@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <title>Rhizi Prototype </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="ui.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
+
+    <link rel="shortcut icon" href="images/favicon2.ico" />
+
+    <script src="d3/d3.v3.min.js"></script>
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/jquery-ui-1.10.4.min.js"></script>
+    <script src="scripts/caret.js"></script>
+    <script src="scripts/autocomplete.js"></script>
+
+</head>
+
+<body>
+    <div class="help">Connect between people and the projects they are working on by describing their main contribution</div>
+    <div class="info">Node info :<br/>
+        <div class="subtitle">Click on a node to display info</div>
+        <form id="editbox">
+          <label>name:</label><input id="editboxname"/>
+          <label>description:</label><input id="editdescription"/>
+          <label>URL:</label><input id="editurl"/>
+          <button>edit</button>
+        </form>
+    </div>
+
+    <div class='editinfo'>
+      <form id='editform'>
+        <input id="editname"/>
+        
+      </form>
+    </div>
+
+    <div class='editlinkinfo'>
+      <form id='editlinkform'>
+        <input id="editlinkname"/>
+        
+      </form>
+    </div>
+
+
+
+   <div id="suggestion">
+       <form> <input id="textanalyser" onfocus="if(this.value == 'We built this entire graph in 30 seconds, try it out yourself!') { this.value = ''; }" value=""/></form>
+       <table>
+           <tr>
+               <td><div class="subtitle">Example: #Owen is developing the visualization of #Rhizi</div></td>
+
+               <td></td>
+           </tr>
+       </table>
+
+    </div>
+
+    <div class="typeselection">
+      <table>
+        <tr><td><img id="keys" src="images/keys.png"/></td></tr>
+        <tr><td>Pick a type with arrows</td></tr>  
+      </table>
+      </div>
+
+      
+
+
+    <div class="logo">
+        <a href="#"><img src="images/sage.png"/></a>
+    </div>
+
+
+    <div class="debug">debug</div>
+
+    <script src="scripts/rhizicore.js"></script>
+    <script src="scripts/textanalysis.js"></script>
+    <script src="scripts/buttons.js"></script>
+    <script src="scripts/robot.js"></script>
+    <script src="scripts/watchdog.js"></script>
+
+</body>
+</html>
