@@ -1,0 +1,36 @@
+{
+  "nodes":[
+  {"name":"Batman","type":"person","state":"perm"},
+  {"name":"Superman","type":"person","state":"perm"},
+  {"name":"Green Lantern","type":"person","state":"perm"},
+  {"name":"Martian Manhunter","type":"person","state":"perm"},
+  {"name":"Wonder Woman","type":"person","state":"perm"},
+  {"name":"The Flash","type":"person","state":"perm"},
+  {"name":"Aquaman","type":"person","state":"perm"},
+  {"name":"Justice League","type":"project","state":"perm"},
+  {"name":"Captain America","type":"person","state":"perm"},
+  {"name":"Iron Man","type":"person","state":"perm"},
+  {"name":"Black Widow","type":"person","state":"perm"},
+  {"name":"Hawkeye","type":"person","state":"perm"},
+  {"name":"Hulk","type":"person","state":"perm"},
+  {"name":"Thor","type":"person","state":"perm"},
+  {"name":"Nick Fury","type":"person","state":"perm"},
+  {"name":"The Avengers","type":"project","state":"perm"}
+  ],
+  "links":[
+    {"source":"Batman","target":"Justice League","name":"is in"},
+  {"source":"Superman","target":"Justice League","name":"leads"},
+  {"source":"Green Lantern","target":"Justice League","name":"is in"},
+  {"source":"Wonder Woman","target":"Justice League","name":"is in"},
+  {"source":"The Flash","target":"Justice League","name":"is in"},
+  {"source":"Aquaman","target":"Justice League","name":"is in"},
+  {"source":"Martian Manhunter","target":"Justice League","name":"is in"},
+  {"source":"Iron Man","target":"The Avengers","name":"is in"},
+  {"source":"Captain America","target":"The Avengers","name":"leads"},
+  {"source":"Hawkeye","target":"The Avengers","name":"is in"},
+  {"source":"Hulk","target":"The Avengers","name":"is in"},
+  {"source":"Black Widow","target":"The Avengers","name":"is in"},
+  {"source":"Nick Fury","target":"The Avengers","name":"is in"},
+  {"source":"Thor","target":"The Avengers","name":"is in"}
+  ]
+}
