@@ -1,16 +1,23 @@
-var sentence="#Rhizibot is showing you a #tutorial ";
+var sentence="";
+/*sentence+="#Rhizibot is showing you a #tutorial ";
 sentence+="#Rhizi visualizes data with #Graphs ";
 sentence+="#Graphs are great to display #relationships ";
 sentence+="#nodes are #entities ";
 sentence+="#nodes are #concepts ";
 sentence+="#entities can be #concepts ";
 sentence+="#concepts have context with #relationships ";
-sentence+="We built this entire graph in 30 seconds, try it out yourself!";
+sentence+="We built this entire graph in 30 seconds, try it out yourself!";*/
 
 sentence="";
 var arr=["works on","contibutes to","likes","knows","is an expert at","donates to"];
-for(var a=0;a<30;a++){
-  sentence+="#"+names[Math.floor(Math.random()*names.length)]+" "+arr[Math.round(Math.random()*4)]+" #"+sugg[Math.floor(Math.random()*sugg.length)]+" ";
+var arr2=["is used by","is liked by","employs"];
+for(var a=0;a<10;a++){
+  if(Math.random()>0.5){
+    sentence+="#"+names[Math.floor(Math.random()*names.length)]+" "+arr[Math.round(Math.random()*4)]+" #"+sugg[Math.floor(Math.random()*sugg.length)]+" ";
+  }else{
+    sentence+="#"+sugg[Math.floor(Math.random()*sugg.length)]+" "+arr2[Math.round(Math.random()*2)]+" #"+names[Math.floor(Math.random()*names.length)]+" ";
+  
+  }
 }
 
 var counter=0;
@@ -23,12 +30,12 @@ setTimeout( Robot, 1000 );
 
 
 });
-/*
-var answer = confirm ("Would you like a tutorial?")
-if (answer)
-setTimeout( Robot, 100 );
 
-*/
+/*var answer = confirm ("Would you like a tutorial?")
+if (answer)
+setTimeout( Robot, 100 );*/
+
+
 
 
 function Robot(){

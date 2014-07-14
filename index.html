@@ -10,14 +10,24 @@
 
     <script src="d3/d3.v3.min.js"></script>
     <script src="scripts/jquery.js"></script>
-    <script src="scripts/jquery-ui-1.10.4.min.js"></script>
+
+    <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <script src="scripts/caret.js"></script>
     <script src="scripts/autocomplete.js"></script>
+    <script type="text/javascript" src="http://static.mentful.com/gantt-chart-d3v2.js"></script>
+    
 
 </head>
 
 <body>
-    <div class="help">Connect between people and the projects they are working on by describing their main contribution</div>
+  <div id="gantbox" style="display:none">
+
+  </div>
+
+  <div id="graph"></div>
+
+  <div class="UI">
+    <div class="help">Connect between <span style="color:#FCB924">people</span> and the  <span style="color:#009DDC">projects</span> they are working on by describing their main contribution:</div>
     <div class="info">Node info :<br/>
         <div class="subtitle">Click on a node to display info</div>
         <form id="editbox">
@@ -26,6 +36,7 @@
           <label>URL:</label><input id="editurl"/>
           <button>edit</button>
         </form>
+        <div class="deletenode"><button>Delete</button></div>
     </div>
 
     <div class='editinfo'>
@@ -46,13 +57,7 @@
 
    <div id="suggestion">
        <form> <input id="textanalyser" onfocus="if(this.value == 'We built this entire graph in 30 seconds, try it out yourself!') { this.value = ''; }" value=""/></form>
-       <table>
-           <tr>
-               <td><div class="subtitle">Example: #Owen is developing the visualization of #Rhizi</div></td>
-
-               <td></td>
-           </tr>
-       </table>
+       
 
     </div>
 
@@ -63,7 +68,15 @@
       </table>
       </div>
 
-      
+    <div class="save">
+        <a href="#">SAVE</a>
+    </div>
+    <div class="load">
+        <a href="#">LOAD</a>
+    </div>    
+    <div class="deliverabletest">
+        <a href="#">Load deliverables</a>
+    </div>     
 
 
     <div class="logo">
@@ -72,12 +85,28 @@
 
 
     <div class="debug">debug</div>
+  </div>
+
+  <div class="poweredby">powered by <a href="http://www.rhizi.org"><img src="images/rhizismall.png"/></a></div>
+  </div>
+
+    
+    <div class="missingdates" style="display:none">The following tasks are missing dates,<br/>Please fill them out:</div>
+
+    <div class="onoffswitch">
+    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" onclick="checkSwitch(this)"checked>
+    <label class="onoffswitch-label" for="myonoffswitch">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+    </div>
 
     <script src="scripts/rhizicore.js"></script>
     <script src="scripts/textanalysis.js"></script>
     <script src="scripts/buttons.js"></script>
     <script src="scripts/robot.js"></script>
     <script src="scripts/watchdog.js"></script>
+    <script src="scripts/gant.js"></script>
 
 </body>
 </html>
