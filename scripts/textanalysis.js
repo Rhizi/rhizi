@@ -20,7 +20,6 @@ $('#textanalyser').autocompleteTrigger({
 });
 
 $('#textanalyser').submit(function () {
-    alert("kldffsgdklgfdmlfdkfglfgsdklgfdkfssfglk,dgf");
     if (previousorder === "EDITNODE") {
         $('#textanalyser').val(text + " ");
     }
@@ -40,11 +39,6 @@ $(document).keydown(function (e) {
         return false;
     }
 
-
-
-    if (e.keyCode == 73) {
-        zoom();
-    }
 
     //DELTE
     if (e.keyCode == 46 || e.keyCode == 8) {

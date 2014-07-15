@@ -112,31 +112,30 @@ input:focus {
 .link {
   fill: none;
   stroke: #404040;
-  stroke-width: 2px;
+  stroke-width: 4px;
   z-index:1;
-  pointer-events: none;
 }
 
 .highlightlink {
   fill: none;
   stroke: #EDE275;
-  stroke-width: 2px;
+  stroke-width: 4px;
   z-index:1;
   pointer-events: none;
 }
 
 .enterlink {
   fill: none;
-  stroke: #00BFFF;
-  stroke-width: 2px;
+  stroke: #EDE275;
+  stroke-width: 5px;
   z-index:1;
   pointer-events: none;
 }
 
 .exitlink {
   fill: none;
-  stroke: #9AFE2E;
-  stroke-width: 2px;
+  stroke: #EDE275;
+  stroke-width: 4px;
   z-index:1;
   pointer-events: none;
 }

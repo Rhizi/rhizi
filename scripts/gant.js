@@ -36,20 +36,6 @@ function checkSwitch(checkswitch) {
 
 }
 
-window.onscroll = function (e) {
-  var horizontal_position = 0;
-  if (pageXOffset)//usual
-    horizontal_position = pageXOffset;
-  else if (document.documentElement.clientWidth)
-    horizontal_position = document.documentElement.scrollLeft;
-  else if (document.body)//ie quirks
-    horizontal_position = document.body.scrollLeft;
-
-	$('.debug').html(scrollValue);
-
-  var your_div = $('#gantbox');
-  $('#gantbox').scrollLeft((horizontal_position));
-}
 
 $('#gantbox').scroll(function () {
 	scrollValue=$('#gantbox').scrollLeft();

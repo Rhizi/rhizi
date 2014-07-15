@@ -10,7 +10,7 @@ var deliverables = [];
 
 var boxedin, nodetext, linktext, link, links, node, nodes, circle;
 
-var scrollValue = 0;
+var scrollValue = 0, zoomX , zoomY;
 
 
 function myGraph(el) {
@@ -71,10 +71,12 @@ function myGraph(el) {
             j = 0;
         var n = findNode(id, state);
         var adjacentnode;
+        $(".debug").html(n.state);
 
-        this.removeHighlight();
         //highlight node
         if (n !== undefined && n.state!=="chosen" && n.state!=="temp") {
+
+        this.removeHighlight();
             n.state = "chosen";
 
             while (i < links.length) {
@@ -92,6 +94,8 @@ function myGraph(el) {
             }
             update();
 
+        }else{
+         
         }
 
     }
@@ -229,8 +233,13 @@ function myGraph(el) {
         .attr("width", w)
         .attr("height", h)
         .append("g")
-        .call(d3.behavior.zoom().center([w / 2, h / 2]).on("zoom", zoom))
+        .call(d3.behavior.zoom().center([w / 2, h / 2]).scaleExtent([0.5, 10]).on("zoom", zoom))
         .append("g");
+
+    function zoom() {
+      if(graphstate==="GRAPH")vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      if(graphstate==="GANTT")vis.attr("transform", "translate([0,0])scale(1)");
+    }
 
    
 
@@ -267,8 +276,8 @@ function myGraph(el) {
             .attr("viewBox", "0 -5 10 10")
             .attr("refX", 23)
             .attr("refY", -1.8)
-            .attr("markerWidth", 5)
-            .attr("markerHeight", 5)
+            .attr("markerWidth", 2.5)
+            .attr("markerHeight", 2.5)
             .attr("orient", "auto")
             .style("fill", "#aaa")
             .append("svg:path")
@@ -283,7 +292,10 @@ function myGraph(el) {
                   else return "link";
               
             })
-            .attr("marker-end", "url(#end)");
+            .attr("marker-end", "url(#end)")
+            .on("click", function (d, i) {
+                $('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
+            });;
 
 
         linktext = vis.selectAll(".linklabel").data(links);
@@ -292,8 +304,14 @@ function myGraph(el) {
             .attr("class", "linklabel")
             .attr("text-anchor", "middle")
             .text(function (d) {
-                if (d.name.length < 25) return d.name;
-                else return d.name.substring(0, 14) + "...";
+                if(d.target.state==="temp" || d.source.state==="chosen" || d.target.state==="chosen"){
+                  if (d.name.length < 25){
+                    return d.name;
+                  }
+                else{ return d.name.substring(0, 14) + "...";}
+              }else{
+                return " " ;
+              }
             })
             .on("click", function (d, i) {
                 editLink(d, i);
@@ -318,7 +336,9 @@ function myGraph(el) {
             .attr("dy", ".35em")
             .text(function (d) {
                 if (d.state === "temp") return d.id + "|";
-                else {
+                else if(d.state === "chosen"){
+                  return d.id;
+                }else{
                     if (d.id.length < 14) return d.id;
                     else return d.id.substring(0, 11) + "...";
                 }
@@ -540,9 +560,9 @@ function deliverableTest() {
         var endindex = Math.floor(Math.random() * i);
         var startindex = Math.floor(Math.random() * i);
         if(nodes[endindex].start>nodes[startindex].start){
-          graph.addLink("Task " + startindex, "Task " + endindex, " ", "perm");
+          graph.addLink("Task " + startindex, "Task " + endindex, "depends on", "perm");
         }else{
-          graph.addLink("Task " + endindex, "Task " + startindex, " ", "perm");
+          graph.addLink("Task " + endindex, "Task " + startindex, "depends on", "perm");
         }
     }
 
@@ -554,19 +574,15 @@ function deliverableTest() {
 
 
 
-function zoom() {
-    //vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-}
-
-
 function showInfo(d, i) {
-
+    if(d.state!=="chosen"){
     graph.highlightNode(d.id,null);
+    $('.info').fadeIn(300);
 
     if (d.type === "deliverable") {
-        $('.info').html('<form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+        $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
     } else {
-        $('.info').html('<form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+        $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
 
 
     }
@@ -601,6 +617,11 @@ function showInfo(d, i) {
             graph.removeNode(d.id, null);
         }
     });
+    }else{
+        graph.removeHighlight();
+        $('.info').fadeOut(300);
+    }
+
 }
 
 function mousedown() {
@@ -610,6 +631,7 @@ function mousedown() {
     $('.editlinkinfo').css('left', 0);
     d3.event.stopPropagation();
     graph.removeHighlight();
+    $('.info').fadeOut(300);
 }
 
 function AddedUnique(newnode) {
