@@ -4,9 +4,9 @@ function checkSwitch(checkswitch) {
 
 
     if (checkswitch.checked) {
-
-        $('#gantbox').fadeOut(300);
+    	vis.selectAll(".gantt").remove();
         $('.missingdates').fadeOut(300);
+        $('body').scrollLeft(0);
         graphstate = "GRAPH";
         var fake_e = {};
     	fake_e.alpha = 0.1;
@@ -15,8 +15,8 @@ function checkSwitch(checkswitch) {
         //boxedin=false;
 
     } else {
-        $('#gantbox').fadeIn(300);
         $('.missingdates').fadeIn(300);
+
         graphstate = "GANTT";
         var fake_e = {};
     	fake_e.alpha = 0.1;
@@ -25,35 +25,44 @@ function checkSwitch(checkswitch) {
 
         initAxis();
 
-        $('#gantbox').scrollLeft(scrollValue);
         //boxedin=true;
     }
 
-    
-
-
-
-
 }
 
+///For some reason JQuery's $('body').scroll never worked, so I found something else.
+$('body').bind('DOMMouseScroll', function(e){
+     if(graphstate==="GANTT"){
+        if(e.originalEvent.detail !== 0) {
+         $('.overlay').hide();
+     }else{
+        $('.overlay').show();
+        var left = $('body').offset().left;
+        $('.overlay').scrollLeft(left);
+     }
+    }else{
+        return false;
+    }
+ });
 
-$('#gantbox').scroll(function () {
-	scrollValue=$('#gantbox').scrollLeft();
-	$('.debug').html(scrollValue);
-    var fake_e = {};
-    fake_e.alpha = 0.0;
-    tick(fake_e);
-});
+ //IE, Opera, Safari
+ $('body').bind('mousewheel', function(e){
+     if(graphstate==="GANTT"){
+        if(e.originalEvent.wheelDelta !== 0) {
+           $('.overlay').hide();
+     }else{
+        $('.overlay').show();
+     }
+    }else{
+        return false;
+    }
+ });
 
 
 
 
 function initAxis() {
 
-    $('#gantbox').html("");
-
-
-    var w,h = $("#gantbox").innerHeight() - 80;
 
     var bar_height = 20;
     var row_height = bar_height + 10;
@@ -81,10 +90,9 @@ function initAxis() {
     graphinterval = w / diffDays;
 
 
-    var svg = d3.select("#gantbox")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h);
+
+    var svg=vis;
+    vis.attr("width",w);
 
     var paddingLeft = 150;
     var paddingTop = 120;
@@ -106,6 +114,7 @@ function initAxis() {
         .attr("x2", xScale)
         .attr("y1", paddingTop + 30)
         .attr("y2", h - 50)
+        .attr("class", "gantt")
         .style("stroke", "#ccc");
 
     var y = function (i) {
@@ -127,7 +136,7 @@ function initAxis() {
         .attr("x", -1000)
         .attr("width", 100)
         .attr("height", bar_height)
-        .attr("class", "company-bar")
+        .attr("class", "company-bar gantt")
         .on("mouseover", function (d) {
             d3.select(this).style("fill", "#F5AF00");
             getCompanyData(String(d.uid))
@@ -144,7 +153,7 @@ function initAxis() {
         });;
 
     label.enter().append("text")
-        .attr("class", "bar-label")
+        .attr("class", "bar-label gantt")
         // .attr("text-anchor","end")
         .attr("x", paddingLeft - 10)
         .attr("y", function (d, i) {
@@ -159,13 +168,13 @@ function initAxis() {
     // Bottom Axis
     var btmAxis = svg.append("g")
         .attr("transform", "translate(0," + (h - 25) + ")")
-        .attr("class", "axis")
+        .attr("class", "axis gantt")
         .call(xAxis);
 
     // Top Axis
     var topAxis = svg.append("g")
         .attr("transform", "translate(0," + paddingTop + ")")
-        .attr("class", "axis")
+        .attr("class", "axis gantt")
         .call(xAxis);
 
 }

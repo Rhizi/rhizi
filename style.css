@@ -7,7 +7,8 @@ html{
 }
 
 body {
-	overflow: hidden;
+	overflow-y: hidden;
+  overflow-x:auto;
 	margin: 0;
 	min-width: 980px;
 	padding: 0;
@@ -50,6 +51,23 @@ font-size:14px;
   -moz-transition: all 0.04s ease-in-out;
   -ms-transition: all 0.04s ease-in-out;
   -o-transition: all 0.04s ease-in-out;
+}
+
+a{
+  text-decoration: none;
+  font-style: italic;
+}
+a:link {
+    color: #FFF;
+}
+a:visited {
+    color: #FFF;
+}
+a:hover {
+    color: #EDE275;
+}
+a:active {
+    color: #FFF;
 }
 
 #textanalyser{
@@ -242,6 +260,7 @@ input:focus {
 .overlay {
   fill:none;
   pointer-events: all;
+  z-index:0;
 
 }
 
@@ -327,6 +346,7 @@ input:focus {
 
 .axis{
   stroke: #ccc;
+  fill: #ccc;
 }
 
 #editlinkname{
@@ -348,7 +368,7 @@ input:focus {
 
 .axis path,.axis line {
   fill: none;
-  stroke: #000;
+  stroke: #ccc;
   shape-rendering: crispEdges;
 }
  

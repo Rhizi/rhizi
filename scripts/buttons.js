@@ -46,20 +46,23 @@ $('.save').click(function(){
 });
 
 $('.load').click(function(){ 
+  if (confirm('All unsaved changes will be deleted, are you sure?')) {
+    links=[];
+  nodes=[];
   var data = JSON.parse(JSON.parse(localStorage.getItem(key)));
   console.log(data);
     for(var i=0; i<data["nodes"].length; i++){
       var node=data.nodes[i];
-      console.log(data.nodes[i].id);
-      graph.addNodeComplete(node.id,node.type,"perm",node.start,node.end);
+      graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end));
     }
 
     for(var j=0; j<data["links"].length; j++){
-      var node=data.links[j];
+      var link=data.links[j];
+      graph.addLink(link.source,link.target,link.name,"perm");
 
-      console.log(data.links[j].name);
-      graph.addLink(fetchNode(link.source),fetchNode(link.target),link.name);
+     
     }
+  }
     
 });
 

@@ -1,6 +1,8 @@
 //CORE VARIABLES
 var addednodes = [];
 
+var vis;
+
 var graphstate = "GRAPH";
 var graphinterval = 0;
 
@@ -229,16 +231,20 @@ function myGraph(el) {
 
     var color = d3.scale.category20();
 
-    var vis = this.vis = d3.select(el).append("svg:svg")
-        .attr("width", w)
+    vis = this.vis = d3.select(el).append("svg:svg")
+        .attr("width", w*5)
         .attr("height", h)
+        .attr("pointer-events", "all")
         .append("g")
         .call(d3.behavior.zoom().center([w / 2, h / 2]).scaleExtent([0.5, 10]).on("zoom", zoom))
         .append("g");
 
+        vis.on("mousedown.zoom", null);
+        vis.on("mousemove.zoom", null);
+
     function zoom() {
       if(graphstate==="GRAPH")vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-      if(graphstate==="GANTT")vis.attr("transform", "translate([0,0])scale(1)");
+      if(graphstate==="GANTT")vis.attr("transform", "translate(0,0)scale(1)");
     }
 
    
@@ -257,17 +263,15 @@ function myGraph(el) {
 
     var update = function () {
 
-        vis.selectAll("*").remove();
+        vis.selectAll(".graph").remove();
         link = vis.selectAll(".link")
             .data(links);
 
-         vis.append("rect")
+        vis.append("rect")
         .attr("class", "overlay")
         .attr("width", w)
-        .attr("height", h)
-        .on("click", function() {
-        mousedown();
-        });
+        .attr("height", h);
+        $('.overlay').click(mousedown);
 
         vis.append("svg:defs").selectAll("marker")
             .data(["end"]) // Different link/path types can be defined here
@@ -279,6 +283,7 @@ function myGraph(el) {
             .attr("markerWidth", 2.5)
             .attr("markerHeight", 2.5)
             .attr("orient", "auto")
+            .attr("class","graph")
             .style("fill", "#aaa")
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
@@ -287,9 +292,9 @@ function myGraph(el) {
             .attr("d", "M0,-5L10,0L0,5")
             .attr("class", function(d){
               
-                  if(d.state === "enter"){return "enterlink";}
-                  else if(d.state === "exit"){return "exitlink";}
-                  else return "link";
+                  if(d.state === "enter"){return "enterlink graph";}
+                  else if(d.state === "exit"){return "exitlink graph";}
+                  else return "link graph";
               
             })
             .attr("marker-end", "url(#end)")
@@ -301,7 +306,7 @@ function myGraph(el) {
         linktext = vis.selectAll(".linklabel").data(links);
         linktext.enter()
             .append("text")
-            .attr("class", "linklabel")
+            .attr("class", "linklabel graph")
             .attr("text-anchor", "middle")
             .text(function (d) {
                 if(d.target.state==="temp" || d.source.state==="chosen" || d.target.state==="chosen"){
@@ -331,7 +336,7 @@ function myGraph(el) {
             .append("g").call(force.drag);
 
         nodetext = nodeEnter.insert("text")
-            .attr("class", "nodetext")
+            .attr("class", "nodetext graph")
             .attr("dx", 20)
             .attr("dy", ".35em")
             .text(function (d) {
@@ -349,7 +354,7 @@ function myGraph(el) {
             });
 
         circle = nodeEnter.insert("circle")
-            .attr("class", "circle")
+            .attr("class", "circle graph")
             .attr("r", function (d) {
                 if (d.state === "temp" && d.type !== "empty") return '16px';
                 else return customSize(d.type);
@@ -474,7 +479,7 @@ function tick(e) {
                 //var min= 150+graphinterval*Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //var max= 150+graphinterval*Math.ceil(Math.abs(d.end.getTime() - d.start.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //d.x = min+Math.sin(today.getTime()/1000*Math.PI*2/10)*max;
-                d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) - $('#gantbox').scrollLeft();
+                d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24));
                 d.y = 150 + d.start.getHours() * 17;
             }
             if(d.state==="chosen"){
@@ -530,6 +535,9 @@ function tick(e) {
             dr = Math.sqrt(dx * dx + dy * dy)*5;
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
             }else{
+              var dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y,
+            dr = Math.sqrt(dx * dx + dy * dy)*5;
 
             return "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
             }
@@ -550,13 +558,13 @@ function tick(e) {
 
 
 function deliverableTest() {
-    for (var i = 0; i < 140; i++) {
+    for (var i = 0; i < 60; i++) {
         var end = randomDate(new Date(), new Date("01-01-2018"));
         var start = randomDate(new Date(), end);
         graph.addNodeComplete("Task " + i, "deliverable", "perm", start, end);
     }
 
-    for (var i = 0; i < 140; i++) {
+    for (var i = 0; i < 60; i++) {
         var endindex = Math.floor(Math.random() * i);
         var startindex = Math.floor(Math.random() * i);
         if(nodes[endindex].start>nodes[startindex].start){
@@ -629,7 +637,6 @@ function mousedown() {
     $('.editinfo').css('left', 0);
     $('.editlinkinfo').css('top', -100);
     $('.editlinkinfo').css('left', 0);
-    d3.event.stopPropagation();
     graph.removeHighlight();
     $('.info').fadeOut(300);
 }
