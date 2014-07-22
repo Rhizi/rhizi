@@ -40,17 +40,22 @@ $('.save').click(function(){
     if(j!==links.length-1)jsonsave+=",";
   }
   jsonsave+=']}';
-  console.log(jsonsave);
+  console.log(JSON.stringify(jsonsave));
   localStorage.setItem(key, JSON.stringify(jsonsave));
 
 });
 
 $('.load').click(function(){ 
-  if (confirm('All unsaved changes will be deleted, are you sure?')) {
+  var acceptLoad=true;
+  if (nodes.length>0){
+    acceptLoad = confirm('All unsaved changes will be deleted, are you sure?');
+  }
+
+  if(acceptLoad){
     links=[];
-  nodes=[];
-  var data = JSON.parse(JSON.parse(localStorage.getItem(key)));
-  console.log(data);
+    nodes=[];
+    var data = JSON.parse(JSON.parse(localStorage.getItem(key)));
+    console.log(data);
     for(var i=0; i<data["nodes"].length; i++){
       var node=data.nodes[i];
       graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end));

@@ -130,14 +130,14 @@ input:focus {
 .link {
   fill: none;
   stroke: #404040;
-  stroke-width: 4px;
+  stroke-width: 2px;
   z-index:1;
 }
 
 .highlightlink {
   fill: none;
   stroke: #EDE275;
-  stroke-width: 4px;
+  stroke-width: 2px;
   z-index:1;
   pointer-events: none;
 }
@@ -145,7 +145,7 @@ input:focus {
 .enterlink {
   fill: none;
   stroke: #EDE275;
-  stroke-width: 5px;
+  stroke-width: 2px;
   z-index:1;
   pointer-events: none;
 }
@@ -153,7 +153,7 @@ input:focus {
 .exitlink {
   fill: none;
   stroke: #EDE275;
-  stroke-width: 4px;
+  stroke-width: 2px;
   z-index:1;
   pointer-events: none;
 }
@@ -254,7 +254,7 @@ input:focus {
   top:5px;
   left:10px;
   margin-left:12px;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .overlay {

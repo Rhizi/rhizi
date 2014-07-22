@@ -12,7 +12,7 @@ var deliverables = [];
 
 var boxedin, nodetext, linktext, link, links, node, nodes, circle;
 
-var scrollValue = 0, zoomX , zoomY;
+var scrollValue = 0, zoomLevel=0, zoomObject;
 
 
 function myGraph(el) {
@@ -231,12 +231,16 @@ function myGraph(el) {
 
     var color = d3.scale.category20();
 
+    //Zoom scale behavior in zoom.js
+    zoomObject=d3.behavior.zoom().scaleExtent([0.5, 10]).on("zoom", zoom);
+
     vis = this.vis = d3.select(el).append("svg:svg")
         .attr("width", w*5)
         .attr("height", h)
         .attr("pointer-events", "all")
         .append("g")
-        .call(d3.behavior.zoom().center([w / 2, h / 2]).scaleExtent([0.5, 10]).on("zoom", zoom))
+        .call(zoomObject)
+        .on("mousedown.zoom", null)
         .append("g");
 
         vis.on("mousedown.zoom", null);
@@ -245,6 +249,28 @@ function myGraph(el) {
     function zoom() {
       if(graphstate==="GRAPH")vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
       if(graphstate==="GANTT")vis.attr("transform", "translate(0,0)scale(1)");
+      /*var threashhold=0;
+      if(zoomObject.scale()>1.7){
+        threashhold=1;
+      }else{
+        threashhold=2;
+      }
+
+      if(zoomLevel!==threashhold){
+        zoomLevel=threashhold;
+
+        if(zoomLevel===1){
+            $('.linklabel').fadeIn(200);
+        }
+        if(zoomLevel===2){
+            $('.linklabel').fadeOut(200);
+        }
+      }*/
+
+
+      
+      
+
     }
 
    
@@ -269,7 +295,7 @@ function myGraph(el) {
 
         vis.append("rect")
         .attr("class", "overlay")
-        .attr("width", w)
+        .attr("width", w*5)
         .attr("height", h);
         $('.overlay').click(mousedown);
 
@@ -280,8 +306,8 @@ function myGraph(el) {
             .attr("viewBox", "0 -5 10 10")
             .attr("refX", 23)
             .attr("refY", -1.8)
-            .attr("markerWidth", 2.5)
-            .attr("markerHeight", 2.5)
+            .attr("markerWidth", 5)
+            .attr("markerHeight", 5)
             .attr("orient", "auto")
             .attr("class","graph")
             .style("fill", "#aaa")
@@ -299,7 +325,7 @@ function myGraph(el) {
             })
             .attr("marker-end", "url(#end)")
             .on("click", function (d, i) {
-                $('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
+                //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
             });;
 
 
@@ -591,9 +617,10 @@ function showInfo(d, i) {
         $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
     } else {
         $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
-
-
     }
+
+    $('.info').css("border-color",customColor(d.type));
+
     $("#editenddate").datepicker({
         inline: true,
         showOtherMonths: true,

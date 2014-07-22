@@ -6,6 +6,9 @@ function checkSwitch(checkswitch) {
     if (checkswitch.checked) {
     	vis.selectAll(".gantt").remove();
         $('.missingdates').fadeOut(300);
+        scrollValue = $('body').scrollLeft();
+        console.log(scrollValue);
+        
         $('body').scrollLeft(0);
         graphstate = "GRAPH";
         var fake_e = {};
@@ -16,6 +19,7 @@ function checkSwitch(checkswitch) {
 
     } else {
         $('.missingdates').fadeIn(300);
+        $('body').scrollLeft(scrollValue);
 
         graphstate = "GANTT";
         var fake_e = {};
@@ -37,8 +41,6 @@ $('body').bind('DOMMouseScroll', function(e){
          $('.overlay').hide();
      }else{
         $('.overlay').show();
-        var left = $('body').offset().left;
-        $('.overlay').scrollLeft(left);
      }
     }else{
         return false;
@@ -52,6 +54,8 @@ $('body').bind('DOMMouseScroll', function(e){
            $('.overlay').hide();
      }else{
         $('.overlay').show();
+        var left = $('body').offset().left;
+        $('.overlay').scrollLeft(left);
      }
     }else{
         return false;
