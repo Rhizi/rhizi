@@ -6,6 +6,8 @@ var vis;
 var graphstate = "GRAPH";
 var graphinterval = 0;
 
+var ganttTimer=0;
+
 var boxedin = false;
 
 var deliverables = [];
@@ -15,12 +17,14 @@ var boxedin, nodetext, linktext, link, links, node, nodes, circle;
 var scrollValue = 0, zoomLevel=0, zoomObject;
 
 
+
 function myGraph(el) {
 
     ///FUNCTIONS
     this.addNode = function (id, type, state) {
         var start = 0,
             end = 0;
+        var status= "unknown";
         var node = findNode(id, null);
         if (node !== undefined) {
             graph.editState(id, null, "temp");
@@ -30,14 +34,15 @@ function myGraph(el) {
                 "type": type,
                 "state": state,
                 "start": start,
-                "end": end
+                "end": end,
+                "status": status
             });
 
         }
         update();
     }
 
-    this.addNodeComplete = function (id, type, state, start, end) {
+    this.addNodeComplete = function (id, type, state, start, end, status) {
         var node = findNode(id, null);
         if (node !== undefined) {
             graph.editState(id, null, "temp");
@@ -47,7 +52,8 @@ function myGraph(el) {
                 "type": type,
                 "state": state,
                 "start": start,
-                "end": end
+                "end": end,
+                "status": status
             });
 
         }
@@ -197,6 +203,14 @@ function myGraph(el) {
         }
     }
 
+    this.updateGraph =  function(){
+        update();
+    }
+
+    this.recenterZoom =  function(){
+        vis.attr("transform", "translate(0,0)scale(1)");
+    }
+
 
 
     var findLink = function (sourceId, targetId, name) {
@@ -232,7 +246,7 @@ function myGraph(el) {
     var color = d3.scale.category20();
 
     //Zoom scale behavior in zoom.js
-    zoomObject=d3.behavior.zoom().scaleExtent([0.5, 10]).on("zoom", zoom);
+    zoomObject=d3.behavior.zoom().scaleExtent([0.5, 3]).on("zoom", zoom);
 
     vis = this.vis = d3.select(el).append("svg:svg")
         .attr("width", w*5)
@@ -286,15 +300,15 @@ function myGraph(el) {
 
 
 
-
     var update = function () {
 
         vis.selectAll(".graph").remove();
+
         link = vis.selectAll(".link")
             .data(links);
 
         vis.append("rect")
-        .attr("class", "overlay")
+        .attr("class", "overlay graph")
         .attr("width", w*5)
         .attr("height", h);
         $('.overlay').click(mousedown);
@@ -304,10 +318,10 @@ function myGraph(el) {
             .enter().append("svg:marker") // This section adds in the arrows
             .attr("id", String)
             .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 23)
-            .attr("refY", -1.8)
-            .attr("markerWidth", 5)
-            .attr("markerHeight", 5)
+            .attr("refX", 22)
+            .attr("refY", -1.5)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
             .attr("orient", "auto")
             .attr("class","graph")
             .style("fill", "#aaa")
@@ -363,8 +377,8 @@ function myGraph(el) {
 
         nodetext = nodeEnter.insert("text")
             .attr("class", "nodetext graph")
-            .attr("dx", 20)
-            .attr("dy", ".35em")
+            .attr("dx", 15)
+            .attr("dy", ".30em")
             .text(function (d) {
                 if (d.state === "temp") return d.id + "|";
                 else if(d.state === "chosen"){
@@ -379,11 +393,13 @@ function myGraph(el) {
                 showInfo(d, i);
             });
 
+
+
         circle = nodeEnter.insert("circle")
             .attr("class", "circle graph")
             .attr("r", function (d) {
-                if (d.state === "temp" && d.type !== "empty") return '16px';
-                else return customSize(d.type);
+                if (d.state === "temp" && d.type !== "empty") return '13px';
+                else return customSize(d.type)-2;
             })
             .style("fill", function (d) {
                 return customColor(d.type);
@@ -409,6 +425,25 @@ function myGraph(el) {
             .on("click", function (d, i) {
                 showInfo(d, i);
             });
+
+            //if(graphstate==="GANTT"){
+        nodeEnter.append("svg:image")
+            .attr("class", "status graph")
+            .attr('x',-7)
+            .attr('y',-8)
+            .attr('width', 15)
+            .attr('height', 15)
+            .attr("xlink:href",function (d) { 
+                switch(d.status){
+                case "done": return "images/delivcheck.png"; break;
+                case "current": return "images/delivwait.png"; break;
+                case "waiting": return "images/delivcross.png"; break;
+                }
+            })
+            .on("click", function (d, i) {
+                showInfo(d, i);
+            });
+        //}
 
         node.exit().remove();
 
@@ -505,8 +540,14 @@ function tick(e) {
                 //var min= 150+graphinterval*Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //var max= 150+graphinterval*Math.ceil(Math.abs(d.end.getTime() - d.start.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //d.x = min+Math.sin(today.getTime()/1000*Math.PI*2/10)*max;
-                d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24));
-                d.y = 150 + d.start.getHours() * 17;
+                ganttTimer++;
+                if(ganttTimer<3000){
+                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24))*ganttTimer/3000;
+                    d.y = 150 + d.start.getHours() * 17;
+                }else{
+                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24));
+                    d.y = 150 + d.start.getHours() * 17;
+                }
             }
             if(d.state==="chosen"){
               scrollValue=d.x;
@@ -584,10 +625,14 @@ function tick(e) {
 
 
 function deliverableTest() {
+    var status= "unknown";
     for (var i = 0; i < 60; i++) {
+        if(Math.random()>0.7)status="done";
+        else if(Math.random()>0.5) status="current";
+        else status="waiting";
         var end = randomDate(new Date(), new Date("01-01-2018"));
         var start = randomDate(new Date(), end);
-        graph.addNodeComplete("Task " + i, "deliverable", "perm", start, end);
+        graph.addNodeComplete("Task " + i, "deliverable", "perm", start, end, status);
     }
 
     for (var i = 0; i < 60; i++) {
@@ -614,7 +659,7 @@ function showInfo(d, i) {
     $('.info').fadeIn(300);
 
     if (d.type === "deliverable") {
-        $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+        $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><input id="editstatus"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
     } else {
         $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
     }
@@ -635,7 +680,7 @@ function showInfo(d, i) {
 
     $('#editdescription').val(d.type);
 
-    $('#editurl').val('www.' + d.id + '.com');
+    $('#editstatus').val(d.status );
 
     if (d.type === "deliverable") {
         $('#editstartdate').val(d.start);
@@ -734,7 +779,7 @@ function customColor(type) {
         color = '#62BB47';
         break;
     case "deliverable":
-        color = '#E03A3E';
+        color = '#CCC';
         break;
     case "objective":
         color = '#933E99';

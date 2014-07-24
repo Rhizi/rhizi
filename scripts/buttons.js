@@ -29,7 +29,7 @@ $('.save').click(function(){
   console.log(nodes);
   for(var i=0;i<nodes.length;i++){
     var node=nodes[i];
-    jsonsave+='{"id":"'+node.id+'","type":"'+node.type+'","state":"'+"perm"+'","start":"'+node.start+'","end":"'+node.end+'"}';
+    jsonsave+='{"id":"'+node.id+'","type":"'+node.type+'","state":"'+"perm"+'","start":"'+node.start+'","end":"'+node.end+'","status":"'+node.status+'"}';
     if(i!==nodes.length-1)jsonsave+=',';
   }
   jsonsave+='],"links":[';
@@ -58,7 +58,7 @@ $('.load').click(function(){
     console.log(data);
     for(var i=0; i<data["nodes"].length; i++){
       var node=data.nodes[i];
-      graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end));
+      graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end),node.status);
     }
 
     for(var j=0; j<data["links"].length; j++){

@@ -212,6 +212,10 @@ input:focus {
   text-align: center;
 }
 
+.status{
+  display:none;
+}
+
 /*
 .typeselection{
   position:fixed;
@@ -398,9 +402,9 @@ input:focus {
 .onoffswitch {
     z-index:100;
     position: fixed; 
-    width: 114px;
-    top:90px;
-    right: 30px;
+    width: 140px;
+    top:35px;
+    right: 180px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 
@@ -421,19 +425,19 @@ input:focus {
 
 .onoffswitch-inner:before, .onoffswitch-inner:after {
     display: block; float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
-    font-size: 15px; color: white; font-weight: bold;
+    font-size: 14px; color: white; font-weight: bold;
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
 .onoffswitch-inner:before {
-    content: "GRAPH";
-    padding-left: 10px;
+    content: "GANTT VIEW";
+    padding-left: 5px;
     background-color: #080808; color: #FFFFFF;
 }
 
 .onoffswitch-inner:after {
-    content: "GANTT";
-    padding-right: 10px;
+    content: "GRAPH VIEW";
+    padding-right: 5px;
     background-color: #080808; color: #FFFFFF;
     text-align: right;
 }
@@ -442,7 +446,7 @@ input:focus {
     display: block; width: 35px; margin: 0px;
     background: #3D3D3D;
     border: 1px solid #FFFFFF; border-radius: 5px;
-    position: absolute; top: 0; bottom: 0; right: 75px;
+    position: absolute; top: 0; bottom: 0; right: 105px;
     -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
     -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
     background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);

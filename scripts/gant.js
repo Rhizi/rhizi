@@ -7,24 +7,29 @@ function checkSwitch(checkswitch) {
     	vis.selectAll(".gantt").remove();
         $('.missingdates').fadeOut(300);
         scrollValue = $('body').scrollLeft();
-        console.log(scrollValue);
         
         $('body').scrollLeft(0);
         graphstate = "GRAPH";
-        var fake_e = {};
-    	fake_e.alpha = 0.1;
-    	tick(fake_e);
+        graph.updateGraph();
+
+        $('.status').fadeOut(600);
 
         //boxedin=false;
 
     } else {
+        ganttTimer=0;
         $('.missingdates').fadeIn(300);
+
+        graph.recenterZoom();
+
         $('body').scrollLeft(scrollValue);
 
         graphstate = "GANTT";
-        var fake_e = {};
-    	fake_e.alpha = 0.1;
-    	tick(fake_e);
+        
+        graph.updateGraph();
+
+
+        $('.status').fadeIn(600);
 
 
         initAxis();
