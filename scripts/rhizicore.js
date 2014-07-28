@@ -254,11 +254,8 @@ function myGraph(el) {
         .attr("pointer-events", "all")
         .append("g")
         .call(zoomObject)
-        .on("mousedown.zoom", null)
         .append("g");
 
-        vis.on("mousedown.zoom", null);
-        vis.on("mousemove.zoom", null);
 
     function zoom() {
       if(graphstate==="GRAPH")vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -373,7 +370,7 @@ function myGraph(el) {
             });
 
         var nodeEnter = node.enter()
-            .append("g").call(force.drag);
+            .append("g");
 
         nodetext = nodeEnter.insert("text")
             .attr("class", "nodetext graph")
@@ -565,11 +562,21 @@ function tick(e) {
 
 
         var k = 15 * e.alpha;
+        var counter=0;
         links.forEach(function (d, i) {
-            d.source.x -= k;
+            counter++;
+
+                d.source.x -= k;
             d.target.x += k;
-            d.source.y -= k / 3;
-            d.target.y += k / 3;
+            if(counter%2===0){
+            d.source.y -= k/3;
+            d.target.y += k/3;
+            }else{
+
+            d.source.y += k/3;
+            d.target.y -= k/3;
+
+            }
         });
     }
 
@@ -626,7 +633,8 @@ function tick(e) {
 
 function deliverableTest() {
     var status= "unknown";
-    for (var i = 0; i < 60; i++) {
+    var nodecounter=80;
+    for (var i = 0; i < nodecounter; i++) {
         if(Math.random()>0.7)status="done";
         else if(Math.random()>0.5) status="current";
         else status="waiting";
@@ -635,10 +643,10 @@ function deliverableTest() {
         graph.addNodeComplete("Task " + i, "deliverable", "perm", start, end, status);
     }
 
-    for (var i = 0; i < 60; i++) {
-        var endindex = Math.floor(Math.random() * i);
-        var startindex = Math.floor(Math.random() * i);
-        if(nodes[endindex].start>nodes[startindex].start){
+    for (var i = 0; i < nodecounter; i++) {
+        var endindex = Math.floor(Math.random() * nodecounter);
+        var startindex = Math.floor(Math.random() * nodecounter);
+        if(nodes[endindex].start>nodes[startindex].start && startindex !== endindex){
           graph.addLink("Task " + startindex, "Task " + endindex, "depends on", "perm");
         }else{
           graph.addLink("Task " + endindex, "Task " + startindex, "depends on", "perm");

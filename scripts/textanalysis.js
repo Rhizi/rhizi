@@ -81,6 +81,89 @@ window.setInterval(function () {
 
 
 
+
+
+
+var sentenceStack = [];
+function TextAnalyser2(newtext) {
+    var states = ["NOTHING", "NEWNODE", "EDITNODE", "CLOSENODE", "NEWLINK", "EDITLINK" , "SPECIAL" , "QUARTET"];
+    var segment = [], subsegment = [], sentence = [];
+    var links=[],linkindex=0;
+    var nodes=[],nodeindex=0;
+    var orderStack = [];
+    var quoteword="";
+
+    //Sentence Sequencing
+    //Build the words and cuts the main elements
+    segment=newtext.split("#");
+    for(var j=0;j<segment.length;j++){
+        if(j!==0)sentence.push("#");
+        subsegment=segment[j].split(" ");
+        for(var k=0;k<subsegment.length;k++){
+            if(subsegment[k]!==" " && subsegment[k]!==""){
+                if(subsegment[k].charAt(0)==='"'){
+                    quoteword="";
+                    do{
+                        quoteword+=subsegment[k]+" ";
+                        k++;
+                    }while(k<subsegment.length && subsegment[k].charAt(subsegment[k].length-1)!=='"');
+                    if(k<subsegment.length)quoteword+=subsegment[k];
+                    sentence.push(quoteword);
+                }else{
+                    sentence.push(subsegment[k]);
+                }
+            }
+        }
+    }
+
+    for(var m=0;m<sentence.length;m++){
+        switch(sentence[m]){
+            case "#":
+            orderStack.push("START");
+            break;
+            case "and": case "+": case ",":
+            orderStack.push("AND");
+            default:
+            if(orderStack[orderStack.length-1]==="START"){
+                //if(linkindex===0){links[linkindex+1]=sentence[m-2]+" ";}
+                nodes.push(sentence[m]);
+                if(m>2) if(!links[linkindex]){links[linkindex]=sentence[m]; }else{ links[linkindex]+=sentence[m]; }
+                linkindex++;
+            }
+            if(!links[linkindex]){links[linkindex]=sentence[m]+" "; }else{ links[linkindex]+=sentence[m]+" ";}
+            orderStack.push("DEFAULT");
+            break;
+        }
+    }
+
+    console.log(orderStack);
+    console.log(nodes);
+    console.log(links);
+
+    linkindex=0;
+    nodeindex=0;
+    var word;
+    for(var m=0; m<orderStack.length;m++){
+        if(orderStack[m]==="NODE"){
+            word+=" ("+nodes[nodeindex]+") ";
+            nodeindex++;
+        }else if(orderStack[m]==="LINK"){
+            linkindex++;
+        }
+    }
+    console.log(word);
+
+    //graph engine
+    graph.removeNode(null,"temp");
+    for(var n=0;n<nodes.length;n++){
+        graph.addNode(nodes[n],nodetypes[typeindex],"temp");
+    }
+
+
+
+}
+
+
 function TextAnalyser(newtext) {
     var states = ["NOTHING", "NEWNODE", "EDITNODE", "CLOSENODE", "NEWLINK", "EDITLINK"];
     var order = previousorder;
@@ -102,19 +185,19 @@ function TextAnalyser(newtext) {
 
     var lastchar = newtext.charAt(newtext.length - 1);
     switch (lastchar) {
-    case " ":
+        case " ":
         if (previousorder === "NEWNODE") order = "CLOSENODE";
         if (previousorder === "EDITNODE") order = "CLOSENODE";
         if (previousorder === "NEWLINK") order = "EDITLINK";
         break;
 
-    case "#":
+        case "#":
         if (previousorder === "NEWNODE") order = "EDITNODE";
         else if (previousorder === "EDITNODE") order = "EDITNODE";
         else order = "NEWNODE";
         break;
 
-    default:
+        default:
         if (previousorder === "NEWNODE") order = "EDITNODE";
         if (previousorder === "CLOSENODE") order = "NEWLINK";
         if (previousorder === "NEWLINK") order = "EDITLINK";
@@ -134,32 +217,32 @@ function TextAnalyser(newtext) {
 
     //edit words
     switch (order) {
-    case "NOTHING":
+        case "NOTHING":
         newnode = "";
         break;
-    case "NEWNODE":
+        case "NEWNODE":
         newnode = "";
         break;
-    case "EDITNODE":
+        case "EDITNODE":
         do {
             newnode = newtext.charAt(index) + newnode;
             newnode = newnode.replace(/\s/g, '');
             index--;
         } while (newtext.charAt(index) !== "#" && index > 0);
         break;
-    case "CLOSENODE":
+        case "CLOSENODE":
         do {
             newnode = newtext.charAt(index) + newnode;
             newnode = newnode.replace(/\s/g, '');
             index--;
         } while (newtext.charAt(index) !== "#" && index > 0);
         break;
-    case "NEWLINK":
+        case "NEWLINK":
 
         newlink = "";
 
         break;
-    case "EDITLINK":
+        case "EDITLINK":
         newnode = "";
         break;
     }
@@ -169,12 +252,12 @@ function TextAnalyser(newtext) {
 
 
     switch (order) {
-    case states[0]:
+        case states[0]:
         window.setTimeout(function () {
             $('#textanalyser').css('box-shadow', '0 0 0px #303030')
         }, 200);
         break;
-    case states[1]:
+        case states[1]:
 
 
         if (nodecounter % 2 === 0) {
@@ -185,7 +268,7 @@ function TextAnalyser(newtext) {
         graph.editType("x", "temp", nodetypes[typeindex]);
         nodecounter++;
         break;
-    case states[2]:
+        case states[2]:
         if (nodereplaced === true) {
             //graph.removeLink();
             //graph.addLink
@@ -206,7 +289,7 @@ function TextAnalyser(newtext) {
         graph.editName("x", "temp", newnode);
         graph.findCoordinates("x", "temp");
         break;
-    case states[3]:
+        case states[3]:
 
         nodereplaced = false;
         graph.editState("x", "temp", "perm");
@@ -222,11 +305,11 @@ function TextAnalyser(newtext) {
             newnode = "";
         }
         break;
-    case states[4]:
+        case states[4]:
         graph.addNode("", "empty", "temp");
         graph.addLink(addednodes[nodecounter - 1], "", newlink, "perm");
         break;
-    case states[5]:
+        case states[5]:
         graph.editLink(addednodes[nodecounter - 1], "", newlink);
         break;
     }
