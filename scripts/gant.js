@@ -18,6 +18,7 @@ function checkSwitch(checkswitch) {
 
     } else {
         ganttTimer=0;
+        
         $('.missingdates').fadeIn(300);
 
         graph.recenterZoom();
@@ -169,7 +170,6 @@ function initAxis() {
             return labelY(i);
         })
         .text(function (d) {
-            d.id
         });
 
 
@@ -185,5 +185,7 @@ function initAxis() {
         .attr("transform", "translate(0," + paddingTop + ")")
         .attr("class", "axis gantt")
         .call(xAxis);
+
+        graph.updateGraph();
 
 }

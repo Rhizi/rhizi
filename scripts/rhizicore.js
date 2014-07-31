@@ -6,7 +6,7 @@ var vis;
 var graphstate = "GRAPH";
 var graphinterval = 0;
 
-var ganttTimer=0;
+var ganttTimer = 0;
 
 var boxedin = false;
 
@@ -14,17 +14,41 @@ var deliverables = [];
 
 var boxedin, nodetext, linktext, link, links, node, nodes, circle;
 
-var scrollValue = 0, zoomLevel=0, zoomObject;
+var scrollValue = 0,
+    zoomLevel = 0,
+    zoomObject;
 
 
 
 function myGraph(el) {
 
+    this.update = function(){
+        update();
+    }
+
     ///FUNCTIONS
-    this.addNode = function (id, type, state) {
+    this.addNode = function(id, type, state) {
         var start = 0,
             end = 0;
-        var status= "unknown";
+        var status = "unknown";
+        var node = findNode(id, null);
+        if (node !== undefined) {
+            //graph.editState(id, null, "temp");
+        } else {
+            nodes.push({
+                "id": id,
+                "type": type,
+                "state": state,
+                "start": start,
+                "end": end,
+                "status": status
+            });
+
+        }
+         
+    }
+
+    this.addNodeComplete = function(id, type, state, start, end, status) {
         var node = findNode(id, null);
         if (node !== undefined) {
             graph.editState(id, null, "temp");
@@ -39,28 +63,10 @@ function myGraph(el) {
             });
 
         }
-        update();
+         
     }
 
-    this.addNodeComplete = function (id, type, state, start, end, status) {
-        var node = findNode(id, null);
-        if (node !== undefined) {
-            graph.editState(id, null, "temp");
-        } else {
-            nodes.push({
-                "id": id,
-                "type": type,
-                "state": state,
-                "start": start,
-                "end": end,
-                "status": status
-            });
-
-        }
-        update();
-    }
-
-    this.removeNode = function (id, state) {
+    this.removeNode = function(id, state) {
         var i = 0;
         var n = findNode(id, state);
         while (i < links.length) {
@@ -70,11 +76,30 @@ function myGraph(el) {
         var index = findNodeIndex(id, state);
         if (index !== undefined) {
             nodes.splice(index, 1);
-            update();
+             
         }
     }
 
-    this.highlightNode = function (id, state) {
+    this.removeNodes = function(state) {
+        var id = null;
+        var ns = findNodes(null, state);
+        for (var j = 0; j < ns.length; j++) {
+            var n = ns[j];
+            var i = 0;
+            while (i < links.length) {
+                if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
+                else i++;
+            }
+            var index = findNodeIndex(id, state);
+            if (index !== undefined) {
+                nodes.splice(index, 1);
+                 
+            }
+        }
+    }
+
+
+    this.highlightNode = function(id, state) {
         var i = 0,
             j = 0;
         var n = findNode(id, state);
@@ -82,50 +107,47 @@ function myGraph(el) {
         $(".debug").html(n.state);
 
         //highlight node
-        if (n !== undefined && n.state!=="chosen" && n.state!=="temp") {
-
-        this.removeHighlight();
+        if (n !== undefined && n.state !== "chosen" && n.state !== "temp") {
+            this.removeHighlight();
             n.state = "chosen";
 
             while (i < links.length) {
-                if (links[i]['source'] === n){
-                    adjacentnode=findNode(links[i]['target'].id,null);
-                    if(adjacentnode.state!=="temp")adjacentnode.state = "exit";
+                if (links[i]['source'] === n) {
+                    adjacentnode = findNode(links[i]['target'].id, null);
+                    if (adjacentnode.state !== "temp") adjacentnode.state = "exit";
                     links[i]['state'] = "exit";
                 }
-                if(links[i]['target'] === n) {
-                    adjacentnode=findNode(links[i]['source'].id,null);
-                    if(adjacentnode.state!=="temp")adjacentnode.state = "enter";
+                if (links[i]['target'] === n) {
+                    adjacentnode = findNode(links[i]['source'].id, null);
+                    if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
                     links[i]['state'] = "enter";
-                } 
+                }
                 i++;
             }
-            update();
+        } else {
 
-        }else{
-         
         }
 
     }
 
-    this.removeHighlight = function(){
-      var k=0;
-       while (k < nodes.length) {
-                if(nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen"){
-                    nodes[k]['state'] = "perm";
-                }
-                k++;
+    this.removeHighlight = function() {
+        var k = 0;
+        while (k < nodes.length) {
+            if (nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen") {
+                nodes[k]['state'] = "perm";
             }
-      var j=0;
+            k++;
+        }
+        var j = 0;
         //highlight all connections
-            while (j < links.length) {
-                links[j]['state'] = "perm";
-                j++;
-            }
-        update();
+        while (j < links.length) {
+            links[j]['state'] = "perm";
+            j++;
+        }
+         
     }
 
-    this.addLink = function (sourceId, targetId, name, state) {
+    this.addLink = function(sourceId, targetId, name, state) {
         var sourceNode = findNode(sourceId, null);
         var targetNode = findNode(targetId, null);
 
@@ -136,66 +158,66 @@ function myGraph(el) {
                 "name": name,
                 "state": state
             });
-            update();
+             
         } else {
 
         }
     }
 
-    this.editLink = function (sourceId, targetId, newname) {
+    this.editLink = function(sourceId, targetId, newname) {
         var link = findLink(sourceId, targetId, newname);
         if (link !== undefined) {
             link.name = newname;
-            update();
+             
         } else {}
     }
 
-    this.editLinkTarget = function (sourceId, targetId, newTarget) {
+    this.editLinkTarget = function(sourceId, targetId, newTarget) {
         var link = findLink(sourceId, targetId, null);
         if (link !== undefined) {
             link.target = findNode(newTarget, null);
-            update();
+             
         } else {
 
         }
     }
 
-    this.editName = function (id, type, newname) {
+    this.editName = function(id, type, newname) {
         var index = findNode(id, type);
         if ((index !== undefined)) {
             index.id = newname;
-            update();
+             
         }
     }
 
-    this.editDates = function (id, type, start, end) {
+    this.editDates = function(id, type, start, end) {
         var index = findNode(id, type);
         if ((index !== undefined)) {
             index.start = start;
             index.end = end;
-            update();
+             
         }
     }
 
 
 
-    this.editType = function (id, state, newtype) {
+    this.editType = function(id, state, newtype) {
         var index = findNode(id, state);
         if ((index !== undefined)) {
             index.type = newtype;
-            update();
+            update();  
         }
     }
 
-    this.editState = function (id, state, newstate) {
+    this.editState = function(id, state, newstate) {
         var index = findNode(id, state);
         if ((index !== undefined)) {
             index.state = newstate;
-            update();
+             
         }
     }
 
-    this.findCoordinates = function (id, type) {
+    this.findCoordinates = function(id, type) {
         var index = findNode(id, type);
         if ((index !== undefined)) {
             $('.typeselection').css('top', index.y - 90);
@@ -203,17 +225,28 @@ function myGraph(el) {
         }
     }
 
-    this.updateGraph =  function(){
-        update();
+    this.updateGraph = function() {
+         
     }
 
-    this.recenterZoom =  function(){
+    this.recenterZoom = function() {
         vis.attr("transform", "translate(0,0)scale(1)");
     }
 
+    this.removeLinks = function(state) {
+        var id = null;
+        var ls = findLinks(state);
+        for (var j = 0; j < ls.length; j++) {
+            var l = ls[j];
+            var i = 0;
+            while (i < links.length) {
+                if (links[i] === l) links.splice(i, 1);
+                else i++;
+            }
+        }
+    }
 
-
-    var findLink = function (sourceId, targetId, name) {
+    var findLink = function(sourceId, targetId, name) {
         for (var i = 0; i < links.length; i++) {
             if (links[i].source.id === sourceId && links[i].target.id === targetId) {
                 return links[i];
@@ -221,8 +254,18 @@ function myGraph(el) {
         }
     }
 
+    var findLinks = function(state) {
+        var foundLinks = [];
+        for (var i = 0; i < links.length; i++) {
+            if (links[i].state == state) {
+                foundLinks.push(links[i]);
+            }
+        }
+        return foundLinks;
+    }
 
-    var findNode = function (id, state) {
+
+    var findNode = function(id, state) {
         //id=id.toLowerCase();
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i].id === id || nodes[i].state === state)
@@ -230,7 +273,17 @@ function myGraph(el) {
         };
     }
 
-    var findNodeIndex = function (id, state) {
+    var findNodes = function(id, state) {
+        //id=id.toLowerCase();
+        var foundNodes = [];
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].id === id || nodes[i].state === state)
+                foundNodes.push(nodes[i]);
+        }
+        return foundNodes;
+    }
+
+    var findNodeIndex = function(id, state) {
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i].id === id || nodes[i].state === state)
                 return i
@@ -246,11 +299,11 @@ function myGraph(el) {
     var color = d3.scale.category20();
 
     //Zoom scale behavior in zoom.js
-    zoomObject=d3.behavior.zoom().scaleExtent([0.5, 3]).on("zoom", zoom);
+    zoomObject = d3.behavior.zoom().scaleExtent([0.3, 3]).on("zoom", zoom);
 
     vis = this.vis = d3.select(el).append("svg:svg")
-        .attr("width", w*5)
-        .attr("height", h)
+        .attr("width", w * 5)
+        .attr("height", h * 5)
         .attr("pointer-events", "all")
         .append("g")
         .call(zoomObject)
@@ -258,9 +311,9 @@ function myGraph(el) {
 
 
     function zoom() {
-      if(graphstate==="GRAPH")vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-      if(graphstate==="GANTT")vis.attr("transform", "translate(0,0)scale(1)");
-      /*var threashhold=0;
+        if (graphstate === "GRAPH") vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        if (graphstate === "GANTT") vis.attr("transform", "translate(0,0)scale(1)");
+        /*var threashhold=0;
       if(zoomObject.scale()>1.7){
         threashhold=1;
       }else{
@@ -276,20 +329,20 @@ function myGraph(el) {
         if(zoomLevel===2){
             $('.linklabel').fadeOut(200);
         }
-      }*/
+    }*/
 
 
-      
-      
+
 
     }
 
-   
+
 
 
     var force = d3.layout.force()
         .distance(120)
-        .charge(-600)
+        .gravity(0.12)
+        .charge(-1800)
         .size([w, h]);
 
     nodes = force.nodes();
@@ -297,7 +350,7 @@ function myGraph(el) {
 
 
 
-    var update = function () {
+    var update = function() {
 
         vis.selectAll(".graph").remove();
 
@@ -305,12 +358,12 @@ function myGraph(el) {
             .data(links);
 
         vis.append("rect")
-        .attr("class", "overlay graph")
-        .attr("width", w*5)
-        .attr("height", h);
+            .attr("class", "overlay graph")
+            .attr("width", w * 5)
+            .attr("height", h);
         $('.overlay').click(mousedown);
 
-        vis.append("svg:defs").selectAll("marker")
+        link.enter().append("svg:defs").selectAll("marker")
             .data(["end"]) // Different link/path types can be defined here
             .enter().append("svg:marker") // This section adds in the arrows
             .attr("id", String)
@@ -320,22 +373,25 @@ function myGraph(el) {
             .attr("markerWidth", 4)
             .attr("markerHeight", 4)
             .attr("orient", "auto")
-            .attr("class","graph")
-            .style("fill", "#aaa")
+            .attr("class", "graph")
+            .style("fill", function(d){if(d.state==="enter" || d.state==="exit") return "EDE275";else return "#aaa";})
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
 
         link.enter().append("path")
             .attr("d", "M0,-5L10,0L0,5")
-            .attr("class", function(d){
-              
-                  if(d.state === "enter"){return "enterlink graph";}
-                  else if(d.state === "exit"){return "exitlink graph";}
-                  else return "link graph";
-              
+            .attr("class", function(d) {
+
+                if (d.state === "enter") {
+                    return "enterlink graph";
+                } else if (d.state === "exit") {
+                    return "exitlink graph";
+                } else return "link graph";
+
             })
+            .style("stroke-dasharray", function(d,i){if(d.name)if(d.name.replace(/ /g,"")=="and")return"3, 3";else return "0,0";})
             .attr("marker-end", "url(#end)")
-            .on("click", function (d, i) {
+            .on("click", function(d, i) {
                 //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
             });;
 
@@ -345,18 +401,21 @@ function myGraph(el) {
             .append("text")
             .attr("class", "linklabel graph")
             .attr("text-anchor", "middle")
-            .text(function (d) {
-                if(d.target.state==="temp" || d.source.state==="chosen" || d.target.state==="chosen"){
-                  if (d.name.length < 25){
-                    return d.name;
-                  }
-                else{ return d.name.substring(0, 14) + "...";}
-              }else{
-                return " " ;
-              }
+            .text(function(d) {
+                
+                if ( d.name && d.target.state === "temp" || d.source.state === "chosen" || d.target.state === "chosen") {
+                    if (d.name.length < 25) {
+                        return d.name;
+                    } else {
+                        return d.name.substring(0, 14) + "...";
+                    }
+                } else {
+                    return " ";
+                }
+
             })
-            .on("click", function (d, i) {
-                editLink(d, i);
+            .on("click", function(d, i) {
+                if(d.state!=="temp")editLink(d, i);
             });
 
         link.exit().remove();
@@ -365,7 +424,7 @@ function myGraph(el) {
 
 
         node = vis.selectAll(".node")
-            .data(nodes, function (d) {
+            .data(nodes, function(d) {
                 return d.id;
             });
 
@@ -376,69 +435,76 @@ function myGraph(el) {
             .attr("class", "nodetext graph")
             .attr("dx", 15)
             .attr("dy", ".30em")
-            .text(function (d) {
-                if (d.state === "temp") return d.id + "|";
-                else if(d.state === "chosen"){
-                  return d.id;
-                }else{
+            .text(function(d) {
+                if (d.state === "temp") return d.id;
+                else if (d.state === "chosen") {
+                    return d.id;
+                } else {
                     if (d.id.length < 14) return d.id;
                     else return d.id.substring(0, 11) + "...";
                 }
             })
-            .on("click", function (d, i) {
-                editNode(d, i);
-                showInfo(d, i);
+            .on("click", function(d, i) {
+                if(d.state!=="temp"){
+                    editNode(d, i);
+                    showInfo(d, i);
+                }
             });
 
 
 
         circle = nodeEnter.insert("circle")
             .attr("class", "circle graph")
-            .attr("r", function (d) {
-                if (d.state === "temp" && d.type !== "empty") return '13px';
-                else return customSize(d.type)-2;
+            .attr("r", function(d) {
+                return customSize(d.type) - 2;
             })
-            .style("fill", function (d) {
+            .style("fill", function(d) {
                 return customColor(d.type);
             })
-            .style("stroke", function (d) {
-                if(d.state === "chosen"){
-                  return "#EDE275";
-                }
-                if(d.state === "enter"){
-                  return "#EDE275";
-                }if(d.state === "exit"){
-                  return "#EDE275";
-                }else{ return "#fff";}
+            .style("stroke", function(d) {
+                if (d.state === "chosen") return "#EDE275";
+                if (d.state === "enter") return "#EDE275";
+                if (d.type === "bubble") return "#101010";
+                if (d.state === "exit")  return "#EDE275";
+                if (d.type === "chainlink")  return "#AAA";
+                
+                return "#fff";
+                
             })
-            .style("stroke-width", function (d) {
-                if (d.state === "temp" && d.type !== "empty" || d.state==="chosen") return "3px";
+            .style("stroke-width", function(d) {
+                if (d.state === "temp" && d.type !== "empty" || d.state === "chosen") return "3px";
                 else return "1.5px";
             })
-            .style("box-shadow", function (d) {
+            .style("box-shadow", function(d) {
                 if (d.state === "temp") return "0 0 40px #FFFF8F";
                 else return "0 0 0px #FFFF8F";
             })
-            .on("click", function (d, i) {
-                showInfo(d, i);
+            .on("click", function(d, i) {
+                 if(d.state!=="temp")showInfo(d, i);
             });
 
-            //if(graphstate==="GANTT"){
+        //if(graphstate==="GANTT"){
         nodeEnter.append("svg:image")
             .attr("class", "status graph")
-            .attr('x',-7)
-            .attr('y',-8)
+            .attr('x', -7)
+            .attr('y', -8)
             .attr('width', 15)
             .attr('height', 15)
-            .attr("xlink:href",function (d) { 
-                switch(d.status){
-                case "done": return "images/delivcheck.png"; break;
-                case "current": return "images/delivwait.png"; break;
-                case "waiting": return "images/delivcross.png"; break;
+            .attr("xlink:href", function(d) {
+                switch (d.status) {
+                    case "done":
+                        return "images/delivcheck.png";
+                        break;
+                    case "current":
+                        return "images/delivwait.png";
+                        break;
+                    case "waiting":
+                        return "images/delivcross.png";
+                        break;
                 }
             })
-            .on("click", function (d, i) {
-                showInfo(d, i);
+            .on("click", function(d, i) {
+                if(d.state!=="temp")showInfo(d, i);
             });
         //}
 
@@ -479,28 +545,14 @@ function myGraph(el) {
 
 graph = new myGraph(document.body);
 
-
+var newnodes=1;
 function tick(e) {
     //console.log(e);
 
     function transform(d) {
         if (graphstate === "GRAPH" || d.type === "deliverable") {
             if (d.state === "temp") {
-                if (d.type === "empty") {
 
-                    d.x = 180;
-                    d.y = 150;
-
-                } else {
-                    if (addednodes.length % 2 === 0) {
-                        d.x = 180;
-                        d.y = 150;
-                    } else {
-                        d.x = 300;
-                        d.y = 150;
-
-                    }
-                }
                 return "translate(" + d.x + "," + d.y + ")";
             } else {
                 return "translate(" + d.x + "," + d.y + ")";
@@ -510,7 +562,7 @@ function tick(e) {
         }
         return "translate(" + d.x + "," + d.y + ")";
     }
-    
+
 
     function getCentroid(selection) {
         var element = selection.node(),
@@ -523,9 +575,11 @@ function tick(e) {
         var k = 20 * e.alpha;
         var today = new Date();
         var missingcounter = 0;
-        nodes.forEach(function (d, i) {
 
-            if ((d.start === 0 || d.end === 0) ){
+        nodes.forEach(function(d, i) {
+
+
+            if ((d.start === 0 || d.end === 0)) {
                 d.x = 450 + missingcounter * 100;
                 d.y = window.innerWidth / 2;
                 if (missingcounter >= 6) {
@@ -538,54 +592,82 @@ function tick(e) {
                 //var max= 150+graphinterval*Math.ceil(Math.abs(d.end.getTime() - d.start.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //d.x = min+Math.sin(today.getTime()/1000*Math.PI*2/10)*max;
                 ganttTimer++;
-                if(ganttTimer<3000){
-                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24))*ganttTimer/3000;
+                if (ganttTimer < 3000) {
+                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) * ganttTimer / 3000;
                     d.y = 150 + d.start.getHours() * 17;
-                }else{
+                } else {
                     d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24));
                     d.y = 150 + d.start.getHours() * 17;
                 }
             }
-            if(d.state==="chosen"){
-              scrollValue=d.x;
+            if (d.state === "chosen") {
+                scrollValue = d.x;
             }
 
         });
     } else {
-      /*nodes.forEach(function (d, i) {
+        /*nodes.forEach(function (d, i) {
           if(d.state==="chosen"){
           d.x=window.innerWidth/2;
           d.y=window.innerHeight/2;
         }
-        });*/
+    });*/
 
 
 
-        var k = 15 * e.alpha;
-        var counter=0;
-        links.forEach(function (d, i) {
+        /*var k = 15 * e.alpha;
+        var counter = 0;
+        links.forEach(function(d, i) {
             counter++;
 
-                d.source.x -= k;
+            d.source.x -= k;
             d.target.x += k;
-            if(counter%2===0){
-            d.source.y -= k/3;
-            d.target.y += k/3;
-            }else{
+            if (counter % 2 === 0) {
+                d.source.y -= k / 3;
+                d.target.y += k / 3;
+            } else {
 
-            d.source.y += k/3;
-            d.target.y -= k/3;
+                d.source.y += k / 3;
+                d.target.y -= k / 3;
 
+            }
+        });*/
+
+        //circles animation
+        var tempcounter = 0;
+        var temptotal = 0;
+        nodes.forEach(function(d, i) {
+            if (d.state === "temp" && d.type!=="chainlink" && d.type!=="bubble") {
+                temptotal++;
+            }
+        });
+        if(temptotal!==newnodes){
+                newnodes+=temptotal/100;
+        }
+        if(newnodes>=temptotal){
+            newnodes=temptotal;
+        }
+        if(newnodes<1)newnodes=1;
+        nodes.forEach(function(d, i) {
+            if (d.state === "temp") {
+                tempcounter++;
+                if(d.type==="chainlink" || d.type==="bubble"){
+                     d.x = window.innerWidth / 2;
+                     d.y = window.innerHeight / 2;
+                }else{
+                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                }
             }
         });
     }
 
 
     if (boxedin) {
-        circle.attr("cx", function (d) {
+        circle.attr("cx", function(d) {
                 return d.x = Math.max(14, Math.min(w - 14, d.x));
             })
-            .attr("cy", function (d) {
+            .attr("cy", function(d) {
                 return d.y = Math.max(114, Math.min(h - 14, d.y));
             });
 
@@ -595,7 +677,7 @@ function tick(e) {
     }
 
 
-    link.attr("d", function (d) {
+    link.attr("d", function(d) {
 
         if (graphstate === "GRAPH") {
             var dx = d.target.x - d.source.x,
@@ -603,24 +685,24 @@ function tick(e) {
                 dr = Math.sqrt(dx * dx + dy * dy);
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
         } else if (graphstate === "GANTT") {
-          if(d.state=== "enter" || d.state=== "exit"){
-            var dx = d.target.x - d.source.x,
-            dy = d.target.y - d.source.y,
-            dr = Math.sqrt(dx * dx + dy * dy)*5;
-            return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-            }else{
-              var dx = d.target.x - d.source.x,
-            dy = d.target.y - d.source.y,
-            dr = Math.sqrt(dx * dx + dy * dy)*5;
+            if (d.state === "enter" || d.state === "exit") {
+                var dx = d.target.x - d.source.x,
+                    dy = d.target.y - d.source.y,
+                    dr = Math.sqrt(dx * dx + dy * dy) * 5;
+                return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+            } else {
+                var dx = d.target.x - d.source.x,
+                    dy = d.target.y - d.source.y,
+                    dr = Math.sqrt(dx * dx + dy * dy) * 5;
 
-            return "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
+                return "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
             }
         }
 
     });
 
 
-    linktext.attr("transform", function (d) {
+    linktext.attr("transform", function(d) {
         if (graphstate === "GRAPH") {
             return "translate(" + (d.source.x + d.target.x) / 2 + "," + (d.source.y + d.target.y) / 2 + ")";
         } else {
@@ -631,13 +713,15 @@ function tick(e) {
 }
 
 
+
+
 function deliverableTest() {
-    var status= "unknown";
-    var nodecounter=80;
+    var status = "unknown";
+    var nodecounter = 80;
     for (var i = 0; i < nodecounter; i++) {
-        if(Math.random()>0.7)status="done";
-        else if(Math.random()>0.5) status="current";
-        else status="waiting";
+        if (Math.random() > 0.7) status = "done";
+        else if (Math.random() > 0.5) status = "current";
+        else status = "waiting";
         var end = randomDate(new Date(), new Date("01-01-2018"));
         var start = randomDate(new Date(), end);
         graph.addNodeComplete("Task " + i, "deliverable", "perm", start, end, status);
@@ -646,71 +730,74 @@ function deliverableTest() {
     for (var i = 0; i < nodecounter; i++) {
         var endindex = Math.floor(Math.random() * nodecounter);
         var startindex = Math.floor(Math.random() * nodecounter);
-        if(nodes[endindex].start>nodes[startindex].start && startindex !== endindex){
-          graph.addLink("Task " + startindex, "Task " + endindex, "depends on", "perm");
-        }else{
-          graph.addLink("Task " + endindex, "Task " + startindex, "depends on", "perm");
+        if (nodes[endindex].start > nodes[startindex].start && startindex !== endindex) {
+            graph.addLink("Task " + startindex, "Task " + endindex, "depends on", "perm");
+        } else {
+            graph.addLink("Task " + endindex, "Task " + startindex, "depends on", "perm");
         }
     }
 
     function randomDate(start, end) {
         return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
     }
+
+    graph.update();
 }
 
 
 
+http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
+    function showInfo(d, i) {
+        if (d.state !== "chosen") {
+            graph.highlightNode(d.id, null);
+            $('.info').fadeIn(300);
 
-function showInfo(d, i) {
-    if(d.state!=="chosen"){
-    graph.highlightNode(d.id,null);
-    $('.info').fadeIn(300);
+            if (d.type === "deliverable") {
+                $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><input id="editstatus"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+            } else {
+                $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+            }
 
-    if (d.type === "deliverable") {
-        $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><input id="editstatus"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
-    } else {
-        $('.info').html('Name: '+d.id+'<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
-    }
+            $('.info').css("border-color", customColor(d.type));
 
-    $('.info').css("border-color",customColor(d.type));
+            $("#editenddate").datepicker({
+                inline: true,
+                showOtherMonths: true,
+                dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            });
 
-    $("#editenddate").datepicker({
-        inline: true,
-        showOtherMonths: true,
-        dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    });
+            $("#editstartdate").datepicker({
+                inline: true,
+                showOtherMonths: true,
+                dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            });
 
-    $("#editstartdate").datepicker({
-        inline: true,
-        showOtherMonths: true,
-        dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    });
+            $('#editdescription').val(d.type);
 
-    $('#editdescription').val(d.type);
+            $('#editstatus').val(d.status);
 
-    $('#editstatus').val(d.status );
+            if (d.type === "deliverable") {
+                $('#editstartdate').val(d.start);
+                $('#editenddate').val(d.end);
+            }
 
-    if (d.type === "deliverable") {
-        $('#editstartdate').val(d.start);
-        $('#editenddate').val(d.end);
-    }
+            $("#editbox").submit(function() {
+                if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
+                return false;
+            });
 
-    $("#editbox").submit(function () {
-        if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
-        return false;
-    });
-
-    $("#deletenode").click(function () {
-        if (confirm('This node and all its connections will be deleted, are you sure?')) {
-            graph.removeNode(d.id, null);
+            $("#deletenode").click(function() {
+                if (confirm('This node and all its connections will be deleted, are you sure?')) {
+                    graph.removeNode(d.id, null);
+                }
+            });
+        } else {
+            graph.removeHighlight();
+            $('.info').fadeOut(300);
         }
-    });
-    }else{
-        graph.removeHighlight();
-        $('.info').fadeOut(300);
-    }
+          graph.update();
 
-}
+    }
 
 function mousedown() {
     $('.editinfo').css('top', -100);
@@ -719,6 +806,8 @@ function mousedown() {
     $('.editlinkinfo').css('left', 0);
     graph.removeHighlight();
     $('.info').fadeOut(300);
+
+      graph.update();
 }
 
 function AddedUnique(newnode) {
@@ -739,7 +828,7 @@ function editNode(d, i) {
     $('.editinfo').css('left', d.x + 18);
     $('#editname').val(oldname);
 
-    $('#editform').submit(function () {
+    $('#editform').submit(function() {
         if (AddedUnique($('#editname').val())) {
             $('.editinfo').css('top', -100);
             $('.editinfo').css('left', 0);
@@ -754,6 +843,8 @@ function editNode(d, i) {
         return false;
     });
 
+      graph.update();
+
 }
 
 function editLink(d, i) {
@@ -764,12 +855,14 @@ function editLink(d, i) {
     $('.editlinkinfo').css('left', dx - 18);
     $('#editlinkname').val(oldname);
 
-    $('#editlinkform').submit(function () {
+    $('#editlinkform').submit(function() {
         graph.editLink(d.source.id, d.target.id, $('#editlinkname').val());
         $('.editlinkinfo').css('top', -100);
         $('.editlinkinfo').css('left', 0);
         return false;
     });
+
+    graph.update();
 
 }
 
@@ -777,27 +870,30 @@ function editLink(d, i) {
 function customColor(type) {
     var color;
     switch (type) {
-    case "person":
-        color = '#FCB924';
-        break;
-    case "project":
-        color = '#009DDC';
-        break;
-    case "skill":
-        color = '#62BB47';
-        break;
-    case "deliverable":
-        color = '#CCC';
-        break;
-    case "objective":
-        color = '#933E99';
-        break;
-    case "empty":
-        color = "#080808";
-        break;
-    case 6:
-        color = "#fff";
-        break;
+        case "person":
+            color = '#FCB924';
+            break;
+        case "project":
+            color = '#009DDC';
+            break;
+        case "skill":
+            color = '#62BB47';
+            break;
+        case "deliverable":
+            color = '#CCC';
+            break;
+        case "objective":
+            color = '#933E99';
+            break;
+        case "empty":
+            color = "#080808";
+            break;
+        case "chainlink":
+            color = "#fff";
+            break;
+        case "bubble":
+            color = "rgba(0,0,0,0.2)";
+            break;
     }
     return color;
 }
@@ -805,27 +901,30 @@ function customColor(type) {
 function customSize(type) {
     var size;
     switch (type) {
-    case "person":
-        size = 12;
-        break;
-    case "project":
-        size = 12;
-        break;
-    case "skill":
-        size = 12;
-        break;
-    case "deliverable":
-        size = 12;
-        break;
-    case "objective":
-        size = 12;
-        break;
-    case "empty":
-        size = 9;
-        break;
-    case 6:
-        size = 0x30334C;
-        break;
+        case "person":
+            size = 12;
+            break;
+        case "project":
+            size = 12;
+            break;
+        case "skill":
+            size = 12;
+            break;
+        case "deliverable":
+            size = 12;
+            break;
+        case "objective":
+            size = 12;
+            break;
+        case "empty":
+            size = 9;
+            break;
+        case "chainlink":
+            size = 8;
+            break;
+        case "bubble":
+            size = 180;
+            break;
     }
     return size;
 }

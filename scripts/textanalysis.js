@@ -12,6 +12,7 @@ var newlink = "";
 
 var ExecutionStack = [];
 
+var lastnode;
 
 $('#textanalyser').autocompleteTrigger({
     triggerStart: '#',
@@ -20,47 +21,57 @@ $('#textanalyser').autocompleteTrigger({
 });
 
 $('#textanalyser').submit(function () {
-    if (previousorder === "EDITNODE") {
-        $('#textanalyser').val(text + " ");
-    }
+    //finalize text input, empty
+    text=$('#textanalyser').val();
+
+    $('#textanalyser').val("");
+    TextAnalyser2(text,true);
     return false;
 });
 
 $(document).keydown(function (e) {
     //RIGHT
-    if (e.keyCode == 37 && (previousorder === "EDITNODE" || previousorder === "NEWNODE")) {
-        changeType(null, "up");
+    if (e.keyCode == 37 ) {
+        e.preventDefault();
+        changeType("up",lastnode);
         return false;
     }
 
     //LEFT
-    if (e.keyCode == 39 && (previousorder === "EDITNODE" || previousorder === "NEWNODE")) {
-        changeType(null, "down");
+    if (e.keyCode == 39 ) {
+        e.preventDefault();
+        changeType("down",lastnode);
         return false;
     }
 
 
-    //DELTE
-    if (e.keyCode == 46 || e.keyCode == 8) {
-        if (previousorder === "CLOSENODE" || previousorder === "NEWNODE") return false;
+    if (e.keyCode == 13) {
+        text=$('#textanalyser').val();
+
+        $('#textanalyser').val("");
+        TextAnalyser2(text,true);
+
+        return false;
+
     }
 });
 
-function changeType(arg, id) {
+function changeType(arg,id) {
     if (arg === 'up') {
         if (typeindex < 4) typeindex++;
         else typeindex = 0;
-        graph.editType(id, "temp", nodetypes[typeindex]);
+        graph.editType(id, null, nodetypes[typeindex]);
 
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
     } else {
         if (typeindex > 0) typeindex--;
         else typeindex = 4;
 
-        if (previousorder === "EDITNODE") graph.editType(id, "temp", nodetypes[typeindex]);
+        graph.editType(id, null, nodetypes[typeindex]);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
 
     }
+    graph.updateGraph();
 }
 
 
@@ -72,9 +83,7 @@ window.setInterval(function () {
         $('.typeselection').css('left', 0);
         // text changed
         text = $('#textanalyser').val();
-        //console.log(text);
-        ExecutionStack.push(text);
-        TextAnalyser(text);
+        TextAnalyser2(text,false);
 
     }
 }, 5);
@@ -85,13 +94,17 @@ window.setInterval(function () {
 
 
 var sentenceStack = [];
-function TextAnalyser2(newtext) {
+var nodeindex,linkindex;
+
+function TextAnalyser2(newtext,finalize) {
     var states = ["NOTHING", "NEWNODE", "EDITNODE", "CLOSENODE", "NEWLINK", "EDITLINK" , "SPECIAL" , "QUARTET"];
     var segment = [], subsegment = [], sentence = [];
-    var links=[],linkindex=0;
-    var nodes=[],nodeindex=0;
+    var newlinks=[];linkindex=0;
+    var newnodes=[];nodeindex=0;
     var orderStack = [];
     var quoteword="";
+    var ANDcase=false;
+    var prefix="";
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
@@ -99,6 +112,9 @@ function TextAnalyser2(newtext) {
     for(var j=0;j<segment.length;j++){
         if(j!==0)sentence.push("#");
         subsegment=segment[j].split(" ");
+        if(subsegment.length===0){
+            sentence.push(" ");
+        }
         for(var k=0;k<subsegment.length;k++){
             if(subsegment[k]!==" " && subsegment[k]!==""){
                 if(subsegment[k].charAt(0)==='"'){
@@ -108,60 +124,136 @@ function TextAnalyser2(newtext) {
                         k++;
                     }while(k<subsegment.length && subsegment[k].charAt(subsegment[k].length-1)!=='"');
                     if(k<subsegment.length)quoteword+=subsegment[k];
-                    sentence.push(quoteword);
+                    sentence.push(quoteword.replace(/"/g, ""));
                 }else{
                     sentence.push(subsegment[k]);
                 }
             }
         }
     }
-
+   
     for(var m=0;m<sentence.length;m++){
         switch(sentence[m]){
             case "#":
             orderStack.push("START");
             break;
             case "and": case "+": case ",":
-            orderStack.push("AND");
+            //orderStack.push("AND");
             default:
             if(orderStack[orderStack.length-1]==="START"){
-                //if(linkindex===0){links[linkindex+1]=sentence[m-2]+" ";}
-                nodes.push(sentence[m]);
-                if(m>2) if(!links[linkindex]){links[linkindex]=sentence[m]; }else{ links[linkindex]+=sentence[m]; }
+                orderStack.push("NODE");
+                newnodes.push(sentence[m]);
                 linkindex++;
-            }
-            if(!links[linkindex]){links[linkindex]=sentence[m]+" "; }else{ links[linkindex]+=sentence[m]+" ";}
-            orderStack.push("DEFAULT");
+            }else if(orderStack[orderStack.length-1]==="NODE"){
+                orderStack.push("LINK");
+
+                if(!newlinks[linkindex]){newlinks[linkindex]=sentence[m]+" "; }
+                else{ newlinks[linkindex]+=sentence[m]+" ";}
+            }else{
+                if(!newlinks[linkindex]){newlinks[linkindex]=sentence[m]+" "; }
+                else{ newlinks[linkindex]+=sentence[m]+" ";}
+            }   
+            if(newnodes.length===0)prefix+=sentence[m]+" ";         
             break;
         }
     }
+    if(prefix)newlinks[1]+="("+prefix+")";
 
-    console.log(orderStack);
-    console.log(nodes);
-    console.log(links);
-
+    //WRITE COMPLETE SENTENCE
     linkindex=0;
     nodeindex=0;
-    var word;
+    var word="";
+    var completeSentence="";
     for(var m=0; m<orderStack.length;m++){
         if(orderStack[m]==="NODE"){
-            word+=" ("+nodes[nodeindex]+") ";
+            word+=" ("+newnodes[nodeindex]+") ";
+            completeSentence+=newnodes[nodeindex]+" ";
             nodeindex++;
         }else if(orderStack[m]==="LINK"){
             linkindex++;
+            word+=" -->"+newlinks[linkindex]+" --> ";
+            completeSentence+=newlinks[linkindex];
         }
     }
-    console.log(word);
 
-    //graph engine
-    graph.removeNode(null,"temp");
-    for(var n=0;n<nodes.length;n++){
-        graph.addNode(nodes[n],nodetypes[typeindex],"temp");
+    //REBUILD GRAPH
+    linkindex=0;
+    nodeindex=0;
+
+    var typesetter="";
+    if(finalize===false)typesetter="temp";
+    else typesetter="perm";
+
+    graph.removeNodes("temp");
+    graph.removeLinks("temp");
+
+    if(orderStack.length>0)graph.addNode("","bubble","temp");
+    //0-N ORDER STACK
+    for(var m=0; m<orderStack.length-1;m++){
+        switch(orderStack[m]){
+        case "NODE":
+            graph.addNode(newnodes[nodeindex],nodetypes[typeindex],typesetter);
+            if(newnodes.length<4)graph.addLink(newnodes[nodeindex-1],newnodes[nodeindex],newlinks[linkindex],typesetter);
+             ANDcase=ANDconnect(newnodes[nodeindex]);
+            nodeindex++;
+            break;
+        case "LINK":
+            linkindex++;
+        break;
+        }
     }
 
+    //FINAL N ORDER
+    switch(orderStack[orderStack.length-1]){
+        case "START":
+            graph.addNode("new node",nodetypes[typeindex],typesetter);
+            if(newnodes.length<4)graph.addLink(newnodes[nodeindex-1],"new node",newlinks[linkindex],typesetter);
+            ANDcase=ANDconnect("new node");
+        break;
+        case "NODE":
+            graph.addNode(newnodes[nodeindex],nodetypes[typeindex],typesetter);
+            if(newnodes.length<4)graph.addLink(newnodes[nodeindex-1],newnodes[nodeindex],newlinks[linkindex],typesetter);
+            ANDcase=ANDconnect(newnodes[nodeindex]);
+        break;
+        case "LINK":
+            linkindex++;
+            graph.addNode("new node","empty",typesetter);
+            if(newnodes.length<4)graph.addLink(newnodes[nodeindex-1],"new node",newlinks[linkindex],typesetter);
+            ANDcase=ANDconnect("new node");
+        break;
+    }
 
+    function ANDconnect(node){
+        if(newlinks[linkindex-1])if(newnodes[nodeindex-2])if(newlinks[linkindex-1].replace(/ /g, "")=="and" && newlinks[linkindex].replace(/ /g, "")!=="and"){
+                if(newnodes.length<4)graph.addLink(newnodes[nodeindex-2],node,newlinks[linkindex],typesetter);
+                return true;
+        }
+    }
 
+    //STAR CASE
+    var verb="";
+    if(newnodes.length>=4){
+        for(var l=1;l<newlinks.length;l++){
+            if(newlinks[l])if(newlinks[l].replace(/ /g,"")!=="and"){
+                verb=newlinks[l];
+            }
+        }
+        graph.addNode(completeSentence,"chainlink",typesetter);
+        for(var n=0;n<newnodes.length;n++){graph.addLink(newnodes[n],completeSentence,verb,typesetter);}
+    }
+    
+    lastnode=newnodes[nodeindex];
+    //UPDATE GRAPH ONCE
+    graph.update();   
 }
+/*
+
+
+
+
+
+
+
 
 
 function TextAnalyser(newtext) {
@@ -318,7 +410,7 @@ function TextAnalyser(newtext) {
 
 }
 
-
+*/
 
 
 function Unique(newnode) {
