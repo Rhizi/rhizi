@@ -3,7 +3,7 @@ var sugg = ["AJAX", "Neo4J", "Rhizi", "Research", "CRI", "SageBionetworks", "Her
 var typeindex = 0;
 var names = ["Jean-ChristopheThalabard", "MaévaVignes", "AbdelElAbed", "ValérieTaly", "SébastienDutreuil", "AntoineBERGEL", "AntoineAngot", "JérômeFeret", "CharlèneGayrard", "HugoJimenezPerez", "CaterinaUrban", "GaëlleChevalon", "IanMarcus", "AntoineTALY", "ChantalLOTTON", "Ana-MariaLennon-Duménil", "FrédériqueCarlier-Grynkorn", "PascalMartin", "TamaraMilosevic", "NicolasCarpi", "StéphaneDaoudy", "DanijelaMaticVignjevic", "EugenioCinquemani", "VincentDAHIREL", "MartinLenz", "MaïlysChassagne", "AnneSchmidt", "SophieSacquinMora", "Richard-EmmanuelEastes", "MichelMorange", "EwaZlotek-Zlotkiewicz", "A.m.o.d.s.e.nC.h.o.t.i.a", "AlexandreVaugoux", "AnnemiekJMCornelissen", "ClémentNizak", "AntoineFrenoy", "ArielB.Lindner", "BenjaminBrogniart", "ChristopheZimmer", "ClaireRibrault", "DavidTareste", "DenisLafeuille", "DorGarbash", "DusanMISEVIC", "EddaNitschke", "FrançoisTaddei", "GregoryBatt", "JeanLucLebrun", "JesseHimmelstein", "KevinLhoste", "LauraCiriani", "LivioRiboli-Sasco", "NathalieSussfeld", "JakeEdwinWintermute", "MarlyneNogbou", "MatthieuPiel", "PascalHersen", "Pierre-YvesBourguignon", "TimoBetz", "RaphaëlGoujet", "StéphaneDebove", "VincentDanos", "TamKienDuong"];
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
-
+var suggestionChange=false;
 var sentenceStack = [];
 var nodeindex, linkindex;
 var typeStack = [];
@@ -29,26 +29,32 @@ $('#textanalyser').submit(function() {
 });
 
 $(document).keydown(function(e) {
-    //RIGHT
-    if (e.keyCode == 37) {
+    if (e.keyCode == 37) {//RIGHT
         e.preventDefault();
         changeType("up", lastnode);
         return false;
     }
-    //LEFT
-    if (e.keyCode == 39) {
+    if (e.keyCode == 39) { //LEFT
         e.preventDefault();
         changeType("down", lastnode);
         return false;
     }
+    if (e.keyCode == 38) {//UP
+        suggestionChange=true;
+    }
+    if (e.keyCode == 40) {//DOWN
+        suggestionChange=true;
+    }
 
     if (e.keyCode == 13) {
-        text = $('#textanalyser').val();
-
-        $('#textanalyser').val("");
-        TextAnalyser2(text, true);
-        typeStack=[];
-
+        if(!suggestionChange){
+            text = $('#textanalyser').val();
+            $('#textanalyser').val("");
+            TextAnalyser2(text, true);
+            typeStack=[];
+        }else{
+            suggestionChange=false;
+        }
         return false;
 
     }
@@ -79,6 +85,7 @@ window.setInterval(function() {
         // text changed
         text = $('#textanalyser').val();
         TextAnalyser2(text, false);
+        suggestionChange=false;
     }
 }, 5);
 
