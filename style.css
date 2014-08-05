@@ -71,7 +71,7 @@ a:active {
 }
 
 #textanalyser{
-  width:900px;
+  width:300px;
   height:30px;
 }
 
@@ -402,7 +402,7 @@ input:focus {
 .onoffswitch {
     z-index:100;
     position: fixed; 
-    width: 140px;
+    width: 160px;
     top:35px;
     right: 180px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
@@ -430,7 +430,7 @@ input:focus {
 }
 
 .onoffswitch-inner:before {
-    content: "GANTT VIEW";
+    content: "TIMELINE VIEW";
     padding-left: 5px;
     background-color: #080808; color: #FFFFFF;
 }
@@ -446,7 +446,7 @@ input:focus {
     display: block; width: 35px; margin: 0px;
     background: #3D3D3D;
     border: 1px solid #FFFFFF; border-radius: 5px;
-    position: absolute; top: 0; bottom: 0; right: 105px;
+    position: absolute; top: 0; bottom: 0; right: 125px;
     -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
     -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
     background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);

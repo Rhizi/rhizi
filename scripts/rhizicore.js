@@ -184,9 +184,27 @@ function myGraph(el) {
 
     this.editName = function(id, type, newname) {
         var index = findNode(id, type);
+        var index2 = findNode(newname, type);
+        var acceptReplace=true;
+  
         if ((index !== undefined)) {
-            index.id = newname;
-             
+            if ((index2 !== undefined)) {
+                acceptReplace = confirm(index2.id+" will replace "+index.id+", are you sure?");
+                if(acceptReplace){
+                    for (var i = 0; i < links.length; i++) {
+                    if (links[i].source === index) {
+                        links[i].source = index2;
+                    }
+
+                    if (links[i].target === index) {
+                        links[i].target = index2;
+                    }
+                }
+                graph.removeNode(index.id,null);
+                }
+            }else{
+                index.id = newname;
+            }
         }
     }
 
@@ -299,7 +317,7 @@ function myGraph(el) {
     var color = d3.scale.category20();
 
     //Zoom scale behavior in zoom.js
-    zoomObject = d3.behavior.zoom().scaleExtent([0.3, 3]).on("zoom", zoom);
+    zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
     vis = this.vis = d3.select(el).append("svg:svg")
         .attr("width", w * 5)
@@ -313,31 +331,28 @@ function myGraph(el) {
     function zoom() {
         if (graphstate === "GRAPH") vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         if (graphstate === "GANTT") vis.attr("transform", "translate(0,0)scale(1)");
-        /*var threashhold=0;
-      if(zoomObject.scale()>1.7){
-        threashhold=1;
-      }else{
-        threashhold=2;
-      }
-
-      if(zoomLevel!==threashhold){
-        zoomLevel=threashhold;
-
-        if(zoomLevel===1){
-            $('.linklabel').fadeIn(200);
-        }
-        if(zoomLevel===2){
-            $('.linklabel').fadeOut(200);
-        }
-    }*/
-
-
-
-
     }
 
+    var drag = d3.behavior.drag()
+    .origin(function(d) { return d; })
+    .on("dragstart", dragstarted)
+    .on("drag", dragged)
+    .on("dragend", dragended);
 
+    function dragstarted(d) {
+        d3.event.sourceEvent.stopPropagation();
+        d3.select(this).classed("dragging", true);
+    }
 
+    function dragged(d) {
+        d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+    }
+
+    function dragended(d) {
+        d3.select(this).classed("dragging", false);
+        d3.select(this).classed("fixed", true);
+        d3.select(this).attr("dx", d3.event.x).attr("dy", d3.event.y);
+    }
 
     var force = d3.layout.force()
         .distance(120)
@@ -429,7 +444,8 @@ function myGraph(el) {
             });
 
         var nodeEnter = node.enter()
-            .append("g");
+            .append("g").call(drag);
+
 
         nodetext = nodeEnter.insert("text")
             .attr("class", "nodetext graph")
@@ -493,13 +509,13 @@ function myGraph(el) {
             .attr("xlink:href", function(d) {
                 switch (d.status) {
                     case "done":
-                        return "images/delivcheck.png";
+                        return "images/check.png";
                         break;
                     case "current":
-                        return "images/delivwait.png";
+                        return "images/wait.png";
                         break;
                     case "waiting":
-                        return "images/delivcross.png";
+                        return "images/cross.png";
                         break;
                 }
             })
@@ -642,7 +658,7 @@ function tick(e) {
             }
         });
         if(temptotal!==newnodes){
-                newnodes+=temptotal/100;
+                newnodes+=temptotal/15/(newnodes*newnodes);
         }
         if(newnodes>=temptotal){
             newnodes=temptotal;
@@ -655,8 +671,8 @@ function tick(e) {
                      d.x = window.innerWidth / 2;
                      d.y = window.innerHeight / 2;
                 }else{
-                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
-                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes-0.3);
+                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes-0.3);
                 }
             }
         });
@@ -753,7 +769,7 @@ http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
             $('.info').fadeIn(300);
 
             if (d.type === "deliverable") {
-                $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><input id="editstatus"/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+                $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
             } else {
                 $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
             }
@@ -783,6 +799,8 @@ http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
 
             $("#editbox").submit(function() {
                 if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
+                
+                graph.update();
                 return false;
             });
 
@@ -790,6 +808,8 @@ http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
                 if (confirm('This node and all its connections will be deleted, are you sure?')) {
                     graph.removeNode(d.id, null);
                 }
+
+                graph.update();
             });
         } else {
             graph.removeHighlight();
@@ -806,8 +826,7 @@ function mousedown() {
     $('.editlinkinfo').css('left', 0);
     graph.removeHighlight();
     $('.info').fadeOut(300);
-
-      graph.update();
+    graph.update();
 }
 
 function AddedUnique(newnode) {
@@ -828,19 +847,18 @@ function editNode(d, i) {
     $('.editinfo').css('left', d.x + 18);
     $('#editname').val(oldname);
 
-    $('#editform').submit(function() {
-        if (AddedUnique($('#editname').val())) {
-            $('.editinfo').css('top', -100);
-            $('.editinfo').css('left', 0);
-            graph.editName(oldname, "whatever", $('#editname').val());
-            var index = addednodes.indexOf(oldname);
-            addednodes[index] = $('#editname').val();
-            console.log(addednodes[index]);
-        } else {
-            var choice = $('#editname').val();
-            $('#editname').val(choice + "(2)");
-        }
+    $('#editform').keypress(function(e) {
+     if (e.which == 13) {
+        $('.editinfo').css('top', -100);
+        $('.editinfo').css('left', 0);
+        graph.editName(oldname, "xx", $('#editname').val());
+        
+
+        graph.update();
+
         return false;
+    }
+
     });
 
       graph.update();
@@ -859,6 +877,8 @@ function editLink(d, i) {
         graph.editLink(d.source.id, d.target.id, $('#editlinkname').val());
         $('.editlinkinfo').css('top', -100);
         $('.editlinkinfo').css('left', 0);
+        graph.update();
+
         return false;
     });
 
@@ -880,7 +900,7 @@ function customColor(type) {
             color = '#62BB47';
             break;
         case "deliverable":
-            color = '#CCC';
+            color = '#202020';
             break;
         case "objective":
             color = '#933E99';

@@ -54,7 +54,10 @@ function Robot(){
           window.setTimeout( Robot, 50/speed+Math.round(Math.random()*100/speed) );
         }
     }else{
-       $('#textanalyser').trigger("submit");
+      var e = jQuery.Event("keypress");
+      e.which = 13; 
+      e.keyCode = 13;
+      $("#textanalyser").trigger(e);
           window.setTimeout( Robot, 650/speed );
     }
     }else{

@@ -18,14 +18,20 @@ $('#textanalyser').autocompleteTrigger({
     source: sugg
 });
 
-$('#textanalyser').submit(function() {
-    //finalize text input, empty
-    text = $('#textanalyser').val();
 
-    $('#textanalyser').val("");
-    TextAnalyser2(text, true);
-    typeStack=[];
+$("#textanalyser").keypress(function(e) {
+     if (e.which == 13) {
+        if(!suggestionChange){
+            text = $('#textanalyser').val();
+            $('#textanalyser').val("");
+            TextAnalyser2(text, true);
+            typeStack=[];
+        }else{
+            suggestionChange=false;
+        }
+        
     return false;
+    }
 });
 
 $(document).keydown(function(e) {
@@ -46,18 +52,13 @@ $(document).keydown(function(e) {
         suggestionChange=true;
     }
 
-    if (e.keyCode == 13) {
-        if(!suggestionChange){
-            text = $('#textanalyser').val();
-            $('#textanalyser').val("");
-            TextAnalyser2(text, true);
-            typeStack=[];
-        }else{
-            suggestionChange=false;
-        }
+  
+    if (e.keyCode == 9) {//TAB
+        text = $('#textanalyser').val();
+        $('#textanalyser').val(text+"        ");
         return false;
-
     }
+
 });
 
 function changeType(arg, id) {
@@ -82,6 +83,8 @@ window.setInterval(function() {
     if ($('#textanalyser').val() != text) {
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);
+
+        if(text.length*8>300)$('#textanalyser').css('width',text.length*8);
         // text changed
         text = $('#textanalyser').val();
         TextAnalyser2(text, false);
