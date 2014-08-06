@@ -29,8 +29,15 @@ $("#textanalyser").keypress(function(e) {
         }else{
             suggestionChange=false;
         }
-        
+
     return false;
+    }
+
+
+    if (e.which == 9) {//TAB
+        text = $('#textanalyser').val();
+        $('#textanalyser').val(text+"        ");
+        return false;
     }
 });
 
@@ -51,11 +58,8 @@ $(document).keydown(function(e) {
     if (e.keyCode == 40) {//DOWN
         suggestionChange=true;
     }
-
   
     if (e.keyCode == 9) {//TAB
-        text = $('#textanalyser').val();
-        $('#textanalyser').val(text+"        ");
         return false;
     }
 

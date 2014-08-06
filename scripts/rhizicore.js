@@ -374,8 +374,10 @@ function myGraph(el) {
 
         vis.append("rect")
             .attr("class", "overlay graph")
-            .attr("width", w * 5)
-            .attr("height", h);
+            .attr("width", $(el).innerWidth()*12)
+            .attr("height", $(el).innerHeight()*12)
+            .attr("x", -$(el).innerWidth()*5)
+            .attr("y", -$(el).innerHeight()*5);
         $('.overlay').click(mousedown);
 
         link.enter().append("svg:defs").selectAll("marker")
@@ -497,6 +499,9 @@ function myGraph(el) {
             })
             .on("click", function(d, i) {
                  if(d.state!=="temp")showInfo(d, i);
+                    else graph.removeHighlight();
+
+                graph.update();
             });
 
         //if(graphstate==="GANTT"){
@@ -732,8 +737,10 @@ function tick(e) {
 
 
 function deliverableTest() {
+    links=[];
+    nodes=[];
     var status = "unknown";
-    var nodecounter = 80;
+    var nodecounter = 150;
     for (var i = 0; i < nodecounter; i++) {
         if (Math.random() > 0.7) status = "done";
         else if (Math.random() > 0.5) status = "current";
