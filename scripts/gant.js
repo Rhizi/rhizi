@@ -86,7 +86,7 @@ function initAxis() {
         if (min > deliv.startdate) min = deliv.startdate;
         if (end < deliv.enddate) end = deliv.enddate;
     }
-    min = new Date(); ///with min
+    min = new Date(min); ///with min
     max = new Date(max);
     console.log("min "+min+" max "+max);
 
