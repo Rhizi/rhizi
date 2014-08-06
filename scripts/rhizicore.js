@@ -770,63 +770,62 @@ function deliverableTest() {
 }
 
 
+// http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
+function showInfo(d, i) {
+  if (d.state !== "chosen") {
+    graph.highlightNode(d.id, null);
+    $('.info').fadeIn(300);
 
-http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
-    function showInfo(d, i) {
-        if (d.state !== "chosen") {
-            graph.highlightNode(d.id, null);
-            $('.info').fadeIn(300);
-
-            if (d.type === "deliverable") {
-                $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
-            } else {
-                $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
-            }
-
-            $('.info').css("border-color", customColor(d.type));
-
-            $("#editenddate").datepicker({
-                inline: true,
-                showOtherMonths: true,
-                dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            });
-
-            $("#editstartdate").datepicker({
-                inline: true,
-                showOtherMonths: true,
-                dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            });
-
-            $('#editdescription').val(d.type);
-
-            $('#editstatus').val(d.status);
-
-            if (d.type === "deliverable") {
-                $('#editstartdate').val(d.start);
-                $('#editenddate').val(d.end);
-            }
-
-            $("#editbox").submit(function() {
-                if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
-                
-                graph.update();
-                return false;
-            });
-
-            $("#deletenode").click(function() {
-                if (confirm('This node and all its connections will be deleted, are you sure?')) {
-                    graph.removeNode(d.id, null);
-                }
-
-                graph.update();
-            });
-        } else {
-            graph.removeHighlight();
-            $('.info').fadeOut(300);
-        }
-          graph.update();
-
+    if (d.type === "deliverable") {
+      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
+    } else {
+      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><label>URL:</label><input id="editurl"/><button>Save</button></form><div id="deletenode"><button>Delete</button></div>');
     }
+
+    $('.info').css("border-color", customColor(d.type));
+
+    $("#editenddate").datepicker({
+      inline: true,
+      showOtherMonths: true,
+      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    });
+
+    $("#editstartdate").datepicker({
+      inline: true,
+      showOtherMonths: true,
+      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    });
+
+    $('#editdescription').val(d.type);
+
+    $('#editstatus').val(d.status);
+
+    if (d.type === "deliverable") {
+      $('#editstartdate').val(d.start);
+      $('#editenddate').val(d.end);
+    }
+
+    $("#editbox").submit(function() {
+      if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
+
+      graph.update();
+      return false;
+    });
+
+    $("#deletenode").click(function() {
+      if (confirm('This node and all its connections will be deleted, are you sure?')) {
+        graph.removeNode(d.id, null);
+      }
+
+      graph.update();
+    });
+  } else {
+    graph.removeHighlight();
+    $('.info').fadeOut(300);
+  }
+  graph.update();
+
+}
 
 function mousedown() {
     $('.editinfo').css('top', -100);
