@@ -7,7 +7,7 @@ function checkSwitch(checkswitch) {
     	vis.selectAll(".gantt").remove();
         $('.missingdates').fadeOut(300);
         scrollValue = $('body').scrollLeft();
-        
+
         $('body').scrollLeft(0);
         graphstate = "GRAPH";
         graph.update();
@@ -18,7 +18,7 @@ function checkSwitch(checkswitch) {
 
     } else {
         ganttTimer=0;
-        
+
         $('.missingdates').fadeIn(300);
 
         graph.recenterZoom();
@@ -28,7 +28,6 @@ function checkSwitch(checkswitch) {
         graphstate = "GANTT";
         
         graph.update();
-
 
         $('.status').fadeIn(600);
 
@@ -80,7 +79,7 @@ function initAxis() {
     var bar_start_offset = 40;
     var h = 15 * row_height + vertical_padding;
 
-   
+
     var min = deliverables[0].startdate;
     var max = deliverables[0].enddate;
 
