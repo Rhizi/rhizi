@@ -60,10 +60,10 @@
 
 .ui-datepicker {
 	background-color: rgba(17,17,17,0.9);
-    width: 217px;  
-    height: auto;  
-    margin: 5px auto 0;  
-    font: 9pt;  
+    width: 217px;
+    height: auto;
+    margin: 5px auto 0;
+    font-size: 9pt;
     border: 1px solid;
 
     -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);

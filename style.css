@@ -93,7 +93,7 @@ input:focus {
 .node {
   stroke: #fff;
   stroke-width: 1px;
-  font: 16px;
+  font-size: 16px;
   z-index:100;
 }
 
@@ -253,12 +253,12 @@ input:focus {
 }
 
 .help{
-  font-style:bold;
-  position:fixed;
-  top:5px;
-  left:10px;
-  margin-left:12px;
+  font-weight: bold;
   font-size: 20px;
+  position: fixed;
+  top: 5px;
+  left: 10px;
+  margin-left: 12px;
 }
 
 .overlay {
@@ -304,7 +304,7 @@ input:focus {
   position:fixed;
   bottom:10px;
   right:10px;
-  vertical-align: center;
+  vertical-align: middle;
 }
 
 .info{
