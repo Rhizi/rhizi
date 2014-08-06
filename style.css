@@ -43,7 +43,7 @@ color: white;
 border-width: 1px;
 border-color: #303030;
 font-size:14px;
-  
+
   outline:none;
   border-color:#303030;
   box-shadow:0 0 0px #303030;
@@ -75,8 +75,8 @@ a:active {
   height:30px;
 }
 
-input:focus { 
-    
+input:focus {
+
 }
 
 #suggestion{
@@ -110,7 +110,7 @@ input:focus {
 }
 
 .nodetext {
-  
+
   fill: #FFFFFF;
   font-size:17px;
   z-index:3;
@@ -336,7 +336,7 @@ input:focus {
   background-color: rgba(200,200,200,0.1);
   height:100%;
   width: 100%;
-  overflow: auto; 
+  overflow: auto;
   z-index:0;
 }
 
@@ -375,23 +375,23 @@ input:focus {
   stroke: #ccc;
   shape-rendering: crispEdges;
 }
- 
+
 .bar {
   fill: #33b5e5;
 }
- 
+
 .bar-failed {
   fill: #CC0000;
 }
- 
+
 .bar-running {
   fill: #669900;
 }
- 
+
 .bar-succeeded {
   fill: #33b5e5;
 }
- 
+
 .bar-killed {
   fill: #ffbb33;
 }
@@ -401,7 +401,7 @@ input:focus {
 
 .onoffswitch {
     z-index:100;
-    position: fixed; 
+    position: fixed;
     width: 160px;
     top:35px;
     right: 180px;
@@ -448,7 +448,7 @@ input:focus {
     border: 1px solid #FFFFFF; border-radius: 5px;
     position: absolute; top: 0; bottom: 0; right: 125px;
     -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
-    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
     background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
@@ -460,6 +460,6 @@ input:focus {
 }
 
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px; 
+    right: 0px;
 }
 

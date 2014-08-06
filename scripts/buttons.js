@@ -2,7 +2,7 @@
 $('.tutorial').click(function(){});
 
 var key="#47989379";
- 
+
 
 $('.save').click(function(){
 
@@ -26,7 +26,7 @@ $('.save').click(function(){
 
 });
 
-$('.load').click(function(){ 
+$('.load').click(function(){
   var acceptLoad=true;
   if (nodes.length>0){
     acceptLoad = confirm('All unsaved changes will be deleted, are you sure?');
@@ -46,10 +46,10 @@ $('.load').click(function(){
       var link=data.links[j];
       graph.addLink(link.source,link.target,link.name,"perm");
 
-     
+
     }
   }
-    
+
 });
 
   $('.deliverabletest').click(function(){
@@ -65,12 +65,4 @@ function fetchNode(id){
   }
   return null;
 }
-
-
-
-
- 
-
-
-
 

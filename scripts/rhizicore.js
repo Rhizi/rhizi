@@ -45,7 +45,7 @@ function myGraph(el) {
             });
 
         }
-         
+
     }
 
     this.addNodeComplete = function(id, type, state, start, end, status) {
@@ -63,7 +63,7 @@ function myGraph(el) {
             });
 
         }
-         
+
     }
 
     this.removeNode = function(id, state) {
@@ -76,7 +76,7 @@ function myGraph(el) {
         var index = findNodeIndex(id, state);
         if (index !== undefined) {
             nodes.splice(index, 1);
-             
+
         }
     }
 
@@ -93,7 +93,7 @@ function myGraph(el) {
             var index = findNodeIndex(id, state);
             if (index !== undefined) {
                 nodes.splice(index, 1);
-                 
+
             }
         }
     }
@@ -144,7 +144,7 @@ function myGraph(el) {
             links[j]['state'] = "perm";
             j++;
         }
-         
+
     }
 
     this.addLink = function(sourceId, targetId, name, state) {
@@ -158,7 +158,7 @@ function myGraph(el) {
                 "name": name,
                 "state": state
             });
-             
+
         } else {
 
         }
@@ -168,7 +168,7 @@ function myGraph(el) {
         var link = findLink(sourceId, targetId, newname);
         if (link !== undefined) {
             link.name = newname;
-             
+
         } else {}
     }
 
@@ -176,7 +176,7 @@ function myGraph(el) {
         var link = findLink(sourceId, targetId, null);
         if (link !== undefined) {
             link.target = findNode(newTarget, null);
-             
+
         } else {
 
         }
@@ -186,7 +186,7 @@ function myGraph(el) {
         var index = findNode(id, type);
         var index2 = findNode(newname, type);
         var acceptReplace=true;
-  
+
         if ((index !== undefined)) {
             if ((index2 !== undefined)) {
                 acceptReplace = confirm(index2.id+" will replace "+index.id+", are you sure?");
@@ -213,7 +213,7 @@ function myGraph(el) {
         if ((index !== undefined)) {
             index.start = start;
             index.end = end;
-             
+
         }
     }
 
@@ -223,7 +223,7 @@ function myGraph(el) {
         var index = findNode(id, state);
         if ((index !== undefined)) {
             index.type = newtype;
-            update();  
+            update();
         }
     }
 
@@ -231,7 +231,7 @@ function myGraph(el) {
         var index = findNode(id, state);
         if ((index !== undefined)) {
             index.state = newstate;
-             
+
         }
     }
 
@@ -244,7 +244,7 @@ function myGraph(el) {
     }
 
     this.updateGraph = function() {
-         
+
     }
 
     this.recenterZoom = function() {
@@ -419,7 +419,7 @@ function myGraph(el) {
             .attr("class", "linklabel graph")
             .attr("text-anchor", "middle")
             .text(function(d) {
-                
+
                 if ( d.name && d.target.state === "temp" || d.source.state === "chosen" || d.target.state === "chosen") {
                     if (d.name.length < 25) {
                         return d.name;
@@ -485,9 +485,9 @@ function myGraph(el) {
                 if (d.type === "bubble") return "#101010";
                 if (d.state === "exit")  return "#EDE275";
                 if (d.type === "chainlink")  return "#AAA";
-                
+
                 return "#fff";
-                
+
             })
             .style("stroke-width", function(d) {
                 if (d.state === "temp" && d.type !== "empty" || d.state === "chosen") return "3px";
@@ -859,7 +859,7 @@ function editNode(d, i) {
         $('.editinfo').css('top', -100);
         $('.editinfo').css('left', 0);
         graph.editName(oldname, "xx", $('#editname').val());
-        
+
 
         graph.update();
 
