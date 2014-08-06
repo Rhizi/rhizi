@@ -45,9 +45,9 @@ $('.load').click(function(){
     for(var j=0; j<data["links"].length; j++){
       var link=data.links[j];
       graph.addLink(link.source,link.target,link.name,"perm");
-
-
     }
+    graph.recenterZoom();
+    graph.update();
   }
 
 });
