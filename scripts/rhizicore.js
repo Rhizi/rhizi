@@ -1,3 +1,5 @@
+"use strict"
+
 //CORE VARIABLES
 var addednodes = [];
 
@@ -564,7 +566,7 @@ function myGraph(el) {
 }
 
 
-graph = new myGraph(document.body);
+var graph = new myGraph(document.body);
 
 var newnodes=1;
 function tick(e) {
