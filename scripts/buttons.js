@@ -17,7 +17,7 @@ $('.save').click(function(){
       "start":node.start,
       "end":node.end,
       "status": node.status
-                      });
+    });
   }
   for(var j=0 ; j < links.length ; j++){
     var link = links[j];
