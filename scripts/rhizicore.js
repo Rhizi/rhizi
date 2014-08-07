@@ -777,7 +777,7 @@ function showInfo(d, i) {
     $('.info').fadeIn(300);
 
     if (d.type === "deliverable") {
-      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><br/><label>Start date:</label><input id="editstartdate"/><label>End date:</label><input id="editenddate"/><button>Save</button><button id="deletenode">Delete</button></form>');
+      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><br/><label>Start date:</label><input id="editstartdate"/><br/><label>End date:</label><input id="editenddate"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
     } else {
       $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>URL:</label><input id="editurl"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
     }
