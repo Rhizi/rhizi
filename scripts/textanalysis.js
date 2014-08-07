@@ -225,6 +225,9 @@ function TextAnalyser2(newtext, finalize) {
     //0-N ORDER STACK
     for (var m = 0; m < orderStack.length - 1; m++) {
         switch (orderStack[m]) {
+            case "START":
+                if(!typeStack[nodeindex])typeStack[nodeindex]=nodetypes[typeindex];
+                break;
             case "NODE":
                 graph.addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
                 if (!abnormalGraph) graph.addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
@@ -254,7 +257,7 @@ function TextAnalyser2(newtext, finalize) {
         case "LINK":
             linkindex++;
             graph.addNode("new node", "empty", "temp");
-            if (!abnormalGraph) graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
+            if (!abnormalGraph)graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDcase = ANDconnect("new node");
             break;
     }
@@ -265,11 +268,16 @@ function TextAnalyser2(newtext, finalize) {
             if (newnodes[nodeindex - 2])
                 if (newlinks[linkindex - 1].replace(/ /g, "") == "and" && newlinks[linkindex].replace(/ /g, "") !== "and") {
                     if (!abnormalGraph) 
-                        if(finalize)graph.addLink(newnodes[nodeindex - 2], node, newlinks[linkindex], typesetter);
+                        //if(finalize)graph.addLink(newnodes[nodeindex - 2], node, newlinks[linkindex], typesetter);
+                        if(finalize)graph.editLink(newnodes[nodeindex - 2], newnodes[nodeindex - 1], completeSentence);
                         else graph.addLink(newnodes[nodeindex - 2], node, newlinks[linkindex], "temp");
                     return true;
                 }
     }
+
+    console.log(sentence);
+    console.log(completeSentence);
+    console.log(orderStack);
 
     //STAR CASE
     var verb = "";

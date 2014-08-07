@@ -347,13 +347,15 @@ function myGraph(el) {
     }
 
     function dragged(d) {
+
+        d3.select(this).classed("fixed", true);
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
     }
 
     function dragended(d) {
         d3.select(this).classed("dragging", false);
         d3.select(this).classed("fixed", true);
-        d3.select(this).attr("dx", d3.event.x).attr("dy", d3.event.y);
+        //d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
     }
 
     var force = d3.layout.force()

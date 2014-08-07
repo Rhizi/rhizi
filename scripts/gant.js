@@ -10,7 +10,7 @@ function checkSwitch(checkswitch) {
         
         $('body').scrollLeft(0);
         graphstate = "GRAPH";
-        graph.updateGraph();
+        graph.update();
 
         $('.status').fadeOut(600);
 
@@ -27,7 +27,7 @@ function checkSwitch(checkswitch) {
 
         graphstate = "GANTT";
         
-        graph.updateGraph();
+        graph.update();
 
 
         $('.status').fadeIn(600);
