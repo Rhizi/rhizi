@@ -6,24 +6,29 @@ var key="#47989379";
 
 $('.save').click(function(){
 
-  var jsonsave='{"nodes":[';
+  var d = {"nodes":[], "links":[]};
   console.log(nodes);
-  for(var i=0;i<nodes.length;i++){
-    var node=nodes[i];
-    jsonsave+='{"id":"'+node.id+'","type":"'+node.type+'","state":"'+"perm"+'","start":"'+node.start+'","end":"'+node.end+'","status":"'+node.status+'"}';
-    if(i!==nodes.length-1)jsonsave+=',';
+  for(var i = 0 ; i < nodes.length ; i++){
+    var node = nodes[i];
+    d['nodes'].push({
+      "id":node.id,
+      "type":node.type,
+      "state":"perm",
+      "start":node.start,
+      "end":node.end,
+      "status": node.status
+                      });
   }
-  jsonsave+='],"links":[';
-
-  for(var j=0;j<links.length;j++){
-    var link=links[j];
-    jsonsave+='{"source":"'+link.source.id+'","target":"'+link.target.id+'","name":"'+link.name+'"}';
-    if(j!==links.length-1)jsonsave+=",";
+  for(var j=0 ; j < links.length ; j++){
+    var link = links[j];
+    d['links'].push({
+      "source":link.source.id,
+      "target":link.target.id,
+      "name":link.name
+    });
   }
-  jsonsave+=']}';
-  console.log(JSON.stringify(jsonsave));
-  localStorage.setItem(key, JSON.stringify(jsonsave));
-
+  console.log(JSON.stringify(d));
+  localStorage.setItem(key, JSON.stringify(d));
 });
 
 $('.load').click(function(){
@@ -35,7 +40,7 @@ $('.load').click(function(){
   if(acceptLoad){
     links=[];
     nodes=[];
-    var data = JSON.parse(JSON.parse(localStorage.getItem(key)));
+    var data = JSON.parse(localStorage.getItem(key));
     console.log(data);
     for(var i=0; i<data["nodes"].length; i++){
       var node=data.nodes[i];
@@ -65,4 +70,3 @@ function fetchNode(id){
   }
   return null;
 }
-
