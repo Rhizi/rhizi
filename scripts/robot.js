@@ -1,28 +1,33 @@
 var sentence="";
-sentence+=" #Rhizibot is showing you a #tutorial|";
+/*sentence+=" #Rhizibot is showing you a #tutorial|";
 sentence+="#Rhizi visualizes data with #Graphs and #relationships|";
 sentence+="#links and #nodes have #context and #meaning|";
 
 sentence+="#entities and #concepts are #nodes|";
-sentence+="We built this entire graph in 30 seconds, try it out yourself!";
-/*
-sentence="";
-var arr=["works on","contibutes to","likes","knows","is an expert at","donates to"];
-var arr2=["is used by","is liked by","employs"];
-for(var a=0;a<10;a++){
-  if(Math.random()>0.5){
-    sentence+="#"+names[Math.floor(Math.random()*names.length)]+" "+arr[Math.round(Math.random()*4)]+" #"+sugg[Math.floor(Math.random()*sugg.length)]+" ";
-  }else{
-    sentence+="#"+sugg[Math.floor(Math.random()*sugg.length)]+" "+arr2[Math.round(Math.random()*2)]+" #"+names[Math.floor(Math.random()*names.length)]+" ";
-  
-  }
-}*/
+sentence+="We built this entire graph in 30 seconds, try it out yourself!";*/
 
+
+
+sentence+='Hi, Rhizibot here! Let me show you how to create networks|';
+sentence+='#Rhizi is really fast at generating #Graphs|';
+sentence+='Use the "#" hashtag to before writing to create a node|';
+sentence+='#Hello|';
+sentence+='#John|';
+sentence+='Use commas if what you want to write has multiple words|';
+sentence+='#"John Smith"|';
+sentence+='#"Beauty and the beast"|';
+sentence+='Nodes can be connected using words|';
+sentence+='#John is a friend of #Tim|';
+sentence+='#"Beauty and the beast" is film by #Disney|';
+sentence+='Use "and" to connect multiple things together|';
+sentence+='#John likes #Apples and #Oranges and #Pistachio|';
+sentence+='You can choose the node type by using right arrow or left arrow|';
+sentence+='#Rhizi is useful for #"Mapping ideas" and "#"Creating info graphics" and #"Organising knowledge"|';
 
 var counter=0;
 var sentencecounter=0;
 var robot;
-var speed=2;
+var speed=1;
 $('.logo').click(function(){
 
 setTimeout( Robot, 1000 );
