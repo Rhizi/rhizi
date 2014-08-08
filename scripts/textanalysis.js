@@ -70,14 +70,15 @@ function changeType(arg, id) {
         if (typeindex < 4) typeindex++;
         else typeindex = 0;
         graph.editType(id, null, nodetypes[typeindex]);
-
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
+        graph.findCoordinates(lastnode,null);
     } else {
         if (typeindex > 0) typeindex--;
         else typeindex = 4;
 
         graph.editType(id, null, nodetypes[typeindex]);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
+        graph.findCoordinates(lastnode,null);
 
     }
     graph.updateGraph();
@@ -276,9 +277,9 @@ function TextAnalyser2(newtext, finalize) {
                 }
     }
 
-    console.log(sentence);
+    /*console.log(sentence);
     console.log(completeSentence);
-    console.log(orderStack);
+    console.log(orderStack);*/
 
     //STAR CASE
     var verb = "";
