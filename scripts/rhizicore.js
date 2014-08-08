@@ -410,7 +410,7 @@ function myGraph(el) {
                 } else return "link graph";
 
             })
-            .style("stroke-dasharray", function(d,i){if(d.name)if(d.name.replace(/ /g,"")=="and")return"3, 3";else return "0,0";})
+            .style("stroke-dasharray", function(d,i){if(d.name)if(d.name.replace(/ /g,"")=="and" && d.state==="temp")return"3, 3";else return "0,0";})
             .attr("marker-end", "url(#end)")
             .on("click", function(d, i) {
                 //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
@@ -779,11 +779,12 @@ function showInfo(d, i) {
     $('.info').fadeIn(300);
 
     if (d.type === "deliverable") {
-      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><br/><label>Start date:</label><input id="editstartdate"/><br/><label>End date:</label><input id="editenddate"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
+      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><br/><label>Start date:</label><input id="editstartdate"/><br/><label>End date:</label><input id="editenddate"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
     } else {
-      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>URL:</label><input id="editurl"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
+      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>URL:</label><input id="editurl"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
     }
 
+    
     $('.info').css("border-color", customColor(d.type));
 
     $("#editenddate").datepicker({
@@ -800,7 +801,7 @@ function showInfo(d, i) {
 
     $('#editdescription').val(d.type);
 
-    $('#editstatus').val(d.status);
+    $('#edittype').val(d.type);
 
     if (d.type === "deliverable") {
       $('#editstartdate').val(d.start);
@@ -809,7 +810,7 @@ function showInfo(d, i) {
 
     $("#editbox").submit(function() {
       if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
-
+      graph.editType(d.id,d.type,$('#edittype').val());
       graph.update();
       return false;
     });

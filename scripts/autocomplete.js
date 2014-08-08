@@ -48,7 +48,7 @@
  *  });
  */
 
-;
+
 (function ($, window, document, undefined) {
   $.widget("ui.autocompleteTrigger", {
 

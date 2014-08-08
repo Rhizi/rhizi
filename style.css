@@ -71,7 +71,7 @@ a:active {
 }
 
 #textanalyser{
-  width:300px;
+  width:500px;
   height:30px;
 }
 
@@ -253,7 +253,6 @@ input:focus {
 }
 
 .help{
-  font-weight: bold;
   font-size: 20px;
   position: fixed;
   top: 5px;
@@ -308,11 +307,10 @@ input:focus {
 }
 
 .info{
-
   background-color: rgba(17,17,17,0.8);
 	position:fixed;
 	top:150px;
-  width:300px;
+  width:140px;
 	right:10px;
 	font-size: 14px;
   border: 1px solid;

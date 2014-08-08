@@ -88,7 +88,7 @@ window.setInterval(function() {
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);
 
-        if(text.length*8>300)$('#textanalyser').css('width',text.length*8);
+        if(text.length*8>500)$('#textanalyser').css('width',text.length*8+20);
         // text changed
         text = $('#textanalyser').val();
         TextAnalyser2(text, false);
@@ -147,6 +147,7 @@ function TextAnalyser2(newtext, finalize) {
             case "and":
             case "+":
             case ",":
+            case "&":
                 sentence[m]=" and ";
                 ANDcount++;
                 //orderStack.push("AND");
@@ -220,7 +221,7 @@ function TextAnalyser2(newtext, finalize) {
     if (orderStack.length > 0) graph.addNode("", "bubble", "temp");
 
     var abnormalGraph=false;
-    if(newlinks.length >= 4 && ANDcount<2 )abnormalGraph=true;
+    if(newlinks.length >= 3 && ANDcount<2 )abnormalGraph=true;
 
     //0-N ORDER STACK
     for (var m = 0; m < orderStack.length - 1; m++) {
