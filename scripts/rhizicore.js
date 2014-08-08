@@ -424,7 +424,7 @@ function myGraph(el) {
             .attr("text-anchor", "middle")
             .text(function(d) {
 
-                if ( d.name && d.target.state === "temp" || d.source.state === "chosen" || d.target.state === "chosen") {
+                if ( d.name)if(d.target.state === "temp" || d.source.state === "chosen" || d.target.state === "chosen") {
                     if (d.name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen") {
                         return d.name;
                     } else {
