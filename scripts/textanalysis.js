@@ -221,7 +221,7 @@ function TextAnalyser2(newtext, finalize) {
     if (orderStack.length > 0) graph.addNode("", "bubble", "temp");
 
     var abnormalGraph=false;
-    if(newlinks.length >= 3 && ANDcount<2 )abnormalGraph=true;
+    if(newlinks.length >= 3 && ANDcount<1 )abnormalGraph=true;
 
     //0-N ORDER STACK
     for (var m = 0; m < orderStack.length - 1; m++) {
