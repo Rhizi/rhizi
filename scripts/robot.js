@@ -1,3 +1,5 @@
+"use strict"
+
 var sentence="";
 /*sentence+=" #Rhizibot is showing you a #tutorial|";
 sentence+="#Rhizi visualizes data with #Graphs and #relationships|";
@@ -43,8 +45,8 @@ setTimeout( Robot, 100 );*/
 
 
 function Robot(){
-    
-      
+
+
     if(counter<=sentence.length){
       var text=$('#textanalyser').val();
          counter++;
@@ -60,7 +62,7 @@ function Robot(){
         }
     }else{
       var e = jQuery.Event("keypress");
-      e.which = 13; 
+      e.which = 13;
       e.keyCode = 13;
       $("#textanalyser").trigger(e);
           window.setTimeout( Robot, 650/speed );
@@ -68,10 +70,10 @@ function Robot(){
     }else{
         window.clearInterval(robot);
     }
-    
 
-      
- 
+
+
+
 }
 
 

@@ -1,3 +1,5 @@
+"use strict"
+
 var text = "";
 var sugg = ["AJAX", "Neo4J", "Rhizi", "Research", "CRI", "SageBionetworks", "Hero.coli", "CSS", "NodeJS", "HTML5", "Angular", "D3", "ProofOfConcept", "Graphs", "CloudComputing", "BigData", "ProblemSolving", "PHP", "Javascript", "BackBone", "Cooperation", "SemanticWeb"];
 var typeindex = 0;
@@ -58,7 +60,7 @@ $(document).keydown(function(e) {
     if (e.keyCode == 40) {//DOWN
         suggestionChange=true;
     }
-  
+
     if (e.keyCode == 9) {//TAB
         return false;
     }
@@ -265,7 +267,7 @@ function TextAnalyser2(newtext, finalize) {
 
     //EXTERNAL AND CONNECTION CHECKING
     var verb = "";
-    function ANDconnect(node) {    
+    function ANDconnect(node) {
           for(var x=0;x<links.length;x++){
             if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
                 verb=newlinks[x];
@@ -310,7 +312,7 @@ function TextAnalyser2(newtext, finalize) {
 
 
 function Unique(newnode) {
-    truth = true;
+    var truth = true;
     for (var p = 0; p < sugg.length; p++) {
         if (sugg[p] === newnode) {
             truth = false;

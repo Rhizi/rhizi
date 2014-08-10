@@ -1,3 +1,4 @@
+"use strict"
 
 function checkSwitch(checkswitch) {
 
@@ -26,7 +27,7 @@ function checkSwitch(checkswitch) {
         $('body').scrollLeft(scrollValue);
 
         graphstate = "GANTT";
-        
+
         graph.update();
 
         $('.status').fadeIn(600);
@@ -95,7 +96,7 @@ function initAxis() {
     ///update interval
     var timeDiff = Math.abs(max.getTime() - min.getTime());
     var diffDays = timeDiff / (1000 * 3600 * 24);
-    w=Math.round(diffDays*15-100);
+    var w = Math.round(diffDays * 15 - 100);
     graphinterval = w / diffDays;
 
 
@@ -130,7 +131,7 @@ function initAxis() {
         return i * row_height + paddingTop + bar_start_offset;
     }
 
-    labelY = function (i) {
+    var labelY = function (i) {
         return i * row_height + paddingTop + bar_start_offset + 13;
     }
 
