@@ -680,8 +680,8 @@ function tick(e) {
                      d.x = window.innerWidth / 2;
                      d.y = window.innerHeight / 2;
                 }else{
-                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes-0.3);
-                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI/2+Math.PI * 2 * (tempcounter-1) / newnodes-0.3);
+                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
                 }
             }
         });
