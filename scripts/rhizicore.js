@@ -425,7 +425,7 @@ function myGraph(el) {
             .text(function(d) {
 
                 if ( d.name)if(d.target.state === "temp" || d.source.state === "chosen" || d.target.state === "chosen") {
-                    if (d.name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen") {
+                    if (d.name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen" || d.state==="temp") {
                         return d.name;
                     } else {
                         return d.name.substring(0, 14) + "...";
