@@ -1,0 +1,7 @@
+/* http://fonts.googleapis.com/css?family=Lato:300 */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Lato Light'), local('Lato-Light'), url(Lato300.ttf) format('truetype');
+}
