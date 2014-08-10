@@ -88,8 +88,6 @@ function changeType(arg, id) {
 
 window.setInterval(function() {
     if ($('#textanalyser').val() != text) {
-        $('.typeselection').css('top', -300);
-        $('.typeselection').css('left', 0);
 
         if(text.length*8>500)$('#textanalyser').css('width',text.length*8+20);
         // text changed
@@ -250,6 +248,9 @@ function TextAnalyser2(newtext, finalize) {
             graph.addNode("new node", typeStack[nodeindex], "temp");
             if (!abnormalGraph){graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDconnect("new node");}
+            $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
+            $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use arrows to pick a type</td></tr></table>');
+
             break;
         case "NODE":
             typeStack[nodeindex]=nodetypes[typeindex];
@@ -262,6 +263,9 @@ function TextAnalyser2(newtext, finalize) {
             graph.addNode("new node", "empty", "temp");
             if (!abnormalGraph){ graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDconnect("new node");}
+
+            $('.typeselection').css('top', -300);
+            $('.typeselection').css('left', 0);
             break;
     }
 
@@ -298,12 +302,17 @@ function TextAnalyser2(newtext, finalize) {
         }
         graph.addNode(completeSentence, "chainlink", typesetter);
         for (var n = 0; n < newnodes.length; n++) {
-            graph.addLink(newnodes[n], completeSentence, verb, typesetter);
+            graph.addLink(newnodes[n], completeSentence, "", typesetter);
         }
     }
 
     //FOR THE EXTERNAL ARROW-TYPE CHANGER
     lastnode = newnodes[nodeindex];
+
+    if(finalize){
+        $('.typeselection').css('top', -300);
+        $('.typeselection').css('left', 0);
+    }
 
     //UPDATE GRAPH ONCE
     graph.update();
