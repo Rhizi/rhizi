@@ -347,15 +347,13 @@ function myGraph(el) {
     }
 
     function dragged(d) {
-
-        d3.select(this).classed("fixed", true);
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
     }
 
     function dragended(d) {
         d3.select(this).classed("dragging", false);
         d3.select(this).classed("fixed", true);
-        //d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        d3.select(this).attr("dx", d3.event.x).attr("dy", d3.event.y);
     }
 
     var force = d3.layout.force()
@@ -503,7 +501,7 @@ function myGraph(el) {
             })
             .on("click", function(d, i) {
                  if(d.state!=="temp")showInfo(d, i);
-                    else graph.removeHighlight();
+                else graph.removeHighlight();
 
                 graph.update();
             });
@@ -780,7 +778,9 @@ function showInfo(d, i) {
 
     if (d.type === "deliverable") {
       $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><br/><label>Start date:</label><input id="editstartdate"/><br/><label>End date:</label><input id="editenddate"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
-    } else {
+    } else if(d.type=== "chainlink"){
+        $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><button>Save</button><button id="deletenode">Delete</button></form>');
+    }else{
       $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>URL:</label><input id="editurl"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
     }
 
