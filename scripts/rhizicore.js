@@ -20,7 +20,7 @@ var scrollValue = 0,
     zoomLevel = 0,
     zoomObject;
 
-
+var force;
 
 function myGraph(el) {
 
@@ -344,23 +344,28 @@ function myGraph(el) {
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
+        force.stop();
     }
 
     function dragged(d) {
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        tick();
     }
 
     function dragended(d) {
         d3.select(this).classed("dragging", false);
         d3.select(this).classed("fixed", true);
         d3.select(this).attr("dx", d3.event.x).attr("dy", d3.event.y);
+        tick();
+        force.resume();
     }
 
-    var force = d3.layout.force()
+    force = d3.layout.force()
         .distance(120)
         .gravity(0.12)
         .charge(-1800)
-        .size([w, h]);
+        .size([w, h])
+        .start();
 
     nodes = force.nodes();
     links = force.links();
@@ -571,6 +576,7 @@ var graph = new myGraph(document.body);
 var newnodes=1;
 function tick(e) {
     //console.log(e);
+    //$(".debug").html(force.alpha());
 
     function transform(d) {
         if (graphstate === "GRAPH" || d.type === "deliverable") {
@@ -784,7 +790,7 @@ function showInfo(d, i) {
       $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>description:</label><input id="editdescription"/><br/><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>URL:</label><input id="editurl"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
     }
 
-    
+
     $('.info').css("border-color", customColor(d.type));
 
     $("#editenddate").datepicker({
