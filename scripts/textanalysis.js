@@ -155,9 +155,9 @@ function TextAnalyser2(newtext, finalize) {
                     quoteword = "";
                     do {
                         quoteword += subsegment[k] + " ";
-                        k++;
+                        if(subsegment[k].charAt(subsegment[k].length-1) !== '"')k++;
                     } while (k < subsegment.length && subsegment[k].charAt(subsegment[k].length - 1) !== '"');
-                    if (k < subsegment.length) quoteword += subsegment[k];
+                     if(subsegment[k])if(subsegment[k]!==quoteword.replace(/ /g, ""))quoteword += subsegment[k];
                     sentence.push(quoteword.replace(/"/g, ""));
                 } else {
                     sentence.push(subsegment[k]);
@@ -315,7 +315,6 @@ function TextAnalyser2(newtext, finalize) {
                     graph.addLink(newnodes[y],node,verb,typesetter);
                     for(var z=x; z<newnodes.length ;z++){
                         graph.addLink(newnodes[y],newnodes[z],verb,typesetter);
-                        console.log(newnodes[y]+ " and "+newnodes[z]);
                     }
                 }
                 
