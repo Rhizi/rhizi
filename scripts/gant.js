@@ -2,8 +2,6 @@
 
 function checkSwitch(checkswitch) {
 
-
-
     if (checkswitch.checked) {
     	vis.selectAll(".gantt").remove();
         $('.missingdates').fadeOut(300);
@@ -19,7 +17,6 @@ function checkSwitch(checkswitch) {
 
     } else {
         ganttTimer=0;
-
         $('.missingdates').fadeIn(300);
 
         graph.recenterZoom();

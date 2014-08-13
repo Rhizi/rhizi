@@ -35,25 +35,37 @@ $("#textanalyser").keypress(function(e) {
     return false;
     }
 
+    if (e.which == 37) {//RIGHT
 
-    if (e.which == 9) {//TAB
-        text = $('#textanalyser').val();
-        $('#textanalyser').val(text+"        ");
+        $('body').scrollLeft(0);
+        e.stopPropagation();
         return false;
     }
+    if (e.which == 39) { //LEFT
+
+        $('body').scrollLeft(0);
+        e.stopPropagation();
+        return false;
+    }
+
 });
 
 $(document).keydown(function(e) {
-    if (e.keyCode == 37) {//RIGHT
-        e.preventDefault();
-        changeType("up", lastnode);
-        return false;
-    }
-    if (e.keyCode == 39) { //LEFT
+  
+
+    if (e.keyCode == 9) {//TAB
         e.preventDefault();
         changeType("down", lastnode);
         return false;
     }
+
+    if (e.keyCode == 37) {//UP
+          $('html, body').scrollLeft(0);
+    }
+    if (e.keyCode == 39) {//DOWN
+          $('html, body').scrollLeft(0);
+    }
+
     if (e.keyCode == 38) {//UP
         suggestionChange=true;
     }
@@ -66,6 +78,21 @@ $(document).keydown(function(e) {
     }
 
 });
+
+
+function textSelect(inp, s, e) {
+        e = e || s;
+        if (inp.createTextRange) {
+            var r = inp.createTextRange();
+            r.collapse(true);
+            r.moveEnd('character', e);
+            r.moveStart('character', s);
+            r.select();
+        }else if(inp.setSelectionRange) {
+            inp.focus();
+            inp.setSelectionRange(s, e);
+        }
+    }
 
 function changeType(arg, id) {
     if (arg === 'up') {
@@ -249,7 +276,7 @@ function TextAnalyser2(newtext, finalize) {
             if (!abnormalGraph){graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDconnect("new node");}
             $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
-            $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use arrows to pick a type</td></tr></table>');
+            $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
 
             break;
         case "NODE":
