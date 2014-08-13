@@ -95,6 +95,7 @@ function textSelect(inp, s, e) {
     }
 
 function changeType(arg, id) {
+    if(!id)id="new node";
     if (arg === 'up') {
         if (typeindex < 4) typeindex++;
         else typeindex = 0;
