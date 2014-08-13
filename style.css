@@ -310,11 +310,12 @@ input:focus {
   background-color: rgba(17,17,17,0.8);
 	position:fixed;
 	top:150px;
-  width:140px;
+  width:250px;
 	right:10px;
-	font-size: 14px;
+	font-size: 18px;
   border: 1px solid;
   padding: 5px;
+  line-height: 45px;
   border-color: #303030;
 }
 .editinfo{
