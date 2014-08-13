@@ -214,7 +214,11 @@ function TextAnalyser2(newtext, finalize) {
     for (var m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === "NODE") {
             word += " (" + newnodes[nodeindex] + ") ";
-            completeSentence += newnodes[nodeindex] + " ";
+            if(newnodes[nodeindex].split(" ").length>1){
+                completeSentence += '"'+newnodes[nodeindex]+'"' + " ";
+            }else{
+                completeSentence += newnodes[nodeindex] + " ";
+            }
             nodeindex++;
         } else if (orderStack[m] === "LINK") {
             linkindex++;
@@ -233,7 +237,12 @@ function TextAnalyser2(newtext, finalize) {
         typesetter = "perm";
         for (var n = 0; n < newnodes.length; n++) {
             if (Unique(newnodes[n])) {
-                sugg.push(newnodes[n]);
+                if(newnodes[n].split(" ").length>1){
+                    sugg.push('"'+newnodes[n]+'"');
+                }else{
+                    sugg.push(newnodes[n]);
+                }
+                
             }
         }
         sugg.push(text);
