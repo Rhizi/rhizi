@@ -152,8 +152,12 @@ function myGraph(el) {
     this.addLink = function(sourceId, targetId, name, state) {
         var sourceNode = findNode(sourceId, null);
         var targetNode = findNode(targetId, null);
+        var found=findLink(sourceId,targetId,name);
+        
         if(name)if(name.replace(/ /g,"")==="and")state="temp";
-        if ((sourceNode !== undefined) && (targetNode !== undefined)) {
+        if(found){
+
+        }else if ((sourceNode !== undefined) && (targetNode !== undefined)) {
             links.push({
                 "source": sourceNode,
                 "target": targetNode,
