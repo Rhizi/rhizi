@@ -299,15 +299,17 @@ function TextAnalyser2(newtext, finalize) {
     //EXTERNAL AND CONNECTION CHECKING
     var verb = "";
     function ANDconnect(node) {
-          for(var x=0;x<links.length;x++){
+          for(var x=0;x<newlinks.length;x++){
             if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
                 verb=newlinks[x];
                 for(var y=0; y<x ;y++){
-                    for(var z=x; z<nodes.length ;z++){
+                    graph.addLink(newnodes[y],node,verb,typesetter);
+                    for(var z=x; z<newnodes.length ;z++){
                         graph.addLink(newnodes[y],newnodes[z],verb,typesetter);
+                        console.log(newnodes[y]+ " and "+newnodes[z]);
                     }
                 }
-                break;
+                
             }
         }
 
