@@ -118,12 +118,28 @@ function myGraph(el) {
                     adjacentnode = findNode(links[i]['target'].id, null);
                     if (adjacentnode.state !== "temp") adjacentnode.state = "exit";
                     links[i]['state'] = "exit";
+
+                    if(links[i]['target'].type==="chainlink"){
+                        console.log("chain");
+                        while (j < links.length) {
+                            if(links[i]['target'].id===links[j]['target'].id && links[j]['target'].type==="chainlink" && links[j]['target'].state!=="temp"){
+                                adjacentnode = findNode(links[j]['source'].id, null);
+                                if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
+                                links[j]['state'] = "enter";
+                            }
+                            j++;
+                        }
+                    }
+                    j=0;
                 }
                 if (links[i]['target'] === n) {
                     adjacentnode = findNode(links[i]['source'].id, null);
                     if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
                     links[i]['state'] = "enter";
+
+
                 }
+
                 i++;
             }
         } else {
