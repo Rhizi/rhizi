@@ -6,30 +6,15 @@ var key="#47989379";
 
 
 $('.save').click(function(){
+    var json = graph.save_to_json();
+    console.log(json);
+    localStorage.setItem(key, json);
+});
 
-  var d = {"nodes":[], "links":[]};
-  console.log(nodes);
-  for(var i = 0 ; i < nodes.length ; i++){
-    var node = nodes[i];
-    d['nodes'].push({
-      "id":node.id,
-      "type":node.type,
-      "state":"perm",
-      "start":node.start,
-      "end":node.end,
-      "status": node.status
-    });
-  }
-  for(var j=0 ; j < links.length ; j++){
-    var link = links[j];
-    d['links'].push({
-      "source":link.source.id,
-      "target":link.target.id,
-      "name":link.name
-    });
-  }
-  console.log(JSON.stringify(d));
-  localStorage.setItem(key, JSON.stringify(d));
+$('.saveToFile').click(function() {
+    var json = graph.save_to_json();
+    console.log(json);
+    location.href = 'data:text/json;base64,' + window.btoa(json);
 });
 
 $('.load').click(function(){
@@ -40,25 +25,10 @@ $('.load').click(function(){
   }
 
   if(acceptLoad){
-    links=[];
-    nodes=[];
-    var data = JSON.parse(localStorage.getItem(key));
-    if (data == null) {
-        console.log('load callback: no data to load');
-        return;
-    }
-    console.log(data);
-    for(var i=0; i<data["nodes"].length; i++){
-      var node=data.nodes[i];
-      graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end),node.status);
-    }
-
-    for(var j=0; j<data["links"].length; j++){
-      var link=data.links[j];
-      graph.addLink(link.source,link.target,link.name,"perm");
-    }
-    graph.recenterZoom();
-    graph.update();
+    links=[]; // TODO - not global
+    nodes=[]; // TODO - not global
+    var json_blob = localStorage.getItem(key)
+    graph.load_from_json(json_blob);
   }
 
 });

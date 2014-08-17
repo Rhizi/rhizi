@@ -379,6 +379,53 @@ function myGraph(el) {
         force.resume();
     }
 
+    function load_from_json(json) {
+        var data = JSON.parse(json);
+        if (data == null) {
+            console.log('load callback: no data to load');
+            return;
+        }
+        for(var i=0; i<data["nodes"].length; i++){
+          var node=data.nodes[i];
+          graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end),node.status);
+        }
+
+        for(var j=0; j<data["links"].length; j++){
+          var link=data.links[j];
+          graph.addLink(link.source,link.target,link.name,"perm");
+        }
+        graph.recenterZoom();
+        graph.update();
+    }
+    this.load_from_json = load_from_json;
+
+    function save_to_json() {
+        var d = {"nodes":[], "links":[]};
+        console.log(nodes);
+        for(var i = 0 ; i < nodes.length ; i++){
+          var node = nodes[i];
+          d['nodes'].push({
+            "id":node.id,
+            "type":node.type,
+            "state":"perm",
+            "start":node.start,
+            "end":node.end,
+            "status": node.status
+          });
+        }
+        for(var j=0 ; j < links.length ; j++){
+          var link = links[j];
+          d['links'].push({
+            "source":link.source.id,
+            "target":link.target.id,
+            "name":link.name
+          });
+        }
+        return JSON.stringify(d);
+    }
+    this.save_to_json = save_to_json;
+
+
     force = d3.layout.force()
         .distance(120)
         .gravity(0.12)
@@ -388,8 +435,6 @@ function myGraph(el) {
 
     nodes = force.nodes();
     links = force.links();
-
-
 
     var update = function() {
 

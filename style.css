@@ -285,6 +285,13 @@ input:focus {
   text-decoration: none;
 }
 
+.saveToFile {
+  position:fixed;
+  bottom:30px;
+  left:60px;
+  text-decoration: none;
+}
+
 .load{
   position:fixed;
   bottom:50px;
