@@ -34,6 +34,7 @@ $('.save').click(function(){
 
 $('.load').click(function(){
   var acceptLoad=true;
+
   if (nodes.length>0){
     acceptLoad = confirm('All unsaved changes will be deleted, are you sure?');
   }
@@ -42,6 +43,10 @@ $('.load').click(function(){
     links=[];
     nodes=[];
     var data = JSON.parse(localStorage.getItem(key));
+    if (data == null) {
+        console.log('load callback: no data to load');
+        return;
+    }
     console.log(data);
     for(var i=0; i<data["nodes"].length; i++){
       var node=data.nodes[i];
