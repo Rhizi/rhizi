@@ -33,12 +33,15 @@ function myGraph(el) {
         var start = 0,
             end = 0;
         var status = "unknown";
+        var text = id;
+        id = id.toLowerCase();
         var node = findNode(id, null);
         if (node !== undefined) {
             //graph.editState(id, null, "temp");
         } else {
             nodes.push({
                 "id": id,
+                "text": text,
                 "type": type,
                 "state": state,
                 "start": start,
@@ -51,12 +54,15 @@ function myGraph(el) {
     }
 
     this.addNodeComplete = function(id, type, state, start, end, status) {
+        var text = id;
+        id = id.toLowerCase();
         var node = findNode(id, null);
         if (node !== undefined) {
             graph.editState(id, null, "temp");
         } else {
             nodes.push({
                 "id": id,
+                "text": text,
                 "type": type,
                 "state": state,
                 "start": start,
@@ -70,6 +76,7 @@ function myGraph(el) {
 
     this.removeNode = function(id, state) {
         var i = 0;
+        id = id.toLowerCase();
         var n = findNode(id, state);
         while (i < links.length) {
             if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
@@ -78,7 +85,6 @@ function myGraph(el) {
         var index = findNodeIndex(id, state);
         if (index !== undefined) {
             nodes.splice(index, 1);
-
         }
     }
 
@@ -136,16 +142,10 @@ function myGraph(el) {
                     adjacentnode = findNode(links[i]['source'].id, null);
                     if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
                     links[i]['state'] = "enter";
-
-
                 }
-
                 i++;
             }
-        } else {
-
         }
-
     }
 
     this.removeHighlight = function() {
@@ -162,27 +162,23 @@ function myGraph(el) {
             links[j]['state'] = "perm";
             j++;
         }
-
     }
 
     this.addLink = function(sourceId, targetId, name, state) {
+        sourceId = sourceId && sourceId.toLowerCase();
+        targetId = targetId && targetId.toLowerCase();
         var sourceNode = findNode(sourceId, null);
         var targetNode = findNode(targetId, null);
-        var found=findLink(sourceId,targetId,name);
+        var found = findLink(sourceId,targetId,name);
         
         if(name)if(name.replace(/ /g,"")==="and")state="temp";
-        if(found){
-
-        }else if ((sourceNode !== undefined) && (targetNode !== undefined)) {
+        if(!found && ((sourceNode !== undefined) && (targetNode !== undefined))) {
             links.push({
                 "source": sourceNode,
                 "target": targetNode,
                 "name": name,
                 "state": state
             });
-
-        } else {
-
         }
     }
 
@@ -205,8 +201,11 @@ function myGraph(el) {
     }
 
     this.editName = function(id, type, newname) {
+        var new_text = newname;
+        id = id && id.toLowerCase();
+        var new_id = newname.toLowerCase();
         var index = findNode(id, type);
-        var index2 = findNode(newname, type);
+        var index2 = findNode(new_id, type);
         var acceptReplace=true;
 
         if ((index !== undefined)) {
@@ -225,7 +224,8 @@ function myGraph(el) {
                 graph.removeNode(index.id,null);
                 }
             }else{
-                index.id = newname;
+                index.id = new_id;
+                index.text = new_text;
             }
         }
     }
@@ -250,10 +250,9 @@ function myGraph(el) {
     }
 
     this.editState = function(id, state, newstate) {
-        var index = findNode(id, state);
+        var index = findNode(id.toLowerCase(), state);
         if ((index !== undefined)) {
             index.state = newstate;
-
         }
     }
 
@@ -481,12 +480,12 @@ function myGraph(el) {
             .attr("dx", 15)
             .attr("dy", ".30em")
             .text(function(d) {
-                if (d.state === "temp") return d.id;
+                if (d.state === "temp") return d.text;
                 else if (d.state === "chosen") {
-                    return d.id;
+                    return d.text;
                 } else {
-                    if (d.id.length < 28) return d.id;
-                    else return d.id.substring(0, 25) + "...";
+                    if (d.text.length < 28) return d.text;
+                    else return d.text.substring(0, 25) + "...";
                 }
             })
             .on("click", function(d, i) {
