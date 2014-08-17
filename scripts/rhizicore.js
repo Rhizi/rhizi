@@ -485,8 +485,8 @@ function myGraph(el) {
                 else if (d.state === "chosen") {
                     return d.id;
                 } else {
-                    if (d.id.length < 14) return d.id;
-                    else return d.id.substring(0, 11) + "...";
+                    if (d.id.length < 25) return d.id;
+                    else return d.id.substring(0, 25) + "...";
                 }
             })
             .on("click", function(d, i) {

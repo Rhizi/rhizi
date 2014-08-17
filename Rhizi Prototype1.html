@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- saved from url=(0067)file:///Users/dorgarbash/WebstormProjects/Rhizi2/rhizi/index.html?# -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Rhizi Prototype </title>
+  
+  <link href="./Rhizi Prototype1_files/style.css" rel="stylesheet" type="text/css">
+    <link href="./Rhizi Prototype1_files/ui.css" rel="stylesheet" type="text/css">
+    <link href="./Rhizi Prototype1_files/css" rel="stylesheet" type="text/css">
+
+    <link rel="shortcut icon" href="file:///Users/dorgarbash/WebstormProjects/Rhizi2/rhizi/images/favicon2.ico">
+
+
+
+    <script src="./Rhizi Prototype1_files/d3.v3.min.js"></script>
+    <script src="./Rhizi Prototype1_files/jquery.js"></script>
+
+    <script src="./Rhizi Prototype1_files/jquery-ui.js"></script>
+    <script src="./Rhizi Prototype1_files/caret.js"></script>
+    <script src="./Rhizi Prototype1_files/autocomplete.js"></script>
+    
+
+</head>
+
+<body>
+  
+
+
+  <div class="UI">
+    <div class="help">Connect between <span style="color:#FCB924">people</span> and the  <span style="color:#009DDC">skills</span> they have by describing their competence level:</div>
+    <div class="info" style="display:none">Node info :<br>
+        <div class="subtitle">Click on a node to display info</div>
+        <form id="editbox">
+          <label>name:</label><input id="editboxname">
+          <br>
+          <label>description:</label><input id="editdescription">
+          <br>
+          <label>URL:</label><input id="editurl">
+          <br>
+          <button>edit</button>
+        </form>
+        <div class="deletenode"><button>Delete</button></div>
+    </div>
+
+    <div class="editinfo" style="top: -100px; left: 0px;">
+      <form id="editform">
+        <input id="editname">
+        
+      </form>
+    </div>
+
+    <div class="editlinkinfo" style="top: -100px; left: 0px;">
+      <form id="editlinkform">
+        <input id="editlinkname">
+        
+      </form>
+    </div>
+
+
+
+   <div id="suggestion">
+       <form> <input id="textanalyser" onfocus="if(this.value == &#39;We built this entire graph in 30 seconds, try it out yourself!&#39;) { this.value = &#39;&#39;; }" value=""></form>
+       
+
+    </div>
+
+    <div class="typeselection">
+      <table>
+        <tbody><tr><td><img id="keys" src="./Rhizi Prototype1_files/keys.png"></td></tr>
+        <tr><td>Pick a type with arrows</td></tr>  
+      </tbody></table>
+      </div>
+
+    <div class="save">
+        <a href="./Rhizi Prototype1_files/Rhizi Prototype1.html">SAVE</a>
+    </div>
+    <div class="load">
+        <a href="./Rhizi Prototype1_files/Rhizi Prototype1.html">LOAD</a>
+    </div>    
+    <div class="deliverabletest">
+        <a href="./Rhizi Prototype1_files/Rhizi Prototype1.html">Load deliverables</a>
+    </div>     
+
+
+    <div class="logo">
+        <a href="./Rhizi Prototype1_files/Rhizi Prototype1.html"><img src="./Rhizi Prototype1_files/sage.png"></a>
+    </div>
+
+
+    <div class="debug">debug</div>
+  </div>
+
+  <div class="poweredby">powered by <a href="http://www.rhizi.org/"><img src="./Rhizi Prototype1_files/rhizismall.png"></a></div>
+  
+
+    
+    <div class="missingdates" style="display:none">The following tasks are missing dates,<br>Please fill them out:</div>
+
+    <div class="onoffswitch">
+    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" onclick="checkSwitch(this)" checked="">
+    <label class="onoffswitch-label" for="myonoffswitch">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+    </div>
+
+
+    <script src="./Rhizi Prototype1_files/rhizicore.js"></script><svg width="6805" height="435" pointer-events="all"><g><g><defs></defs><defs></defs><defs></defs><defs></defs><rect class="overlay graph" width="6805" height="435"></rect><defs><marker id="end" viewBox="0 -5 10 10" refX="22" refY="-1.5" markerWidth="4" markerHeight="4" orient="auto" class="graph" style="fill: rgb(170, 170, 170);"><path d="M0,-5L10,0L0,5"></path></marker></defs></g></g></svg>
+    <script src="./Rhizi Prototype1_files/textanalysis.js"></script>
+    <script src="./Rhizi Prototype1_files/buttons.js"></script>
+    <script src="./Rhizi Prototype1_files/robot.js"></script>
+    <script src="./Rhizi Prototype1_files/watchdog.js"></script>
+    <script src="./Rhizi Prototype1_files/gant.js"></script>
+
+
+
+</body></html>
