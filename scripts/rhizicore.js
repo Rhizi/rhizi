@@ -772,7 +772,7 @@ function deliverableTest() {
         if (Math.random() > 0.7) status = "done";
         else if (Math.random() > 0.5) status = "current";
         else status = "waiting";
-        var end = randomDate(new Date(), new Date("01-01-2018"));
+        var end = randomDate(new Date(), new Date("01/01/2018"));
         var start = randomDate(new Date(), end);
         graph.addNodeComplete("Task " + i, "deliverable", "perm", start, end, status);
     }
