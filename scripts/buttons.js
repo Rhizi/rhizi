@@ -41,6 +41,11 @@ $('.set-user').click(function() {
     $('.set-user').hide();
     $('.set-user-form').show();
     $('.set-user-form').submit(function() {
-        graph.set_user($('.set-user-input').val());
+        var user = $('.set-user-input').val();
+        graph.set_user(user);
+        $('.set-user').html('user: ' + user);
+        $('.set-user').show();
+        $('.set-user-form').hide();
+        $('.save-history').show();
     })
 });
