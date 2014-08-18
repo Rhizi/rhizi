@@ -272,38 +272,26 @@ input:focus {
    border-color: #303030;
 }
 
-.debug{
-  position:fixed;
-  bottom:10px;
-  left:10px;
-}
-
-.save{
-  position:fixed;
-  bottom:30px;
-  left:10px;
-  text-decoration: none;
-}
-
-.saveToFile {
-  position:fixed;
-  bottom:30px;
-  left:60px;
-  text-decoration: none;
-}
-
-.load{
-  position:fixed;
-  bottom:50px;
-  left:10px;
-  text-decoration: none;
-}
-
-.deliverabletest{
+.debug-ui {
   position:fixed;
   bottom:70px;
   left:10px;
   text-decoration: none;
+}
+
+.debug{
+}
+
+.save{
+}
+
+.saveToFile {
+}
+
+.load{
+}
+
+.deliverabletest{
 }
 
 .poweredby{
