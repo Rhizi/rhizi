@@ -33,16 +33,6 @@ $('.load').click(function(){
 
 });
 
-  $('.deliverabletest').click(function(){
-    deliverableTest();
-  });
-
-function fetchNode(id){
-  for( x in nodes){
-    if(x.id===id){
-      console.log("found");
-      return x;
-    }
-  }
-  return null;
-}
+$('.deliverabletest').click(function(){
+  deliverableTest();
+});
