@@ -953,6 +953,9 @@ function editNode(d, i) {
     $('#editname').val(oldname);
 
     $('#editform').keypress(function(e) {
+        if (graph.history !== undefined) {
+            graph.history.record_keystrokes(KEYSTROKE_WHERE_EDIT_NODE, [e.which]);
+        }
      if (e.which == 13) {
         $('.editinfo').css('top', -100);
         $('.editinfo').css('left', 0);

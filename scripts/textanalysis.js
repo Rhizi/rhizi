@@ -22,27 +22,27 @@ $('#textanalyser').autocompleteTrigger({
 
 
 $("#textanalyser").keypress(function(e) {
+     if (graph.history !== undefined) {
+         graph.history.record_keystrokes(KEYSTROKE_WHERE_TEXTANALYSIS, [e.which]);
+     }
      if (e.which == 13) {
         if(!suggestionChange){
             text = $('#textanalyser').val();
             $('#textanalyser').val("");
             TextAnalyser2(text, true);
             typeStack=[];
-        }else{
+        } else {
             suggestionChange=false;
         }
-
-    return false;
+        return false;
     }
 
     if (e.which == 37) {//RIGHT
-
         $('body').scrollLeft(0);
         e.stopPropagation();
         return false;
     }
     if (e.which == 39) { //LEFT
-
         $('body').scrollLeft(0);
         e.stopPropagation();
         return false;
@@ -52,7 +52,9 @@ $("#textanalyser").keypress(function(e) {
 
 $(document).keydown(function(e) {
   
-
+    if (graph.history !== undefined) {
+        graph.history.record_keystrokes(KEYSTROKE_WHERE_DOCUMENT, [e.KeyCode]);
+    }
     if (e.keyCode == 9) {//TAB
         e.preventDefault();
         changeType("down", lastnode);

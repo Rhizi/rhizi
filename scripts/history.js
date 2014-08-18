@@ -20,10 +20,14 @@ function History(user) {
     this.user = user;
 }
 
-var ACTION_TYPE = 'ACTION_TYPE';
+var ACTION_KEYSTROKES = 'ACTION_KEYSTROKES';
 var ACTION_MOUSE = 'ACTION_MOUSE';
 var ACTION_GRAPH_ADD = 'ACTION_GRAPH_ADD';
 var ACTION_GRAPH_DELETE = 'ACTION_GRAPH_DELETE';
+
+var KEYSTROKE_WHERE_TEXTANALYSIS = 'KEYSTROKE_WHERE_TEXTANALYSIS';
+var KEYSTROKE_WHERE_DOCUMENT = 'KEYSTROKE_WHERE_DOCUMENT';
+var KEYSTROKE_WHERE_EDIT_NODE = 'KEYSTROKE_WHERE_EDIT_NODE';
 
 History.prototype.record = function(d)
 {
@@ -75,5 +79,20 @@ History.prototype.record_nodes = function(nodes)
     this.record({'action': ACTION_GRAPH_ADD,
      'nodes': nodes,
      'linkes': []
+    });
+}
+
+History.prototype.record_keystrokes = function(where, keys)
+{
+    if (keys === undefined || keys.length === undefined || keys.length <= 0) {
+        throw "Invalid arguments";
+    }
+    keys = keys.filter(function(k) { return k !== undefined; });
+    if (keys.length == 0) {
+        return;
+    }
+    this.record({'action': ACTION_KEYSTROKES,
+        'keys': keys,
+        'where': where
     });
 }
