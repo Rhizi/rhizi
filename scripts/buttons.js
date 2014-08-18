@@ -49,3 +49,10 @@ $('.set-user').click(function() {
         $('.save-history').show();
     })
 });
+
+$('.save-history').click(function() {
+    if (graph.history === undefined) {
+        throw "History is undefined";
+    }
+    graph.history.save_to_file();
+});

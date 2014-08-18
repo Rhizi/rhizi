@@ -37,9 +37,10 @@ function myGraph(el) {
         id = id.toLowerCase();
         var node = findNode(id, null);
         if (node !== undefined) {
+            console.log('addNode: node of same id exists: ' + id);
             //graph.editState(id, null, "temp");
         } else {
-            nodes.push({
+            var new_node = {
                 "id": id,
                 "text": text,
                 "type": type,
@@ -47,13 +48,16 @@ function myGraph(el) {
                 "start": start,
                 "end": end,
                 "status": status
-            });
-
+            };
+            nodes.push(new_node);
+            if (this.history !== undefined) {
+                this.history.record_nodes([new_node]);
+            }
         }
-
     }
 
     this.addNodeComplete = function(id, type, state, start, end, status) {
+        // No history recorded - this is a helper for loading from files / constant graphs
         var text = id;
         id = id.toLowerCase();
         var node = findNode(id, null);
@@ -86,6 +90,9 @@ function myGraph(el) {
         if (index !== undefined) {
             nodes.splice(index, 1);
         }
+        if (this.history != undefined) {
+            this.history.record_nodes_removal([id]);
+        }
     }
 
     this.removeNodes = function(state) {
@@ -101,8 +108,10 @@ function myGraph(el) {
             var index = findNodeIndex(id, state);
             if (index !== undefined) {
                 nodes.splice(index, 1);
-
             }
+        }
+        if (ns.length > 0 && this.history !== undefined) {
+            this.history.record_nodes_removal(ns.map(function(n) { return n.id; }));
         }
     }
 
@@ -173,12 +182,16 @@ function myGraph(el) {
         
         if(name)if(name.replace(/ /g,"")==="and")state="temp";
         if(!found && ((sourceNode !== undefined) && (targetNode !== undefined))) {
-            links.push({
+            var link = {
                 "source": sourceNode,
                 "target": targetNode,
                 "name": name,
                 "state": state
-            });
+            };
+            links.push(link);
+            if (this.history !== undefined) {
+                this.history.record_links([link]);
+            }
         }
     }
 
@@ -396,6 +409,7 @@ function myGraph(el) {
         }
         graph.recenterZoom();
         graph.update();
+        graph.clear_history();
     }
     this.load_from_json = load_from_json;
 
@@ -427,9 +441,15 @@ function myGraph(el) {
 
     function set_user(user) {
         this.user = user;
+        this.history = new History(this.user);
         console.log('new user: ' + user);
     }
     this.set_user = set_user;
+
+    function clear_history() {
+        this.history.clear();
+    }
+    this.clear_history = clear_history;
 
     force = d3.layout.force()
         .distance(120)
@@ -902,7 +922,6 @@ function showInfo(d, i) {
     $('.info').fadeOut(300);
   }
   graph.update();
-
 }
 
 function mousedown() {
