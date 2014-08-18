@@ -36,3 +36,11 @@ $('.load').click(function(){
 $('.deliverabletest').click(function(){
   deliverableTest();
 });
+
+$('.set-user').click(function() {
+    $('.set-user').hide();
+    $('.set-user-form').show();
+    $('.set-user-form').submit(function() {
+        graph.set_user($('.set-user-input').val());
+    })
+});
