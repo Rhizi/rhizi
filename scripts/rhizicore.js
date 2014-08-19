@@ -467,7 +467,9 @@ function myGraph(el) {
     this.set_user = set_user;
 
     function clear_history() {
-        this.history.clear();
+        if (this.history !== undefined) {
+            this.history.clear();
+        }
     }
     this.clear_history = clear_history;
 
