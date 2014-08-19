@@ -275,6 +275,13 @@ function myGraph(el) {
         }
     }
 
+    this.editURL = function(id, state, url) {
+        var index = findNode(id, state);
+        if ((index === undefined)) return;
+        index.url = url;
+        update();
+    }
+
     this.editState = function(id, state, newstate) {
         var index = findNode(id.toLowerCase(), state);
         if ((index !== undefined)) {
@@ -910,14 +917,18 @@ function showInfo(d, i) {
 
     $('#edittype').val(d.type);
 
+    $('#editurl').val(d.url);
+
     if (d.type === "deliverable") {
       $('#editstartdate').val(d.start);
       $('#editenddate').val(d.end);
     }
 
     $("#editbox").submit(function() {
-      if (d.type === "deliverable") graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
+      if (d.type === "deliverable")
+        graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
       graph.editType(d.id,d.type,$('#edittype').val());
+      graph.editURL(d.id, d.type, $('#editurl').val());
       graph.update();
       return false;
     });
