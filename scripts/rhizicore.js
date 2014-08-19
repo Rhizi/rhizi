@@ -925,8 +925,9 @@ function showInfo(d, i) {
     }
 
     $("#editbox").submit(function() {
-      if (d.type === "deliverable")
+      if (d.type === "deliverable") {
         graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
+      }
       graph.editType(d.id,d.type,$('#edittype').val());
       graph.editURL(d.id, d.type, $('#editurl').val());
       graph.update();
