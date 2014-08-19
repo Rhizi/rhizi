@@ -128,7 +128,6 @@ window.setInterval(function() {
 
 
 function TextAnalyser2(newtext, finalize) {
-    var states = ["NOTHING", "NEWNODE", "EDITNODE", "CLOSENODE", "NEWLINK", "EDITLINK", "SPECIAL", "QUARTET"];
     var segment = [],
         subsegment = [],
         sentence = [];
