@@ -6,7 +6,6 @@ var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
 var suggestionChange=false;
 var sentenceStack = [];
-var nodeindex, linkindex;
 var typeStack = [];
 
 var ExecutionStack = [];
@@ -133,8 +132,8 @@ function TextAnalyser2(newtext, finalize) {
         sentence = [];
     var newlinks = [];
     var newnodes = [];
-    linkindex = 0;
-    nodeindex = 0;
+    var linkindex = 0;
+    var nodeindex = 0;
     var orderStack = [];
     var quoteword = "";
     var ANDcase = false;
