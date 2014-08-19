@@ -256,16 +256,19 @@ function TextAnalyser2(newtext, finalize) {
     graph.removeLinks("temp");
 
     //ADD SURROUNDING BUBBLE
-    if (orderStack.length > 0) graph.addNode("", "bubble", "temp");
+    if (orderStack.length > 0) {
+        graph.addNode("", "bubble", "temp");
+    }
 
-    var abnormalGraph=false;
-    if((newlinks.length- ANDcount)>=3 )abnormalGraph=true;
+    var abnormalGraph = (newlinks.length - ANDcount) >= 3;
 
     //0-N ORDER STACK
     for (var m = 0; m < orderStack.length - 1; m++) {
         switch (orderStack[m]) {
             case "START":
-                if(!typeStack[nodeindex])typeStack[nodeindex]=nodetypes[typeindex];
+                if (!typeStack[nodeindex]) {
+                    typeStack[nodeindex] = nodetypes[typeindex];
+                }
                 break;
             case "NODE":
                 graph.addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
@@ -292,8 +295,10 @@ function TextAnalyser2(newtext, finalize) {
         case "NODE":
             typeStack[nodeindex]=nodetypes[typeindex];
             graph.addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
-            if (!abnormalGraph){ graph.addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
-            ANDconnect(newnodes[nodeindex]);}
+            if (!abnormalGraph) {
+                graph.addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
+                ANDconnect(newnodes[nodeindex]);
+            }
             break;
         case "LINK":
             linkindex++;
