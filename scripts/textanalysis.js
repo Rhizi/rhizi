@@ -10,6 +10,8 @@ var ExecutionStack = [];
 
 var lastnode;
 
+var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
+var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
 function TextAnalyser2(graph, newtext, finalize) {
     var segment = [],
@@ -24,6 +26,7 @@ function TextAnalyser2(graph, newtext, finalize) {
     var ANDcase = false;
     var ANDcount = 0;
     var prefix = "";
+    var ret = {};
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
@@ -120,6 +123,7 @@ function TextAnalyser2(graph, newtext, finalize) {
     var typesetter = "";
     if (finalize === true) {
         typesetter = "perm";
+        var sugg = []
         for (var n = 0; n < newnodes.length; n++) {
             if (Unique(newnodes[n])) {
                 if(newnodes[n].split(" ").length>1){
@@ -131,6 +135,7 @@ function TextAnalyser2(graph, newtext, finalize) {
             }
         }
         sugg.push(text);
+        ret.sugg = sugg;
     } else {
         typesetter = "temp";
     }
@@ -172,8 +177,7 @@ function TextAnalyser2(graph, newtext, finalize) {
             graph.addNode("new node", typeStack[nodeindex], "temp");
             if (!abnormalGraph){graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDconnect("new node");}
-            $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
-            $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
+            ret.state = ANALYSIS_NODE_START;
 
             break;
         case "NODE":
@@ -189,9 +193,7 @@ function TextAnalyser2(graph, newtext, finalize) {
             graph.addNode("new node", "empty", "temp");
             if (!abnormalGraph){ graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDconnect("new node");}
-
-            $('.typeselection').css('top', -300);
-            $('.typeselection').css('left', 0);
+            ret.state = ANALYSIS_LINK;
             break;
     }
 
@@ -243,6 +245,8 @@ function TextAnalyser2(graph, newtext, finalize) {
 
     //UPDATE GRAPH ONCE
     graph.update();
+
+    return ret;
 }
 
 

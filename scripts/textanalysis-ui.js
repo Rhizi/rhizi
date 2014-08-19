@@ -7,11 +7,22 @@ $('#textanalyser').autocompleteTrigger({
     source: sugg
 });
 
+// TODO - hide this in a scope
 function analyzeSentence(sentence, finalize)
 {
     var d = TextAnalyser2(graph, sentence, finalize);
-    for (var k in d.suggestions) {
-        sugg[k] = k;
+    for (var k in d.sugg) {
+        sugg.push(k);
+    }
+    switch (d.state) {
+    case ANALYSIS_NODE_START:
+        $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
+        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
+        break;
+    case ANALYSIS_LINK:
+        $('.typeselection').css('top', -300);
+        $('.typeselection').css('left', 0);
+        break;
     }
 }
 
@@ -24,7 +35,7 @@ $("#textanalyser").keypress(function(e) {
         if(!suggestionChange){
             text = $('#textanalyser').val();
             $('#textanalyser').val("");
-            TextAnalyser2(graph, text, true);
+            analyzeSentence(text, true);
             typeStack=[];
         } else {
             suggestionChange=false;
@@ -116,7 +127,7 @@ window.setInterval(function() {
         if(text.length*8>500)$('#textanalyser').css('width',text.length*8+20);
         // text changed
         text = $('#textanalyser').val();
-        TextAnalyser2(graph, text, false);
+        analyzeSentence(text, false);
         suggestionChange=false;
     }
 }, 5);
