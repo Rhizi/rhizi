@@ -47,6 +47,7 @@ $('.set-user').click(function() {
         $('.set-user').show();
         $('.set-user-form').hide();
         $('.save-history').show();
+        return false;
     })
 });
 
