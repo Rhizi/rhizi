@@ -28,6 +28,19 @@ function myGraph(el) {
         update();
     }
 
+    function makeNewNode(spec) {
+        return {
+            'id': spec.id,
+            'text': spec.text,
+            'type': spec.type,
+            'state': spec.state,
+            'start': spec.start,
+            'end': spec.end,
+            'status': spec.status,
+            'url': spec.url
+        };
+    }
+
     ///FUNCTIONS
     this.addNode = function(id, type, state) {
         var start = 0,
@@ -40,7 +53,7 @@ function myGraph(el) {
             console.log('addNode: node of same id exists: ' + id);
             //graph.editState(id, null, "temp");
         } else {
-            var new_node = {
+            var new_node = makeNewNode({
                 "id": id,
                 "text": text,
                 "type": type,
@@ -48,7 +61,7 @@ function myGraph(el) {
                 "start": start,
                 "end": end,
                 "status": status
-            };
+            });
             nodes.push(new_node);
             if (this.history !== undefined) {
                 this.history.record_nodes([new_node]);
@@ -64,7 +77,7 @@ function myGraph(el) {
         if (node !== undefined) {
             graph.editState(id, null, "temp");
         } else {
-            nodes.push({
+            nodes.push(makeNewNode({
                 "id": id,
                 "text": text,
                 "type": type,
@@ -72,7 +85,7 @@ function myGraph(el) {
                 "start": start,
                 "end": end,
                 "status": status
-            });
+            }));
 
         }
 
