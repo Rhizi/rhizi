@@ -878,7 +878,6 @@ function deliverableTest() {
 }
 
 
-// http: //open.spotify.com/track/2ClxMaiC6wPP93pA0Ql0Vz
 function showInfo(d, i) {
   if (d.state !== "chosen") {
     graph.highlightNode(d.id, null);
