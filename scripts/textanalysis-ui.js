@@ -10,11 +10,11 @@ $('#textanalyser').autocompleteTrigger({
 // TODO - hide this in a scope
 function analyzeSentence(sentence, finalize)
 {
-    var d = TextAnalyser2(graph, sentence, finalize);
-    for (var k in d.sugg) {
+    var ret = TextAnalyser2(sentence, finalize);
+    for (var k in ret.sugg) {
         sugg.push(k);
     }
-    switch (d.state) {
+    switch (ret.state) {
     case ANALYSIS_NODE_START:
         $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
@@ -23,6 +23,25 @@ function analyzeSentence(sentence, finalize)
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);
         break;
+    }
+    //REINITIALISE GRAPH (DUMB BUT IT WORKS)
+    graph.removeNodes("temp");
+    graph.removeLinks("temp");
+    for (var k in ret.nodes) {
+        var n = ret.nodes[k];
+        graph.addNode(n.id, n.type, n.state);
+    }
+    for (var k in ret.links) {
+        var l = ret.links[k];
+        graph.addLink(l.sourceId, l.targetId, l.name, l.state);
+    }
+
+    //UPDATE GRAPH ONCE
+    graph.update();
+
+    if (finalize) {
+        $('.typeselection').css('top', -300);
+        $('.typeselection').css('left', 0);
     }
 }
 

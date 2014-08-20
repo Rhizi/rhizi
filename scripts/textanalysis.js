@@ -13,7 +13,7 @@ var lastnode;
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
-function TextAnalyser2(graph, newtext, finalize) {
+function TextAnalyser2(newtext, finalize) {
     var segment = [],
         subsegment = [],
         sentence = [];
@@ -26,7 +26,14 @@ function TextAnalyser2(graph, newtext, finalize) {
     var ANDcase = false;
     var ANDcount = 0;
     var prefix = "";
-    var ret = {};
+    var ret = {'nodes': [], 'links': []};
+
+    function addNode(id, type, state) {
+        ret.nodes.push({'id':id, 'type':type, 'state':state});
+    }
+    function addLink(src, dst, name, state) {
+        ret.links.push({'sourceId':src, 'targetId':dst, 'name':name, 'state':state});
+    }
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
@@ -140,13 +147,9 @@ function TextAnalyser2(graph, newtext, finalize) {
         typesetter = "temp";
     }
 
-    //REINITIALISE GRAPH (DUMB BUT IT WORKS)
-    graph.removeNodes("temp");
-    graph.removeLinks("temp");
-
     //ADD SURROUNDING BUBBLE
     if (orderStack.length > 0) {
-        graph.addNode("", "bubble", "temp");
+        addNode("", "bubble","temp");
     }
 
     var abnormalGraph = (newlinks.length - ANDcount) >= 3;
@@ -160,8 +163,10 @@ function TextAnalyser2(graph, newtext, finalize) {
                 }
                 break;
             case "NODE":
-                graph.addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
-                if (!abnormalGraph) graph.addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
+                addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
+                if (!abnormalGraph) {
+                    addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
+                }
                 nodeindex++;
                 break;
             case "LINK":
@@ -174,25 +179,28 @@ function TextAnalyser2(graph, newtext, finalize) {
     switch (orderStack[orderStack.length - 1]) {
         case "START":
             typeStack[nodeindex]=nodetypes[typeindex];
-            graph.addNode("new node", typeStack[nodeindex], "temp");
-            if (!abnormalGraph){graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
+            addNode("new node", typeStack[nodeindex], "temp");
+            if (!abnormalGraph) {
+                addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
             ANDconnect("new node");}
             ret.state = ANALYSIS_NODE_START;
 
             break;
         case "NODE":
             typeStack[nodeindex]=nodetypes[typeindex];
-            graph.addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
+            addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
             if (!abnormalGraph) {
-                graph.addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
+                addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
                 ANDconnect(newnodes[nodeindex]);
             }
             break;
         case "LINK":
             linkindex++;
-            graph.addNode("new node", "empty", "temp");
-            if (!abnormalGraph){ graph.addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
-            ANDconnect("new node");}
+            addNode("new node", "empty", "temp");
+            if (!abnormalGraph) {
+                addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
+                ANDconnect("new node");
+            }
             ret.state = ANALYSIS_LINK;
             break;
     }
@@ -204,16 +212,14 @@ function TextAnalyser2(graph, newtext, finalize) {
             if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
                 verb=newlinks[x];
                 for(var y=0; y<x ;y++){
-                    graph.addLink(newnodes[y],node,verb,typesetter);
+                    addLink(newnodes[y], node, verb, typesetter);
                     for(var z=x; z<newnodes.length ;z++){
-                        graph.addLink(newnodes[y],newnodes[z],verb,typesetter);
+                        addLink(newnodes[y], newnodes[z], verb, typesetter);
                     }
                 }
                 
             }
         }
-
-
     }
 
     /*console.log(sentence);
@@ -229,22 +235,14 @@ function TextAnalyser2(graph, newtext, finalize) {
                     verb = newlinks[l];
                 }
         }
-        graph.addNode(completeSentence, "chainlink", typesetter);
+        addNode(completeSentence, "chainlink", typesetter);
         for (var n = 0; n < newnodes.length; n++) {
-            graph.addLink(newnodes[n], completeSentence, "", typesetter);
+            addLink(newnodes[n], completeSentence, "", typesetter);
         }
     }
 
     //FOR THE EXTERNAL ARROW-TYPE CHANGER
     lastnode = newnodes[nodeindex];
-
-    if(finalize){
-        $('.typeselection').css('top', -300);
-        $('.typeselection').css('left', 0);
-    }
-
-    //UPDATE GRAPH ONCE
-    graph.update();
 
     return ret;
 }
