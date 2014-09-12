@@ -12,7 +12,7 @@ function analyzeSentence(sentence, finalize)
 {
     var ret = TextAnalyser2(sentence, finalize);
     for (var k in ret.sugg) {
-        sugg.push(k);
+        sugg.push(ret.sugg[k]);
     }
     switch (ret.state) {
     case ANALYSIS_NODE_START:
