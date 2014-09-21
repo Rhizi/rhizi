@@ -51,13 +51,13 @@ $("#textanalyser").keypress(function(e) {
          graph.history.record_keystrokes(KEYSTROKE_WHERE_TEXTANALYSIS, [e.which]);
      }
      if (e.which == 13) {
-        if(!suggestionChange){
+        if(!suggestionChange) {
             text = $('#textanalyser').val();
             $('#textanalyser').val("");
             analyzeSentence(text, true);
-            typeStack=[];
+            typeStack = [];
         } else {
-            suggestionChange=false;
+            suggestionChange = false;
         }
         return false;
     }
@@ -94,10 +94,10 @@ $(document).keydown(function(e) {
     }
 
     if (e.keyCode == 38) {//UP
-        suggestionChange=true;
+        suggestionChange = true;
     }
     if (e.keyCode == 40) {//DOWN
-        suggestionChange=true;
+        suggestionChange = true;
     }
 
     if (e.keyCode == 9) {//TAB
