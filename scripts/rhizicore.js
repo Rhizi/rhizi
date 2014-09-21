@@ -230,8 +230,11 @@ function myGraph(el) {
         var new_text = newname;
         id = id && id.toLowerCase();
         var new_id = newname.toLowerCase();
+        var index2 = undefined;
+        if (id != new_id) {
+            index2 = findNode(new_id, type);
+        }
         var index = findNode(id, type);
-        var index2 = findNode(new_id, type);
         var acceptReplace=true;
 
         if ((index !== undefined)) {
