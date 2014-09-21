@@ -89,14 +89,12 @@
               $(this).val(firstTextPart + text.substring(cursorPosition, text.length));
               acTrigger.setCursorPosition(firstTextPart.length);
             } else {
-
               var text = $(this).text();
               var html = $(this).html();
-
               var searchTerm = text.substring(0, cursorPosition);
-
               var i = 0;
               var index = 0;
+
               while (i < searchTerm.length) {
                 index = html.lastIndexOf(searchTerm.substring(i));
                 if (index != -1) {
@@ -147,7 +145,6 @@
           var delay = typeof acTrigger.options.delay === 'undefined' ? 0 : acTrigger.options.delay;
 
           if (event.keyCode != $.ui.keyCode.UP && event.keyCode != $.ui.keyCode.DOWN) {
-
             if ($(this).is('input,textarea')) {
               var text = $(this).val();
             } else {
@@ -174,7 +171,6 @@
      * @description Destroy an instantiated plugin and clean up modifications the widget has made to the DOM
      */
     destroy: function () {
-
       // this.element.removeStuff();
       // For UI 1.8, destroy must be invoked from the
       // base widget
@@ -216,7 +212,8 @@
       lastTriggerEndPosition = text.substring(0, cursorPosition).lastIndexOf(triggerEnd);
 
 //      console.log('autocomplete: '+text+", lastTriggerPosition: "+lastTriggerPosition+", lastTriggerEndPosition: "+lastTriggerEndPosition + ", cursorPosition: "+cursorPosition);
-      if ((lastTriggerEndPosition < lastTriggerPosition || textLength >= trigger.length) && lastTriggerPosition != -1) {
+      if ((lastTriggerEndPosition < lastTriggerPosition || textLength >= trigger.length)
+          && lastTriggerPosition != -1) {
         query = text.substring(lastTriggerPosition + trigger.length, cursorPosition);
 //        console.log('query '+query);
         acTrigger.triggered = true;
@@ -225,9 +222,6 @@
         acTrigger.triggered = false;
         widget.autocomplete("close");
       }
-
     }
-
-
   });
 })(jQuery, window, document);
