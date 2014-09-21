@@ -64,37 +64,37 @@ function TextAnalyser2(newtext, finalize) {
     //BUILD NEW NODE AND LINK ARRAYS WITH ORDER OF APPEARENCE
     for (var m = 0; m < sentence.length; m++) {
         switch (sentence[m]) {
-            case "#":
-                orderStack.push("START");
-                break;
-            case "and":
-            case "+":
-            case ",":
-            case "&":
-                sentence[m]=" and ";
-                ANDcount++;
-                //orderStack.push("AND");
-            default:
-                if (orderStack[orderStack.length - 1] === "START") {
-                    orderStack.push("NODE");
-                    newnodes.push(sentence[m]);
-                    linkindex++;
-                } else if (orderStack[orderStack.length - 1] === "NODE") {
-                    orderStack.push("LINK");
-                    if (!newlinks[linkindex]) {
-                        newlinks[linkindex] = sentence[m] + " ";
-                    } else {
-                        newlinks[linkindex] += sentence[m] + " ";
-                    }
+        case "#":
+            orderStack.push("START");
+            break;
+        case "and":
+        case "+":
+        case ",":
+        case "&":
+            sentence[m]=" and ";
+            ANDcount++;
+            //orderStack.push("AND");
+        default:
+            if (orderStack[orderStack.length - 1] === "START") {
+                orderStack.push("NODE");
+                newnodes.push(sentence[m]);
+                linkindex++;
+            } else if (orderStack[orderStack.length - 1] === "NODE") {
+                orderStack.push("LINK");
+                if (!newlinks[linkindex]) {
+                    newlinks[linkindex] = sentence[m] + " ";
                 } else {
-                    if (!newlinks[linkindex]) {
-                        newlinks[linkindex] = sentence[m] + " ";
-                    } else {
-                        newlinks[linkindex] += sentence[m] + " ";
-                    }
+                    newlinks[linkindex] += sentence[m] + " ";
                 }
-                if (newnodes.length === 0) prefix += sentence[m] + " ";
-                break;
+            } else {
+                if (!newlinks[linkindex]) {
+                    newlinks[linkindex] = sentence[m] + " ";
+                } else {
+                    newlinks[linkindex] += sentence[m] + " ";
+                }
+            }
+            if (newnodes.length === 0) prefix += sentence[m] + " ";
+            break;
         }
     }
 
