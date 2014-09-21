@@ -74,7 +74,7 @@
           },
           select: function (event, ui) {
             /**
-             * @description if a item is selected, insert the value between triggerStart and triggerEnd
+             * @description if an item is selected, insert the value between triggerStart and triggerEnd
              */
             var acTrigger = $(this).data("autocompleteTrigger") || $(this).data("uiAutocompleteTrigger");
             var trigger = acTrigger.options.triggerStart;
