@@ -374,8 +374,8 @@ function myGraph(el) {
     zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
     vis = this.vis = d3.select(el).append("svg:svg")
-        .attr("width", w * 5)
-        .attr("height", h )
+        .attr("width", Math.max(w, 1000) * 5)
+        .attr("height", Math.max(h, 1000) )
         .attr("pointer-events", "all")
         .append("g")
         .call(zoomObject)
