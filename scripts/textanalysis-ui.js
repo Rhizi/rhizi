@@ -35,7 +35,7 @@ function analyzeSentence(sentence, finalize)
     //UPDATE GRAPH ONCE
     graph.update();
 
-    if (finalize) {
+    if (finalize || sentence.length == 0) {
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);
     }
