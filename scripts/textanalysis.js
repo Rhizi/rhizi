@@ -17,7 +17,6 @@ var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
 function autoSuggestAddName(name)
 {
-    console.log('adding suggestion ' + name);
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
     if(name.split(" ").length > 1) {
         sugg['"'+newnodes[n]+'"'] = 1;
@@ -28,7 +27,6 @@ function autoSuggestAddName(name)
 
 function autocompleteCallback(request, response_callback)
 {
-    console.log('autocompleteCallback: ' + request.term);
     var ret = [];
     if (request.term === "" || request.term) {
         for (var name in sugg) {
