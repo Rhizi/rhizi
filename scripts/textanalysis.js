@@ -10,8 +10,35 @@ var ExecutionStack = [];
 
 var lastnode;
 
+var sugg = {}; // suggestions for autocompletion of node names
+
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
+
+function autoSuggestAddName(name)
+{
+    console.log('adding suggestion ' + name);
+    /* note that name can contain spaces - this is ok. We might want to limit this though? */
+    if(name.split(" ").length > 1) {
+        sugg['"'+newnodes[n]+'"'] = 1;
+    } else {
+        sugg[name] = 1;
+    }
+}
+
+function autocompleteCallback(request, response_callback)
+{
+    console.log('autocompleteCallback: ' + request.term);
+    var ret = [];
+    if (request.term === "" || request.term) {
+        for (var name in sugg) {
+            if (name.indexOf(request.term) == 0) {
+                ret.push(name);
+            }
+        }
+    }
+    response_callback(ret);
+}
 
 function TextAnalyser2(newtext, finalize) {
     var segment = [],
@@ -130,19 +157,9 @@ function TextAnalyser2(newtext, finalize) {
     var typesetter = "";
     if (finalize === true) {
         typesetter = "perm";
-        var sugg = []
         for (var n = 0; n < newnodes.length; n++) {
-            if (Unique(newnodes[n])) {
-                if(newnodes[n].split(" ").length>1){
-                    sugg.push('"'+newnodes[n]+'"');
-                }else{
-                    sugg.push(newnodes[n]);
-                }
-                
-            }
+            autoSuggestAddName(newnodes[n]);
         }
-        sugg.push(text);
-        ret.sugg = sugg;
     } else {
         typesetter = "temp";
     }
@@ -245,16 +262,4 @@ function TextAnalyser2(newtext, finalize) {
     lastnode = newnodes[nodeindex];
 
     return ret;
-}
-
-
-
-function Unique(newnode) {
-    var truth = true;
-    for (var p = 0; p < sugg.length; p++) {
-        if (sugg[p] === newnode) {
-            truth = false;
-        }
-    }
-    return truth;
 }

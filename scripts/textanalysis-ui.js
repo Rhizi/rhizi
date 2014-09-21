@@ -1,19 +1,15 @@
 var text = ""; // Last text of sentence
-var sugg = []; // suggestions for autocompletion of node names
 
 $('#textanalyser').autocompleteTrigger({
     triggerStart: '#',
     triggerEnd: '',
-    source: sugg
+    source: autocompleteCallback
 });
 
 // TODO - hide this in a scope
 function analyzeSentence(sentence, finalize)
 {
     var ret = TextAnalyser2(sentence, finalize);
-    for (var k in ret.sugg) {
-        sugg.push(ret.sugg[k]);
-    }
     switch (ret.state) {
     case ANALYSIS_NODE_START:
         $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
