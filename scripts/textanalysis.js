@@ -256,6 +256,8 @@ function TextAnalyser2(newtext, finalize) {
         }
     }
 
+    ret.drop_conjugator_links = ANDcount < linkindex;
+
     //FOR THE EXTERNAL ARROW-TYPE CHANGER
     lastnode = newnodes[nodeindex];
 

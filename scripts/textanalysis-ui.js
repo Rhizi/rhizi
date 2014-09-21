@@ -29,7 +29,7 @@ function analyzeSentence(sentence, finalize)
     }
     for (var k in ret.links) {
         var l = ret.links[k];
-        graph.addLink(l.sourceId, l.targetId, l.name, l.state);
+        graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
     }
 
     //UPDATE GRAPH ONCE

@@ -186,14 +186,16 @@ function myGraph(el) {
         }
     }
 
-    this.addLink = function(sourceId, targetId, name, state) {
+    this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {
         sourceId = sourceId && sourceId.toLowerCase();
         targetId = targetId && targetId.toLowerCase();
         var sourceNode = findNode(sourceId, null);
         var targetNode = findNode(targetId, null);
         var found = findLink(sourceId,targetId,name);
-        
-        if(name)if(name.replace(/ /g,"")==="and")state="temp";
+
+        if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
+            state = "temp";
+        }
         if(!found && ((sourceNode !== undefined) && (targetNode !== undefined))) {
             var link = {
                 "source": sourceNode,
