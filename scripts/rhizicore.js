@@ -421,6 +421,7 @@ function myGraph(el) {
         for(var i=0; i<data["nodes"].length; i++){
           var node=data.nodes[i];
           graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end),node.status);
+          autoSuggestAddName(node.id);
         }
 
         for(var j=0; j<data["links"].length; j++){
