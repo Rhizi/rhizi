@@ -19,7 +19,7 @@ function autoSuggestAddName(name)
 {
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
     if(name.split(" ").length > 1) {
-        sugg['"'+newnodes[n]+'"'] = 1;
+        sugg['"' + name + '"'] = 1;
     } else {
         sugg[name] = 1;
     }
