@@ -49,10 +49,7 @@ function myGraph(el) {
         var text = id;
         id = id.toLowerCase();
         var node = findNode(id, null);
-        if (node !== undefined) {
-            console.log('addNode: node of same id exists: ' + id);
-            //graph.editState(id, null, "temp");
-        } else {
+        if (node === undefined) {
             var new_node = makeNewNode({
                 "id": id,
                 "text": text,
