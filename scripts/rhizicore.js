@@ -338,7 +338,7 @@ function myGraph(el) {
 
 
     var findNode = function(id, state) {
-        //id=id.toLowerCase();
+        id = id && id.toLowerCase();
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i].id === id || nodes[i].state === state)
                 return nodes[i]
