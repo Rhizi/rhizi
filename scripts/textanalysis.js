@@ -137,19 +137,23 @@ function TextAnalyser2(newtext, finalize) {
                     newlinks[linkindex] += sentence[m] + " ";
                 }
             }
-            if (newnodes.length === 0) prefix += sentence[m] + " ";
+            if (newnodes.length === 0) {
+                prefix += sentence[m];
+            }
             break;
         }
     }
 
-    //ATTACH SENTENCE PREFIX
-    if (prefix) newlinks[1] += "(" + prefix + ")";
+    //PREFIX not null case - put complete sentence in first link.
+    if (prefix) {
+        newlinks[1] = prefix + " " + newnodes[0] + " " + newlinks[1] + newnodes[1];
+    }
 
     //WRITE COMPLETE SENTENCE
     linkindex = 0;
     nodeindex = 0;
     var word = "";
-    var completeSentence = "";
+    var completeSentence = prefix.length > 0 ? String(prefix) + " " : "";
     for (var m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === "NODE") {
             word += " (" + newnodes[nodeindex] + ") ";
