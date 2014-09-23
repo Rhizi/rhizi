@@ -38,6 +38,25 @@ function autocompleteCallback(request, response_callback)
     response_callback(ret);
 }
 
+/*
+ * TextAnalyser2
+ *
+ * Input:
+ *  @newtext - new sentence
+ *  @finalize - is this an intermediate editing state or are we editing the graph
+ *
+ * Output:
+ *  none
+ *
+ * Side effect:
+ *  updating graph (global)
+ *
+ * Implementation notes:
+ *  There is no well defined grammer. The translation goes from obvious to not
+ *  so much for more complex sentences involving more then two nodes (two '#'
+ *  marks).
+ *
+ */
 function TextAnalyser2(newtext, finalize) {
     var segment = [],
         subsegment = [],
