@@ -79,20 +79,18 @@ class DBO_add_node_set(DB_op):
     """
     DB op: add node set
     
-    @param node_map: type to node list map
+    @param node_map: node-type to node list map
+    @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
+    
     """
-    def __init__(self, node_map):
+    def __init__(self, node_map, input_to_DB_property_map=lambda _: _):
         super(DBO_add_node_set, self).__init__()
         self.node_map = node_map
 
         for type, n_set in self.node_map.items():
             q = "create (n:{0} {{prop_dict}}) return id(n)".format(type)
-            for n in n_set:
-                #
-                # any translation between how we accept node data
-                # and how we store them should go here
-                #
-                p = {'prop_dict' : { 'name' : n['name']}}
+            for n_prop_dict in n_set:
+                p = {'prop_dict' : input_to_DB_property_map(n_prop_dict)}
                 self.add_statement(q, p)
 
     def on_success(self, data):
@@ -140,7 +138,7 @@ class DBO_load_node_id_set(DB_op):
                 nid = k['row'][0]
                 id_set.append(nid)
 
-        log.debug('loaded node-set: ids: ' + str(id_set))
+        log.debug('loaded node id set: ' + str(id_set))
         return id_set
 
 class DB_Controller:
@@ -150,18 +148,23 @@ class DB_Controller:
     def __init__(self, config):
         self.config = config
 
+    def log_committed_queries(self, statement_set):
+        for sp_dict in statement_set['statements']:
+            log.debug('\tq: {0}'.format(sp_dict['statement']))
+
     def exec_op(self, op):
         """
         execute operation within a DB transaction
         """
         tx_base_url = self.config.db_base_url + '/db/data/transaction'
-        data = dbu.statement_set_to_REST_form(op.statement_set)
+        statement_set = dbu.statement_set_to_REST_form(op.statement_set)
 
         try:
             op.begin(tx_base_url)
             tx_url = "{0}/{1}".format(tx_base_url, op.tx_id)
-            ret_tx = dbu.post_neo4j(tx_url, data)
+            ret_tx = dbu.post_neo4j(tx_url, statement_set)
             op.commit()
+            self.log_committed_queries(statement_set)
             return op.on_success(ret_tx)
         except Exception as e:
             log.error(e.message)
