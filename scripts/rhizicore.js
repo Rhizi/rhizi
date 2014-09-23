@@ -267,8 +267,6 @@ function myGraph(el) {
         }
     }
 
-
-
     this.editType = function(id, state, newtype) {
         var index = findNode(id, state);
         if ((index !== undefined)) {

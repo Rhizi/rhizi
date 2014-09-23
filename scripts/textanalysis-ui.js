@@ -117,7 +117,9 @@ function textSelect(inp, s, e) {
 }
 
 function changeType(arg, id) {
-    if(!id)id="new node";
+    if(!id) {
+        id = "new node";
+    }
     if (arg === 'up') {
         if (typeindex < 4) typeindex++;
         else typeindex = 0;
@@ -131,7 +133,6 @@ function changeType(arg, id) {
         graph.editType(id, null, nodetypes[typeindex]);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
         graph.findCoordinates(lastnode,null);
-
     }
     graph.updateGraph();
 }
