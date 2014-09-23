@@ -141,6 +141,20 @@ class DBO_load_node_id_set(DB_op):
         log.debug('loaded node id set: ' + str(id_set))
         return id_set
 
+class DBO_load_node_set_by_id(DB_op):
+    """
+    load a set of nodes by ids
+    """
+
+    def __init__(self, id_set):
+        super(DBO_load_node_set_by_id, self).__init__()
+        q = "match (n) where n.id in {id_list} return n"
+        self.add_statement(q, { 'id_list': id_set})
+
+    def on_success(self, data):
+        log.debug('loaded node set: ' + str(data))
+        return data
+
 class DB_Controller:
     """
     neo4j DB controller
