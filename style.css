@@ -71,7 +71,8 @@ a:active {
 }
 
 #textanalyser{
-  width:500px;
+  position: fixed;
+  width:900px;
   height:30px;
 }
 
