@@ -33,11 +33,12 @@ def load_node_by_id_attr():
     op = dbc.DBO_load_node_set_by_id_attribute([node_id])
     try:
         n = db_ctl.exec_op(op)
-        ret = __response_wrap(n)
+        ret = __response_wrap(data=n)
         return jsonify(ret)
     except Exception as e:
-        return jsonify('unable to load node with id: {0}'.format(node_id))
+        return jsonify(__response_wrap(error='unable to load node with id: {0}'.format(node_id)))
 
-@webapp.route("/add/node-single")
+@webapp.route("/add/node-single", methods=['POST'])
 def add_node(n):
+    
     pass
