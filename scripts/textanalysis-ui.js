@@ -22,21 +22,7 @@ function analyzeSentence(sentence, finalize)
         $('.typeselection').css('left', 0);
         break;
     }
-    //REINITIALISE GRAPH (DUMB BUT IT WORKS)
-    graph.removeNodes("temp");
-    graph.removeLinks("temp");
-    for (var k in ret.nodes) {
-        var n = ret.nodes[k];
-        graph.addNode(n.id, n.type, n.state);
-    }
-    for (var k in ret.links) {
-        var l = ret.links[k];
-        graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
-    }
-
-    //UPDATE GRAPH ONCE
-    graph.update();
-
+    ret.applyToGraph(graph);
     if (finalize || sentence.length == 0) {
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);

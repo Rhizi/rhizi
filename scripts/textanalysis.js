@@ -284,5 +284,21 @@ var textAnalyser2 = function (newtext, finalize) {
     //FOR THE EXTERNAL ARROW-TYPE CHANGER
     lastnode = newnodes[nodeindex];
 
+    ret.applyToGraph = function(graph) {
+        //REINITIALISE GRAPH (DUMB BUT IT WORKS)
+        graph.removeNodes("temp");
+        graph.removeLinks("temp");
+        for (var k in ret.nodes) {
+            var n = ret.nodes[k];
+            graph.addNode(n.id, n.type, n.state);
+        }
+        for (var k in ret.links) {
+            var l = ret.links[k];
+            graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
+        }
+        //UPDATE GRAPH ONCE
+        graph.update();
+    }
+
     return ret;
 }
