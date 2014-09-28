@@ -4,6 +4,8 @@ import rhizi_api
 import json
 
 from rhizi_server import Config
+from werkzeug.test import EnvironBuilder
+from werkzeug.test import Client
 
 class TestRhiziAPI(unittest.TestCase):
 
@@ -16,11 +18,13 @@ class TestRhiziAPI(unittest.TestCase):
         """
         add node set test
         """
-        node_map = { 'Skill': { 'name': 'kung-fu' } }
-        
+        node_map = { 'Skill': [{ 'name': 'kung-fu' }, { 'name': 'judo' }] }
         with rhizi_api.webapp.test_client() as c:
-            req = c.post('/add/node-set', data={'node_map':node_map})
-            rz_data = json.loads(req.data)['data']
+            req = c.post('/add/node-set', content_type='application/json', 
+                         data=json.dumps(dict(node_map=node_map)))
+            id_set = json.loads(req.data)['data']
+            self.assertEqual(2, len(id_set))
+            self.assertTrue(isinstance(id_set[0], int))
 
     def test_load_node_non_existing(self):
         """
