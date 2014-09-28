@@ -43,7 +43,7 @@ History.prototype.save_to_file = function()
 {
     // TODO: filename and chrome support (grep json;base64 for other locations)
     // perhaps has to wait for FileWriter api?
-    location.href = 'data:text/json;base64,' + window.btoa(JSON.stringify(this.records));
+    location.href = 'data:text/json;base64,' + window.btoa(JSON.stringify(this.records, function (k, v) { return v; }, 2));
 };
 
 History.prototype.clear_history = function()
