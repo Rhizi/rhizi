@@ -377,10 +377,16 @@ function myGraph(el) {
         .attr("width", '100%')
         .attr("height", '100%')
         .attr("pointer-events", "all")
-        .append("g")
         .call(zoomObject)
         .append("g");
 
+    vis.append("rect")
+        .attr("class", "overlay graph")
+        .attr("width", $(el).innerWidth() * 12)
+        .attr("height", $(el).innerHeight() * 12)
+        .attr("x", -$(el).innerWidth() * 5)
+        .attr("y", -$(el).innerHeight() * 5);
+    $('.overlay').click(mousedown);
 
     function zoom() {
         if (graphstate === "GRAPH") {
@@ -494,18 +500,8 @@ function myGraph(el) {
     };
 
     var update = function() {
-        vis.selectAll(".graph").remove();
-
         link = vis.selectAll(".link")
             .data(links);
-
-        vis.append("rect")
-            .attr("class", "overlay graph")
-            .attr("width", $(el).innerWidth()*12)
-            .attr("height", $(el).innerHeight()*12)
-            .attr("x", -$(el).innerWidth()*5)
-            .attr("y", -$(el).innerHeight()*5);
-        $('.overlay').click(mousedown);
 
         link.enter().append("svg:defs").selectAll("marker")
             .data(["end"]) // Different link/path types can be defined here
@@ -538,33 +534,33 @@ function myGraph(el) {
                 //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
             });;
 
+        link.exit().remove();
 
         linktext = vis.selectAll(".linklabel").data(links);
         linktext.enter()
             .append("text")
             .attr("class", "linklabel graph")
             .attr("text-anchor", "middle")
-            .text(function(d) {
+            .on("click", function(d, i) {
+                if(d.state !== "temp") {
+                    editLink(d, i);
+                }
+            });
 
-                if ( d.name)if(d.target.state === "temp" || d.source.state === "chosen" || d.target.state === "chosen") {
+        linktext
+            .text(function(d) {
+                if (d.name) {
                     if (d.name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen" || d.state==="temp") {
                         return d.name;
                     } else {
                         return d.name.substring(0, 14) + "...";
                     }
                 } else {
-                    return " ";
+                    return "";
                 }
-
-            })
-            .on("click", function(d, i) {
-                if(d.state!=="temp")editLink(d, i);
             });
 
-        link.exit().remove();
-
-
-
+        linktext.exit().remove();
 
         node = vis.selectAll(".node")
             .data(nodes, function(d) {
@@ -572,32 +568,35 @@ function myGraph(el) {
             });
 
         var nodeEnter = node.enter()
-            .append("g").call(drag);
-
-
-        nodetext = nodeEnter.insert("text")
-            .attr("class", "nodetext graph")
-            .attr("dx", 15)
-            .attr("dy", ".30em")
-            .text(function(d) {
-                if (d.state === "temp") return d.text;
-                else if (d.state === "chosen") {
-                    return d.text;
-                } else {
-                    if (d.text.length < 28) return d.text;
-                    else return d.text.substring(0, 25) + "...";
-                }
-            })
+            .append("g").attr('class', 'node')
             .on("click", function(d, i) {
                 if(d.state!=="temp"){
                     editNode(d, i);
                     showInfo(d, i);
                 }
+            })
+            .call(drag);
+
+        nodetext = nodeEnter.insert("text")
+            .attr("class", "nodetext graph")
+            .attr("dx", 15)
+            .attr("dy", ".30em");
+
+        node.select('g.node text')
+            .text(function(d) {
+                if (d.state === "temp" || d.state === 'chosen') {
+                     return d.text;
+                } else {
+                    if (d.text.length < 28) {
+                        return d.text;
+                    } else {
+                        return d.text.substring(0, 25) + "...";
+                    }
+                }
             });
 
-
-
-        circle = nodeEnter.insert("circle")
+        circle = nodeEnter.insert("circle");
+        node.select('g.node circle')
             .attr("class", "circle graph")
             .attr("r", function(d) {
                 return customSize(d.type) - 2;
@@ -623,9 +622,12 @@ function myGraph(el) {
                 else return "0 0 0px #FFFF8F";
             })
             .on("click", function(d, i) {
-                 if(d.state!=="temp")showInfo(d, i);
-                else graph.removeHighlight();
-
+                d3.event.stopPropagation();
+                if(d.state!=="temp") {
+                     showInfo(d, i);
+                } else {
+                    graph.removeHighlight();
+                }
                 graph.update();
             });
 
