@@ -15,6 +15,9 @@ webapp.debug = True
 # injected: DB controller
 db_ctl = None
 
+def __sanitize_input():
+    pass
+
 def __response_wrap(data=None, error=None):
     """
     wrap response data/errors as dict - this should always be used when returning
@@ -30,6 +33,9 @@ def load_node_by_id_attr():
     @raise exception: on error
     """
     node_id = request.form['id']
+    
+    __sanitize_input(node_id)
+    
     op = dbc.DBO_load_node_set_by_id_attribute([node_id])
     try:
         n = db_ctl.exec_op(op)
@@ -40,5 +46,9 @@ def load_node_by_id_attr():
 
 @webapp.route("/add/node-single", methods=['POST'])
 def add_node(n):
-    
+    pass
+
+@webapp.route("/add/node-set", methods=['POST'])
+def add_node_set(n_set):
+    op = dbc.DBO_add_node_set()
     pass
