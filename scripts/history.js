@@ -78,7 +78,7 @@ History.prototype.record_nodes = function(nodes)
     }
     this.record({'action': ACTION_GRAPH_ADD,
      'nodes': nodes,
-     'linkes': []
+     'links': []
     });
 }
 
