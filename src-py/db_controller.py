@@ -93,7 +93,6 @@ class DBO_add_node_set(DB_op):
         
         @param node_map: node-type to node list map
         @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
-        
         """
         super(DBO_add_node_set, self).__init__()
         self.node_map = node_map
@@ -152,6 +151,21 @@ class DBO_load_node_id_set(DB_op):
         log.debug('loaded node id set: ' + str(id_set))
         return id_set
 
+class DBO_load_node_set_by_DB_id(DB_op):
+    def __init__(self, id_set):
+        """
+        load a set of nodes whose DB id is in id_set
+        
+        @return: loaded node set or an empty set if no match was found
+        """
+        super(DBO_load_node_set_by_DB_id, self).__init__()
+        q = "match (n) where id(n) in {id_set} return n"
+        self.add_statement(q, { 'id_set': id_set})
+
+    def on_success(self, data):
+        log.debug('loaded node set: ' + str(data))
+        return self.parse_single_query_response_data(self.statement_set[0], data)
+
 class DBO_load_node_set_by_attribute(DB_op):
 
     def __init__(self, attr_name, attr_set):
@@ -161,8 +175,8 @@ class DBO_load_node_set_by_attribute(DB_op):
         @return: loaded node set or an empty set if no match was found
         """
         super(DBO_load_node_set_by_attribute, self).__init__()
-        q = "match (n) where n.{0} in {{attr_list}} return n".format(attr_name)
-        self.add_statement(q, { 'attr_list': attr_set})
+        q = "match (n) where n.{0} in {{attr_set}} return n".format(attr_name)
+        self.add_statement(q, { 'attr_set': attr_set})
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
@@ -213,4 +227,6 @@ class DB_Controller:
         """
         @deprecated: use transaction based api
         """
-        self.post_neo4j('/db/data/cypher', {"query" : q})
+
+        # call post and not dbu.post_neo4j to avoid response key errors
+        dbu.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})

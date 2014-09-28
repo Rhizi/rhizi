@@ -33,6 +33,14 @@ class TestDBController(unittest.TestCase):
         self.db_ctl.exec_cypher_query('match ()-[r]-() delete r')
         self.db_ctl.exec_cypher_query('match (n) delete n')
 
+    def test_node_DB_id_lifecycle(self):
+        """
+        test node DB id life cycle
+        """
+        id_set = self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_DB_id(id_set))
+        self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
+
     def test_node_lifecycle(self):
         """
         test node commit & load
