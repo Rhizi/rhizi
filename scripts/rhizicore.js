@@ -488,8 +488,12 @@ function myGraph(el) {
     nodes = force.nodes();
     links = force.links();
 
-    var update = function() {
+    var state_to_link_class = {
+        enter:'enterlink graph',
+        exit:'exitlink graph',
+    };
 
+    var update = function() {
         vis.selectAll(".graph").remove();
 
         link = vis.selectAll(".link")
@@ -521,13 +525,7 @@ function myGraph(el) {
         link.enter().append("path")
             .attr("d", "M0,-5L10,0L0,5")
             .attr("class", function(d) {
-
-                if (d.state === "enter") {
-                    return "enterlink graph";
-                } else if (d.state === "exit") {
-                    return "exitlink graph";
-                } else return "link graph";
-
+                return state_to_link_class[d.state] || 'link graph';
             })
             .style("stroke-dasharray", function(d,i){
                 if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
