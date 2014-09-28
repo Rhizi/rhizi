@@ -6,8 +6,6 @@ sentence+="#links and #nodes have #context and #meaning|";
 sentence+="#entities and #concepts are #nodes|";
 sentence+="We built this entire graph in 30 seconds, try it out yourself!";*/
 
-
-
 sentence+=' #Hi, this is #Rhizibot!|';
 sentence+='#Rhizi is a tool for creating interactive #Networks|';
 sentence+='With #Rhizi your #Text becomes a #Network"|';
@@ -27,56 +25,44 @@ sentence+='#Rhizi is useful for #"Mapping ideas" and "#"Creating info graphics" 
 sentence+="#You can click on any #Node to change and modify it's #Properties|";
 sentence+='#Play around and have #Fun!|';
 
-var counter=0;
-var sentencecounter=0;
-var robot;
-var speed=1;
+var robot = function (sentence) {
+    var r = {
+        speed: 1,
+        counter: 0,
+        sentence: sentence,
+        sentencecounter: 0,
+        element: element || $('#textanalyser')};
+    r.next_event = function () {
+        if(r.counter <= r.sentence.length) {
+            var text = r.element.val();
+            r.counter++;
+            if (r.sentence.charAt(r.counter) !== "|") {
+                r.element.val(text + r.sentence.charAt(r.counter));
+                //if(Math.random()>0.9)graph.editType("x","temp",nodetypes[Math.round(Math.random()*4)]);
+                if (r.sentence.charAt(r.counter)==="#") {
+                  r.sentencecounter++;
+                  r.timeout_id = window.setTimeout( r.next_event, 30/r.speed+Math.random()*160/r.speed );
+                } else {
+                  r.timeout_id = window.setTimeout( r.next_event, 50/r.speed+Math.round(Math.random()*100/r.speed) );
+                }
+            } else {
+                var e = jQuery.Event("keypress");
+                e.which = 13;
+                e.keyCode = 13;
+                $("#textanalyser").trigger(e);
+                window.setTimeout( r.next_event, 650/r.speed );
+            }
+        } else {
+            window.clearInterval(r.timeout_id);
+        }
+    }
+    return r;
+}
+
 $('.logo').click(function(){
-
-setTimeout( Robot, 1000 );
-
-
+    setTimeout( robot(sentence).next_event, 1000 );
 });
 
 /*var answer = confirm ("Would you like a tutorial?")
 if (answer)
 setTimeout( Robot, 100 );*/
-
-
-
-
-function Robot(){
-    
-      
-    if(counter<=sentence.length){
-      var text=$('#textanalyser').val();
-         counter++;
-      if(sentence.charAt(counter)!=="|"){
-      $('#textanalyser').val(text+sentence.charAt(counter));
-        //if(Math.random()>0.9)graph.editType("x","temp",nodetypes[Math.round(Math.random()*4)]);
-
-        if(sentence.charAt(counter)==="#"){
-          sentencecounter++;
-          window.setTimeout( Robot, 30/speed+Math.random()*160/speed );
-        }else{
-          window.setTimeout( Robot, 50/speed+Math.round(Math.random()*100/speed) );
-        }
-    }else{
-      var e = jQuery.Event("keypress");
-      e.which = 13; 
-      e.keyCode = 13;
-      $("#textanalyser").trigger(e);
-          window.setTimeout( Robot, 650/speed );
-    }
-    }else{
-        window.clearInterval(robot);
-    }
-    
-
-      
- 
-}
-
-
-
-
