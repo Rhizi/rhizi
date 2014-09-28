@@ -137,16 +137,21 @@ function changeType(arg, id) {
     graph.updateGraph();
 }
 
-/* TODO: don't use interval by default but only if keys are comming to fast (but still - 5 ms??) */
-window.setInterval(function() {
-    if ($('#textanalyser').val() != text) {
+var analysis_element = '#textanalyser';
 
-        if(text.length*8 > 500)$('#textanalyser').css('width',text.length*8+20);
-        // text changed
-        text = $('#textanalyser').val();
-        analyzeSentence(text, false);
-        suggestionChange = false;
-    }
-}, 5);
+if ($(analysis_element).length == 1) {
+    /* TODO: don't use interval by default but only if keys are comming to fast (but still - 5 ms??) */
+    window.setInterval(function() {
+        var e = $(analysis_element);
+        if (e.val() != text) {
 
-
+            if (text.length * 8 > 500) {
+                e.css('width', text.length * 8 + 20);
+            }
+            // text changed
+            text = e.val();
+            analyzeSentence(text, false);
+            suggestionChange = false;
+        }
+    }, 5);
+}
