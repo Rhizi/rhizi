@@ -7,7 +7,8 @@ import urllib2
 
 def post_neo4j(url, data):
     """
-    return dict translation of the json string returned by neo4j, raise Exception if the 'errors' key is not empty  
+    @return dict object from the neo4j json POST response
+    @raise exception: if the 'errors' key is not empty
     """
     ret = post(url, data)
     ret_data = json.load(ret)
@@ -38,7 +39,7 @@ def statement_to_REST_form(query, parameters={}):
     """
     turn cypher query to neo4j json API format
     """
-    assert isinstance(query, str)
+    assert isinstance(query, basestring)
     assert isinstance(parameters, dict)
 
     return {'statement' : query, 'parameters': parameters}
