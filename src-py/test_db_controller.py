@@ -26,6 +26,13 @@ class TestDBController(unittest.TestCase):
     def setUp(self):
         self.flush_db()
 
+    def flush_db(self):
+        """
+        complete DB flush: remove all nodes & links
+        """
+        self.db_ctl.exec_cypher_query('match ()-[r]-() delete r')
+        self.db_ctl.exec_cypher_query('match (n) delete n')
+
     def test_node_lifecycle(self):
         """
         test node commit & load
