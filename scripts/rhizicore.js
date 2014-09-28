@@ -570,6 +570,10 @@ function myGraph(el) {
         var nodeEnter = node.enter()
             .append("g").attr('class', 'node')
             .on("click", function(d, i) {
+                if (d3.event.defaultPrevented) {
+                    // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                    return;
+                }
                 if(d.state!=="temp"){
                     editNode(d, i);
                     showInfo(d, i);
@@ -622,6 +626,10 @@ function myGraph(el) {
                 else return "0 0 0px #FFFF8F";
             })
             .on("click", function(d, i) {
+                if (d3.event.defaultPrevented) {
+                    // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                    return;
+                }
                 d3.event.stopPropagation();
                 if(d.state!=="temp") {
                      showInfo(d, i);
