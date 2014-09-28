@@ -9,7 +9,7 @@ $('#textanalyser').autocompleteTrigger({
 // TODO - hide this in a scope
 function analyzeSentence(sentence, finalize)
 {
-    var ret = TextAnalyser2(sentence, finalize);
+    var ret = textAnalyser2(sentence, finalize);
     switch (ret.state) {
     case ANALYSIS_NODE_START:
         $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});

@@ -39,7 +39,7 @@ function autocompleteCallback(request, response_callback)
 }
 
 /*
- * TextAnalyser2
+ * textAnalyser2
  *
  * Input:
  *  @newtext - new sentence
@@ -57,7 +57,7 @@ function autocompleteCallback(request, response_callback)
  *  marks).
  *
  */
-function TextAnalyser2(newtext, finalize) {
+var textAnalyser2 = function (newtext, finalize) {
     var segment = [],
         subsegment = [],
         sentence = [];
