@@ -1,6 +1,8 @@
 var text = ""; // Last text of sentence
+var element_name = '#textanalyser';
+var element = $(element_name);
 
-$('#textanalyser').autocompleteTrigger({
+element.autocompleteTrigger({
     triggerStart: '#',
     triggerEnd: '',
     source: autocompleteCallback
@@ -42,14 +44,14 @@ function analyzeSentence(sentence, finalize)
 }
 
 
-$("#textanalyser").keypress(function(e) {
+element.keypress(function(e) {
      if (graph.history !== undefined) {
          graph.history.record_keystrokes(KEYSTROKE_WHERE_TEXTANALYSIS, [e.which]);
      }
      if (e.which == 13) {
         if(!suggestionChange) {
-            text = $('#textanalyser').val();
-            $('#textanalyser').val("");
+            text = element.val();
+            element.val("");
             analyzeSentence(text, true);
             typeStack = [];
         } else {
@@ -137,19 +139,16 @@ function changeType(arg, id) {
     graph.updateGraph();
 }
 
-var analysis_element = '#textanalyser';
-
-if ($(analysis_element).length == 1) {
+if (element.length == 1) {
     /* TODO: don't use interval by default but only if keys are comming to fast (but still - 5 ms??) */
     window.setInterval(function() {
-        var e = $(analysis_element);
-        if (e.val() != text) {
+        if (element.val() != text) {
 
             if (text.length * 8 > 500) {
-                e.css('width', text.length * 8 + 20);
+                element.css('width', text.length * 8 + 20);
             }
             // text changed
-            text = e.val();
+            text = element.val();
             analyzeSentence(text, false);
             suggestionChange = false;
         }
