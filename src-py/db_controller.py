@@ -76,14 +76,14 @@ class DB_op(object):
         pass
 
 class DBO_add_node_set(DB_op):
-    """
-    DB op: add node set
-    
-    @param node_map: node-type to node list map
-    @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
-    
-    """
     def __init__(self, node_map, input_to_DB_property_map=lambda _: _):
+        """
+        DB op: add node set
+        
+        @param node_map: node-type to node list map
+        @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
+        
+        """
         super(DBO_add_node_set, self).__init__()
         self.node_map = node_map
 
@@ -107,10 +107,10 @@ class DBO_add_node_set(DB_op):
         return id_set
 
 class DBO_load_node_id_set(DB_op):
-    """
-    load node id set, filter by type / properties
-    """
     def __init__(self, filter_type, filter_prop=None):
+        """
+        load node DB id set, filter by type / properties
+        """
         super(DBO_load_node_id_set, self).__init__()
 
         # build where clause if necessary
@@ -141,19 +141,28 @@ class DBO_load_node_id_set(DB_op):
         log.debug('loaded node id set: ' + str(id_set))
         return id_set
 
-class DBO_load_node_set_by_id(DB_op):
-    """
-    load a set of nodes by ids
-    """
+class DBO_load_node_set_by_attribute(DB_op):
 
-    def __init__(self, id_set):
-        super(DBO_load_node_set_by_id, self).__init__()
-        q = "match (n) where n.id in {id_list} return n"
-        self.add_statement(q, { 'id_list': id_set})
+    def __init__(self, attr_name, attr_set):
+        """
+        load a set of nodes whose attr_name is in attr_set
+        
+        @return: loaded node set or an empty set if no match was found
+        """
+        super(DBO_load_node_set_by_attribute, self).__init__()
+        q = "match (n) where n.{0} in {{attr_list}} return n".format(attr_name)
+        self.add_statement(q, { 'attr_list': attr_set})
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
         return data
+
+class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
+    def __init__(self, id_set):
+        """
+        convenience op for load a set of nodes by their 'id' attribute != DB node id
+        """
+        super(DBO_load_node_set_by_id_attribute, self).__init__('id', id_set)
 
 class DB_Controller:
     """
