@@ -19,7 +19,7 @@ class TestDBController(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        cfg = Config.init_from_file('res/etc/rhizi-backend.conf')
+        cfg = Config.init_from_file('res/etc/rhizi-server.conf')
         self.log = logging.getLogger('rhizi')
         self.db_ctl = dbc.DB_Controller(cfg)
 
