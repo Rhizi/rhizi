@@ -383,8 +383,12 @@ function myGraph(el) {
 
 
     function zoom() {
-        if (graphstate === "GRAPH") vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        if (graphstate === "GANTT") vis.attr("transform", "translate(0,0)scale(1)");
+        if (graphstate === "GRAPH") {
+            vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        }
+        if (graphstate === "GANTT") {
+            vis.attr("transform", "translate(0,0)scale(1)");
+        }
     }
 
     var drag = d3.behavior.drag()
@@ -527,7 +531,7 @@ function myGraph(el) {
             })
             .style("stroke-dasharray", function(d,i){
                 if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
-                    return"3, 3";
+                    return "3,3";
                 else
                     return "0,0";
                 })
@@ -611,7 +615,6 @@ function myGraph(el) {
                 if (d.type === "chainlink")  return "#AAA";
 
                 return "#fff";
-
             })
             .style("stroke-width", function(d) {
                 if (d.state === "temp" && d.type !== "empty" || d.state === "chosen") return "3px";
@@ -657,11 +660,7 @@ function myGraph(el) {
 
         //d3.select("body").on("mousedown", mousedown);
 
-
-
         force.on("tick", tick);
-
-
 
         //update deliverables
         deliverables = [];
@@ -677,11 +676,9 @@ function myGraph(el) {
             //Do something
         }
 
-
         force.nodes(nodes)
             .links(links)
             .start();
-
     }
 
     update();
@@ -723,8 +720,6 @@ function tick(e) {
         var missingcounter = 0;
 
         nodes.forEach(function(d, i) {
-
-
             if ((d.start === 0 || d.end === 0)) {
                 d.x = 450 + missingcounter * 100;
                 d.y = window.innerWidth / 2;
@@ -752,33 +747,6 @@ function tick(e) {
 
         });
     } else {
-        /*nodes.forEach(function (d, i) {
-          if(d.state==="chosen"){
-          d.x=window.innerWidth/2;
-          d.y=window.innerHeight/2;
-        }
-    });*/
-
-
-
-        /*var k = 15 * e.alpha;
-        var counter = 0;
-        links.forEach(function(d, i) {
-            counter++;
-
-            d.source.x -= k;
-            d.target.x += k;
-            if (counter % 2 === 0) {
-                d.source.y -= k / 3;
-                d.target.y += k / 3;
-            } else {
-
-                d.source.y += k / 3;
-                d.target.y -= k / 3;
-
-            }
-        });*/
-
         //circles animation
         var tempcounter = 0;
         var temptotal = 0;
