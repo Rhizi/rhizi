@@ -69,7 +69,7 @@ class DB_op(object):
     def statement_set(self):
         return self.id_to_statement_map.values()
 
-    def parse_single_query_response_data(self, q, data):
+    def extract_single_query_response_data(self, q, data):
         """
         DB op can issue complex sets of quries all at once - this helper method
         assists in parsing response data from a single query.
@@ -95,6 +95,11 @@ class DBO_add_node_set(DB_op):
         @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
         """
         super(DBO_add_node_set, self).__init__()
+        
+        for k, v in node_map.iteritems(): # do some type sanity checking
+            assert isinstance(k, str)
+            assert isinstance(v, list)
+        
         self.node_map = node_map
 
         for type, n_set in self.node_map.items():
@@ -164,7 +169,7 @@ class DBO_load_node_set_by_DB_id(DB_op):
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
-        return self.parse_single_query_response_data(self.statement_set[0], data)
+        return self.extract_single_query_response_data(self.statement_set[0], data)
 
 class DBO_load_node_set_by_attribute(DB_op):
 
@@ -174,19 +179,23 @@ class DBO_load_node_set_by_attribute(DB_op):
         
         @return: loaded node set or an empty set if no match was found
         """
+        assert isinstance(attr_set, list)
+        
         super(DBO_load_node_set_by_attribute, self).__init__()
         q = "match (n) where n.{0} in {{attr_set}} return n".format(attr_name)
         self.add_statement(q, { 'attr_set': attr_set})
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
-        return self.parse_single_query_response_data(self.statement_set[0], data)
+        return self.extract_single_query_response_data(self.statement_set[0], data)
 
 class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
     def __init__(self, id_set):
         """
         convenience op for load a set of nodes by their 'id' attribute != DB node id
         """
+        assert isinstance(id_set, list)
+
         super(DBO_load_node_set_by_id_attribute, self).__init__('id', id_set)
 
 class DB_Controller:
