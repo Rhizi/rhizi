@@ -280,6 +280,11 @@ input:focus {
   text-decoration: none;
 }
 
+.debug-ui-row {
+    float: left;
+    width: 100%;
+}
+
 .debug-ui-left {
     float: left;
     width: 50%;
