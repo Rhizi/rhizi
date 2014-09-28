@@ -981,6 +981,7 @@ function editLink(d, i) {
     $('.editlinkinfo').css('left', dx - 18);
     $('#editlinkname').val(oldname);
 
+    // TODO: handle escape as well to quit without changes (enter does submit)
     $('#editlinkform').submit(function() {
         graph.editLink(d.source.id, d.target.id, $('#editlinkname').val());
         $('.editlinkinfo').css('top', -100);
