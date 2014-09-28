@@ -69,6 +69,17 @@ class DB_op(object):
     def statement_set(self):
         return self.id_to_statement_map.values()
 
+    def parse_single_query_response_data(self, q, data):
+        """
+        DB op can issue complex sets of quries all at once - this helper method
+        assists in parsing response data from a single query.
+        """
+        ret = []
+        r_0 = data['results'][0]
+        for row in r_0['data']:
+            ret.append(row['row'][0])
+        return ret
+
     def on_success(self, data):
         pass
 
@@ -155,7 +166,7 @@ class DBO_load_node_set_by_attribute(DB_op):
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
-        return data
+        return self.parse_single_query_response_data(self.statement_set[0], data)
 
 class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
     def __init__(self, id_set):
