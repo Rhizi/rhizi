@@ -34,10 +34,6 @@ $('.local-storage-load').click(function(){
   graph.load_from_json(json_blob);
 });
 
-$('.deliverabletest').click(function(){
-  deliverableTest();
-});
-
 $('.set-user').click(function() {
     $('.set-user').hide();
     $('.set-user-form').show();
