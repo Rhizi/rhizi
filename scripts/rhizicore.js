@@ -514,7 +514,13 @@ function myGraph(el) {
             .attr("markerHeight", 4)
             .attr("orient", "auto")
             .attr("class", "graph")
-            .style("fill", function(d){if(d.state==="enter" || d.state==="exit") return "EDE275";else return "#aaa";})
+            .style("fill", function(d){
+                if (d.state==="enter" || d.state==="exit") {
+                    return "EDE275";
+                } else {
+                    return "#aaa";
+                }
+                })
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
 
@@ -549,14 +555,11 @@ function myGraph(el) {
 
         linktext
             .text(function(d) {
-                if (d.name) {
-                    if (d.name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen" || d.state==="temp") {
-                        return d.name;
-                    } else {
-                        return d.name.substring(0, 14) + "...";
-                    }
+                var name = d.name || "";
+                if (name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen" || d.state==="temp") {
+                    return name;
                 } else {
-                    return "";
+                    return name.substring(0, 14) + "...";
                 }
             });
 
