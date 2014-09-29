@@ -25,7 +25,7 @@ var really_load = function() {
 }
 
 $('.local-storage-load').click(function(){
-  if (!really_load()){
+  if (!really_load()) {
       return;
   }
   links=[]; // TODO - not global
