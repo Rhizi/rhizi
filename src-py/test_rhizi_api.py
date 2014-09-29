@@ -2,6 +2,7 @@ import unittest
 import db_controller as dbc
 import rhizi_api
 import json
+import logging
 
 from rhizi_server import Config
 from werkzeug.test import EnvironBuilder
@@ -28,7 +29,8 @@ class TestRhiziAPI(unittest.TestCase):
         """
         node_map = { 'Skill': [{ 'name': 'kung-fu' }, { 'name': 'judo' }] }
         with rhizi_api.webapp.test_client() as c:
-            req = c.post('/add/node-set', content_type='application/json', 
+            req = c.post('/add/node-set',
+                         content_type='application/json',
                          data=json.dumps(dict(node_map=node_map)))
             id_set = json.loads(req.data)['data']
             self.assertEqual(2, len(id_set))
@@ -38,9 +40,11 @@ class TestRhiziAPI(unittest.TestCase):
         """
         loading a non existing node test
         """
-        node_id = 'non_existing_id'
+        id_set = ['non_existing_id']
         with rhizi_api.webapp.test_client() as c:
-            req = c.post('/load/node-single', data=dict(id=node_id))
+            req = c.post('/load/node-set',
+                         content_type='application/json',
+                         data=json.dumps({ 'id_set': id_set}))
             req_data = json.loads(req.data)
             rz_data = req_data['data']
             rz_err = req_data['error']
@@ -51,13 +55,15 @@ class TestRhiziAPI(unittest.TestCase):
         """
         loading an existing node test
         """
-        node_id = 'skill_00'
+        id_set = ['skill_00']
         with rhizi_api.webapp.test_client() as c:
-            req = c.post('/load/node-single', data=dict(id=node_id))
+            req = c.post('/load/node-set',
+                         content_type='application/json',
+                         data=json.dumps({ 'id_set': id_set}))
             n_set = json.loads(req.data)['data']
 
             self.assertEqual(1, len(n_set))
-            self.assertEqual(n_set[0]['id'], node_id)
+            self.assertEqual(n_set[0]['id'], id_set[0])
 
 if __name__ == "__main__":
     unittest.main()
