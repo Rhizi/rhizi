@@ -138,7 +138,7 @@ var textAnalyser2 = function (newtext, finalize) {
                 }
             }
             if (newnodes.length === 0) {
-                prefix += sentence[m];
+                prefix += (prefix.length > 0 ? ' ' : '') + sentence[m];
             }
             break;
         }
