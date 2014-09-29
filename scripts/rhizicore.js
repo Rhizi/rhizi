@@ -380,6 +380,7 @@ function myGraph(el) {
         .call(zoomObject)
         .append("g");
 
+    // TODO: why do we need this huge overlay (hugeness also not constant)
     vis.append("rect")
         .attr("class", "overlay graph")
         .attr("width", $(el).innerWidth() * 12)
