@@ -83,6 +83,17 @@ def add_node():
     assert False
 
 @webapp.route("/add/node-set", methods=['POST'])
-def add_node_set(n_set):
-    op = dbc.DBO_add_node_set()
-    pass
+def add_node_set():
+    """
+    @param node_map: node type to node map, eg. { 'Skill': { 'name': 'kung-fu' } }
+    """
+    node_map = request.get_json()['node_map']
+    __sanitize_input(node_map)
+
+    op = dbc.DBO_add_node_set(node_map)
+    try:
+        n_set = db_ctl.exec_op(op)
+        return __common_resp_handle(n_set)
+    except Exception as e:
+        return __common_resp_handle('exception raised: add_node_set')
+
