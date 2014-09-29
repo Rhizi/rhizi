@@ -727,14 +727,6 @@ function tick(e) {
         return "translate(" + d.x + "," + d.y + ")";
     }
 
-
-    function getCentroid(selection) {
-        var element = selection.node(),
-            bbox = element.getBBox();
-        return [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
-    }
-
-
     if (graphstate === "GANTT") {
         var k = 20 * e.alpha;
         var today = new Date();
