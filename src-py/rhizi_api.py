@@ -39,6 +39,17 @@ def __response_wrap(data=None, error=None):
     """
     return dict(data=data, error=error)
 
+def __common_resp_handle(data=None, error=None):
+    """
+    provide common response handling
+    """
+    ret_data = __response_wrap(data, error)
+    resp = jsonify(ret_data)
+
+    # more response processing
+
+    return resp
+
 @webapp.route("/load/node-single", methods=['POST'])
 def load_node_by_id_attr():
     """
