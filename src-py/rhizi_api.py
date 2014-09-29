@@ -51,23 +51,30 @@ def __common_resp_handle(data=None, error=None):
     return resp
 
 @webapp.route("/load/node-single", methods=['POST'])
-def load_node_by_id_attr():
+def load_node_single_by_id_attr():
+    assert False
+
+@webapp.route("/load/node-set", methods=['POST'])
+def load_node_set_by_id_attr():
     """
+    @param id_set: list of node ids to match id attribute against
     @return: a list containing a single node whose id attribute matches 'id' or
             an empty list if the requested node is not found
     @raise exception: on error
     """
-    node_id = request.form['id']
-    
-    __sanitize_input(node_id)
-    
-    op = dbc.DBO_load_node_set_by_id_attribute([node_id])
+    id_set = request.get_json()['id_set']
+    __sanitize_input(id_set)
+
+    return __load_node_set_by_id_attr_common(id_set)
+
+def __load_node_set_by_id_attr_common(id_set):
+    op = dbc.DBO_load_node_set_by_id_attribute(id_set)
     try:
-        n = db_ctl.exec_op(op)
-        ret = __response_wrap(data=n)
-        return jsonify(ret)
+        n_set = db_ctl.exec_op(op)
+        return __common_resp_handle(data=n_set)
     except Exception as e:
-        return jsonify(__response_wrap(error='unable to load node with id: {0}'.format(node_id)))
+        log.exception(e)
+        return __common_resp_handle(error='unable to load node with ids: {0}'.format(id_set))
 
 @webapp.route("/add/node-single", methods=['POST'])
 def add_node(n):
