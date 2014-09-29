@@ -66,9 +66,8 @@ function myGraph(el) {
         }
     }
 
-    this.addNodeComplete = function(id, type, state, start, end, status) {
+    this.addNodeComplete = function(id, name, type, state, start, end, status) {
         // No history recorded - this is a helper for loading from files / constant graphs
-        var name = id;
         id = id.toLowerCase();
         var node = findNode(id, null);
         if (node !== undefined) {
