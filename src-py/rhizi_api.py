@@ -52,6 +52,7 @@ def __common_resp_handle(data=None, error=None):
 
 @webapp.route("/load/node-single", methods=['POST'])
 def load_node_single_by_id_attr():
+    # pending decision regarding support for single object operations
     assert False
 
 @webapp.route("/load/node-set", methods=['POST'])
@@ -77,8 +78,9 @@ def __load_node_set_by_id_attr_common(id_set):
         return __common_resp_handle(error='unable to load node with ids: {0}'.format(id_set))
 
 @webapp.route("/add/node-single", methods=['POST'])
-def add_node(n):
-    pass
+def add_node():
+    # pending decision regarding support for single object operations
+    assert False
 
 @webapp.route("/add/node-set", methods=['POST'])
 def add_node_set(n_set):
