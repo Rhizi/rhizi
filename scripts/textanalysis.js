@@ -146,7 +146,11 @@ var textAnalyser2 = function (newtext, finalize) {
 
     //PREFIX not null case - put complete sentence in first link.
     if (prefix) {
-        newlinks[1] = prefix + " " + newnodes[0] + " " + newlinks[1] + newnodes[1];
+        newlinks[1] = prefix + " " + newnodes[0] +
+        (newlinks[1] !== undefined || newnodes[1] !== undefined ?
+        " " : "")
+        + (newlinks[1] !== undefined ? newlinks[1] : "")
+        + (newnodes[1] !== undefined ? newnodes[1] : "");
     }
 
     //WRITE COMPLETE SENTENCE
