@@ -534,16 +534,16 @@ function myGraph(el) {
             .attr("class", function(d) {
                 return state_to_link_class[d.state] || 'link graph';
             })
-            .style("stroke-dasharray", function(d,i){
-                if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
-                    return "3,3";
-                else
-                    return "0,0";
-                })
             .attr("marker-end", "url(#end)")
             .on("click", function(d, i) {
                 //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
             });;
+        link.style("stroke-dasharray", function(d,i){
+            if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
+                return "3,3";
+            else
+                return "0,0";
+            });
 
         link.exit().remove();
 
