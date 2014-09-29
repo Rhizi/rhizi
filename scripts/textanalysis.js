@@ -207,7 +207,8 @@ var textAnalyser2 = function (newtext, finalize) {
             case "NODE":
                 addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
                 if (!abnormalGraph) {
-                    addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
+                    addLink(newnodes[nodeindex - 1], newnodes[nodeindex],
+                            newlinks[linkindex], typesetter);
                 }
                 nodeindex++;
                 break;
