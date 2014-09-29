@@ -24,7 +24,7 @@ var really_load = function() {
   return true;
 }
 
-$('.load').click(function(){
+$('.local-storage-load').click(function(){
   if (!really_load()){
       return;
   }
