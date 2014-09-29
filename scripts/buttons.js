@@ -17,20 +17,21 @@ $('.saveToFile').click(function() {
     location.href = 'data:text/json;base64,' + window.btoa(json);
 });
 
+var really_load = function() {
+  if (nodes.length > 0){
+    return confirm('All unsaved changes will be deleted, are you sure?');
+  }
+  return true;
+}
+
 $('.load').click(function(){
-  var acceptLoad=true;
-
-  if (nodes.length>0){
-    acceptLoad = confirm('All unsaved changes will be deleted, are you sure?');
+  if (!really_load()){
+      return;
   }
-
-  if(acceptLoad){
-    links=[]; // TODO - not global
-    nodes=[]; // TODO - not global
-    var json_blob = localStorage.getItem(key)
-    graph.load_from_json(json_blob);
-  }
-
+  links=[]; // TODO - not global
+  nodes=[]; // TODO - not global
+  var json_blob = localStorage.getItem(key)
+  graph.load_from_json(json_blob);
 });
 
 $('.deliverabletest').click(function(){
