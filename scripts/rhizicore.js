@@ -578,6 +578,7 @@ function myGraph(el) {
 
         var nodeEnter = node.enter()
             .append("g").attr('class', 'node')
+            .attr('visibility', 'hidden') // made visible on first tick
             .on("click", function(d, i) {
                 if (d3.event.defaultPrevented) {
                     // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
@@ -827,6 +828,9 @@ function tick(e) {
         }
     });
 
+    // After initial placement we can make the nodes visible.
+    //links.attr('visibility', 'visible');
+    node.attr('visibility', 'visible');
 }
 
 
