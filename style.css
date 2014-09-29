@@ -72,8 +72,8 @@ a:active {
 
 #textanalyser{
   position: fixed;
-  width:900px;
   height:30px;
+  max-width: 70%;
 }
 
 input:focus {
@@ -83,13 +83,11 @@ input:focus {
 #suggestion{
   display:block;
   position:fixed;
-	top:30px;
-	left:20px;
+  top:30px;
+  left:20px;
   list-style-type: none;
   width:900px;
 }
-
-
 
 .node {
   stroke: #fff;
