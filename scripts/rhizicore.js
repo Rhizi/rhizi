@@ -83,9 +83,7 @@ function myGraph(el) {
                 "end": end,
                 "status": status
             }));
-
         }
-
     }
 
     this.removeNode = function(id, state) {
@@ -263,7 +261,6 @@ function myGraph(el) {
         if ((index !== undefined)) {
             index.start = start;
             index.end = end;
-
         }
     }
 
@@ -438,7 +435,6 @@ function myGraph(el) {
           graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end),node.status);
           autoSuggestAddName(node.id);
         }
-
         for(var j=0; j<data["links"].length; j++){
           var link=data.links[j];
           graph.addLink(link.source,link.target,link.name,"perm");
@@ -716,7 +712,6 @@ function tick(e) {
     function transform(d) {
         if (graphstate === "GRAPH" || d.type === "deliverable") {
             if (d.state === "temp") {
-
                 return "translate(" + d.x + "," + d.y + ")";
             } else {
                 return "translate(" + d.x + "," + d.y + ")";
@@ -757,7 +752,6 @@ function tick(e) {
             if (d.state === "chosen") {
                 scrollValue = d.x;
             }
-
         });
     } else {
         //circles animation
@@ -789,7 +783,6 @@ function tick(e) {
         });
     }
 
-
     if (boxedin) {
         circle.attr("cx", function(d) {
                 return d.x = Math.max(14, Math.min(w - 14, d.x));
@@ -803,9 +796,7 @@ function tick(e) {
         node.attr("transform", transform);
     }
 
-
     link.attr("d", function(d) {
-
         if (graphstate === "GRAPH") {
             var dx = d.target.x - d.source.x,
                 dy = d.target.y - d.source.y,
@@ -825,7 +816,6 @@ function tick(e) {
                 return "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
             }
         }
-
     });
 
 
