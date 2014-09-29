@@ -97,7 +97,7 @@ class DBO_add_node_set(DB_op):
         super(DBO_add_node_set, self).__init__()
         
         for k, v in node_map.iteritems(): # do some type sanity checking
-            assert isinstance(k, str)
+            assert isinstance(k, basestring)
             assert isinstance(v, list)
         
         self.node_map = node_map
@@ -134,7 +134,7 @@ class DBO_load_node_id_set(DB_op):
             filter_prop_arr = []
             for k, v in filter_prop:
                 v_str = str(v)
-                if isinstance(v, str):
+                if isinstance(v, basestring):
                     # quote string values
                     v_str = "'{0}'".format(v_str)
                 filter_prop_arr.append("n.{0} = {1} and ".format(k, v_str))
