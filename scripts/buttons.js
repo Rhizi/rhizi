@@ -24,6 +24,31 @@ var really_load = function() {
   return true;
 }
 
+$('.file-load').on('change', function(event) {
+    var file = event.target.files[0];
+    var reader;
+
+    if (!really_load()) {
+        return;
+    }
+    if (file === undefined) {
+        return;
+    }
+    console.log(file);
+    reader = new FileReader();
+    reader.onload = (function(theFile) {
+        return function(e) {
+            var result = e.target.result;
+            if (e.target.readyState === FileReader.DONE) {
+                console.log('done reading ' + theFile.name);
+                console.log('got #' + result.length + ' bytes in ' + typeof(result));
+                graph.load_from_json(result);
+            }
+        }
+    })(file);
+    reader.readAsText(file, "text/javascript");
+});
+
 $('.local-storage-load').click(function(){
   if (!really_load()) {
       return;
