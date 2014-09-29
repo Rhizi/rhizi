@@ -388,6 +388,10 @@ function myGraph(el) {
         .attr("y", -$(el).innerHeight() * 5);
     $('.overlay').click(mousedown);
 
+    // SVG rendering order is last rendered on top, so to make sure
+    // all links are below the nodes we group them under a single g
+    vis.append("g").attr("id", "link-group");
+
     function zoom() {
         if (graphstate === "GRAPH") {
             vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -500,7 +504,7 @@ function myGraph(el) {
     };
 
     var update = function() {
-        link = vis.selectAll(".link")
+        link = vis.select("#link-group").selectAll(".link")
             .data(links);
 
         link.enter().append("svg:defs").selectAll("marker")
