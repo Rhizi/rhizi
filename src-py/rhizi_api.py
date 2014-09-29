@@ -4,12 +4,14 @@ Rhizi web API
 import os
 import db_controller as dbc
 import json
+import logging
 from flask import jsonify
 
 from flask import Flask
 from flask import request
 from flask import make_response
 
+log = logging.getLogger('rhizi')
 
 class FlaskExt(Flask):
     """
@@ -29,7 +31,7 @@ webapp.debug = True
 # injected: DB controller
 db_ctl = None
 
-def __sanitize_input():
+def __sanitize_input(*args, **kw_args):
     pass
 
 def __response_wrap(data=None, error=None):
