@@ -14,6 +14,14 @@ class TestRhiziAPI(unittest.TestCase):
         db_ctl = dbc.DB_Controller(cfg)
         rhizi_api.db_ctl = db_ctl
 
+    @classmethod
+    def setUpClass(self):
+        # TODO extract to superclass
+        log = logging.getLogger('rhizi')
+        log.setLevel(logging.DEBUG)
+        log_handler_c = logging.StreamHandler()
+        log.addHandler(log_handler_c)
+
     def test_add_node_set(self):
         """
         add node set test
