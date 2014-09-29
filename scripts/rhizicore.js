@@ -31,7 +31,7 @@ function myGraph(el) {
     function makeNewNode(spec) {
         return {
             'id': spec.id,
-            'text': spec.text,
+            'name': spec.name,
             'type': spec.type,
             'state': spec.state,
             'start': spec.start,
@@ -46,13 +46,13 @@ function myGraph(el) {
         var start = 0,
             end = 0;
         var status = "unknown";
-        var text = id;
+        var name = id;
         id = id.toLowerCase();
         var node = findNode(id, null);
         if (node === undefined) {
             var new_node = makeNewNode({
                 "id": id,
-                "text": text,
+                "name": name,
                 "type": type,
                 "state": state,
                 "start": start,
@@ -68,7 +68,7 @@ function myGraph(el) {
 
     this.addNodeComplete = function(id, type, state, start, end, status) {
         // No history recorded - this is a helper for loading from files / constant graphs
-        var text = id;
+        var name = id;
         id = id.toLowerCase();
         var node = findNode(id, null);
         if (node !== undefined) {
@@ -76,7 +76,7 @@ function myGraph(el) {
         } else {
             nodes.push(makeNewNode({
                 "id": id,
-                "text": text,
+                "name": name,
                 "type": type,
                 "state": state,
                 "start": start,
@@ -224,7 +224,7 @@ function myGraph(el) {
     }
 
     this.editName = function(id, type, newname) {
-        var new_text = newname;
+        var new_name = newname;
         id = id && id.toLowerCase();
         var new_id = newname.toLowerCase();
         var index2 = undefined;
@@ -251,7 +251,7 @@ function myGraph(el) {
                 }
             }else{
                 index.id = new_id;
-                index.text = new_text;
+                index.name = new_name;
             }
         }
     }
@@ -426,17 +426,19 @@ function myGraph(el) {
 
     function load_from_json(json) {
         var data = JSON.parse(json);
+        var i, node, link;
+
         if (data == null) {
             console.log('load callback: no data to load');
             return;
         }
-        for(var i=0; i<data["nodes"].length; i++){
-          var node=data.nodes[i];
-          graph.addNodeComplete(node.id,node.type,"perm",new Date(node.start),new Date(node.end),node.status);
+        for(i = 0; i < data["nodes"].length; i++){
+          node = data.nodes[i];
+          graph.addNodeComplete(node.id, node.name, node.type,"perm",new Date(node.start),new Date(node.end),node.status);
           autoSuggestAddName(node.id);
         }
-        for(var j=0; j<data["links"].length; j++){
-          var link=data.links[j];
+        for(i = 0; i < data["links"].length; i++){
+          link = data.links[i];
           graph.addLink(link.source,link.target,link.name,"perm");
         }
         graph.recenterZoom();
@@ -599,12 +601,12 @@ function myGraph(el) {
         node.select('g.node text')
             .text(function(d) {
                 if (d.state === "temp" || d.state === 'chosen') {
-                     return d.text;
+                     return d.name;
                 } else {
-                    if (d.text.length < 28) {
-                        return d.text;
+                    if (d.name.length < 28) {
+                        return d.name;
                     } else {
-                        return d.text.substring(0, 25) + "...";
+                        return d.name.substring(0, 25) + "...";
                     }
                 }
             });
