@@ -561,7 +561,12 @@ function myGraph(el) {
         linktext
             .text(function(d) {
                 var name = d.name || "";
-                if (name.length < 25 || d.source.state === "chosen" || d.target.state === "chosen" || d.state==="temp") {
+                if (!(d.target.state === "temp" ||
+                    d.source.state === "chosen" || d.target.state === "chosen")) {
+                    return "";
+                }
+                if (name.length < 25 || d.source.state === "chosen" ||
+                    d.target.state === "chosen" || d.state==="temp") {
                     return name;
                 } else {
                     return name.substring(0, 14) + "...";
