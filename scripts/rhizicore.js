@@ -599,6 +599,9 @@ function myGraph(el) {
 
         node.select('g.node text')
             .text(function(d) {
+                if (!d.name) {
+                    return "";
+                }
                 if (d.state === "temp" || d.state === 'chosen') {
                      return d.name;
                 } else {
