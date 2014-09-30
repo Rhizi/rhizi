@@ -677,8 +677,6 @@ function myGraph(el) {
 
         node.exit().remove();
 
-        //d3.select("body").on("mousedown", mousedown);
-
         force.on("tick", tick);
 
         //update deliverables
