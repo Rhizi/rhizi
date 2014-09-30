@@ -76,7 +76,7 @@ var textAnalyser2 = function (newtext, finalize) {
         ret.nodes.push({'id':id, 'type':type, 'state':state});
     }
     function addLink(src, dst, name, state) {
-        ret.links.push({'sourceId':src, 'targetId':dst, 'name':name, 'state':state});
+        ret.links.push({'sourceId':src, 'targetId':dst, 'name':name ? name.trim() : "", 'state':state});
     }
 
     //Sentence Sequencing
