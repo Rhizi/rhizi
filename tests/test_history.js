@@ -33,6 +33,9 @@ var env = jsdom.env({
     scripts: script_filenames,
     //url: "http://localhost:12345/",
     html: "<html><body></body></html>",
+    created: function(errors, window) {
+        window.console.log = console.log;
+    },
     done: function (errors, window) {
         console.log('---------');
         console.log(errors);
