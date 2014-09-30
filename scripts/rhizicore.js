@@ -1065,7 +1065,9 @@ function customSize(type) {
     return size;
 }
 
-function Expand(obj){
-    if (!obj.savesize) obj.savesize=obj.size;
-    obj.size=Math.max(obj.savesize,obj.value.length);
+function expand(obj){
+    if (!obj.savesize)
+        obj.savesize = obj.size;
+    obj.size = Math.max(obj.savesize,obj.value.length);
+
 }
