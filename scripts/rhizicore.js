@@ -905,6 +905,7 @@ function mousedown() {
     $('.editlinkinfo').css('left', 0);
     graph.removeHighlight();
     $('.info').fadeOut(300);
+    graph.update();
 }
 
 function AddedUnique(newnode) {
