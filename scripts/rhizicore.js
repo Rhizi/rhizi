@@ -1033,8 +1033,15 @@ function customSize(type) {
 }
 
 function expand(obj){
+<<<<<<< HEAD
     if (!obj.savesize) {
         obj.savesize = obj.size;
     }
     obj.size = Math.max(obj.savesize, obj.value.length);
+=======
+    if (!obj.savesize)
+        obj.savesize = obj.size;
+    obj.size = Math.max(obj.savesize,obj.value.length);
+
+>>>>>>> #62
 }
