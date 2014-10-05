@@ -35,6 +35,15 @@ class TestDBController(unittest.TestCase):
         """
         self.db_ctl.exec_cypher_query('match (n) optional match (n)-[r]-() delete n,r')
 
+    def test_load_node_set_by_attribute(self):
+        filter_map = { 'name': ['Bob', 'Judo'],
+                       'age': [128] }
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_attribute(filter_map))
+        self.assertEqual(len(n_set), 1)
+
+    def test_load_node_set_by_id_attribute(self):
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
+        self.assertEqual(len(n_set), 2)
 
     def test_node_DB_id_lifecycle(self):
         """
@@ -44,14 +53,7 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_DB_id(id_set))
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
 
-    def test_node_lifecycle(self):
-        """
-        test node commit & load
-        """
-
-        self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
-        self.assertEqual(len(n_set), 2, 'incorrect result size')
+    def test_load_node_set_by_DB_id(self): pass
 
     def tearDown(self): pass
 
