@@ -146,17 +146,32 @@ class DBO_load_node_set_by_DB_id(DB_op):
 
 class DBO_load_node_set_by_attribute(DB_op):
 
-    def __init__(self, attr_name, attr_set):
+    def __init__(self, filter_attr_map):
         """
-        load a set of nodes whose attr_name is in attr_set
+        load a set of nodes according to filter_attr_map
         
+        @param filter_attr_map: is a filter_key to filter_value_set map of
+               attributes to match against, eg.:
+               { 'id':[0,1], 'color: ['red','blue'] } 
         @return: loaded node set or an empty set if no match was found
         """
-        assert isinstance(attr_set, list)
-        
+
+        # type sanity checks
+        assert isinstance(filter_attr_map, dict)
+        assert len(filter_attr_map) > 0
+        for k, v in filter_attr_map.items():
+            assert isinstance(k, basestring)
+            assert isinstance(v, list)
+
+        filter_arr = []
+        for k, v in filter_attr_map.items():
+            f_attr = "n.{0} in {1}".format(k, v)
+            filter_arr.append(f_attr)
+        filter_str = "where {0}".format(' and '.join(filter_arr))
+
         super(DBO_load_node_set_by_attribute, self).__init__()
-        q = "match (n) where n.{0} in {{attr_set}} return n".format(attr_name)
-        self.add_statement(q, { 'attr_set': attr_set})
+        q = "match (n) {0} return n".format(filter_str)
+        self.add_statement(q, { 'attr_set': filter_str})
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
