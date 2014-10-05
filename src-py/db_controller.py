@@ -68,11 +68,11 @@ class DBO_add_node_set(DB_op):
         @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
         """
         super(DBO_add_node_set, self).__init__()
-        
-        for k, v in node_map.iteritems(): # do some type sanity checking
+
+        for k, v in node_map.iteritems():  # do some type sanity checking
             assert isinstance(k, basestring)
             assert isinstance(v, list)
-        
+
         self.node_map = node_map
 
         for type, n_set in self.node_map.items():
