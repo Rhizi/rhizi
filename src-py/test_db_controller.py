@@ -27,13 +27,14 @@ class TestDBController(unittest.TestCase):
 
     def setUp(self):
         self.flush_db()
+        self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
 
     def flush_db(self):
         """
         complete DB flush: remove all nodes & links
         """
-        self.db_ctl.exec_cypher_query('match ()-[r]-() delete r')
-        self.db_ctl.exec_cypher_query('match (n) delete n')
+        self.db_ctl.exec_cypher_query('match (n) optional match (n)-[r]-() delete n,r')
+
 
     def test_node_DB_id_lifecycle(self):
         """
