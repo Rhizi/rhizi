@@ -180,11 +180,11 @@ class DBO_load_node_set_by_attribute(DB_op):
 class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
     def __init__(self, id_set):
         """
-        convenience op for load a set of nodes by their 'id' attribute != DB node id
+        convenience op: load a set of nodes by their 'id' attribute != DB node id
         """
         assert isinstance(id_set, list)
 
-        super(DBO_load_node_set_by_id_attribute, self).__init__('id', id_set)
+        super(DBO_load_node_set_by_id_attribute, self).__init__({'id': id_set})
 
 class DB_Controller:
     """
