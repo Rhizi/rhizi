@@ -23,37 +23,10 @@ class DB_op(object):
         self.tx_id = None
         self.tx_commit_url = None  # cached from response to tx begin
 
-    def begin(self, tx_open_url):
-        try:
-            #
-            # [!] neo4j seems picky about receiving an additional empty statement list
-            #
-            data = data = dbu.statement_set_to_REST_form([])
-            ret = dbu.post_neo4j(tx_open_url, data)
-            tx_commit_url = ret['commit']
-            self.parse_tx_id(tx_commit_url)
-            self.tx_commit_url = tx_commit_url
-
-            log.debug('tx-open: id: {0}, commit-url: {1}'.format(self.tx_id, tx_commit_url))
-        except Exception as e:
-            raise Exception('failed to open transaction:' + e.message)
-
     def parse_tx_id(self, tx_commit_url):
         m = re.search('/(?P<id>\d+)/commit$', tx_commit_url)
         id_str = m.group('id')
         self.tx_id = int(id_str)
-
-    def commit(self):
-        try:
-            #
-            # [!] neo4j seems picky about receiving an additional empty statement list
-            #
-            data = dbu.statement_set_to_REST_form([])
-            ret = dbu.post(self.tx_commit_url, data)
-        except Exception as e:
-            raise Exception('failed to commit transaction:' + e.message)
-
-        log.debug('tx-commit: id: {0}, commit-url: {1}'.format(self.tx_id, self.tx_commit_url))
 
     def add_statement(self, cypher_query, params={}):
         """
@@ -204,24 +177,63 @@ class DB_Controller:
     """
     def __init__(self, config):
         self.config = config
+        self.tx_base_url = self.config.db_base_url + '/db/data/transaction'
 
     def log_committed_queries(self, statement_set):
         for sp_dict in statement_set['statements']:
             log.debug('\tq: {0}'.format(sp_dict['statement']))
 
+    def __begin_tx(self, op):
+        tx_open_url = self.tx_base_url
+
+        try:
+            #
+            # [!] neo4j seems picky about receiving an additional empty statement list
+            #
+            data = data = dbu.statement_set_to_REST_form([])
+            ret = dbu.post_neo4j(tx_open_url, data)
+            tx_commit_url = ret['commit']
+            op.parse_tx_id(tx_commit_url)
+
+            log.debug('tx-open: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))
+        except Exception as e:
+            raise Exception('failed to open transaction:' + e.message)
+
+    def __exex_op_statements(self, op):
+        tx_url = "{0}/{1}".format(self.tx_base_url, op.tx_id)
+        statement_set = dbu.statement_set_to_REST_form(op.statement_set)
+
+        try:
+            ret = dbu.post_neo4j(tx_url, statement_set)
+            self.log_committed_queries(statement_set)
+            return ret
+        except Exception as e:
+            raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
+
+    def __commit_tx(self, op):
+        tx_commit_url = "{0}/{1}/commit".format(self.tx_base_url, op.tx_id)
+
+        try:
+            #
+            # [!] neo4j seems picky about receiving an additional empty statement list
+            #
+            data = dbu.statement_set_to_REST_form([])
+            ret = dbu.post(tx_commit_url, data)
+
+            log.debug('tx-commit: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))
+
+            return ret
+        except Exception as e:
+            raise Exception('failed to commit transaction:' + e.message)
+
     def exec_op(self, op):
         """
         execute operation within a DB transaction
         """
-        tx_base_url = self.config.db_base_url + '/db/data/transaction'
-        statement_set = dbu.statement_set_to_REST_form(op.statement_set)
-
         try:
-            op.begin(tx_base_url)
-            tx_url = "{0}/{1}".format(tx_base_url, op.tx_id)
-            ret_tx = dbu.post_neo4j(tx_url, statement_set)
-            op.commit()
-            self.log_committed_queries(statement_set)
+            self.__begin_tx(op)
+            ret_tx = self.__exex_op_statements(op)
+            ret_commit = self.__commit_tx(op)
             return op.on_success(ret_tx)
         except Exception as e:
             log.error(e.message)
