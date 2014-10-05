@@ -186,19 +186,11 @@ class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
 
         super(DBO_load_node_set_by_id_attribute, self).__init__({'id': id_set})
 
-class DB_Controller:
-    """
-    neo4j DB controller
-    """
-    def __init__(self, config):
-        self.config = config
-        self.tx_base_url = self.config.db_base_url + '/db/data/transaction'
+class DB_Driver_REST:
+    def __init__(self, db_base_url):
+        self.tx_base_url = db_base_url + '/db/data/transaction'
 
-    def log_committed_queries(self, statement_set):
-        for sp_dict in statement_set['statements']:
-            log.debug('\tq: {0}'.format(sp_dict['statement']))
-
-    def __begin_tx(self, op):
+    def begin_tx(self, op):
         tx_open_url = self.tx_base_url
 
         try:
@@ -214,7 +206,7 @@ class DB_Controller:
         except Exception as e:
             raise Exception('failed to open transaction:' + e.message)
 
-    def __exex_op_statements(self, op):
+    def exex_op_statements(self, op):
         tx_url = "{0}/{1}".format(self.tx_base_url, op.tx_id)
         statement_set = dbu.statement_set_to_REST_form(op.statement_set)
 
@@ -225,7 +217,7 @@ class DB_Controller:
         except Exception as e:
             raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
 
-    def __commit_tx(self, op):
+    def commit_tx(self, op):
         tx_commit_url = "{0}/{1}/commit".format(self.tx_base_url, op.tx_id)
 
         try:
@@ -241,14 +233,31 @@ class DB_Controller:
         except Exception as e:
             raise Exception('failed to commit transaction:' + e.message)
 
+    def log_committed_queries(self, statement_set):
+        for sp_dict in statement_set['statements']:
+            log.debug('\tq: {0}'.format(sp_dict['statement']))
+
+class DB_Driver_Embedded:
+    pass
+
+class DB_Controller:
+    """
+    neo4j DB controller
+    """
+    def __init__(self, config, db_driver=None):
+        self.config = config
+        if not db_driver:
+            db_driver = DB_Driver_REST(self.config.db_base_url)
+        self.db_driver = db_driver
+
     def exec_op(self, op):
         """
         execute operation within a DB transaction
         """
         try:
-            self.__begin_tx(op)
-            ret_tx = self.__exex_op_statements(op)
-            ret_commit = self.__commit_tx(op)
+            self.db_driver.begin_tx(op)
+            ret_tx = self.db_driver.exex_op_statements(op)
+            ret_commit = self.db_driver.commit_tx(op)
             return op.on_success(ret_tx)
         except Exception as e:
             log.error(e.message)
