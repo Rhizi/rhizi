@@ -40,6 +40,10 @@ class TestDBController(unittest.TestCase):
                        'age': [128] }
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_attribute(filter_map))
         self.assertEqual(len(n_set), 1)
+        
+        filter_map = { 'age': [128, 256, 404] }
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_attribute(filter_map))
+        self.assertEqual(len(n_set), 2)
 
     def test_load_node_set_by_id_attribute(self):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
