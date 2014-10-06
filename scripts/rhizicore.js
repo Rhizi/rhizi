@@ -28,59 +28,41 @@ function myGraph(el) {
         update();
     }
 
-    function makeNewNode(spec) {
-        return {
-            'id': spec.id,
-            'name': spec.name,
-            'type': spec.type,
-            'state': spec.state,
-            'start': spec.start,
-            'end': spec.end,
-            'status': spec.status,
-            'url': spec.url
-        };
-    }
-
     ///FUNCTIONS
     this.addNode = function(id, type, state) {
-        var start = 0,
-            end = 0;
-        var status = "unknown";
-        var name = id;
-        id = id.toLowerCase();
-        var node = findNode(id, null);
-        if (node === undefined) {
-            var new_node = makeNewNode({
-                "id": id,
-                "name": name,
-                "type": type,
-                "state": state,
-                "start": start,
-                "end": end,
-                "status": status
-            });
-            nodes.push(new_node);
-            if (this.history !== undefined) {
-                this.history.record_nodes([new_node]);
-            }
+        var new_node = this.addNodeNoHistory(
+            {id:id,
+             name:id,
+             type:type,
+             state:state,
+             start:0,
+             end:0,
+             status:"unknown"});
+        if (new_node && this.history !== undefined) {
+            this.history.record_nodes([new_node]);
         }
     }
 
-    this.addNodeComplete = function(id, name, type, state, start, end, status) {
+    this.addNodeNoHistory = function(spec) {
         // No history recorded - this is a helper for loading from files / constant graphs
-        id = id.toLowerCase();
+        var id = spec.id.toLowerCase();
         var node = findNode(id, null);
+        var new_node = undefined;
+
         if (node === undefined) {
-            nodes.push(makeNewNode({
+            new_node = {
                 "id": id,
-                "name": name,
-                "type": type,
-                "state": state,
-                "start": start,
-                "end": end,
-                "status": status
-            }));
+                "name": spec.name,
+                "type": spec.type,
+                "state": spec.state,
+                "start": spec.start,
+                "end": spec.end,
+                "status": spec.status,
+                'url': undefined
+            };
+            nodes.push(new_node);
         }
+        return new_node;
     }
 
     this.removeNode = function(id, state) {
@@ -431,7 +413,11 @@ function myGraph(el) {
         }
         for(i = 0; i < data["nodes"].length; i++){
           node = data.nodes[i];
-          graph.addNodeComplete(node.id, node.name, node.type,"perm",new Date(node.start),new Date(node.end),node.status);
+          graph.addNodeNoHistory({id:node.id, name:node.name,
+                                  type:node.type,state:"perm",
+                                  start:new Date(node.start),
+                                  end:new Date(node.end),
+                                  status:node.status});
           autoSuggestAddName(node.id);
         }
         for(i = 0; i < data["links"].length; i++){
