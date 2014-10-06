@@ -313,6 +313,18 @@ function myGraph(el) {
     }
 
 
+    var hasNode = function(id, state) {
+        var i;
+        id = id.toLowerCase();
+        for (i = 0 ; i < nodes.length; ++i) {
+            if (nodes[i].id == id && nodes[i].state == state) {
+                return true;
+            }
+        }
+        return false;
+    }
+    this.hasNode = hasNode;
+
     var findNode = function(id, state) {
         id = id && id.toLowerCase();
         for (var i = 0; i < nodes.length; i++) {
