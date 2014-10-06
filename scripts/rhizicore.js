@@ -24,8 +24,8 @@ var force;
 
 function myGraph(el) {
 
-    this.update = function(){
-        update();
+    this.update = function(no_relayout) {
+        update(no_relayout);
     }
 
     ///FUNCTIONS
@@ -488,6 +488,7 @@ function myGraph(el) {
         .gravity(0.12)
         .charge(-1800)
         .size([w, h])
+        .on("tick", tick)
         .start();
 
     nodes = force.nodes();
@@ -498,7 +499,7 @@ function myGraph(el) {
         exit:'exitlink graph',
     };
 
-    var update = function() {
+    var update = function(no_relayout) {
         link = vis.select("#link-group").selectAll(".link")
             .data(links);
 
@@ -677,8 +678,6 @@ function myGraph(el) {
 
         node.exit().remove();
 
-        force.on("tick", tick);
-
         //update deliverables
         deliverables = [];
         for (var i = 0; i < nodes.length; i++) {
@@ -696,6 +695,13 @@ function myGraph(el) {
         force.nodes(nodes)
             .links(links)
             .start();
+        if (no_relayout) {
+            // XXX If we are stopped we need to update the text of the links at least,
+            // and this is the simplest way
+            tick();
+        } else {
+            force.alpha(0.1).start();
+        }
     }
 
     update();
