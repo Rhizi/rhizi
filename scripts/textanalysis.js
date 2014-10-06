@@ -249,9 +249,9 @@ var textAnalyser2 = function (newtext, finalize) {
             addNode("new node", typeStack[nodeindex], "temp");
             if (!abnormalGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
-            ANDconnect("new node");}
+                ANDconnect("new node");
+            }
             ret.state = ANALYSIS_NODE_START;
-
             break;
         case "NODE":
             typeStack[nodeindex]=nodetypes[typeindex];
