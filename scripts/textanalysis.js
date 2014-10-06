@@ -71,6 +71,12 @@ var textAnalyser2 = function (newtext, finalize) {
     var ANDcount = 0;
     var prefix = "";
     var ret = {'nodes': [], 'links': []};
+    var m;
+    var word;
+    var completeSentence;
+    var typesetter, abnormalGraph;
+    var verb;
+    var l, n, j;
 
     function addNode(id, type, state) {
         ret.nodes.push({'id':id, 'type':type, 'state':state});
@@ -82,7 +88,7 @@ var textAnalyser2 = function (newtext, finalize) {
     //Sentence Sequencing
     //Build the words and cuts the main elements
     segment = newtext.split("#");
-    for (var j = 0; j < segment.length; j++) {
+    for (j = 0; j < segment.length; j++) {
         if (j !== 0) sentence.push("#");
         subsegment = segment[j].split(" ");
         if (subsegment.length === 0) {
@@ -106,7 +112,7 @@ var textAnalyser2 = function (newtext, finalize) {
     }
 
     //BUILD NEW NODE AND LINK ARRAYS WITH ORDER OF APPEARENCE
-    for (var m = 0; m < sentence.length; m++) {
+    for (m = 0; m < sentence.length; m++) {
         switch (sentence[m]) {
         case "#":
             orderStack.push("START");
@@ -156,9 +162,9 @@ var textAnalyser2 = function (newtext, finalize) {
     //WRITE COMPLETE SENTENCE
     linkindex = 0;
     nodeindex = 0;
-    var word = "";
-    var completeSentence = prefix.length > 0 ? String(prefix) + " " : "";
-    for (var m = 0; m < orderStack.length; m++) {
+    word = "";
+    completeSentence = prefix.length > 0 ? String(prefix) + " " : "";
+    for (m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === "NODE") {
             word += " (" + newnodes[nodeindex] + ") ";
             if(newnodes[nodeindex].split(" ").length>1){
@@ -179,7 +185,7 @@ var textAnalyser2 = function (newtext, finalize) {
     nodeindex = 0;
 
     //CHANGE TO PERMANENT STATE AND UPDATE SUGGESTIONLIST
-    var typesetter = "";
+    typesetter = "";
     if (finalize === true) {
         typesetter = "perm";
         for (var n = 0; n < newnodes.length; n++) {
@@ -194,10 +200,10 @@ var textAnalyser2 = function (newtext, finalize) {
         addNode("", "bubble","temp");
     }
 
-    var abnormalGraph = (newlinks.length - ANDcount) >= 3;
+    abnormalGraph = (newlinks.length - ANDcount) >= 3;
 
     //0-N ORDER STACK
-    for (var m = 0; m < orderStack.length - 1; m++) {
+    for (m = 0; m < orderStack.length - 1; m++) {
         switch (orderStack[m]) {
             case "START":
                 if (!typeStack[nodeindex]) {
@@ -249,7 +255,7 @@ var textAnalyser2 = function (newtext, finalize) {
     }
 
     //EXTERNAL AND CONNECTION CHECKING
-    var verb = "";
+    verb = "";
     function ANDconnect(node) {
           for(var x=0;x<newlinks.length;x++){
             if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
@@ -272,14 +278,14 @@ var textAnalyser2 = function (newtext, finalize) {
     //STAR CASE
     verb = "";
     if (abnormalGraph) {
-        for (var l = 1; l < newlinks.length; l++) {
+        for (l = 1; l < newlinks.length; l++) {
             if (newlinks[l])
                 if (newlinks[l].replace(/ /g, "") !== "and") {
                     verb = newlinks[l];
                 }
         }
         addNode(completeSentence, "chainlink", typesetter);
-        for (var n = 0; n < newnodes.length; n++) {
+        for (n = 0; n < newnodes.length; n++) {
             addLink(newnodes[n], completeSentence, "", typesetter);
         }
     }
