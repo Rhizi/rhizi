@@ -701,6 +701,14 @@ var debug_print = function(message) {
     }
 }
 
+function check_for_nan(x) {
+    if (Number.isNaN(x)) {
+        console.log('nan problem');
+        force.stop();
+    }
+    return Number.isNaN(x);
+}
+
 var newnodes=1;
 function tick(e) {
     //console.log(e);
@@ -708,6 +716,9 @@ function tick(e) {
 
     function transform(d) {
         if (graphstate === "GRAPH" || d.type === "deliverable") {
+            if (check_for_nan(d.x) || check_for_nan(d.y)) {
+                return;
+            }
             if (d.state === "temp") {
                 return "translate(" + d.x + "," + d.y + ")";
             } else {
@@ -772,10 +783,12 @@ function tick(e) {
                 if(d.type==="chainlink" || d.type==="bubble"){
                      d.x = window.innerWidth / 2;
                      d.y = window.innerHeight / 2;
-                }else{
-                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
-                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                } else {
+                    d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                    d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
                 }
+                check_for_nan(d.x);
+                check_for_nan(d.y);
             }
         });
     }
