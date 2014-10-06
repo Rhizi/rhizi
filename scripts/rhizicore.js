@@ -413,7 +413,7 @@ function myGraph(el) {
         }
         for(i = 0; i < data["nodes"].length; i++){
           node = data.nodes[i];
-          graph.addNodeNoHistory({id:node.id, name:node.name,
+          graph.addNodeNoHistory({id:node.id, name:node.name ? node.name : node.id,
                                   type:node.type,state:"perm",
                                   start:new Date(node.start),
                                   end:new Date(node.end),
