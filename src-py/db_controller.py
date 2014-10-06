@@ -38,6 +38,12 @@ class DB_op(object):
         self.s_id = self.s_id + 1
         return ret
 
+    def __iter__(self):
+        # TODO impl
+        pass
+        # for k, v in self.id_to_statement_map:
+        #    yield {k, v, None}
+
     @property
     def statement_set(self):
         return self.id_to_statement_map.values()
@@ -165,13 +171,16 @@ class DBO_load_node_set_by_attribute(DB_op):
 
         filter_arr = []
         for k, v in filter_attr_map.items():
-            f_attr = "n.{0} in {1}".format(k, v)
+            # create a cypher query parameter place holder for each attr set
+            # eg. n.foo in {foo}, where foo is passed as a query parameter
+            f_attr = "n.{0} in {{{0}}}".format(k, v)
             filter_arr.append(f_attr)
+
         filter_str = "where {0}".format(' and '.join(filter_arr))
 
         super(DBO_load_node_set_by_attribute, self).__init__()
         q = "match (n) {0} return n".format(filter_str)
-        self.add_statement(q, { 'attr_set': filter_str})
+        self.add_statement(q, params=filter_attr_map)
 
     def on_success(self, data):
         log.debug('loaded node set: ' + str(data))
@@ -186,7 +195,10 @@ class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
 
         super(DBO_load_node_set_by_id_attribute, self).__init__({'id': id_set})
 
-class DB_Driver_REST:
+class DB_Driver_Base():
+    pass
+
+class DB_Driver_REST(DB_Driver_Base):
     def __init__(self, db_base_url):
         self.tx_base_url = db_base_url + '/db/data/transaction'
 
@@ -237,18 +249,40 @@ class DB_Driver_REST:
         for sp_dict in statement_set['statements']:
             log.debug('\tq: {0}'.format(sp_dict['statement']))
 
-class DB_Driver_Embedded:
-    pass
+class DB_Driver_Embedded(DB_Driver_Base):
+    def __init__(self, db_base_url):
+        self.tx_base_url = db_base_url + '/db/data/transaction'
+
+        from org.rhizi.db.neo4j.util import EmbeddedNeo4j
+        self.edb = EmbeddedNeo4j.createDb()
+        self.edb.createDb()
+
+    def begin_tx(self, op):
+        pass
+
+    def exex_op_statements(self, op):
+        s_set = op.statement_set
+        self.edb.executeCypherQury()
+
+    def commit_tx(self, op):
+        pass
+
+    def log_committed_queries(self, statement_set):
+        for sp_dict in statement_set['statements']:
+            log.debug('\tq: {0}'.format(sp_dict['statement']))
+
 
 class DB_Controller:
     """
     neo4j DB controller
     """
-    def __init__(self, config, db_driver=None):
+    def __init__(self, config, db_driver_class=None):
         self.config = config
-        if not db_driver:
-            db_driver = DB_Driver_REST(self.config.db_base_url)
-        self.db_driver = db_driver
+        if not db_driver_class:
+            self.db_driver = DB_Driver_REST(self.config.db_base_url)
+        else:
+            self.db_driver = db_driver_class()
+        assert isinstance(self.db_driver, DB_Driver_Base)
 
     def exec_op(self, op):
         """
