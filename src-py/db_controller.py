@@ -112,7 +112,7 @@ class DBO_add_node_set(DB_op):
 
 class DBO_load_node_id_set(DB_op):
     def __init__(self, filter_type, filter_prop=None):
-        # TODO: mv type filter to DBO_load_node_set_by_attribute
+        # TODO: mv type filter to DBO_load_node_set
         """
         load node DB id set, filter by type / properties
         """
@@ -161,35 +161,23 @@ class DBO_load_node_set_by_DB_id(DB_op):
         log.debug('loaded node set: ' + str(data))
         return self.extract_single_query_response_data(self.statement_set[0], data)
 
-class DBO_load_node_set_by_attribute(DB_op):
+class DBO_load_node_set(DB_op):
 
-    def __init__(self, filter_attr_map):
+    def __init__(self, filter_type=None, filter_attr_map=None):
         """
         load a set of nodes according to filter_attr_map
         
         @param filter_attr_map: is a filter_key to filter_value_set map of
                attributes to match against, eg.:
                { 'id':[0,1], 'color: ['red','blue'] } 
+        @param filter_type: node type filter 
         @return: loaded node set or an empty set if no match was found
         """
 
-        # type sanity checks
-        assert isinstance(filter_attr_map, dict)
-        assert len(filter_attr_map) > 0
-        for k, v in filter_attr_map.items():
-            assert isinstance(k, basestring)
-            assert isinstance(v, list)
+        self.__type_check_filter_attr_map(filter_attr_map)
+        filter_str = dbu.where_clause_from_filter_attr_map()
 
-        filter_arr = []
-        for k, v in filter_attr_map.items():
-            # create a cypher query parameter place holder for each attr set
-            # eg. n.foo in {foo}, where foo is passed as a query parameter
-            f_attr = "n.{0} in {{{0}}}".format(k, v)
-            filter_arr.append(f_attr)
-
-        filter_str = "where {0}".format(' and '.join(filter_arr))
-
-        super(DBO_load_node_set_by_attribute, self).__init__()
+        super(DBO_load_node_set, self).__init__()
         q = "match (n) {0} return n".format(filter_str)
         self.add_statement(q, params=filter_attr_map)
 
@@ -197,7 +185,7 @@ class DBO_load_node_set_by_attribute(DB_op):
         log.debug('loaded node set: ' + str(data))
         return self.extract_single_query_response_data(self.statement_set[0], data)
 
-class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
+class DBO_load_node_set_by_id_attribute(DBO_load_node_set):
     def __init__(self, id_set):
         """
         convenience op: load a set of nodes by their 'id' attribute != DB node id
@@ -205,6 +193,20 @@ class DBO_load_node_set_by_id_attribute(DBO_load_node_set_by_attribute):
         assert isinstance(id_set, list)
 
         super(DBO_load_node_set_by_id_attribute, self).__init__({'id': id_set})
+
+class DBO_load_link_id_set(DB_op):
+    def __init__(self, filter_type=None, filter_attr_map=None):
+        """
+        load a set of link ids
+        
+        @param filter_type: link type filter 
+        @param filter_attr_map: is a filter_key to filter_value_set map of
+               attributes to match link properties against
+        @return: a set of loaded link ids
+        """
+        self.__type_check_filter_attr_map(filter_attr_map)
+        filter_str = dbu.where_clause_from_filter_attr_map()
+        
 
 class DB_Driver_Base():
     pass

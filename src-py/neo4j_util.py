@@ -54,7 +54,12 @@ def where_clause_from_filter_attr_map(filter_attr_map, node_param_name="n"):
     convert a filter attribute map to a parameterized Cypher where clause, eg.
     in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1,2] }
     out: where n.att_foo in {att_foo} and n.att_goo in {att_goo} ...
+    
+    @param filter_attr_map: may be None or empty 
     """
+    if not filter_attr_map:
+        return ""
+    
     filter_arr = []
     for k in filter_attr_map.keys():
         # create a cypher query parameter place holder for each attr set
