@@ -452,7 +452,8 @@ function myGraph(el) {
         for(var i = 0 ; i < nodes.length ; i++){
           var node = nodes[i];
           d['nodes'].push({
-            "id":node.id,
+            "id": node.id,
+            "name": node.name,
             "type":node.type,
             "state":"perm",
             "start":node.start,
