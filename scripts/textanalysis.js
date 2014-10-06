@@ -77,11 +77,29 @@ var textAnalyser2 = function (newtext, finalize) {
     var typesetter, abnormalGraph;
     var verb;
     var l, n, j;
+    var link_hash = {};
+    var yell_bug = false; // TODO: fix both issues
 
     function addNode(id, type, state) {
         ret.nodes.push({'id':id, 'type':type, 'state':state});
     }
     function addLink(src, dst, name, state) {
+        if (!src || !dst) {
+            if (yell_bug) {
+                console.log('bug - adding link (' + src + ', ' + dst + ')');
+            }
+            return;
+        }
+        if (link_hash[src] && link_hash[src][dst]) {
+            if (yell_bug) {
+                console.log('bug - adding link twice (' + src + ', ' + dst + ')');
+            }
+            return;
+        }
+        if (!link_hash[src]) {
+            link_hash[src] = {};
+        }
+        link_hash[src][dst] = 1;
         ret.links.push({'sourceId':src, 'targetId':dst, 'name':name ? name.trim() : "", 'state':state});
     }
 
