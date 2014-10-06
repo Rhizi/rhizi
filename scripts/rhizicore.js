@@ -70,9 +70,7 @@ function myGraph(el) {
         // No history recorded - this is a helper for loading from files / constant graphs
         id = id.toLowerCase();
         var node = findNode(id, null);
-        if (node !== undefined) {
-            graph.editState(id, null, "temp");
-        } else {
+        if (node === undefined) {
             nodes.push(makeNewNode({
                 "id": id,
                 "name": name,
