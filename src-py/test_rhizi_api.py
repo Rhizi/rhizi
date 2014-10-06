@@ -42,7 +42,7 @@ class TestRhiziAPI(unittest.TestCase):
         """
         id_set = ['non_existing_id']
         with rhizi_api.webapp.test_client() as c:
-            req = c.post('/load/node-set',
+            req = c.post('/load/node-set-by-id',
                          content_type='application/json',
                          data=json.dumps({ 'id_set': id_set}))
             req_data = json.loads(req.data)
