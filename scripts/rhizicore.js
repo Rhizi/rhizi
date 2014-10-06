@@ -692,6 +692,15 @@ function myGraph(el) {
 
 var graph = new myGraph(document.body);
 
+var debug_print = function(message) {
+    var element = $(".debug");
+    if (element.length == 1) {
+        element.html(message);
+    } else {
+        console.log(message);
+    }
+}
+
 var newnodes=1;
 function tick(e) {
     //console.log(e);
