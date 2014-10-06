@@ -102,6 +102,7 @@ class DBO_add_node_set(DB_op):
 
 class DBO_load_node_id_set(DB_op):
     def __init__(self, filter_type, filter_prop=None):
+        # TODO: mv type filter to DBO_load_node_set_by_attribute
         """
         load node DB id set, filter by type / properties
         """
@@ -119,7 +120,7 @@ class DBO_load_node_id_set(DB_op):
                 filter_prop_arr.append("n.{0} = {1} and ".format(k, v_str))
             filter_prop_str = " where " + " and ".join(filter_prop_arr)
 
-        q = "match (n:{0}){1} return id(n)".format(filter_type, filter_prop_str)
+        q = "match (n:{0} {1}) return id(n)".format(filter_type, filter_prop_str)
         self.add_statement(q)
 
     def on_success(self, data):
