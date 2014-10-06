@@ -26,14 +26,7 @@ class TestDBController(unittest.TestCase):
         self.db_ctl = dbc.DB_Controller(cfg)
 
     def setUp(self):
-        self.flush_db()
         self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
-
-    def flush_db(self):
-        """
-        complete DB flush: remove all nodes & links
-        """
-        self.db_ctl.exec_cypher_query('match (n) optional match (n)-[r]-() delete n,r')
 
     def test_load_node_set_by_attribute(self):
         filter_map = { 'name': ['Bob', 'Judo'],
