@@ -48,3 +48,19 @@ def statement_set_to_REST_form(statement_set):
     assert isinstance(statement_set, list)
 
     return {'statements': statement_set}
+
+def where_clause_from_filter_attr_map(filter_attr_map, node_param_name="n"):
+    """
+    convert a filter attribute map to a parameterized Cypher where clause, eg.
+    in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1,2] }
+    out: where n.att_foo in {att_foo} and n.att_goo in {att_goo} ...
+    """
+    filter_arr = []
+    for k in filter_attr_map.keys():
+        # create a cypher query parameter place holder for each attr set
+        # eg. n.foo in {foo}, where foo is passed as a query parameter
+        f_attr = "{0}.{1} in {{{1}}}".format(node_param_name, k)
+        filter_arr.append(f_attr)
+    filter_str = "where {0}".format(' and '.join(filter_arr))
+    return filter_str
+
