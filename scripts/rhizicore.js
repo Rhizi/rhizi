@@ -758,7 +758,6 @@ function myGraph(el) {
 
         force.nodes(nodes)
             .links(links)
-            .start();
         if (no_relayout) {
             // XXX If we are stopped we need to update the text of the links at least,
             // and this is the simplest way
