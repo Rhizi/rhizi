@@ -1,4 +1,0 @@
-rhizi-server
-============
-
-Rhizi server
