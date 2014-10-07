@@ -4,6 +4,28 @@
 
 import json
 import urllib2
+import model
+import string
+
+class Cypher_String_Formatter(string.Formatter):
+    """
+    Despite parameter support in Cypher, we sometimes do engage in query string building 
+    - as both Cypher & Python use brackets to wrap parameters, escaping them in Python makes
+    queries less readable. This customized formatter will simply ignore unavailable keyworded 
+    formatting arguments, allowing the use of non-escaped parameter designation, eg:
+    q = cfmt("match (a:{type} {cypher_param})", type='Book')
+    """
+
+    def get_field(self, field_name, args, kwargs):
+        # ignore key not found, return bracket wrapped key
+        try:
+            val=super(Cypher_String_Formatter, self).get_field(field_name, args, kwargs)
+        except (KeyError, AttributeError):
+            val="{" + field_name + "}", field_name
+        return val
+
+def cfmt(fmt_str, *args, **kwargs):
+    return Cypher_String_Formatter().format(fmt_str, *args, **kwargs)
 
 def post_neo4j(url, data):
     """
@@ -49,7 +71,7 @@ def statement_set_to_REST_form(statement_set):
 
     return {'statements': statement_set}
 
-def where_clause_from_filter_attr_map(filter_attr_map, node_param_name="n"):
+def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     """
     convert a filter attribute map to a parameterized Cypher where clause, eg.
     in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1,2] }
@@ -59,17 +81,19 @@ def where_clause_from_filter_attr_map(filter_attr_map, node_param_name="n"):
     """
     if not filter_attr_map:
         return ""
-    
+
+    __type_check_filter_attr_map(filter_attr_map)
+
     filter_arr = []
-    for k in filter_attr_map.keys():
+    for attr in filter_attr_map.keys():
         # create a cypher query parameter place holder for each attr set
         # eg. n.foo in {foo}, where foo is passed as a query parameter
-        f_attr = "{0}.{1} in {{{1}}}".format(node_param_name, k)
+        f_attr = cfmt("{node_label}.{attr} in {{{attr}}}", node_label=node_label, attr=attr)
         filter_arr.append(f_attr)
     filter_str = "where {0}".format(' and '.join(filter_arr))
     return filter_str
 
-def create_query_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
+def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of node create queries
     
@@ -78,15 +102,17 @@ def create_query_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
     
     @return: a (query, query_parameteres) set of create queries
     """
+    __type_check_link_or_node_map(node_map)
+    
     ret = []
     for n_type, n_set in node_map.items():
-        q = "create (n:{0} {{prop_dict}}) return id(n)".format(n_type)
+        q = cfmt("create (n:{n_type} {node_attr}) return id(n)", n_type=n_type)
         for n_prop_set in n_set:
-            q_params = {'prop_dict' : input_to_DB_property_map(n_prop_set)}
+            q_params = {'node_attr': input_to_DB_property_map(n_prop_set)}
             ret.append((q, q_params))
     return ret
 
-def create_query_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
+def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of link create queries
     
@@ -106,14 +132,22 @@ def create_query_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
             del prop_dict['__dst']
             del prop_dict['__src']
 
-            q = "create ({ns})-[:{lt} {{prop_dict}}]-({nd})".format(ns=n_src, lt=l_type, nd=n_dst)
-            q_params = {'prop_dict' : input_to_DB_property_map(prop_dict)}
+            q = cfmt("match (src {src_attr}),(dst {dst_attr}) create (src)-[:{l_type} {link_attr}]-(dst)", l_type=l_type)
+            q_params = {'src_attr': { 'id': n_src} ,
+                        'dst_attr': { 'id': n_dst} ,
+                        'link_attr' : input_to_DB_property_map(prop_dict)}
             ret.append((q, q_params))
 
     return ret
+
 def __type_check_link(link):
     assert link.has_key('__src')
     assert link.has_key('__dst')
+
+def __type_check_link_or_node_map(x_map):
+    for k, v in x_map.iteritems():  # do some type sanity checking
+        assert isinstance(k, basestring)
+        assert isinstance(v, list)
 
 def __type_check_filter_attr_map(filter_attr_map):
     """
