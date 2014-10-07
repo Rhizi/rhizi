@@ -314,19 +314,37 @@ var textAnalyser2 = function (newtext, finalize) {
     lastnode = newnodes[nodeindex];
 
     ret.applyToGraph = function(graph) {
-        //REINITIALISE GRAPH (DUMB BUT IT WORKS)
-        graph.removeNodes("temp");
-        graph.removeLinks("temp");
-        for (var k in ret.nodes) {
-            var n = ret.nodes[k];
-            graph.addNode(n.id, n.type, n.state);
-        }
-        for (var k in ret.links) {
-            var l = ret.links[k];
-            graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
+        window.ret = ret;
+        var comp = graph.compareSubset('temp', ret.nodes.filter(
+            function(node) {
+                return !graph.hasNode(node.id, "perm");
+            }).map(function (node) {
+                return node.id;
+            }), ret.links.map(
+            function (link) {
+                return [link.sourceId.toLowerCase(), link.targetId.toLowerCase()];
+            }
+        ));
+        var k, n;
+        if (comp.graph_same && !finalize) {
+            if (comp.old_id && comp.new_id) {
+                graph.editName(comp.old_id, null, comp.new_id);
+            }
+        } else {
+            //REINITIALISE GRAPH (DUMB BUT IT WORKS)
+            graph.removeNodes("temp");
+            graph.removeLinks("temp");
+            for (k in ret.nodes) {
+                n = ret.nodes[k];
+                graph.addNode(n.id, n.type, n.state);
+            }
+            for (k in ret.links) {
+                var l = ret.links[k];
+                graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
+            }
         }
         //UPDATE GRAPH ONCE
-        graph.update();
+        graph.update(!finalize && comp.graph_same);
     }
 
     return ret;

@@ -160,6 +160,62 @@ function myGraph(el) {
         }
     }
 
+    /* compareSubset:
+     *  state: one of the optional states that defines a subgraph
+     *  new_nodes: array of objects with id
+     *  new_links: array of length two arrays [source_id, target_id]
+     *  returns: true if current and new graph are homomorphic up to
+     *  a single node id change. false otherwise
+     */
+    this.compareSubset = function(state, new_nodes, new_links) {
+        // Note: the nodes include a state=='temp', type=='bubble' node
+        // but it's ok since it exists both in new_nodes and in state_nodes
+        var state_nodes = findNodes(null, state).sort();
+        var state_links = findLinks(state).map(function(link) {
+            return [link.source.id, link.target.id];
+        }).sort();
+        var k;
+        var changed_old_id = undefined, changed_new_id = undefined;
+        var state_source, state_target, new_source, new_target;
+
+        new_nodes.sort();
+        new_links.sort();
+        if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
+            return {graph_same: false};
+        }
+        for (k in state_nodes) {
+            if (new_nodes[k] != state_nodes[k].id) {
+                if (changed_old_id === undefined) {
+                    // found the changed node
+                    changed_old_id = state_nodes[k].id;
+                    changed_new_id = new_nodes[k];
+                } else {
+                    return {graph_same: false};
+                }
+            }
+        }
+        for (k in state_links) {
+            state_source = state_links[k][0];
+            state_target = state_links[k][1];
+            new_source = new_links[k][0];
+            new_target = new_links[k][1];
+            if (state_source != new_source ||
+                state_target != new_target) {
+                if ((state_source == changed_old_id &&
+                     new_source == changed_new_id &&
+                     state_target == new_target) ||
+                    (state_target == changed_old_id &&
+                     new_target == changed_new_id &&
+                     state_source == new_source)) {
+                    // this one is ok
+                } else {
+                    return {graph_same: false};
+                }
+            }
+        }
+        return {graph_same: true, old_id: changed_old_id, new_id: changed_new_id};
+    }
+
     this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {
         sourceId = sourceId && sourceId.toLowerCase();
         targetId = targetId && targetId.toLowerCase();
