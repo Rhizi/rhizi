@@ -100,41 +100,6 @@ class DBO_add_node_set(DB_op):
         log.debug('node-set added: ids: ' + str(id_set))
         return id_set
 
-class DBO_load_node_id_set(DB_op):
-    def __init__(self, filter_type, filter_prop=None):
-        # TODO: mv type filter to DBO_load_node_set
-        """
-        load node DB id set, filter by type / properties
-        """
-        super(DBO_load_node_id_set, self).__init__()
-
-        # build where clause if necessary
-        filter_prop_str = ""
-        if filter_prop:
-            filter_prop_arr = []
-            for k, v in filter_prop:
-                v_str = str(v)
-                if isinstance(v, basestring):
-                    # quote string values
-                    v_str = "'{0}'".format(v_str)
-                filter_prop_arr.append("n.{0} = {1} and ".format(k, v_str))
-            filter_prop_str = " where " + " and ".join(filter_prop_arr)
-
-        q = "match (n:{0} {1}) return id(n)".format(filter_type, filter_prop_str)
-        self.add_statement(q)
-
-    def on_success(self, data):
-        # [!] fragile - parse results
-        # sample input: dict: {u'errors': [], u'results': [{u'data': [{u'row': [20]}], u'columns': [u'id(n)']}]}
-        id_set = []
-        for r in data['results']:
-            columns = r['columns']
-            for k in r['data']:
-                nid = k['row'][0]
-                id_set.append(nid)
-
-        log.debug('loaded node id set: ' + str(id_set))
-        return id_set
 
 class DBO_load_node_set_by_DB_id(DB_op):
     def __init__(self, id_set):
