@@ -103,13 +103,15 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     @return: a (query, query_parameteres) set of create queries
     """
     __type_check_link_or_node_map(node_map)
-    
+
     ret = []
     for n_type, n_set in node_map.items():
         q = cfmt("create (n:{n_type} {node_attr}) return id(n)", n_type=n_type)
+        q_params_set = []
         for n_prop_set in n_set:
-            q_params = {'node_attr': input_to_DB_property_map(n_prop_set)}
-            ret.append((q, q_params))
+            q_params = input_to_DB_property_map(n_prop_set)
+            q_params_set.append(q_params)
+        ret.append((q, {'node_attr': q_params_set}))
     return ret
 
 def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
@@ -118,7 +120,7 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     
     @param link_map: is a link-type to link map - see model.link
     """
-    ret = []
+    q_params_set = []
     for l_type, l_set in link_map.items():
 
         for link in l_set:
@@ -132,13 +134,13 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
             del prop_dict['__dst']
             del prop_dict['__src']
 
-            q = cfmt("match (src {src_attr}),(dst {dst_attr}) create (src)-[:{l_type} {link_attr}]-(dst)", l_type=l_type)
-            q_params = {'src_attr': { 'id': n_src} ,
-                        'dst_attr': { 'id': n_dst} ,
+            q_params = {'src': { 'id': n_src} ,
+                        'dst': { 'id': n_dst} ,
                         'link_attr' : input_to_DB_property_map(prop_dict)}
-            ret.append((q, q_params))
+            q_params_set.append(q_params)
 
-    return ret
+    q = "match (src {id: {src}.id}),(dst {id: {dst}.id}) create (src)-[:%(l_type)s {link_attr}]->(dst)" % {'l_type':l_type}
+    return (q, q_params_set)
 
 def __type_check_link(link):
     assert link.has_key('__src')
