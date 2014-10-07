@@ -327,7 +327,6 @@ var textAnalyser2 = function (newtext, finalize) {
         ));
         var k, n, l;
         if (comp.graph_same && !finalize) {
-            console.log('same graph, changing graph just a bit');
             if (comp.old_id && comp.new_id) {
                 graph.editName(comp.old_id, null, comp.new_id);
             }
