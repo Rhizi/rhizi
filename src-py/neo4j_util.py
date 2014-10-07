@@ -69,3 +69,15 @@ def where_clause_from_filter_attr_map(filter_attr_map, node_param_name="n"):
     filter_str = "where {0}".format(' and '.join(filter_arr))
     return filter_str
 
+def __type_check_link(link):
+    assert link.has_key('__src')
+    assert link.has_key('__dst')
+
+def __type_check_filter_attr_map(filter_attr_map):
+    """
+    # type sanity check an attribute filter map
+    """
+    assert isinstance(filter_attr_map, dict)
+    for k, v in filter_attr_map.items():
+        assert isinstance(k, basestring)
+        assert isinstance(v, list)

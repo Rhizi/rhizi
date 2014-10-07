@@ -44,16 +44,6 @@ class DB_op(object):
         # for k, v in self.id_to_statement_map:
         #    yield {k, v, None}
 
-    def __type_check_filter_attr_map(self, filter_attr_map):
-        """
-        # type sanity check an attribute filter map
-        """
-        assert isinstance(filter_attr_map, dict)
-        assert len(filter_attr_map) > 0
-        for k, v in filter_attr_map.items():
-            assert isinstance(k, basestring)
-            assert isinstance(v, list)
-
     @property
     def statement_set(self):
         return self.id_to_statement_map.values()
@@ -174,7 +164,6 @@ class DBO_load_node_set(DB_op):
         @return: loaded node set or an empty set if no match was found
         """
 
-        self.__type_check_filter_attr_map(filter_attr_map)
         filter_str = dbu.where_clause_from_filter_attr_map()
 
         super(DBO_load_node_set, self).__init__()
@@ -204,7 +193,6 @@ class DBO_load_link_id_set(DB_op):
                attributes to match link properties against
         @return: a set of loaded link ids
         """
-        self.__type_check_filter_attr_map(filter_attr_map)
         filter_str = dbu.where_clause_from_filter_attr_map()
         
 
