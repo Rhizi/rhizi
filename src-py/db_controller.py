@@ -39,14 +39,16 @@ class DB_op(object):
         return ret
 
     def __iter__(self):
-        # TODO impl
-        pass
-        # for k, v in self.id_to_statement_map:
-        #    yield {k, v, None}
-
-    @property
-    def statement_set(self):
-        return self.id_to_statement_map.values()
+        """
+        iterate over (statement_index, statement, statement_result)
+        note: statement_index is zero based
+        
+        TODO: support statement_result
+        """
+        i = 0
+        for s in self.statement_set:
+            yield (i, s, None)
+            i = i + 1
 
     def extract_single_query_response_data(self, q, data):
         """

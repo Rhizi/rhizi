@@ -29,6 +29,20 @@ class TestDBController(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_db_op_statement_iter(self):
+        s_arr = ['match (n) return n',
+                 'create (b:Book {\'title\': \'foo\'}) return b']
+
+        db_op = dbc.DB_op()
+        db_op.add_statement(s_arr[0])
+        db_op.add_statement(s_arr[1])
+
+        i = 0
+        for s in db_op:
+            # access: second tuple item -> REST-form 'statement' key
+            self.assertEqual(s_arr[i], s[1]['statement'])
+            i = i + 1
+
     def test_load_node_set_by_attribute(self):
         filter_map = { 'name': ['Bob', u'Judo'],
                        'age': [128] }
