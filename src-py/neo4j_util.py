@@ -69,6 +69,48 @@ def where_clause_from_filter_attr_map(filter_attr_map, node_param_name="n"):
     filter_str = "where {0}".format(' and '.join(filter_arr))
     return filter_str
 
+def create_query_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
+    """
+    generate a set of node create queries
+    
+    @param node_map: is a node-type to node map
+    @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
+    
+    @return: a (query, query_parameteres) set of create queries
+    """
+    ret = []
+    for n_type, n_set in node_map.items():
+        q = "create (n:{0} {{prop_dict}}) return id(n)".format(n_type)
+        for n_prop_set in n_set:
+            q_params = {'prop_dict' : input_to_DB_property_map(n_prop_set)}
+            ret.append((q, q_params))
+    return ret
+
+def create_query_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
+    """
+    generate a set of link create queries
+    
+    @param link_map: is a link-type to link map - see model.link
+    """
+    ret = []
+    for l_type, l_set in link_map.items():
+
+        for link in l_set:
+            __type_check_link(link)
+
+            n_src = link['__src']
+            n_dst = link['__dst']
+
+            # TODO: use object based link representation
+            prop_dict = link.copy()
+            del prop_dict['__dst']
+            del prop_dict['__src']
+
+            q = "create ({ns})-[:{lt} {{prop_dict}}]-({nd})".format(ns=n_src, lt=l_type, nd=n_dst)
+            q_params = {'prop_dict' : input_to_DB_property_map(prop_dict)}
+            ret.append((q, q_params))
+
+    return ret
 def __type_check_link(link):
     assert link.has_key('__src')
     assert link.has_key('__dst')
