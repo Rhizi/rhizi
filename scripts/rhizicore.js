@@ -226,7 +226,10 @@ function myGraph(el) {
         if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
             state = "temp";
         }
-        if(!found && ((sourceNode !== undefined) && (targetNode !== undefined))) {
+        if (sourceNode === undefined || targetNode === undefined) {
+            return;
+        }
+        if (!found) {
             var link = {
                 "source": sourceNode,
                 "target": targetNode,
@@ -237,15 +240,20 @@ function myGraph(el) {
             if (this.history !== undefined) {
                 this.history.record_links([link]);
             }
+        } else {
+            found.name = name;
+            found.state = state;
         }
     }
 
-    this.editLink = function(sourceId, targetId, newname) {
+    this.editLink = function(sourceId, targetId, newname, newstate) {
         var link = findLink(sourceId, targetId, newname);
         if (link !== undefined) {
             link.name = newname;
-
-        } else {}
+            if (newstate !== undefined) {
+                link.state = newstate;
+            }
+        }
     }
 
     this.editLinkTarget = function(sourceId, targetId, newTarget) {

@@ -325,10 +325,15 @@ var textAnalyser2 = function (newtext, finalize) {
                 return [link.sourceId.toLowerCase(), link.targetId.toLowerCase()];
             }
         ));
-        var k, n;
+        var k, n, l;
         if (comp.graph_same && !finalize) {
+            console.log('same graph, changing graph just a bit');
             if (comp.old_id && comp.new_id) {
                 graph.editName(comp.old_id, null, comp.new_id);
+            }
+            for (k in ret.links) {
+                l = ret.links[k];
+                graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
             }
         } else {
             //REINITIALISE GRAPH (DUMB BUT IT WORKS)
@@ -339,7 +344,7 @@ var textAnalyser2 = function (newtext, finalize) {
                 graph.addNode(n.id, n.type, n.state);
             }
             for (k in ret.links) {
-                var l = ret.links[k];
+                l = ret.links[k];
                 graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
             }
         }
