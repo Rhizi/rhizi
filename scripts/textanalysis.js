@@ -161,7 +161,9 @@ var textAnalyser2 = function (newtext, finalize) {
                         quoteword += subsegment[k] + " ";
                         if(subsegment[k].charAt(subsegment[k].length-1) !== '"')k++;
                     } while (k < subsegment.length && subsegment[k].charAt(subsegment[k].length - 1) !== '"');
-                     if(subsegment[k])if(subsegment[k]!==quoteword.replace(/ /g, ""))quoteword += subsegment[k];
+                    if (subsegment[k] && subsegment[k]!==quoteword.replace(/ /g, "")) {
+                        quoteword += subsegment[k];
+                    }
                     sentence.push(quoteword.replace(/"/g, ""));
                 } else {
                     sentence.push(subsegment[k]);
