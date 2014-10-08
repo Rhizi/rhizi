@@ -197,6 +197,7 @@ var textAnalyser2 = function (newtext, finalize) {
             completeSentence += newlinks[linkindex];
         }
     }
+    completeSentence = completeSentence.trim();
 
     //REBUILD GRAPH
     linkindex = 0;
