@@ -22,6 +22,36 @@ var scrollValue = 0,
 
 var force;
 
+function set_from_array(a) {
+    var ret = {};
+    for (var k = 0 ; k < a.length ; ++k) {
+        ret[a[k]] = 1;
+    }
+    return ret;
+}
+
+function set_diff(sa, sb) {
+    var ret = {a_b:[], b_a:[]};
+    var i;
+    for (i in sa) {
+        if (!(i in sb)) {
+            ret.a_b.push(i);
+        }
+    }
+    for (i in sb) {
+        if (!(i in sa)) {
+            ret.b_a.push(i);
+        }
+    }
+    return ret;
+}
+
+function array_diff(aa, ab) {
+    var sa = set_from_array(aa);
+    var sb = set_from_array(ab);
+    return set_diff(sa, sb);
+}
+
 function myGraph(el) {
 
     this.update = function(no_relayout) {
@@ -170,50 +200,52 @@ function myGraph(el) {
     this.compareSubset = function(state, new_nodes, new_links) {
         // Note: the nodes include a state=='temp', type=='bubble' node
         // but it's ok since it exists both in new_nodes and in state_nodes
-        var state_nodes = findNodes(null, state).sort();
+        var state_nodes = findNodes(null, state);
         var state_links = findLinks(state).map(function(link) {
             return [link.source.id, link.target.id];
         }).sort();
         var k;
         var changed_old_id = undefined, changed_new_id = undefined;
         var state_source, state_target, new_source, new_target;
+        var changed_nodes;
+        var verbose = false; // XXX should be global. should have only one global. sigh.
+        var set_old_id, set_new_id;
 
         new_nodes.sort();
         new_links.sort();
         if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
             return {graph_same: false};
         }
-        for (k in state_nodes) {
-            if (new_nodes[k] != state_nodes[k].id) {
-                if (changed_old_id === undefined) {
-                    // found the changed node
-                    changed_old_id = state_nodes[k].id;
-                    changed_new_id = new_nodes[k];
-                } else {
-                    return {graph_same: false};
-                }
-            }
+        changed_nodes = set_diff(set_from_array(state_nodes.map(function(d) { return d.id; })),
+                                 set_from_array(new_nodes));
+        // we allow any number of changed nodes as long as we it is 1 or 2 :)
+        if (changed_nodes.a_b.length <= 2) {
+            set_old_id = set_from_array(changed_nodes.a_b);
+            set_new_id = set_from_array(changed_nodes.b_a);
+        } else {
+            return {graph_same: false};
         }
-        for (k in state_links) {
+        for (k = 0 ; k < state_links.length ; ++k) {
             state_source = state_links[k][0];
             state_target = state_links[k][1];
             new_source = new_links[k][0];
             new_target = new_links[k][1];
-            if (state_source != new_source ||
-                state_target != new_target) {
-                if ((state_source == changed_old_id &&
-                     new_source == changed_new_id &&
-                     state_target == new_target) ||
-                    (state_target == changed_old_id &&
-                     new_target == changed_new_id &&
-                     state_source == new_source)) {
-                    // this one is ok
-                } else {
-                    return {graph_same: false};
+            if ((state_source != new_source &&
+                 !(state_source in set_old_id && new_source in set_new_id))
+                ||
+               (state_target != new_target &&
+                 !(state_target in set_old_id && new_target in set_new_id))) {
+                if (verbose) {
+                    console.log('not same link: ' +
+                                state_source + '->' + state_target + ' != ' +
+                                new_source + '->' + new_target);
+                    console.log(set_old_id);
+                    console.log(set_new_id);
                 }
+                return {graph_same: false};
             }
         }
-        return {graph_same: true, old_id: changed_old_id, new_id: changed_new_id};
+        return {graph_same: true, old_id: changed_nodes.a_b, new_id: changed_nodes.b_a};
     }
 
     this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {

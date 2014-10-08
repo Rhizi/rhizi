@@ -38,6 +38,47 @@ function autocompleteCallback(request, response_callback)
     response_callback(ret);
 }
 
+function same_up_to_one_letter(s1, s2)
+{
+    return ((s1.length == s2.length + 1 && s1.substr(0, s2.length) == s2) ||
+            (s2.length == s1.length + 1 && s2.substr(0, s1.length) == s1));
+}
+
+function up_to_two_renames(graph, old_id, new_id)
+{
+    var not_one_letter = false;
+    var k;
+
+    if (old_id.length != new_id.length) {
+        console.log('bug: up_to_two_renames: not equal inputs');
+        return;
+    }
+    if (old_id.length > 2) {
+        console.log('bug: up_to_two_renames: input length 2 < ' + old_id.length);
+        return;
+    }
+    if (old_id.length == 2) {
+        if (same_up_to_one_letter(old_id[0], new_id[1]) &&
+            same_up_to_one_letter(old_id[1], new_id[0])) {
+            old_id = [old_id[1], old_id[0]];
+        } else {
+            if (!same_up_to_one_letter(old_id[0], new_id[0]) ||
+                !same_up_to_one_letter(old_id[1], new_id[1])) {
+                not_one_letter = true;
+            }
+        }
+    }
+    if (not_one_letter) {
+        console.log('bug: up_to_two_renames: not one letter changes');
+        console.log(old_id);
+        console.log(new_id);
+        return;
+    }
+    for (k = 0 ; k < old_id.length ; ++k) {
+        graph.editName(old_id[k], null, new_id[k]);
+    }
+}
+
 /*
  * textAnalyser2
  *
@@ -329,7 +370,7 @@ var textAnalyser2 = function (newtext, finalize) {
         var k, n, l;
         if (comp.graph_same && !finalize) {
             if (comp.old_id && comp.new_id) {
-                graph.editName(comp.old_id, null, comp.new_id);
+                up_to_two_renames(graph, comp.old_id, comp.new_id);
             }
             for (k in ret.links) {
                 l = ret.links[k];
