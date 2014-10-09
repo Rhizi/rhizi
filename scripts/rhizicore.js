@@ -311,18 +311,17 @@ function myGraph(el) {
 
         if ((index !== undefined)) {
             if ((index2 !== undefined)) {
-                acceptReplace = confirm(index2.id+" will replace "+index.id+", are you sure?");
+                acceptReplace = confirm('"' + index2.id + '" will replace "' + index.id + '", are you sure?');
                 if(acceptReplace){
                     for (var i = 0; i < links.length; i++) {
-                    if (links[i].source === index) {
-                        links[i].source = index2;
+                        if (links[i].source === index) {
+                            links[i].source = index2;
+                        }
+                        if (links[i].target === index) {
+                            links[i].target = index2;
+                        }
                     }
-
-                    if (links[i].target === index) {
-                        links[i].target = index2;
-                    }
-                }
-                graph.removeNode(index.id,null);
+                    graph.removeNode(index.id,null);
                 }
             }else{
                 index.id = new_id;
