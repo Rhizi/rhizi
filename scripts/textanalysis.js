@@ -262,7 +262,7 @@ var textAnalyser2 = function (newtext, finalize) {
         addNode("", "bubble","temp");
     }
 
-    abnormalGraph = (newlinks.length - ANDcount) >= 2;
+    abnormalGraph = (newlinks.length - ANDcount) >= 3;
 
     //0-N ORDER STACK
     for (m = 0; m < orderStack.length - 1; m++) {
