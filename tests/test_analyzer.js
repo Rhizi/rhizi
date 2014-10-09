@@ -52,7 +52,7 @@ function dump_graphviz(window) {
 }
 
 var done = function (errors, window) {
-    window.analyzeSentence(process.argv.join(" "), true);
+    window.analyzeSentence(process.argv.slice(2).join(" "), true);
     dump_graphviz(window);
     process.exit();
 }
