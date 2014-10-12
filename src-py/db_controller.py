@@ -61,10 +61,13 @@ class DB_op(object):
             ret.append(row['row'][0])
         return ret
 
-    def on_success(self, data):
+    def parse_multi_statement_response_data(self, data):
         pass
 
-    def on_error(self):
+    def on_completion(self, data):
+        self.result_set = data['results']
+        self.error_set = data['errors']
+
         pass
 
 class DBO_add_node_set(DB_op):
@@ -89,7 +92,7 @@ class DBO_add_node_set(DB_op):
                 p = {'prop_dict' : input_to_DB_property_map(n_prop_dict)}
                 self.add_statement(q, p)
 
-    def on_success(self, data):
+    def on_completion(self, data):
         # [!] fragile - parse results
         # sample input: dict: {u'errors': [], u'results': [{u'data': [{u'row': [20]}], u'columns': [u'id(n)']}]}
         id_set = []
@@ -114,9 +117,9 @@ class DBO_load_node_set_by_DB_id(DB_op):
         q = "match (n) where id(n) in {id_set} return n"
         self.add_statement(q, { 'id_set': id_set})
 
-    def on_success(self, data):
+    def on_completion(self, data):
         log.debug('loaded node set: ' + str(data))
-        return self.extract_single_query_response_data(self.statement_set[0], data)
+        return self.parse_single_query_response_data(data)
 
 class DBO_load_node_set(DB_op):
 
@@ -137,9 +140,11 @@ class DBO_load_node_set(DB_op):
         q = "match (n) {0} return n".format(filter_str)
         self.add_statement(q, params=filter_attr_map)
 
-    def on_success(self, data):
-        log.debug('loaded node set: ' + str(data))
-        return self.extract_single_query_response_data(self.statement_set[0], data)
+        self.add_statement(q, q_params)
+
+    def on_completion(self, data):
+        log.debug('loaded id-set: ' + str(data))
+        return self.parse_single_query_response_data(data)
 
 class DBO_load_node_set_by_id_attribute(DBO_load_node_set):
     def __init__(self, id_set):
@@ -260,11 +265,12 @@ class DB_Controller:
             self.db_driver.begin_tx(op)
             ret_tx = self.db_driver.exex_op_statements(op)
             ret_commit = self.db_driver.commit_tx(op)
-            return op.on_success(ret_tx)
+            return op.on_completion(ret_tx)
         except Exception as e:
+            # here we watch for IOExecptions, etc - not db errors
+            # these are returned in the db response itself
             log.error(e.message)
             log.error(traceback.print_exc())
-            op.on_error()
 
     def create_db_op(self, f_work, f_cont):
         ret = DB_op(f_work, f_cont)
