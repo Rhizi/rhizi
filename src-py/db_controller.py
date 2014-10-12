@@ -40,15 +40,22 @@ class DB_op(object):
 
     def __iter__(self):
         """
-        iterate over (statement_index, statement, statement_result)
+        iterate over (statement_index, statement, result, error) 
+        where result & error are mutually exclusive
+        
         note: statement_index is zero based
         
-        TODO: support statement_result
+        TODO: handle partial iteration due to error_set being non-empty
         """
         i = 0
-        for s in self.statement_set:
-            yield (i, s, None)
-            i = i + 1
+        if self.result_set:
+            for s in self.statement_set:
+                yield (i, s, self.result_set[i])
+                i = i + 1
+        else:
+            for s in self.statement_set:
+                yield (i, s, None)
+                i = i + 1
 
     def extract_single_query_response_data(self, q, data):
         """
