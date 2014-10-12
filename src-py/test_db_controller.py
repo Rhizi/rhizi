@@ -81,6 +81,19 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
         self.assertEqual(len(n_set), 2)
 
+    def test_load_link_set_by_src_or_dst_id_attributes(self):
+        op = dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id='person_00', dst_id='skill_00')
+        n_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(n_set), 1)
+        
+        op = dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id='person_00')
+        n_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(n_set), 2)
+
+        op = dbc.DBO_load_link_set_by_src_or_dst_id_attributes(dst_id='skill_00')
+        n_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(n_set), 1)
+
     def test_node_DB_id_lifecycle(self):
         """
         test node DB id life cycle

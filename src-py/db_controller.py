@@ -176,14 +176,40 @@ class DBO_load_node_set(DB_op):
         log.debug('loaded id-set: ' + str(data))
         return self.parse_single_query_response_data(data)
 
-class DBO_load_node_set_by_id_attribute(DBO_load_node_set):
+class DBO_load_node_set_by_id_attribute(DBO_load_node_id_set):
     def __init__(self, id_set):
         """
         convenience op: load a set of nodes by their 'id' attribute != DB node id
         """
         assert isinstance(id_set, list)
 
-        super(DBO_load_node_set_by_id_attribute, self).__init__({'id': id_set})
+        super(DBO_load_node_set_by_id_attribute, self).__init__(filter_attr_map={'id': id_set})
+
+
+class DBO_load_link_set_by_src_or_dst_id_attributes(DB_op):
+    def __init__(self, src_id=None, dst_id=None):
+        """
+        load an id-set of links by source/target id attributes != DB node id
+        """
+        assert None != src_id or None != dst_id
+
+        super(DBO_load_link_set_by_src_or_dst_id_attributes, self).__init__()
+
+        if not src_id:
+            q = "match ()-[r]->({id: {dst_id}}) return r"
+            q_params = {'dst_id': dst_id}
+        elif not dst_id:
+            q = "match ({id: {src_id}})-[r]->() return r"
+            q_params = {'src_id': src_id}
+        else:
+            q = "match ({id: {src_id}})-[r]->({id: {dst_id}}) return r"
+            q_params = {'src_id': src_id, 'dst_id': dst_id}
+
+        self.add_statement(q, q_params)
+
+    def on_completion(self, data):
+        log.debug('loaded id-set: ' + str(data))
+        return self.parse_single_query_response_data(data)
 
 class DBO_load_link_id_set(DB_op):
     def __init__(self, filter_type=None, filter_attr_map=None):
