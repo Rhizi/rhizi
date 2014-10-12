@@ -19,8 +19,9 @@ class DB_op(object):
     """
 
     def __init__(self):
-        self.s_id = 0  # statement id counter
-        self.id_to_statement_map = {}  # zero based id to statement map
+        self.statement_set = []
+        self.result_set = None
+        self.error_set = None
         self.tx_id = None
         self.tx_commit_url = None  # cached from response to tx begin
 
@@ -29,15 +30,14 @@ class DB_op(object):
         id_str = m.group('id')
         self.tx_id = int(id_str)
 
-    def add_statement(self, cypher_query, params={}):
+    def add_statement(self, query, query_params={}):
         """
         add a DB query language statement
-        @return: statement id
+        @return: statement index (zero based)
         """
-        ret = self.s_id
-        self.id_to_statement_map[self.s_id] = dbu.statement_to_REST_form(cypher_query, params)
-        self.s_id = self.s_id + 1
-        return ret
+        s = db_util.statement_to_REST_form(query, query_params)
+        self.statement_set.append(s)
+        return len(self.statement_set)
 
     def __iter__(self):
         """
