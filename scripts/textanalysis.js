@@ -369,20 +369,21 @@ var textAnalyser2 = function (newtext, finalize) {
 
     ret.applyToGraph = function(graph) {
         window.ret = ret;
-        var comp = graph.compareSubset('temp', ret.nodes.filter(
-            function(node) {
-                return !graph.hasNode(node.id, "perm");
-            }).map(function (node) {
-                return node.id;
-            }), ret.links.map(
-            function (link) {
-                return [link.sourceId.toLowerCase(), link.targetId.toLowerCase()];
-            }
-        ));
+        var comp = graph.compareSubset('temp',
+            ret.nodes.filter(
+                function(node) {
+                    return !graph.hasNode(node.id, "perm");
+                }).map(function (node) {
+                    return {id: node.id, name: node.name};
+                }),
+            ret.links.map(
+                function (link) {
+                    return [link.sourceId.toLowerCase(), link.targetId.toLowerCase()];
+                }));
         var k, n, l;
         if (comp.graph_same && !finalize) {
             if (comp.old_id && comp.new_id) {
-                up_to_two_renames(graph, comp.old_id, comp.new_id);
+                up_to_two_renames(graph, comp.old_id, comp.new_name);
             }
             for (k in ret.links) {
                 l = ret.links[k];

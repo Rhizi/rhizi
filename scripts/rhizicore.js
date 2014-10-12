@@ -210,7 +210,18 @@ function myGraph(el) {
         var changed_nodes;
         var verbose = false; // XXX should be global. should have only one global. sigh.
         var set_old_id, set_new_id;
+        var new_id_to_name = {};
 
+        new_nodes.map(function (f) {
+            if (!f.name) {
+                f.name = f.id;
+            }
+            f.id = f.id.toLowerCase();
+            new_id_to_name[f.id] = f.name;
+            if (verbose) {
+                console.log('new_id_to_name ' + f.id + ' -> ' + new_id_to_name[f.id]);
+            }
+        });
         new_nodes.sort();
         new_links.sort();
         if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
@@ -219,12 +230,12 @@ function myGraph(el) {
             }
             return {graph_same: false};
         }
-        changed_nodes = set_diff(set_from_array(state_nodes.map(function(d) { return d.id; })),
-                                 set_from_array(new_nodes));
+        changed_nodes = set_diff(set_from_array(state_nodes.map(function(d) { return d.id.toLowerCase(); })),
+                                 set_from_array(new_nodes.map(function (f) { return f.id.toLowerCase(); })));
         // we allow any number of changed nodes as long as we it is 1 or 2 :)
         if (changed_nodes.a_b.length <= 2) {
-            set_old_id = set_from_array(changed_nodes.a_b.map(function (f) { return f.toLowerCase(); }));
-            set_new_id = set_from_array(changed_nodes.b_a.map(function (f) { return f.toLowerCase(); }));
+            set_old_id = set_from_array(changed_nodes.a_b);
+            set_new_id = set_from_array(changed_nodes.b_a);
         } else {
             if (verbose) {
                 console.log('changed too many nodes');
@@ -252,7 +263,8 @@ function myGraph(el) {
                 return {graph_same: false};
             }
         }
-        return {graph_same: true, old_id: changed_nodes.a_b, new_id: changed_nodes.b_a};
+        return {graph_same: true, old_id: changed_nodes.a_b, new_id: changed_nodes.b_a,
+                new_name: changed_nodes.b_a.map(function (k) { return new_id_to_name[k]; })};
     }
 
     this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {
