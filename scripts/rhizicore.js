@@ -494,6 +494,7 @@ function myGraph(el) {
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
+        d.dragstart = {clientX:d3.event.sourceEvent.clientX, clientY:d3.event.sourceEvent.clientY};
         force.stop();
     }
 
@@ -506,8 +507,11 @@ function myGraph(el) {
         d3.select(this).classed("dragging", false);
         d3.select(this).classed("fixed", true);
         d3.select(this).attr("dx", d3.event.x).attr("dy", d3.event.y);
-        tick();
-        force.resume();
+        if (d.dragstart.clientX - d3.event.sourceEvent.clientX != 0 ||
+            d.dragstart.clientY - d3.event.sourceEvent.clientY != 0) {
+            tick();
+            force.resume();
+        }
     }
 
     function load_from_json(json) {
