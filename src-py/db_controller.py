@@ -198,17 +198,27 @@ class DBO_load_link_set_by_src_or_dst_id_attributes(DB_op):
         return self.parse_single_query_response_data(data)
 
 class DBO_load_link_id_set(DB_op):
-    def __init__(self, filter_type=None, filter_attr_map=None):
+    def __init__(self, filter_type=None, filter_attr_map={}):
         """
-        load a set of link ids
+        load an id-set of links
         
         @param filter_type: link type filter 
         @param filter_attr_map: is a filter_key to filter_value_set map of
                attributes to match link properties against
         @return: a set of loaded link ids
         """
-        filter_str = dbu.where_clause_from_filter_attr_map()
-        
+        super(DBO_load_link_id_set, self).__init__()
+
+        q = "match ()-[r{filter_type} {filter_attr}]->() return id(r)"
+        q = cfmt(q, filter_type="" if not filter_type else ":" + filter_type)
+        q = cfmt(q, filter_attr=db_util.gen_clause_attr_filter_from_filter_attr_map(filter_attr_map))
+        q_params = {k: v[0] for (k, v) in filter_attr_map.items()}  # pass on only first value from each value set
+
+        self.add_statement(q, q_params)
+
+    def on_completion(self, data):
+        log.debug('loaded id-set: ' + str(data))
+        return self.parse_single_query_response_data(data)
 
 class DB_Driver_Base():
     pass
