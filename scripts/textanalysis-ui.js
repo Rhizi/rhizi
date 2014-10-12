@@ -122,7 +122,7 @@ function changeType(arg, id) {
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
         graph.findCoordinates(lastnode,null);
     }
-    graph.updateGraph();
+    graph.update(true);
 }
 
 if (element.length == 1) {

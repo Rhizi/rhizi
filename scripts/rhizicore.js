@@ -342,7 +342,7 @@ function myGraph(el) {
         var index = findNode(id, state);
         if ((index !== undefined)) {
             index.type = newtype;
-            update();
+            update(true);
         }
     }
 
@@ -350,7 +350,7 @@ function myGraph(el) {
         var index = findNode(id, state);
         if ((index === undefined)) return;
         index.url = url;
-        update();
+        update(true);
     }
 
     this.editState = function(id, state, newstate) {
@@ -532,7 +532,7 @@ function myGraph(el) {
           graph.addLink(link.source,link.target,link.name,"perm");
         }
         graph.recenterZoom();
-        graph.update();
+        graph.update(false);
         graph.clear_history();
     }
     this.load_from_json = load_from_json;
@@ -743,7 +743,7 @@ function myGraph(el) {
                 } else {
                     graph.removeHighlight();
                 }
-                graph.update();
+                graph.update(true);
             });
 
         //if(graphstate==="GANTT"){
@@ -798,7 +798,7 @@ function myGraph(el) {
         }
     }
 
-    update();
+    update(false);
 }
 
 
@@ -999,22 +999,21 @@ function showInfo(d, i) {
       }
       graph.editType(d.id,d.type,$('#edittype').val());
       graph.editURL(d.id, d.type, $('#editurl').val());
-      graph.update();
+      graph.update(true);
       return false;
     });
 
     $("#deletenode").click(function() {
       if (confirm('This node and all its connections will be deleted, are you sure?')) {
         graph.removeNode(d.id, null);
+        graph.update(false);
       }
-
-      graph.update();
     });
   } else {
     graph.removeHighlight();
     $('.info').fadeOut(300);
   }
-  graph.update();
+  graph.update(true);
 }
 
 function mousedown() {
@@ -1024,7 +1023,7 @@ function mousedown() {
     $('.editlinkinfo').css('left', 0);
     graph.removeHighlight();
     $('.info').fadeOut(300);
-    graph.update();
+    graph.update(true);
 }
 
 function AddedUnique(newnode) {
@@ -1054,16 +1053,14 @@ function editNode(d, i) {
         $('.editinfo').css('left', 0);
         graph.editName(oldname, "xx", $('#editname').val());
 
-
-        graph.update();
+        graph.update(true);
 
         return false;
     }
 
     });
 
-      graph.update();
-
+    graph.update(true);
 }
 
 function editLink(d, i) {
@@ -1079,13 +1076,12 @@ function editLink(d, i) {
         graph.editLink(d.source.id, d.target.id, $('#editlinkname').val());
         $('.editlinkinfo').css('top', -100);
         $('.editlinkinfo').css('left', 0);
-        graph.update();
+        graph.update(true);
 
         return false;
     });
 
-    graph.update();
-
+    graph.update(true);
 }
 
 
