@@ -1,9 +1,10 @@
 import unittest
-import db_controller
 import logging
 import db_controller as dbc
 
 from rhizi_server import Config
+from neo4j_test_util import rand_id
+from neo4j_test_util import flush_db
 
 class TestDBController(unittest.TestCase):
 
@@ -19,11 +20,15 @@ class TestDBController(unittest.TestCase):
                          ]
             }
 
+    l_map = { 'Knows' : [{'__src': 'person_00', '__dst': 'skill_00'},
+                         {'__src': 'person_00', '__dst': 'skill_01'}] }
+        
     @classmethod
     def setUpClass(self):
         cfg = Config.init_from_file('res/etc/rhizi-server.conf')
         self.db_ctl = dbc.DB_Controller(cfg)
         self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
+        self.db_ctl.exec_op(dbc.DBO_add_link_set(self.l_map))
         self.log = logging.getLogger('rhizi')
 
     def setUp(self):
@@ -31,25 +36,27 @@ class TestDBController(unittest.TestCase):
 
     def test_db_op_statement_iteration(self):
         s_arr = ['create (b:Book {title: \'foo\'}) return b',
-                 'match (n) return n',]
+                 'match (n) return n', ]
 
         op = dbc.DB_op()
         op.add_statement(s_arr[0])
         op.add_statement(s_arr[1])
 
         i = 0
-        for s_id, s, r in op:
+        for _, s, r in op:
             # access: second tuple item -> REST-form 'statement' key
             self.assertEqual(s_arr[i], s['statement'])
             self.assertEqual(None, r)
             i = i + 1
-            
+
         self.db_ctl.exec_op(op)
 
         i = 0
-        for s_id, s, r in op:
+        for _, s, r_set in op:
             # access: second tuple item -> REST-form 'statement' key
-            self.assertNotEqual(None, r)
+            self.assertNotEqual(None, r_set)
+            for x in r_set:
+                pass
             i = i + 1
 
     def test_add_node_set(self):
@@ -90,6 +97,7 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(n_set), 2)
 
     def test_load_node_set_by_DB_id(self): pass  # TODO
+
     def test_load_node_set_by_id_attribute(self):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
         self.assertEqual(len(n_set), 2)
@@ -125,7 +133,6 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_DB_id(id_set))
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
 
-    def test_load_node_set_by_DB_id(self): pass # TODO
 
     def test_partial_query_set_execution_success(self):
         """
@@ -137,15 +144,15 @@ class TestDBController(unittest.TestCase):
         the server will roll back the transaction.'
         """
         n_id = 'test_partial_query_set_execution_success'
-        
+
         op = dbc.DB_op()
-        op.add_statement("create (n:Person {id: '%s'}) return n" % (n_id), {}) # valid statement
-        op.add_statement("match (n) return n", {}) # valid statement
+        op.add_statement("create (n:Person {id: '%s'}) return n" % (n_id), {})  # valid statement
+        op.add_statement("match (n) return n", {})  # valid statement
         op.add_statement("non-valid statement #1", {})
         op.add_statement("non-valid statement #2", {})
-        
+
         self.db_ctl.exec_op(op)
-        
+
         self.assertEqual(len(op.result_set), 2)
         self.assertEqual(len(op.error_set), 1)
 
