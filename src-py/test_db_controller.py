@@ -70,26 +70,26 @@ class TestDBController(unittest.TestCase):
                                            {'__src': src_id, '__dst': dst_id_1}] } 
         l_set = self.db_ctl.exec_op(dbc.DBO_add_link_set(l_map))
         self.assertEqual(len(l_set), 2)
-    
-    def test_load_node_set_by_type(self):
-        filter_type = 'Person'
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_type=filter_type))
-        self.assertEqual(len(n_set), 2)
 
-        filter_type = 'Nan_Type'
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_type=filter_type))
-        self.assertEqual(len(n_set), 0)
+    def test_load_node_set_by_type(self):
+        op = dbc.DBO_load_node_id_set(filter_type='Person')
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 2)
+
+        op = dbc.DBO_load_node_id_set(filter_type='Nan_Type')
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
 
     def test_load_node_set_by_attribute(self):
-        filter_map = { 'name': ['Bob', u'Judo'],
-                       'age': [128] }
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_attribute(filter_map))
+        fam = { 'name': ['Bob', u'Judo'], 'age': [128] }
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_attr_map=fam))
         self.assertEqual(len(n_set), 1)
 
-        filter_map = { 'age': [128, 256, 404] }
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_attribute(filter_map))
+        fam = { 'age': [128, 256, 404] }
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_attr_map=fam))
         self.assertEqual(len(n_set), 2)
 
+    def test_load_node_set_by_DB_id(self): pass  # TODO
     def test_load_node_set_by_id_attribute(self):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
         self.assertEqual(len(n_set), 2)
