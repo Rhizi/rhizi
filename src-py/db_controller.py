@@ -59,15 +59,15 @@ class DB_op(object):
                 yield (i, s, None)
                 i = i + 1
 
-    def extract_single_query_response_data(self, q, data):
+    def parse_single_query_response_data(self, data):
         """
         DB op can issue complex sets of quries all at once - this helper method
         assists in parsing response data from a single query.
         """
         ret = []
-        r_0 = data['results'][0]
-        for row in r_0['data']:
-            ret.append(row['row'][0])
+        for _, _, r_set in self:
+            for row in r_set:
+                ret.append(row)
         return ret
 
     def parse_multi_statement_response_data(self, data):
