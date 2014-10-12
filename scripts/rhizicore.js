@@ -1042,30 +1042,30 @@ function AddedUnique(newnode) {
 }
 
 
-
-function editNode(d, i) {
-    var oldname = d.id;
-    $('.editinfo').css('top', d.y - 12);
-    $('.editinfo').css('left', d.x + 18);
-    $('#editname').val(oldname);
-
-    $('#editform').keypress(function(e) {
-        if (graph.history !== undefined) {
-            graph.history.record_keystrokes(KEYSTROKE_WHERE_EDIT_NODE, [e.which]);
-        }
-     if (e.which == 13) {
+$('#editform').keypress(function(e) {
+    if (graph.history !== undefined) {
+        graph.history.record_keystrokes(KEYSTROKE_WHERE_EDIT_NODE, [e.which]);
+    }
+    if (e.which == 13) {
         $('.editinfo').css('top', -100);
         $('.editinfo').css('left', 0);
-        graph.editName(oldname, "xx", $('#editname').val());
-
+        var element = $('#editname');
+        var newname = element.val();
+        var d = element.data().d;
+        graph.editName(d.id, "xx", newname);
         graph.update(true);
-
         return false;
     }
+});
 
-    });
 
-    graph.update(true);
+function editNode(d, i) {
+    var oldname = d.name;
+    var element = $('#editname');
+    $('.editinfo').css('top', d.y - 12);
+    $('.editinfo').css('left', d.x + 18);
+    element.val(oldname);
+    element.data().d = d;
 }
 
 function editLink(d, i) {
