@@ -7,6 +7,17 @@ import urllib2
 import model
 import string
 
+class DB_result_set(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __iter__(self):
+        for db_row_dict in self.data['data']:
+            # example: dict: {u'row': [{u'title': u'foo'}]}
+            assert None != db_row_dict['row'][0]
+
+            yield db_row_dict['row'][0]
+
 class Cypher_String_Formatter(string.Formatter):
     """
     Despite parameter support in Cypher, we sometimes do engage in query string building 

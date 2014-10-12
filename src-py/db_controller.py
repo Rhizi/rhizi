@@ -9,6 +9,7 @@ import traceback
 import urllib2
 
 import neo4j_util as dbu
+from neo4j_util import DB_result_set
 
 log = logging.getLogger('rhizi')
 
@@ -50,7 +51,8 @@ class DB_op(object):
         i = 0
         if self.result_set:
             for s in self.statement_set:
-                yield (i, s, self.result_set[i])
+                rs = DB_result_set(self.result_set[i])
+                yield (i, s, rs)
                 i = i + 1
         else:
             for s in self.statement_set:
