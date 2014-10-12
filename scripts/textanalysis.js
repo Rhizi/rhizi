@@ -45,8 +45,9 @@ function up_to_two_renames(graph, old_id, new_id)
 {
     var not_one_letter = false;
     var k;
-    /* Includes:
-     * single letter or no addition or removal after changing to lower case.
+    /* Allowed renames:
+     * no change
+     * s1 is substring of s2
      * older (s1) node being 'new node'
      */
     function allowed_rename(s1, s2)
@@ -55,8 +56,8 @@ function up_to_two_renames(graph, old_id, new_id)
         s2 = s2.toLowerCase();
         return (s1 == s2 ||
                 s1 == 'new node' ||
-                (s1.length == s2.length + 1 && s1.substr(0, s2.length) == s2) ||
-                (s2.length == s1.length + 1 && s2.substr(0, s1.length) == s1));
+                s1.substr(0, s2.length) == s2 ||
+                s2.substr(0, s1.length) == s1);
     }
 
     if (old_id.length != new_id.length) {
