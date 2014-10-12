@@ -66,7 +66,33 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_DB_id(id_set))
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
 
-    def test_load_node_set_by_DB_id(self): pass
+    def test_load_node_set_by_DB_id(self): pass # TODO
+
+    def test_partial_query_set_execution_success(self):
+        """
+        test:
+            - statement execution stops at first invalid statement
+            - assert create statement with result data does not actually persist in DB 
+            
+        From the REST API doc: 'If any errors occur while executing statements,
+        the server will roll back the transaction.'
+        """
+        n_id = 'test_partial_query_set_execution_success'
+        
+        op = dbc.DB_op()
+        op.add_statement("create (n:Person {id: '%s'}) return n" % (n_id), {}) # valid statement
+        op.add_statement("match (n) return n", {}) # valid statement
+        op.add_statement("non-valid statement #1", {})
+        op.add_statement("non-valid statement #2", {})
+        
+        self.db_ctl.exec_op(op)
+        
+        self.assertEqual(len(op.result_set), 2)
+        self.assertEqual(len(op.error_set), 1)
+
+        # assert node creation did not persist
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute([n_id]))
+        self.assertEqual(len(n_set), 0)
 
     def tearDown(self): pass
 
