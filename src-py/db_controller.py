@@ -80,35 +80,21 @@ class DB_op(object):
         pass
 
 class DBO_add_node_set(DB_op):
-    def __init__(self, node_map, input_to_DB_property_map=lambda _: _):
+    def __init__(self, node_map):
         """
         DB op: add node set
         
-        @param node_map: node-type to node list map
-        @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
+        @param node_map: node-type to node-set map
         """
         super(DBO_add_node_set, self).__init__()
-
-        for k, v in node_map.iteritems():  # do some type sanity checking
-            assert isinstance(k, basestring)
-            assert isinstance(v, list)
-
-        self.node_map = node_map
-
-        for type, n_set in self.node_map.items():
-            q = "create (n:{0} {{prop_dict}}) return id(n)".format(type)
-            for n_prop_dict in n_set:
-                p = {'prop_dict' : input_to_DB_property_map(n_prop_dict)}
-                self.add_statement(q, p)
+        for q, q_param_set in db_util.gen_query_create_from_node_map(node_map):
+            self.add_statement(q, q_param_set)
 
     def on_completion(self, data):
-        # [!] fragile - parse results
-        # sample input: dict: {u'errors': [], u'results': [{u'data': [{u'row': [20]}], u'columns': [u'id(n)']}]}
         id_set = []
-        for r in data['results']:
-            columns = r['columns']
-            for k in r['data']:
-                nid = k['row'][0]
+        for _, _, r_set in self:
+            for row in r_set:
+                nid = row  # [!] fragile
                 id_set.append(nid)
 
         log.debug('node-set added: ids: ' + str(id_set))
