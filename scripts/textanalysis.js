@@ -38,16 +38,26 @@ function autocompleteCallback(request, response_callback)
     response_callback(ret);
 }
 
-function same_up_to_one_letter(s1, s2)
-{
-    return ((s1.length == s2.length + 1 && s1.substr(0, s2.length) == s2) ||
-            (s2.length == s1.length + 1 && s2.substr(0, s1.length) == s1));
-}
-
+/* up_to_two_renames:
+ *
+ * allow one letter or 'new node' to anything changes */
 function up_to_two_renames(graph, old_id, new_id)
 {
     var not_one_letter = false;
     var k;
+    /* Includes:
+     * single letter or no addition or removal after changing to lower case.
+     * older (s1) node being 'new node'
+     */
+    function allowed_rename(s1, s2)
+    {
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+        return (s1 == s2 ||
+                s1 == 'new node' ||
+                (s1.length == s2.length + 1 && s1.substr(0, s2.length) == s2) ||
+                (s2.length == s1.length + 1 && s2.substr(0, s1.length) == s1));
+    }
 
     if (old_id.length != new_id.length) {
         console.log('bug: up_to_two_renames: not equal inputs');
@@ -58,12 +68,12 @@ function up_to_two_renames(graph, old_id, new_id)
         return;
     }
     if (old_id.length == 2) {
-        if (same_up_to_one_letter(old_id[0], new_id[1]) &&
-            same_up_to_one_letter(old_id[1], new_id[0])) {
+        if (allowed_rename(old_id[0], new_id[1]) &&
+            allowed_rename(old_id[1], new_id[0])) {
             old_id = [old_id[1], old_id[0]];
         } else {
-            if (!same_up_to_one_letter(old_id[0], new_id[0]) ||
-                !same_up_to_one_letter(old_id[1], new_id[1])) {
+            if (!allowed_rename(old_id[0], new_id[0]) ||
+                !allowed_rename(old_id[1], new_id[1])) {
                 not_one_letter = true;
             }
         }
