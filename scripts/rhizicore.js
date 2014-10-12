@@ -214,6 +214,9 @@ function myGraph(el) {
         new_nodes.sort();
         new_links.sort();
         if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
+            if (verbose) {
+                console.log('not same size');
+            }
             return {graph_same: false};
         }
         changed_nodes = set_diff(set_from_array(state_nodes.map(function(d) { return d.id; })),
@@ -223,6 +226,10 @@ function myGraph(el) {
             set_old_id = set_from_array(changed_nodes.a_b.map(function (f) { return f.toLowerCase(); }));
             set_new_id = set_from_array(changed_nodes.b_a.map(function (f) { return f.toLowerCase(); }));
         } else {
+            if (verbose) {
+                console.log('changed too many nodes');
+                console.log(changed_nodes);
+            }
             return {graph_same: false};
         }
         for (k = 0 ; k < state_links.length ; ++k) {
