@@ -52,9 +52,22 @@ class TestDBController(unittest.TestCase):
             self.assertNotEqual(None, r)
             i = i + 1
 
+    def test_add_node_set(self):
+        n_map = { 'T_test_add_node_set': [{'id': rand_id() }] }
+        id_set = self.db_ctl.exec_op(dbc.DBO_add_node_set(n_map))
+        self.assertEqual(len(id_set), 1)
+
     def test_add_link_set(self):
-        l_map = { 'Knows' : [{'__src': 'person_00', '__dst': 'skill_00'},
-                             {'__src': 'person_00', '__dst': 'skill_01'}] }
+        src_id = rand_id()
+        dst_id_0 = rand_id()
+        dst_id_1 = rand_id()
+        n_map = { 'T_test_add_node_set': [{'id': src_id },
+                                          {'id': dst_id_0 },
+                                          {'id': dst_id_1 }] }
+        self.db_ctl.exec_op(dbc.DBO_add_node_set(n_map))
+        
+        l_map = { 'T_test_add_link_set' : [{'__src': src_id, '__dst': dst_id_0},
+                                           {'__src': src_id, '__dst': dst_id_1}] } 
         l_set = self.db_ctl.exec_op(dbc.DBO_add_link_set(l_map))
         self.assertEqual(len(l_set), 2)
     
