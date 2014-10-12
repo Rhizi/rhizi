@@ -245,9 +245,8 @@ var textAnalyser2 = function (newtext, finalize) {
             }
             nodeindex++;
         } else if (orderStack[m] === "LINK") {
-            linkindex++;
-            word += " -->" + newlinks[linkindex] + " --> ";
-            completeSentence += newlinks[linkindex];
+            word += " -->" + newlinks[nodeindex] + " --> ";
+            completeSentence += newlinks[nodeindex];
         }
     }
     completeSentence = completeSentence.trim();
