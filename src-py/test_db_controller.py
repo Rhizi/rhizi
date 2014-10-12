@@ -52,6 +52,21 @@ class TestDBController(unittest.TestCase):
             self.assertNotEqual(None, r)
             i = i + 1
 
+    def test_add_link_set(self):
+        l_map = { 'Knows' : [{'__src': 'person_00', '__dst': 'skill_00'},
+                             {'__src': 'person_00', '__dst': 'skill_01'}] }
+        l_set = self.db_ctl.exec_op(dbc.DBO_add_link_set(l_map))
+        self.assertEqual(len(l_set), 2)
+    
+    def test_load_node_set_by_type(self):
+        filter_type = 'Person'
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_type=filter_type))
+        self.assertEqual(len(n_set), 2)
+
+        filter_type = 'Nan_Type'
+        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_type=filter_type))
+        self.assertEqual(len(n_set), 0)
+
     def test_load_node_set_by_attribute(self):
         filter_map = { 'name': ['Bob', u'Judo'],
                        'age': [128] }

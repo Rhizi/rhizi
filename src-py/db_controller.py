@@ -114,6 +114,27 @@ class DBO_add_node_set(DB_op):
         log.debug('node-set added: ids: ' + str(id_set))
         return id_set
 
+class DBO_add_link_set(DB_op):
+    def __init__(self, link_map):
+        """
+        @param link_map: is a link-type to link-set map - see model.link
+        """
+        super(DBO_add_link_set, self).__init__()
+        for q, q_params in db_util.gen_query_create_from_link_map(link_map):
+            self.add_statement(q, q_params)
+
+    def on_completion(self, data):
+        super(DBO_add_link_set, self).on_completion(data)
+
+        id_set = []
+        for s_id, s, r_set in self:
+            for row in r_set:
+                # [!] fragile - parse results
+                lid = row
+                id_set.append(lid)
+
+        log.debug('link-set added: ids: ' + str(id_set))
+        return id_set
 
 class DBO_load_node_set_by_DB_id(DB_op):
     def __init__(self, id_set):
