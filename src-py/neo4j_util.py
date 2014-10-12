@@ -30,13 +30,12 @@ def cfmt(fmt_str, *args, **kwargs):
 def post_neo4j(url, data):
     """
     @return dict object from the neo4j json POST response
-    @raise exception: if the 'errors' key is not empty
     """
     ret = post(url, data)
     ret_data = json.load(ret)
 
-    if ret_data['errors']:
-        raise Exception('neo4j exception: ' + str(ret_data['errors']))
+    # [!] do not raise exception if ret_data['errors'] is not empty -
+    # this allows query-sets to partially succeed
 
     return ret_data
 
