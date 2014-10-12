@@ -220,8 +220,8 @@ function myGraph(el) {
                                  set_from_array(new_nodes));
         // we allow any number of changed nodes as long as we it is 1 or 2 :)
         if (changed_nodes.a_b.length <= 2) {
-            set_old_id = set_from_array(changed_nodes.a_b);
-            set_new_id = set_from_array(changed_nodes.b_a);
+            set_old_id = set_from_array(changed_nodes.a_b.map(function (f) { return f.toLowerCase(); }));
+            set_new_id = set_from_array(changed_nodes.b_a.map(function (f) { return f.toLowerCase(); }));
         } else {
             return {graph_same: false};
         }
