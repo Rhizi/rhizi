@@ -387,10 +387,6 @@ function myGraph(el) {
         }
     }
 
-    this.updateGraph = function() {
-
-    }
-
     this.recenterZoom = function() {
         vis.attr("transform", "translate(0,0)scale(1)");
     }

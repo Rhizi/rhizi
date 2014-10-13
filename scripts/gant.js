@@ -69,8 +69,6 @@ $('body').bind('DOMMouseScroll', function(e){
 
 
 function initAxis() {
-
-
     var bar_height = 20;
     var row_height = bar_height + 10;
     var vertical_padding = 150
@@ -182,7 +180,4 @@ function initAxis() {
         .attr("transform", "translate(0," + paddingTop + ")")
         .attr("class", "axis gantt")
         .call(xAxis);
-
-        graph.updateGraph();
-
 }
