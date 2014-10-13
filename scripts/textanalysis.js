@@ -127,7 +127,6 @@ var textAnalyser2 = function (newtext, finalize) {
     var word;
     var completeSentence;
     var typesetter, abnormalGraph;
-    var verb;
     var l, n, j;
     var link_hash = {};
     var yell_bug = false; // TODO: fix both issues
@@ -328,18 +327,17 @@ var textAnalyser2 = function (newtext, finalize) {
     }
 
     //EXTERNAL AND CONNECTION CHECKING
-    verb = "";
     function ANDconnect(node) {
-          for(var x=0;x<newlinks.length;x++){
+        var verb;
+        for(var x=0;x<newlinks.length;x++){
             if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
-                verb=newlinks[x];
+                verb = newlinks[x];
                 for(var y=0; y<x ;y++){
                     addLink(newnodes[y], node, verb, typesetter);
                     for(var z=x; z<newnodes.length ;z++){
                         addLink(newnodes[y], newnodes[z], verb, typesetter);
                     }
                 }
-                
             }
         }
     }
@@ -349,14 +347,7 @@ var textAnalyser2 = function (newtext, finalize) {
     console.log(orderStack);*/
 
     //STAR CASE
-    verb = "";
     if (abnormalGraph) {
-        for (l = 1; l < newlinks.length; l++) {
-            if (newlinks[l])
-                if (newlinks[l].replace(/ /g, "") !== "and") {
-                    verb = newlinks[l];
-                }
-        }
         addNode(completeSentence, "chainlink", typesetter);
         for (n = 0; n < newnodes.length; n++) {
             addLink(newnodes[n], completeSentence, "", typesetter);
