@@ -370,8 +370,8 @@ input:focus {
 }
 
 #editname{
-  width:150px;
-  height:20px;
+  width:inherit;
+  height:inherit;
 
   font-size: 17px;
 
