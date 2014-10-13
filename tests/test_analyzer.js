@@ -51,9 +51,28 @@ function dump_graphviz(window) {
     console.log('}');
 }
 
+var data = [
+["#a hello there #b", ["a", "b"], [["a", "b", "hello there"]],
+["#a hello there2 #ba", ["a", "ba"], ["a", "ba", "hello there2"]]],
+["#c and #d like #e", ["c", "d", "e"], [["c", "e", "like"], ["d", "e", "like"]]],
+["#f and #g and #h are cool", ["f", "g", "h", "are cool"], [["f", "are cool", ""], ["g", "are cool", ""], ["h", "are cool", ""]]], // the are should be a label actually, but harder to do.
+["#i likes #j and #k", ["i", "j", "k"], ["i", "j", "likes"], ["i", "k", "likes"]],
+["#q likes #r but doesn't like #l", ["q", "r", "l"], []],
+];
+/*
+#t and #u like #v
+#w #x #y
+sometimes #z and #ab aren't friends
+I like to work with #a
+*/
+
+
 var done = function (errors, window) {
-    window.analyzeSentence(process.argv.slice(2).join(" "), true);
-    dump_graphviz(window);
+    debugger;
+    if (process.argv.length > 2) {
+        window.analyzeSentence(process.argv.slice(2).join(" "), true);
+        dump_graphviz(window);
+    }
     process.exit();
 }
 
