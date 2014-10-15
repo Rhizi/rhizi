@@ -123,6 +123,30 @@ class DBO_topo_diff_commit(DB_composed_op):
         self.add_sub_op(op_n_add)
         self.add_sub_op(op_l_add)
 
+    def on_completion(self, data):
+        pass
+
+class DBO_attr_diff_commit(DB_op):
+    """
+    commit a Attr_Diff
+    """
+    def __init__(self, attr_diff):
+        super(DBO_attr_diff_commit, self).__init__()
+
+        for id_attr, n_attr_diff in attr_diff.items():
+            # TODO parameterize multiple attr removal
+            rm_attr_set = n_attr_diff['attr_remove']
+            rm_attr_str = ', '.join(['n.' + attr for attr in rm_attr_set])
+            
+            q = ("match (n {id: {id}}) " + 
+                 "set n += {attr_set}" +
+                 "remove " + rm_attr_str +
+                 " return n.id, n")
+            q_param_set = {'id': id_attr,
+                           'attr_set': n_attr_diff['attr_write']}
+            self.add_statement(q, q_param_set)
+
+    def on_completion(self, data):
         pass
 
 class DBO_add_node_set(DB_op):

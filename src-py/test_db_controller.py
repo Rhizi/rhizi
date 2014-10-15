@@ -193,6 +193,21 @@ class TestDBController(unittest.TestCase):
         id_set = self.db_ctl.exec_op(dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id=n_1_id, dst_id=n_0_id))
         self.assertEqual(len(id_set), 1)
 
+    def test_attr_diff_commit(self):
+        # create test node
+        n_id = rand_id()
+        topo_diff = Topo_Diff(node_set_add=[{'__type': 'T_test_attr_diff_commit', 'id': n_id, 'attr_rm': 0}])
+        op = dbc.DBO_topo_diff_commit(topo_diff)
+        self.db_ctl.exec_op(op)
+
+        # apply attr_diff
+        attr_diff = {n_id: {'attr_write': {'attr_0': 0,
+                                           'attr_1': 'a'},
+                            'attr_remove': ['attr_rm']}}
+        op = dbc.DBO_attr_diff_commit(attr_diff)
+        n_set = self.db_ctl.exec_op(op)
+        pass
+
     def tearDown(self): pass
 
 if __name__ == "__main__":
