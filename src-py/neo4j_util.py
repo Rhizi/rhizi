@@ -164,6 +164,28 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
                         'link_attr' : input_to_DB_property_map(prop_dict)}
             q_params_set.append(q_params)
 
+def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
+    """
+    convert a list of maps each containing a meta_attr key into a
+    meta_attr-mapped collection of lists with the meta_attr removed - eg:
+    
+        in: [{'id':0, '__type': 'T'}, {'id':1, '__type': 'T'}]
+        out: { 'T', [{'id':0}, {'id':1}] }
+    """
+    ret = {}
+    for v in e_set:
+        assert None != v['__type'] # attert type meta-attr is present
+
+        v_type = v['__type']
+        if None == ret.get(v_type):# init type list if necessary
+            ret[v_type] = []
+    
+        v_no_meta = v.copy()
+        del v_no_meta['__type']
+
+        ret[v_type].append(v_no_meta)
+
+    return ret
     q = "match (src {id: {src}.id}),(dst {id: {dst}.id}) create (src)-[:%(l_type)s {link_attr}]->(dst)" % {'l_type':l_type}
     return (q, q_params_set)
 
