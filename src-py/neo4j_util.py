@@ -145,8 +145,14 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     
     @param link_map: is a link-type to link map - see model.link
     """
-    q_params_set = []
+    __type_check_link_or_node_map(link_map)
+
+    ret = []
     for l_type, l_set in link_map.items():
+        q = "match (src {id: {src}.id}),(dst {id: {dst}.id}) " + \
+            "create (src)-[r:%(__type)s {link_attr}]->(dst) " + \
+            "return id(r)"
+        q = q % {'__type':l_type}
 
         for link in l_set:
             __type_check_link(link)
@@ -162,7 +168,9 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
             q_params = {'src': { 'id': n_src} ,
                         'dst': { 'id': n_dst} ,
                         'link_attr' : input_to_DB_property_map(prop_dict)}
-            q_params_set.append(q_params)
+            ret.append((q, q_params))
+
+    return ret
 
 def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
     """
