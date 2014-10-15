@@ -173,7 +173,7 @@ class DBO_load_node_set_by_DB_id(DB_op):
         @return: loaded node set or an empty set if no match was found
         """
         super(DBO_load_node_set_by_DB_id, self).__init__()
-        q = "match (n) where id(n) in {id_set} return n"
+        q = "start n=node({id_set}) return n"
         self.add_statement(q, { 'id_set': id_set})
 
     def on_completion(self, data):
