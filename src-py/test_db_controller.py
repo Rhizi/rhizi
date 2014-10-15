@@ -6,6 +6,9 @@ from rhizi_server import Config
 from neo4j_test_util import rand_id
 from neo4j_test_util import flush_db
 
+from model.graph import Attribute_Diff as Attr_Diff
+from model.graph import Topo_Diff as Topo_Diff
+
 class TestDBController(unittest.TestCase):
 
     db_ctl = None
@@ -22,7 +25,7 @@ class TestDBController(unittest.TestCase):
 
     l_map = { 'Knows' : [{'__src': 'person_00', '__dst': 'skill_00'},
                          {'__src': 'person_00', '__dst': 'skill_01'}] }
-        
+
     @classmethod
     def setUpClass(self):
         cfg = Config.init_from_file('res/etc/rhizi-server.conf')
@@ -60,9 +63,13 @@ class TestDBController(unittest.TestCase):
             i = i + 1
 
     def test_add_node_set(self):
-        n_map = { 'T_test_add_node_set': [{'id': rand_id() }] }
-        id_set = self.db_ctl.exec_op(dbc.DBO_add_node_set(n_map))
-        self.assertEqual(len(id_set), 1)
+        n_map = { 'T_test_add_node_set': [{'id': rand_id()}, {'id': rand_id()}] }
+        op = dbc.DBO_add_node_set(n_map)
+
+        self.assertEqual(len(op.statement_set), 1)  # assert a single statement is issued
+
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 2)
 
     def test_add_link_set(self):
         src_id = rand_id()
@@ -72,55 +79,59 @@ class TestDBController(unittest.TestCase):
                                           {'id': dst_id_0 },
                                           {'id': dst_id_1 }] }
         self.db_ctl.exec_op(dbc.DBO_add_node_set(n_map))
-        
+
         l_map = { 'T_test_add_link_set' : [{'__src': src_id, '__dst': dst_id_0},
-                                           {'__src': src_id, '__dst': dst_id_1}] } 
-        l_set = self.db_ctl.exec_op(dbc.DBO_add_link_set(l_map))
+                                           {'__src': src_id, '__dst': dst_id_1}] }
+
+        op = dbc.DBO_add_link_set(l_map)
+        self.assertEqual(len(op.statement_set), 2)  # no support yet for parameterized statements for link creation
+
+        l_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(l_set), 2)
 
-    def test_load_node_set_by_type(self):
-        op = dbc.DBO_load_node_id_set(filter_type='Person')
+    def test_match_node_set_by_type(self):
+        op = dbc.DBO_match_node_id_set(filter_type='Person')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 2)
 
-        op = dbc.DBO_load_node_id_set(filter_type='Nan_Type')
+        op = dbc.DBO_match_node_id_set(filter_type='Nan_Type')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
-    def test_load_node_set_by_attribute(self):
+    def test_match_node_set_by_attribute(self):
         fam = { 'name': ['Bob', u'Judo'], 'age': [128] }
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_attr_map=fam))
+        n_set = self.db_ctl.exec_op(dbc.DBO_match_node_id_set(filter_attr_map=fam))
         self.assertEqual(len(n_set), 1)
 
         fam = { 'age': [128, 256, 404] }
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_id_set(filter_attr_map=fam))
+        n_set = self.db_ctl.exec_op(dbc.DBO_match_node_id_set(filter_attr_map=fam))
         self.assertEqual(len(n_set), 2)
 
-    def test_load_node_set_by_DB_id(self): pass  # TODO
+    def test_match_node_set_by_DB_id(self): pass  # TODO
 
-    def test_load_node_set_by_id_attribute(self):
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute(['skill_00', 'person_01']))
+    def test_match_node_set_by_id_attribute(self):
+        n_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute(['skill_00', 'person_01']))
         self.assertEqual(len(n_set), 2)
 
-    def test_load_link_set_by_type(self):
-        op = dbc.DBO_load_link_id_set(filter_type='Knows')
+    def test_match_link_set_by_type(self):
+        op = dbc.DBO_match_link_id_set(filter_type='Knows')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 2)
 
-        op = dbc.DBO_load_link_id_set(filter_type='Nan_Type')
+        op = dbc.DBO_match_link_id_set(filter_type='Nan_Type')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
-    def test_load_link_set_by_src_or_dst_id_attributes(self):
-        op = dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id='person_00', dst_id='skill_00')
+    def test_match_link_set_by_src_or_dst_id_attributes(self):
+        op = dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id='person_00', dst_id='skill_00')
         n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), 1)
-        
-        op = dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id='person_00')
+
+        op = dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id='person_00')
         n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), 2)
 
-        op = dbc.DBO_load_link_set_by_src_or_dst_id_attributes(dst_id='skill_00')
+        op = dbc.DBO_match_link_set_by_src_or_dst_id_attributes(dst_id='skill_00')
         n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), 1)
 
@@ -132,7 +143,6 @@ class TestDBController(unittest.TestCase):
                                                                       {'name': 'John Doe', 'id': 'jdoe_01'}]}))
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_DB_id(id_set))
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
-
 
     def test_partial_query_set_execution_success(self):
         """
@@ -157,7 +167,7 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(op.error_set), 1)
 
         # assert node creation did not persist
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute([n_id]))
+        n_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute([n_id]))
         self.assertEqual(len(n_set), 0)
 
     def test_topo_diff_commit(self):
@@ -182,6 +192,7 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(id_set), 1)
         id_set = self.db_ctl.exec_op(dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id=n_1_id, dst_id=n_0_id))
         self.assertEqual(len(id_set), 1)
+
     def tearDown(self): pass
 
 if __name__ == "__main__":
