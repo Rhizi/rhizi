@@ -4,7 +4,11 @@ class Attribute_Diff():
     either logical nodes or logical links, and attributes can be added,
     changed or removed
     """
-    pass
+    def __init__(self, id_to_attr_diff_map={}):
+        """
+        @param id_to_attr_diff_map
+        """
+        self.id_to_attr_diff_map = id_to_attr_diff_map
 
 class Topo_Diff():
     """
