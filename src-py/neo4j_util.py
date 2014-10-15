@@ -81,6 +81,21 @@ def statement_set_to_REST_form(statement_set):
 
     return {'statements': statement_set}
 
+def gen_clause_attr_filter_from_filter_attr_map(filter_attr_map, node_label="n"):
+    if not filter_attr_map:
+        return "{}"
+
+    __type_check_filter_attr_map(filter_attr_map)
+
+    filter_arr = []
+    for attr_name in filter_attr_map.keys():
+        # create a cypher query parameter place holder for each attr set
+        # eg. n.foo in {foo}, where foo is passed as a query parameter
+        f_attr = cfmt("{attr_name}: {{{attr}}}", attr_name=attr_name)
+        filter_arr.append(f_attr)
+
+    filter_str = "{{{0}}}".format(', '.join(filter_arr))
+    return filter_str
 def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     """
     convert a filter attribute map to a parameterized Cypher where clause, eg.
