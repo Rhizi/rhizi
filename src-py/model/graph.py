@@ -1,14 +1,15 @@
-class link():
+class Attribute_Diff():
     """
-    documentation anchor - this class currently carries no implementation
-    and only acts as a documentation anchor
-    
-    link['__src'] - meta attribute for link source
-    link['__dst'] - meta attribute for link destination
+    Represents a change to note attributes, where nodes can represent
+    either logical nodes or logical links, and attributes can be added,
+    changed or removed
     """
     pass
 
-class GDiff():
+class Topo_Diff():
+    """
+    Represents a change to the graph topology
+    """
 
     def __init__(self, link_set_rm=[],
                         node_set_rm=[],
