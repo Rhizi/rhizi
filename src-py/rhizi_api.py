@@ -83,6 +83,19 @@ def __load_node_set_by_id_attr_common(id_set):
 def add_node():
     # pending decision regarding support for single object operations
     assert False
+@webapp.route("/graph/topo-diff-commit", methods=['POST'])
+def topo_diff_commit():
+    """
+    commit a graph topology diff
+    """
+    pass
+
+@webapp.route("/graph/attr-diff-commit", methods=['POST'])
+def attr_diff_commit():
+    """
+    commit a graph attribute diff
+    """
+    pass
 
 @webapp.route("/add/node-set", methods=['POST'])
 def add_node_set():
