@@ -74,8 +74,32 @@ class DB_op(object):
         pass
 
     def on_completion(self, data):
+        pass
+
+    def _assign_results_errors(self, data):
         self.result_set = data['results']
         self.error_set = data['errors']
+
+class DB_composed_op(DB_op):
+    def __init__(self):
+        super(DB_composed_op, self).__init__()
+        self.sub_op_set = []
+
+    def add_statement(self, query, query_params={}):
+        assert False, "composed_op may not contain statements, only sub-ops"
+
+    def add_sub_op(self, op):
+        self.sub_op_set.append(op)
+
+    def __getattribute__(self, attr):
+        """
+        intercept 'statement_set' attr get
+        """
+        if attr == 'statement_set':
+            # construct a list comprehension composed of all sup_op statements 
+            return [s for s_op in self.sub_op_set for s in s_op.statement_set]
+
+        return object.__getattribute__(self, attr)
 
         pass
 
