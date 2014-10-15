@@ -160,6 +160,28 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_id_attribute([n_id]))
         self.assertEqual(len(n_set), 0)
 
+    def test_topo_diff_commit(self):
+        n_0_id = rand_id()
+        n_1_id = rand_id()
+
+        n_set = [{'__type': 'T_test_topo_diff_commit', 'id': n_0_id },
+                 {'__type': 'T_test_topo_diff_commit', 'id': n_1_id }]
+        l_set = [{'__type': 'T_test_topo_diff_commit', '__src': n_0_id, '__dst': n_1_id},
+                 {'__type': 'T_test_topo_diff_commit', '__src': n_1_id, '__dst': n_0_id}]
+
+        topo_diff = Topo_Diff(node_set_add=n_set,
+                              link_set_add=l_set)
+
+        op = dbc.DBO_topo_diff_commit(topo_diff)
+        self.assertEqual(len(op.statement_set), 3) # one parameterized node create. 2 link create
+        self.db_ctl.exec_op(op)
+        
+        id_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
+        self.assertEqual(len(id_set), 2)
+        id_set = self.db_ctl.exec_op(dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id=n_0_id, dst_id=n_1_id))
+        self.assertEqual(len(id_set), 1)
+        id_set = self.db_ctl.exec_op(dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id=n_1_id, dst_id=n_0_id))
+        self.assertEqual(len(id_set), 1)
     def tearDown(self): pass
 
 if __name__ == "__main__":

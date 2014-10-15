@@ -101,6 +101,28 @@ class DB_composed_op(DB_op):
 
         return object.__getattribute__(self, attr)
 
+class DBO_topo_diff_commit(DB_composed_op):
+    """
+    commit a 
+    """
+    def __init__(self, topo_diff):
+        super(DBO_topo_diff_commit, self).__init__()
+
+        # TODO rm link set
+        # TODO rm node set
+        assert not topo_diff.node_set_rm, 'unsupported'
+        assert not topo_diff.link_set_rm, 'unsupported'
+
+        n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
+        l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add)
+
+        op_n_add = DBO_add_node_set(n_add_map)
+        op_l_add = DBO_add_link_set(l_add_map)
+        
+        # [!] order critical
+        self.add_sub_op(op_n_add)
+        self.add_sub_op(op_l_add)
+
         pass
 
 class DBO_add_node_set(DB_op):
