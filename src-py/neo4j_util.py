@@ -30,9 +30,9 @@ class Cypher_String_Formatter(string.Formatter):
     def get_field(self, field_name, args, kwargs):
         # ignore key not found, return bracket wrapped key
         try:
-            val=super(Cypher_String_Formatter, self).get_field(field_name, args, kwargs)
+            val = super(Cypher_String_Formatter, self).get_field(field_name, args, kwargs)
         except (KeyError, AttributeError):
-            val="{" + field_name + "}", field_name
+            val = "{" + field_name + "}", field_name
         return val
 
 def cfmt(fmt_str, *args, **kwargs):
@@ -72,7 +72,11 @@ def statement_to_REST_form(query, parameters={}):
     turn cypher query to neo4j json API format
     """
     assert isinstance(query, basestring)
-    assert isinstance(parameters, dict)
+    if isinstance(parameters, list):
+        for v in parameters:
+            assert isinstance(v, dict)
+    else:
+        assert isinstance(parameters, dict)
 
     return {'statement' : query, 'parameters': parameters}
 
@@ -96,13 +100,16 @@ def gen_clause_attr_filter_from_filter_attr_map(filter_attr_map, node_label="n")
 
     filter_str = "{{{0}}}".format(', '.join(filter_arr))
     return filter_str
+
 def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     """
     convert a filter attribute map to a parameterized Cypher where clause, eg.
     in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1,2] }
-    out: where n.att_foo in {att_foo} and n.att_goo in {att_goo} ...
+    out: {att_foo: {att_foo}, att_goo: {att_goo}, ...}
     
-    @param filter_attr_map: may be None or empty 
+    this function will essentially ignore all but the first value in the value list 
+    
+    @param filter_attr_map: may be None or empty
     """
     if not filter_attr_map:
         return ""
@@ -194,8 +201,6 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
         ret[v_type].append(v_no_meta)
 
     return ret
-    q = "match (src {id: {src}.id}),(dst {id: {dst}.id}) create (src)-[:%(l_type)s {link_attr}]->(dst)" % {'l_type':l_type}
-    return (q, q_params_set)
 
 def __type_check_link(link):
     assert link.has_key('__src')

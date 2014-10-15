@@ -156,13 +156,10 @@ class DBO_add_link_set(DB_op):
             self.add_statement(q, q_params)
 
     def on_completion(self, data):
-        super(DBO_add_link_set, self).on_completion(data)
-
         id_set = []
         for s_id, s, r_set in self:
             for row in r_set:
-                # [!] fragile - parse results
-                lid = row
+                lid = row  # [!] fragile
                 id_set.append(lid)
 
         log.debug('link-set added: ids: ' + str(id_set))
@@ -183,7 +180,7 @@ class DBO_load_node_set_by_DB_id(DB_op):
         log.debug('loaded node set: ' + str(data))
         return self.parse_single_query_response_data(data)
 
-class DBO_load_node_set(DB_op):
+class DBO_match_node_id_set(DB_op):
 
     def __init__(self, filter_type=None, filter_attr_map=None):
         """
@@ -208,24 +205,26 @@ class DBO_load_node_set(DB_op):
         log.debug('loaded id-set: ' + str(data))
         return self.parse_single_query_response_data(data)
 
-class DBO_load_node_set_by_id_attribute(DBO_load_node_id_set):
+class DBO_match_node_set_by_id_attribute(DBO_match_node_id_set):
     def __init__(self, id_set):
         """
         convenience op: load a set of nodes by their 'id' attribute != DB node id
         """
         assert isinstance(id_set, list)
 
-        super(DBO_load_node_set_by_id_attribute, self).__init__(filter_attr_map={'id': id_set})
+        super(DBO_match_node_set_by_id_attribute, self).__init__(filter_attr_map={'id': id_set})
 
 
-class DBO_load_link_set_by_src_or_dst_id_attributes(DB_op):
+class DBO_match_link_set_by_src_or_dst_id_attributes(DB_op):
     def __init__(self, src_id=None, dst_id=None):
         """
-        load an id-set of links by source/target id attributes != DB node id
+        match a set of links by source/target node id attributes
+        
+        @return: a set of loaded links
         """
         assert None != src_id or None != dst_id
 
-        super(DBO_load_link_set_by_src_or_dst_id_attributes, self).__init__()
+        super(DBO_match_link_set_by_src_or_dst_id_attributes, self).__init__()
 
         if not src_id:
             q = "match ()-[r]->({id: {dst_id}}) return r"
@@ -243,7 +242,7 @@ class DBO_load_link_set_by_src_or_dst_id_attributes(DB_op):
         log.debug('loaded id-set: ' + str(data))
         return self.parse_single_query_response_data(data)
 
-class DBO_load_link_id_set(DB_op):
+class DBO_match_link_id_set(DB_op):
     def __init__(self, filter_type=None, filter_attr_map={}):
         """
         load an id-set of links
@@ -253,7 +252,7 @@ class DBO_load_link_id_set(DB_op):
                attributes to match link properties against
         @return: a set of loaded link ids
         """
-        super(DBO_load_link_id_set, self).__init__()
+        super(DBO_match_link_id_set, self).__init__()
 
         q = "match ()-[r{filter_type} {filter_attr}]->() return id(r)"
         q = cfmt(q, filter_type="" if not filter_type else ":" + filter_type)
@@ -280,8 +279,8 @@ class DB_Driver_REST(DB_Driver_Base):
             #
             # [!] neo4j seems picky about receiving an additional empty statement list
             #
-            data = data = dbu.statement_set_to_REST_form([])
-            ret = dbu.post_neo4j(tx_open_url, data)
+            data = data = db_util.statement_set_to_REST_form([])
+            ret = db_util.post_neo4j(tx_open_url, data)
             tx_commit_url = ret['commit']
             op.parse_tx_id(tx_commit_url)
 
@@ -291,10 +290,11 @@ class DB_Driver_REST(DB_Driver_Base):
 
     def exex_op_statements(self, op):
         tx_url = "{0}/{1}".format(self.tx_base_url, op.tx_id)
-        statement_set = dbu.statement_set_to_REST_form(op.statement_set)
+        statement_set = db_util.statement_set_to_REST_form(op.statement_set)
 
         try:
-            ret = dbu.post_neo4j(tx_url, statement_set)
+            ret = db_util.post_neo4j(tx_url, statement_set)
+            op._assign_results_errors(ret)
             self.log_committed_queries(statement_set)
             return ret
         except Exception as e:
@@ -307,8 +307,8 @@ class DB_Driver_REST(DB_Driver_Base):
             #
             # [!] neo4j seems picky about receiving an additional empty statement list
             #
-            data = dbu.statement_set_to_REST_form([])
-            ret = dbu.post(tx_commit_url, data)
+            data = db_util.statement_set_to_REST_form([])
+            ret = db_util.post(tx_commit_url, data)
 
             log.debug('tx-commit: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))
 
@@ -379,5 +379,5 @@ class DB_Controller:
         @deprecated: use transaction based api
         """
 
-        # call post and not dbu.post_neo4j to avoid response key errors
-        dbu.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
+        # call post and not db_util.post_neo4j to avoid response key errors
+        db_util.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
