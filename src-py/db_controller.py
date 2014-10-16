@@ -67,7 +67,8 @@ class DB_op(object):
         ret = []
         for _, _, r_set in self:
             for row in r_set:
-                ret.append(row)
+                for cloumn in row:
+                    ret.append(row)
         return ret
 
     def parse_multi_statement_response_data(self, data):
@@ -155,6 +156,7 @@ class DBO_add_node_set(DB_op):
         DB op: add node set
         
         @param node_map: node-type to node-set map
+        @return: set of new node DB ids
         """
         super(DBO_add_node_set, self).__init__()
         for q, q_param_set in db_util.gen_query_create_from_node_map(node_map):
@@ -164,8 +166,8 @@ class DBO_add_node_set(DB_op):
         id_set = []
         for _, _, r_set in self:
             for row in r_set:
-                nid = row  # [!] fragile
-                id_set.append(nid)
+                for clo in row:
+                    id_set.append(clo)
 
         log.debug('node-set added: ids: ' + str(id_set))
         return id_set
@@ -174,6 +176,7 @@ class DBO_add_link_set(DB_op):
     def __init__(self, link_map):
         """
         @param link_map: is a link-type to link-set map - see model.link
+        @return: set of new node DB ids
         """
         super(DBO_add_link_set, self).__init__()
         for q, q_params in db_util.gen_query_create_from_link_map(link_map):
@@ -181,10 +184,10 @@ class DBO_add_link_set(DB_op):
 
     def on_completion(self, data):
         id_set = []
-        for s_id, s, r_set in self:
+        for _, _, r_set in self:
             for row in r_set:
-                lid = row  # [!] fragile
-                id_set.append(lid)
+                for col_val in row:
+                    id_set.append(col_val)
 
         log.debug('link-set added: ids: ' + str(id_set))
         return id_set

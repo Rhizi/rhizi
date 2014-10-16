@@ -7,6 +7,14 @@ import urllib2
 import model
 import string
 
+class DB_row(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __iter__(self):
+        for column_val in self.data:
+            yield column_val
+
 class DB_result_set(object):
     def __init__(self, data):
         self.data = data
@@ -14,9 +22,9 @@ class DB_result_set(object):
     def __iter__(self):
         for db_row_dict in self.data['data']:
             # example: dict: {u'row': [{u'title': u'foo'}]}
-            assert None != db_row_dict['row'][0]
+            assert None != db_row_dict['row']
 
-            yield db_row_dict['row'][0]
+            yield DB_row(db_row_dict['row'])
 
 class Cypher_String_Formatter(string.Formatter):
     """

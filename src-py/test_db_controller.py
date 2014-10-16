@@ -135,13 +135,19 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), 1)
 
-    def test_node_DB_id_lifecycle(self):
+    def test_load_node_set_by_DB_id(self):
         """
         test node DB id life cycle
         """
-        id_set = self.db_ctl.exec_op(dbc.DBO_add_node_set({'Person': [{'name': 'John Doe', 'id': 'jdoe_00'},
-                                                                      {'name': 'John Doe', 'id': 'jdoe_01'}]}))
-        n_set = self.db_ctl.exec_op(dbc.DBO_load_node_set_by_DB_id(id_set))
+        
+        # create nodes, get DB ids
+        op = dbc.DBO_add_node_set({'T_test_load_node_set_by_DB_id': [{'name': 'John Doe'},
+                                                                     {'name': 'John Doe'}]})
+        id_set = self.db_ctl.exec_op(op)
+        
+        # match against DB ids
+        op = dbc.DBO_load_node_set_by_DB_id(id_set)
+        n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
 
     def test_partial_query_set_execution_success(self):
