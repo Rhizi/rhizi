@@ -211,8 +211,13 @@ class TestDBController(unittest.TestCase):
                                            'attr_1': 'a'},
                             'attr_remove': ['attr_rm']}}
         op = dbc.DBO_attr_diff_commit(attr_diff)
-        n_set = self.db_ctl.exec_op(op)
-        pass
+        n_map = self.db_ctl.exec_op(op)
+        self.assertEqual(len(n_map), 1)
+        n = n_map.get(n_id)
+        self.assertTrue(None != n)
+        self.assertTrue(None == n.get('attr_rm'))
+        self.assertTrue(None != n.get('attr_0'))
+        self.assertTrue(None != n.get('attr_1'))
 
     def tearDown(self): pass
 

@@ -141,14 +141,19 @@ class DBO_attr_diff_commit(DB_op):
             
             q = ("match (n {id: {id}}) " + 
                  "set n += {attr_set}" +
-                 "remove " + rm_attr_str +
-                 " return n.id, n")
+                 "remove " + rm_attr_str + " " +
+                 "return n.id, n")
             q_param_set = {'id': id_attr,
                            'attr_set': n_attr_diff['attr_write']}
             self.add_statement(q, q_param_set)
 
     def on_completion(self, data):
-        pass
+        ret = {}
+        for _, _, r_set in self:
+            for row in r_set:
+                n_id, n = [v for v in row] # we expect a [n_id, n] array
+                ret[n_id] = n
+        return ret
 
 class DBO_add_node_set(DB_op):
     def __init__(self, node_map):
