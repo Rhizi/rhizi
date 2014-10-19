@@ -13,8 +13,10 @@ $('.save').click(function(){
 
 $('.saveToFile').click(function() {
     var json = graph.save_to_json();
-    console.log(json);
-    location.href = 'data:text/json;base64,' + window.btoa(json);
+    var filename = 'graph.json';
+    var blob = new Blob([json], {type: 'application/json'});
+    console.log('saving ' + json.length + ' bytes to ' + filename);
+    saveAs(blob, filename);
 });
 
 var really_load = function() {
