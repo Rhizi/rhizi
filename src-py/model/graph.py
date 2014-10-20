@@ -1,14 +1,35 @@
-class Attribute_Diff():
+class Attr_Diff(dict):
     """
     Represents a change to note attributes, where nodes can represent
     either logical nodes or logical links, and attributes can be added,
     changed or removed
+    
+    Example:
+            attr_diff = {n_id: {'attr_write': {'attr_0': 0,
+                                               'attr_1': 'a'},
+                                'attr_remove': ['attr_2'] }
+                        }
     """
-    def __init__(self, id_to_attr_diff_map={}):
-        """
-        @param id_to_attr_diff_map
-        """
-        self.id_to_attr_diff_map = id_to_attr_diff_map
+    def __init__(self):
+        pass
+
+    def init_node_attr_diff(self, n_id):
+        ret = {'attr_write': {},
+                      'attr_remove': []}
+        self[n_id] = ret
+        return ret
+                      
+    def add_node_attr_write(self, n_id, attr_name, attr_val):
+        n_attr_diff = self.get(n_id)
+        if None == n_attr_diff:
+            n_attr_diff = self.init_node_attr_diff(n_id)
+        n_attr_diff['attr_write'][attr_name] = attr_val
+
+    def add_node_attr_rm(self, n_id, attr_name):
+        n_attr_diff = self.get(n_id)
+        if None == n_attr_diff:
+            n_attr_diff = self.init_node_attr_diff(n_id)
+        n_attr_diff['attr_remove'].append(attr_name)
 
 class Topo_Diff():
     """

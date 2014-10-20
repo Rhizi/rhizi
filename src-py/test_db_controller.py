@@ -167,7 +167,7 @@ class TestDBController(unittest.TestCase):
         op.add_statement("non-valid statement #1", {})
         op.add_statement("non-valid statement #2", {})
 
-        self.db_ctl.exec_op(op)
+        self.assertRaises(Neo4JException, self.db_ctl.exec_op, op)
 
         self.assertEqual(len(op.result_set), 2)
         self.assertEqual(len(op.error_set), 1)
