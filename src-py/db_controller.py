@@ -234,22 +234,23 @@ class DBO_load_node_set_by_DB_id(DB_op):
 
 class DBO_match_node_id_set(DB_op):
 
-    def __init__(self, filter_type=None, filter_attr_map=None):
+    def __init__(self, filter_type=None, filter_attr_map={}):
         """
-        load a set of nodes according to filter_attr_map
+        match a set of nodes by type / attr_map
         
+        @param filter_type: node type filter
         @param filter_attr_map: is a filter_key to filter_value_set map of
-               attributes to match against, eg.:
+               possible attributes to match against, eg.:
                { 'id':[0,1], 'color: ['red','blue'] } 
-        @param filter_type: node type filter 
-        @return: loaded node set or an empty set if no match was found
+        @return: a set of node DB id's
         """
+        super(DBO_match_node_id_set, self).__init__()
 
-        filter_str = dbu.where_clause_from_filter_attr_map()
+        q = "match (n{filter_type}) {where_clause} return id(n)"
+        q = cfmt(q, filter_type="" if not filter_type else ":" + filter_type)
+        q = cfmt(q, where_clause=db_util.gen_clause_where_from_filter_attr_map(filter_attr_map))
 
-        super(DBO_load_node_set, self).__init__()
-        q = "match (n) {0} return n".format(filter_str)
-        self.add_statement(q, params=filter_attr_map)
+        q_params = filter_attr_map
 
         self.add_statement(q, q_params)
 
