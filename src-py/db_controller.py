@@ -351,15 +351,21 @@ class DB_Driver_REST(DB_Driver_Base):
         except Exception as e:
             raise Exception('failed to open transaction:' + e.message)
 
-    def exex_op_statements(self, op):
+    def exec_statement_set(self, op):
+
         tx_url = "{0}/{1}".format(self.tx_base_url, op.tx_id)
         statement_set = db_util.statement_set_to_REST_form(op.statement_set)
 
         try:
-            ret = db_util.post_neo4j(tx_url, statement_set)
-            op._assign_results_errors(ret)
+            post_ret = db_util.post_neo4j(tx_url, statement_set)
+            op.result_set = post_ret['results']
+            op.error_set = post_ret['errors']
+            if 0 != len(op.error_set):
+                raise Neo4JException(op.error_set)
+
             self.log_committed_queries(statement_set)
-            return ret
+        except Neo4JException as e:
+            raise e
         except Exception as e:
             raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
 

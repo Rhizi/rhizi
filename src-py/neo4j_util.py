@@ -7,6 +7,13 @@ import urllib2
 import model
 import string
 
+class Neo4JException(Exception):
+    def __init__(self, error_set):
+        self.error_set = error_set
+        
+    def __str__(self):
+        return 'neo4j error set: ' + str(self.error_set)
+    
 class DB_row(object):
     def __init__(self, data):
         self.data = data
