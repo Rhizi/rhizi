@@ -138,9 +138,9 @@ class DBO_attr_diff_commit(DB_op):
             # TODO parameterize multiple attr removal
             rm_attr_set = n_attr_diff['attr_remove']
             rm_attr_str = ', '.join(['n.' + attr for attr in rm_attr_set])
-            
-            q = ("match (n {id: {id}}) " + 
-                 "set n += {attr_set}" +
+
+            q = ("match (n {id: {id}}) " +
+                 "set n += {attr_set} " +
                  "remove " + rm_attr_str + " " +
                  "return n.id, n")
             q_param_set = {'id': id_attr,
