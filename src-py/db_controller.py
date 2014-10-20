@@ -25,7 +25,7 @@ class DB_op(object):
 
     def __init__(self):
         self.statement_set = []
-        self.result_set = None
+        self.result_set = []
         self.error_set = None
         self.tx_id = None
         self.tx_commit_url = None  # cached from response to tx begin
@@ -54,17 +54,18 @@ class DB_op(object):
         TODO: handle partial iteration due to error_set being non-empty
         """
         i = 0
-        if self.result_set:
-            for s in self.statement_set:
-                rs = DB_result_set(self.result_set[i])
-                yield (i, s, rs)
-                i = i + 1
-        else:
-            for s in self.statement_set:
-                yield (i, s, None)
-                i = i + 1
+        r_set_len = len(self.result_set)
+        for s in self.statement_set:
+            r_set = None  # row-set
+            if i < r_set_len:  # support partial result recovery
+                r_set = DB_result_set(self.result_set[i])
+            yield (i, s, r_set)
+            i = i + 1
 
-    def parse_single_query_response_data(self, data):
+    def parse_multi_statement_response_data(self, data):
+        pass
+
+    def process_result_set(self):
         """
         DB op can issue complex sets of quries all at once - this helper method
         assists in parsing response data from a single query.
@@ -72,19 +73,10 @@ class DB_op(object):
         ret = []
         for _, _, r_set in self:
             for row in r_set:
-                for cloumn in row:
-                    ret.append(row)
+                for col in row:
+                    ret.append(col)
         return ret
 
-    def parse_multi_statement_response_data(self, data):
-        pass
-
-    def on_completion(self, data):
-        pass
-
-    def _assign_results_errors(self, data):
-        self.result_set = data['results']
-        self.error_set = data['errors']
 
 class DB_composed_op(DB_op):
     def __init__(self):
@@ -179,7 +171,7 @@ class DBO_attr_diff_commit(DB_op):
             q = " ".join(q_arr)
             self.add_statement(q, q_param_set)
 
-    def on_completion(self, data):
+    def process_result_set(self):
         ret = {}
         for _, _, r_set in self:
             for row in r_set:
@@ -199,10 +191,10 @@ class DBO_add_node_set(DB_op):
         for q, q_param_set in db_util.gen_query_create_from_node_map(node_map):
             self.add_statement(q, q_param_set)
 
-    def on_completion(self, data):
+    def process_result_set(self):
         id_set = []
-        for _, _, r_set in self:
-            for row in r_set:
+        for _, _, row_set in self:
+            for row in row_set:
                 for clo in row:
                     id_set.append(clo)
 
@@ -219,7 +211,7 @@ class DBO_add_link_set(DB_op):
         for q, q_params in db_util.gen_query_create_from_link_map(link_map):
             self.add_statement(q, q_params)
 
-    def on_completion(self, data):
+    def process_result_set(self):
         id_set = []
         for _, _, r_set in self:
             for row in r_set:
@@ -239,10 +231,6 @@ class DBO_load_node_set_by_DB_id(DB_op):
         super(DBO_load_node_set_by_DB_id, self).__init__()
         q = "start n=node({id_set}) return n"
         self.add_statement(q, { 'id_set': id_set})
-
-    def on_completion(self, data):
-        log.debug('loaded node set: ' + str(data))
-        return self.parse_single_query_response_data(data)
 
 class DBO_match_node_id_set(DB_op):
 
@@ -264,10 +252,6 @@ class DBO_match_node_id_set(DB_op):
         self.add_statement(q, params=filter_attr_map)
 
         self.add_statement(q, q_params)
-
-    def on_completion(self, data):
-        log.debug('loaded id-set: ' + str(data))
-        return self.parse_single_query_response_data(data)
 
 class DBO_match_node_set_by_id_attribute(DBO_match_node_id_set):
     def __init__(self, id_set):
@@ -302,10 +286,6 @@ class DBO_match_link_set_by_src_or_dst_id_attributes(DB_op):
 
         self.add_statement(q, q_params)
 
-    def on_completion(self, data):
-        log.debug('loaded id-set: ' + str(data))
-        return self.parse_single_query_response_data(data)
-
 class DBO_match_link_id_set(DB_op):
     def __init__(self, filter_type=None, filter_attr_map={}):
         """
@@ -324,10 +304,6 @@ class DBO_match_link_id_set(DB_op):
         q_params = {k: v[0] for (k, v) in filter_attr_map.items()}  # pass on only first value from each value set
 
         self.add_statement(q, q_params)
-
-    def on_completion(self, data):
-        log.debug('loaded id-set: ' + str(data))
-        return self.parse_single_query_response_data(data)
 
 class DB_Driver_Base():
     pass
