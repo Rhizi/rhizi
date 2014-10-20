@@ -136,15 +136,25 @@ class DBO_attr_diff_commit(DB_op):
 
         for id_attr, n_attr_diff in attr_diff.items():
             # TODO parameterize multiple attr removal
-            rm_attr_set = n_attr_diff['attr_remove']
-            rm_attr_str = ', '.join(['n.' + attr for attr in rm_attr_set])
+            r_attr_set = n_attr_diff['attr_remove']
+            w_attr_set = n_attr_diff['attr_write']
 
-            q = ("match (n {id: {id}}) " +
-                 "set n += {attr_set} " +
-                 "remove " + rm_attr_str + " " +
-                 "return n.id, n")
-            q_param_set = {'id': id_attr,
-                           'attr_set': n_attr_diff['attr_write']}
+            assert len(r_attr_set) > 0 or len(w_attr_set) > 0
+
+            q_arr = ["match (n {id: {id}}) ",
+                     "return n.id, n"]
+            q_param_set = {'id': id_attr}
+
+            if len(r_attr_set) > 0:
+                stmt_attr_rm = "remove " + ', '.join(['n.' + attr for attr in r_attr_set])
+                q_arr.insert(1, stmt_attr_rm)
+
+            if len(w_attr_set) > 0:
+                stmt_attr_set = "set n += {attr_set}"
+                q_arr.insert(1, stmt_attr_set)
+                q_param_set['attr_set'] = w_attr_set
+
+            q = " ".join(q_arr)
             self.add_statement(q, q_param_set)
 
     def on_completion(self, data):
