@@ -6,10 +6,15 @@ import re
 import logging
 import traceback
 
+from model.graph import Attr_Diff
+from model.graph import Topo_Diff
+
 import urllib2
 
-import neo4j_util as dbu
+import neo4j_util as db_util
+from neo4j_util import cfmt
 from neo4j_util import DB_result_set
+from neo4j_util import Neo4JException
 
 log = logging.getLogger('rhizi')
 
@@ -326,6 +331,28 @@ class DBO_match_link_id_set(DB_op):
 class DB_Driver_Base():
     pass
 
+class DB_Driver_Embedded(DB_Driver_Base):
+    def __init__(self, db_base_url):
+        self.tx_base_url = db_base_url + '/db/data/transaction'
+
+        from org.rhizi.db.neo4j.util import EmbeddedNeo4j
+        self.edb = EmbeddedNeo4j.createDb()
+        self.edb.createDb()
+
+    def begin_tx(self, op):
+        pass
+
+    def exec_statement_set(self, op):
+        s_set = op.statement_set
+        self.edb.executeCypherQury()
+
+    def commit_tx(self, op):
+        pass
+
+    def log_committed_queries(self, statement_set):
+        for sp_dict in statement_set['statements']:
+            log.debug('\tq: {0}'.format(sp_dict['statement']))
+
 class DB_Driver_REST(DB_Driver_Base):
     def __init__(self, db_base_url):
         self.tx_base_url = db_base_url + '/db/data/transaction'
@@ -377,29 +404,6 @@ class DB_Driver_REST(DB_Driver_Base):
     def log_committed_queries(self, statement_set):
         for sp_dict in statement_set['statements']:
             log.debug('\tq: {0}'.format(sp_dict['statement']))
-
-class DB_Driver_Embedded(DB_Driver_Base):
-    def __init__(self, db_base_url):
-        self.tx_base_url = db_base_url + '/db/data/transaction'
-
-        from org.rhizi.db.neo4j.util import EmbeddedNeo4j
-        self.edb = EmbeddedNeo4j.createDb()
-        self.edb.createDb()
-
-    def begin_tx(self, op):
-        pass
-
-    def exex_op_statements(self, op):
-        s_set = op.statement_set
-        self.edb.executeCypherQury()
-
-    def commit_tx(self, op):
-        pass
-
-    def log_committed_queries(self, statement_set):
-        for sp_dict in statement_set['statements']:
-            log.debug('\tq: {0}'.format(sp_dict['statement']))
-
 
 class DB_Controller:
     """
