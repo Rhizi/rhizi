@@ -31,7 +31,7 @@ class Attr_Diff(dict):
             n_attr_diff = self.init_node_attr_diff(n_id)
         n_attr_diff['attr_remove'].append(attr_name)
 
-class Topo_Diff():
+class Topo_Diff(object):
     """
     Represents a change to the graph topology
     """
@@ -45,18 +45,15 @@ class Topo_Diff():
         self.node_set_add = node_set_add
         self.link_set_add = link_set_add
 
-    @property
-    def link_set_rm(self):
-        return self.link_set_rm
+    def check_validity(self, topo_diff_dict):
+        """
+        Topo_Diff may represent invalid operations, eg. adding a link while
+         removing it's end-point - this stub should check for that
+        """
+        pass
 
-    @property
-    def node_set_rm(self):
-        return self.node_set_rm
-
-    @property
-    def link_set_add(self):
-        return self.link_set_add
-
-    @property
-    def node_set_add(self):
-        return self.node_set_add
+    @staticmethod
+    def from_dict(topo_diff_dict):
+        ret = Topo_Diff()
+        ret.__dict__ = topo_diff_dict
+        return ret
