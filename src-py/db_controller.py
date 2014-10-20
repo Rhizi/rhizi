@@ -86,21 +86,37 @@ class DB_composed_op(DB_op):
         super(DB_composed_op, self).__init__()
         self.sub_op_set = []
 
-    def add_statement(self, query, query_params={}):
+    def __assert_false_statement_access(self):
         assert False, "composed_op may not contain statements, only sub-ops"
+
+    def add_statement(self, query, query_params={}):
+        self.__assert_false_statement_access()
 
     def add_sub_op(self, op):
         self.sub_op_set.append(op)
 
     def __getattribute__(self, attr):
         """
-        intercept 'statement_set' attr get
+        intercept 'statement_set' attr get    
         """
         if attr == 'statement_set':
-            # construct a list comprehension composed of all sup_op statements 
-            return [s for s_op in self.sub_op_set for s in s_op.statement_set]
+            self.__assert_false_statement_access()
 
         return object.__getattribute__(self, attr)
+
+    def __iter__(self):
+        """
+        iterate over sub_op_set
+        """
+        for s_op in self.sub_op_set:
+            yield s_op
+
+    def process_result_set(self):
+        ret = []
+        for s_op in self:
+            s_result_set = s_op.process_result_set()
+            ret.append(s_result_set)
+        return ret
 
 class DBO_topo_diff_commit(DB_composed_op):
     """
@@ -401,16 +417,24 @@ class DB_Controller:
         """
         execute operation within a DB transaction
         """
+        if isinstance(op, DB_composed_op):
+            # construct a list comprehension composed of all sup_op statements
+            for s_op in op.sub_op_set:
+                self.exec_op(s_op)
+            return op.process_result_set()
+
         try:
             self.db_driver.begin_tx(op)
-            ret_tx = self.db_driver.exex_op_statements(op)
-            ret_commit = self.db_driver.commit_tx(op)
-            return op.on_completion(ret_tx)
+            self.db_driver.exec_statement_set(op)
+            self.db_driver.commit_tx(op)
+
+            return op.process_result_set()
         except Exception as e:
             # here we watch for IOExecptions, etc - not db errors
             # these are returned in the db response itself
             log.error(e.message)
             log.error(traceback.print_exc())
+            raise e
 
     def create_db_op(self, f_work, f_cont):
         ret = DB_op(f_work, f_cont)
