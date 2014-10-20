@@ -207,17 +207,33 @@ class TestDBController(unittest.TestCase):
         self.db_ctl.exec_op(op)
 
         # apply attr_diff
-        attr_diff = {n_id: {'attr_write': {'attr_0': 0,
-                                           'attr_1': 'a'},
-                            'attr_remove': ['attr_rm']}}
+        attr_diff = Attr_Diff()
+        attr_diff.add_node_attr_write(n_id, 'attr_0', 0)
+        attr_diff.add_node_attr_write(n_id, 'attr_1', 'a')
+        attr_diff.add_node_attr_rm(n_id, 'attr_rm')
+
         op = dbc.DBO_attr_diff_commit(attr_diff)
         n_map = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_map), 1)
         n = n_map.get(n_id)
         self.assertTrue(None != n)
         self.assertTrue(None == n.get('attr_rm'))
-        self.assertTrue(None != n.get('attr_0'))
-        self.assertTrue(None != n.get('attr_1'))
+        self.assertEqual(0, n.get('attr_0'))
+        self.assertEqual('a', n.get('attr_1'))
+
+        # attr-set only
+        attr_diff = Attr_Diff()
+        attr_diff.add_node_attr_write(n_id, 'attr_2', 0)
+
+        op = dbc.DBO_attr_diff_commit(attr_diff)
+        n_map = self.db_ctl.exec_op(op)
+
+        # attr-remove only
+        attr_diff = Attr_Diff()
+        attr_diff.add_node_attr_rm(n_id, 'attr_2')
+
+        op = dbc.DBO_attr_diff_commit(attr_diff)
+        n_map = self.db_ctl.exec_op(op)
 
     def tearDown(self): pass
 
