@@ -179,9 +179,11 @@ class TestDBController(unittest.TestCase):
     def test_topo_diff_commit(self):
         n_0_id = rand_id()
         n_1_id = rand_id()
+        n_2_id = rand_id()
 
         n_set = [{'__type': 'T_test_topo_diff_commit', 'id': n_0_id },
-                 {'__type': 'T_test_topo_diff_commit', 'id': n_1_id }]
+                 {'__type': 'T_test_topo_diff_commit', 'id': n_1_id },
+                 {'__type': 'T_test_topo_diff_commit', 'id': n_2_id }]
         l_set = [{'__type': 'T_test_topo_diff_commit', '__src': n_0_id, '__dst': n_1_id},
                  {'__type': 'T_test_topo_diff_commit', '__src': n_1_id, '__dst': n_0_id}]
 
@@ -189,14 +191,16 @@ class TestDBController(unittest.TestCase):
                               link_set_add=l_set)
 
         op = dbc.DBO_topo_diff_commit(topo_diff)
-        self.assertEqual(len(op.statement_set), 3) # one parameterized node create. 2 link create
-        self.db_ctl.exec_op(op)
-        
+        op_ret = self.db_ctl.exec_op(op)
+        self.assertEqual(len(op_ret), 2)  # to id-sets, nodes & links
+        self.assertEqual(len(op_ret[0]), 3)  # expect id-set of length 3
+        self.assertEqual(len(op_ret[1]), 2)  # expect id-set of length 2
+
         id_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
         self.assertEqual(len(id_set), 2)
-        id_set = self.db_ctl.exec_op(dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id=n_0_id, dst_id=n_1_id))
+        id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id=n_0_id, dst_id=n_1_id))
         self.assertEqual(len(id_set), 1)
-        id_set = self.db_ctl.exec_op(dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id=n_1_id, dst_id=n_0_id))
+        id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id=n_1_id, dst_id=n_0_id))
         self.assertEqual(len(id_set), 1)
 
     def test_attr_diff_commit(self):
