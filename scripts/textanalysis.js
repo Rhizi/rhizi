@@ -1,5 +1,6 @@
 "use strict"
 
+define('textanalysis', [], function() {
 var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
 var suggestionChange=false;
@@ -400,3 +401,11 @@ var textAnalyser2 = function (newtext, finalize) {
 
     return ret;
 }
+return {
+    autocompleteCallback:autocompleteCallback,
+    textAnalyser2:textAnalyser2,
+    autoSuggestAddName:autoSuggestAddName,
+    ANALYSIS_NODE_START:ANALYSIS_NODE_START,
+    ANALYSIS_LINK:ANALYSIS_LINK,
+};
+});

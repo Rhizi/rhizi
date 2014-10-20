@@ -1,24 +1,31 @@
-$(function() {
+define('drag_n_drop', ['jquery', 'jquery-ui', 'rhizicore'], function($, __unused_jqueryui, RZ) {
+
+function init() {
+console.log('rhizi: init drag-n-drop');
 $(document).on('drop', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        var files = e.originalEvent.dataTransfer.files;
-        var file = files[files.length - 1];
-        var fr = new FileReader();
-        fr.onload = function() {
-            if (fr.readyState != 2) {
-                console.log('drop: error: reading from file failed');
-            } else {
-                console.log(fr.result);
-                graph.load_from_json(fr.result);
-            }
+    e.stopPropagation();
+    e.preventDefault();
+    var files = e.originalEvent.dataTransfer.files;
+    var file = files[files.length - 1];
+    var fr = new FileReader();
+    fr.onload = function() {
+        if (fr.readyState != 2) {
+            console.log('drop: error: reading from file failed');
+        } else {
+            console.log('loading dropped file');
+            RZ.graph.load_from_json(fr.result);
         }
-        fr.readAsText(file);
+    }
+    fr.readAsText(file);
+    return false;
 });
 $(document).on('dragover', function (e) 
 {
-      e.stopPropagation();
-      e.preventDefault();
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
 });
-document.bloated = true;
-});
+};
+return {'init': init };
+
+}); // define

@@ -1,6 +1,9 @@
 "use strict"
 
-//CORE VARIABLES
+define('rhizicore',
+['jquery', 'd3', 'util', 'history', 'textanalysis'],
+function($, d3, util, history, textanalysis) {
+var History = history.History;
 var addednodes = [];
 
 var vis;
@@ -200,12 +203,12 @@ function myGraph(el) {
             }
             return {graph_same: false};
         }
-        changed_nodes = set_diff(set_from_array(state_nodes.map(function(d) { return d.id.toLowerCase(); })),
-                                 set_from_array(new_nodes.map(function (f) { return f.id.toLowerCase(); })));
+        changed_nodes = util.set_diff(util.set_from_array(state_nodes.map(function(d) { return d.id.toLowerCase(); })),
+                                 util.set_from_array(new_nodes.map(function (f) { return f.id.toLowerCase(); })));
         // we allow any number of changed nodes as long as we it is 1 or 2 :)
         if (changed_nodes.a_b.length <= 2) {
-            set_old_id = set_from_array(changed_nodes.a_b);
-            set_new_id = set_from_array(changed_nodes.b_a);
+            set_old_id = util.set_from_array(changed_nodes.a_b);
+            set_new_id = util.set_from_array(changed_nodes.b_a);
         } else {
             if (verbose) {
                 console.log('changed too many nodes');
@@ -499,10 +502,21 @@ function myGraph(el) {
         }
     }
 
+    function clear() {
+        nodes.length = 0;
+        links.length = 0;
+    }
+
+    function empty() {
+        return nodes.length == 0 && links.length == 0;
+    }
+    this.empty = empty;
+
     function load_from_json(json) {
         var data = JSON.parse(json);
         var i, node, link;
 
+        clear();
         if (data == null) {
             console.log('load callback: no data to load');
             return;
@@ -514,7 +528,7 @@ function myGraph(el) {
                                   start:new Date(node.start),
                                   end:new Date(node.end),
                                   status:node.status});
-          autoSuggestAddName(node.id);
+          textanalysis.autoSuggestAddName(node.id);
         }
         for(i = 0; i < data["links"].length; i++){
           link = data.links[i];
@@ -1029,7 +1043,7 @@ function AddedUnique(newnode) {
 
 $('#editform').keypress(function(e) {
     if (graph.history !== undefined) {
-        graph.history.record_keystrokes(KEYSTROKE_WHERE_EDIT_NODE, [e.which]);
+        graph.history.record_keystrokes(history.KEYSTROKE_WHERE_EDIT_NODE, [e.which]);
     }
     if (e.which == 13) {
         $('.editinfo').css('top', -100);
@@ -1143,3 +1157,8 @@ function expand(obj){
     }
     obj.size = Math.max(obj.savesize, obj.value.length);
 }
+return {
+    expand: expand,
+    graph: graph,
+}
+}); /* close define call */

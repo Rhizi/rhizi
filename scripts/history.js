@@ -15,6 +15,8 @@
 // ReferenceError: __commandLineAPI is not defined
 //var ActionEnum = Enum();
 
+define('history', ['FileSaver'], function(saveAs) {
+
 function History(user) {
     this.records = [];
     this.user = user;
@@ -41,9 +43,9 @@ History.prototype.record = function(d)
 
 History.prototype.save_to_file = function()
 {
-    // TODO: filename and chrome support (grep json;base64 for other locations)
-    // perhaps has to wait for FileWriter api?
-    location.href = 'data:text/json;base64,' + window.btoa(JSON.stringify(this.records, function (k, v) { return v; }, 2));
+    var json = JSON.stringify(this.records, function (k, v) { return v; }, 2);
+
+    saveAs(new Blob([json], {type: 'application/json'}), 'history.json');
 };
 
 History.prototype.clear_history = function()
@@ -96,3 +98,11 @@ History.prototype.record_keystrokes = function(where, keys)
         'where': where
     });
 }
+
+return {
+    History:History,
+    KEYSTROKE_WHERE_TEXTANALYSIS:KEYSTROKE_WHERE_TEXTANALYSIS,
+    KEYSTROKE_WHERE_DOCUMENT:KEYSTROKE_WHERE_DOCUMENT,
+    KEYSTROKE_WHERE_EDIT_NODE:KEYSTROKE_WHERE_EDIT_NODE
+};
+}); // define

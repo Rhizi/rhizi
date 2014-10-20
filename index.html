@@ -8,14 +8,7 @@
 
     <link rel="shortcut icon" href="images/favicon2.ico" />
 
-    <script src="external/scripts/d3/d3.js"></script>
-    <script src="external/scripts/jquery.js"></script>
-
-    <script src="external/scripts/jquery-ui.js"></script>
-    <script src="external/scripts/autocomplete.js"></script>
-    <script src="external/scripts/FileSaver.js"></script>
-
-    <script src="scripts/caret.js"></script>
+    <script data-main='scripts/app.js' src="scripts/external/require.js"></script>
 
 </head>
 
@@ -36,14 +29,14 @@
 
     <div class='editinfo'>
       <form id='editform'>
-        <input id="editname" onkeyup="expand(this);"/>
+        <input id="editname"/>
 
       </form>
     </div>
 
     <div class='editlinkinfo'>
       <form id='editlinkform'>
-        <input id="editlinkname" onkeyup="expand(this);"/>
+        <input id="editlinkname"/>
 
       </form>
     </div>
@@ -51,7 +44,7 @@
 
 
    <div id="suggestion" >
-       <form> <input id="textanalyser" size="70" placeholder="Type here to create a network:" onkeyup="expand(this);"/></form>
+       <form> <input id="textanalyser" size="70" placeholder="Type here to create a network:"/></form>
     </div>
 
     <div class="typeselection">
@@ -128,17 +121,6 @@
         <span class="onoffswitch-switch"></span>
     </label>
     </div>
-
-    <script src="scripts/history.js"></script>
-    <script src="scripts/util.js"></script>
-    <script src="scripts/rhizicore.js"></script>
-    <script src="scripts/textanalysis.js"></script>
-    <script src="scripts/textanalysis-ui.js"></script>
-    <script src="scripts/buttons.js"></script>
-    <script src="scripts/drag_n_drop.js"></script>
-    <script src="scripts/robot.js"></script>
-    <script src="scripts/watchdog.js"></script>
-    <script src="scripts/gant.js"></script>
 
 </body>
 </html>

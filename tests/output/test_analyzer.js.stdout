@@ -1,0 +1,7 @@
+addScript: loaded ../scripts/external/require.js
+app: running under node
+addScript: loaded ../scripts/app.js
+test harness: starting script loading with requirejs
+test harness: main loaded
+Rhizi main started
+rhizi: init drag-n-drop

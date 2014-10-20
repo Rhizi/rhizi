@@ -1,18 +1,19 @@
 "use strict"
 
+define('buttons', ['jquery', 'FileSaver', 'rhizicore'], function ($, saveAs, RZ) {
 $('.tutorial').click(function(){});
 
 var key="#47989379";
 
 
 $('.save').click(function(){
-    var json = graph.save_to_json();
+    var json = RZ.graph.save_to_json();
     console.log(json);
     localStorage.setItem(key, json);
 });
 
 $('.saveToFile').click(function() {
-    var json = graph.save_to_json();
+    var json = RZ.graph.save_to_json();
     var filename = 'graph.json';
     var blob = new Blob([json], {type: 'application/json'});
     console.log('saving ' + json.length + ' bytes to ' + filename);
@@ -20,7 +21,7 @@ $('.saveToFile').click(function() {
 });
 
 var really_load = function() {
-  if (nodes.length > 0){
+  if (!RZ.graph.empty()) {
     return confirm('All unsaved changes will be deleted, are you sure?');
   }
   return true;
@@ -44,7 +45,7 @@ $('.file-load').on('change', function(event) {
             if (e.target.readyState === FileReader.DONE) {
                 console.log('done reading ' + theFile.name);
                 console.log('got #' + result.length + ' bytes in ' + typeof(result));
-                graph.load_from_json(result);
+                RZ.graph.load_from_json(result);
             }
         }
     })(file);
@@ -55,10 +56,8 @@ $('.local-storage-load').click(function(){
   if (!really_load()) {
       return;
   }
-  links=[]; // TODO - not global
-  nodes=[]; // TODO - not global
   var json_blob = localStorage.getItem(key)
-  graph.load_from_json(json_blob);
+  RZ.graph.load_from_json(json_blob);
 });
 
 $('.set-user').click(function() {
@@ -66,7 +65,7 @@ $('.set-user').click(function() {
     $('.set-user-form').show();
     $('.set-user-form').submit(function() {
         var user = $('.set-user-input').val();
-        graph.set_user(user);
+        RZ.graph.set_user(user);
         $('.set-user').html('user: ' + user);
         $('.set-user').show();
         $('.set-user-form').hide();
@@ -76,8 +75,10 @@ $('.set-user').click(function() {
 });
 
 $('.save-history').click(function() {
-    if (graph.history === undefined) {
+    if (RZ.graph.history === undefined) {
         throw "History is undefined";
     }
-    graph.history.save_to_file();
+    RZ.graph.history.save_to_file();
 });
+return {'buttons': 'nothing here'};
+}); // define

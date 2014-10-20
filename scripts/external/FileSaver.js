@@ -237,7 +237,7 @@ var saveAs = saveAs
 if (typeof module !== "undefined" && module !== null) {
   module.exports = saveAs;
 } else if ((typeof define !== "undefined" && define !== null) && (define.amd != null)) {
-  define([], function() {
+  define('FileSaver', [], function() {
     return saveAs;
   });
 }

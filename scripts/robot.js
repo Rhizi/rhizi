@@ -1,3 +1,5 @@
+define('robot', ['jquery'], function($) {
+
 var sentence="";
 /*sentence+=" #Rhizibot is showing you a #tutorial|";
 sentence+="#Rhizi visualizes data with #Graphs and #relationships|";
@@ -61,3 +63,5 @@ $('.logo').click(function(){
 /*var answer = confirm ("Would you like a tutorial?")
 if (answer)
 setTimeout( Robot, 100 );*/
+
+}); // define

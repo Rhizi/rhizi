@@ -1,4 +1,5 @@
-(function($) {
+define('caret', ['jquery'],
+function($) {
   $.fn.caret = function(pos) {
     var target = this[0];
 	var isContentEditable = target.contentEditable === 'true';
@@ -67,4 +68,6 @@
       target.focus();
     return pos;
   }
-})(jQuery)
+  return {'caret': 'place-holder'};
+}
+);

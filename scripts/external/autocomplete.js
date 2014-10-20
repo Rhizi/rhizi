@@ -49,7 +49,8 @@
  */
 
 
-(function ($, window, document, undefined) {
+define('autocomplete', ['jquery', 'jquery-ui', 'caret'], function(jQuery, __jqueryui, __caret) {
+return function ($, window, document, undefined) {
   $.widget("ui.autocompleteTrigger", {
 
     //Options to be used as defaults
@@ -224,4 +225,6 @@
       }
     }
   });
-})(jQuery, window, document);
+  return {autocomplete:'loaded, yay! just two hours wasted!'};
+}(jQuery, window, document);
+});
