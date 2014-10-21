@@ -122,19 +122,28 @@ class TestDBController(unittest.TestCase):
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
-    def test_match_link_set_by_src_or_dst_id_attributes(self):
-        op = dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id='person_00', dst_id='skill_00')
-        n_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(n_set), 1)
+    def test_load_link_set(self):
+        l_ptr = Link.link_ptr(src_id='person_00', dst_id='skill_00')
+        op = dbc.DBO_load_link_set.init_from_link_ptr(l_ptr)
+        l_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(l_set), 1)
 
-        op = dbc.DBO_match_link_set_by_src_or_dst_id_attributes(src_id='person_00')
-        n_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(n_set), 2)
+        l_ptr = Link.link_ptr(src_id='person_00')
+        op = dbc.DBO_load_link_set.init_from_link_ptr(l_ptr)
+        l_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(l_set), 2)
 
-        op = dbc.DBO_match_link_set_by_src_or_dst_id_attributes(dst_id='skill_00')
-        n_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(n_set), 1)
+        l_ptr = Link.link_ptr(dst_id='skill_00')
+        op = dbc.DBO_load_link_set.init_from_link_ptr(l_ptr)
+        l_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(l_set), 1)
 
+        # load sets
+        l_ptr_set = [Link.link_ptr(s,d) for (s,d) in [('person_00', 'skill_00'), ('person_00', 'skill_01')]]
+        op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
+        l_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(l_set), 2)
+    
     def test_load_node_set_by_DB_id(self):
         """
         test node DB id life cycle

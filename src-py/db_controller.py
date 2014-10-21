@@ -264,28 +264,38 @@ class DBO_match_node_set_by_id_attribute(DBO_match_node_id_set):
         super(DBO_match_node_set_by_id_attribute, self).__init__(filter_attr_map={'id': id_set})
 
 
-class DBO_match_link_set_by_src_or_dst_id_attributes(DB_op):
-    def __init__(self, src_id=None, dst_id=None):
+class DBO_load_link_set(DB_op):
+    def __init__(self, link_ptr_set):
         """
-        match a set of links by source/target node id attributes
+        match a set of sets of links by source/target node id attributes
         
+        This class should be instantiated through a static factory function
+
+        @link_ptr_set link pointer set
         @return: a set of loaded links
         """
-        assert None != src_id or None != dst_id
+        super(DBO_load_link_set, self).__init__()
+        
+        for l_ptr in link_ptr_set:
+            if not l_ptr.src_id:
+                q = "match ()-[r]->({id: {dst_id}}) return r"
+                q_params = {'dst_id': l_ptr.dst_id}
+            elif not l_ptr.dst_id:
+                q = "match ({id: {src_id}})-[r]->() return r"
+                q_params = {'src_id': l_ptr.src_id}
+            else:
+                q = "match ({id: {src_id}})-[r]->({id: {dst_id}}) return r"
+                q_params = {'src_id': l_ptr.src_id, 'dst_id': l_ptr.dst_id}
 
-        super(DBO_match_link_set_by_src_or_dst_id_attributes, self).__init__()
+            self.add_statement(q, q_params)
 
-        if not src_id:
-            q = "match ()-[r]->({id: {dst_id}}) return r"
-            q_params = {'dst_id': dst_id}
-        elif not dst_id:
-            q = "match ({id: {src_id}})-[r]->() return r"
-            q_params = {'src_id': src_id}
-        else:
-            q = "match ({id: {src_id}})-[r]->({id: {dst_id}}) return r"
-            q_params = {'src_id': src_id, 'dst_id': dst_id}
+    @staticmethod
+    def init_from_link_ptr(l_ptr):
+        return DBO_load_link_set([l_ptr])
 
-        self.add_statement(q, q_params)
+    @staticmethod
+    def init_from_link_ptr_set(l_ptr_set):
+        return DBO_load_link_set(l_ptr_set)
 
 class DBO_match_link_id_set(DB_op):
     def __init__(self, filter_type=None, filter_attr_map={}):
