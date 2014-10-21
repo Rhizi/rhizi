@@ -3,7 +3,6 @@ var text = ""; // Last text of sentence
 var element_name = '#textanalyser';
 var element = $(element_name);
 
-// TODO - hide this in a scope
 function analyzeSentence(sentence, finalize)
 {
     var ret = textanalysis.textAnalyser2(sentence, finalize);
@@ -60,6 +59,7 @@ function changeType(arg, id) {
 }
 
 return {
+    analyzeSentence: analyzeSentence,
     main:function () {
         if (element.length != 1) {
             return;

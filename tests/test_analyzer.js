@@ -18,15 +18,17 @@ I like to work with #a
 base.run_tests({
     done: function (errors, window) {
         debugger;
-        if (process.argv.length > 2) {
-            window.analyzeSentence(process.argv.slice(2).join(" "), true);
-            dump_graphviz(window);
+        var analyzeSentence = window.require('textanalysis.ui').analyzeSentence;
+        console.log(process.argv);
+        if (process.argv.length >= 2) {
+            analyzeSentence(process.argv.slice(2).join(" "), true);
+            base.dump_graphviz(window.require('rhizicore').force);
         } else {
             for (var k in data) {
                 var sentence = data[k][0];
                 var expected_nodes = data[k][1];
                 var expected_links = data[k][2];
-                window.analyzeSentence(sentence, true);
+                analyzeSentence(sentence, true);
                 // TODO - compare graphs
             }
         }

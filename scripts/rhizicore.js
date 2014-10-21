@@ -1159,5 +1159,6 @@ function expand(obj){
 return {
     expand: expand,
     graph: graph,
+    force: force,
 }
 }); /* close define call */
