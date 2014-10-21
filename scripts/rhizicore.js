@@ -20,7 +20,6 @@ var deliverables = [];
 var boxedin, nodetext, linktext, link, links, node, nodes, circle;
 
 var scrollValue = 0,
-    zoomLevel = 0,
     zoomObject;
 
 var force;
