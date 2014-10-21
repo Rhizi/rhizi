@@ -142,12 +142,19 @@ class TestDBController(unittest.TestCase):
         l_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(l_set), 1)
 
-        # load sets
-        l_ptr_set = [Link.link_ptr(s,d) for (s,d) in [('person_00', 'skill_00'), ('person_00', 'skill_01')]]
+        # load by l_ptr sets
+        l_ptr_set = [Link.link_ptr(s, d) for (s, d) in [('person_00', 'skill_00'), ('person_00', 'skill_01')]]
         op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
         l_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(l_set), 2)
-    
+
+        # this should return the same link twice
+        l_ptr_set = [Link.link_ptr(s, d) for (s, d) in [('person_00', 'skill_00'), ('person_00', 'skill_01')]]
+        l_ptr_set.append(Link.link_ptr(dst_id='skill_00'))
+        op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
+        l_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(l_set), 3)
+
     def test_load_node_set_by_DB_id(self):
         """
         test node DB id life cycle
