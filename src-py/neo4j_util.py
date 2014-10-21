@@ -75,6 +75,8 @@ def post(url, data):
     req.add_header('Accept', 'application/json; charset=UTF-8')
     req.add_header('Content-Type', 'application/json')
 
+    req.add_header('X-Stream', 'true') # enable neo4j JSON streaming
+
     try:
         ret = urllib2.urlopen(req, post_data_json)
     except urllib2.HTTPError as e:
