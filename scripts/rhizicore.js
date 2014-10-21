@@ -505,6 +505,7 @@ function myGraph(el) {
         nodes.length = 0;
         links.length = 0;
     }
+    this.clear = clear;
 
     function empty() {
         return nodes.length == 0 && links.length == 0;

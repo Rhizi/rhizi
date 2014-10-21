@@ -19,17 +19,28 @@ base.run_tests({
     done: function (errors, window) {
         debugger;
         var analyzeSentence = window.require('textanalysis.ui').analyzeSentence;
-        console.log(process.argv);
-        if (process.argv.length >= 2) {
+        if (process.argv.length > 2) {
             analyzeSentence(process.argv.slice(2).join(" "), true);
             base.dump_graphviz(window.require('rhizicore').force);
         } else {
-            for (var k in data) {
+            for (var k = 0; k < data.length; ++k) {
                 var sentence = data[k][0];
                 var expected_nodes = data[k][1];
                 var expected_links = data[k][2];
+                base.reset(window);
+                console.log('analyzing ' + sentence);
                 analyzeSentence(sentence, true);
-                // TODO - compare graphs
+                var nodes = base.nodes(window);
+                var links = base.links(window);
+                if (nodes != expected_nodes) {
+                    console.log('expected: ' + expected_nodes);
+                    console.log('got:      ' + nodes.join('|'));
+                }
+                if (links != expected_links) {
+                    console.log('expected: ' + expected_links);
+                    console.log('got:      ' + links);
+                }
+                base.dump_graphviz(window.require('rhizicore').force);
             }
         }
         process.exit();
