@@ -83,6 +83,32 @@ def __load_node_set_by_id_attr_common(id_set):
 def add_node():
     # pending decision regarding support for single object operations
     assert False
+@webapp.route("/load/link-set/by_link_ptr_set", methods=['POST'])
+def load_link_set_by_link_ptr_set():
+
+    def deserialize_param_set(param_json):
+        l_ptr_set_raw = param_json['link_ptr_set']
+
+        __sanitize_input(l_ptr_set_raw)
+
+        l_ptr_set = []
+        for lptr_dict in l_ptr_set_raw:
+            src_id = lptr_dict.get('src_id')
+            dst_id = lptr_dict.get('dst_id')
+            l_ptr_set += [Link.Link_Ptr(src_id=src_id, dst_id=dst_id) ]
+
+        return l_ptr_set
+
+    l_ptr_set = deserialize_param_set(request.get_json())
+
+    op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
+    try:
+        l_set = db_ctl.exec_op(op)
+        return __common_resp_handle(data=l_set)
+    except Exception as e:
+        log.exception(e)
+        return __common_resp_handle(error='unable to load link set')
+
 @webapp.route("/graph/topo-diff-commit", methods=['POST'])
 def topo_diff_commit():
     """
