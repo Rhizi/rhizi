@@ -5,9 +5,11 @@ import db_controller as dbc
 from rhizi_server import Config
 from neo4j_test_util import rand_id
 from neo4j_test_util import flush_db
+from neo4j_util import Neo4JException
 
-from model.graph import Attribute_Diff as Attr_Diff
-from model.graph import Topo_Diff as Topo_Diff
+from model.graph import Attr_Diff
+from model.graph import Topo_Diff
+from model.model import Link
 
 class TestDBController(unittest.TestCase):
 
@@ -30,12 +32,13 @@ class TestDBController(unittest.TestCase):
     def setUpClass(self):
         cfg = Config.init_from_file('res/etc/rhizi-server.conf')
         self.db_ctl = dbc.DB_Controller(cfg)
-        self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
-        self.db_ctl.exec_op(dbc.DBO_add_link_set(self.l_map))
         self.log = logging.getLogger('rhizi')
+        self.log.addHandler(logging.StreamHandler())
 
     def setUp(self):
-        pass
+        flush_db(self.db_ctl) # remove once embedded DB test mode is supported
+        self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
+        self.db_ctl.exec_op(dbc.DBO_add_link_set(self.l_map))
 
     def test_db_op_statement_iteration(self):
         s_arr = ['create (b:Book {title: \'foo\'}) return b',
@@ -107,7 +110,8 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(dbc.DBO_match_node_id_set(filter_attr_map=fam))
         self.assertEqual(len(n_set), 2)
 
-    def test_match_node_set_by_DB_id(self): pass  # TODO
+    def test_match_node_set_by_DB_id(self):
+        pass  # TODO
 
     def test_match_node_set_by_id_attribute(self):
         n_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute(['skill_00', 'person_01']))
@@ -148,7 +152,7 @@ class TestDBController(unittest.TestCase):
         """
         test node DB id life cycle
         """
-        
+
         # create nodes, get DB ids
         op = dbc.DBO_add_node_set({'T_test_load_node_set_by_DB_id': [{'name': 'John Doe'},
                                                                      {'name': 'John Doe'}]})
