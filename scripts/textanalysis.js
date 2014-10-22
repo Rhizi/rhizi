@@ -401,11 +401,23 @@ var textAnalyser2 = function (newtext, finalize) {
 
     return ret;
 }
+
 return {
     autocompleteCallback:autocompleteCallback,
     textAnalyser2:textAnalyser2,
     autoSuggestAddName:autoSuggestAddName,
     ANALYSIS_NODE_START:ANALYSIS_NODE_START,
     ANALYSIS_LINK:ANALYSIS_LINK,
+    lastnode: function() { return lastnode; },
+    typeindex: function() { return typeindex; },
+    typeindex_next: function() {
+        typeindex = (typeindex + 1) % 5;
+        return typeindex;
+    },
+    typeindex_prev: function() {
+        typeindex = (typeindex + 4) % 5;
+        return typeindex;
+    },
+    nodetypes: function() { return nodetypes; } // XXX should be readonly, but returning a copy?
 };
 });

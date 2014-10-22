@@ -38,22 +38,24 @@ function textSelect(inp, s, e) {
 }
 
 function changeType(arg, id) {
+    var typeindex;
+    var lastnode = textanalysis.lastnode();
+    var nodetype;
+
     if(!id) {
         id = "new node";
     }
-    if (arg === 'up') {
-        if (typeindex < 4) typeindex++;
-        else typeindex = 0;
-        RZ.graph.editType(id, null, nodetypes[typeindex]);
-        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
-        RZ.graph.findCoordinates(lastnode,null);
-    } else {
-        if (typeindex > 0) typeindex--;
-        else typeindex = 4;
+    typeindex = (arg === 'up'? textanalysis.typeindex_next() : textanalysis.typeindex_prev());
+    nodetype = textanalysis.nodetypes()[typeindex];
 
-        RZ.graph.editType(id, null, nodetypes[typeindex]);
-        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetypes[typeindex] + '</td></tr></table>');
-        RZ.graph.findCoordinates(lastnode,null);
+    if (arg === 'up') {
+        RZ.graph.editType(id, null, nodetype);
+        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
+        RZ.graph.findCoordinates(lastnode, null);
+    } else {
+        RZ.graph.editType(id, null, nodetype);
+        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
+        RZ.graph.findCoordinates(lastnode, null);
     }
     RZ.graph.update(true);
 }
@@ -78,7 +80,7 @@ return {
             }
             if (e.keyCode == 9) {//TAB
                 e.preventDefault();
-                changeType("down", lastnode);
+                changeType("down", textanalysis.lastnode());
                 return false;
             }
 
