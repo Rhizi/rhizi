@@ -22,7 +22,7 @@ sentence+='#John likes #Apples and #Oranges and #Pistachio|';
 sentence+='#Click on any #Node to change and modify it|';
 sentence+='#Play around and have #Fun!|';
 
-var robot = function (sentence) {
+var robot = function (element, sentence) {
     var r = {
         speed: 1,
         counter: 0,
@@ -57,7 +57,7 @@ var robot = function (sentence) {
 }
 
 $('.logo').click(function(){
-    setTimeout( robot(sentence).next_event, 1000 );
+    setTimeout( robot(undefined, sentence).next_event, 1000 );
 });
 
 /*var answer = confirm ("Would you like a tutorial?")
