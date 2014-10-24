@@ -80,7 +80,7 @@ return {
             }
             if (e.keyCode == 9) {//TAB
                 e.preventDefault();
-                changeType("down", textanalysis.lastnode());
+                changeType(e.shiftKey ? "up" : "down", textanalysis.lastnode());
                 return false;
             }
 
