@@ -166,6 +166,9 @@ var textAnalyser2 = function (newtext, finalize) {
     var l, n, j;
     var link_hash = {};
     var yell_bug = false; // TODO: fix both issues
+    const NODE = "NODE";
+    const LINK = "LINK";
+    const START = "START";
 
     function addNode(id, type, state) {
         ret.nodes.push({'id':id, 'type':type, 'state':state});
@@ -198,7 +201,7 @@ var textAnalyser2 = function (newtext, finalize) {
     for (m = 0; m < sentence.length; m++) {
         switch (sentence[m]) {
         case "#":
-            orderStack.push("START");
+            orderStack.push(START);
             break;
         case "and":
         case "+":
@@ -208,12 +211,12 @@ var textAnalyser2 = function (newtext, finalize) {
             ANDcount++;
             //orderStack.push("AND");
         default:
-            if (orderStack[orderStack.length - 1] === "START") {
-                orderStack.push("NODE");
+            if (orderStack[orderStack.length - 1] === START) {
+                orderStack.push(NODE);
                 newnodes.push(sentence[m]);
                 linkindex++;
-            } else if (orderStack[orderStack.length - 1] === "NODE") {
-                orderStack.push("LINK");
+            } else if (orderStack[orderStack.length - 1] === NODE) {
+                orderStack.push(LINK);
                 if (!newlinks[linkindex]) {
                     newlinks[linkindex] = sentence[m] + " ";
                 } else {
@@ -250,11 +253,11 @@ var textAnalyser2 = function (newtext, finalize) {
     word = "";
     completeSentence = prefix.length > 0 ? String(prefix) + " " : "";
     for (m = 0; m < orderStack.length; m++) {
-        if (orderStack[m] === "NODE") {
+        if (orderStack[m] === NODE) {
             word += " (" + newnodes[nodeindex] + ") ";
             completeSentence += newnodes[nodeindex] + " ";
             nodeindex++;
-        } else if (orderStack[m] === "LINK") {
+        } else if (orderStack[m] === LINK) {
             word += " -->" + newlinks[nodeindex] + " --> ";
             completeSentence += newlinks[nodeindex];
         }
@@ -285,12 +288,12 @@ var textAnalyser2 = function (newtext, finalize) {
     //0-N ORDER STACK
     for (m = 0; m < orderStack.length - 1; m++) {
         switch (orderStack[m]) {
-            case "START":
+            case START:
                 if (!typeStack[nodeindex]) {
                     typeStack[nodeindex] = nodetypes[typeindex];
                 }
                 break;
-            case "NODE":
+            case NODE:
                 addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
                 if (!abnormalGraph) {
                     addLink(newnodes[nodeindex - 1], newnodes[nodeindex],
@@ -298,7 +301,7 @@ var textAnalyser2 = function (newtext, finalize) {
                 }
                 nodeindex++;
                 break;
-            case "LINK":
+            case LINK:
                 linkindex++;
                 break;
         }
@@ -306,7 +309,7 @@ var textAnalyser2 = function (newtext, finalize) {
 
     //FINAL N ORDER
     switch (orderStack[orderStack.length - 1]) {
-        case "START":
+        case START:
             typeStack[nodeindex]=nodetypes[typeindex];
             addNode("new node", typeStack[nodeindex], "temp");
             if (!abnormalGraph) {
@@ -315,7 +318,7 @@ var textAnalyser2 = function (newtext, finalize) {
             }
             ret.state = ANALYSIS_NODE_START;
             break;
-        case "NODE":
+        case NODE:
             typeStack[nodeindex]=nodetypes[typeindex];
             addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
             if (!abnormalGraph) {
@@ -323,7 +326,7 @@ var textAnalyser2 = function (newtext, finalize) {
                 ANDconnect(newnodes[nodeindex]);
             }
             break;
-        case "LINK":
+        case LINK:
             linkindex++;
             addNode("new node", "empty", "temp");
             if (!abnormalGraph) {
