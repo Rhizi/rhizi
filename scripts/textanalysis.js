@@ -166,9 +166,9 @@ var textAnalyser2 = function (newtext, finalize) {
     var l, n, j;
     var link_hash = {};
     var yell_bug = false; // TODO: fix both issues
-    const NODE = "NODE";
-    const LINK = "LINK";
-    const START = "START";
+    var NODE = "NODE";
+    var LINK = "LINK";
+    var START = "START";
 
     function addNode(id, type, state) {
         ret.nodes.push({'id':id, 'type':type, 'state':state});
