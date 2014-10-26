@@ -252,11 +252,7 @@ var textAnalyser2 = function (newtext, finalize) {
     for (m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === "NODE") {
             word += " (" + newnodes[nodeindex] + ") ";
-            if(newnodes[nodeindex].split(" ").length>1){
-                completeSentence += '"'+newnodes[nodeindex]+'"' + " ";
-            }else{
-                completeSentence += newnodes[nodeindex] + " ";
-            }
+            completeSentence += newnodes[nodeindex] + " ";
             nodeindex++;
         } else if (orderStack[m] === "LINK") {
             word += " -->" + newlinks[nodeindex] + " --> ";
