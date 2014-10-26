@@ -30,7 +30,7 @@ function dump_graphviz(force) {
     }
     for (i = 0 ; i < links.length; ++i) {
         var link = links[i];
-        console.log(' ' + q(link.source.name) + ' -> ' + q(link.target.name) + ';');
+        console.log(' ' + q(link.source.name) + ' -> ' + q(link.target.name) + ' [label=' + link.name + '];');
     }
     console.log('}');
 }
