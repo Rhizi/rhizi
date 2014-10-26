@@ -236,7 +236,7 @@ var textAnalyser2 = function (newtext, finalize) {
         }
     }
 
-    abnormalGraph = (newlinks.length - ANDcount) >= 3;
+    abnormalGraph = (newlinks.length - ANDcount) >= 3 || orderStack[orderStack.length - 1] != NODE;
 
     //PREFIX not null case - put complete sentence in first link.
     if (prefix && !abnormalGraph) {
