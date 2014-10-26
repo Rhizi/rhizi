@@ -204,7 +204,7 @@ var textAnalyser2 = function (newtext, finalize) {
         case "+":
         case ",":
         case "&":
-            sentence[m]=" and ";
+            sentence[m]="and";
             ANDcount++;
             //orderStack.push("AND");
         default:
