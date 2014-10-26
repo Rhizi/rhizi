@@ -1,4 +1,5 @@
-define('textanalysis.ui', ['autocomplete', 'rhizicore', 'textanalysis', 'history'], function(autocomplete, RZ, textanalysis, history) {
+define('textanalysis.ui', ['autocomplete', 'rhizicore', 'textanalysis', 'signal', 'consts'],
+       function(autocomplete, RZ, textanalysis, signal, consts) {
 var text = ""; // Last text of sentence
 var element_name = '#textanalyser';
 var element = $(element_name);
@@ -74,10 +75,7 @@ return {
         });
 
         $(document).keydown(function(e) {
-          
-            if (RZ.graph.history !== undefined) {
-                RZ.graph.history.record_keystrokes(history.KEYSTROKE_WHERE_DOCUMENT, [e.KeyCode]);
-            }
+            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]}]);
             if (e.keyCode == 9) {//TAB
                 e.preventDefault();
                 changeType(e.shiftKey ? "up" : "down", textanalysis.lastnode());
@@ -104,10 +102,8 @@ return {
         });
 
         element.keypress(function(e) {
-             if (RZ.graph.history !== undefined) {
-                 RZ.graph.history.record_keystrokes(history.KEYSTROKE_WHERE_TEXTANALYSIS, [e.which]);
-             }
-             if (e.which == 13) {
+            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]}]);
+            if (e.which == 13) {
                 if(!suggestionChange) {
                     text = element.val();
                     element.val("");

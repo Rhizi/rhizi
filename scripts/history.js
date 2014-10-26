@@ -22,15 +22,16 @@ function History(user) {
     var that = this;
     this.records = [];
     this.user = user;
-    signal.slot(consts.RECORD_LINKS, function(obj) {
-        return that.record_links(obj)
+    signal.slot(consts.APPLIED_GRAPH_DIFF, function(obj) {
+        return that.record_graph_diff(obj)
+    });
+    signal.slot(consts.KEYSTROKES, function(obj) {
+        return that.record_keystrokes(obj);
     });
 }
 
 var ACTION_KEYSTROKES = 'ACTION_KEYSTROKES';
-var ACTION_MOUSE = 'ACTION_MOUSE';
-var ACTION_GRAPH_ADD = 'ACTION_GRAPH_ADD';
-var ACTION_GRAPH_DELETE = 'ACTION_GRAPH_DELETE';
+var ACTION_GRAPH_DIFF = 'ACTION_GRAPH_DIFF';
 
 var KEYSTROKE_WHERE_TEXTANALYSIS = 'KEYSTROKE_WHERE_TEXTANALYSIS';
 var KEYSTROKE_WHERE_DOCUMENT = 'KEYSTROKE_WHERE_DOCUMENT';
@@ -58,47 +59,31 @@ History.prototype.clear_history = function()
     this.records = [];
 }
 
-History.prototype.record_nodes_removal = function(ids)
+History.prototype.record_graph_diff = function(obj)
 {
     this.record({
-        'action': ACTION_GRAPH_DELETE,
-        'node_ids': ids
-    });
+        action: ACTION_GRAPH_DIFF,
+        nodes: {add: obj.nodes && obj.nodes.add, remove: obj.nodes && obj.nodes.remove,
+                change: obj.nodes && obj.nodes.change},
+        links: {add: obj.links && obj.links.add, remove: obj.links && obj.links.remove,
+                change: obj.links && obj.links.change},
+                });
 }
 
-History.prototype.record_links = function(links)
+History.prototype.record_keystrokes = function(obj)
 {
-    if (links === undefined || links.length === undefined || links.length <= 0) {
-        throw "Invalid arguments"
-    }
-    this.record({
-        'action': ACTION_GRAPH_ADD,
-        'nodes': [],
-        'links': links
-    });
-}
+    var where = obj.where,
+        keys = obj.keys;
 
-History.prototype.record_nodes = function(nodes)
-{
-    if (nodes === undefined || nodes.length === undefined || nodes.length <= 0) {
-        throw "Invalid arguments"
-    }
-    this.record({'action': ACTION_GRAPH_ADD,
-     'nodes': nodes,
-     'links': []
-    });
-}
-
-History.prototype.record_keystrokes = function(where, keys)
-{
-    if (keys === undefined || keys.length === undefined || keys.length <= 0) {
+    if (where === undefined || keys === undefined || keys.length === undefined ||
+        keys.length <= 0) {
         throw "Invalid arguments";
     }
     keys = keys.filter(function(k) { return k !== undefined; });
     if (keys.length == 0) {
         return;
     }
-    this.record({'action': ACTION_KEYSTROKES,
+    this.record({action: ACTION_KEYSTROKES,
         'keys': keys,
         'where': where
     });

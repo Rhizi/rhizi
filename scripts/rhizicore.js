@@ -40,8 +40,9 @@ function myGraph(el) {
              start:0,
              end:0,
              status:"unknown"});
-        if (new_node && this.history !== undefined) {
-            this.history.record_nodes([new_node]);
+        if (new_node) {
+            signal.signal(consts.APPLIED_GRAPH_DIFF, [{
+                nodes: {add: [new_node]}}]);
         }
     }
 
@@ -79,9 +80,7 @@ function myGraph(el) {
         if (index !== undefined) {
             nodes.splice(index, 1);
         }
-        if (this.history != undefined) {
-            this.history.record_nodes_removal([id]);
-        }
+        signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {removed: [id]}}]);
     }
 
     this.removeNodes = function(state) {
@@ -99,8 +98,8 @@ function myGraph(el) {
                 nodes.splice(index, 1);
             }
         }
-        if (ns.length > 0 && this.history !== undefined) {
-            this.history.record_nodes_removal(ns.map(function(n) { return n.id; }));
+        if (ns.length > 0) {
+            signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {removed: ns.map(function(n) { return n.id; })}}]);
         }
     }
 
@@ -260,7 +259,7 @@ function myGraph(el) {
                 "state": state
             };
             links.push(link);
-            signal.signal(consts.RECORD_LINKS, [[link]]);
+            signal.signal(consts.APPLIED_GRAPH_DIFF, [{links: {add: [link]}}]);
         } else {
             found.name = name;
             found.state = state;
@@ -1043,9 +1042,7 @@ function AddedUnique(newnode) {
 
 
 $('#editform').keypress(function(e) {
-    if (graph.history !== undefined) {
-        graph.history.record_keystrokes(history.KEYSTROKE_WHERE_EDIT_NODE, [e.which]);
-    }
+    signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]}]);
     if (e.which == 13) {
         $('.editinfo').css('top', -100);
         $('.editinfo').css('left', 0);
