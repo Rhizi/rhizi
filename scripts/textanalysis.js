@@ -91,6 +91,43 @@ function up_to_two_renames(graph, old_id, new_id)
     }
 }
 
+// TODO: add escape char, i.e. r"bla\"bla" -> ['bla"bla']
+function tokenize(text, node_token, quote)
+{
+    var segment = [],
+        subsegment = [],
+        sentence = [],
+        quoteword;
+    var j;
+
+    segment = text.split(node_token);
+    for (j = 0; j < segment.length; j++) {
+        if (j !== 0) sentence.push(node_token);
+        subsegment = segment[j].split(" ");
+        if (subsegment.length === 0) {
+            sentence.push(" ");
+        }
+        for (var k = 0; k < subsegment.length; k++) {
+            if (subsegment[k] !== " " && subsegment[k] !== "") {
+                if (subsegment[k].charAt(0) === quote) {
+                    quoteword = "";
+                    do {
+                        quoteword += subsegment[k] + ' ';
+                        if(subsegment[k].charAt(subsegment[k].length-1) !== quote)k++;
+                    } while (k < subsegment.length && subsegment[k].charAt(subsegment[k].length - 1) !== quote);
+                    if (subsegment[k] && subsegment[k]!==quoteword.replace(/ /g, "")) {
+                        quoteword += subsegment[k];
+                    }
+                    sentence.push(quoteword.replace(RegExp(quote, 'g'), ""));
+                } else {
+                    sentence.push(subsegment[k]);
+                }
+            }
+        }
+    }
+    return sentence;
+}
+
 /*
  * textAnalyser2
  *
@@ -111,9 +148,7 @@ function up_to_two_renames(graph, old_id, new_id)
  *
  */
 var textAnalyser2 = function (newtext, finalize) {
-    var segment = [],
-        subsegment = [],
-        sentence = [];
+    var sentence;
     var newlinks = [];
     var newnodes = [];
     var linkindex = 0;
@@ -157,31 +192,7 @@ var textAnalyser2 = function (newtext, finalize) {
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
-    segment = newtext.split("#");
-    for (j = 0; j < segment.length; j++) {
-        if (j !== 0) sentence.push("#");
-        subsegment = segment[j].split(" ");
-        if (subsegment.length === 0) {
-            sentence.push(" ");
-        }
-        for (var k = 0; k < subsegment.length; k++) {
-            if (subsegment[k] !== " " && subsegment[k] !== "") {
-                if (subsegment[k].charAt(0) === '"') {
-                    quoteword = "";
-                    do {
-                        quoteword += subsegment[k] + " ";
-                        if(subsegment[k].charAt(subsegment[k].length-1) !== '"')k++;
-                    } while (k < subsegment.length && subsegment[k].charAt(subsegment[k].length - 1) !== '"');
-                    if (subsegment[k] && subsegment[k]!==quoteword.replace(/ /g, "")) {
-                        quoteword += subsegment[k];
-                    }
-                    sentence.push(quoteword.replace(/"/g, ""));
-                } else {
-                    sentence.push(subsegment[k]);
-                }
-            }
-        }
-    }
+    sentence = tokenize(newtext, '#', '"');
 
     //BUILD NEW NODE AND LINK ARRAYS WITH ORDER OF APPEARENCE
     for (m = 0; m < sentence.length; m++) {
