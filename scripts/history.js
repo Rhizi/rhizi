@@ -15,11 +15,16 @@
 // ReferenceError: __commandLineAPI is not defined
 //var ActionEnum = Enum();
 
-define('history', ['FileSaver'], function(saveAs) {
+define('history', ['jquery', 'FileSaver', 'consts', 'signal'],
+    function($, saveAs, consts, signal) {
 
 function History(user) {
+    var that = this;
     this.records = [];
     this.user = user;
+    signal.slot(consts.RECORD_LINKS, function(obj) {
+        return that.record_links(obj)
+    });
 }
 
 var ACTION_KEYSTROKES = 'ACTION_KEYSTROKES';

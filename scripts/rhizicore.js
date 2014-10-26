@@ -1,8 +1,8 @@
 "use strict"
 
 define('rhizicore',
-['jquery', 'd3', 'util', 'history', 'textanalysis'],
-function($, d3, util, history, textanalysis) {
+['jquery', 'd3', 'consts', 'signal', 'util', 'history', 'textanalysis'],
+function($, d3, consts, signal, util, history, textanalysis) {
 var History = history.History;
 var addednodes = [];
 
@@ -260,9 +260,7 @@ function myGraph(el) {
                 "state": state
             };
             links.push(link);
-            if (this.history !== undefined) {
-                this.history.record_links([link]);
-            }
+            signal.signal(consts.RECORD_LINKS, [[link]]);
         } else {
             found.name = name;
             found.state = state;
