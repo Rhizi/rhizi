@@ -60,7 +60,7 @@ function myGraph(el) {
                 "start": spec.start,
                 "end": spec.end,
                 "status": spec.status,
-                'url': undefined
+                'url': spec.url,
             };
             nodes.push(new_node);
         }
@@ -527,7 +527,9 @@ function myGraph(el) {
                                   type:node.type,state:"perm",
                                   start:new Date(node.start),
                                   end:new Date(node.end),
-                                  status:node.status});
+                                  status:node.status,
+                                  url:node.url,
+                                 });
           textanalysis.autoSuggestAddName(node.id);
         }
         for(i = 0; i < data["links"].length; i++){
@@ -552,7 +554,8 @@ function myGraph(el) {
             "state":"perm",
             "start":node.start,
             "end":node.end,
-            "status": node.status
+            "status": node.status,
+            "url": node.url,
           });
         }
         for(var j=0 ; j < links.length ; j++){
