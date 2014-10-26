@@ -401,7 +401,11 @@ var textAnalyser2 = function (newtext, finalize) {
             graph.removeLinks("temp");
             for (k in ret.nodes) {
                 n = ret.nodes[k];
-                graph.addNode(n.id, n.type, n.state);
+                if (n.state == 'temp' && finalize) {
+                    console.log('bug: temp node creation on finalize');
+                } else {
+                    graph.addNode(n.id, n.type, n.state);
+                }
             }
             for (k in ret.links) {
                 l = ret.links[k];
