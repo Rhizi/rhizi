@@ -1,7 +1,17 @@
 import uuid
+import string
+from random import choice
+import db_controller as dbc
 
 def rand_id():
     return str(uuid.uuid4())
+
+def rand_label(length=8):
+    """
+    return random label
+    """
+    char_set = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return ''.join([choice(string.ascii_lowercase)] + [choice(char_set) for _ in range(length - 1)])
 
 def flush_db(db_ctl):
     """
