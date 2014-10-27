@@ -124,22 +124,30 @@ class DBO_topo_diff_commit(DB_composed_op):
 
         # TODO rm link set
         # TODO rm node set
-        assert 0 == len(topo_diff.node_set_rm), 'unsupported'
         assert 0 == len(topo_diff.link_set_rm), 'unsupported'
 
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add)
+        l_rm_set = []
+        n_rm_set = topo_diff.node_set_rm
 
         #
         # [!] order critical
         #
         if len(n_add_map) > 0:
-            op_n_add = DBO_add_node_set(n_add_map)
-            self.add_sub_op(op_n_add)
+            op = DBO_add_node_set(n_add_map)
+            self.add_sub_op(op)
 
         if len(l_add_map) > 0:
-            op_l_add = DBO_add_link_set(l_add_map)
-            self.add_sub_op(op_l_add)
+            op = DBO_add_link_set(l_add_map)
+            self.add_sub_op(op)
+
+        if len(l_rm_set) > 0:
+            pass
+
+        if len(n_rm_set) > 0:
+            op = DBO_rm_node_set(n_rm_set)
+            self.add_sub_op(op)
 
 class DBO_attr_diff_commit(DB_op):
     """

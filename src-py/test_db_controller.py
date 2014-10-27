@@ -200,12 +200,13 @@ class TestDBController(unittest.TestCase):
         n_0_id = rand_id()
         n_1_id = rand_id()
         n_2_id = rand_id()
+        n_T = 'T_test_topo_diff_commit'
 
-        n_set = [{'__type': 'T_test_topo_diff_commit', 'id': n_0_id },
-                 {'__type': 'T_test_topo_diff_commit', 'id': n_1_id },
-                 {'__type': 'T_test_topo_diff_commit', 'id': n_2_id }]
-        l_set = [{'__type': 'T_test_topo_diff_commit', '__src': n_0_id, '__dst': n_1_id},
-                 {'__type': 'T_test_topo_diff_commit', '__src': n_1_id, '__dst': n_0_id}]
+        n_set = [{'__type': n_T, 'id': n_0_id },
+                 {'__type': n_T, 'id': n_1_id },
+                 {'__type': n_T, 'id': n_2_id }]
+        l_set = [{'__type': n_T, '__src': n_0_id, '__dst': n_1_id},
+                 {'__type': n_T, '__src': n_1_id, '__dst': n_0_id}]
 
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
@@ -218,10 +219,22 @@ class TestDBController(unittest.TestCase):
 
         id_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
         self.assertEqual(len(id_set), 2)
-        id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id=n_0_id, dst_id=n_1_id))
+        
+        l_ptr = Link.link_ptr(src_id=n_0_id, dst_id=n_1_id)
+        id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set.init_from_link_ptr(l_ptr))
         self.assertEqual(len(id_set), 1)
-        id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set_by_src_or_dst_id_attributes(src_id=n_1_id, dst_id=n_0_id))
+        
+        l_ptr = Link.link_ptr(src_id=n_1_id, dst_id=n_0_id)
+        id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set.init_from_link_ptr(l_ptr))
         self.assertEqual(len(id_set), 1)
+
+        id_set_rm=[n_2_id]
+        topo_diff = Topo_Diff(node_set_rm=id_set_rm)
+        op = dbc.DBO_topo_diff_commit(topo_diff)
+        self.db_ctl.exec_op(op)
+        op = dbc.DBO_match_node_set_by_id_attribute(id_set_rm)
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
 
     def test_attr_diff_commit(self):
         # create test node
