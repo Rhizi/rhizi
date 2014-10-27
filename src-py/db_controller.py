@@ -1,20 +1,19 @@
 #!/usr/bin/python
 
-import os
 import json
-import re
 import logging
+import os
+import re
 import traceback
-
-from model.graph import Attr_Diff
-from model.graph import Topo_Diff
-
 import urllib2
 
-import neo4j_util as db_util
-from neo4j_util import cfmt
+from db_driver import DB_Driver_REST, DB_Driver_Base
+from model.graph import Attr_Diff
+from model.graph import Topo_Diff
 from neo4j_util import DB_result_set
-from neo4j_util import Neo4JException
+from neo4j_util import cfmt
+import neo4j_util as db_util
+from model.model import Link
 
 log = logging.getLogger('rhizi')
 
@@ -183,7 +182,7 @@ class DBO_attr_diff_commit(DB_op):
         ret = {}
         for _, _, r_set in self:
             for row in r_set:
-                n_id, n = [v for v in row] # we expect a [n_id, n] array
+                n_id, n = [v for v in row]  # we expect a [n_id, n] array
                 ret[n_id] = n
         return ret
 
@@ -234,6 +233,7 @@ class DBO_load_node_set_by_DB_id(DB_op):
         """
         load a set of nodes whose DB id is in id_set
         
+        @param id_set: DB node id set
         @return: loaded node set or an empty set if no match was found
         """
         super(DBO_load_node_set_by_DB_id, self).__init__()

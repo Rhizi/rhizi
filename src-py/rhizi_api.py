@@ -48,26 +48,42 @@ def __common_resp_handle(data=None, error=None):
     ret_data = __response_wrap(data, error)
     resp = jsonify(ret_data)
 
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+
     # more response processing
 
     return resp
 
+def __common_exec(op, on_success=__common_resp_handle):
+    try:
+        op_ret = db_ctl.exec_op(op)
+        return on_success(op_ret)
+    except Exception as e:
+        return __common_resp_handle('exception raised: add_node_set')
 
-@webapp.route("/load/node-set", methods=['POST'])
+@webapp.route("/load/node-set-by-id", methods=['POST'])
 def load_node_set_by_id_attr():
     """
+    load node-set by ID attribute
+    
     @param id_set: list of node ids to match id attribute against
-    @return: a list containing a single node whose id attribute matches 'id' or
+    @return: a list of nodes whose id attribute matches 'id' or
             an empty list if the requested node is not found
     @raise exception: on error
     """
-    id_set = request.get_json()['id_set']
+    req_json = request.get_json()
+    id_set = req_json['id_set']
+
     __sanitize_input(id_set)
 
     return __load_node_set_by_id_attr_common(id_set)
 
 def __load_node_set_by_id_attr_common(id_set):
-    op = dbc.DBO_load_node_set_by_id_attribute(id_set)
+    """
+    @param f_k: optional attribute filter key
+    @param f_vset: possible key values to match against
+    """
+    op = dbc.DBO_match_node_set_by_id_attribute(id_set=id_set)
     try:
         n_set = db_ctl.exec_op(op)
         return __common_resp_handle(data=n_set)
