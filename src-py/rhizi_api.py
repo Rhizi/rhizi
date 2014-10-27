@@ -127,7 +127,11 @@ def attr_diff_commit():
     """
     commit a graph attribute diff
     """
-    pass
+    attr_diff = request.get_json()['attr_diff']
+    __sanitize_input(attr_diff)
+
+    op = dbc.DBO_attr_diff_commit(attr_diff)
+    return __common_exec(op)
 
 @webapp.route("/add/node-set", methods=['POST'])
 def add_node_set():
