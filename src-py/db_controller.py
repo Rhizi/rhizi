@@ -351,6 +351,51 @@ class DBO_rm_node_set(DB_op):
         q = ' '.join(q_arr)  # TODO: use id param upon neo4j support: q_params = {'id_set': id_set}
         self.add_statement(q)
 
+class DBO_rz_clone(DB_op):
+    def __init__(self, filter_label=None, limit=128):
+        """
+        clone rhizi
+        
+        @return: a dict: {'node_set': n_set,
+                          'link_set': l_set }
+                 where l_set is a list of (src.id, dst.id, link) tuples
+        """
+        super(DBO_rz_clone, self).__init__()
+
+        self.limit = limit
+        self.skip = 0
+
+        q_arr = ['match (n)' if not filter_label else 'match (n:%s)' % (filter_label),
+                 'optional match (n)-[r]->(m)',
+                 'with n,r,m',
+                 'order by n.id',
+                 'skip %d' % (self.skip),
+                 'limit %d' % (self.limit),
+                 'return n,collect([n.id, m.id, r])']
+
+        q = ' '.join(q_arr)
+        self.add_statement(q)
+
+    def process_result_set(self):
+        ret_n_set = []
+        ret_l_set = []
+        for _, _, row_set in self:
+            for row in row_set:
+                itr = iter(row)
+                n = itr.next()
+
+                l_set = itr.next()
+                for l in l_set:
+                    assert 3 == len(l)  # (n.id, m.id, r) tuples
+                    if None == l[1]:
+                        # as link matching is optional, collect may yield empty sets
+                        continue
+                    ret_l_set.append(l)
+                ret_n_set.append(n)
+
+        return {'node_set': ret_n_set,
+                'link_set': ret_l_set }
+
 class DB_Controller:
     """
     neo4j DB controller
