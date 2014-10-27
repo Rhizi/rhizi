@@ -303,6 +303,17 @@ class TestDBController(unittest.TestCase):
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
+    def test_rz_clone(self):
+        l_n, l_r = gen_rand_data(self.db_ctl, lim_n=8, lim_r=16, prob_link_create=0.7)
+        op = dbc.DBO_rz_clone(filter_label = l_n, limit=32)
+        ret = self.db_ctl.exec_op(op)
+        n_set = ret['node_set']
+        l_set = ret['link_set']
+        
+        # TODO improve assertions
+        self.assertTrue(0 < len(n_set))
+        self.assertTrue(0 < len(l_set))
+
     def tearDown(self): pass
 
 if __name__ == "__main__":
