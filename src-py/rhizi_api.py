@@ -114,7 +114,13 @@ def topo_diff_commit():
     """
     commit a graph topology diff
     """
-    pass
+    topo_diff_dict = request.get_json()['topo_diff']
+    __sanitize_input(topo_diff_dict)
+
+    topo_diff = Topo_Diff.from_dict(topo_diff_dict)
+
+    op = dbc.DBO_topo_diff_commit(topo_diff)
+    return __common_exec(op)
 
 @webapp.route("/graph/attr-diff-commit", methods=['POST'])
 def attr_diff_commit():
