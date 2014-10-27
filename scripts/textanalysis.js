@@ -162,7 +162,7 @@ var textAnalyser2 = function (newtext, finalize) {
     var m;
     var word;
     var completeSentence;
-    var typesetter, abnormalGraph;
+    var typesetter, starGraph;
     var l, n, j;
     var link_hash = {};
     var yell_bug = false; // TODO: fix both issues
@@ -236,13 +236,13 @@ var textAnalyser2 = function (newtext, finalize) {
         }
     }
 
-    abnormalGraph = (newlinks.length - ANDcount) >= 3  ||
+    starGraph = (newlinks.length - ANDcount) >= 3  ||
         ((newlinks.length - ANDcount >= 1) &&
          orderStack.length > 1 &&
          orderStack[orderStack.length - 1] != NODE);
 
     //PREFIX not null case - put complete sentence in first link.
-    if (prefix && !abnormalGraph) {
+    if (prefix && !starGraph) {
         newlinks[1] = prefix + " " + newnodes[0] +
         (newlinks[1] !== undefined || newnodes[1] !== undefined ?
         " " : "")
@@ -298,7 +298,7 @@ var textAnalyser2 = function (newtext, finalize) {
                 break;
             case NODE:
                 addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
-                if (!abnormalGraph) {
+                if (!starGraph) {
                     addLink(newnodes[nodeindex - 1], newnodes[nodeindex],
                             newlinks[linkindex], typesetter);
                 }
@@ -315,7 +315,7 @@ var textAnalyser2 = function (newtext, finalize) {
         case START:
             typeStack[nodeindex]=nodetypes[typeindex];
             addNode("new node", typeStack[nodeindex], "temp");
-            if (!abnormalGraph) {
+            if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
                 ANDconnect("new node");
             }
@@ -324,7 +324,7 @@ var textAnalyser2 = function (newtext, finalize) {
         case NODE:
             typeStack[nodeindex]=nodetypes[typeindex];
             addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
-            if (!abnormalGraph) {
+            if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
                 ANDconnect(newnodes[nodeindex]);
             }
@@ -332,7 +332,7 @@ var textAnalyser2 = function (newtext, finalize) {
         case LINK:
             linkindex++;
             addNode("new node", "empty", "temp");
-            if (!abnormalGraph) {
+            if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
                 ANDconnect("new node");
             }
@@ -361,7 +361,7 @@ var textAnalyser2 = function (newtext, finalize) {
     console.log(orderStack);*/
 
     //STAR CASE
-    if (abnormalGraph) {
+    if (starGraph) {
         addNode(completeSentence, "chainlink", typesetter);
         for (n = 0; n < newnodes.length; n++) {
             addLink(newnodes[n], completeSentence, "", typesetter);
