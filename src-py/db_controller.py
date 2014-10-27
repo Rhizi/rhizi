@@ -114,6 +114,14 @@ class DB_composed_op(DB_op):
             ret.append(s_result_set)
         return ret
 
+class DBO_cypher_query(DB_op):
+    """
+    freeform cypher query
+    """
+    def __init__(self, q, q_params={}):
+        super(DBO_cypher_query, self).__init__()
+        self.add_statement(q, q_params)
+
 class DBO_topo_diff_commit(DB_composed_op):
     """
     commit a Topo_Diff
@@ -384,8 +392,13 @@ class DB_Controller:
 
     def exec_cypher_query(self, q):
         """
-        @deprecated: use transaction based api
+        @deprecated: use DBO_cypher_query
         """
 
         # call post and not db_util.post_neo4j to avoid response key errors
-        db_util.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
+        try:
+            db_util.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
+        except Exception as e:
+            log.error(e.message)
+            log.error(traceback.print_exc())
+            raise e
