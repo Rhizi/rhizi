@@ -4,7 +4,8 @@ var data = [
 ["#a hello there #b", ["a", "b"], [["a", "b", "hello there"]],
 ["#a hello there2 #ba", ["a", "ba"], ["a", "ba", "hello there2"]]],
 ["#c and #d like #e", ["c", "d", "e"], [["c", "e", "like"], ["d", "e", "like"]]],
-["#f and #g and #h are cool", ["f", "g", "h", "are cool"], [["f", "are cool", ""], ["g", "are cool", ""], ["h", "are cool", ""]]], // the are should be a label actually, but harder to do.
+// issue 86
+["#f and #g and #h are cool", ["f", "g", "h", "f and g and h are cool"], [["f", "f and g and h are cool", ""], ["g", "f and g and h are cool", ""], ["h", "f and g and h are cool", ""]]],
 ["#i likes #j and #k", ["i", "j", "k"], ["i", "j", "likes"], ["i", "k", "likes"]],
 ["#q likes #r but doesn't like #l", ["q", "r", "l"], []],
 ];
