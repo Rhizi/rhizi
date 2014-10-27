@@ -21,7 +21,6 @@ class DB_op(object):
     """
     tx wrapped DB operation possibly composing multiple DB queries
     """
-
     def __init__(self):
         self.statement_set = []
         self.result_set = []
@@ -75,7 +74,6 @@ class DB_op(object):
                 for col in row:
                     ret.append(col)
         return ret
-
 
 class DB_composed_op(DB_op):
     def __init__(self):
@@ -250,11 +248,11 @@ class DBO_load_node_set_by_DB_id(DB_op):
 
 class DBO_match_node_id_set(DB_op):
 
-    def __init__(self, filter_type=None, filter_attr_map={}):
+    def __init__(self, filter_label=None, filter_attr_map={}):
         """
         match a set of nodes by type / attr_map
         
-        @param filter_type: node type filter
+        @param filter_label: node type filter
         @param filter_attr_map: is a filter_key to filter_value_set map of
                possible attributes to match against, eg.:
                { 'id':[0,1], 'color: ['red','blue'] } 
@@ -262,8 +260,8 @@ class DBO_match_node_id_set(DB_op):
         """
         super(DBO_match_node_id_set, self).__init__()
 
-        q = "match (n{filter_type}) {where_clause} return id(n)"
-        q = cfmt(q, filter_type="" if not filter_type else ":" + filter_type)
+        q = "match (n{filter_label}) {where_clause} return id(n)"
+        q = cfmt(q, filter_label="" if not filter_label else ":" + filter_label)
         q = cfmt(q, where_clause=db_util.gen_clause_where_from_filter_attr_map(filter_attr_map))
 
         q_params = filter_attr_map
@@ -291,7 +289,7 @@ class DBO_load_link_set(DB_op):
         @return: a set of loaded links
         """
         super(DBO_load_link_set, self).__init__()
-        
+
         for l_ptr in link_ptr_set:
             if not l_ptr.src_id:
                 q = "match ()-[r]->({id: {dst_id}}) return r"
@@ -314,19 +312,19 @@ class DBO_load_link_set(DB_op):
         return DBO_load_link_set(l_ptr_set)
 
 class DBO_match_link_id_set(DB_op):
-    def __init__(self, filter_type=None, filter_attr_map={}):
+    def __init__(self, filter_label=None, filter_attr_map={}):
         """
         load an id-set of links
         
-        @param filter_type: link type filter 
+        @param filter_label: link type filter 
         @param filter_attr_map: is a filter_key to filter_value_set map of
                attributes to match link properties against
         @return: a set of loaded link ids
         """
         super(DBO_match_link_id_set, self).__init__()
 
-        q = "match ()-[r{filter_type} {filter_attr}]->() return id(r)"
-        q = cfmt(q, filter_type="" if not filter_type else ":" + filter_type)
+        q = "match ()-[r{filter_label} {filter_attr}]->() return id(r)"
+        q = cfmt(q, filter_label="" if not filter_label else ":" + filter_label)
         q = cfmt(q, filter_attr=db_util.gen_clause_attr_filter_from_filter_attr_map(filter_attr_map))
         q_params = {k: v[0] for (k, v) in filter_attr_map.items()}  # pass on only first value from each value set
 
@@ -334,6 +332,9 @@ class DBO_match_link_id_set(DB_op):
 
 class DBO_rm_node_set(DB_op):
     def __init__(self, id_set, rm_links=False):
+        """
+        remove node set
+        """
         super(DBO_rm_node_set, self).__init__()
 
         if rm_links:
