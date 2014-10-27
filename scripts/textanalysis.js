@@ -238,6 +238,7 @@ var textAnalyser2 = function (newtext, finalize) {
 
     starGraph = (newlinks.length - ANDcount) >= 3  ||
         ((newlinks.length - ANDcount >= 1) &&
+         newlinks.length > 2 &&
          orderStack.length > 1 &&
          orderStack[orderStack.length - 1] != NODE);
 
