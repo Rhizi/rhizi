@@ -259,6 +259,37 @@ class TestDBController(unittest.TestCase):
         op = dbc.DBO_attr_diff_commit(attr_diff)
         n_map = self.db_ctl.exec_op(op)
 
+    def test_rm_node_set(self):
+        n_0_id = rand_id()
+        n_1_id = rand_id()
+        n_2_id = rand_id()
+        n_3_id = rand_id()
+        n_T = 'T_test_rm_node_set'
+        
+        n_set = [{'__type': n_T, 'id': n_0_id },
+                 {'__type': n_T, 'id': n_1_id },
+                 {'__type': n_T, 'id': n_2_id },
+                 {'__type': n_T, 'id': n_3_id }]
+        l_set = [{'__type': n_T, '__src': n_2_id, '__dst': n_2_id},
+                 {'__type': n_T, '__src': n_2_id, '__dst': n_3_id}]
+
+        topo_diff = Topo_Diff(node_set_add=n_set,
+                              link_set_add=l_set)
+
+        op = dbc.DBO_topo_diff_commit(topo_diff)
+        self.db_ctl.exec_op(op)
+        
+        op = dbc.DBO_rm_node_set([n_0_id, n_1_id])
+        self.db_ctl.exec_op(op)
+        
+        op = dbc.DBO_rm_node_set([n_2_id, n_3_id], rm_links=True)
+        self.db_ctl.exec_op(op)
+        
+        # assert all deleted
+        op = dbc.DBO_match_node_id_set(filter_type=n_T)
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
+
     def tearDown(self): pass
 
 if __name__ == "__main__":

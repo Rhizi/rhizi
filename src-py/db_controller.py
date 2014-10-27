@@ -316,6 +316,25 @@ class DBO_match_link_id_set(DB_op):
 
         self.add_statement(q, q_params)
 
+class DBO_rm_node_set(DB_op):
+    def __init__(self, id_set, rm_links=False):
+        super(DBO_rm_node_set, self).__init__()
+
+        if rm_links:
+            q_arr = ['match (n)',
+                     'where n.id in ' + str(id_set),
+                     'optional match (n)-[r]-()',
+                     'delete n,r'
+             ]
+        else:
+            q_arr = ['match (n)',
+                     'where n.id in ' + str(id_set),
+                     'delete n'
+             ]
+
+        q = ' '.join(q_arr)  # TODO: use id param upon neo4j support: q_params = {'id_set': id_set}
+        self.add_statement(q)
+
 class DB_Controller:
     """
     neo4j DB controller
