@@ -129,18 +129,25 @@ return {
             }
         });
 
-        /* TODO: don't use interval by default but only if keys are comming to fast (but still - 5 ms??) */
-        window.setInterval(function() {
-            if (element.val() != text) {
-
-                if (text.length * 8 > 500) {
-                    element.css('width', text.length * 8 + 20);
-                }
-                // text changed
+        if ('oninput' in document.documentElement) {
+            element.on('input', function(e) {
                 text = element.val();
                 analyzeSentence(text, false);
-            }
-        }, 5);
+            });
+        } else {
+            console.log('textanalysis.ui: fallback to polling');
+            window.setInterval(function() {
+                if (element.val() != text) {
+                    if (text.length * 8 > 500) {
+                        element.css('width', text.length * 8 + 20);
+                    }
+                    // text changed
+                    text = element.val();
+                    analyzeSentence(text, false);
+                    suggestionChange = false;
+                }
+            }, 50);
+        }
     }
 };
 }); // define
