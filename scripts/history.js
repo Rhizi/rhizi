@@ -56,6 +56,7 @@ History.prototype.record = function(action, d)
     d['user'] = this.user;
     d['timestamp'] = new Date();
     this.records.push(d);
+    $('.history-timeline').html('<pre>' + JSON.stringify(d) + '</pre>');
 };
 
 function svg_extract_translate_and_scale(e)
