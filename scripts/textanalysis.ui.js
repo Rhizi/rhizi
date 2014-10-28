@@ -1,8 +1,11 @@
+"use strict"
+
 define('textanalysis.ui', ['autocomplete', 'rhizicore', 'textanalysis', 'signal', 'consts'],
        function(autocomplete, RZ, textanalysis, signal, consts) {
 var text = ""; // Last text of sentence
 var element_name = '#textanalyser';
 var element = $(element_name);
+var suggestionChange;
 
 function analyzeSentence(sentence, finalize)
 {
@@ -108,7 +111,6 @@ return {
                     text = element.val();
                     element.val("");
                     analyzeSentence(text, true);
-                    typeStack = [];
                 } else {
                     suggestionChange = false;
                 }
@@ -137,7 +139,6 @@ return {
                 // text changed
                 text = element.val();
                 analyzeSentence(text, false);
-                suggestionChange = false;
             }
         }, 5);
     }

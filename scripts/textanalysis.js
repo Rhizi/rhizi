@@ -417,6 +417,10 @@ var textAnalyser2 = function (newtext, finalize) {
         graph.update(!finalize && comp.graph_same);
     }
 
+    if (finalize) {
+        typeStack = [];
+    }
+
     return ret;
 }
 
