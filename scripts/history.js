@@ -44,11 +44,12 @@ var KEYSTROKE_WHERE_TEXTANALYSIS = 'KEYSTROKE_WHERE_TEXTANALYSIS';
 var KEYSTROKE_WHERE_DOCUMENT = 'KEYSTROKE_WHERE_DOCUMENT';
 var KEYSTROKE_WHERE_EDIT_NODE = 'KEYSTROKE_WHERE_EDIT_NODE';
 
-History.prototype.record = function(d)
+History.prototype.record = function(action, d)
 {
-    if (d === undefined || d.action === undefined) {
+    if (d === undefined || action === undefined) {
         throw "Invalid arguments";
     }
+    d['action'] = action;
     d['user'] = this.user;
     d['timestamp'] = new Date();
     this.records.push(d);
@@ -75,8 +76,7 @@ History.prototype.clear_history = function()
 
 History.prototype.record_graph_diff = function(obj)
 {
-    this.record({
-        action: ACTION_GRAPH_DIFF,
+    this.record(ACTION_GRAPH_DIFF, {
         nodes: {add: obj.nodes && obj.nodes.add, remove: obj.nodes && obj.nodes.remove,
                 change: obj.nodes && obj.nodes.change},
         links: {add: obj.links && obj.links.add, remove: obj.links && obj.links.remove,
@@ -97,7 +97,7 @@ History.prototype.record_keystrokes = function(obj)
     if (keys.length == 0) {
         return;
     }
-    this.record({action: ACTION_KEYSTROKES,
+    this.record(ACTION_KEYSTROKES, {
         'keys': keys,
         'where': where
     });
