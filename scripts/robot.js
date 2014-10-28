@@ -35,6 +35,9 @@ var robot = function (element, sentence) {
             r.counter++;
             if (r.sentence.charAt(r.counter) !== "|") {
                 r.element.val(text + r.sentence.charAt(r.counter));
+                if ('oninput' in document.documentElement) {
+                    r.element.trigger('input', {});
+                }
                 //if(Math.random()>0.9)graph.editType("x","temp",nodetypes[Math.round(Math.random()*4)]);
                 if (r.sentence.charAt(r.counter)==="#") {
                   r.sentencecounter++;
