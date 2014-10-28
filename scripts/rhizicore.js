@@ -62,6 +62,8 @@ function myGraph(el) {
                 "end": spec.end,
                 "status": spec.status,
                 'url': spec.url,
+                'x': spec.x,
+                'y': spec.y,
             };
             nodes.push(new_node);
         }
@@ -527,6 +529,8 @@ function myGraph(el) {
                                   end:new Date(node.end),
                                   status:node.status,
                                   url:node.url,
+                                  x: node.x,
+                                  y: node.y,
                                  });
           textanalysis.autoSuggestAddName(node.id);
         }
@@ -553,6 +557,8 @@ function myGraph(el) {
             "end":node.end,
             "status": node.status,
             "url": node.url,
+            "x": node.x,
+            "y": node.y,
           });
         }
         for(var j=0 ; j < links.length ; j++){
