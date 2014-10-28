@@ -21,10 +21,11 @@ define('history', ['jquery', 'FileSaver', 'consts', 'signal'],
 /* user - username (string)
  * svg - svg element for catching zoom events (jquery DOMNode wrapper)
  */
-function History(user, svg) {
+function History(user, transform_element) {
     var that = this;
     this.records = [];
     this.user = user;
+    this.transform_element = transform_element;
     signal.slot(consts.APPLIED_GRAPH_DIFF, function(obj) {
         return that.record_graph_diff(obj)
     });
@@ -32,13 +33,15 @@ function History(user, svg) {
         return that.record_keystrokes(obj);
     });
     // XXX create zoom behavior - then proof to event name change
-    $(window).on('wheel', function(obj) {
-        return that.record_zoom(obj);
+    $(window).on('wheel.history', function(obj) {
+        that.record_zoom(obj);
+        return true;
     });
 }
 
 var ACTION_KEYSTROKES = 'ACTION_KEYSTROKES';
 var ACTION_GRAPH_DIFF = 'ACTION_GRAPH_DIFF';
+var ACTION_ZOOM = 'ACTION_ZOOM';
 
 var KEYSTROKE_WHERE_TEXTANALYSIS = 'KEYSTROKE_WHERE_TEXTANALYSIS';
 var KEYSTROKE_WHERE_DOCUMENT = 'KEYSTROKE_WHERE_DOCUMENT';
@@ -55,11 +58,30 @@ History.prototype.record = function(action, d)
     this.records.push(d);
 };
 
+function svg_extract_translate_and_scale(e)
+{
+    // See: http://stackoverflow.com/questions/10349811/how-to-manipulate-translate-transforms-on-a-svg-element-with-javascript-in-chrom
+    // Using the regexp option right now, did only firefox testing 36
+    var str = e.attributes['transform'].value;
+    var parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(str);
+    var scale = /scale\(\s*([^\s)]+)\)/.exec(str);
+    if (scale) {
+        var x = parts[1], y = parts[2];
+        return {scale:+scale[1], translate: [+x, +y]};
+    } else {
+        return {scale:1.0, translate: [0.0, 0.0]};
+    }
+}
+
 History.prototype.record_zoom = function(d)
 {
-    console.log('history record zoom');
-    console.log(d);
-    return true;
+    var transform = svg_extract_translate_and_scale(this.transform_element);
+
+    if (transform === undefined) {
+        console.log('record_zoom: bug: transform_element has no transform attribute');
+        return;
+    }
+    this.record(ACTION_ZOOM, {transform: transform});
 }
 
 History.prototype.save_to_file = function()

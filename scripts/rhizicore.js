@@ -445,7 +445,8 @@ function myGraph(el) {
         .attr("height", '100%')
         .attr("pointer-events", "all")
         .call(zoomObject)
-        .append("g");
+        .append("g")
+        .attr("class", "zoom");
 
     // TODO: why do we need this huge overlay (hugeness also not constant)
     vis.append("rect")
@@ -569,7 +570,7 @@ function myGraph(el) {
 
     function set_user(user) {
         this.user = user;
-        this.history = new History(this.user, $('svg'));
+        this.history = new History(this.user, $('svg g.zoom')[0]);
         console.log('new user: ' + user);
     }
     this.set_user = set_user;
