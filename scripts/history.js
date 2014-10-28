@@ -18,7 +18,10 @@
 define('history', ['jquery', 'FileSaver', 'consts', 'signal'],
     function($, saveAs, consts, signal) {
 
-function History(user) {
+/* user - username (string)
+ * svg - svg element for catching zoom events (jquery DOMNode wrapper)
+ */
+function History(user, svg) {
     var that = this;
     this.records = [];
     this.user = user;
@@ -27,6 +30,10 @@ function History(user) {
     });
     signal.slot(consts.KEYSTROKES, function(obj) {
         return that.record_keystrokes(obj);
+    });
+    // XXX create zoom behavior - then proof to event name change
+    $(window).on('wheel', function(obj) {
+        return that.record_zoom(obj);
     });
 }
 
@@ -46,6 +53,13 @@ History.prototype.record = function(d)
     d['timestamp'] = new Date();
     this.records.push(d);
 };
+
+History.prototype.record_zoom = function(d)
+{
+    console.log('history record zoom');
+    console.log(d);
+    return true;
+}
 
 History.prototype.save_to_file = function()
 {

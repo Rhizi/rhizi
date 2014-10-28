@@ -569,7 +569,7 @@ function myGraph(el) {
 
     function set_user(user) {
         this.user = user;
-        this.history = new History(this.user);
+        this.history = new History(this.user, $('svg'));
         console.log('new user: ' + user);
     }
     this.set_user = set_user;

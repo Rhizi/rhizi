@@ -1,6 +1,6 @@
 (function() {
 var config = {
-    //urlArgs: "bust=" + (new Date()).getTime(), // NOTE: useful for debugging
+    urlArgs: "bust=" + (new Date()).getTime(), // NOTE: useful for debugging
     paths: {
         jquery: 'external/jquery',
         'jquery-ui': 'external/jquery-ui',
