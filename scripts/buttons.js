@@ -6,13 +6,13 @@ $('.tutorial').click(function(){});
 var key="#47989379";
 
 
-$('.save').click(function(){
+$('.save a').click(function(){
     var json = RZ.graph.save_to_json();
-    console.log(json);
+    console.log('saving to local storage ' + json.length + ' bytes');
     localStorage.setItem(key, json);
 });
 
-$('.saveToFile').click(function() {
+$('.saveToFile a').click(function() {
     var json = RZ.graph.save_to_json();
     var filename = 'graph.json';
     var blob = new Blob([json], {type: 'application/json'});
@@ -52,7 +52,7 @@ $('.file-load').on('change', function(event) {
     reader.readAsText(file, "text/javascript");
 });
 
-$('.local-storage-load').click(function(){
+$('.local-storage-load a').click(function(){
   if (!really_load()) {
       return;
   }
@@ -60,7 +60,7 @@ $('.local-storage-load').click(function(){
   RZ.graph.load_from_json(json_blob);
 });
 
-$('.set-user').click(function() {
+$('a.set-user').click(function() {
     $('.set-user').hide();
     $('.set-user-form').show();
     $('.set-user-form').submit(function() {
@@ -74,7 +74,7 @@ $('.set-user').click(function() {
     })
 });
 
-$('.save-history').click(function() {
+$('a.save-history').click(function() {
     if (RZ.graph.history === undefined) {
         throw "History is undefined";
     }

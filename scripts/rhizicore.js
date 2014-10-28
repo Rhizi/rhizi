@@ -542,7 +542,6 @@ function myGraph(el) {
 
     function save_to_json() {
         var d = {"nodes":[], "links":[]};
-        console.log(nodes);
         for(var i = 0 ; i < nodes.length ; i++){
           var node = nodes[i];
           d['nodes'].push({
