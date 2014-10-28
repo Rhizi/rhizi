@@ -48,7 +48,7 @@ function myGraph(el) {
 
     this.addNodeNoHistory = function(spec) {
         // No history recorded - this is a helper for loading from files / constant graphs
-        var id = spec.id.toLowerCase();
+        var id = spec.id.toString().toLowerCase();
         var node = findNode(id, null);
         var new_node = undefined;
 
