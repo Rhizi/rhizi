@@ -1,13 +1,9 @@
-"use strict"
+"use strict";
 
 define('textanalysis', [], function() {
 var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
-var suggestionChange=false;
-var sentenceStack = [];
 var typeStack = [];
-
-var ExecutionStack = [];
 
 var lastnode;
 
@@ -31,7 +27,7 @@ function autocompleteCallback(request, response_callback)
     var ret = [];
     if (request.term === "" || request.term) {
         for (var name in sugg) {
-            if (name.indexOf(request.term) == 0) {
+            if (name.indexOf(request.term) === 0) {
                 ret.push(name);
             }
         }
@@ -118,7 +114,7 @@ function tokenize(text, node_token, quote)
                     if (subsegment[k] && subsegment[k]!==quoteword.replace(/ /g, "")) {
                         quoteword += subsegment[k];
                     }
-                    sentence.push(quoteword.replace(RegExp(quote, 'g'), ""));
+                    sentence.push(quoteword.replace(new RegExp(quote, 'g'), ""));
                 } else {
                     sentence.push(subsegment[k]);
                 }
@@ -154,16 +150,14 @@ var textAnalyser2 = function (newtext, finalize) {
     var linkindex = 0;
     var nodeindex = 0;
     var orderStack = [];
-    var quoteword = "";
-    var ANDcase = false;
-    var ANDcount = 0;
+    var and_count = 0;
     var prefix = "";
     var ret = {'nodes': [], 'links': []};
     var m;
     var word;
     var completeSentence;
     var typesetter, starGraph;
-    var l, n, j;
+    var n;
     var link_hash = {};
     var yell_bug = false; // TODO: fix both issues
     var NODE = "NODE";
@@ -208,7 +202,7 @@ var textAnalyser2 = function (newtext, finalize) {
         case ",":
         case "&":
             sentence[m] = "and";
-            ANDcount++;
+            and_count++;
             //orderStack.push("AND");
         default:
             if (orderStack[orderStack.length - 1] === START) {
@@ -236,8 +230,8 @@ var textAnalyser2 = function (newtext, finalize) {
         }
     }
 
-    starGraph = (newlinks.length - ANDcount) >= 3  ||
-        ((newlinks.length - ANDcount >= 1) &&
+    starGraph = (newlinks.length - and_count) >= 3  ||
+        ((newlinks.length - and_count >= 1) &&
          newlinks.length > 2 &&
          orderStack.length > 1 &&
          orderStack[orderStack.length - 1] != NODE);
@@ -276,7 +270,7 @@ var textAnalyser2 = function (newtext, finalize) {
     typesetter = "";
     if (finalize === true) {
         typesetter = "perm";
-        for (var n = 0; n < newnodes.length; n++) {
+        for (n = 0; n < newnodes.length; n++) {
             autoSuggestAddName(newnodes[n]);
         }
     } else {
@@ -318,7 +312,7 @@ var textAnalyser2 = function (newtext, finalize) {
             addNode("new node", typeStack[nodeindex], "temp");
             if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
-                ANDconnect("new node");
+                and_connect("new node");
             }
             ret.state = ANALYSIS_NODE_START;
             break;
@@ -327,7 +321,7 @@ var textAnalyser2 = function (newtext, finalize) {
             addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
             if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
-                ANDconnect(newnodes[nodeindex]);
+                and_connect(newnodes[nodeindex]);
             }
             break;
         case LINK:
@@ -335,14 +329,14 @@ var textAnalyser2 = function (newtext, finalize) {
             addNode("new node", "empty", "temp");
             if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
-                ANDconnect("new node");
+                and_connect("new node");
             }
             ret.state = ANALYSIS_LINK;
             break;
     }
 
     //EXTERNAL AND CONNECTION CHECKING
-    function ANDconnect(node) {
+    function and_connect(node) {
         var verb;
         for(var x=0;x<newlinks.length;x++){
             if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
@@ -369,7 +363,7 @@ var textAnalyser2 = function (newtext, finalize) {
         }
     }
 
-    ret.drop_conjugator_links = ANDcount < linkindex;
+    ret.drop_conjugator_links = and_count < linkindex;
 
     //FOR THE EXTERNAL ARROW-TYPE CHANGER
     lastnode = newnodes[nodeindex];
@@ -415,14 +409,14 @@ var textAnalyser2 = function (newtext, finalize) {
         }
         //UPDATE GRAPH ONCE
         graph.update(!finalize && comp.graph_same);
-    }
+    };
 
     if (finalize) {
         typeStack = [];
     }
 
     return ret;
-}
+};
 
 return {
     autocompleteCallback:autocompleteCallback,
