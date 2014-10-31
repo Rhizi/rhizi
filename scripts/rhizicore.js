@@ -1151,6 +1151,9 @@ function customSize(type) {
         case "bubble":
             size = 180;
             break;
+        default:
+            size = 9;
+            break;
     }
     return size;
 }
