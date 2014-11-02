@@ -1,8 +1,8 @@
 "use strict"
 
 define('rhizicore',
-['jquery', 'd3', 'consts', 'signal', 'util', 'history', 'textanalysis'],
-function($, d3, consts, signal, util, history, textanalysis) {
+['jquery', 'd3', 'consts', 'signal', 'util', 'history', 'textanalysis', 'model/graph'],
+function($, d3, consts, signal, util, history, textanalysis, myGraph) {
 var History = history.History;
 var addednodes = [];
 
@@ -13,455 +13,29 @@ var graphinterval = 0;
 
 var ganttTimer = 0;
 
-var boxedin = false;
-
 var deliverables = [];
 
-var boxedin, nodetext, linktext, link, links, node, nodes, circle;
+var circle; // <-- should not be module globals.
 
 var scrollValue = 0,
     zoomObject;
 
+var graph;
+
+var drag;
+
 var force;
 
-function myGraph(el) {
+var state_to_link_class = {
+    enter:'enterlink graph',
+    exit:'exitlink graph',
+};
 
-    this.update = function(no_relayout) {
-        update(no_relayout);
-    }
+function recenterZoom() {
+    vis.attr("transform", "translate(0,0)scale(1)");
+}
 
-    ///FUNCTIONS
-    this.addNode = function(id, type, state) {
-        var new_node = this.addNodeNoHistory(
-            {id:id,
-             name:id,
-             type:type,
-             state:state,
-             start:0,
-             end:0,
-             status:"unknown"});
-        if (new_node) {
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{
-                nodes: {add: [new_node]}}]);
-        }
-    }
-
-    this.addNodeNoHistory = function(spec) {
-        // No history recorded - this is a helper for loading from files / constant graphs
-        var id = spec.id.toString().toLowerCase();
-        var node = findNode(id, null);
-        var new_node = undefined;
-
-        if (node === undefined) {
-            new_node = {
-                "id": id,
-                "name": spec.name,
-                "type": spec.type,
-                "state": spec.state,
-                "start": spec.start,
-                "end": spec.end,
-                "status": spec.status,
-                'url': spec.url,
-                'x': spec.x,
-                'y': spec.y,
-            };
-            nodes.push(new_node);
-        }
-        return new_node;
-    }
-
-    this.removeNode = function(id, state) {
-        var i = 0;
-        id = id.toLowerCase();
-        var n = findNode(id, state);
-        while (i < links.length) {
-            if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
-            else i++;
-        }
-        var index = findNodeIndex(id, state);
-        if (index !== undefined) {
-            nodes.splice(index, 1);
-        }
-        signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {removed: [id]}}]);
-    }
-
-    this.removeNodes = function(state) {
-        var id = null;
-        var ns = findNodes(null, state);
-        for (var j = 0; j < ns.length; j++) {
-            var n = ns[j];
-            var i = 0;
-            while (i < links.length) {
-                if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
-                else i++;
-            }
-            var index = findNodeIndex(id, state);
-            if (index !== undefined) {
-                nodes.splice(index, 1);
-            }
-        }
-        if (ns.length > 0) {
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {removed: ns.map(function(n) { return n.id; })}}]);
-        }
-    }
-
-
-    this.highlightNode = function(id, state) {
-        var i = 0,
-            j = 0;
-        var n = findNode(id, state);
-        var adjacentnode;
-        $(".debug").html(n.state);
-
-        //highlight node
-        if (n !== undefined && n.state !== "chosen" && n.state !== "temp") {
-            this.removeHighlight();
-            n.state = "chosen";
-
-            while (i < links.length) {
-                if (links[i]['source'] === n) {
-                    adjacentnode = findNode(links[i]['target'].id, null);
-                    if (adjacentnode.state !== "temp") adjacentnode.state = "exit";
-                    links[i]['state'] = "exit";
-
-                    if(links[i]['target'].type==="chainlink"){
-                        console.log("chain");
-                        while (j < links.length) {
-                            if(links[i]['target'].id===links[j]['target'].id && links[j]['target'].type==="chainlink" && links[j]['target'].state!=="temp"){
-                                adjacentnode = findNode(links[j]['source'].id, null);
-                                if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
-                                links[j]['state'] = "enter";
-                            }
-                            j++;
-                        }
-                    }
-                    j=0;
-                }
-                if (links[i]['target'] === n) {
-                    adjacentnode = findNode(links[i]['source'].id, null);
-                    if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
-                    links[i]['state'] = "enter";
-                }
-                i++;
-            }
-        }
-    }
-
-    this.removeHighlight = function() {
-        var k = 0;
-        while (k < nodes.length) {
-            if (nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen") {
-                nodes[k]['state'] = "perm";
-            }
-            k++;
-        }
-        var j = 0;
-        //highlight all connections
-        while (j < links.length) {
-            links[j]['state'] = "perm";
-            j++;
-        }
-    }
-
-    /* compareSubset:
-     *  state: one of the optional states that defines a subgraph
-     *  new_nodes: array of objects with id
-     *  new_links: array of length two arrays [source_id, target_id]
-     *  returns: true if current and new graph are homomorphic up to
-     *  a single node id change. false otherwise
-     */
-    this.compareSubset = function(state, new_nodes, new_links) {
-        // Note: the nodes include a state=='temp', type=='bubble' node
-        // but it's ok since it exists both in new_nodes and in state_nodes
-        var state_nodes = findNodes(null, state);
-        var state_links = findLinks(state).map(function(link) {
-            return [link.source.id, link.target.id];
-        }).sort();
-        var k;
-        var changed_old_id = undefined, changed_new_id = undefined;
-        var state_source, state_target, new_source, new_target;
-        var changed_nodes;
-        var verbose = false; // XXX should be global. should have only one global. sigh.
-        var set_old_id, set_new_id;
-        var new_id_to_name = {};
-
-        new_nodes.map(function (f) {
-            if (!f.name) {
-                f.name = f.id;
-            }
-            f.id = f.id.toLowerCase();
-            new_id_to_name[f.id] = f.name;
-            if (verbose) {
-                console.log('new_id_to_name ' + f.id + ' -> ' + new_id_to_name[f.id]);
-            }
-        });
-        new_nodes.sort();
-        new_links.sort();
-        if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
-            if (verbose) {
-                console.log('not same size');
-            }
-            return {graph_same: false};
-        }
-        changed_nodes = util.set_diff(util.set_from_array(state_nodes.map(function(d) { return d.id.toLowerCase(); })),
-                                 util.set_from_array(new_nodes.map(function (f) { return f.id.toLowerCase(); })));
-        // we allow any number of changed nodes as long as we it is 1 or 2 :)
-        if (changed_nodes.a_b.length <= 2) {
-            set_old_id = util.set_from_array(changed_nodes.a_b);
-            set_new_id = util.set_from_array(changed_nodes.b_a);
-        } else {
-            if (verbose) {
-                console.log('changed too many nodes');
-                console.log(changed_nodes);
-            }
-            return {graph_same: false};
-        }
-        for (k = 0 ; k < state_links.length ; ++k) {
-            state_source = state_links[k][0];
-            state_target = state_links[k][1];
-            new_source = new_links[k][0];
-            new_target = new_links[k][1];
-            if ((state_source != new_source &&
-                 !(state_source in set_old_id && new_source in set_new_id))
-                ||
-               (state_target != new_target &&
-                 !(state_target in set_old_id && new_target in set_new_id))) {
-                if (verbose) {
-                    console.log('not same link: ' +
-                                state_source + '->' + state_target + ' != ' +
-                                new_source + '->' + new_target);
-                    console.log(set_old_id);
-                    console.log(set_new_id);
-                }
-                return {graph_same: false};
-            }
-        }
-        return {graph_same: true, old_id: changed_nodes.a_b, new_id: changed_nodes.b_a,
-                new_name: changed_nodes.b_a.map(function (k) { return new_id_to_name[k]; })};
-    }
-
-    this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {
-        sourceId = sourceId && sourceId.toLowerCase();
-        targetId = targetId && targetId.toLowerCase();
-        var sourceNode = findNode(sourceId, null);
-        var targetNode = findNode(targetId, null);
-        var found = findLink(sourceId,targetId,name);
-
-        if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
-            state = "temp";
-        }
-        if (sourceNode === undefined || targetNode === undefined) {
-            return;
-        }
-        if (!found) {
-            var link = {
-                "source": sourceNode,
-                "target": targetNode,
-                "name": name,
-                "state": state
-            };
-            links.push(link);
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{links: {add: [link]}}]);
-        } else {
-            found.name = name;
-            found.state = state;
-        }
-    }
-
-    this.editLink = function(sourceId, targetId, newname, newstate) {
-        var link = findLink(sourceId, targetId, newname);
-        if (link !== undefined) {
-            link.name = newname;
-            if (newstate !== undefined) {
-                link.state = newstate;
-            }
-        }
-    }
-
-    this.editLinkTarget = function(sourceId, targetId, newTarget) {
-        var link = findLink(sourceId, targetId, null);
-        if (link !== undefined) {
-            link.target = findNode(newTarget, null);
-
-        } else {
-
-        }
-    }
-
-    this.editName = function(id, type, newname) {
-        var new_name = newname;
-        id = id && id.toLowerCase();
-        var new_id = newname.toLowerCase();
-        var index2 = undefined;
-        if (id != new_id) {
-            index2 = findNode(new_id, type);
-        }
-        var index = findNode(id, type);
-        var acceptReplace=true;
-
-        if ((index !== undefined)) {
-            if ((index2 !== undefined)) {
-                acceptReplace = confirm('"' + index2.id + '" will replace "' + index.id + '", are you sure?');
-                if(acceptReplace){
-                    for (var i = 0; i < links.length; i++) {
-                        if (links[i].source === index) {
-                            links[i].source = index2;
-                        }
-                        if (links[i].target === index) {
-                            links[i].target = index2;
-                        }
-                    }
-                    graph.removeNode(index.id,null);
-                }
-            }else{
-                index.id = new_id;
-                index.name = new_name;
-            }
-        }
-    }
-
-    this.editDates = function(id, type, start, end) {
-        var index = findNode(id, type);
-        if ((index !== undefined)) {
-            index.start = start;
-            index.end = end;
-        }
-    }
-
-    this.editType = function(id, state, newtype) {
-        var index = findNode(id, state);
-        if ((index !== undefined)) {
-            index.type = newtype;
-            update(true);
-        }
-    }
-
-    this.editURL = function(id, state, url) {
-        var index = findNode(id, state);
-        if ((index === undefined)) return;
-        index.url = url;
-        update(true);
-    }
-
-    this.editState = function(id, state, newstate) {
-        var index = findNode(id.toLowerCase(), state);
-        if ((index !== undefined)) {
-            index.state = newstate;
-        }
-    }
-
-    this.findCoordinates = function(id, type) {
-        var index = findNode(id, type);
-        if ((index !== undefined)) {
-            $('.typeselection').css('top', index.y - 90);
-            $('.typeselection').css('left', index.x - 230);
-        }
-    }
-
-    this.recenterZoom = function() {
-        vis.attr("transform", "translate(0,0)scale(1)");
-    }
-
-    this.removeLinks = function(state) {
-        var id = null;
-        var ls = findLinks(state);
-        for (var j = 0; j < ls.length; j++) {
-            var l = ls[j];
-            var i = 0;
-            while (i < links.length) {
-                if (links[i] === l) links.splice(i, 1);
-                else i++;
-            }
-        }
-    }
-
-    var findLink = function(sourceId, targetId, name) {
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].source.id === sourceId && links[i].target.id === targetId) {
-                return links[i];
-            }
-        }
-    }
-
-    var findLinks = function(state) {
-        var foundLinks = [];
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].state == state) {
-                foundLinks.push(links[i]);
-            }
-        }
-        return foundLinks;
-    }
-
-
-    var hasNode = function(id, state) {
-        var i;
-        id = id.toLowerCase();
-        for (i = 0 ; i < nodes.length; ++i) {
-            if (nodes[i].id == id && nodes[i].state == state) {
-                return true;
-            }
-        }
-        return false;
-    }
-    this.hasNode = hasNode;
-
-    var findNode = function(id, state) {
-        id = id && id.toLowerCase();
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id || nodes[i].state === state)
-                return nodes[i]
-        };
-    }
-
-    var findNodes = function(id, state) {
-        //id=id.toLowerCase();
-        var foundNodes = [];
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id || nodes[i].state === state)
-                foundNodes.push(nodes[i]);
-        }
-        return foundNodes;
-    }
-
-    var findNodeIndex = function(id, state) {
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id || nodes[i].state === state)
-                return i
-        };
-    }
-
-
-
-    ///GRAPH BUILDER
-    var w = $(el).innerWidth(),
-        h = $(el).innerHeight();
-
-    var color = d3.scale.category20();
-
-    //Zoom scale behavior in zoom.js
-    zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-
-    vis = this.vis = d3.select(el).append("svg:svg")
-        .attr("width", '100%')
-        .attr("height", '100%')
-        .attr("pointer-events", "all")
-        .call(zoomObject)
-        .append("g")
-        .attr("class", "zoom");
-
-    // TODO: why do we need this huge overlay (hugeness also not constant)
-    vis.append("rect")
-        .attr("class", "overlay graph")
-        .attr("width", $(el).innerWidth() * 12)
-        .attr("height", $(el).innerHeight() * 12)
-        .attr("x", -$(el).innerWidth() * 5)
-        .attr("y", -$(el).innerHeight() * 5);
-    $('.overlay').click(mousedown);
-
-    // SVG rendering order is last rendered on top, so to make sure
-    // all links are below the nodes we group them under a single g
-    vis.append("g").attr("id", "link-group");
+var initDrawingArea = function () {
 
     function zoom() {
         if (graphstate === "GRAPH") {
@@ -471,12 +45,6 @@ function myGraph(el) {
             vis.attr("transform", "translate(0,0)scale(1)");
         }
     }
-
-    var drag = d3.behavior.drag()
-    .origin(function(d) { return d; })
-    .on("dragstart", dragstarted)
-    .on("drag", dragged)
-    .on("dragend", dragended);
 
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
@@ -501,91 +69,42 @@ function myGraph(el) {
         }
     }
 
-    function clear() {
-        nodes.length = 0;
-        links.length = 0;
-    }
-    this.clear = clear;
+    var el = document.body;
 
-    function empty() {
-        return nodes.length == 0 && links.length == 0;
-    }
-    this.empty = empty;
+    graph = new myGraph(el);
 
-    function load_from_json(json) {
-        var data = JSON.parse(json);
-        var i, node, link;
+    //Zoom scale behavior in zoom.js
+    zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    
+    vis = d3.select(el).append("svg:svg")
+        .attr("width", '100%')
+        .attr("height", '100%')
+        .attr("pointer-events", "all")
+        .call(zoomObject)
+        .append("g")
+        .attr("class", "zoom");
 
-        clear();
-        if (data == null) {
-            console.log('load callback: no data to load');
-            return;
-        }
-        for(i = 0; i < data["nodes"].length; i++){
-          node = data.nodes[i];
-          graph.addNodeNoHistory({id:node.id, name:node.name ? node.name : node.id,
-                                  type:node.type,state:"perm",
-                                  start:new Date(node.start),
-                                  end:new Date(node.end),
-                                  status:node.status,
-                                  url:node.url,
-                                  x: node.x,
-                                  y: node.y,
-                                 });
-          textanalysis.autoSuggestAddName(node.id);
-        }
-        for(i = 0; i < data["links"].length; i++){
-          link = data.links[i];
-          graph.addLink(link.source,link.target,link.name,"perm");
-        }
-        graph.recenterZoom();
-        graph.update(false);
-        graph.clear_history();
-    }
-    this.load_from_json = load_from_json;
+    // TODO: why do we need this huge overlay (hugeness also not constant)
+    vis.append("rect")
+        .attr("class", "overlay graph")
+        .attr("width", $(el).innerWidth() * 12)
+        .attr("height", $(el).innerHeight() * 12)
+        .attr("x", -$(el).innerWidth() * 5)
+        .attr("y", -$(el).innerHeight() * 5);
+    $('.overlay').click(mousedown);
 
-    function save_to_json() {
-        var d = {"nodes":[], "links":[]};
-        for(var i = 0 ; i < nodes.length ; i++){
-          var node = nodes[i];
-          d['nodes'].push({
-            "id": node.id,
-            "name": node.name,
-            "type":node.type,
-            "state":"perm",
-            "start":node.start,
-            "end":node.end,
-            "status": node.status,
-            "url": node.url,
-            "x": node.x,
-            "y": node.y,
-          });
-        }
-        for(var j=0 ; j < links.length ; j++){
-          var link = links[j];
-          d['links'].push({
-            "source":link.source.id,
-            "target":link.target.id,
-            "name":link.name
-          });
-        }
-        return JSON.stringify(d);
-    }
-    this.save_to_json = save_to_json;
+    // SVG rendering order is last rendered on top, so to make sure
+    // all links are below the nodes we group them under a single g
+    vis.append("g").attr("id", "link-group");
 
-    function set_user(user) {
-        this.user = user;
-        this.history = new History(this.user, $('svg g.zoom')[0]);
-        console.log('new user: ' + user);
-    }
-    this.set_user = set_user;
+    drag = d3.behavior.drag()
+    .origin(function(d) { return d; })
+    .on("dragstart", dragstarted)
+    .on("drag", dragged)
+    .on("dragend", dragended);
 
-    function clear_history() {
-        if (this.history !== undefined) {
-            this.history.clear();
-        }
-    }
-    this.clear_history = clear_history;
+    var w = $(el).innerWidth(),
+        h = $(el).innerHeight();
 
     force = d3.layout.force()
         .distance(120)
@@ -595,223 +114,219 @@ function myGraph(el) {
         .on("tick", tick)
         .start();
 
-    nodes = force.nodes();
-    links = force.links();
+    graph.update = update;
+}
 
-    var state_to_link_class = {
-        enter:'enterlink graph',
-        exit:'exitlink graph',
-    };
+initDrawingArea();
 
-    var update = function(no_relayout) {
-        link = vis.select("#link-group").selectAll(".link")
-            .data(links);
+function update(no_relayout) {
+    var node, link, linktext, nodetext;
 
-        link.enter().append("svg:defs").selectAll("marker")
-            .data(["end"]) // Different link/path types can be defined here
-            .enter().append("svg:marker") // This section adds in the arrows
-            .attr("id", String)
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 22)
-            .attr("refY", -1.5)
-            .attr("markerWidth", 4)
-            .attr("markerHeight", 4)
-            .attr("orient", "auto")
-            .attr("class", "graph")
-            .style("fill", function(d){
-                if (d.state==="enter" || d.state==="exit") {
-                    return "EDE275";
-                } else {
-                    return "#aaa";
-                }
-                })
-            .append("svg:path")
-            .attr("d", "M0,-5L10,0L0,5");
+    link = vis.select("#link-group").selectAll(".link")
+        .data(graph.links());
 
-        link.enter().append("path")
-            .attr("d", "M0,-5L10,0L0,5")
-            .attr("class", function(d) {
-                return state_to_link_class[d.state] || 'link graph';
-            })
-            .attr("marker-end", "url(#end)")
-            .on("click", function(d, i) {
-                //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
-            });;
-        link.style("stroke-dasharray", function(d,i){
-            if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
-                return "3,3";
-            else
-                return "0,0";
-            });
-
-        link.exit().remove();
-
-        linktext = vis.selectAll(".linklabel").data(links);
-        linktext.enter()
-            .append("text")
-            .attr("class", "linklabel graph")
-            .attr("text-anchor", "middle")
-            .on("click", function(d, i) {
-                if(d.state !== "temp") {
-                    editLink(d, i);
-                }
-            });
-
-        linktext
-            .text(function(d) {
-                var name = d.name || "";
-                if (!(d.target.state === "temp" ||
-                    d.source.state === "chosen" || d.target.state === "chosen")) {
-                    return "";
-                }
-                if (name.length < 25 || d.source.state === "chosen" ||
-                    d.target.state === "chosen" || d.state==="temp") {
-                    return name;
-                } else {
-                    return name.substring(0, 14) + "...";
-                }
-            });
-
-        linktext.exit().remove();
-
-        node = vis.selectAll(".node")
-            .data(nodes, function(d) {
-                return d.id;
-            });
-
-        var nodeEnter = node.enter()
-            .append("g").attr('class', 'node')
-            .attr('visibility', 'hidden') // made visible on first tick
-            .on("click", function(d, i) {
-                if (d3.event.defaultPrevented) {
-                    // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
-                    return;
-                }
-                if(d.state!=="temp"){
-                    editNode(d, i);
-                    showInfo(d, i);
-                }
-            })
-            .call(drag);
-
-        nodetext = nodeEnter.insert("text")
-            .attr("class", "nodetext graph")
-            .attr("dx", 15)
-            .attr("dy", ".30em");
-
-        node.select('g.node text')
-            .text(function(d) {
-                if (!d.name) {
-                    return "";
-                }
-                if (d.state === "temp" || d.state === 'chosen') {
-                     return d.name;
-                } else {
-                    if (d.name.length < 28) {
-                        return d.name;
-                    } else {
-                        return d.name.substring(0, 25) + "...";
-                    }
-                }
-            });
-
-        circle = nodeEnter.insert("circle");
-        node.select('g.node circle')
-            .attr("class", "circle graph")
-            .attr("r", function(d) {
-                return customSize(d.type) - 2;
-            })
-            .style("fill", function(d) {
-                return customColor(d.type);
-            })
-            .style("stroke", function(d) {
-                if (d.state === "chosen") return "#EDE275";
-                if (d.state === "enter") return "#EDE275";
-                if (d.type === "bubble") return "#101010";
-                if (d.state === "exit")  return "#EDE275";
-                if (d.type === "chainlink")  return "#AAA";
-
-                return "#fff";
-            })
-            .style("stroke-width", function(d) {
-                if (d.state === "temp" && d.type !== "empty" || d.state === "chosen") return "3px";
-                else return "1.5px";
-            })
-            .style("box-shadow", function(d) {
-                if (d.state === "temp") return "0 0 40px #FFFF8F";
-                else return "0 0 0px #FFFF8F";
-            })
-            .on("click", function(d, i) {
-                if (d3.event.defaultPrevented) {
-                    // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
-                    return;
-                }
-                d3.event.stopPropagation();
-                if(d.state!=="temp") {
-                     showInfo(d, i);
-                } else {
-                    graph.removeHighlight();
-                }
-                graph.update(true);
-            });
-
-        //if(graphstate==="GANTT"){
-        nodeEnter.append("svg:image")
-            .attr("class", "status graph")
-            .attr('x', -7)
-            .attr('y', -8)
-            .attr('width', 15)
-            .attr('height', 15)
-            .attr("xlink:href", function(d) {
-                switch (d.status) {
-                    case "done":
-                        return "images/check.png";
-                        break;
-                    case "current":
-                        return "images/wait.png";
-                        break;
-                    case "waiting":
-                        return "images/cross.png";
-                        break;
-                }
-            })
-            .on("click", function(d, i) {
-                if(d.state!=="temp")showInfo(d, i);
-            });
-        //}
-
-        node.exit().remove();
-
-        //update deliverables
-        deliverables = [];
-        for (var i = 0; i < nodes.length; i++) {
-            var current = nodes[i];
-            if (current.type === "deliverable") {
-                deliverables.push({
-                    "id": nodes[i].id,
-                    "startdate": nodes[i].start,
-                    "enddate": nodes[i].end
-                });
+    link.enter().append("svg:defs").selectAll("marker")
+        .data(["end"]) // Different link/path types can be defined here
+        .enter().append("svg:marker") // This section adds in the arrows
+        .attr("id", String)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 22)
+        .attr("refY", -1.5)
+        .attr("markerWidth", 4)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .attr("class", "graph")
+        .style("fill", function(d){
+            if (d.state==="enter" || d.state==="exit") {
+                return "EDE275";
+            } else {
+                return "#aaa";
             }
-            //Do something
-        }
+            })
+        .append("svg:path")
+        .attr("d", "M0,-5L10,0L0,5");
 
-        force.nodes(nodes)
-            .links(links)
-        if (no_relayout) {
-            // XXX If we are stopped we need to update the text of the links at least,
-            // and this is the simplest way
-            tick();
-        } else {
-            force.alpha(0.1).start();
+    link.enter().append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("class", function(d) {
+            return state_to_link_class[d.state] || 'link graph';
+        })
+        .attr("marker-end", "url(#end)")
+        .on("click", function(d, i) {
+            //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
+        });;
+    link.style("stroke-dasharray", function(d,i){
+        if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
+            return "3,3";
+        else
+            return "0,0";
+        });
+
+    link.exit().remove();
+
+    linktext = vis.selectAll(".linklabel").data(graph.links());
+    linktext.enter()
+        .append("text")
+        .attr("class", "linklabel graph")
+        .attr("text-anchor", "middle")
+        .on("click", function(d, i) {
+            if(d.state !== "temp") {
+                editLink(d, i);
+            }
+        });
+
+    linktext
+        .text(function(d) {
+            var name = d.name || "";
+            if (!(d.target.state === "temp" ||
+                d.source.state === "chosen" || d.target.state === "chosen")) {
+                return "";
+            }
+            if (name.length < 25 || d.source.state === "chosen" ||
+                d.target.state === "chosen" || d.state==="temp") {
+                return name;
+            } else {
+                return name.substring(0, 14) + "...";
+            }
+        });
+
+    linktext.exit().remove();
+
+    node = vis.selectAll(".node")
+        .data(graph.nodes(), function(d) {
+            return d.id;
+        });
+
+    var nodeEnter = node.enter()
+        .append("g").attr('class', 'node')
+        .attr('visibility', 'hidden') // made visible on first tick
+        .on("click", function(d, i) {
+            if (d3.event.defaultPrevented) {
+                // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                return;
+            }
+            if(d.state!=="temp"){
+                editNode(d, i);
+                showInfo(d, i);
+            }
+        })
+        .call(drag);
+
+    nodetext = nodeEnter.insert("text")
+        .attr("class", "nodetext graph")
+        .attr("dx", 15)
+        .attr("dy", ".30em");
+
+    node.select('g.node text')
+        .text(function(d) {
+            if (!d.name) {
+                return "";
+            }
+            if (d.state === "temp" || d.state === 'chosen') {
+                 return d.name;
+            } else {
+                if (d.name.length < 28) {
+                    return d.name;
+                } else {
+                    return d.name.substring(0, 25) + "...";
+                }
+            }
+        });
+
+    circle = nodeEnter.insert("circle");
+    node.select('g.node circle')
+        .attr("class", "circle graph")
+        .attr("r", function(d) {
+            return customSize(d.type) - 2;
+        })
+        .style("fill", function(d) {
+            return customColor(d.type);
+        })
+        .style("stroke", function(d) {
+            if (d.state === "chosen") return "#EDE275";
+            if (d.state === "enter") return "#EDE275";
+            if (d.type === "bubble") return "#101010";
+            if (d.state === "exit")  return "#EDE275";
+            if (d.type === "chainlink")  return "#AAA";
+
+            return "#fff";
+        })
+        .style("stroke-width", function(d) {
+            if (d.state === "temp" && d.type !== "empty" || d.state === "chosen") return "3px";
+            else return "1.5px";
+        })
+        .style("box-shadow", function(d) {
+            if (d.state === "temp") return "0 0 40px #FFFF8F";
+            else return "0 0 0px #FFFF8F";
+        })
+        .on("click", function(d, i) {
+            if (d3.event.defaultPrevented) {
+                // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                return;
+            }
+            d3.event.stopPropagation();
+            if(d.state!=="temp") {
+                 showInfo(d, i);
+            } else {
+                graph.removeHighlight();
+            }
+            update(true);
+        });
+
+    //if(graphstate==="GANTT"){
+    nodeEnter.append("svg:image")
+        .attr("class", "status graph")
+        .attr('x', -7)
+        .attr('y', -8)
+        .attr('width', 15)
+        .attr('height', 15)
+        .attr("xlink:href", function(d) {
+            switch (d.status) {
+                case "done":
+                    return "images/check.png";
+                    break;
+                case "current":
+                    return "images/wait.png";
+                    break;
+                case "waiting":
+                    return "images/cross.png";
+                    break;
+            }
+        })
+        .on("click", function(d, i) {
+            if(d.state!=="temp")showInfo(d, i);
+        });
+    //}
+
+    node.exit().remove();
+
+    //update deliverables
+    deliverables = [];
+    var nodes = graph.nodes();
+    for (var i = 0; i < nodes.length; i++) {
+        var current = nodes[i];
+        if (current.type === "deliverable") {
+            deliverables.push({
+                "id": nodes[i].id,
+                "startdate": nodes[i].start,
+                "enddate": nodes[i].end
+            });
         }
+        //Do something
     }
 
-    update(false);
+    force.nodes(graph.nodes())
+        .links(graph.links())
+    if (no_relayout) {
+        // XXX If we are stopped we need to update the text of the links at least,
+        // and this is the simplest way
+        tick();
+    } else {
+        force.alpha(0.1).start();
+    }
 }
 
 
-var graph = new myGraph(document.body);
 
 var debug_print = function(message) {
     var element = $(".debug");
@@ -834,6 +349,13 @@ var newnodes=1;
 function tick(e) {
     //console.log(e);
     //$(".debug").html(force.alpha());
+    var node = vis.selectAll(".node")
+        .data(force.nodes(), function(d) {
+            return d.id;
+        });
+    var link = vis.select("#link-group").selectAll(".link")
+        .data(graph.links());
+    var linktext = vis.selectAll(".linklabel").data(graph.links());
 
     function transform(d) {
         if (graphstate === "GRAPH" || d.type === "deliverable") {
@@ -856,7 +378,7 @@ function tick(e) {
         var today = new Date();
         var missingcounter = 0;
 
-        nodes.forEach(function(d, i) {
+        graph.nodes().forEach(function(d, i) {
             if ((d.start === 0 || d.end === 0)) {
                 d.x = 450 + missingcounter * 100;
                 d.y = window.innerWidth / 2;
@@ -886,7 +408,7 @@ function tick(e) {
         //circles animation
         var tempcounter = 0;
         var temptotal = 0;
-        nodes.forEach(function(d, i) {
+        graph.nodes().forEach(function(d, i) {
             if (d.state === "temp" && d.type!=="chainlink" && d.type!=="bubble") {
                 temptotal++;
             }
@@ -898,7 +420,7 @@ function tick(e) {
             newnodes=temptotal;
         }
         if(newnodes<1)newnodes=1;
-        nodes.forEach(function(d, i) {
+        graph.nodes().forEach(function(d, i) {
             if (d.state === "temp") {
                 tempcounter++;
                 if(d.type==="chainlink" || d.type==="bubble"){
@@ -912,19 +434,6 @@ function tick(e) {
                 check_for_nan(d.y);
             }
         });
-    }
-
-    if (boxedin) {
-        circle.attr("cx", function(d) {
-                return d.x = Math.max(14, Math.min(w - 14, d.x));
-            })
-            .attr("cy", function(d) {
-                return d.y = Math.max(114, Math.min(h - 14, d.y));
-            });
-
-        nodetext.attr("transform", transform);
-    } else {
-        node.attr("transform", transform);
     }
 
     link.attr("d", function(d) {
@@ -957,6 +466,8 @@ function tick(e) {
             return "translate(0,0)";
         }
     });
+
+    node.attr("transform", transform);
 
     // After initial placement we can make the nodes visible.
     //links.attr('visibility', 'visible');
@@ -1164,9 +675,15 @@ function expand(obj){
     }
     obj.size = Math.max(obj.savesize, obj.value.length);
 }
+
 return {
     expand: expand,
     graph: graph,
     force: force,
+    load_from_json: function(result) {
+        graph.load_from_json(result);
+        recenterZoom();
+        update(false);
+    }
 }
 }); /* close define call */

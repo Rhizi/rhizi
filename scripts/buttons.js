@@ -45,7 +45,7 @@ $('.file-load').on('change', function(event) {
             if (e.target.readyState === FileReader.DONE) {
                 console.log('done reading ' + theFile.name);
                 console.log('got #' + result.length + ' bytes in ' + typeof(result));
-                RZ.graph.load_from_json(result);
+                RZ.load_from_json(result);
             }
         }
     })(file);
@@ -57,7 +57,7 @@ $('.local-storage-load a').click(function(){
       return;
   }
   var json_blob = localStorage.getItem(key)
-  RZ.graph.load_from_json(json_blob);
+  RZ.load_from_json(json_blob);
 });
 
 $('a.set-user').click(function() {
