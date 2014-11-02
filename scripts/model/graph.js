@@ -3,7 +3,7 @@
 define(['signal', 'consts', 'util', 'textanalysis'], function (
     signal, consts, util, textanalysis) {
 
-function myGraph(el) {
+function Graph(el) {
 
     var nodes = []
     var links = [];
@@ -499,5 +499,5 @@ function myGraph(el) {
 };
 
 
-    return myGraph;
+    return Graph;
 });

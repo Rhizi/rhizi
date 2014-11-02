@@ -2,7 +2,7 @@
 
 define('rhizicore',
 ['jquery', 'd3', 'consts', 'signal', 'util', 'history', 'textanalysis', 'model/graph'],
-function($, d3, consts, signal, util, history, textanalysis, myGraph) {
+function($, d3, consts, signal, util, history, textanalysis, Graph) {
 var History = history.History;
 var addednodes = [];
 
@@ -71,7 +71,7 @@ var initDrawingArea = function () {
 
     var el = document.body;
 
-    graph = new myGraph(el);
+    graph = new Graph(el);
 
     //Zoom scale behavior in zoom.js
     zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
