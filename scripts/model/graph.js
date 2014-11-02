@@ -5,8 +5,8 @@ define(['signal', 'consts', 'util', 'textanalysis'], function (
 
 function Graph(el) {
 
-    var nodes = []
-    var links = [];
+    var nodes = [],
+        links = [];
 
     ///FUNCTIONS
     this.addNode = function(id, type, state) {
