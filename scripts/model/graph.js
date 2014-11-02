@@ -8,11 +8,21 @@ function Graph(el) {
     var nodes = [],
         links = [];
 
+    function id_generator_generator() {
+        var id = 0;
+        function get_next() {
+            var next = id;
+            id += 1;
+            return next;
+        }
+        return get_next;
+    }
+    var id_generator = id_generator_generator();
+
     ///FUNCTIONS
-    this.addNode = function(id, type, state) {
+    this.addNode = function(name, type, state) {
         var new_node = this._addNodeNoHistory(
-            {id:id,
-             name:id,
+            {name:name,
              type:type,
              state:state,
              start:0,
@@ -26,7 +36,7 @@ function Graph(el) {
 
     this._addNodeNoHistory = function(spec) {
         // No history recorded - this is a helper for loading from files / constant graphs
-        var id = spec.id.toString().toLowerCase();
+        var id = spec.id || id_generator();
         var node = findNode(id, null);
         var new_node = undefined;
 
@@ -50,7 +60,6 @@ function Graph(el) {
 
     this.removeNode = function(id, state) {
         var i = 0;
-        id = id.toLowerCase();
         var n = findNode(id, state);
         while (i < links.length) {
             if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
@@ -143,84 +152,90 @@ function Graph(el) {
 
     /* compareSubset:
      *  state: one of the optional states that defines a subgraph
-     *  new_nodes: array of objects with id
-     *  new_links: array of length two arrays [source_id, target_id]
+     *  new_nodes: array of objects with name
+     *  new_links: array of length two arrays [source_name, target_name]
      *  returns: true if current and new graph are homomorphic up to
      *  a single node id change. false otherwise
      */
     this.compareSubset = function(state, new_nodes, new_links) {
         // Note: the nodes include a state=='temp', type=='bubble' node
         // but it's ok since it exists both in new_nodes and in state_nodes
-        var state_nodes = findNodes(null, state);
+        var state_nodes = findNodes(null, state).filter(function (nd) {
+            return nd.type !== 'bubble';
+        });
         var state_links = findLinks(state).map(function(link) {
-            return [link.source.id, link.target.id];
+            return [link.source.name, link.target.name];
         }).sort();
         var k;
-        var changed_old_id = undefined, changed_new_id = undefined;
         var state_source, state_target, new_source, new_target;
         var changed_nodes;
-        var verbose = false; // XXX should be global. should have only one global. sigh.
-        var set_old_id, set_new_id;
-        var new_id_to_name = {};
+        var verbose = true; // XXX should be global.
+        var set_old_name, set_new_name;
 
         new_nodes.map(function (f) {
             if (!f.name) {
-                f.name = f.id;
-            }
-            f.id = f.id.toLowerCase();
-            new_id_to_name[f.id] = f.name;
-            if (verbose) {
-                console.log('new_id_to_name ' + f.id + ' -> ' + new_id_to_name[f.id]);
+                console.log('missing name on node. node follows');
+                console.log(f);
             }
         });
         new_nodes.sort();
         new_links.sort();
         if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
             if (verbose) {
-                console.log('not same size');
+                console.log('not same size: new/old ' + new_nodes.length + ' / ' + state_nodes.length + '; ' +
+                            new_links.length + ' / ' + state_links.length);
             }
             return {graph_same: false};
         }
-        changed_nodes = util.set_diff(util.set_from_array(state_nodes.map(function(d) { return d.id.toLowerCase(); })),
-                                 util.set_from_array(new_nodes.map(function (f) { return f.id.toLowerCase(); })));
+        changed_nodes = util.set_diff(util.set_from_array(state_nodes.map(function(d) { return d.name; })),
+                                 util.set_from_array(new_nodes.map(function (f) { return f.name; })));
         // we allow any number of changed nodes as long as we it is 1 or 2 :)
-        if (changed_nodes.a_b.length <= 2) {
-            set_old_id = util.set_from_array(changed_nodes.a_b);
-            set_new_id = util.set_from_array(changed_nodes.b_a);
-        } else {
+        if (changed_nodes.a_b.length > 2) {
             if (verbose) {
                 console.log('changed too many nodes');
                 console.log(changed_nodes);
             }
             return {graph_same: false};
         }
+        set_old_name = util.set_from_array(changed_nodes.a_b);
+        set_new_name = util.set_from_array(changed_nodes.b_a);
         for (k = 0 ; k < state_links.length ; ++k) {
             state_source = state_links[k][0];
             state_target = state_links[k][1];
             new_source = new_links[k][0];
             new_target = new_links[k][1];
-            if ((state_source != new_source &&
-                 !(state_source in set_old_id && new_source in set_new_id))
+            if ((state_source !== new_source &&
+                 !(state_source in set_old_name && new_source in set_new_name))
                 ||
-               (state_target != new_target &&
-                 !(state_target in set_old_id && new_target in set_new_id))) {
+               (state_target !== new_target &&
+                 !(state_target in set_old_name && new_target in set_new_name))) {
                 if (verbose) {
                     console.log('not same link: ' +
                                 state_source + '->' + state_target + ' != ' +
                                 new_source + '->' + new_target);
-                    console.log(set_old_id);
-                    console.log(set_new_id);
+                    console.log('state_source === new_source: ' + String(state_source === new_source));
+                    console.log('state_target === new_target: ' + String(state_target === new_target));
+                    console.log(set_old_name);
+                    console.log(set_new_name);
                 }
                 return {graph_same: false};
             }
         }
-        return {graph_same: true, old_id: changed_nodes.a_b, new_id: changed_nodes.b_a,
-                new_name: changed_nodes.b_a.map(function (k) { return new_id_to_name[k]; })};
+        return {graph_same: true, old_name: changed_nodes.a_b, new_name: changed_nodes.b_a};
+    }
+
+    this.addLinkByName = function(sourceName, targetName, name, state, drop_conjugator_links) {
+        var sourceId = findNodeByName(sourceName, null).id;
+        var targetId = findNodeByName(targetName, null).id;
+
+        if (sourceId === undefined || targetId === undefined) {
+            console.log('error: cannot add link between names : ' + sourceName + ', ' + targetName);
+            return;
+        }
+        this.addLink(sourceId, targetId, name, state, drop_conjugator_links);
     }
 
     this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {
-        sourceId = sourceId && sourceId.toLowerCase();
-        targetId = targetId && targetId.toLowerCase();
         var sourceNode = findNode(sourceId, null);
         var targetNode = findNode(targetId, null);
         var found = findLink(sourceId,targetId,name);
@@ -266,21 +281,25 @@ function Graph(el) {
         }
     }
 
-    this.editName = function(id, type, newname) {
-        var new_name = newname;
-        id = id && id.toLowerCase();
-        var new_id = newname.toLowerCase();
-        var index2 = undefined;
-        if (id != new_id) {
-            index2 = findNode(new_id, type);
+    this.editNameByName = function(old_name, new_name) {
+        var node = findNodeByName(old_name, null);
+
+        if (node === undefined) {
+            console.log('editNameByName: error: cannot find node with name ' + old_name);
+            return;
         }
-        var index = findNode(id, type);
+        return this.editName(node.id, new_name); // TODO: introduce Node class (yes Amir, I'm now down with that).
+    }
+
+    this.editName = function(id, new_name) {
+        var index2 = findNodeByName(new_name, null);
+        var index = findNode(id, null);
         var acceptReplace=true;
 
         if ((index !== undefined)) {
-            if ((index2 !== undefined)) {
-                acceptReplace = confirm('"' + index2.id + '" will replace "' + index.id + '", are you sure?');
-                if(acceptReplace){
+            if (index2 !== undefined) {
+                acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
+                if (acceptReplace){
                     for (var i = 0; i < links.length; i++) {
                         if (links[i].source === index) {
                             links[i].source = index2;
@@ -291,8 +310,7 @@ function Graph(el) {
                     }
                     graph.removeNode(index.id,null);
                 }
-            }else{
-                index.id = new_id;
+            } else {
                 index.name = new_name;
             }
         }
@@ -324,7 +342,8 @@ function Graph(el) {
     }
 
     this.editState = function(id, state, newstate) {
-        var index = findNode(id.toLowerCase(), state);
+        var index = findNode(id, state);
+
         if ((index !== undefined)) {
             index.state = newstate;
         }
@@ -369,12 +388,23 @@ function Graph(el) {
         return foundLinks;
     }
 
+    var hasNodeByName = function(name, state) {
+        var i;
+
+        for (i = 0 ; i < nodes.length; ++i) {
+            if (nodes[i].name === name && nodes[i].state === state) {
+                return true;
+            }
+        }
+        return false;
+    }
+    this.hasNodeByName = hasNodeByName;
 
     var hasNode = function(id, state) {
         var i;
-        id = id.toLowerCase();
+
         for (i = 0 ; i < nodes.length; ++i) {
-            if (nodes[i].id == id && nodes[i].state == state) {
+            if (nodes[i].id === id && nodes[i].state === state) {
                 return true;
             }
         }
@@ -383,18 +413,25 @@ function Graph(el) {
     this.hasNode = hasNode;
 
     var findNode = function(id, state) {
-        id = id && id.toLowerCase();
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i].id === id || nodes[i].state === state)
                 return nodes[i]
         };
     }
 
+    var findNodeByName = function(name, state) {
+        for (var i = 0 ; i < nodes.length ; ++i) {
+            if (nodes[i].name === name || nodes[i].state === state) {
+                return nodes[i];
+            }
+        }
+    }
+
     var findNodes = function(id, state) {
         //id=id.toLowerCase();
         var foundNodes = [];
         for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id || nodes[i].state === state)
+            if ((id && nodes[i].id === id) || (state && nodes[i].state === state))
                 foundNodes.push(nodes[i]);
         }
         return foundNodes;
@@ -402,7 +439,7 @@ function Graph(el) {
 
     var findNodeIndex = function(id, state) {
         for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id || nodes[i].state === state)
+            if ((id && nodes[i].id === id) || (state && nodes[i].state === state))
                 return i
         };
     }
@@ -442,7 +479,7 @@ function Graph(el) {
         }
         for(i = 0; i < data["links"].length; i++){
           link = data.links[i];
-          this.addLink(link.source,link.target,link.name,"perm");
+          this.addLink(link.source, link.target, link.name, "perm");
         }
         this.clear_history();
     }
