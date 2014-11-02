@@ -9,8 +9,7 @@ var config = {
         autocomplete: 'external/autocomplete',
     }
 }
-config.urlArgs = local_config && local_config.urlArgs;
-
+config.urlArgs = (typeof local_config != 'undefined') && local_config.urlArgs;
 
 if (window.is_node) {
     // Testing path only
