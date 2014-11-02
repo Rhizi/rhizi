@@ -38,7 +38,7 @@ function autocompleteCallback(request, response_callback)
 /* up_to_two_renames:
  *
  * allow one letter or 'new node' to anything changes */
-function up_to_two_renames(graph, old_id, new_id)
+function up_to_two_renames(graph, old_name, new_name)
 {
     var not_one_letter = false;
     var k;
@@ -49,41 +49,39 @@ function up_to_two_renames(graph, old_id, new_id)
      */
     function allowed_rename(s1, s2)
     {
-        s1 = s1.toLowerCase();
-        s2 = s2.toLowerCase();
         return (s1 == s2 ||
                 s1 == 'new node' ||
                 s1.substr(0, s2.length) == s2 ||
                 s2.substr(0, s1.length) == s1);
     }
 
-    if (old_id.length != new_id.length) {
+    if (old_name.length != new_name.length) {
         console.log('bug: up_to_two_renames: not equal inputs');
         return;
     }
-    if (old_id.length > 2) {
-        console.log('bug: up_to_two_renames: input length 2 < ' + old_id.length);
+    if (old_name.length > 2) {
+        console.log('bug: up_to_two_renames: input length 2 < ' + old_name.length);
         return;
     }
-    if (old_id.length == 2) {
-        if (allowed_rename(old_id[0], new_id[1]) &&
-            allowed_rename(old_id[1], new_id[0])) {
-            old_id = [old_id[1], old_id[0]];
+    if (old_name.length == 2) {
+        if (allowed_rename(old_name[0], new_name[1]) &&
+            allowed_rename(old_name[1], new_name[0])) {
+            old_name = [old_name[1], old_name[0]];
         } else {
-            if (!allowed_rename(old_id[0], new_id[0]) ||
-                !allowed_rename(old_id[1], new_id[1])) {
+            if (!allowed_rename(old_name[0], new_name[0]) ||
+                !allowed_rename(old_name[1], new_name[1])) {
                 not_one_letter = true;
             }
         }
     }
     if (not_one_letter) {
         console.log('bug: up_to_two_renames: not one letter changes');
-        console.log(old_id);
-        console.log(new_id);
+        console.log(old_name);
+        console.log(new_name);
         return;
     }
-    for (k = 0 ; k < old_id.length ; ++k) {
-        graph.editName(old_id[k], null, new_id[k]);
+    for (k = 0 ; k < old_name.length ; ++k) {
+        graph.editNameByName(old_name[k], new_name[k]);
     }
 }
 
@@ -164,8 +162,8 @@ var textAnalyser2 = function (newtext, finalize) {
     var LINK = "LINK";
     var START = "START";
 
-    function addNode(id, type, state) {
-        ret.nodes.push({'id':id, 'type':type, 'state':state});
+    function addNode(name, type, state) {
+        ret.nodes.push({'name':name, 'type':type, 'state':state});
     }
     function addLink(src, dst, name, state) {
         if (!src || !dst) {
@@ -184,7 +182,7 @@ var textAnalyser2 = function (newtext, finalize) {
             link_hash[src] = {};
         }
         link_hash[src][dst] = 1;
-        ret.links.push({'sourceId':src, 'targetId':dst, 'name':name ? name.trim() : "", 'state':state});
+        ret.links.push({'sourceName':src, 'targetName':dst, 'name':name ? name.trim() : "", 'state':state});
     }
 
     //Sentence Sequencing
@@ -373,22 +371,23 @@ var textAnalyser2 = function (newtext, finalize) {
         var comp = graph.compareSubset('temp',
             ret.nodes.filter(
                 function(node) {
-                    return !graph.hasNode(node.id, "perm");
+                    return !graph.hasNodeByName(node.name, "perm")
+                        && node.type !== 'bubble';
                 }).map(function (node) {
-                    return {id: node.id, name: node.name};
+                    return {name: node.name};
                 }),
             ret.links.map(
                 function (link) {
-                    return [link.sourceId.toLowerCase(), link.targetId.toLowerCase()];
+                    return [link.sourceName, link.targetName];
                 }));
         var k, n, l;
         if (comp.graph_same && !finalize) {
-            if (comp.old_id && comp.new_id) {
-                up_to_two_renames(graph, comp.old_id, comp.new_name);
+            if (comp.old_name && comp.new_name) {
+                up_to_two_renames(graph, comp.old_name, comp.new_name);
             }
             for (k in ret.links) {
                 l = ret.links[k];
-                graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
+                graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
             }
         } else {
             //REINITIALISE GRAPH (DUMB BUT IT WORKS)
@@ -399,12 +398,12 @@ var textAnalyser2 = function (newtext, finalize) {
                 if (n.state == 'temp' && finalize) {
                     console.log('bug: temp node creation on finalize');
                 } else {
-                    graph.addNode(n.id, n.type, n.state);
+                    graph.addNode(n.name, n.type, n.state);
                 }
             }
             for (k in ret.links) {
                 l = ret.links[k];
-                graph.addLink(l.sourceId, l.targetId, l.name, l.state, ret.drop_conjugator_links);
+                graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
             }
         }
         //UPDATE GRAPH ONCE

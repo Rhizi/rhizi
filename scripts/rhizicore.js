@@ -566,7 +566,7 @@ $('#editform').keypress(function(e) {
         var element = $('#editname');
         var newname = element.val();
         var d = element.data().d;
-        graph.editName(d.id, "xx", newname);
+        graph.editName(d.id, newname);
         graph.update(true);
         return false;
     }
