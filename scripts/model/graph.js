@@ -10,7 +10,7 @@ function Graph(el) {
 
     ///FUNCTIONS
     this.addNode = function(id, type, state) {
-        var new_node = this.addNodeNoHistory(
+        var new_node = this._addNodeNoHistory(
             {id:id,
              name:id,
              type:type,
@@ -24,7 +24,7 @@ function Graph(el) {
         }
     }
 
-    this.addNodeNoHistory = function(spec) {
+    this._addNodeNoHistory = function(spec) {
         // No history recorded - this is a helper for loading from files / constant graphs
         var id = spec.id.toString().toLowerCase();
         var node = findNode(id, null);
@@ -429,7 +429,7 @@ function Graph(el) {
         }
         for(i = 0; i < data["nodes"].length; i++){
           node = data.nodes[i];
-          this.addNodeNoHistory({id:node.id, name:node.name ? node.name : node.id,
+          this._addNodeNoHistory({id:node.id, name:node.name ? node.name : node.id,
                                  type:node.type,state:"perm",
                                  start:new Date(node.start),
                                  end:new Date(node.end),
