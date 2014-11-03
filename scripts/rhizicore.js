@@ -222,7 +222,8 @@ function update(no_relayout) {
             if (!d.name) {
                 return "";
             }
-            if (d.state === "temp" || d.state === 'chosen') {
+            if (d.state === "temp" || d.state === 'chosen'
+             || d.state === "enter" || d.state === "exit") {
                  return d.name;
             } else {
                 if (d.name.length < 28) {
