@@ -96,62 +96,77 @@ function Graph(el) {
         }
     }
 
-
-    this.highlightNode = function(id, state) {
+    /**
+     *
+     * getConnectedNodesAndLinks
+     *
+     * @id
+     * @state - defines the starting node (must have id and state)
+     * @d - depth defining connected component. If -1 returns the entire connected component. (can be the whole graph)
+     * 
+     * NOTE: chainlinks are treated specially, they don't count for distance. So all their decendants will be added.
+     *
+     * NOTE: temp state nodes (n.state === 'temp') are ignored.
+     *
+     * @return - {
+     *  'node': [node]
+     *  'link': [link]
+     *  }
+     *
+     * TODO: rewrite using efficient data structure. Right now iterates over everything
+     * TODO: implement for d !== 1
+     *
+     */
+    this.getConnectedNodesAndLinks = function(n, d) {
         var i = 0,
-            j = 0;
-        var n = findNode(id, state);
-        var adjacentnode;
+            j = 0,
+            adjacentnode,
+            ret = {'nodes':[], 'links':{}};
+
         $(".debug").html(n.state);
 
-        //highlight node
-        if (n !== undefined && n.state !== "chosen" && n.state !== "temp") {
-            this.removeHighlight();
-            n.state = "chosen";
+        if (n === undefined) {
+            console.log('getConnectedNodesAndLinks: bug: called with undefined node');
+            return;
+        }
+        if (d !== 1) {
+            console.log('getConnectedNodesAndLinks: bug: not implemented for d == ' + d);
+        }
+        d = d || 1;
 
-            while (i < links.length) {
-                if (links[i]['source'] === n) {
-                    adjacentnode = findNode(links[i]['target'].id, null);
-                    if (adjacentnode.state !== "temp") adjacentnode.state = "exit";
-                    links[i]['state'] = "exit";
+        while (i < links.length) {
+            if (links[i].source === n) {
+                adjacentnode = findNode(links[i].target.id, null);
+                if (adjacentnode.state !== "temp") {
+                    adjacentnode.state = "exit";
+                }
+                links[i].state = "exit";
 
-                    if(links[i]['target'].type==="chainlink"){
-                        console.log("chain");
-                        while (j < links.length) {
-                            if(links[i]['target'].id===links[j]['target'].id && links[j]['target'].type==="chainlink" && links[j]['target'].state!=="temp"){
-                                adjacentnode = findNode(links[j]['source'].id, null);
-                                if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
-                                links[j]['state'] = "enter";
+                if (links[i].target.type === "chainlink") {
+                    console.log("chain");
+                    while (j < links.length) {
+                        if (links[i].target.id === links[j].target.id &&
+                            links[j].target.type === "chainlink" &&
+                            links[j].target.state !== "temp") {
+                            adjacentnode = findNode(links[j].source.id, null);
+                            if (adjacentnode.state !== "temp") {
+                                adjacentnode.state = "enter";
                             }
-                            j++;
+                            links[j].state = "enter";
                         }
+                        j++;
                     }
-                    j=0;
                 }
-                if (links[i]['target'] === n) {
-                    adjacentnode = findNode(links[i]['source'].id, null);
-                    if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
-                    links[i]['state'] = "enter";
-                }
-                i++;
+                j=0;
             }
-        }
-    }
-
-    this.removeHighlight = function() {
-        var k = 0;
-        while (k < nodes.length) {
-            if (nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen") {
-                nodes[k]['state'] = "perm";
+            if (links[i].target === n) {
+                adjacentnode = findNode(links[i].source.id, null);
+                if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
+                links[i].state = "enter";
             }
-            k++;
+            i++;
         }
-        var j = 0;
-        //highlight all connections
-        while (j < links.length) {
-            links[j]['state'] = "perm";
-            j++;
-        }
+        return ret;
     }
 
     /* compareSubset:

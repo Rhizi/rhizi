@@ -267,9 +267,9 @@ function update(no_relayout) {
             }
             d3.event.stopPropagation();
             if(d.state!=="temp") {
-                 showInfo(d, i);
+                showInfo(d, i);
             } else {
-                graph.removeHighlight();
+                removeHighlight();
             }
             update(true);
         });
@@ -475,9 +475,49 @@ function tick(e) {
     node.attr('visibility', 'visible');
 }
 
+function removeHighlight() {
+    // TODO: stop manipulating state
+    var nodes = graph.nodes(),
+        links = graph.links(),
+        k = 0, j = 0;
+
+    while (k < nodes.length) {
+        if (nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen") {
+            nodes[k]['state'] = "perm";
+        }
+        k++;
+    }
+    while (j < links.length) {
+        links[j]['state'] = "perm";
+        j++;
+    }
+}
+
+function highlight(n)
+{
+    var connected = graph.getConnectedNodesAndLinks(n, 1),
+        i,
+        data;
+
+    n.state = 'chosen';
+
+    for (i in connected.nodes) {
+        data = connected.nodes[i];
+        node = data.node;
+        switch (data.type) {
+        case 'exit':
+            node.state = 'exit';
+            break;
+        case 'enter':
+            node.state = 'enter';
+            break;
+        };
+    }
+}
+
 function showInfo(d, i) {
-  if (d.state !== "chosen") {
-    graph.highlightNode(d.id, null);
+  if (d.state !== "chosen" && d.state !== 'temp') {
+    highlight(d);
     $('.info').fadeIn(300);
 
     if (d.type === "deliverable") {
@@ -532,7 +572,7 @@ function showInfo(d, i) {
       }
     });
   } else {
-    graph.removeHighlight();
+    removeHighlight();
     $('.info').fadeOut(300);
   }
   graph.update(true);
@@ -543,7 +583,7 @@ function mousedown() {
     $('.editinfo').css('left', 0);
     $('.editlinkinfo').css('top', -100);
     $('.editlinkinfo').css('left', 0);
-    graph.removeHighlight();
+    removeHighlight();
     $('.info').fadeOut(300);
     graph.update(true);
 }
