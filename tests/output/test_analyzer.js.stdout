@@ -6,7 +6,7 @@ test harness: main loaded
 Rhizi main started
 rhizi: init drag-n-drop
 analyzing #a hello there #b
-starGraph: false
+not same size: new/old 2 / 0; 1 / 0
 bug: temp node creation on finalize
 expected: a,b
 got:      a|b
@@ -18,7 +18,7 @@ digraph {
  a -> b [label=hello there];
 }
 analyzing #c and #d like #e
-starGraph: false
+not same size: new/old 3 / 0; 3 / 0
 bug: temp node creation on finalize
 expected: c,d,e
 got:      c|d|e
@@ -33,12 +33,12 @@ digraph {
  c -> e [label=like];
 }
 analyzing #f and #g and #h are cool
-starGraph: true
+not same size: new/old 5 / 0; 3 / 0
 bug: temp node creation on finalize
 bug: temp node creation on finalize
-expected: f,g,h,are cool
+expected: f,g,h,f and g and h are cool
 got:      f|g|h|f and g and h are cool
-expected: f,are cool,,g,are cool,,h,are cool,
+expected: f,f and g and h are cool,,g,f and g and h are cool,,h,f and g and h are cool,
 got:      f,f and g and h are cool,,g,f and g and h are cool,,h,f and g and h are cool,
 digraph {
  f;
@@ -50,7 +50,7 @@ digraph {
  h -> "f and g and h are cool" [label=];
 }
 analyzing #i likes #j and #k
-starGraph: false
+not same size: new/old 3 / 0; 3 / 0
 bug: temp node creation on finalize
 expected: i,j,k
 got:      i|j|k
@@ -65,7 +65,7 @@ digraph {
  i -> k [label=likes];
 }
 analyzing #q likes #r but doesn't like #l
-starGraph: true
+not same size: new/old 4 / 0; 3 / 0
 bug: temp node creation on finalize
 expected: q,r,l
 got:      q|r|l|q likes r but doesn't like l
@@ -79,21 +79,4 @@ digraph {
  q -> "q likes r but doesn't like l" [label=];
  r -> "q likes r but doesn't like l" [label=];
  l -> "q likes r but doesn't like l" [label=];
-}
-analyzing #c and #d and #m are tightly connected
-starGraph: true
-bug: temp node creation on finalize
-bug: temp node creation on finalize
-expected: 
-got:      c|d|m|c and d and m are tightly connected
-expected: 
-got:      c,c and d and m are tightly connected,,d,c and d and m are tightly connected,,m,c and d and m are tightly connected,
-digraph {
- c;
- d;
- m;
- "c and d and m are tightly connected";
- c -> "c and d and m are tightly connected" [label=];
- d -> "c and d and m are tightly connected" [label=];
- m -> "c and d and m are tightly connected" [label=];
 }
