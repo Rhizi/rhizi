@@ -74,7 +74,10 @@ return {
         element.autocompleteTrigger({
             triggerStart: '#',
             triggerEnd: '',
-            source: textanalysis.autocompleteCallback
+            source: textanalysis.autocompleteCallback,
+            open: function() {
+                $('.ui-autocomplete').css('width', '10px');
+            }
         });
 
         $(document).keydown(function(e) {
