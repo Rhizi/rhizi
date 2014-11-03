@@ -403,7 +403,9 @@ var textAnalyser2 = function (newtext, finalize) {
             }
             for (k in ret.links) {
                 l = ret.links[k];
-                graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
+                if (!finalize || l.name !== 'and') {
+                    graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
+                }
             }
         }
         //UPDATE GRAPH ONCE
