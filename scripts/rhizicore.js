@@ -170,7 +170,7 @@ function update(no_relayout) {
         .attr("class", "linklabel graph")
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
-            if(d.state !== "temp") {
+            if (d.state !== "temp") {
                 editLink(d, i);
             }
         });
