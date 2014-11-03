@@ -173,7 +173,7 @@ function Graph(el) {
         var k;
         var state_source, state_target, new_source, new_target;
         var changed_nodes;
-        var verbose = true; // XXX should be global.
+        var verbose = false; // XXX should be global.
         var set_old_name, set_new_name;
 
         new_nodes.map(function (f) {
