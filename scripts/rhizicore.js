@@ -205,8 +205,8 @@ function update(no_relayout) {
                 // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
                 return;
             }
-            if(d.state!=="temp"){
-                editNode(d, i);
+            if (d.state !== "temp"){
+                editNode(this, d, i);
                 showInfo(d, i);
             }
         })
@@ -573,11 +573,13 @@ $('#editform').keypress(function(e) {
 });
 
 
-function editNode(d, i) {
+function editNode(node, d, i) {
     var oldname = d.name;
     var element = $('#editname');
-    $('.editinfo').css('top', d.y - 12);
-    $('.editinfo').css('left', d.x + 18);
+    var offset = $(node).find('.nodetext').offset();
+
+    $('.editinfo').css('top', offset.top);
+    $('.editinfo').css('left', offset.left);
     element.val(oldname);
     element.data().d = d;
 }
