@@ -13,7 +13,7 @@ $(document).on('drop', function(e) {
             console.log('drop: error: reading from file failed');
         } else {
             console.log('loading dropped file');
-            RZ.graph.load_from_json(fr.result);
+            RZ.load_from_json(fr.result);
         }
     }
     fr.readAsText(file);
