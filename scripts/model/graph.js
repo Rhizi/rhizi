@@ -36,13 +36,17 @@ function Graph(el) {
 
     this._addNodeNoHistory = function(spec) {
         // No history recorded - this is a helper for loading from files / constant graphs
-        var id = spec.id || id_generator();
-        var node = findNode(id, null);
-        var new_node = undefined;
-
+        var node;
+        if (spec.id === undefined) {
+            node = findNodeByName(spec.name, null);
+        } else {
+            if (spec.id !== undefined) {
+                node = findNode(spec.id, null);
+            }
+        }
         if (node === undefined) {
-            new_node = {
-                "id": id,
+            node = {
+                "id": spec.id || id_generator(),
                 "name": spec.name,
                 "type": spec.type,
                 "state": spec.state,
@@ -53,9 +57,9 @@ function Graph(el) {
                 'x': spec.x,
                 'y': spec.y,
             };
-            nodes.push(new_node);
+            nodes.push(node);
         }
-        return new_node;
+        return node;
     }
 
     this.removeNode = function(id, state) {
