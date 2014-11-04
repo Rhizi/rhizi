@@ -478,6 +478,48 @@ function Graph(el) {
     }
     this.empty = empty;
 
+    /**
+    /**
+     * perform initial DB load from backend
+     */
+    // @ajax-trans
+    function load_from_backend() {
+
+        function on_success(data){
+            var n_set = [];
+            var l_set = [];
+            var len;
+
+            len = data['node_set'].length;
+            for (var i = 0; i < len; i++) {
+                var n_raw = data['node_set'][i];
+                var n = model_util.adapt_format_read_node(n_raw);
+                n_set.push(n);
+            }
+            
+            len = data['link_set'].length;
+            for (var i = 0; i < len; i++) {
+                var l_raw = data['link_set'][i];
+                var l = model_util.adapt_format_read_link(l_raw);
+                l_set.push(l);
+            }
+            
+            len = n_set.length
+            for (var i = 0; i < len; i++) {
+                var n = n_set[i];
+                graph.addNode(n.id, n.type, n.state)
+            }
+            
+            len = l_set.length
+            for (var i = 0; i < len; i++) {
+                var l = l_set[i];
+                graph.addLink_byIds(l.sourceId, l.targetId, l.name, "perm")
+            }
+        }
+        
+        rz_api_backend.clone(0, on_success);
+    }
+
     function load_from_json(json) {
         var data = JSON.parse(json);
         var i, node, link;
