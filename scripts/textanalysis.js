@@ -365,7 +365,7 @@ var textAnalyser = function (newtext, finalize) {
     //FOR THE EXTERNAL ARROW-TYPE CHANGER
     lastnode = newnodes[nodeindex];
 
-    ret.applyToGraph = function(graph) {
+    ret.applyToGraph = function(graph, backend_commit) {
         window.ret = ret;
         var comp = graph.compareSubset('temp',
             ret.nodes.filter(
@@ -407,6 +407,17 @@ var textAnalyser = function (newtext, finalize) {
                 }
             }
         }
+
+        if (finalize && backend_commit) {
+            // broadcast diff:
+            //    - finalize?
+            //    - broadcast_diff requested by caller
+            var topo_diff = model_util.adapt_format_write_topo_diff(ret.nodes, ret.links);
+            var diff_set = model_diff.new_diff_set();
+            diff_set.add_diff_obj(topo_diff);
+            graph.commit_diff_set(diff_set);
+        }
+
         //UPDATE GRAPH ONCE
         graph.update(!finalize && comp.graph_same);
     };

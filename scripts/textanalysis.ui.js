@@ -21,7 +21,10 @@ function analyzeSentence(sentence, finalize)
         $('.typeselection').css('left', 0);
         break;
     }
-    ret.applyToGraph(RZ.graph);
+    
+    var backend_commit = finalize;
+    ret.applyToGraph(RZ.graph, finalize, backend_commit);
+
     if (finalize || sentence.length == 0) {
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);

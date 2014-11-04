@@ -478,6 +478,16 @@ function Graph(el) {
     }
     this.empty = empty;
 
+    // @ajax-trans
+    this.commit_diff_set = function (diff_set) {
+        
+        function on_success(data){
+            // TODO impl
+        }
+        
+        rz_api_mesh.broadcast_possible_next_diff_block(diff_set);
+    }
+
     /**
     /**
      * perform initial DB load from backend
