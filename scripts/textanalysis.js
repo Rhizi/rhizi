@@ -142,25 +142,25 @@ function tokenize(text, node_token, quote)
  *
  */
 var textAnalyser = function (newtext, finalize) {
-    var sentence;
-    var newlinks = [];
-    var newnodes = [];
-    var linkindex = 0;
-    var nodeindex = 0;
-    var orderStack = [];
-    var and_count = 0;
-    var prefix = "";
-    var ret = {'nodes': [], 'links': []};
-    var m;
-    var word;
-    var completeSentence;
-    var typesetter, starGraph;
-    var n;
-    var link_hash = {};
-    var yell_bug = false; // TODO: fix both issues
-    var NODE = "NODE";
-    var LINK = "LINK";
-    var START = "START";
+    var sentence,
+        newlinks = [],
+        newnodes = [],
+        linkindex = 0,
+        nodeindex = 0,
+        orderStack = [],
+        and_count = 0,
+        prefix = "",
+        ret = {'nodes': [], 'links': []},
+        m,
+        word,
+        completeSentence,
+        typesetter, starGraph,
+        n,
+        link_hash = {},
+        yell_bug = false, // TODO: fix both issues
+        NODE = "NODE",
+        LINK = "LINK",
+        START = "START";
 
     function addNode(name, type, state) {
         ret.nodes.push({'name':name, 'type':type, 'state':state});
@@ -279,7 +279,6 @@ var textAnalyser = function (newtext, finalize) {
     if (orderStack.length > 0) {
         addNode("", "bubble","temp");
     }
-
 
     //0-N ORDER STACK
     for (m = 0; m < orderStack.length - 1; m++) {
