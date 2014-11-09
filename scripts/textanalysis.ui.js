@@ -22,8 +22,8 @@ function analyzeSentence(sentence, finalize)
         break;
     }
     
-    var backend_commit = finalize;
-    ret.applyToGraph(RZ.graph, finalize, backend_commit);
+    var backend_commit = false;
+    ret.applyToGraph(RZ.graph, backend_commit);
 
     if (finalize || sentence.length == 0) {
         $('.typeselection').css('top', -300);
