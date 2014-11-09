@@ -211,7 +211,6 @@ class DBO_add_node_set(DB_op):
                 for clo in row:
                     id_set.append(clo)
 
-        log.debug('node-set added: ids: ' + str(id_set))
         return id_set
 
 class DBO_add_link_set(DB_op):
@@ -231,7 +230,6 @@ class DBO_add_link_set(DB_op):
                 for col_val in row:
                     id_set.append(col_val)
 
-        log.debug('link-set added: ids: ' + str(id_set))
         return id_set
 
 class DBO_load_node_set_by_DB_id(DB_op):
@@ -424,7 +422,10 @@ class DB_Controller:
             self.db_driver.exec_statement_set(op)
             self.db_driver.commit_tx(op)
 
-            return op.process_result_set()
+            ret = op.process_result_set()
+
+            log.debug('exec_op:' + op.name + ': return value: ' + str(ret))
+            return ret
         except Exception as e:
             # here we watch for IOExecptions, etc - not db errors
             # these are returned in the db response itself
