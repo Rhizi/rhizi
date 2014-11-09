@@ -1,2 +1,11 @@
 = About =
 Rhizi server
+
+= Use =
+Command line use documentation can be view with:
+:$ python rhizi_server.py -h
+
+= Hacking =
+== Running the Tests ==
+Test code makes use of Python's unittest - run by invoking them with python,
+or by creating a launch configuration in your IDE of choice.
