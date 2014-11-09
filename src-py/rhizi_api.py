@@ -93,6 +93,16 @@ def __load_node_set_by_id_attr_common(id_set):
         log.exception(e)
         return __common_resp_handle(error='unable to load node with ids: {0}'.format(id_set))
 
+@webapp.route("/match/node-set", methods=['POST'])
+def match_node_set_by_attr_filter_map(attr_filter_map):
+    """
+    @param attr_filter_map
+    
+    @return: a set of node DB id's
+    """
+    op = dbc.DBO_match_node_id_set(attr_filter_map)
+    return __common_exec(op)
+
 @webapp.route("/load/link-set/by_link_ptr_set", methods=['POST'])
 def load_link_set_by_link_ptr_set():
 
