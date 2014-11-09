@@ -63,6 +63,10 @@ class DB_op(object):
     def parse_multi_statement_response_data(self, data):
         pass
 
+    @property
+    def name(self):
+        return self.__class__.__name__
+
     def process_result_set(self):
         """
         DB op can issue complex sets of quries all at once - this helper method

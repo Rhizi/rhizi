@@ -5,6 +5,7 @@ import db_controller as dbc
 from rhizi_server import Config
 from neo4j_test_util import rand_id
 from neo4j_test_util import flush_db
+from neo4j_test_util import gen_rand_data
 from neo4j_util import Neo4JException
 
 from model.graph import Attr_Diff
@@ -35,8 +36,12 @@ class TestDBController(unittest.TestCase):
         self.log = logging.getLogger('rhizi')
         self.log.addHandler(logging.StreamHandler())
 
+        # TODO rm when implemented: neo4j_test_util
+        self.db_ctl.exec_cypher_query('create index on :Person(id)')
+        self.db_ctl.exec_cypher_query('create index on :Skill(id)')
+
     def setUp(self):
-        flush_db(self.db_ctl) # remove once embedded DB test mode is supported
+        flush_db(self.db_ctl)  # remove once embedded DB test mode is supported
         self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
         self.db_ctl.exec_op(dbc.DBO_add_link_set(self.l_map))
 
@@ -127,6 +132,8 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(id_set), 0)
 
     def test_load_link_set(self):
+
+        # load by l_ptr
         l_ptr = Link.link_ptr(src_id='person_00', dst_id='skill_00')
         op = dbc.DBO_load_link_set.init_from_link_ptr(l_ptr)
         l_set = self.db_ctl.exec_op(op)
@@ -164,7 +171,7 @@ class TestDBController(unittest.TestCase):
         op = dbc.DBO_add_node_set({'T_test_load_node_set_by_DB_id': [{'name': 'John Doe'},
                                                                      {'name': 'John Doe'}]})
         id_set = self.db_ctl.exec_op(op)
-        
+
         # match against DB ids
         op = dbc.DBO_load_node_set_by_DB_id(id_set)
         n_set = self.db_ctl.exec_op(op)
@@ -219,16 +226,16 @@ class TestDBController(unittest.TestCase):
 
         id_set = self.db_ctl.exec_op(dbc.DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
         self.assertEqual(len(id_set), 2)
-        
+
         l_ptr = Link.link_ptr(src_id=n_0_id, dst_id=n_1_id)
         id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set.init_from_link_ptr(l_ptr))
         self.assertEqual(len(id_set), 1)
-        
+
         l_ptr = Link.link_ptr(src_id=n_1_id, dst_id=n_0_id)
         id_set = self.db_ctl.exec_op(dbc.DBO_load_link_set.init_from_link_ptr(l_ptr))
         self.assertEqual(len(id_set), 1)
 
-        id_set_rm=[n_2_id]
+        id_set_rm = [n_2_id]
         topo_diff = Topo_Diff(node_set_rm=id_set_rm)
         op = dbc.DBO_topo_diff_commit(topo_diff)
         self.db_ctl.exec_op(op)
@@ -278,7 +285,7 @@ class TestDBController(unittest.TestCase):
         n_2_id = rand_id()
         n_3_id = rand_id()
         n_T = 'T_test_rm_node_set'
-        
+
         n_set = [{'__type': n_T, 'id': n_0_id },
                  {'__type': n_T, 'id': n_1_id },
                  {'__type': n_T, 'id': n_2_id },
@@ -291,13 +298,13 @@ class TestDBController(unittest.TestCase):
 
         op = dbc.DBO_topo_diff_commit(topo_diff)
         self.db_ctl.exec_op(op)
-        
+
         op = dbc.DBO_rm_node_set([n_0_id, n_1_id])
         self.db_ctl.exec_op(op)
-        
+
         op = dbc.DBO_rm_node_set([n_2_id, n_3_id], rm_links=True)
         self.db_ctl.exec_op(op)
-        
+
         # assert all deleted
         op = dbc.DBO_match_node_id_set(filter_type=n_T)
         id_set = self.db_ctl.exec_op(op)
@@ -305,11 +312,11 @@ class TestDBController(unittest.TestCase):
 
     def test_rz_clone(self):
         l_n, l_r = gen_rand_data(self.db_ctl, lim_n=8, lim_r=16, prob_link_create=0.7)
-        op = dbc.DBO_rz_clone(filter_label = l_n, limit=32)
+        op = dbc.DBO_rz_clone(filter_label=l_n, limit=32)
         ret = self.db_ctl.exec_op(op)
         n_set = ret['node_set']
         l_set = ret['link_set']
-        
+
         # TODO improve assertions
         self.assertTrue(0 < len(n_set))
         self.assertTrue(0 < len(l_set))

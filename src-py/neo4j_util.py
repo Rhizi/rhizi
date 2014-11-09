@@ -6,14 +6,17 @@ import json
 import urllib2
 import model
 import string
+import time
+
+from util import debug_log_duration
 
 class Neo4JException(Exception):
     def __init__(self, error_set):
         self.error_set = error_set
-        
+
     def __str__(self):
         return 'neo4j error set: ' + str(self.error_set)
-    
+
 class DB_row(object):
     def __init__(self, data):
         self.data = data
@@ -21,6 +24,9 @@ class DB_row(object):
     def __iter__(self):
         for column_val in self.data:
             yield column_val
+
+    def items(self):
+        return [x for x in self]
 
 class DB_result_set(object):
     def __init__(self, data):
@@ -32,6 +38,9 @@ class DB_result_set(object):
             assert None != db_row_dict['row']
 
             yield DB_row(db_row_dict['row'])
+
+    def items(self):
+        return [x for x in self]
 
 class Cypher_String_Formatter(string.Formatter):
     """
@@ -206,12 +215,12 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
     """
     ret = {}
     for v in e_set:
-        assert None != v['__type'] # attert type meta-attr is present
+        assert None != v['__type']  # assert type meta-attr is present
 
         v_type = v['__type']
-        if None == ret.get(v_type):# init type list if necessary
+        if None == ret.get(v_type):  # init type list if necessary
             ret[v_type] = []
-    
+
         v_no_meta = v.copy()
         del v_no_meta['__type']
 
