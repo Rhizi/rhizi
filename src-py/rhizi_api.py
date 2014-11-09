@@ -151,8 +151,8 @@ def diff_commit_topo():
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
-@webapp.route("/graph/attr-diff-commit", methods=['POST'])
-def attr_diff_commit():
+@webapp.route("/graph/diff-commit-attr", methods=['POST'])
+def diff_commit_attr():
     """
     commit a graph attribute diff
     """
