@@ -123,7 +123,7 @@ function tokenize(text, node_token, quote)
 }
 
 /*
- * textAnalyser2
+ * textAnalyser
  *
  * Input:
  *  @newtext - new sentence
@@ -141,7 +141,7 @@ function tokenize(text, node_token, quote)
  *  marks).
  *
  */
-var textAnalyser2 = function (newtext, finalize) {
+var textAnalyser = function (newtext, finalize) {
     var sentence;
     var newlinks = [];
     var newnodes = [];
@@ -421,7 +421,7 @@ var textAnalyser2 = function (newtext, finalize) {
 
 return {
     autocompleteCallback:autocompleteCallback,
-    textAnalyser2:textAnalyser2,
+    textAnalyser:textAnalyser,
     autoSuggestAddName:autoSuggestAddName,
     ANALYSIS_NODE_START:ANALYSIS_NODE_START,
     ANALYSIS_LINK:ANALYSIS_LINK,

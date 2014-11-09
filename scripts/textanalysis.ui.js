@@ -9,7 +9,7 @@ var suggestionChange;
 
 function analyzeSentence(sentence, finalize)
 {
-    var ret = textanalysis.textAnalyser2(sentence, finalize);
+    var ret = textanalysis.textAnalyser(sentence, finalize);
     switch (ret.state) {
     case textanalysis.ANALYSIS_NODE_START:
         $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
