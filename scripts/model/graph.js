@@ -31,6 +31,7 @@ function Graph(el) {
         if (new_node) {
             signal.signal(consts.APPLIED_GRAPH_DIFF, [{
                 nodes: {add: [new_node]}}]);
+            return new_node;
         }
     }
 
