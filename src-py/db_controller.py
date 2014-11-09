@@ -370,7 +370,7 @@ class DBO_rz_clone(DB_op):
                  'order by n.id',
                  'skip %d' % (self.skip),
                  'limit %d' % (self.limit),
-                 'return n,collect([n.id, m.id, r])']
+                 'return n,labels(n),collect([m.id, r, type(r)])']
 
         q = ' '.join(q_arr)
         self.add_statement(q)
@@ -380,17 +380,28 @@ class DBO_rz_clone(DB_op):
         ret_l_set = []
         for _, _, row_set in self:
             for row in row_set:
-                itr = iter(row)
-                n = itr.next()
+                n, n_lbl_set, l_set = row.items()  # see query return statement
 
-                l_set = itr.next()
-                for l in l_set:
-                    assert 3 == len(l)  # (n.id, m.id, r) tuples
-                    if None == l[1]:
+                # reconstruct nodes
+                assert None != n['id']
+
+                n['__label_set'] = n_lbl_set
+                ret_n_set.append(n)
+
+                # reconstruct links from link tuples
+                for l_tuple in l_set:
+                    assert 3 == len(l_tuple)  # see query return statement
+
+                    if None == l_tuple[0]:  # check if link dst is None
                         # as link matching is optional, collect may yield empty sets
                         continue
+
+                    l = l_tuple[1]
+                    l['__src'] = n['id']
+                    l['__dst'] = l_tuple[0]
+                    l['__label_set'] = [l_tuple[2]]  # box single value returned by type()
+
                     ret_l_set.append(l)
-                ret_n_set.append(n)
 
         return {'node_set': ret_n_set,
                 'link_set': ret_l_set }
