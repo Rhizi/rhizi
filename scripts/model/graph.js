@@ -327,7 +327,7 @@ function Graph(el) {
                             links[i].target = index2;
                         }
                     }
-                    graph.removeNode(index.id,null);
+                    this.removeNode(index.id,null);
                 }
             } else {
                 index.name = new_name;
