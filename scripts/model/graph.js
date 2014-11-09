@@ -407,11 +407,15 @@ function Graph(el) {
         return foundLinks;
     }
 
+    var compareNames = function(name1, name2) {
+        return name1.toLowerCase() === name2.toLowerCase();
+    };
+
     var hasNodeByName = function(name, state) {
         var i;
 
         for (i = 0 ; i < nodes.length; ++i) {
-            if (nodes[i].name === name && nodes[i].state === state) {
+            if (compareNames(nodes[i].name, name) && nodes[i].state === state) {
                 return true;
             }
         }
@@ -440,7 +444,7 @@ function Graph(el) {
 
     var findNodeByName = function(name, state) {
         for (var i = 0 ; i < nodes.length ; ++i) {
-            if (nodes[i].name === name || nodes[i].state === state) {
+            if (compareNames(nodes[i].name, name) || nodes[i].state === state) {
                 return nodes[i];
             }
         }
