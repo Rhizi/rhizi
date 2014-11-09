@@ -77,6 +77,7 @@ var initDrawingArea = function () {
     zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
     
     vis = d3.select(el).append("svg:svg")
+        .attr('id', 'canvas_d3')
         .attr("width", '100%')
         .attr("height", '100%')
         .attr("pointer-events", "all")
