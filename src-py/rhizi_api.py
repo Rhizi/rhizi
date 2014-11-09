@@ -169,6 +169,10 @@ def diff_commit_attr():
     op = dbc.DBO_attr_diff_commit(attr_diff)
     return __common_exec(op)
 
+@webapp.route("/graph/diff-commit-vis", methods=['POST'])
+def diff_commit_vis():
+    pass
+
 @webapp.route("/add/node-set", methods=['POST'])
 def add_node_set():
     """
