@@ -1,8 +1,9 @@
 import logging
 import json
 import util
+import os
 import neo4j_util
-
+import argparse
 import db_controller as dbc
 import rhizi_api
 
@@ -14,6 +15,9 @@ class Config(object):
     @staticmethod
     def init_from_file(file_path):
         ret = Config()
+
+        if False == os.path.exists(file_path):
+            raise Exception('config file not found: ' + file_path)
 
         with open(file_path, 'r') as f:
             cfg = json.loads(f.read())
@@ -50,9 +54,15 @@ class RhiziServer(object):
 
 if __name__ == "__main__":
 
+    p = argparse.ArgumentParser(description='rhizi-server')
+    p.add_argument('--config-dir', help='path to Rhizi config dir')
+    args = p.parse_args()
+
+    cfg_dir = args.config_dir
+
     init_logging()
 
-    cfg = Config.init_from_file('res/etc/rhizi-server.conf')
+    cfg = Config.init_from_file(os.path.join(cfg_dir, 'rhizi-server.conf'))
     db_ctl = dbc.DB_Controller(cfg)
 
     rhizi_api.db_ctl = db_ctl
