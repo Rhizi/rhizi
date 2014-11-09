@@ -176,6 +176,8 @@ def diff_commit_vis():
 @webapp.route("/add/node-set", methods=['POST'])
 def add_node_set():
     """
+    @deprecated: use topo_attr_commit
+
     @param node_map: node type to node map, eg. { 'Skill': { 'name': 'kung-fu' } }
     """
     node_map = request.get_json()['node_map']
