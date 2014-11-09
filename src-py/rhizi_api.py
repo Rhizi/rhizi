@@ -137,6 +137,17 @@ def rz_clone():
 
     topo_diff = Topo_Diff.from_dict(topo_diff_dict)
 
+@webapp.route("/graph/diff-commit-topo", methods=['POST'])
+def diff_commit_topo():
+    """
+    commit a graph topology diff
+    """
+    def sanitize_input(req):
+        topo_diff_dict = request.get_json()['topo_diff']
+        topo_diff = Topo_Diff.from_dict(topo_diff_dict)
+        return topo_diff;
+
+    topo_diff = sanitize_input(request)
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
