@@ -129,13 +129,20 @@ def rz_clone():
     op = dbc.DBO_rz_clone()
     return __common_exec(op)
 
+@webapp.route("/graph/diff-commit-set", methods=['POST'])
+def diff_commit_set():
     """
-    commit a graph topology diff
+    commit a diff set
     """
-    topo_diff_dict = request.get_json()['topo_diff']
-    __sanitize_input(topo_diff_dict)
+    def sanitize_input(req):
+        diff_set_dict = request.get_json()['diff_set']
+        topo_diff_dict = diff_set_dict['__diff_set_topo'][0]
+        topo_diff = Topo_Diff.from_dict(topo_diff_dict)
+        return topo_diff;
 
-    topo_diff = Topo_Diff.from_dict(topo_diff_dict)
+    topo_diff = sanitize_input(request)
+    op = dbc.DBO_topo_diff_commit(topo_diff)
+    return __common_exec(op)
 
 @webapp.route("/graph/diff-commit-topo", methods=['POST'])
 def diff_commit_topo():
