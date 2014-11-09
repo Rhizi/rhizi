@@ -98,11 +98,11 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(l_set), 2)
 
     def test_match_node_set_by_type(self):
-        op = dbc.DBO_match_node_id_set(filter_type='Person')
+        op = dbc.DBO_match_node_id_set(filter_label='Person')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 2)
 
-        op = dbc.DBO_match_node_id_set(filter_type='Nan_Type')
+        op = dbc.DBO_match_node_id_set(filter_label='Nan_Type')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
@@ -123,11 +123,11 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(n_set), 2)
 
     def test_match_link_set_by_type(self):
-        op = dbc.DBO_match_link_id_set(filter_type='Knows')
+        op = dbc.DBO_match_link_id_set(filter_label='Knows')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 2)
 
-        op = dbc.DBO_match_link_id_set(filter_type='Nan_Type')
+        op = dbc.DBO_match_link_id_set(filter_label='Nan_Type')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
@@ -306,7 +306,7 @@ class TestDBController(unittest.TestCase):
         self.db_ctl.exec_op(op)
 
         # assert all deleted
-        op = dbc.DBO_match_node_id_set(filter_type=n_T)
+        op = dbc.DBO_match_node_id_set(filter_label=n_T)
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
