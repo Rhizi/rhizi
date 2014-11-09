@@ -59,7 +59,9 @@ def __common_exec(op, on_success=__common_resp_handle):
         op_ret = db_ctl.exec_op(op)
         return on_success(op_ret)
     except Exception as e:
-        return __common_resp_handle('exception raised: add_node_set')
+        log.error(e.message)
+        log.error(traceback.print_exc())
+        return __common_resp_handle('error occurred')
 
 @webapp.route("/load/node-set-by-id", methods=['POST'])
 def load_node_set_by_id_attr():
@@ -110,12 +112,7 @@ def load_link_set_by_link_ptr_set():
     l_ptr_set = deserialize_param_set(request.get_json())
 
     op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
-    try:
-        l_set = db_ctl.exec_op(op)
-        return __common_resp_handle(data=l_set)
-    except Exception as e:
-        log.exception(e)
-        return __common_resp_handle(error='unable to load link set')
+    return __common_exec(op)
 
 @webapp.route("/graph/topo-diff-commit", methods=['POST'])
 def topo_diff_commit():
@@ -150,9 +147,5 @@ def add_node_set():
     __sanitize_input(node_map)
 
     op = dbc.DBO_add_node_set(node_map)
-    try:
-        n_set = db_ctl.exec_op(op)
-        return __common_resp_handle(n_set)
-    except Exception as e:
-        return __common_resp_handle('exception raised: add_node_set')
+    return __common_exec(op)
 
