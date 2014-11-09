@@ -54,6 +54,15 @@ class Topo_Diff(object):
 
     @staticmethod
     def from_dict(topo_diff_dict):
+        """
+        construct from dict - no node/link constructor set must be provided
+        """
         ret = Topo_Diff()
-        ret.__dict__ = topo_diff_dict
+
+        # merge keys - this allows obj constructor argument ommision,
+        # such as when constructing from POST JSON data
+        for k, _ in ret.__dict__.items():
+            v =  topo_diff_dict.get(k)
+            if None != v:
+                ret.__dict__[k] = v
         return ret
