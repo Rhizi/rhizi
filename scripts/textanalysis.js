@@ -1,6 +1,6 @@
 "use strict";
 
-define('textanalysis', [], function() {
+define('textanalysis', ['model/util', 'model/diff'], function(model_util, model_diff) {
 var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
 var typeStack = [];
@@ -379,6 +379,7 @@ var textAnalyser = function (newtext, finalize) {
                 function (link) {
                     return [link.sourceName, link.targetName];
                 }));
+
         var k, n, l;
         if (comp.graph_same && !finalize) {
             if (comp.old_name && comp.new_name) {
@@ -389,7 +390,7 @@ var textAnalyser = function (newtext, finalize) {
                 graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
             }
         } else {
-            //REINITIALISE GRAPH (DUMB BUT IT WORKS)
+            // REINITIALISE GRAPH (DUMB BUT IT WORKS)
             graph.removeNodes("temp");
             graph.removeLinks("temp");
             for (k in ret.nodes) {
@@ -418,7 +419,7 @@ var textAnalyser = function (newtext, finalize) {
             graph.commit_diff_set(diff_set);
         }
 
-        //UPDATE GRAPH ONCE
+        // UPDATE GRAPH ONCE
         graph.update(!finalize && comp.graph_same);
     };
 

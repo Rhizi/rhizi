@@ -1,7 +1,7 @@
 "use strict"
 
-define(['signal', 'consts', 'util', 'textanalysis'], function (
-    signal, consts, util, textanalysis) {
+define(['signal', 'consts', 'util', 'textanalysis','model/util', 'rz_api_backend', 'rz_api_mesh'], function (
+    signal, consts, util, textanalysis, model_util, rz_api_backend, rz_api_mesh) {
 
 function Graph(el) {
 
@@ -345,6 +345,7 @@ function Graph(el) {
 
     /**
      * editType:
+     * 
      * @return true if type changed
      */
     this.editType = function(id, state, newtype) {
@@ -438,7 +439,7 @@ function Graph(el) {
     var findNode = function(id, state) {
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i].id === id || nodes[i].state === state)
-                return nodes[i]
+                return nodes[i];
         };
     }
 
@@ -451,7 +452,7 @@ function Graph(el) {
     }
 
     var findNodes = function(id, state) {
-        //id=id.toLowerCase();
+        // id=id.toLowerCase();
         var foundNodes = [];
         for (var i = 0; i < nodes.length; i++) {
             if ((id && nodes[i].id === id) || (state && nodes[i].state === state))
@@ -463,7 +464,7 @@ function Graph(el) {
     var findNodeIndex = function(id, state) {
         for (var i = 0; i < nodes.length; i++) {
             if ((id && nodes[i].id === id) || (state && nodes[i].state === state))
-                return i
+                return i;
         };
     }
 
@@ -488,7 +489,6 @@ function Graph(el) {
         rz_api_mesh.broadcast_possible_next_diff_block(diff_set);
     }
 
-    /**
     /**
      * perform initial DB load from backend
      */
@@ -610,6 +610,7 @@ function Graph(el) {
     this.links = get_links;
 };
 
-
-    return Graph;
+    return {
+        Graph: Graph,
+    };
 });

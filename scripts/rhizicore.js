@@ -2,7 +2,7 @@
 
 define('rhizicore',
 ['jquery', 'd3', 'consts', 'signal', 'util', 'history', 'textanalysis', 'model/graph'],
-function($, d3, consts, signal, util, history, textanalysis, Graph) {
+function($, d3, consts, signal, util, history, textanalysis, model_graph) {
 var History = history.History;
 var addednodes = [];
 
@@ -71,7 +71,7 @@ var initDrawingArea = function () {
 
     var el = document.body;
 
-    graph = new Graph(el);
+    graph = new model_graph.Graph(el);
 
     //Zoom scale behavior in zoom.js
     zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
@@ -318,6 +318,7 @@ function update(no_relayout) {
 
     force.nodes(graph.nodes())
         .links(graph.links())
+
     if (no_relayout) {
         // XXX If we are stopped we need to update the text of the links at least,
         // and this is the simplest way
@@ -674,6 +675,9 @@ function customColor(type) {
         case "bubble":
             color = "rgba(0,0,0,0.2)";
             break;
+        default:
+            size = '#080808';
+            break;
     }
     return color;
 }
@@ -718,6 +722,9 @@ function expand(obj){
     }
     obj.size = Math.max(obj.savesize, obj.value.length);
 }
+
+window.graph = graph;
+window.force = force;
 
 return {
     expand: expand,
