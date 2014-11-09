@@ -124,8 +124,11 @@ def load_link_set_by_link_ptr_set():
     op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
     return __common_exec(op)
 
-@webapp.route("/graph/topo-diff-commit", methods=['POST'])
-def topo_diff_commit():
+@webapp.route("/graph/clone", methods=['POST'])
+def rz_clone():
+    op = dbc.DBO_rz_clone()
+    return __common_exec(op)
+
     """
     commit a graph topology diff
     """
