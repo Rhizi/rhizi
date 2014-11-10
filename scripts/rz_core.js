@@ -717,9 +717,6 @@ function customSize(type) {
     return size;
 }
 
-window.graph = graph;
-window.force = force;
-
 return {
     graph: graph,
     force: force,
