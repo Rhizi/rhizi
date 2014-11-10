@@ -362,9 +362,6 @@ var textAnalyser = function (newtext, finalize) {
 
     ret.drop_conjugator_links = and_count < linkindex;
 
-    //FOR THE EXTERNAL ARROW-TYPE CHANGER
-    lastnode = newnodes[nodeindex];
-
     ret.applyToGraph = function(graph, backend_commit) {
         window.ret = ret;
         var comp = graph.compareSubset('temp',
@@ -398,7 +395,7 @@ var textAnalyser = function (newtext, finalize) {
                 if (n.state == 'temp' && finalize) {
                     console.log('bug: temp node creation on finalize');
                 } else {
-                    graph.addNode(n.name, n.type, n.state);
+                    lastnode = graph.addNode(n.name, n.type, n.state);
                 }
             }
             for (k in ret.links) {
@@ -436,7 +433,10 @@ return {
     autoSuggestAddName:autoSuggestAddName,
     ANALYSIS_NODE_START:ANALYSIS_NODE_START,
     ANALYSIS_LINK:ANALYSIS_LINK,
+
+    //for the external arrow-type changer
     lastnode: function() { return lastnode; },
+
     typeindex: function() { return typeindex; },
     typeindex_next: function() {
         typeindex = (typeindex + 1) % 5;

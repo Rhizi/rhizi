@@ -45,13 +45,16 @@ function textSelect(inp, s, e) {
     }
 }
 
-function changeType(arg, id) {
-    var typeindex;
-    var lastnode = textanalysis.lastnode();
-    var nodetype;
+function changeType(arg) {
+    var typeindex,
+        lastnode = textanalysis.lastnode(),
+        nodetype,
+        id;
 
-    if(!id) {
+    if(!lastnode) {
         id = "new node";
+    } else {
+        id = lastnode.id;
     }
     typeindex = (arg === 'up'? textanalysis.typeindex_next() : textanalysis.typeindex_prev());
     nodetype = textanalysis.nodetypes()[typeindex];
@@ -59,11 +62,11 @@ function changeType(arg, id) {
     if (arg === 'up') {
         RZ.graph.editType(id, null, nodetype);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
-        RZ.graph.findCoordinates(lastnode, null);
+        RZ.graph.findCoordinates(id, null);
     } else {
         RZ.graph.editType(id, null, nodetype);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
-        RZ.graph.findCoordinates(lastnode, null);
+        RZ.graph.findCoordinates(id, null);
     }
     RZ.graph.update(true);
 }
