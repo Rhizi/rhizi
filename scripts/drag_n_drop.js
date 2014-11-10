@@ -1,4 +1,4 @@
-define(['jquery', 'jquery-ui', 'rz_core'], function($, __unused_jqueryui, rz_core) {
+define(['jquery', 'rz_core'], function($, rz_core) {
 
 function init() {
 console.log('rhizi: init drag-n-drop');
