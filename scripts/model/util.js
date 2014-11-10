@@ -4,7 +4,8 @@
  * model utility functions:
  *    - convert from/to client/backend data representations
  */
-define([ 'jquery', 'model/diff', 'model/graph' ], function($, model_diff, model_graph) {
+define(['jquery', 'model/diff'], 
+function($, model_diff) {
 
     /**
      * read by adapting from backend format
