@@ -6,7 +6,7 @@
 // exceptions but that shouldn't break the console, as evidenced by the '__commandLineAPI is not defined'
 // error below.
 //
-// Uncaught TypeError: Can't add property addednodes, object is not extensible rhizicore.js:4
+// Uncaught TypeError: Can't add property addednodes, object is not extensible rz_core.js:4
 // Uncaught TypeError: Can't add property text, object is not extensible textanalysis.js:3
 // Uncaught TypeError: Can't add property key, object is not extensible buttons.js:5
 // Uncaught ReferenceError: sentence is not defined robot.js:11

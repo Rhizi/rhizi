@@ -64,17 +64,17 @@ function run_tests(settings) {
 }
 
 function reset(window) {
-    window.require('rhizicore').graph.clear();
+    window.require('rz_core').graph.clear();
 }
 
 function nodes(window) {
-    return window.require('rhizicore').force.nodes().map(function (n) {
+    return window.require('rz_core').force.nodes().map(function (n) {
         return n.name;
     });
 }
 
 function links(window) {
-    return window.require('rhizicore').force.links().map(function (l) {
+    return window.require('rz_core').force.links().map(function (l) {
         debugger;
         return [l.source.name, l.target.name, l.name];
     });

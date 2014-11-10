@@ -1,4 +1,4 @@
-define('main', ['rhizicore', 'textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot'],
+define('main', ['rz_core', 'textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot'],
 function(RZ, textanalysis_ui, buttons, history, drag_n_drop, robot) {
 return {
 main: function() {

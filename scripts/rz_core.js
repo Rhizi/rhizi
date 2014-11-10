@@ -1,6 +1,6 @@
 "use strict"
 
-define('rhizicore',
+define('rz_core',
 ['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph'],
 function($, d3, consts, signal, util, model_graph) {
 

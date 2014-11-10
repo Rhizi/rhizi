@@ -1,6 +1,6 @@
 "use strict"
 
-define('textanalysis.ui', ['autocomplete', 'rhizicore', 'textanalysis', 'signal', 'consts'],
+define('textanalysis.ui', ['autocomplete', 'rz_core', 'textanalysis', 'signal', 'consts'],
        function(autocomplete, RZ, textanalysis, signal, consts) {
 var text = ""; // Last text of sentence
 var element_name = '#textanalyser';

@@ -22,7 +22,7 @@ base.run_tests({
         var analyzeSentence = window.require('textanalysis.ui').analyzeSentence;
         if (process.argv.length > 2) {
             analyzeSentence(process.argv.slice(2).join(" "), true);
-            base.dump_graphviz(window.require('rhizicore').force);
+            base.dump_graphviz(window.require('rz_core').force);
         } else {
             for (var k = 0; k < data.length; ++k) {
                 var sentence = data[k][0];
@@ -41,7 +41,7 @@ base.run_tests({
                     console.log('expected: ' + expected_links);
                     console.log('got:      ' + links);
                 }
-                base.dump_graphviz(window.require('rhizicore').force);
+                base.dump_graphviz(window.require('rz_core').force);
             }
         }
         process.exit();

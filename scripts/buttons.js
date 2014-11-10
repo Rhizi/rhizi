@@ -1,6 +1,6 @@
 "use strict"
 
-define('buttons', ['jquery', 'FileSaver', 'rhizicore'], function ($, saveAs, RZ) {
+define('buttons', ['jquery', 'FileSaver', 'rz_core'], function ($, saveAs, RZ) {
 $('.tutorial').click(function(){});
 
 var key="#47989379";
