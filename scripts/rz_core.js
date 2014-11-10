@@ -717,18 +717,10 @@ function customSize(type) {
     return size;
 }
 
-function expand(obj){
-    if (!obj.savesize) {
-        obj.savesize = obj.size;
-    }
-    obj.size = Math.max(obj.savesize, obj.value.length);
-}
-
 window.graph = graph;
 window.force = force;
 
 return {
-    expand: expand,
     graph: graph,
     force: force,
     load_from_json: function(result) {
