@@ -1,4 +1,4 @@
-define('consts', function() {
+define(function() {
     // TODO: enums, sometime
     return {
         APPLIED_GRAPH_DIFF: 'graph_diff',
