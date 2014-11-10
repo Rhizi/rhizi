@@ -1,9 +1,9 @@
 "use strict"
 
 define('rhizicore',
-['jquery', 'd3', 'consts', 'signal', 'util', 'history', 'model/graph'],
-function($, d3, consts, signal, util, history, model_graph) {
-var History = history.History;
+['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph'],
+function($, d3, consts, signal, util, model_graph) {
+
 var addednodes = [];
 
 var vis;
