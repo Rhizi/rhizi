@@ -1,7 +1,7 @@
 "use strict"
 
-define(['signal', 'consts', 'util', 'textanalysis','model/util', 'rz_api_backend', 'rz_api_mesh'], function (
-    signal, consts, util, textanalysis, model_util, rz_api_backend, rz_api_mesh) {
+define(['signal', 'consts', 'util', 'textanalysis','model/util', 'rz_api_backend', 'rz_api_mesh'],
+function (signal, consts, util, textanalysis, model_util, rz_api_backend, rz_api_mesh) {
 
 function Graph(el) {
 
