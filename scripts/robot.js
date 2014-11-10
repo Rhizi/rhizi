@@ -1,4 +1,4 @@
-define('robot', ['jquery'], function($) {
+define(['jquery'], function($) {
 
 var sentence="";
 /*sentence+=" #Rhizibot is showing you a #tutorial|";
