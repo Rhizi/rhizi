@@ -1,7 +1,7 @@
 "use strict"
 
-define('textanalysis.ui', ['autocomplete', 'rz_core', 'textanalysis', 'signal', 'consts'],
-       function(autocomplete, RZ, textanalysis, signal, consts) {
+define(['autocomplete', 'rz_core', 'textanalysis', 'signal', 'consts'],
+function(autocomplete, rz_core, textanalysis, signal, consts) {
 var text = ""; // Last text of sentence
 var element_name = '#textanalyser';
 var element = $(element_name);
@@ -23,7 +23,7 @@ function analyzeSentence(sentence, finalize)
     }
     
     var backend_commit = false;
-    ret.applyToGraph(RZ.graph, backend_commit);
+    ret.applyToGraph(rz_core.graph, backend_commit);
 
     if (finalize || sentence.length == 0) {
         $('.typeselection').css('top', -300);
@@ -58,15 +58,15 @@ function changeType(arg) {
     nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
     if (arg === 'up') {
-        RZ.graph.editType(id, null, nodetype);
+        rz_core.graph.editType(id, null, nodetype);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
-        RZ.graph.findCoordinates(id, null);
+        rz_core.graph.findCoordinates(id, null);
     } else {
-        RZ.graph.editType(id, null, nodetype);
+        rz_core.graph.editType(id, null, nodetype);
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
-        RZ.graph.findCoordinates(id, null);
+        rz_core.graph.findCoordinates(id, null);
     }
-    RZ.graph.update(true);
+    rz_core.graph.update(true);
 }
 
 return {
