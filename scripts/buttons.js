@@ -1,19 +1,19 @@
 "use strict"
 
-define('buttons', ['jquery', 'FileSaver', 'rz_core'], function ($, saveAs, RZ) {
+define(['jquery', 'FileSaver', 'rz_core'], function ($, saveAs, rz_core) {
 $('.tutorial').click(function(){});
 
 var key="#47989379";
 
 
 $('.save a').click(function(){
-    var json = RZ.graph.save_to_json();
+    var json = rz_core.graph.save_to_json();
     console.log('saving to local storage ' + json.length + ' bytes');
     localStorage.setItem(key, json);
 });
 
 $('.saveToFile a').click(function() {
-    var json = RZ.graph.save_to_json();
+    var json = rz_core.graph.save_to_json();
     var filename = 'graph.json';
     var blob = new Blob([json], {type: 'application/json'});
     console.log('saving ' + json.length + ' bytes to ' + filename);
@@ -21,7 +21,7 @@ $('.saveToFile a').click(function() {
 });
 
 var really_load = function() {
-  if (!RZ.graph.empty()) {
+  if (!rz_core.graph.empty()) {
     return confirm('All unsaved changes will be deleted, are you sure?');
   }
   return true;
@@ -45,7 +45,7 @@ $('.file-load').on('change', function(event) {
             if (e.target.readyState === FileReader.DONE) {
                 console.log('done reading ' + theFile.name);
                 console.log('got #' + result.length + ' bytes in ' + typeof(result));
-                RZ.load_from_json(result);
+                rz_core.load_from_json(result);
             }
         }
     })(file);
@@ -57,7 +57,7 @@ $('.local-storage-load a').click(function(){
       return;
   }
   var json_blob = localStorage.getItem(key)
-  RZ.load_from_json(json_blob);
+  rz_core.load_from_json(json_blob);
 });
 
 $('a.set-user').click(function() {
@@ -65,7 +65,7 @@ $('a.set-user').click(function() {
     $('.set-user-form').show();
     $('.set-user-form').submit(function() {
         var user = $('.set-user-input').val();
-        RZ.graph.set_user(user);
+        rz_core.graph.set_user(user);
         $('.set-user').html('user: ' + user);
         $('.set-user').show();
         $('.set-user-form').hide();
@@ -75,10 +75,10 @@ $('a.set-user').click(function() {
 });
 
 $('a.save-history').click(function() {
-    if (RZ.graph.history === undefined) {
+    if (rz_core.graph.history === undefined) {
         throw "History is undefined";
     }
-    RZ.graph.history.save_to_file();
+    rz_core.graph.history.save_to_file();
 });
 return {'buttons': 'nothing here'};
 }); // define

@@ -1,4 +1,4 @@
-define('drag_n_drop', ['jquery', 'jquery-ui', 'rz_core'], function($, __unused_jqueryui, RZ) {
+define(['jquery', 'jquery-ui', 'rz_core'], function($, __unused_jqueryui, rz_core) {
 
 function init() {
 console.log('rhizi: init drag-n-drop');
@@ -13,7 +13,7 @@ $(document).on('drop', function(e) {
             console.log('drop: error: reading from file failed');
         } else {
             console.log('loading dropped file');
-            RZ.load_from_json(fr.result);
+            rz_core.load_from_json(fr.result);
         }
     }
     fr.readAsText(file);
