@@ -3,9 +3,8 @@
 /**
  * Diff module
  */
-define(
-        [ 'model/util' ],
-        function(model_util) {
+define([],
+       function() {
 
             /**
              * A set of diff objects
