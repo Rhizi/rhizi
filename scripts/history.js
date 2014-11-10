@@ -15,7 +15,7 @@
 // ReferenceError: __commandLineAPI is not defined
 //var ActionEnum = Enum();
 
-define('history', ['jquery', 'FileSaver', 'consts', 'signal'],
+define(['jquery', 'FileSaver', 'consts', 'signal'],
     function($, saveAs, consts, signal) {
 
 /* user - username (string)
