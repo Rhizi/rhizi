@@ -6,7 +6,7 @@
  * easier.
  */
 
-define('signal', ['jquery'], function($) {
+define(['jquery'], function($) {
     function slot(name, handler) {
         $(window).on(name, function(e, args) {
             handler(args);

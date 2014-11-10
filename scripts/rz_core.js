@@ -1,7 +1,6 @@
 "use strict"
 
-define('rz_core',
-['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph'],
+define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph'],
 function($, d3, consts, signal, util, model_graph) {
 
 var addednodes = [];

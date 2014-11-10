@@ -1,6 +1,8 @@
 "use strict";
 
-define('textanalysis', ['model/util', 'model/diff'], function(model_util, model_diff) {
+define(['rz_core', 'model/util', 'model/diff'], 
+function(rz_core, model_util, model_diff) {
+
 var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
 var typeStack = [];
