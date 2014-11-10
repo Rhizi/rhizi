@@ -537,7 +537,7 @@ function Graph(el) {
         rz_api_backend.clone(0, on_success);
     }
 
-    function load_from_json(json) {
+    this.load_from_json = function(json) {
         var data = JSON.parse(json);
         var i, node, link;
 
@@ -565,9 +565,8 @@ function Graph(el) {
         }
         this.clear_history();
     }
-    this.load_from_json = load_from_json;
 
-    function save_to_json() {
+    this.save_to_json = function() {
         var d = {"nodes":[], "links":[]};
         for(var i = 0 ; i < nodes.length ; i++){
           var node = nodes[i];
@@ -594,20 +593,19 @@ function Graph(el) {
         }
         return JSON.stringify(d);
     }
-    this.save_to_json = save_to_json;
 
-    function set_user(user) {
+    this.set_user = function(user) {
         this.user = user;
         this.history = new History(this.user, $('svg g.zoom')[0]);
         console.log('new user: ' + user);
     }
-    this.set_user = set_user;
 
     function clear_history() {
         if (this.history !== undefined) {
             this.history.clear();
         }
     }
+
     this.clear_history = clear_history;
 
     var get_nodes = function() { return nodes; };
@@ -615,9 +613,11 @@ function Graph(el) {
 
     var get_links = function() { return links; };
     this.links = get_links;
+
+}
+
+return {
+    Graph: Graph,
 };
 
-    return {
-        Graph: Graph,
-    };
 });
