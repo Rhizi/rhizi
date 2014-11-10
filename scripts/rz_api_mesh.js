@@ -1,7 +1,8 @@
 /**
  * API calls designed to execute in decentralized fashion
  */
-define(['rz_api_backend'], function(rz_api_backend) {
+define(['rz_api_backend'],
+function(rz_api_backend) {
     function RZ_API_Mesh() {
         
         /**
