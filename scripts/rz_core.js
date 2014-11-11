@@ -569,7 +569,7 @@ function showInfo(d, i) {
       if (confirm('This node and all its connections will be deleted, are you sure?')) {
         graph.removeNode(d.id, null);
         graph.update(false);
-        document.querySelector('.info').style.visibility = "hidden";
+        $('.info').hide();
       }
     });
   } else {
