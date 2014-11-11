@@ -165,7 +165,9 @@ function update(no_relayout) {
     link_g.append("path")
         .attr("class", "ghostlink")
         .on("click", function(d, i) {
-            var that = this;
+            var that = this,
+                source = this.link.source,
+                target = this.link.target;
 
             view.edge_info.on_delete(function () {
                 graph.removeLink(that.link);
@@ -173,6 +175,11 @@ function update(no_relayout) {
                 view.edge_info.hide();
             });
             view.edge_info.show();
+            highlight(source);
+            highlight(target);
+            source.state = 'chosen';
+            target.state = 'chosen';
+            graph.update(true);
         });
 
     link.style("stroke-dasharray", function(d,i){
@@ -180,6 +187,14 @@ function update(no_relayout) {
             return "3,3";
         else
             return "0,0";
+        });
+
+    link.selectAll('path.link')
+        .attr('stroke-width', function(d) {
+            if (d.state === 'exit' || d.state === 'enter') {
+                return "4px";
+            }
+            return "2.0px";
         });
 
     link.exit().remove();
@@ -233,10 +248,14 @@ function update(no_relayout) {
             }
             if (d.state !== "temp"){
                 editNode(this, d, i);
-                showInfo(d, i);
+                showInfo(this.node, i);
             }
         })
         .call(drag);
+
+    node.each(function (d) {
+        this.node = d;
+    });
 
     nodetext = nodeEnter.insert("text")
         .attr("class", "nodetext graph")
@@ -529,13 +548,16 @@ function removeHighlight() {
 
 function highlight(n)
 {
-    var connected = graph.getConnectedNodesAndLinks(n, 1),
+    var n,
+        connected = graph.getConnectedNodesAndLinks(n, 1),
         i,
+        node,
+        link,
         data;
 
     n.state = 'chosen';
 
-    for (i in connected.nodes) {
+    for (i = 0 ; i < connected.nodes.length ; ++i) {
         data = connected.nodes[i];
         node = data.node;
         switch (data.type) {
@@ -544,6 +566,18 @@ function highlight(n)
             break;
         case 'enter':
             node.state = 'enter';
+            break;
+        };
+    }
+    for (i = 0 ; i < connected.links.length ; ++i) {
+        data = connected.links[i];
+        link = data.link;
+        switch (data.type) {
+        case 'exit':
+            link.state = 'exit';
+            break;
+        case 'enter':
+            link.state = 'enter';
             break;
         };
     }

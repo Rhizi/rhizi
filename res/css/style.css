@@ -129,7 +129,6 @@ input:focus {
 .link {
   fill: none;
   stroke: #404040;
-  stroke-width: 2px;
   z-index:1;
 }
 
