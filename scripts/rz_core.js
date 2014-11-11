@@ -240,6 +240,7 @@ function update(no_relayout) {
 
     var nodeEnter = node.enter()
         .append("g").attr('class', 'node')
+        .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
         .attr('visibility', 'hidden') // made visible on first tick
         .on("click", function(d, i) {
             if (d3.event.defaultPrevented) {
