@@ -46,8 +46,7 @@ function textSelect(inp, s, e) {
 }
 
 function changeType(arg) {
-    var typeindex,
-        lastnode = textanalysis.lastnode(),
+    var lastnode = textanalysis.lastnode(),
         nodetype,
         id;
 
@@ -56,8 +55,7 @@ function changeType(arg) {
     } else {
         id = lastnode.id;
     }
-    typeindex = (arg === 'up'? textanalysis.typeindex_next() : textanalysis.typeindex_prev());
-    nodetype = textanalysis.nodetypes()[typeindex];
+    nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
     if (arg === 'up') {
         RZ.graph.editType(id, null, nodetype);

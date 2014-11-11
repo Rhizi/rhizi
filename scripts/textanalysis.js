@@ -445,15 +445,13 @@ return {
     //for the external arrow-type changer
     lastnode: function() { return lastnode; },
 
-    typeindex: function() { return typeindex; },
-    typeindex_next: function() {
+    selected_type_next: function() {
         typeindex = (typeindex + 1) % 5;
-        return typeindex;
+        return selectedType();
     },
-    typeindex_prev: function() {
+    selected_type_prev: function() {
         typeindex = (typeindex + 4) % 5;
-        return typeindex;
-    },
-    nodetypes: function() { return nodetypes; } // XXX should be readonly, but returning a copy?
+        return selectedType();
+    }
 };
 });
