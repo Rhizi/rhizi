@@ -147,7 +147,6 @@ function update(no_relayout) {
         .attr("d", "M0,-5L10,0L0,5");
 
     link.enter().append("path")
-        .attr("d", "M0,-5L10,0L0,5")
         .attr("class", function(d) {
             return state_to_link_class[d.state] || 'link graph';
         })
