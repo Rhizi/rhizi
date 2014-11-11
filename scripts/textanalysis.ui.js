@@ -28,6 +28,9 @@ function analyzeSentence(sentence, finalize)
     if (finalize || sentence.length == 0) {
         $('.typeselection').css('top', -300);
         $('.typeselection').css('left', 0);
+        $('span.ui-helper-hidden-accessible').hide();
+    } else {
+        $('span.ui-helper-hidden-accessible').show();
     }
 }
 
@@ -82,7 +85,7 @@ return {
             source: textanalysis.autocompleteCallback,
             open: function() {
                 $('.ui-autocomplete').css('width', '10px');
-            }
+            },
         });
 
         $(document).keydown(function(e) {
