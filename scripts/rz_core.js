@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'view/helpers', 'view/node_info'],
-function($, d3, consts, signal, util, model_graph, view_helpers, view_node_info) {
+define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'view/helpers', 'view/view'],
+function($, d3, consts, signal, util, model_graph, view_helpers, view) {
 
 var addednodes = [];
 
@@ -519,8 +519,8 @@ function highlight(n)
 function showInfo(d, i) {
   if (d.state !== "chosen" && d.state !== 'temp') {
     highlight(d);
-    view_node_info.show(d);
-    view_node_info.on_submit(function() {
+    view.node_info.show(d);
+    view.node_info.on_submit(function() {
       if (d.type === "deliverable") {
         graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
       }
@@ -529,16 +529,16 @@ function showInfo(d, i) {
       graph.update(true);
       return false;
     });
-    view_node_info.on_delete(function() {
+    view.node_info.on_delete(function() {
       if (confirm('This node and all its connections will be deleted, are you sure?')) {
         graph.removeNode(d.id, null);
         graph.update(false);
-        view_node_info.hide();
+        view.node_info.hide();
       }
     });
   } else {
     removeHighlight();
-    view_node_info.hide();
+    view.node_info.hide();
   }
   graph.update(true);
 }
