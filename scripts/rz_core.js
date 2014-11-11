@@ -284,13 +284,13 @@ function update(no_relayout) {
         .attr("xlink:href", function(d) {
             switch (d.status) {
                 case "done":
-                    return "images/check.png";
+                    return "res/img/check.png";
                     break;
                 case "current":
-                    return "images/wait.png";
+                    return "res/img/wait.png";
                     break;
                 case "waiting":
-                    return "images/cross.png";
+                    return "res/img/cross.png";
                     break;
             }
         })
