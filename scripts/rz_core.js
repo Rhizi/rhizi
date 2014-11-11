@@ -171,7 +171,7 @@ function update(no_relayout) {
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
             if (d.state !== "temp") {
-                editLink(d, i);
+                editLink(this, d, i);
             }
         });
 
@@ -590,12 +590,12 @@ function editNode(node, d, i) {
     element.data().d = d;
 }
 
-function editLink(d, i) {
-    var dx = (d.source.x + d.target.x) / 2;
-    var dy = (d.source.y + d.target.y) / 2;
-    var oldname = d.name;
-    $('.editlinkinfo').css('top', dy - 17);
-    $('.editlinkinfo').css('left', dx - 18);
+function editLink(link, d, i) {
+    var offset = $(link).offset(),
+        oldname = d.name;
+
+    $('.editlinkinfo').css('top', offset.top);
+    $('.editlinkinfo').css('left', offset.left);
     $('#editlinkname').val(oldname);
 
     // TODO: handle escape as well to quit without changes (enter does submit)
