@@ -331,7 +331,7 @@ var textAnalyser = function (newtext, finalize) {
             break;
         case LINK:
             linkindex++;
-            addNode("new node", "empty", "temp");
+            addNode("new node", selectedType(), "temp");
             if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
                 and_connect("new node");
