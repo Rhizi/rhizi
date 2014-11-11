@@ -1,7 +1,15 @@
-"use strict"
 
 define(['view/internal'],
 function(internal) {
+
+var delete_button = internal.edit_tab.get('edge', '#deleteedge'),
+    delete_callback = undefined;
+
+delete_button.on('click', function() {
+    if (delete_callback) {
+        delete_callback();
+    }
+});
 
 function show()
 {
@@ -15,9 +23,7 @@ function hide()
 
 function on_delete(f)
 {
-    var e = internal.edit_tab.get('edge', '#deleteedge');
-
-    e.on('click', f);
+    delete_callback = f;
 }
 
 return {
@@ -26,3 +32,4 @@ return {
     on_delete: on_delete,
 };
 });
+"use strict"
