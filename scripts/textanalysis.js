@@ -27,7 +27,7 @@ function autocompleteCallback(request, response_callback)
     var ret = [];
     if (request.term === "" || request.term) {
         for (var name in sugg) {
-            if (name.indexOf(request.term) === 0) {
+            if (name.toLowerCase().indexOf(request.term.toLowerCase()) === 0) {
                 ret.push(name);
             }
         }
