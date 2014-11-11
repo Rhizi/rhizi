@@ -385,6 +385,26 @@ function Graph(el) {
         }
     }
 
+    this.removeLink = function(link) {
+        var link,
+            i;
+
+        for ( i = 0 ; i < links.length; ++i ) {
+            if (link.id !== undefined) {
+                if (link.id === links[i].id) {
+                    links.splice(i, 1);
+                    return;
+                }
+            } else {
+                if (link.sourceId === links[i].sourceId && link.targetId === links[i].targetId) {
+                    links.splice(i, 1);
+                    return;
+                }
+            }
+        }
+        console.log('bug: attempt to remove non existant link');
+    }
+
     this.removeLinks = function(state) {
         var id = null;
         var ls = findLinks(state);
