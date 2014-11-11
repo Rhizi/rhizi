@@ -12,7 +12,7 @@ $('.save a').click(function(){
     localStorage.setItem(key, json);
 });
 
-$('.saveToFile a').click(function() {
+$('.export a').click(function() {
     var json = rz_core.graph.save_to_json();
     var filename = 'graph.json';
     var blob = new Blob([json], {type: 'application/json'});
@@ -27,7 +27,7 @@ var really_load = function() {
   return true;
 }
 
-$('.file-load').on('change', function(event) {
+$('.file-import').on('change', function(event) {
     var file = event.target.files[0];
     var reader;
 
