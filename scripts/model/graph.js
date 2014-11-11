@@ -273,12 +273,13 @@ function Graph(el) {
             return;
         }
         if (!found) {
-            var link = {
+            var id = id_generator(),
+                link = {
                 source: sourceNode,
                 target: targetNode,
                 name: name,
                 state: state,
-                id: id_generator(),
+                id: id,
             };
             links.push(link);
             signal.signal(consts.APPLIED_GRAPH_DIFF, [{links: {add: [link]}}]);

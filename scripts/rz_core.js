@@ -120,14 +120,23 @@ var initDrawingArea = function () {
 initDrawingArea();
 
 function update(no_relayout) {
-    var node, link, linktext, nodetext;
+    var node,
+        link,
+        link_g,
+        linktext,
+        nodetext,
+        link_group;
 
-    link = vis.select("#link-group").selectAll(".link")
+    link_group = vis.select('#link-group');
+    link = link_group.selectAll("g.link")
         .data(graph.links());
 
-    link.enter().append("svg:defs").selectAll("marker")
+    link_g = link.enter().append('g')
+        .attr('class', 'link graph');
+
+    link_g.append("svg:defs").selectAll("marker")
         .data(["end"]) // Different link/path types can be defined here
-        .enter().append("svg:marker") // This section adds in the arrows
+        .append("svg:marker") // This section adds in the arrows
         .attr("id", String)
         .attr("viewBox", "0 -5 10 10")
         .attr("refX", 22)
@@ -146,18 +155,26 @@ function update(no_relayout) {
         .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5");
 
-    link.enter().append("path")
+    link_g.append("path")
         .attr("class", function(d) {
             return state_to_link_class[d.state] || 'link graph';
         })
-        .attr("marker-end", "url(#end)")
+        .attr("marker-end", "url(#end)");
+
+    // second path for larger click area
+    link_g.append("path")
+        .attr("class", "ghostlink")
         .on("click", function(d, i) {
+            var that = this;
+
             view.edge_info.on_delete(function () {
-                graph.removeLink(d);
+                graph.removeLink(that.link);
                 graph.update(true);
+                view.edge_info.hide();
             });
             view.edge_info.show();
-        });;
+        });
+
     link.style("stroke-dasharray", function(d,i){
         if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
             return "3,3";
@@ -166,6 +183,12 @@ function update(no_relayout) {
         });
 
     link.exit().remove();
+
+    link_group.selectAll('.ghostlink')
+        .data(graph.links())
+        .each(function (d) {
+            this.link = d;
+        });
 
     linktext = vis.selectAll(".linklabel").data(graph.links());
     linktext.enter()
@@ -358,7 +381,7 @@ function tick(e) {
         .data(force.nodes(), function(d) {
             return d.id;
         });
-    var link = vis.select("#link-group").selectAll(".link")
+    var link = vis.select("#link-group").selectAll("path.link")
         .data(graph.links());
     var linktext = vis.selectAll(".linklabel").data(graph.links());
 
@@ -441,26 +464,33 @@ function tick(e) {
         });
     }
 
-    link.attr("d", function(d) {
+    link.attr("d", function(d, i) {
+        var d_val,
+            ghost;
+
         if (graphstate === "GRAPH") {
             var dx = d.target.x - d.source.x,
                 dy = d.target.y - d.source.y,
                 dr = Math.sqrt(dx * dx + dy * dy);
-            return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+            d_val = "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
         } else if (graphstate === "GANTT") {
             if (d.state === "enter" || d.state === "exit") {
                 var dx = d.target.x - d.source.x,
                     dy = d.target.y - d.source.y,
                     dr = Math.sqrt(dx * dx + dy * dy) * 5;
-                return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+                d_val = "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
             } else {
                 var dx = d.target.x - d.source.x,
                     dy = d.target.y - d.source.y,
                     dr = Math.sqrt(dx * dx + dy * dy) * 5;
 
-                return "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
+                d_val = "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
             }
         }
+        // update ghostlink position
+        ghost = $(this.nextElementSibling);
+        ghost.attr("d", d_val);
+        return d_val;
     });
 
 

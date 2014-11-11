@@ -133,6 +133,12 @@ input:focus {
   z-index:1;
 }
 
+.ghostlink {
+  fill: none;
+  stroke-width: 2px;
+  z-index:2; // higher than link, lower than node
+}
+
 .highlightlink {
   fill: none;
   stroke: #EDE275;
