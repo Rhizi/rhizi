@@ -11,9 +11,10 @@ delete_button.on('click', function() {
     }
 });
 
-function show()
+function show(link)
 {
     internal.edit_tab.show('edge');
+    internal.edit_tab.get('edge', '#edgetitle').html(link.name);
 }
 
 function hide()

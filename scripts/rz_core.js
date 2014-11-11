@@ -174,7 +174,7 @@ function update(no_relayout) {
                 graph.update(true);
                 view.edge_info.hide();
             });
-            view.edge_info.show();
+            view.edge_info.show(d);
             highlight(source);
             highlight(target);
             source.state = 'chosen';
