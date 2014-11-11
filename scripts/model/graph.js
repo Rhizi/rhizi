@@ -245,11 +245,14 @@ function Graph(el) {
     }
 
     this.addLinkByName = function(sourceName, targetName, name, state, drop_conjugator_links) {
-        var sourceId = findNodeByName(sourceName, null).id;
-        var targetId = findNodeByName(targetName, null).id;
+        var source = findNodeByName(sourceName, null),
+            target = findNodeByName(targetName, null),
+            sourceId = source ? source.id : null,
+            targetId = target ? target.id : null;
 
-        if (sourceId === undefined || targetId === undefined) {
-            console.log('error: cannot add link between names : ' + sourceName + ', ' + targetName);
+        if (sourceId === null || targetId === null) {
+            console.log('error: link of missing nodes: ' + sourceName + ' (' + sourceId + ') -> '
+                        + targetName + ' (' + targetId + ')');
             return;
         }
         this.addLink(sourceId, targetId, name, state, drop_conjugator_links);
