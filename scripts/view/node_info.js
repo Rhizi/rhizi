@@ -45,12 +45,12 @@ function hide()
 
 function on_submit(f)
 {
-    $("#editbox").submit(f);
+    internal.edit_tab.get('node', "#editbox").submit(f);
 }
 
 function on_delete(f)
 {
-    $("#deletenode").click(f);
+    internal.edit_tab.get('node', "#deletenode").click(f);
 }
 
 return {
