@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'view/helpers'],
-function($, d3, consts, signal, util, model_graph, view_helpers) {
+define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'view/helpers', 'view/node_info'],
+function($, d3, consts, signal, util, model_graph, view_helpers, view_node_info) {
 
 var addednodes = [];
 
@@ -519,43 +519,8 @@ function highlight(n)
 function showInfo(d, i) {
   if (d.state !== "chosen" && d.state !== 'temp') {
     highlight(d);
-    $('.info').fadeIn(300);
-
-    if (d.type === "deliverable") {
-      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="current">Current</option><option value="done">Done</option></select><br/><label>Start date:</label><input id="editstartdate"/></br><label>End date:</label><input id="editenddate"/></br><button>Save</button><button id="deletenode">Delete</button></form>');
-    } else if(d.type=== "chainlink"){
-      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><button>Save</button><button id="deletenode">Delete</button></form>');
-    }else{
-      $('.info').html('Name: ' + d.id + '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="project">Project</option><option value="skill">Skill</option><option value="deliverable">Deliverable</option><option value="objective">Objective</option></select><br/><label>URL:</label><input id="editurl"/><br/><button>Save</button><button id="deletenode">Delete</button></form>');
-    }
-
-
-    $('.info').css("border-color", view_helpers.customColor(d.type));
-
-    $("#editenddate").datepicker({
-      inline: true,
-      showOtherMonths: true,
-      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    });
-
-    $("#editstartdate").datepicker({
-      inline: true,
-      showOtherMonths: true,
-      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    });
-
-    $('#editdescription').val(d.type);
-
-    $('#edittype').val(d.type);
-
-    $('#editurl').val(d.url);
-
-    if (d.type === "deliverable") {
-      $('#editstartdate').val(d.start);
-      $('#editenddate').val(d.end);
-    }
-
-    $("#editbox").submit(function() {
+    view_node_info.show(d);
+    view_node_info.on_submit(function() {
       if (d.type === "deliverable") {
         graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
       }
@@ -564,17 +529,16 @@ function showInfo(d, i) {
       graph.update(true);
       return false;
     });
-
-    $("#deletenode").click(function() {
+    view_node_info.on_delete(function() {
       if (confirm('This node and all its connections will be deleted, are you sure?')) {
         graph.removeNode(d.id, null);
         graph.update(false);
-        $('.info').hide();
+        view_node_info.hide();
       }
     });
   } else {
     removeHighlight();
-    $('.info').fadeOut(300);
+    view_node_info.hide();
   }
   graph.update(true);
 }
