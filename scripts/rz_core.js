@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph'],
-function($, d3, consts, signal, util, model_graph) {
+define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'view/helpers'],
+function($, d3, consts, signal, util, model_graph, view_helpers) {
 
 var addednodes = [];
 
@@ -241,7 +241,7 @@ function update(no_relayout) {
             return customSize(d.type) - 2;
         })
         .style("fill", function(d) {
-            return customColor(d.type);
+            return view_helpers.customColor(d.type);
         })
         .style("stroke", function(d) {
             if (d.state === "chosen") return "#EDE275";
@@ -530,7 +530,7 @@ function showInfo(d, i) {
     }
 
 
-    $('.info').css("border-color", customColor(d.type));
+    $('.info').css("border-color", view_helpers.customColor(d.type));
 
     $("#editenddate").datepicker({
       inline: true,
@@ -645,42 +645,6 @@ function editLink(d, i) {
     });
 
     graph.update(true);
-}
-
-
-function customColor(type) {
-    var color;
-    switch (type) {
-        case "person":
-            color = '#FCB924';
-            break;
-        case "project":
-            color = '#009DDC';
-            break;
-        case "skill":
-            color = '#62BB47';
-            break;
-        case "deliverable":
-            color = '#202020';
-            break;
-        case "objective":
-            color = '#933E99';
-            break;
-        case "empty":
-            color = "#080808";
-            break;
-        case "chainlink":
-            color = "#fff";
-            break;
-        case "bubble":
-            color = "rgba(0,0,0,0.2)";
-            break;
-        default:
-            console.log('bug: unknown type ' + type);
-            color = '#080808';
-            break;
-    }
-    return color;
 }
 
 function customSize(type) {
