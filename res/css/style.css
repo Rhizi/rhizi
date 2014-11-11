@@ -324,7 +324,7 @@ input:focus {
   vertical-align: middle;
 }
 
-.info{
+.edge_info, .info {
   background-color: rgba(17,17,17,0.8);
 	position:fixed;
 	top:150px;

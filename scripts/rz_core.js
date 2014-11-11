@@ -153,7 +153,11 @@ function update(no_relayout) {
         })
         .attr("marker-end", "url(#end)")
         .on("click", function(d, i) {
-            //$('#textanalyser').val("node("+d.source.id+") -> "+d.name+" -> node("+d.target.id+")");
+            view.edge_info.on_delete(function () {
+                graph.removeLink(d);
+                graph.update(true);
+            });
+            view.edge_info.show();
         });;
     link.style("stroke-dasharray", function(d,i){
         if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
