@@ -3,5 +3,5 @@
   font-family: 'Lato';
   font-style: normal;
   font-weight: 300;
-  src: local('Lato Light'), local('Lato-Light'), url(Lato300.ttf) format('truetype');
+  src: local('Lato Light'), local('Lato-Light'), url(../font/Lato300.ttf) format('truetype');
 }
