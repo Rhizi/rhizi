@@ -12,6 +12,11 @@ var sugg = {}; // suggestions for autocompletion of node names
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
+function selectedType()
+{
+    return nodetypes[typeindex];
+}
+
 function autoSuggestAddName(name)
 {
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
@@ -288,7 +293,7 @@ var textAnalyser = function (newtext, finalize) {
         switch (orderStack[m]) {
             case START:
                 if (!typeStack[nodeindex]) {
-                    typeStack[nodeindex] = nodetypes[typeindex];
+                    typeStack[nodeindex] = selectedType();
                 }
                 break;
             case NODE:
@@ -308,7 +313,7 @@ var textAnalyser = function (newtext, finalize) {
     //FINAL N ORDER
     switch (orderStack[orderStack.length - 1]) {
         case START:
-            typeStack[nodeindex]=nodetypes[typeindex];
+            typeStack[nodeindex] = selectedType();
             addNode("new node", typeStack[nodeindex], "temp");
             if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
@@ -317,7 +322,7 @@ var textAnalyser = function (newtext, finalize) {
             ret.state = ANALYSIS_NODE_START;
             break;
         case NODE:
-            typeStack[nodeindex]=nodetypes[typeindex];
+            typeStack[nodeindex] = selectedType();
             addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
             if (!starGraph) {
                 addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
