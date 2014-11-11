@@ -677,7 +677,8 @@ function customColor(type) {
             color = "rgba(0,0,0,0.2)";
             break;
         default:
-            size = '#080808';
+            console.log('bug: unknown type ' + type);
+            color = '#080808';
             break;
     }
     return color;

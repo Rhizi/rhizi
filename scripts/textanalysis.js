@@ -163,6 +163,9 @@ var textAnalyser = function (newtext, finalize) {
         START = "START";
 
     function addNode(name, type, state) {
+        if (type === undefined) {
+            console.log('bug: textanalyser.addNode of type undefined');
+        }
         ret.nodes.push({'name':name, 'type':type, 'state':state});
     }
     function addLink(src, dst, name, state) {

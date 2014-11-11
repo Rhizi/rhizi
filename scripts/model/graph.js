@@ -21,6 +21,9 @@ function Graph(el) {
 
     ///FUNCTIONS
     this.addNode = function(name, type, state) {
+        if (type === undefined) {
+            console.log('bug: adding undefined type');
+        }
         var new_node = this._addNodeNoHistory(
             {name:name,
              type:type,
