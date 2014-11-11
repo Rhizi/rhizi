@@ -1,13 +1,13 @@
 (function() {
-    var lib_path = '../';
+    var lib_path = '../lib/';
     var config = {
         paths: {
-            jquery: lib_path + 'external/jquery',
-            'jquery-ui': lib_path + 'external/jquery-ui',
-            'd3': lib_path + 'external/d3/d3',
-            FileSaver: lib_path + 'external/FileSaver',
-            caret: lib_path + 'external/caret',
-            autocomplete: lib_path + 'external/autocomplete',
+            jquery: lib_path + 'jquery',
+            'jquery-ui': lib_path + 'jquery-ui',
+            'd3': lib_path + 'd3/d3',
+            FileSaver: lib_path + 'FileSaver',
+            caret: lib_path + 'caret',
+            autocomplete: lib_path + 'autocomplete',
         }
     }
 
