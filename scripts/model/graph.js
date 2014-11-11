@@ -125,7 +125,9 @@ function Graph(el) {
         var i = 0,
             j = 0,
             adjacentnode,
-            ret = {'nodes':[], 'links':{}};
+            link,
+            link2,
+            ret = {'nodes':[], 'links':[]};
 
         $(".debug").html(n.state);
 
@@ -139,31 +141,33 @@ function Graph(el) {
         d = d || 1;
 
         while (i < links.length) {
-            if (links[i].source === n) {
-                adjacentnode = findNode(links[i].target.id, null);
+            link = links[i];
+            // XXX: using name comparison because n might be stale
+            if (compareNames(link.source.name, n.name)) {
+                adjacentnode = findNode(link.target.id, null);
                 if (adjacentnode.state !== "temp") {
-                    adjacentnode.state = "exit";
+                    ret.nodes.push({type: 'exit', node: adjacentnode});
                 }
-                links[i].state = "exit";
+                ret.links.push({type: 'exit', link: link});
 
-                if (links[i].target.type === "chainlink") {
-                    console.log("chain");
+                if (link.target.type === "chainlink") {
                     while (j < links.length) {
-                        if (links[i].target.id === links[j].target.id &&
-                            links[j].target.type === "chainlink" &&
-                            links[j].target.state !== "temp") {
-                            adjacentnode = findNode(links[j].source.id, null);
+                        link2 = links[j];
+                        if (link.target.id === link2.target.id &&
+                            link2.target.type === "chainlink" &&
+                            link2.target.state !== "temp") {
+                            adjacentnode = findNode(link2.source.id, null);
                             if (adjacentnode.state !== "temp") {
-                                adjacentnode.state = "enter";
+                                ret.nodes.push({type: 'enter', node: adjacentnode});
                             }
-                            links[j].state = "enter";
+                            ret.links.push({type: 'enter', link: link2});
                         }
                         j++;
                     }
                 }
                 j=0;
             }
-            if (links[i].target === n) {
+            if (compareNames(links[i].target.name, n.name)) {
                 adjacentnode = findNode(links[i].source.id, null);
                 if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
                 links[i].state = "enter";
