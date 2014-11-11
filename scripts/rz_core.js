@@ -549,7 +549,7 @@ function mousedown() {
     $('.editlinkinfo').css('top', -100);
     $('.editlinkinfo').css('left', 0);
     removeHighlight();
-    $('.info').fadeOut(300);
+    view.hide();
     graph.update(true);
 }
 
