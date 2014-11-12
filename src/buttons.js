@@ -20,6 +20,13 @@ $('.export a').click(function() {
     saveAs(blob, filename);
 });
 
+$('.url-copy a').click(function() {
+    var json = rz_core.graph.save_to_json();
+    // TODO use jquery BBQ $.param({json: json});
+    var encoded = document.location.origin + '/?json=' + encodeURIComponent(json);
+    window.prompt('Copy to clipboard: Ctrl-C, Enter (or Cmd-C for Mac)', encoded);
+});
+
 var really_load = function() {
   if (!rz_core.graph.empty()) {
     return confirm('All unsaved changes will be deleted, are you sure?');
