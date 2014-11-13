@@ -74,7 +74,7 @@ var initDrawingArea = function () {
 
     //Zoom scale behavior in zoom.js
     zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-    
+
     vis = d3.select(el).append("svg:svg")
         .attr('id', 'canvas_d3')
         .attr("width", '100%')
@@ -115,6 +115,7 @@ var initDrawingArea = function () {
         .start();
 
     graph.update = update;
+    $('#canvas_d3').dblclick(canvas_handler_dblclick);
 }
 
 initDrawingArea();
@@ -132,6 +133,35 @@ function locate_visual_element(model_obj){
         return null;
     }
     return id_sel[0];
+}
+
+/**
+ * add node on canvas double click
+ */
+function canvas_handler_dblclick(){
+    var n = model_core.create_node__set_random_id();
+    n.name = ''; // will be set by user
+
+    graph._addNodeNoHistory(n); // FIXME: clean once node creation functions consolidate
+    graph.update();
+
+    var n_ve = locate_visual_element(n); // locate visual element
+
+    var on_slowdown_cb =  function(){
+        var set_focus = true;
+        editNode(n_ve, n, set_focus);
+        observer.disconnect();
+    }
+    var mutation_handler = rz_observer.new_Mutation_Handler__on_dxy_slowdown(on_slowdown_cb);
+    var observer = rz_observer.new_MutationObserver(mutation_handler);
+    mutation_handler.on_slowdown_threshold_reached;
+
+    observer.observe(n_ve, {
+        subtree: false,
+        childList : false,
+        attributes: true,
+        attributeOldValue : true,
+    });
 }
 
 function update(no_relayout) {
