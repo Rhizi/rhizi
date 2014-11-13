@@ -26,7 +26,7 @@ define('test', function() {
 });
 
 console.log('test_app: running under node');
-config.baseUrl = '../scripts/';
+config.baseUrl = '../src/';
 
 document.config = config;
 }());

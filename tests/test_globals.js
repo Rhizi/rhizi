@@ -1,5 +1,5 @@
 var base = require('./base');
-var util = require('../scripts/util');
+var util = require('../src/util');
 
 var count;
 

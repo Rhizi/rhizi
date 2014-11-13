@@ -16,7 +16,7 @@
 if (window.is_node) {
     // Testing path only
     console.log('app: running under node');
-    config.baseUrl = '../scripts/';
+    config.baseUrl = '../src/';
     window.rhizi_require_config = config;
 } else {
     // Main app path

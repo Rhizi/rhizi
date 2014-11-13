@@ -1,4 +1,4 @@
-addScript: loaded ../scripts/external/require.js
+addScript: loaded ../src/external/require.js
 test_app: running under node
 addScript: loaded test_app.js
 callback after test_app.js loading
@@ -9,7 +9,7 @@ callback after test_app.js loading
      d3: 'external/d3/d3',
      autocomplete: 'external/autocomplete',
      FileSaver: 'external/FileSaver' },
-  baseUrl: '../scripts/' }
+  baseUrl: '../src/' }
 hello from test factory
 here we are after test_app prerequisites
 42

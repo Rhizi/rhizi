@@ -1,6 +1,6 @@
-addScript: loaded ../scripts/external/require.js
+addScript: loaded ../src/external/require.js
 app: running under node
-addScript: loaded ../scripts/app.js
+addScript: loaded ../src/app.js
 test harness: starting script loading with requirejs
 test harness: main loaded
 Rhizi main started

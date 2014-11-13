@@ -2,4 +2,4 @@
 Rhizi Prototype1_files/
 
 .idea/
-scripts/local_config.js
+src/local_config.js

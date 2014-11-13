@@ -6,7 +6,7 @@ var addScript = require('./test_util').addScript;
 window.console.log = console.log;
 window.is_node = true;
 
-addScript(window, '../scripts/external/require.js')
+addScript(window, '../src/external/require.js')
     .load_next('test_app.js')
     .done(function () {
         var config = document.config
