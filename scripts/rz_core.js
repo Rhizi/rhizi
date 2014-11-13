@@ -662,15 +662,23 @@ $('#editform').keypress(function(e) {
 });
 
 
-function editNode(node, d, i) {
-    var oldname = d.name;
-    var element = $('#editname');
-    var offset = $(node).find('.nodetext').offset();
+/**
+ * @param e visual node element
+ * @param n node model object
+ */
+function editNode(e, n, set_focus) {
+    var oldname = n.name;
+    var en_element = $('#editname');
+    var offset = $(e).find('.nodetext').offset();
 
     $('.editinfo').css('top', offset.top);
     $('.editinfo').css('left', offset.left);
-    element.val(oldname);
-    element.data().d = d;
+    en_element.val(oldname);
+    en_element.data().d = n;
+
+    if (set_focus){
+        en_element.focus();
+    }
 }
 
 function editLink(link, d, i) {
