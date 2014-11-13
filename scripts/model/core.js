@@ -12,33 +12,41 @@ define([], function() {
         return Math.random().toString(36).substring(2);
     }
 
+    function random_node_name() {
+        return Math.random().toString(36).substring(2, 10);
+    }
+
     function Node() {
     }
 
-    this.create_node_with_random_id = function(node_spec) {
+    function create_node__set_random_id(node_spec) {
+        if (undefined == node_spec) {
+            node_spec = {};
+        }
+
         var ret = new Node();
         ret.id = random_id();
 
-        ret.name = spec.name;
-        ret.type = spec.type;
-        ret.state = spec.state;
-        ret.status = spec.status;
-        ret.url = spec.url;
+        ret.name = node_spec.name;
+        ret.type = node_spec.type;
+        ret.state = node_spec.state;
+        ret.status = node_spec.status;
+        ret.url = node_spec.url;
 
-        ret.start = spec.start;
-        ret.end = spec.end;
+        ret.start = node_spec.start;
+        ret.end = node_spec.end;
 
         return ret;
     }
 
-    this.create_link_with_random_id = function(link_spec) {
+    function create_link__set_random_id(link_spec) {
         var ret = new Link();
         ret.id = random_id();
     }
 
     /**
      * determine if nodes are equal by ID
-     * 
+     *
      * @param other_node
      * @returns {Boolean}
      */
@@ -56,7 +64,7 @@ define([], function() {
 
     /**
      * determine if links are equal by ID
-     * 
+     *
      * @param other_node
      * @returns {Boolean}
      */
@@ -65,7 +73,8 @@ define([], function() {
     }
 
     return {
-        create_node_with_random_id : create_node_with_random_id,
-        create_link_with_random_id : create_link_with_random_id,
+        random_node_name : random_node_name,
+        create_node__set_random_id : create_node__set_random_id,
+        create_link__set_random_id : create_link__set_random_id,
     };
 });
