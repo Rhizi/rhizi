@@ -55,12 +55,12 @@ define(
                             + this.most_recent_sample_weight * d;
 
                     // debug
-                    console.log({
-                        'dx' : dx,
-                        'dy' : dy,
-                        'd' : d,
-                        'avg_d' : avg_d,
-                    });
+                    // console.log({
+                    //     'dx' : dx,
+                    //     'dy' : dy,
+                    //     'd' : d,
+                    //     'avg_d' : avg_d,
+                    // });
 
                     if (avg_d < this.slowdown_threshold) {
                         // slowdown threshold reached
