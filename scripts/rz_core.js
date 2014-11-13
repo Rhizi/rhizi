@@ -329,7 +329,7 @@ function update(no_relayout) {
     node.select('g.node circle')
         .attr("class", "circle graph")
         .attr("r", function(d) {
-            return customSize(d.type) - 2;
+            return view_helpers.customSize(d.type) - 2;
         })
         .style("fill", function(d) {
             return view_helpers.customColor(d.type);
@@ -730,40 +730,6 @@ function editLink(link, d, i) {
     });
 
     graph.update(true);
-}
-
-function customSize(type) {
-    var size;
-    switch (type) {
-        case "person":
-            size = 12;
-            break;
-        case "project":
-            size = 12;
-            break;
-        case "skill":
-            size = 12;
-            break;
-        case "deliverable":
-            size = 12;
-            break;
-        case "objective":
-            size = 12;
-            break;
-        case "empty":
-            size = 9;
-            break;
-        case "chainlink":
-            size = 8;
-            break;
-        case "bubble":
-            size = 180;
-            break;
-        default:
-            size = 9;
-            break;
-    }
-    return size;
 }
 
 return {
