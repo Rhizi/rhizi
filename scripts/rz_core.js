@@ -119,6 +119,21 @@ var initDrawingArea = function () {
 
 initDrawingArea();
 
+/**
+ * find the visual element counterpart of a given model object. This relies on
+ * the visual element having an id attribute equal to the object's id.
+ *
+ * @return null if visual element is not found
+ */
+function locate_visual_element(model_obj){
+    var id_sel = $('#' + model_obj.id);
+    if (0 == id_sel.length){
+        console.warn('unable to find visual element for model object: object id: ' + model_obj.id.toString())
+        return null;
+    }
+    return id_sel[0];
+}
+
 function update(no_relayout) {
     var node,
         link,
