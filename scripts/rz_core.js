@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'view/helpers', 'view/view'],
-function($, d3, consts, signal, util, model_graph, view_helpers, view) {
+define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer'],
+function($, d3, consts, signal, util, model_graph, model_core, view_helpers, view, rz_observer) {
 
 var addednodes = [];
 
