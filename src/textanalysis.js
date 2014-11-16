@@ -150,14 +150,13 @@ function tokenize(text, node_token, quote)
  */
 var textAnalyser = function (newtext, finalize) {
     var sentence,
-        newlinks = [],
-        newnodes = [],
+        token_set_new_node_names = [], // token set representing new node names
+        token_set_new_link_names = [], // token set representing new link names
         linkindex = 0,
         nodeindex = 0,
         orderStack = [],
         and_count = 0,
         prefix = "",
-        ret = {'nodes': [], 'links': []},
         m,
         word,
         completeSentence,
@@ -215,42 +214,42 @@ var textAnalyser = function (newtext, finalize) {
         default:
             if (orderStack[orderStack.length - 1] === START) {
                 orderStack.push(NODE);
-                newnodes.push(sentence[m]);
+                token_set_new_node_names.push(sentence[m]);
                 linkindex++;
             } else if (orderStack[orderStack.length - 1] === NODE) {
                 orderStack.push(LINK);
-                if (!newlinks[linkindex]) {
-                    newlinks[linkindex] = sentence[m] + " ";
+                if (!token_set_new_link_names[linkindex]) {
+                    token_set_new_link_names[linkindex] = sentence[m] + " ";
                 } else {
-                    newlinks[linkindex] += sentence[m] + " ";
+                    token_set_new_link_names[linkindex] += sentence[m] + " ";
                 }
             } else {
-                if (!newlinks[linkindex]) {
-                    newlinks[linkindex] = sentence[m] + " ";
+                if (!token_set_new_link_names[linkindex]) {
+                    token_set_new_link_names[linkindex] = sentence[m] + " ";
                 } else {
-                    newlinks[linkindex] += sentence[m] + " ";
+                    token_set_new_link_names[linkindex] += sentence[m] + " ";
                 }
             }
-            if (newnodes.length === 0) {
+            if (token_set_new_node_names.length === 0) {
                 prefix += (prefix.length > 0 ? ' ' : '') + sentence[m];
             }
             break;
         }
     }
 
-    starGraph = (newlinks.length - and_count) >= 3  ||
-        ((newlinks.length - and_count >= 1) &&
-         newlinks.length > 2 &&
+    starGraph = (token_set_new_link_names.length - and_count) >= 3  ||
+        ((token_set_new_link_names.length - and_count >= 1) &&
+         token_set_new_link_names.length > 2 &&
          orderStack.length > 1 &&
          orderStack[orderStack.length - 1] != NODE);
 
     //PREFIX not null case - put complete sentence in first link.
     if (prefix && !starGraph) {
-        newlinks[1] = prefix + " " + newnodes[0] +
-        (newlinks[1] !== undefined || newnodes[1] !== undefined ?
+        token_set_new_link_names[1] = prefix + " " + token_set_new_node_names[0] +
+        (token_set_new_link_names[1] !== undefined || token_set_new_node_names[1] !== undefined ?
         " " : "")
-        + (newlinks[1] !== undefined ? newlinks[1] : "")
-        + (newnodes[1] !== undefined ? newnodes[1] : "");
+        + (token_set_new_link_names[1] !== undefined ? token_set_new_link_names[1] : "")
+        + (token_set_new_node_names[1] !== undefined ? token_set_new_node_names[1] : "");
     }
 
     //WRITE COMPLETE SENTENCE
@@ -260,12 +259,12 @@ var textAnalyser = function (newtext, finalize) {
     completeSentence = prefix.length > 0 ? String(prefix) + " " : "";
     for (m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === NODE) {
-            word += " (" + newnodes[nodeindex] + ") ";
-            completeSentence += newnodes[nodeindex] + " ";
+            word += " (" + token_set_new_node_names[nodeindex] + ") ";
+            completeSentence += token_set_new_node_names[nodeindex] + " ";
             nodeindex++;
         } else if (orderStack[m] === LINK) {
-            word += " -->" + newlinks[nodeindex] + " --> ";
-            completeSentence += newlinks[nodeindex];
+            word += " -->" + token_set_new_link_names[nodeindex] + " --> ";
+            completeSentence += token_set_new_link_names[nodeindex];
         }
     }
     completeSentence = completeSentence.trim();
@@ -278,8 +277,8 @@ var textAnalyser = function (newtext, finalize) {
     typesetter = "";
     if (finalize === true) {
         typesetter = "perm";
-        for (n = 0; n < newnodes.length; n++) {
-            autoSuggestAddName(newnodes[n]);
+        for (n = 0; n < token_set_new_node_names.length; n++) {
+            autoSuggestAddName(token_set_new_node_names[n]);
         }
     } else {
         typesetter = "temp";
@@ -299,10 +298,10 @@ var textAnalyser = function (newtext, finalize) {
                 }
                 break;
             case NODE:
-                addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
+                addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
                 if (!starGraph) {
-                    addLink(newnodes[nodeindex - 1], newnodes[nodeindex],
-                            newlinks[linkindex], typesetter);
+                    addLink(token_set_new_node_names[nodeindex - 1], token_set_new_node_names[nodeindex],
+                            token_set_new_link_names[linkindex], typesetter);
                 }
                 nodeindex++;
                 break;
@@ -318,24 +317,24 @@ var textAnalyser = function (newtext, finalize) {
             typeStack[nodeindex] = selectedType();
             addNode("new node", typeStack[nodeindex], "temp");
             if (!starGraph) {
-                addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
+                addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
                 and_connect("new node");
             }
             ret.state = ANALYSIS_NODE_START;
             break;
         case NODE:
             typeStack[nodeindex] = selectedType();
-            addNode(newnodes[nodeindex], typeStack[nodeindex], typesetter);
+            addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
             if (!starGraph) {
-                addLink(newnodes[nodeindex - 1], newnodes[nodeindex], newlinks[linkindex], typesetter);
-                and_connect(newnodes[nodeindex]);
+                addLink(token_set_new_node_names[nodeindex - 1], token_set_new_node_names[nodeindex], token_set_new_link_names[linkindex], typesetter);
+                and_connect(token_set_new_node_names[nodeindex]);
             }
             break;
         case LINK:
             linkindex++;
             addNode("new node", selectedType(), "temp");
             if (!starGraph) {
-                addLink(newnodes[nodeindex - 1], "new node", newlinks[linkindex], "temp");
+                addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
                 and_connect("new node");
             }
             ret.state = ANALYSIS_LINK;
@@ -345,13 +344,13 @@ var textAnalyser = function (newtext, finalize) {
     //EXTERNAL AND CONNECTION CHECKING
     function and_connect(node) {
         var verb;
-        for(var x=0;x<newlinks.length;x++){
-            if(newlinks[x])if(newlinks[x].replace(/ /g,"")!=="and"){
-                verb = newlinks[x];
+        for(var x=0;x<token_set_new_link_names.length;x++){
+            if(token_set_new_link_names[x])if(token_set_new_link_names[x].replace(/ /g,"")!=="and"){
+                verb = token_set_new_link_names[x];
                 for(var y=0; y<x ;y++){
-                    addLink(newnodes[y], node, verb, typesetter);
-                    for(var z=x; z<newnodes.length ;z++){
-                        addLink(newnodes[y], newnodes[z], verb, typesetter);
+                    addLink(token_set_new_node_names[y], node, verb, typesetter);
+                    for(var z=x; z<token_set_new_node_names.length ;z++){
+                        addLink(token_set_new_node_names[y], token_set_new_node_names[z], verb, typesetter);
                     }
                 }
             }
@@ -365,8 +364,8 @@ var textAnalyser = function (newtext, finalize) {
     //STAR CASE
     if (starGraph) {
         addNode(completeSentence, "chainlink", typesetter);
-        for (n = 0; n < newnodes.length; n++) {
-            addLink(newnodes[n], completeSentence, "", typesetter);
+        for (n = 0; n < token_set_new_node_names.length; n++) {
+            addLink(token_set_new_node_names[n], completeSentence, "", typesetter);
         }
     }
 
