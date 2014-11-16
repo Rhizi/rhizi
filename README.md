@@ -1,4 +1,4 @@
 rhizi
 =====
 
-Open source intelligence
+A collaborative editor for organising, communicating, and analysing data in graph form
