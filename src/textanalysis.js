@@ -401,28 +401,36 @@ var textAnalyser = function (newtext, finalize) {
             if (comp.old_name && comp.new_name) {
                 up_to_two_renames(graph, comp.old_name, comp.new_name);
             }
-            for (k in ret.links) {
-                l = ret.links[k];
-                graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
-            }
+
+            ret.for_each_link_add(function (link) {
+                graph.addLinkByName(link.sourceName,
+                                    link.targetName,
+                                    link.name,
+                                    link.state,
+                                    ret.drop_conjugator_links);
+            });
         } else {
             // REINITIALISE GRAPH (DUMB BUT IT WORKS)
             graph.removeNodes("temp");
             graph.removeLinks("temp");
-            for (k in ret.nodes) {
-                n = ret.nodes[k];
-                if (n.state == 'temp' && finalize) {
+
+            ret.for_each_node_add(function (node) {
+                if (true == finalize && node.state == 'temp') {
                     console.log('bug: temp node creation on finalize');
                 } else {
-                    lastnode = graph.addNode(n.name, n.type, n.state);
+                    lastnode = graph.addNode(node);
                 }
-            }
-            for (k in ret.links) {
-                l = ret.links[k];
-                if (!finalize || l.name !== 'and') {
-                    graph.addLinkByName(l.sourceName, l.targetName, l.name, l.state, ret.drop_conjugator_links);
+            });
+
+            ret.for_each_link_add(function (link) {
+                if (false == finalize || link.name !== 'and') {
+                    graph.addLinkByName(link.__src,
+                                        link.__dst,
+                                        link.name,
+                                        link.state,
+                                        ret.drop_conjugator_links);
                 }
-            }
+            });
         }
 
         if (finalize && backend_commit) {
