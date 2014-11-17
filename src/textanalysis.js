@@ -174,8 +174,14 @@ var textAnalyser = function (newtext, finalize) {
         if (type === undefined) {
             console.log('bug: textanalyser.addNode of type undefined');
         }
-        ret.nodes.push({'name':name, 'type':type, 'state':state});
+        var node = model_core.crete_node_from_spec(
+                {'name':name,
+                 'type':type,
+                 'state':state});
+
+        ret.node_set_add.push(node);
     }
+
     function addLink(src, dst, name, state) {
         if (!src || !dst) {
             if (yell_bug) {
@@ -193,7 +199,9 @@ var textAnalyser = function (newtext, finalize) {
             link_hash[src] = {};
         }
         link_hash[src][dst] = 1;
-        ret.links.push({'sourceName':src, 'targetName':dst, 'name':name ? name.trim() : "", 'state':state});
+
+        var link = model_core.crete_link_from_spec(src, dst, {'name':name, 'state':state});
+        ret.link_set_add.push(link);
     }
 
     //Sentence Sequencing
