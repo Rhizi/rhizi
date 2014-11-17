@@ -19,29 +19,43 @@ define([], function() {
     function Node() {
     }
 
-    Node.prototype.selected = function() {
-        return this.state == 'chosen' || this.state == 'enter' || this.state == 'exit';
+    function Link() {
     }
 
-    function create_node__set_random_id(node_spec) {
-        if (node_spec.id) {
-            console.log('create_node__set_random_id: bug: given id');
-        }
-        node_spec.id = random_id();
-        return create_node(node_spec);
-    }
-
-    function create_node(node_spec) {
-        if (undefined == node_spec) {
-            node_spec = {};
-        }
+    /**
+     * the most flexible way to create a node: - perform spec field validation -
+     * fill-in missing spec fields
+     */
+    function crete_node_from_spec(node_spec) {
         var ret = new Node();
-        ret.name = node_spec.name;
-        ret.type = node_spec.type;
-        ret.state = node_spec.state;
-        ret.status = node_spec.status;
-        ret.url = node_spec.url;
 
+        // name
+        if (undefined == node_spec.name) {
+            console.debug('crete_node_from_spec: undefined name, falling back to \"\"');
+            node_spec.name = "";
+        }
+        ret.name = node_spec.name;
+
+        // type
+        if (undefined == node_spec.type) {
+            console.debug('crete_node_from_spec: undefined type, falling back to \'empty\'');
+            node_spec.type = 'empty';
+        }
+        ret.type = node_spec.type;
+
+        // status
+        if (undefined == node_spec.status) {
+            node_spec.type = 'unknown';
+        }
+        ret.status = node_spec.status;
+
+        // visual
+        ret.x = node_spec.x;
+        ret.y = node_spec.y;
+
+        // other
+        ret.state = node_spec.state;
+        ret.url = node_spec.url;
         ret.start = node_spec.start;
         ret.end = node_spec.end;
         ret.x = node_spec.x;
@@ -51,9 +65,29 @@ define([], function() {
         return ret;
     }
 
-    function create_link__set_random_id(link_spec) {
-        var ret = new Link();
-        ret.id = random_id();
+    /**
+     *
+     */
+    function create_node__set_random_id(node_spec) {
+        if (undefined == node_spec) {
+            node_spec = {};
+        }
+
+        var ret = crete_node_from_spec(node_spec);
+        Object.defineProperty(ret, "id", {
+            value: random_id(),
+            writable: false
+        });
+
+        return ret;
+    }
+
+    function create_link__set_random_id(src, dst, link_spec) {
+        var ret = crete_link_from_spec(src, dst, link_spec);
+        Object.defineProperty(ret, "id", {
+            value: random_id(),
+            writable: false
+        });
     }
 
     /**
@@ -74,6 +108,31 @@ define([], function() {
 
     }
 
+    function crete_link_from_spec(src, dst, link_spec) {
+        if (undefined == src) {
+            console.error('crete_link_from_spec: undefined: src');
+            return null;
+        }
+        if (undefined == dst) {
+            console.error('crete_link_from_spec: undefined: dst');
+            return null;
+        }
+
+        var ret = new Link();
+        ret.__src = src;
+        ret.__dst = dst;
+        ret.__type = 'textual_link';
+
+        if (undefined == link_spec.name){
+            console.warn('crete_link_from_spec: name: ' + link_spec.name);
+            link_spec.name = "";
+        }
+        ret.name = link_spec.name.trim();
+
+        ret.state = link_spec.state;
+        return ret;
+    }
+
     /**
      * determine if links are equal by ID
      *
@@ -86,7 +145,8 @@ define([], function() {
 
     return {
         random_node_name : random_node_name,
-        create_node: create_node,
+        crete_node_from_spec : crete_node_from_spec,
+        crete_link_from_spec : crete_link_from_spec,
         create_node__set_random_id : create_node__set_random_id,
         create_link__set_random_id : create_link__set_random_id,
     };
