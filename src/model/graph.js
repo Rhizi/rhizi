@@ -19,50 +19,45 @@ function Graph(el) {
     }
     var id_generator = id_generator_generator();
 
-    ///FUNCTIONS
-    this.addNode = function(name, type, state) {
-        if (type === undefined) {
-            console.log('bug: adding undefined type');
-        }
-        var new_node = this._addNodeNoHistory(
-            {name:name,
-             type:type,
-             state:state,
-             start:0,
-             end:0,
-             status:"unknown"});
-        if (new_node) {
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{
-                nodes: {add: [new_node]}}]);
-            return new_node;
+    /**
+     * add node if no previous node is present whose id equals that of the node being added
+     *
+     * @return node if node was actually added
+     */
+    this.addNode = function(node) {
+        if (this.__addNode(node)) {
+            return node;
         }
     }
 
-    this._addNodeNoHistory = function(spec) {
-        // No history recorded - this is a helper for loading from files / constant graphs
-        var node;
-        if (spec.id === undefined) {
-            node = findNodeByName(spec.name, null);
-        } else {
-            if (spec.id !== undefined) {
-                node = findNode(spec.id, null);
+    /**
+     * Inner implementation
+     *
+     * @param notify whether or not a presenter notification will be sent, default = true
+     */
+    this.__addNode = function(node, notify) {
+        if (undefined == node.id) {
+            if (findNodeByName(node.name)){
+                // FIXME handle node-with-equal-name case
+                return;
+            }else{
+                node = model_core.create_node__set_random_id(node);
+                console.debug('__addNode: node id missing, generated: name: ' + node.name + ', id: ' + node.id);
             }
         }
-        if (node === undefined) {
-            node = {
-                "id": spec.id || id_generator(),
-                "name": spec.name,
-                "type": spec.type,
-                "state": spec.state,
-                "start": spec.start,
-                "end": spec.end,
-                "status": spec.status,
-                'url': spec.url,
-                'x': spec.x,
-                'y': spec.y,
-            };
-            nodes.push(node);
+
+        if (findNode(node.id, null)){
+            return;
         }
+
+        undefined === notify && (notify = true); // notify by default
+
+        nodes.push(node);
+
+        if (undefined == notify){
+            signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {add: [node]}}]);
+        }
+
         return node;
     }
 
