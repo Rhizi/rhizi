@@ -1,7 +1,7 @@
 "use strict";
 
-define(['rz_core', 'model/util', 'model/diff'], 
-function(rz_core, model_util, model_diff) {
+define(['rz_core', 'model/core', 'model/util', 'model/diff'],
+function(rz_core, model_core, model_util, model_diff) {
 
 var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
@@ -167,6 +167,8 @@ var textAnalyser = function (newtext, finalize) {
         NODE = "NODE",
         LINK = "LINK",
         START = "START";
+
+    var ret = model_diff.new_topo_diff();
 
     function addNode(name, type, state) {
         if (type === undefined) {
