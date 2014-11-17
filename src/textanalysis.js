@@ -208,7 +208,7 @@ var textAnalyser = function (newtext, finalize) {
     //Build the words and cuts the main elements
     sentence = tokenize(newtext, '#', '"');
 
-    //BUILD NEW NODE AND LINK ARRAYS WITH ORDER OF APPEARENCE
+    // build new node,link arrays in order of appearance
     for (m = 0; m < sentence.length; m++) {
         switch (sentence[m]) {
         case "#":
@@ -383,21 +383,20 @@ var textAnalyser = function (newtext, finalize) {
 
     ret.applyToGraph = function(graph, backend_commit) {
         window.ret = ret;
-        var comp = graph.compareSubset('temp',
-            ret.nodes.filter(
-                function(node) {
-                    return !graph.hasNodeByName(node.name, "perm")
-                        && node.type !== 'bubble';
-                }).map(function (node) {
-                    return {name: node.name};
-                }),
-            ret.links.map(
-                function (link) {
-                    return [link.sourceName, link.targetName];
-                }));
 
-        var k, n, l;
-        if (comp.graph_same && !finalize) {
+        /*
+         * generate fitered node set who:
+         * - are not name-present in graph
+         * - are not of type 'bubble'
+         */
+        var n_set = ret.node_set_add.filter(function(node) {
+                    return false == graph.hasNodeByName(node.name, "perm")
+                        && node.type !== 'bubble';
+                });
+
+        var comp = graph.compareSubset('temp', n_set, ret.link_set_add);
+
+        if (false == finalize && comp.graph_same) {
             if (comp.old_name && comp.new_name) {
                 up_to_two_renames(graph, comp.old_name, comp.new_name);
             }
