@@ -108,7 +108,10 @@ define([],
 
             /**
              * Visual diff object expressing any visual change to the state of a
-             * particular visualization type
+             * particular visualization type.
+             *
+             * @obj_spec if none is passed a default topo_diff is constructed
+             *           with node,link add sets
              */
             function Vis_Diff(obj_spec) {
             }
@@ -117,8 +120,16 @@ define([],
                 /*
                  * validate obj_spec
                  */
-                // TODO
-                var ret = new Topo_Diff(obj_spec);
+                var ret;
+                if (undefined == obj_spec) {
+                    obj_spec = {
+                        node_set_add : [],
+                        link_set_add : [],
+                    }
+                    ret = new Topo_Diff(obj_spec);
+                } else {
+                    ret = new Topo_Diff(obj_spec);
+                }
                 return ret;
             }
 
