@@ -55,7 +55,7 @@ class RhiziServer(object):
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser(description='rhizi-server')
-    p.add_argument('--config-dir', help='path to Rhizi config dir')
+    p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     args = p.parse_args()
 
     cfg_dir = args.config_dir
