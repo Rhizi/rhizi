@@ -1,7 +1,8 @@
 "use strict"
 
-define(['autocomplete', 'rz_core', 'textanalysis', 'signal', 'consts'],
-function(autocomplete, rz_core, textanalysis, signal, consts) {
+define(['jquery', 'autocomplete', 'rz_core', 'textanalysis', 'signal', 'consts'],
+function($, autocomplete, rz_core, textanalysis, signal, consts) {
+
 var text = ""; // Last text of sentence
 var element_name = '#textanalyser';
 var element = $(element_name);
