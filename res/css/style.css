@@ -208,7 +208,7 @@ input:focus {
 /* Selected parts of the graph, right now by clicking, later with search. */
 
 .notselected {
-    opacity: 0.5;
+    opacity: 0.2;
 }
 
 .graph.link.temp_and {
