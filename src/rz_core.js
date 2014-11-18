@@ -159,6 +159,10 @@ function canvas_handler_dblclick(){
     });
 }
 
+var node_selected = function(node) {
+    return node.state == 'chosen' || node.state == 'enter' || node.state == 'exit';
+}
+
 function update(no_relayout) {
     var node,
         link,
@@ -223,15 +227,16 @@ function update(no_relayout) {
         });
 
     link.attr("class", function(d,i){
-        if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
-            return "graph link temp_and";
-        else
-            return "graph link";
+        var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp") ? " temp_and" : "",
+            selected = node_selected(d) ? " selected" : "";
+
+        return "graph link" + temp_and + selected;
         });
 
     link.selectAll('path.link')
         .attr('class', function(d) {
-            return d.state + " link graph";
+            var selected = node_selected(d) ? " selected" : "";
+            return d.state + selected + " link graph";
         });
 
     link.exit().remove();
@@ -245,7 +250,10 @@ function update(no_relayout) {
     linktext = vis.selectAll(".linklabel").data(graph.links());
     linktext.enter()
         .append("text")
-        .attr("class", "linklabel graph")
+        .attr("class", function(d) {
+            var selected = node_selected(d) ? " selected" : "";
+            return "linklabel graph" + selected;
+        })
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
             if (d.state !== "temp") {
@@ -276,7 +284,7 @@ function update(no_relayout) {
         });
 
     var nodeEnter = node.enter()
-        .append("g").attr('class', 'node')
+        .append("g")
         .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
         .attr('visibility', 'hidden') // made visible on first tick
         .on("click", function(d, i) {
@@ -293,8 +301,12 @@ function update(no_relayout) {
         .call(drag);
 
     node.each(function (d) {
-        this.node = d;
-    });
+            this.node = d;
+        })
+        .attr('class', function(d) {
+            var selected = node_selected(d) ? " selected" : "";
+            return 'node' + selected;
+        });
 
     nodetext = nodeEnter.insert("text")
         .attr("class", "nodetext graph")
