@@ -214,6 +214,7 @@ function update(no_relayout) {
                 view.edge_info.hide();
             });
             view.edge_info.show(d);
+            removeHighlight();
             highlight(source);
             highlight(target);
             source.state = 'chosen';
