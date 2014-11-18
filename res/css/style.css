@@ -101,11 +101,11 @@ input:focus {
 }
 
 .circle {
-
   stroke: #fff;
   stroke-width: 1.5px;
   z-index: 100;
   pointer-events:all;
+  box-shadow: 0 0 0px #FFFF8F;
 }
 
 .nodetext {
@@ -139,6 +139,82 @@ input:focus {
   z-index:2; // higher than link, lower than node
 }
 
+.circle.chosen {
+    stroke: #EDE275;
+}
+.circle.enter {
+    stroke: #EDE275;
+}
+.circle.bubble {
+    stroke: #101010;
+}
+.circle.exit {
+    stroke: #EDE275;
+}
+.circle.chainlink {
+    stroke: #AAA;
+}
+
+.circle.temp {
+    box-shadow: 0 0 40px #FFFF8F;
+}
+
+.circle.temp, .circle.chosen {
+    stroke-width: 3px;
+}
+
+.circle.temp.empty {
+    stroke-width: 1.5px;
+}
+
+/* Per node and edge type (type is a property of nodes and links) styling
+ * note that this should be automatically generated somehow for user settings.
+ */
+
+.circle.person {
+    fill: #FCB924;
+}
+
+
+.circle.project {
+    fill: #009DDC;
+}
+
+.circle.skill {
+    fill: #62BB47;
+}
+
+.circle.deliverable {
+    fill: #202020;
+}
+
+.circle.objective {
+    fill: #933E99;
+}
+
+.circle.empty {
+    fill: #080808;
+}
+
+.circle.chainlink {
+    fill: #fff;
+}
+
+.circle.bubble {
+    fill: rgba(0,0,0,0.2);
+}
+
+
+// Selected parts of the graph, right now by clicking, later with search.
+
+.graph.link.selected {
+    fill: #EDE275;
+}
+
+.graph.link.temp_and {
+    stroke-dasharray: 3,3;
+}
+
 .highlightlink {
   fill: none;
   stroke: #EDE275;
@@ -147,18 +223,18 @@ input:focus {
   pointer-events: none;
 }
 
-.enterlink {
+.link.enter {
   fill: none;
   stroke: #EDE275;
-  stroke-width: 2px;
+  stroke-width: 4px;
   z-index:1;
   pointer-events: none;
 }
 
-.exitlink {
+.link.exit {
   fill: none;
   stroke: #EDE275;
-  stroke-width: 2px;
+  stroke-width: 4px;
   z-index:1;
   pointer-events: none;
 }
@@ -220,16 +296,6 @@ input:focus {
 .status{
   display:none;
 }
-
-/*
-.typeselection{
-  position:fixed;
-  right:20px;
-  top:200px;
-  font-size:16px;
-  text-align:right;
-
-}*/
 
 .typeselection{
   position:fixed;
@@ -485,4 +551,3 @@ input:focus {
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px;
 }
-

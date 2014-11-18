@@ -25,11 +25,6 @@ var drag;
 
 var force;
 
-var state_to_link_class = {
-    enter:'enterlink graph',
-    exit:'exitlink graph',
-};
-
 function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
 }
@@ -189,12 +184,11 @@ function update(no_relayout) {
         .attr("markerWidth", 4)
         .attr("markerHeight", 4)
         .attr("orient", "auto")
-        .attr("class", "graph")
-        .style("fill", function(d){
+        .attr("class", function(d){
             if (d.state==="enter" || d.state==="exit") {
-                return "EDE275";
+                return "selected";
             } else {
-                return "#aaa";
+                return "";
             }
             })
         .append("svg:path")
@@ -202,7 +196,7 @@ function update(no_relayout) {
 
     link_g.append("path")
         .attr("class", function(d) {
-            return state_to_link_class[d.state] || 'link graph';
+            return d.state + ' link graph';
         })
         .attr("marker-end", "url(#end)");
 
@@ -227,19 +221,16 @@ function update(no_relayout) {
             graph.update(true);
         });
 
-    link.style("stroke-dasharray", function(d,i){
+    link.attr("class", function(d,i){
         if(d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp")
-            return "3,3";
+            return "graph link temp_and";
         else
-            return "0,0";
+            return "graph link";
         });
 
     link.selectAll('path.link')
-        .attr('stroke-width', function(d) {
-            if (d.state === 'exit' || d.state === 'enter') {
-                return "4px";
-            }
-            return "2.0px";
+        .attr('class', function(d) {
+            return d.state + " link graph";
         });
 
     link.exit().remove();
@@ -294,6 +285,7 @@ function update(no_relayout) {
             }
             if (d.state !== "temp"){
                 editNode(this, d, i);
+                removeHighlight();
                 showInfo(this.node, i);
             }
         })
@@ -327,29 +319,11 @@ function update(no_relayout) {
 
     circle = nodeEnter.insert("circle");
     node.select('g.node circle')
-        .attr("class", "circle graph")
+        .attr("class", function(d) {
+            return d.type + " " + d.state + " circle graph";
+        })
         .attr("r", function(d) {
             return view_helpers.customSize(d.type) - 2;
-        })
-        .style("fill", function(d) {
-            return view_helpers.customColor(d.type);
-        })
-        .style("stroke", function(d) {
-            if (d.state === "chosen") return "#EDE275";
-            if (d.state === "enter") return "#EDE275";
-            if (d.type === "bubble") return "#101010";
-            if (d.state === "exit")  return "#EDE275";
-            if (d.type === "chainlink")  return "#AAA";
-
-            return "#fff";
-        })
-        .style("stroke-width", function(d) {
-            if (d.state === "temp" && d.type !== "empty" || d.state === "chosen") return "3px";
-            else return "1.5px";
-        })
-        .style("box-shadow", function(d) {
-            if (d.state === "temp") return "0 0 40px #FFFF8F";
-            else return "0 0 0px #FFFF8F";
         })
         .on("click", function(d, i) {
             if (d3.event.defaultPrevented) {
@@ -358,6 +332,7 @@ function update(no_relayout) {
             }
             d3.event.stopPropagation();
             if(d.state!=="temp") {
+                removeHighlight();
                 showInfo(d, i);
             } else {
                 removeHighlight();
@@ -386,7 +361,10 @@ function update(no_relayout) {
             }
         })
         .on("click", function(d, i) {
-            if(d.state!=="temp")showInfo(d, i);
+            if(d.state!=="temp") {
+                removeHighlight();
+                showInfo(d, i);
+            }
         });
     //}
 
