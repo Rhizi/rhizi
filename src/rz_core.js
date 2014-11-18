@@ -25,6 +25,10 @@ var drag;
 
 var force;
 
+// TODO hide inside a selection object? behavior? probably a good idea. route selection to it,
+// let it change state on nodes & links and query it for selection activity. (between 'select' and 'unselect')
+var selection; // boolean, true if there is a current selection
+
 function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
 }
@@ -163,6 +167,10 @@ var node_selected = function(node) {
     return node.state == 'chosen' || node.state == 'enter' || node.state == 'exit';
 }
 
+var selected_class = function(node) {
+    return selection ? (node_selected(node) ? "selected" : "notselected") : "";
+}
+
 function update(no_relayout) {
     var node,
         link,
@@ -188,13 +196,9 @@ function update(no_relayout) {
         .attr("markerWidth", 4)
         .attr("markerHeight", 4)
         .attr("orient", "auto")
-        .attr("class", function(d){
-            if (d.state==="enter" || d.state==="exit") {
-                return "selected";
-            } else {
-                return "";
-            }
-            })
+        .attr("class", function(d) {
+            return selected_class(d);
+        })
         .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5");
 
@@ -226,17 +230,15 @@ function update(no_relayout) {
             graph.update(true);
         });
 
-    link.attr("class", function(d,i){
-        var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp") ? " temp_and" : "",
-            selected = node_selected(d) ? " selected" : "";
+    link.attr("class", function(d, i){
+            var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp") ? "temp_and" : "";
 
-        return "graph link" + temp_and + selected;
+            return ["graph link", temp_and, selected_class(d)].join(' ');
         });
 
     link.selectAll('path.link')
         .attr('class', function(d) {
-            var selected = node_selected(d) ? " selected" : "";
-            return d.state + selected + " link graph";
+            return [d.state, selected_class(d), "link graph"].join(' ');
         });
 
     link.exit().remove();
@@ -251,8 +253,7 @@ function update(no_relayout) {
     linktext.enter()
         .append("text")
         .attr("class", function(d) {
-            var selected = node_selected(d) ? " selected" : "";
-            return "linklabel graph" + selected;
+            return ["linklabel graph", selected_class(d)].join(' ');
         })
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
@@ -304,8 +305,7 @@ function update(no_relayout) {
             this.node = d;
         })
         .attr('class', function(d) {
-            var selected = node_selected(d) ? " selected" : "";
-            return 'node' + selected;
+            return ['node', selected_class(d)].join(' ');
         });
 
     nodetext = nodeEnter.insert("text")
@@ -571,6 +571,7 @@ function removeHighlight() {
         links = graph.links(),
         k = 0, j = 0;
 
+    selection = false;
     while (k < nodes.length) {
         if (nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen") {
             nodes[k]['state'] = "perm";
@@ -592,6 +593,7 @@ function highlight(n)
         link,
         data;
 
+    selection = true;
     n.state = 'chosen';
 
     for (i = 0 ; i < connected.nodes.length ; ++i) {

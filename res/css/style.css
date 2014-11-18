@@ -205,10 +205,10 @@ input:focus {
 }
 
 
-// Selected parts of the graph, right now by clicking, later with search.
+/* Selected parts of the graph, right now by clicking, later with search. */
 
-.graph.link.selected {
-    fill: #EDE275;
+.notselected {
+    opacity: 0.5;
 }
 
 .graph.link.temp_and {
