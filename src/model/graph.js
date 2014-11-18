@@ -516,7 +516,7 @@ function Graph(el) {
     this.commit_diff_set = function (diff_set) {
         
         function on_success(data){
-            // TODO impl
+            console.log('commit_diff_set:on_success: TODO impl');
         }
         
         rz_api_mesh.broadcast_possible_next_diff_block(diff_set);
