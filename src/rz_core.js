@@ -140,7 +140,7 @@ function canvas_handler_dblclick(){
     var n = model_core.create_node__set_random_id();
     n.name = ''; // will be set by user
 
-    graph._addNodeNoHistory(n); // FIXME: clean once node creation functions consolidate
+    graph.addNode(n);
     graph.update();
 
     var n_ve = locate_visual_element(n); // locate visual element
