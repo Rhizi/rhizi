@@ -109,6 +109,8 @@ define([], function() {
             value: random_id(),
             writable: false
         });
+
+        return ret;
     }
 
     /**
@@ -123,10 +125,6 @@ define([], function() {
             console.debug(this.id + ' != ' + other.id);
         }
         return ret;
-    }
-
-    function Link() {
-
     }
 
     function crete_link_from_spec(src, dst, link_spec) {
