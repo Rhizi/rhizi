@@ -68,13 +68,12 @@ var initDrawingArea = function () {
         }
     }
 
-    var el = document.body;
-
-    graph = new model_graph.Graph(el);
+    graph = new model_graph.Graph();
 
     //Zoom scale behavior in zoom.js
     zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
+    var el = document.body;
     vis = d3.select(el).append("svg:svg")
         .attr('id', 'canvas_d3')
         .attr("width", '100%')

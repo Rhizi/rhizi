@@ -3,7 +3,7 @@
 define(['signal', 'consts', 'util', 'textanalysis', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh'],
 function (signal, consts, util, textanalysis, model_core, model_util, rz_api_backend, rz_api_mesh) {
 
-function Graph(el) {
+function Graph() {
 
     var nodes = [],
         links = [];
