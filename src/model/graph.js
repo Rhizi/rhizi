@@ -36,17 +36,27 @@ function Graph(el) {
      * @param notify whether or not a presenter notification will be sent, default = true
      */
     this.__addNode = function(node, notify) {
+        var existing_node;
         if (undefined == node.id) {
-            if (findNodeByName(node.name)){
+            existing_node = findNodeByName(node.name)
+            if (existing_node){
                 // FIXME handle node-with-equal-name case
+                console.debug('__addNode: name collision: existing-node.name: \'' + existing_node.name + '\'' + 'new-node.name: \'' + node.name + '\'');
                 return;
             }else{
                 node = model_core.create_node__set_random_id(node);
-                console.debug('__addNode: node id missing, generated: name: ' + node.name + ', id: ' + node.id);
+                // TODO clean
+                if ('bubble' == node.type){
+                    console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
+                }else {
+                    console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
+                }
             }
         }
 
-        if (findNode(node.id, null)){
+        existing_node = findNode(node.id, null);
+        if (existing_node){
+            console.debug('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\'' + 'new-node.id: \'' + node.id + '\'');
             return;
         }
 
@@ -268,7 +278,8 @@ function Graph(el) {
         if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
             state = "temp";
         }
-        if (sourceNode === undefined || targetNode === undefined) {
+        if (undefined === sourceNode || undefined === targetNode) {
+            console.log('addLink: undefined src / dst');
             return;
         }
         if (!found) {
