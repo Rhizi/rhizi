@@ -569,7 +569,7 @@ function Graph(el) {
         }
         for(i = 0; i < data["nodes"].length; i++){
           node = data.nodes[i];
-          this._addNodeNoHistory({id:node.id, name:node.name ? node.name : node.id,
+          this.__addNode({id:node.id, name:node.name ? node.name : node.id,
                                  type:node.type,state:"perm",
                                  start:new Date(node.start),
                                  end:new Date(node.end),
@@ -577,7 +577,7 @@ function Graph(el) {
                                  url:node.url,
                                  x: node.x,
                                  y: node.y,
-                                });
+                                }, false);
           textanalysis.autoSuggestAddName(node.name.toLowerCase());
         }
         for(i = 0; i < data["links"].length; i++){
