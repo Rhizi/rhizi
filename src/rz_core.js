@@ -210,8 +210,8 @@ function update(no_relayout) {
         .attr("class", "ghostlink")
         .on("click", function(d, i) {
             var that = this,
-                source = this.link.source,
-                target = this.link.target;
+                src = this.link.__src,
+                dst = this.link.__dst;
 
             view.edge_info.on_delete(function () {
                 graph.removeLink(that.link);
@@ -219,10 +219,10 @@ function update(no_relayout) {
                 view.edge_info.hide();
             });
             view.edge_info.show(d);
-            highlight(source);
-            highlight(target);
-            source.state = 'chosen';
-            target.state = 'chosen';
+            highlight(src);
+            highlight(dst);
+            src.state = 'chosen';
+            dst.state = 'chosen';
             graph.update(true);
         });
 
@@ -263,12 +263,12 @@ function update(no_relayout) {
     linktext
         .text(function(d) {
             var name = d.name || "";
-            if (!(d.target.state === "temp" ||
-                d.source.state === "chosen" || d.target.state === "chosen")) {
+            if (!(d.__dst.state === "temp" ||
+                d.__src.state === "chosen" || d.__dst.state === "chosen")) {
                 return "";
             }
-            if (name.length < 25 || d.source.state === "chosen" ||
-                d.target.state === "chosen" || d.state==="temp") {
+            if (name.length < 25 || d.__src.state === "chosen" ||
+                d.__dst.state === "chosen" || d.state==="temp") {
                 return name;
             } else {
                 return name.substring(0, 14) + "...";
@@ -533,19 +533,19 @@ function tick(e) {
             ghost;
 
         if (graphstate === "GRAPH") {
-            var dx = d.target.x - d.source.x,
-                dy = d.target.y - d.source.y,
+            var dx = d.__dst.x - d.__src.x,
+                dy = d.__dst.y - d.__src.y,
                 dr = Math.sqrt(dx * dx + dy * dy);
-            d_val = "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+            d_val = "M" + d.__src.x + "," + d.__src.y + "A" + dr + "," + dr + " 0 0,1 " + d.__dst.x + "," + d.__dst.y;
         } else if (graphstate === "GANTT") {
             if (d.state === "enter" || d.state === "exit") {
-                var dx = d.target.x - d.source.x,
-                    dy = d.target.y - d.source.y,
+                var dx = d.__dst.x - d.__src.x,
+                    dy = d.__dst.y - d.__src.y,
                     dr = Math.sqrt(dx * dx + dy * dy) * 5;
-                d_val = "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+                d_val = "M" + d.__src.x + "," + d.__src.y + "A" + dr + "," + dr + " 0 0,1 " + d.__dst.x + "," + d.__dst.y;
             } else {
-                var dx = d.target.x - d.source.x,
-                    dy = d.target.y - d.source.y,
+                var dx = d.__dst.x - d.__src.x,
+                    dy = d.__dst.y - d.__src.y,
                     dr = Math.sqrt(dx * dx + dy * dy) * 5;
 
                 d_val = "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
@@ -560,7 +560,7 @@ function tick(e) {
 
     linktext.attr("transform", function(d) {
         if (graphstate === "GRAPH") {
-            return "translate(" + (d.source.x + d.target.x) / 2 + "," + (d.source.y + d.target.y) / 2 + ")";
+            return "translate(" + (d.__src.x + d.__dst.x) / 2 + "," + (d.__src.y + d.__dst.y) / 2 + ")";
         } else {
             return "translate(0,0)";
         }
@@ -720,7 +720,7 @@ function editLink(link, d, i) {
 
     // TODO: handle escape as well to quit without changes (enter does submit)
     $('#editlinkform').submit(function() {
-        graph.editLink(d.source.id, d.target.id, $('#editlinkname').val());
+        graph.editLink(d.__src.id, d.__dst.id, $('#editlinkname').val());
         $('.editlinkinfo').css('top', -100);
         $('.editlinkinfo').css('left', 0);
         graph.update(true);

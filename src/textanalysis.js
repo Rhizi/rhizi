@@ -402,8 +402,8 @@ var textAnalyser = function (newtext, finalize) {
             }
 
             ret.for_each_link_add(function (link) {
-                graph.addLinkByName(link.sourceName,
-                                    link.targetName,
+                graph.addLinkByName(link.__src.name,
+                                    link.__dst.name,
                                     link.name,
                                     link.state,
                                     ret.drop_conjugator_links);
