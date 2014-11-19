@@ -245,34 +245,34 @@ function Graph() {
         return {graph_same: true, old_name: changed_nodes.a_b, new_name: changed_nodes.b_a};
     }
 
-    this.addLinkByName = function(sourceName, targetName, name, state, drop_conjugator_links) {
-        var source = findNodeByName(sourceName, null),
-            target = findNodeByName(targetName, null),
-            sourceId = source ? source.id : null,
-            targetId = target ? target.id : null;
+    this.addLinkByName = function(src_name, dst_name, name, state, drop_conjugator_links) {
+        var src = findNodeByName(src_name, null),
+            dst = findNodeByName(dst_name, null),
+            src_id = src ? src.id : null,
+            dst_id = dst ? dst.id : null;
 
-        if (sourceId === null || targetId === null) {
-            console.log('error: link of missing nodes: ' + sourceName + ' (' + sourceId + ') -> '
-                        + targetName + ' (' + targetId + ')');
+        if (src_id === null || dst_id === null) {
+            console.log('error: link of missing nodes: ' + src_name + ' (' + src_id + ') -> '
+                        + dst_name + ' (' + dst_id + ')');
             return;
         }
-        this.addLink(sourceId, targetId, name, state, drop_conjugator_links);
+        this.addLink(src_id, dst_id, name, state, drop_conjugator_links);
     }
 
-    this.addLink = function(sourceId, targetId, name, state, drop_conjugator_links) {
-        var sourceNode = findNode(sourceId, null);
-        var targetNode = findNode(targetId, null);
-        var found = findLink(sourceId,targetId,name);
+    this.addLink = function(src_id, dst_id, name, state, drop_conjugator_links) {
+        var src = findNode(src_id, null);
+        var dst = findNode(dst_id, null);
+        var found = findLink(src_id,dst_id,name);
 
         if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
             state = "temp";
         }
-        if (undefined === sourceNode || undefined === targetNode) {
+        if (undefined === src || undefined === dst) {
             console.log('addLink: undefined src / dst');
             return;
         }
         if (!found) {
-            var link = model_core.create_link__set_random_id(sourceNode, targetNode, { name: name, state: state });
+            var link = model_core.create_link__set_random_id(src, dst, { name: name, state: state });
             links.push(link);
             signal.signal(consts.APPLIED_GRAPH_DIFF, [{links: {add: [link]}}]);
         } else {
