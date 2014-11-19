@@ -8,17 +8,6 @@ function Graph() {
     var nodes = [],
         links = [];
 
-    function id_generator_generator() {
-        var id = 0;
-        function get_next() {
-            var next = id;
-            id += 1;
-            return next;
-        }
-        return get_next;
-    }
-    var id_generator = id_generator_generator();
-
     /**
      * add node if no previous node is present whose id equals that of the node being added
      *
@@ -112,7 +101,7 @@ function Graph() {
      * @id
      * @state - defines the starting node (must have id and state)
      * @d - depth defining connected component. If -1 returns the entire connected component. (can be the whole graph)
-     * 
+     *
      * NOTE: chainlinks are treated specially, they don't count for distance. So all their decendants will be added.
      *
      * NOTE: temp state nodes (n.state === 'temp') are ignored.
@@ -283,14 +272,7 @@ function Graph() {
             return;
         }
         if (!found) {
-            var id = id_generator(),
-                link = {
-                source: sourceNode,
-                target: targetNode,
-                name: name,
-                state: state,
-                id: id,
-            };
+            var link = model_core.create_link__set_random_id(sourceNode, targetNode, { name: name, state: state });
             links.push(link);
             signal.signal(consts.APPLIED_GRAPH_DIFF, [{links: {add: [link]}}]);
         } else {
@@ -364,7 +346,7 @@ function Graph() {
 
     /**
      * editType:
-     * 
+     *
      * @return true if type changed
      */
     this.editType = function(id, state, newtype) {
@@ -524,11 +506,11 @@ function Graph() {
 
     // @ajax-trans
     this.commit_diff_set = function (diff_set) {
-        
+
         function on_success(data){
             console.log('commit_diff_set:on_success: TODO impl');
         }
-        
+
         rz_api_mesh.broadcast_possible_next_diff_block(diff_set);
     }
 
@@ -549,27 +531,27 @@ function Graph() {
                 var n = model_util.adapt_format_read_node(n_raw);
                 n_set.push(n);
             }
-            
+
             len = data['link_set'].length;
             for (var i = 0; i < len; i++) {
                 var l_raw = data['link_set'][i];
                 var l = model_util.adapt_format_read_link(l_raw);
                 l_set.push(l);
             }
-            
+
             len = n_set.length
             for (var i = 0; i < len; i++) {
                 var n = n_set[i];
                 graph.addNode(n.id, n.type, n.state)
             }
-            
+
             len = l_set.length
             for (var i = 0; i < len; i++) {
                 var l = l_set[i];
                 graph.addLink_byIds(l.sourceId, l.targetId, l.name, "perm")
             }
         }
-        
+
         rz_api_backend.clone(0, on_success);
     }
 
