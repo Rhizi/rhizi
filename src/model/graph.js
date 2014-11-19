@@ -64,7 +64,7 @@ function Graph() {
         var i = 0;
         var n = findNode(id, state);
         while (i < links.length) {
-            if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
+            if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) links.splice(i, 1);
             else i++;
         }
         var index = findNodeIndex(id, state);
@@ -81,7 +81,7 @@ function Graph() {
             var n = ns[j];
             var i = 0;
             while (i < links.length) {
-                if ((links[i]['source'] === n) || (links[i]['target'] == n)) links.splice(i, 1);
+                if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) links.splice(i, 1);
                 else i++;
             }
             var index = findNodeIndex(id, state);
@@ -137,20 +137,20 @@ function Graph() {
         while (i < links.length) {
             link = links[i];
             // XXX: using name comparison because n might be stale
-            if (compareNames(link.source.name, n.name)) {
-                adjacentnode = findNode(link.target.id, null);
+            if (compareNames(link.__src.name, n.name)) {
+                adjacentnode = findNode(link.__dst.id, null);
                 if (adjacentnode.state !== "temp") {
                     ret.nodes.push({type: 'exit', node: adjacentnode});
                 }
                 ret.links.push({type: 'exit', link: link});
 
-                if (link.target.type === "chainlink") {
+                if (link.__dst.type === "chainlink") {
                     while (j < links.length) {
                         link2 = links[j];
-                        if (link.target.id === link2.target.id &&
-                            link2.target.type === "chainlink" &&
-                            link2.target.state !== "temp") {
-                            adjacentnode = findNode(link2.source.id, null);
+                        if (link.__dst.id === link2.__dst.id &&
+                            link2.__dst.type === "chainlink" &&
+                            link2.__dst.state !== "temp") {
+                            adjacentnode = findNode(link2.__src.id, null);
                             if (adjacentnode.state !== "temp") {
                                 ret.nodes.push({type: 'enter', node: adjacentnode});
                             }
@@ -161,8 +161,8 @@ function Graph() {
                 }
                 j=0;
             }
-            if (compareNames(links[i].target.name, n.name)) {
-                adjacentnode = findNode(links[i].source.id, null);
+            if (compareNames(links[i].__dst.name, n.name)) {
+                adjacentnode = findNode(links[i].__src.id, null);
                 if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
                 links[i].state = "enter";
             }
@@ -185,7 +185,7 @@ function Graph() {
             return nd.type !== 'bubble';
         });
         var state_links = findLinks(state).map(function(link) {
-            return [link.source.name, link.target.name];
+            return [link.__src.name, link.__dst.name];
         }).sort();
         var k;
         var state_source, state_target, new_source, new_target;
@@ -281,8 +281,8 @@ function Graph() {
         }
     }
 
-    this.editLink = function(sourceId, targetId, newname, newstate) {
-        var link = findLink(sourceId, targetId, newname);
+    this.editLink = function(src_id, dst_id, newname, newstate) {
+        var link = findLink(src_id, dst_id, newname);
         if (link !== undefined) {
             link.name = newname;
             if (newstate !== undefined) {
@@ -291,10 +291,10 @@ function Graph() {
         }
     }
 
-    this.editLinkTarget = function(sourceId, targetId, newTarget) {
-        var link = findLink(sourceId, targetId, null);
+    this.editLinkTarget = function(src_id, dst_id, newTarget) {
+        var link = findLink(src_id, dst_id, null);
         if (link !== undefined) {
-            link.target = findNode(newTarget, null);
+            link.__dst = findNode(newTarget, null);
 
         } else {
 
@@ -321,11 +321,11 @@ function Graph() {
                 acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
                 if (acceptReplace){
                     for (var i = 0; i < links.length; i++) {
-                        if (links[i].source === index) {
-                            links[i].source = index2;
+                        if (links[i].__src === index) {
+                            links[i].__src = index2;
                         }
-                        if (links[i].target === index) {
-                            links[i].target = index2;
+                        if (links[i].__dst === index) {
+                            links[i].__dst = index2;
                         }
                     }
                     this.removeNode(index.id,null);
@@ -389,7 +389,7 @@ function Graph() {
                     return;
                 }
             } else {
-                if (link.sourceId === links[i].sourceId && link.targetId === links[i].targetId) {
+                if (link.__src.id === links[i].__src.id && link.__dst.id === links[i].__dst.id) {
                     links.splice(i, 1);
                     return;
                 }
@@ -411,9 +411,9 @@ function Graph() {
         }
     }
 
-    var findLink = function(sourceId, targetId, name) {
+    var findLink = function(src_id, dst_id, name) {
         for (var i = 0; i < links.length; i++) {
-            if (links[i].source.id === sourceId && links[i].target.id === targetId) {
+            if (links[i].__src.id === src_id && links[i].__dst.id === dst_id) {
                 return links[i];
             }
         }
@@ -548,7 +548,7 @@ function Graph() {
             len = l_set.length
             for (var i = 0; i < len; i++) {
                 var l = l_set[i];
-                graph.addLink_byIds(l.sourceId, l.targetId, l.name, "perm")
+                graph.addLink_byIds(l.__src.id, l.__dst.id, l.name, "perm")
             }
         }
 
@@ -579,7 +579,7 @@ function Graph() {
         }
         for(i = 0; i < data["links"].length; i++){
           link = data.links[i];
-          this.addLink(link.source, link.target, link.name, "perm");
+          this.addLink(link.__src, link.__dst, link.name, "perm");
         }
         this.clear_history();
     }
@@ -604,8 +604,8 @@ function Graph() {
         for(var j=0 ; j < links.length ; j++){
           var link = links[j];
           d['links'].push({
-            "source":link.source.id,
-            "target":link.target.id,
+            "__src":link.__src.id,
+            "__dst":link.__dst.id,
             "name":link.name
           });
         }

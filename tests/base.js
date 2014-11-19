@@ -30,7 +30,7 @@ function dump_graphviz(force) {
     }
     for (i = 0 ; i < links.length; ++i) {
         var link = links[i];
-        console.log(' ' + q(link.source.name) + ' -> ' + q(link.target.name) + ' [label=' + link.name + '];');
+        console.log(' ' + q(link.__src.name) + ' -> ' + q(link.__dst.name) + ' [label=' + link.name + '];');
     }
     console.log('}');
 }
@@ -76,7 +76,7 @@ function nodes(window) {
 function links(window) {
     return window.require('rz_core').force.links().map(function (l) {
         debugger;
-        return [l.source.name, l.target.name, l.name];
+        return [l.__src.name, l.__dst.name, l.name];
     });
 }
 
