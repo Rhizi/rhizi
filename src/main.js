@@ -1,5 +1,5 @@
-define(['jquery', 'textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot', 'rz_core'],
-function($,        textanalysis_ui,   buttons,   history,   drag_n_drop,   robot,   rz_core) {
+define(['textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core'],
+function(textanalysis_ui,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core) {
 
     function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -25,13 +25,16 @@ function($,        textanalysis_ui,   buttons,   history,   drag_n_drop,   robot
         $('#textanalyser').onkeyup = function() { expand(this); };
 
         textanalysis_ui.main();
+
         // TODO: jquery BBQ: $.deparam.querystring().json;
         json = getParameterByName('json');
         if (json) {
             rz_core.load_from_json(json);
         }
+        // TODO: interaction between the hack above and this
+        model_core.init(rz_config);
     }
-    
+
     return {
         main: main };
     }
