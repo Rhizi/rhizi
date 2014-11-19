@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot'],
-function(textanalysis_ui, buttons, history, drag_n_drop, robot) {
+define(['textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config'],
+function(textanalysis_ui, buttons, history, drag_n_drop, robot, model_core, rz_config) {
 
     function expand(obj){
         if (!obj.savesize) {
@@ -16,8 +16,10 @@ function(textanalysis_ui, buttons, history, drag_n_drop, robot) {
         $('#textanalyser').onkeyup = function() { expand(this); };
 
         textanalysis_ui.main();
+
+        model_core.init(rz_config);
     }
-    
+
     return {
         main: main };
     }

@@ -8,12 +8,33 @@ define([], function() {
     /**
      * return a random id
      */
-    var random_id = function() {
-        return Math.random().toString(36).substring(2);
+    var random_id;
+
+    var random_id__hash = function() {
+        return Math.random().toString(36).substring(2, 10);
+    }
+
+    var random_id__seq = function () {
+        var id = 0;
+        function get_next() {
+            var next = id;
+            id += 1;
+            return next;
+        }
+        return get_next;
     }
 
     function random_node_name() {
-        return Math.random().toString(36).substring(2, 10);
+        return random_id__hash();
+    }
+
+    function init(config){
+        if (config['rand_id_generator'] == 'hash') {
+            random_id = random_id__hash;
+        }
+        if (config['rand_id_generator'] == 'seq') {
+            random_id = random_id__seq();
+        }
     }
 
     function Node() {
@@ -141,6 +162,7 @@ define([], function() {
     }
 
     return {
+        init : init,
         random_node_name : random_node_name,
         crete_node_from_spec : crete_node_from_spec,
         crete_link_from_spec : crete_link_from_spec,
