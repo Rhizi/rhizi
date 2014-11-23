@@ -12,7 +12,7 @@ function checkSwitch(checkswitch) {
 
         $('body').scrollLeft(0);
         graphstate = "GRAPH";
-        graph.update();
+        rz_core.update_view__graph();
 
         $('.status').fadeOut(600);
 
@@ -28,7 +28,7 @@ function checkSwitch(checkswitch) {
 
         graphstate = "GANTT";
 
-        graph.update();
+        rz_core.update_view__graph();
 
         $('.status').fadeIn(600);
 

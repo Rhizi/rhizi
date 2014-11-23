@@ -443,7 +443,7 @@ var textAnalyser = function (newtext, finalize) {
         }
 
         // UPDATE GRAPH ONCE
-        graph.update(!finalize && comp.graph_same);
+        rz_core.update_view__graph(!finalize && comp.graph_same);
     };
 
     if (finalize) {

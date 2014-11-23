@@ -101,7 +101,6 @@ var initDrawingArea = function () {
              .on("drag", dragged)
              .on("dragend", dragended);
 
-    graph.update = update;
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
 }
 
@@ -153,7 +152,7 @@ function canvas_handler_dblclick(){
     n.name = ''; // will be set by user
 
     graph.addNode(n);
-    graph.update();
+    update_view__graph();
 
     var n_ve = locate_visual_element(n); // locate visual element
 
@@ -182,7 +181,10 @@ var selected_class = function(node) {
     return selection ? (node_selected(node) ? "selected" : "notselected") : "";
 }
 
-function update(no_relayout) {
+/**
+ * update view: graph
+ */
+function update_view__graph(no_relayout) {
     var node,
         link,
         link_g,
@@ -229,7 +231,7 @@ function update(no_relayout) {
 
             view.edge_info.on_delete(function () {
                 graph.removeLink(that.link);
-                graph.update(true);
+                update_view__graph(true);
                 view.edge_info.hide();
             });
             view.edge_info.show(d);
@@ -238,7 +240,7 @@ function update(no_relayout) {
             highlight(dst);
             src.state = 'chosen';
             dst.state = 'chosen';
-            graph.update(true);
+            update_view__graph(true);
         });
 
     link.attr("class", function(d, i){
@@ -361,7 +363,7 @@ function update(no_relayout) {
             } else {
                 removeHighlight();
             }
-            update(true);
+            update_view__graph(true);
         });
 
     //if(graphstate==="GANTT"){
@@ -643,13 +645,13 @@ function showInfo(d, i) {
       }
       graph.editType(d.id,d.type,$('#edittype').val());
       graph.editURL(d.id, d.type, $('#editurl').val());
-      graph.update(true);
+      update_view__graph(true);
       return false;
     });
     view.node_info.on_delete(function() {
       if (confirm('This node and all its connections will be deleted, are you sure?')) {
         graph.removeNode(d.id, null);
-        graph.update(false);
+        update_view__graph(false);
         view.node_info.hide();
       }
     });
@@ -657,7 +659,7 @@ function showInfo(d, i) {
     removeHighlight();
     view.node_info.hide();
   }
-  graph.update(true);
+  update_view__graph(true);
 }
 
 function mousedown() {
@@ -667,7 +669,7 @@ function mousedown() {
     $('.editlinkinfo').css('left', 0);
     removeHighlight();
     view.hide();
-    graph.update(true);
+    update_view__graph(true);
 }
 
 function AddedUnique(newnode) {
@@ -690,7 +692,7 @@ $('#editform').keypress(function(e) {
         var newname = element.val();
         var d = element.data().d;
         graph.editName(d.id, newname);
-        graph.update(true);
+        update_view__graph(true);
         return false;
     }
 });
@@ -728,12 +730,12 @@ function editLink(link, d, i) {
         graph.editLink(d.__src.id, d.__dst.id, $('#editlinkname').val());
         $('.editlinkinfo').css('top', -100);
         $('.editlinkinfo').css('left', 0);
-        graph.update(true);
+        update_view__graph(true);
 
         return false;
     });
 
-    graph.update(true);
+    update_view__graph(true);
 }
 
 return {
@@ -742,7 +744,8 @@ return {
     load_from_json: function(result) {
         graph.load_from_json(result);
         recenterZoom();
-        update(false);
-    }
+        update_view__graph(false);
+    },
+    update_view__graph : update_view__graph,
 }
 }); /* close define call */

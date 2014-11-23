@@ -22,7 +22,7 @@ function analyzeSentence(sentence, finalize)
         $('.typeselection').css('left', 0);
         break;
     }
-    
+
     var backend_commit = false;
     ret.applyToGraph(rz_core.graph, backend_commit);
 
@@ -70,7 +70,7 @@ function changeType(arg) {
         $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
         rz_core.graph.findCoordinates(id, null);
     }
-    rz_core.graph.update(true);
+    rz_core.update_view__graph(true);
 }
 
 return {
