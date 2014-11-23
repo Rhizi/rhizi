@@ -16,8 +16,7 @@ var deliverables = [];
 
 var circle; // <-- should not be module globals.
 
-var scrollValue = 0,
-    zoomObject;
+var scrollValue = 0;
 
 var graph;
 
@@ -69,18 +68,21 @@ var initDrawingArea = function () {
 
     graph = new model_graph.Graph();
 
-    //Zoom scale behavior in zoom.js
-    zoomObject = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-
     var el = document.body;
     vis = d3.select(el).append("svg:svg")
         .attr('id', 'canvas_d3')
         .attr("width", '100%')
         .attr("height", '100%')
         .attr("pointer-events", "all")
-        .call(zoomObject)
         .append("g")
         .attr("class", "zoom");
+
+    /*
+     * init zoom behavior
+     */
+    var zoom_obj = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    zoom_obj(d3.select('#canvas_d3'))
+    d3.select("svg").on("dblclick.zoom", null); // disable zoom on double click
 
     // TODO: why do we need this huge overlay (hugeness also not constant)
     vis.append("rect")
