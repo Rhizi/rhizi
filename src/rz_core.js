@@ -10,7 +10,7 @@ var vis;
 var graphstate = "GRAPH";
 var graphinterval = 0;
 
-var ganttTimer = 0;
+var timeline_timer = 0;
 
 var deliverables = [];
 
@@ -39,7 +39,7 @@ var initDrawingArea = function () {
         if (graphstate === "GRAPH") {
             vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         }
-        if (graphstate === "GANTT") {
+        if (graphstate === "TIMELINE") {
             vis.attr("transform", "translate(0,0)scale(1)");
         }
     }
@@ -366,7 +366,7 @@ function update_view__graph(no_relayout) {
             update_view__graph(true);
         });
 
-    //if(graphstate==="GANTT"){
+    //if(graphstate==="TIMELINE"){
     nodeEnter.append("svg:image")
         .attr("class", "status graph")
         .attr('x', -7)
@@ -470,7 +470,7 @@ function tick(e) {
         return "translate(" + d.x + "," + d.y + ")";
     }
 
-    if (graphstate === "GANTT") {
+    if (graphstate === "TIMELINE") {
         var k = 20 * e.alpha;
         var today = new Date();
         var missingcounter = 0;
@@ -488,9 +488,9 @@ function tick(e) {
                 //var min= 150+graphinterval*Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //var max= 150+graphinterval*Math.ceil(Math.abs(d.end.getTime() - d.start.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
                 //d.x = min+Math.sin(today.getTime()/1000*Math.PI*2/10)*max;
-                ganttTimer++;
-                if (ganttTimer < 3000) {
-                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) * ganttTimer / 3000;
+                timeline_timer++;
+                if (timeline_timer < 3000) {
+                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) * timeline_timer / 3000;
                     d.y = 150 + d.start.getHours() * 17;
                 } else {
                     d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24));
@@ -542,7 +542,7 @@ function tick(e) {
                 dy = d.__dst.y - d.__src.y,
                 dr = Math.sqrt(dx * dx + dy * dy);
             d_val = "M" + d.__src.x + "," + d.__src.y + "A" + dr + "," + dr + " 0 0,1 " + d.__dst.x + "," + d.__dst.y;
-        } else if (graphstate === "GANTT") {
+        } else if (graphstate === "TIMELINE") {
             if (d.state === "enter" || d.state === "exit") {
                 var dx = d.__dst.x - d.__src.x,
                     dy = d.__dst.y - d.__src.y,

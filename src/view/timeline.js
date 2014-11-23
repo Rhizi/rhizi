@@ -6,7 +6,7 @@ function ($, rz_core) {
 function checkSwitch(checkswitch) {
 
     if (checkswitch.checked) {
-    	vis.selectAll(".gantt").remove();
+    	vis.selectAll(".timeline").remove();
         $('.missingdates').fadeOut(300);
         scrollValue = $('body').scrollLeft();
 
@@ -19,14 +19,14 @@ function checkSwitch(checkswitch) {
         //boxedin=false;
 
     } else {
-        ganttTimer=0;
+        timelineTimer=0;
         $('.missingdates').fadeIn(300);
 
         graph.recenterZoom();
 
         $('body').scrollLeft(scrollValue);
 
-        graphstate = "GANTT";
+        graphstate = "TIMELINE";
 
         rz_core.update_view__graph();
 
@@ -42,7 +42,7 @@ function checkSwitch(checkswitch) {
 
 ///For some reason JQuery's $('body').scroll never worked, so I found something else.
 $('body').bind('DOMMouseScroll', function(e){
-     if(graphstate==="GANTT"){
+     if(graphstate==="TIMELINE"){
         if(e.originalEvent.detail !== 0) {
          $('.overlay').hide();
      }else{
@@ -55,7 +55,7 @@ $('body').bind('DOMMouseScroll', function(e){
 
  //IE, Opera, Safari
  $('body').bind('mousewheel', function(e){
-     if(graphstate==="GANTT"){
+     if(graphstate==="TIMELINE"){
         if(e.originalEvent.wheelDelta !== 0) {
            $('.overlay').hide();
      }else{
@@ -117,7 +117,7 @@ function initAxis() {
         .attr("x2", xScale)
         .attr("y1", paddingTop + 30)
         .attr("y2", h - 50)
-        .attr("class", "gantt")
+        .attr("class", "timeline")
         .style("stroke", "#ccc");
 
     var y = function (i) {
@@ -139,7 +139,7 @@ function initAxis() {
         .attr("x", -1000)
         .attr("width", 100)
         .attr("height", bar_height)
-        .attr("class", "company-bar gantt")
+        .attr("class", "company-bar timeline")
         .on("mouseover", function (d) {
             d3.select(this).style("fill", "#F5AF00");
             getCompanyData(String(d.uid))
@@ -154,7 +154,7 @@ function initAxis() {
         });;
 
     label.enter().append("text")
-        .attr("class", "bar-label gantt")
+        .attr("class", "bar-label timeline")
         // .attr("text-anchor","end")
         .attr("x", paddingLeft - 10)
         .attr("y", function (d, i) {
@@ -166,13 +166,13 @@ function initAxis() {
     // Bottom Axis
     var btmAxis = svg.append("g")
         .attr("transform", "translate(0," + (h - 25) + ")")
-        .attr("class", "axis gantt")
+        .attr("class", "axis timeline")
         .call(xAxis);
 
     // Top Axis
     var topAxis = svg.append("g")
         .attr("transform", "translate(0," + paddingTop + ")")
-        .attr("class", "axis gantt")
+        .attr("class", "axis timeline")
         .call(xAxis);
 }
 
