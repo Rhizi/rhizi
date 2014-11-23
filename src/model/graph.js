@@ -1,7 +1,7 @@
 "use strict"
 
-define(['signal', 'consts', 'util', 'textanalysis', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh'],
-function (signal, consts, util, textanalysis, model_core, model_util, rz_api_backend, rz_api_mesh) {
+define(['signal', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh'],
+function (signal, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh) {
 
 function Graph() {
 
@@ -575,7 +575,7 @@ function Graph() {
                                  x: node.x,
                                  y: node.y,
                                 }, false);
-          textanalysis.autoSuggestAddName(node.name.toLowerCase());
+          // textanalysis.autoSuggestAddName(node.name.toLowerCase());
         }
         for(i = 0; i < data["links"].length; i++){
           link = data.links[i];
