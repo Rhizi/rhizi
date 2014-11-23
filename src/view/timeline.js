@@ -1,5 +1,8 @@
 "use strict"
 
+define(['jquery', 'rz_core'],
+function ($, rz_core) {
+
 function checkSwitch(checkswitch) {
 
     if (checkswitch.checked) {
@@ -65,9 +68,6 @@ $('body').bind('DOMMouseScroll', function(e){
     }
  });
 
-
-
-
 function initAxis() {
     var bar_height = 20;
     var row_height = bar_height + 10;
@@ -93,8 +93,6 @@ function initAxis() {
     var diffDays = timeDiff / (1000 * 3600 * 24);
     var w = Math.round(diffDays * 15 - 100);
     graphinterval = w / diffDays;
-
-
 
     var svg=vis;
     vis.attr("width",w);
@@ -150,8 +148,6 @@ function initAxis() {
             d3.select(this).style("fill", "#fc0");
         });
 
-
-
     var label = svg.selectAll("text")
         .data(deliverables, function (key) {
             return key.id
@@ -167,8 +163,6 @@ function initAxis() {
         .text(function (d) {
         });
 
-
-
     // Bottom Axis
     var btmAxis = svg.append("g")
         .attr("transform", "translate(0," + (h - 25) + ")")
@@ -181,3 +175,6 @@ function initAxis() {
         .attr("class", "axis gantt")
         .call(xAxis);
 }
+
+return {};
+});
