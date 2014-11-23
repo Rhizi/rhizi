@@ -96,27 +96,39 @@ var initDrawingArea = function () {
     vis.append("g").attr("id", "link-group");
 
     drag = d3.behavior.drag()
-    .origin(function(d) { return d; })
-    .on("dragstart", dragstarted)
-    .on("drag", dragged)
-    .on("dragend", dragended);
+             .origin(function(d) { return d; })
+             .on("dragstart", dragstarted)
+             .on("drag", dragged)
+             .on("dragend", dragended);
 
+    graph.update = update;
+    // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
+}
+
+function init_force_layout(){
+    var el = document.body;
     var w = $(el).innerWidth(),
         h = $(el).innerHeight();
 
     force = d3.layout.force()
-        .distance(120)
-        .gravity(0.12)
-        .charge(-1800)
-        .size([w, h])
-        .on("tick", tick)
-        .start();
+              .distance(120)
+              .gravity(0.12)
+              .charge(-1800)
+              .size([w, h])
+              .on("tick", tick)
+              .start();
 
-    graph.update = update;
-    $('#canvas_d3').dblclick(canvas_handler_dblclick);
+    // adapte Link to force_layoutL create __src,__dst aliases
+    model_core.Link.prototype.source = function(){
+        return this.__src;
+    }
+    model_core.Link.prototype.target = function(){
+        return this.__dst;
+    }
 }
 
 initDrawingArea();
+init_force_layout();
 
 /**
  * find the visual element counterpart of a given model object. This relies on

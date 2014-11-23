@@ -164,6 +164,8 @@ define([], function() {
 
     return {
         init : init,
+        Node: Node, // allow model adaptation
+        Link: Link, // allow model adaptation
         random_node_name : random_node_name,
         crete_node_from_spec : crete_node_from_spec,
         crete_link_from_spec : crete_link_from_spec,
