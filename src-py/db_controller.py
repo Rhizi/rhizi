@@ -43,11 +43,11 @@ class DB_op(object):
 
     def __iter__(self):
         """
-        iterate over (statement_index, statement, result, error) 
+        iterate over (statement_index, statement, result, error)
         where result & error are mutually exclusive
-        
+
         note: statement_index is zero based
-        
+
         TODO: handle partial iteration due to error_set being non-empty
         """
         i = 0
@@ -94,7 +94,7 @@ class DB_composed_op(DB_op):
 
     def __getattribute__(self, attr):
         """
-        intercept 'statement_set' attr get    
+        intercept 'statement_set' attr get
         """
         if attr == 'statement_set':
             self.__assert_false_statement_access()
@@ -199,7 +199,7 @@ class DBO_add_node_set(DB_op):
     def __init__(self, node_map):
         """
         DB op: add node set
-        
+
         @param node_map: node-type to node-set map
         @return: set of new node DB ids
         """
@@ -239,7 +239,7 @@ class DBO_load_node_set_by_DB_id(DB_op):
     def __init__(self, id_set):
         """
         load a set of nodes whose DB id is in id_set
-        
+
         @param id_set: DB node id set
         @return: loaded node set or an empty set if no match was found
         """
@@ -252,11 +252,11 @@ class DBO_match_node_id_set(DB_op):
     def __init__(self, filter_label=None, filter_attr_map={}):
         """
         match a set of nodes by type / attr_map
-        
+
         @param filter_label: node type filter
         @param filter_attr_map: is a filter_key to filter_value_set map of
                possible attributes to match against, eg.:
-               { 'id':[0,1], 'color: ['red','blue'] } 
+               { 'id':[0,1], 'color: ['red','blue'] }
         @return: a set of node DB id's
         """
         super(DBO_match_node_id_set, self).__init__()
@@ -283,7 +283,7 @@ class DBO_load_link_set(DB_op):
     def __init__(self, link_ptr_set):
         """
         match a set of sets of links by source/target node id attributes
-        
+
         This class should be instantiated through a static factory function
 
         @link_ptr_set link pointer set
@@ -316,8 +316,8 @@ class DBO_match_link_id_set(DB_op):
     def __init__(self, filter_label=None, filter_attr_map={}):
         """
         load an id-set of links
-        
-        @param filter_label: link type filter 
+
+        @param filter_label: link type filter
         @param filter_attr_map: is a filter_key to filter_value_set map of
                attributes to match link properties against
         @return: a set of loaded link ids
@@ -357,7 +357,7 @@ class DBO_rz_clone(DB_op):
     def __init__(self, filter_label=None, limit=128):
         """
         clone rhizi
-        
+
         @return: a dict: {'node_set': n_set,
                           'link_set': l_set }
                  where l_set is a list of (src.id, dst.id, link) tuples
