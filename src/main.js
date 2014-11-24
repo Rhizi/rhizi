@@ -31,6 +31,18 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         if (json) {
             rz_core.load_from_json(json);
         }
+
+        document.body.onkeyup = function(e) {
+            var key = (e.key || (e.charCode && String.charCodeAt(e.charCode))
+                             || (e.which && String.charCodeAt(e.which))).toLowerCase();
+
+            if (e.altKey && e.ctrlKey && key == 'i') {
+                $('#textanalyser').focus();
+            }
+            if (e.altKey && e.ctrlKey && key == 'o') {
+                $('#search').focus();
+            }
+        };
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
         textanalysis.init();
