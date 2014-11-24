@@ -236,15 +236,7 @@ input:focus {
   pointer-events: none;
 }
 
-.link.enter {
-  fill: none;
-  stroke: #EDE275;
-  stroke-width: 4px;
-  z-index:1;
-  pointer-events: none;
-}
-
-.link.exit {
+.link.enter, .link.exit, .link.selected {
   fill: none;
   stroke: #EDE275;
   stroke-width: 4px;
