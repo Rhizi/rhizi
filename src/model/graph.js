@@ -118,7 +118,7 @@ function Graph() {
      * TODO: implement for d !== 1
      *
      */
-    this.getConnectedNodesAndLinks = function(n, d) {
+    this.getConnectedNodesAndLinks = function(chosen_nodes, d) {
         var i = 0,
             j = 0,
             adjacentnode,
@@ -126,9 +126,7 @@ function Graph() {
             link2,
             ret = {'nodes':[], 'links':[]};
 
-        $(".debug").html(n.state);
-
-        if (n === undefined) {
+        if (chosen_nodes === undefined) {
             console.log('getConnectedNodesAndLinks: bug: called with undefined node');
             return;
         }
@@ -137,38 +135,44 @@ function Graph() {
         }
         d = d || 1;
 
+        if (chosen_nodes.length === undefined) {
+            console.log('getConnectedNodesAndLinks: expected array');
+        }
+
         while (i < links.length) {
             link = links[i];
-            // XXX: using name comparison because n might be stale
-            if (compareNames(link.__src.name, n.name)) {
-                adjacentnode = findNode(link.__dst.id, null);
-                if (adjacentnode.state !== "temp") {
-                    ret.nodes.push({type: 'exit', node: adjacentnode});
-                }
-                ret.links.push({type: 'exit', link: link});
-
-                if (link.__dst.type === "chainlink") {
-                    while (j < links.length) {
-                        link2 = links[j];
-                        if (link.__dst.id === link2.__dst.id &&
-                            link2.__dst.type === "chainlink" &&
-                            link2.__dst.state !== "temp") {
-                            adjacentnode = findNode(link2.__src.id, null);
-                            if (adjacentnode.state !== "temp") {
-                                ret.nodes.push({type: 'enter', node: adjacentnode});
-                            }
-                            ret.links.push({type: 'enter', link: link2});
-                        }
-                        j++;
+            chosen_nodes.forEach(function (n) {
+                // XXX: using name comparison because n might be stale
+                if (compareNames(link.__src.name, n.name)) {
+                    adjacentnode = findNode(link.__dst.id, null);
+                    if (adjacentnode.state !== "temp") {
+                        ret.nodes.push({type: 'exit', node: adjacentnode});
                     }
+                    ret.links.push({type: 'exit', link: link});
+
+                    if (link.__dst.type === "chainlink") {
+                        while (j < links.length) {
+                            link2 = links[j];
+                            if (link.__dst.id === link2.__dst.id &&
+                                link2.__dst.type === "chainlink" &&
+                                link2.__dst.state !== "temp") {
+                                adjacentnode = findNode(link2.__src.id, null);
+                                if (adjacentnode.state !== "temp") {
+                                    ret.nodes.push({type: 'enter', node: adjacentnode});
+                                }
+                                ret.links.push({type: 'enter', link: link2});
+                            }
+                            j++;
+                        }
+                    }
+                    j=0;
                 }
-                j=0;
-            }
-            if (compareNames(links[i].__dst.name, n.name)) {
-                adjacentnode = findNode(links[i].__src.id, null);
-                if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
-                links[i].state = "enter";
-            }
+                if (compareNames(links[i].__dst.name, n.name)) {
+                    adjacentnode = findNode(links[i].__src.id, null);
+                    if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
+                    links[i].state = "enter";
+                }
+            });
             i++;
         }
         return ret;
@@ -634,6 +638,50 @@ function Graph() {
     var get_links = function() { return links; };
     this.links = get_links;
 
+    function setRegularState() {
+        var x, node, link, s;
+
+        for (x in nodes) {
+            node = nodes[x];
+            s = node.state;
+            if (s === 'chosen' || s === 'enter' || s === 'exit') {
+                node.state = 'perm';
+            }
+        }
+        for (x in links) {
+            link = links[x];
+            s = link.state;
+            if (s === 'chosen' || s === 'enter' || s === 'exit') {
+                link.state = 'perm';
+            }
+        }
+    }
+    this.setRegularState = setRegularState;
+
+    this.findByVisitors = function(node_visitor, link_visitor) {
+        var n_length = nodes.length,
+            l_length = links.length,
+            selected = [],
+            i,
+            node,
+            link,
+            state;
+
+        if (!node_visitor) {
+            return;
+        }
+
+        for (i = 0 ; i < n_length; ++i) {
+            node = nodes[i];
+            if (node.state == 'temp') {
+                continue;
+            }
+            if (node_visitor(node)) {
+                selected.push(node);
+            }
+        }
+        return selected;
+    }
 }
 
 return {

@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer'],
-function($, d3, consts, signal, util, model_graph, model_core, view_helpers, view, rz_observer) {
+define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection'],
+function($, d3, consts, signal, util, model_graph, model_core, view_helpers, view, rz_observer, selection) {
 
 var addednodes = [];
 
@@ -23,10 +23,6 @@ var graph;
 var drag;
 
 var force;
-
-// TODO hide inside a selection object? behavior? probably a good idea. route selection to it,
-// let it change state on nodes & links and query it for selection activity. (between 'select' and 'unselect')
-var selection; // boolean, true if there is a current selection
 
 function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
@@ -175,14 +171,6 @@ function canvas_handler_dblclick(){
     });
 }
 
-var node_selected = function(node) {
-    return node.state == 'chosen' || node.state == 'enter' || node.state == 'exit';
-}
-
-var selected_class = function(node) {
-    return selection ? (node_selected(node) ? "selected" : "notselected") : "";
-}
-
 /**
  * update view: graph
  */
@@ -212,7 +200,7 @@ function update_view__graph(no_relayout) {
         .attr("markerHeight", 4)
         .attr("orient", "auto")
         .attr("class", function(d) {
-            return selected_class(d);
+            return selection.selected_class(d);
         })
         .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5");
@@ -237,7 +225,7 @@ function update_view__graph(no_relayout) {
                 view.edge_info.hide();
             });
             view.edge_info.show(d);
-            removeHighlight();
+            selection.clear();
             highlight(src);
             highlight(dst);
             src.state = 'chosen';
@@ -248,12 +236,12 @@ function update_view__graph(no_relayout) {
     link.attr("class", function(d, i){
             var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && d.state==="temp") ? "temp_and" : "";
 
-            return ["graph link", temp_and, selected_class(d)].join(' ');
+            return ["graph link", temp_and, selection.selected_class(d)].join(' ');
         });
 
     link.selectAll('path.link')
         .attr('class', function(d) {
-            return [d.state, selected_class(d), "link graph"].join(' ');
+            return [d.state, selection.selected_class(d), "link graph"].join(' ');
         });
 
     link.exit().remove();
@@ -268,7 +256,7 @@ function update_view__graph(no_relayout) {
     linktext.enter()
         .append("text")
         .attr("class", function(d) {
-            return ["linklabel graph", selected_class(d)].join(' ');
+            return ["linklabel graph", selection.selected_class(d)].join(' ');
         })
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
@@ -310,7 +298,7 @@ function update_view__graph(no_relayout) {
             }
             if (d.state !== "temp"){
                 editNode(this, d, i);
-                removeHighlight();
+                selection.clear();
                 showInfo(this.node, i);
             }
         })
@@ -320,7 +308,7 @@ function update_view__graph(no_relayout) {
             this.node = d;
         })
         .attr('class', function(d) {
-            return ['node', selected_class(d)].join(' ');
+            return ['node', selection.selected_class(d)].join(' ');
         });
 
     nodetext = nodeEnter.insert("text")
@@ -360,10 +348,10 @@ function update_view__graph(no_relayout) {
             }
             d3.event.stopPropagation();
             if(d.state!=="temp") {
-                removeHighlight();
+                selection.clear();
                 showInfo(d, i);
             } else {
-                removeHighlight();
+                selection.clear();
             }
             update_view__graph(true);
         });
@@ -390,7 +378,7 @@ function update_view__graph(no_relayout) {
         })
         .on("click", function(d, i) {
             if(d.state!=="temp") {
-                removeHighlight();
+                selection.clear();
                 showInfo(d, i);
             }
         });
@@ -580,66 +568,9 @@ function tick(e) {
     node.attr('visibility', 'visible');
 }
 
-function removeHighlight() {
-    // TODO: stop manipulating state
-    var nodes = graph.nodes(),
-        links = graph.links(),
-        k = 0, j = 0;
-
-    selection = false;
-    while (k < nodes.length) {
-        if (nodes[k]['state'] === "enter" || nodes[k]['state'] === "exit" || nodes[k]['state'] === "chosen") {
-            nodes[k]['state'] = "perm";
-        }
-        k++;
-    }
-    while (j < links.length) {
-        links[j]['state'] = "perm";
-        j++;
-    }
-}
-
-function highlight(n)
-{
-    var n,
-        connected = graph.getConnectedNodesAndLinks(n, 1),
-        i,
-        node,
-        link,
-        data;
-
-    selection = true;
-    n.state = 'chosen';
-
-    for (i = 0 ; i < connected.nodes.length ; ++i) {
-        data = connected.nodes[i];
-        node = data.node;
-        switch (data.type) {
-        case 'exit':
-            node.state = 'exit';
-            break;
-        case 'enter':
-            node.state = 'enter';
-            break;
-        };
-    }
-    for (i = 0 ; i < connected.links.length ; ++i) {
-        data = connected.links[i];
-        link = data.link;
-        switch (data.type) {
-        case 'exit':
-            link.state = 'exit';
-            break;
-        case 'enter':
-            link.state = 'enter';
-            break;
-        };
-    }
-}
-
 function showInfo(d, i) {
   if (d.state !== "chosen" && d.state !== 'temp') {
-    highlight(d);
+    selection.connectedComponent([d]);
     view.node_info.show(d);
     view.node_info.on_submit(function() {
       if (d.type === "deliverable") {
@@ -658,7 +589,7 @@ function showInfo(d, i) {
       }
     });
   } else {
-    removeHighlight();
+    selection.clear();
     view.node_info.hide();
   }
   update_view__graph(true);
@@ -669,7 +600,7 @@ function mousedown() {
     $('.editinfo').css('left', 0);
     $('.editlinkinfo').css('top', -100);
     $('.editlinkinfo').css('left', 0);
-    removeHighlight();
+    selection.clear();
     view.hide();
     update_view__graph(true);
 }

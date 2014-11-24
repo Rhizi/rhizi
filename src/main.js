@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core) {
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core, selection) {
 
     function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -43,6 +43,18 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
                 $('#search').focus();
             }
         };
+        // TODO: move me somewhere
+        $('#search').on('input', function(e) {
+            var text = this.value,
+                r = new RegExp(text.replace(' ', '|')); // TODO fails for quotes
+            console.log('search: ' + text);
+            if (text.length > 0) {
+                selection.byVisitors(function (n) { return n.name.match(r); });
+            } else {
+                selection.clear();
+            }
+            rz_core.update_view__graph(false);
+        });
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
         textanalysis.init();
