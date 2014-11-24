@@ -456,7 +456,7 @@ var textAnalyser = function (newtext, finalize) {
 function init()
 {
     function onNodeAdded(diff) {
-        if (diff.nodes.added === undefined) {
+        if (!diff || !diff.nodes || diff.nodes.added) {
             return;
         }
         for (var k in diff.nodes.added) {
