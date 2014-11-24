@@ -45,9 +45,9 @@ class DB_result_set(object):
 
 class Cypher_String_Formatter(string.Formatter):
     """
-    Despite parameter support in Cypher, we sometimes do engage in query string building 
+    Despite parameter support in Cypher, we sometimes do engage in query string building
     - as both Cypher & Python use brackets to wrap parameters, escaping them in Python makes
-    queries less readable. This customized formatter will simply ignore unavailable keyworded 
+    queries less readable. This customized formatter will simply ignore unavailable keyworded
     formatting arguments, allowing the use of non-escaped parameter designation, eg:
     q = cfmt("match (a:{type} {cypher_param})", type='Book')
     """
@@ -133,9 +133,9 @@ def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     convert a filter attribute map to a parameterized Cypher where clause, eg.
     in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1,2] }
     out: {att_foo: {att_foo}, att_goo: {att_goo}, ...}
-    
-    this function will essentially ignore all but the first value in the value list 
-    
+
+    this function will essentially ignore all but the first value in the value list
+
     @param filter_attr_map: may be None or empty
     """
     if not filter_attr_map:
@@ -155,10 +155,10 @@ def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
 def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of node create queries
-    
+
     @param node_map: is a node-type to node map
     @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
-    
+
     @return: a (query, query_parameteres) set of create queries
     """
     __type_check_link_or_node_map(node_map)
@@ -176,7 +176,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
 def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of link create queries
-    
+
     @param link_map: is a link-type to link map - see model.link
     """
     __type_check_link_or_node_map(link_map)
@@ -210,7 +210,7 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
     """
     convert a list of maps each containing a meta_attr key into a
     meta_attr-mapped collection of lists with the meta_attr removed - eg:
-    
+
         in: [{'id':0, '__type': 'T'}, {'id':1, '__type': 'T'}]
         out: { 'T', [{'id':0}, {'id':1}] }
     """
