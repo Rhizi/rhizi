@@ -5,11 +5,17 @@ import os
 import db_controller as dbc
 import json
 import logging
+import traceback
 from flask import jsonify
 
 from flask import Flask
 from flask import request
 from flask import make_response
+
+from model.graph import Topo_Diff
+from model.graph import Attr_Diff
+from model.model import Link
+from datetime import datetime
 
 log = logging.getLogger('rhizi')
 
@@ -185,4 +191,17 @@ def add_node_set():
 
     op = dbc.DBO_add_node_set(node_map)
     return __common_exec(op)
+
+@webapp.route("/monitor/server-info", methods=['GET'])
+def monitor__server_info():
+    """
+    server monitor stub
+    """
+    dt = datetime.now()
+    return "<html><body>" + \
+           "<h1>Rhizi Server v0.1</h1><p>" + \
+           "date: " + dt.strftime("%Y-%m-%d") + "<br>" + \
+           "time: " + dt.strftime("%H:%M:%S") + "<br>" + \
+           "</p></body></html>"
+
 
