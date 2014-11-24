@@ -136,7 +136,7 @@ input:focus {
   opacity: 0.0;
   fill: none;
   stroke-width: 15px;
-  z-index:2; // higher than link, lower than node
+  z-index:2; /* higher than link, lower than node */
 }
 
 .circle.chosen {
