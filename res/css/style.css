@@ -360,7 +360,7 @@ input:focus {
 }
 
 .debug-ui-right {
-    .float: right;
+    float: right;
     width: 50%;
 }
 
