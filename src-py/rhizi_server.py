@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import logging
 import json
 import util
