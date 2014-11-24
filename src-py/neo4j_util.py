@@ -3,7 +3,8 @@
 """
 
 import json
-import urllib2
+from six.moves.urllib import request
+import six.moves.urllib_error as urllib_error
 import model
 import string
 import time
@@ -79,7 +80,7 @@ def post(url, data):
 
     post_data_json = json.dumps(data)
 
-    req = urllib2.Request(url)
+    req = request.Request(url)
     req.add_header('User-Agent', 'rhizi-server/0.1')
     req.add_header('Accept', 'application/json; charset=UTF-8')
     req.add_header('Content-Type', 'application/json')
@@ -87,8 +88,8 @@ def post(url, data):
     req.add_header('X-Stream', 'true') # enable neo4j JSON streaming
 
     try:
-        ret = urllib2.urlopen(req, post_data_json)
-    except urllib2.HTTPError as e:
+        ret = request.urlopen(req, post_data_json)
+    except urllib_error.HTTPError as e:
         raise Exception('post request failed: code: {0}, reason: {1}'.format(e.code, e.reason))
 
     return ret
