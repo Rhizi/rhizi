@@ -81,7 +81,6 @@ define([], function() {
         ret.end = node_spec.end;
         ret.x = node_spec.x;
         ret.y = node_spec.y;
-        console.log(ret);
 
         return ret;
     }

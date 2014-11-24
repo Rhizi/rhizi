@@ -3,6 +3,8 @@
 define(['signal', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh'],
 function (signal, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh) {
 
+var debug = false;
+
 function Graph() {
 
     var nodes = [],
@@ -34,11 +36,12 @@ function Graph() {
                 return;
             }else{
                 node = model_core.create_node__set_random_id(node);
-                // TODO clean
-                if ('bubble' == node.type){
-                    console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
-                }else {
-                    console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
+                if (debug) {
+                    if ('bubble' == node.type){
+                        console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
+                    }else {
+                        console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
+                    }
                 }
             }
         }
