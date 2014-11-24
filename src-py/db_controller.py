@@ -5,7 +5,6 @@ import logging
 import os
 import re
 import traceback
-import urllib2
 
 from db_driver import DB_Driver_REST, DB_Driver_Base
 from model.graph import Attr_Diff
