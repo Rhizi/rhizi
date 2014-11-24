@@ -575,7 +575,6 @@ function Graph() {
                                  x: node.x,
                                  y: node.y,
                                 }, false);
-          // textanalysis.autoSuggestAddName(node.name.toLowerCase());
         }
         for(i = 0; i < data["links"].length; i++){
           link = data.links[i];

@@ -1,7 +1,7 @@
 "use strict";
 
-define(['rz_core', 'model/core', 'model/util', 'model/diff'],
-function(rz_core, model_core, model_util, model_diff) {
+define(['rz_core', 'model/core', 'model/util', 'model/diff', 'signal', 'consts'],
+function(rz_core,   model_core,   model_util,   model_diff,   signal,   consts) {
 
 var typeindex = 0;
 var nodetypes = ["person", "project", "skill", "deliverable", "objective"];
@@ -453,7 +453,22 @@ var textAnalyser = function (newtext, finalize) {
     return ret;
 };
 
+function init()
+{
+    function onNodeAdded(diff) {
+        if (diff.nodes.added === undefined) {
+            return;
+        }
+        for (var k in diff.nodes.added) {
+            var node = diff.nodes[k];
+            autoSuggestAddName(node.name.toLowerCase());
+        }
+    }
+    signal.slot(consts.APPLIED_GRAPH_DIFF, onNodeAdded);
+}
+
 return {
+    init:init,
     autocompleteCallback:autocompleteCallback,
     textAnalyser:textAnalyser,
     autoSuggestAddName:autoSuggestAddName,

@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core'],
-function(textanalysis_ui,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core) {
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core) {
 
     function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -33,6 +33,7 @@ function(textanalysis_ui,   buttons,   history,   drag_n_drop,   robot,   model_
         }
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
+        textanalysis.init();
     }
 
     return {
