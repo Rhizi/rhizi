@@ -70,23 +70,36 @@ a:active {
     color: #FFF;
 }
 
-#textanalyser{
+#textinputui {
   position: fixed;
+  display: block;
+  top: 40px;
+  left: 20px;
+  right: 400px;
+}
+
+#textanalyser{
+  float: left;
   height:30px;
   max-width: 70%;
+  width:900px;
 }
 
 input:focus {
-
 }
 
 #suggestion{
-  display:block;
-  position:fixed;
-  top:30px;
-  left:20px;
   list-style-type: none;
-  width:900px;
+}
+
+#search {
+    height: 30px;
+    max-width: 100%;
+}
+
+#searchdiv {
+    width: 200px;
+    float: right;
 }
 
 .node {
