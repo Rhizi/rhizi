@@ -34,10 +34,8 @@ function Graph() {
         if (undefined == spec.id) {
             existing_node = findNodeByName(spec.name)
             if (existing_node){
-                // FIXME handle node-with-equal-name case
-                console.debug('__addNode: name collision: existing-node.name: \'' + existing_node.name + '\'' + 'new-node.name: \'' + spec.name + '\'');
-                return;
-            }else{
+                return existing_node;
+            } else {
                 node = model_core.create_node__set_random_id(spec);
                 if (debug) {
                     if ('bubble' == node.type){
@@ -53,8 +51,8 @@ function Graph() {
 
         existing_node = findNode(node.id, null);
         if (existing_node) {
-            console.debug('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\' ' + 'new-node.id: \'' + node.id + '\'');
-            return;
+            console.debug('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\', ' + 'new-node.id: \'' + node.id + '\'');
+            return existing_node;
         }
 
         undefined === notify && (notify = true); // notify by default
