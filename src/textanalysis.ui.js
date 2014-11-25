@@ -96,7 +96,7 @@ return {
             },
         });
 
-        $(document).keydown(function(e) {
+        $(document).keypress(function(e) {
             signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]}]);
             if (e.keyCode == 9) {//TAB
                 e.preventDefault();
