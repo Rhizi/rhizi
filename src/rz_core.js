@@ -596,17 +596,6 @@ function mousedown() {
     update_view__graph(true);
 }
 
-function AddedUnique(newnode) {
-    truth = true;
-    for (var p = 0; p < addednodes.length; p++) {
-        if (addednodes[p] === newnode) {
-            truth = false;
-        }
-    }
-    return truth;
-}
-
-
 $('#editform').keypress(function(e) {
     signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]}]);
     if (e.which == 13) {
