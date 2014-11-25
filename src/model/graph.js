@@ -47,8 +47,8 @@ function Graph() {
         }
 
         existing_node = findNode(node.id, null);
-        if (existing_node){
-            console.debug('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\'' + 'new-node.id: \'' + node.id + '\'');
+        if (existing_node) {
+            console.debug('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\' ' + 'new-node.id: \'' + node.id + '\'');
             return;
         }
 
