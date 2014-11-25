@@ -22,11 +22,24 @@ function selectedType()
 function autoSuggestAddName(name)
 {
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
-    if(name.split(" ").length > 1) {
-        sugg['"' + name + '"'] = 1;
-    } else {
-        sugg[name] = 1;
+    sugg[name] = 1;
+}
+
+function unquoted(name)
+{
+    var start = 0,
+        end = name.length;
+
+    if (name.length >= 1) {
+        if (name.charAt(0) == '"') {
+            start = 1;
+            if (name.length > 1 && name.charAt(name.length - 1) == '"') {
+                end = name.length - 1;
+            }
+        }
+        return name.substring(start, end);
     }
+    return name;
 }
 
 function autocompleteCallback(request, response_callback)
@@ -34,7 +47,7 @@ function autocompleteCallback(request, response_callback)
     var ret = [];
     if (request.term === "" || request.term) {
         for (var name in sugg) {
-            if (name.toLowerCase().indexOf(request.term.toLowerCase()) === 0) {
+            if (name.toLowerCase().indexOf(unquoted(request.term.toLowerCase())) === 0) {
                 ret.push(name);
             }
         }

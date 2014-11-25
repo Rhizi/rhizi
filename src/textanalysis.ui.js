@@ -84,6 +84,15 @@ return {
             triggerStart: '#',
             triggerEnd: '',
             source: textanalysis.autocompleteCallback,
+            response: function(element, ui) {
+                console.log(ui.content);
+                ui.content.forEach(function (x) {
+                    if (x.value.search(' ') != -1) {
+                        x.value = '"' + x.value + '"';
+                    }
+                });
+                console.log(ui.content);
+            },
             open: function() {
                 $('.ui-autocomplete').css('width', '10px');
             },
