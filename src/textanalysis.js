@@ -477,7 +477,11 @@ function init()
             autoSuggestAddName(node.name.toLowerCase());
         }
     }
+    function onSuggestedNameAdd(names) {
+        names.map(String.toLowerCase).forEach(autoSuggestAddName);
+    }
     signal.slot(consts.APPLIED_GRAPH_DIFF, onNodeAdded);
+    signal.slot(consts.SUGGESTED_NAME_ADD, onSuggestedNameAdd);
 }
 
 return {

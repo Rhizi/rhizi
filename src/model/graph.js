@@ -563,17 +563,17 @@ function Graph() {
     }
 
     this.load_from_json = function(json) {
-        var data = JSON.parse(json);
-        var i, node, link;
+        var data = JSON.parse(json),
+            added_names,
+            that = this;
 
         clear();
         if (data == null) {
             console.log('load callback: no data to load');
             return;
         }
-        for(i = 0; i < data["nodes"].length; i++){
-          node = data.nodes[i];
-          this.__addNode({id:node.id, name:node.name ? node.name : node.id,
+        added_names = data.nodes.map(function(node) {
+            return that.__addNode({id:node.id, name:node.name ? node.name : node.id,
                                  type:node.type,state:"perm",
                                  start:new Date(node.start),
                                  end:new Date(node.end),
@@ -581,12 +581,12 @@ function Graph() {
                                  url:node.url,
                                  x: node.x,
                                  y: node.y,
-                                }, false);
-        }
-        for(i = 0; i < data["links"].length; i++){
-          link = data.links[i];
-          this.addLink(link.__src, link.__dst, link.name, "perm");
-        }
+                                }, false).name;
+        });
+        data.links.forEach(function(link) {
+            that.addLink(link.__src, link.__dst, link.name, "perm");
+        });
+        signal.signal(consts.SUGGESTED_NAME_ADD, [added_names]);
         this.clear_history();
     }
 
