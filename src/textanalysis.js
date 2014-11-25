@@ -174,7 +174,7 @@ var textAnalyser = function (newtext, finalize) {
         if (type === undefined) {
             console.log('bug: textanalyser.addNode of type undefined');
         }
-        var node = model_core.create_node_from_spec(
+        var node = model_core.create_node__with_optional_id(
                 {'name':name,
                  'type':type,
                  'state':state});

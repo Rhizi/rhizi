@@ -88,6 +88,16 @@ define([], function() {
     /**
      *
      */
+    function create_node__with_optional_id(node_spec) {
+        var node = create_node_from_spec(node_spec);
+
+        node.id = node_spec.id;
+        return node;
+    }
+
+    /**
+     *
+     */
     function create_node__set_random_id(node_spec) {
         if (undefined == node_spec) {
             node_spec = {};
@@ -166,7 +176,7 @@ define([], function() {
         Node: Node, // allow model adaptation
         Link: Link, // allow model adaptation
         random_node_name : random_node_name,
-        create_node_from_spec : create_node_from_spec,
+        create_node__with_optional_id : create_node__with_optional_id,
         create_link_from_spec : create_link_from_spec,
         create_node__set_random_id : create_node__set_random_id,
         create_link__set_random_id : create_link__set_random_id,
