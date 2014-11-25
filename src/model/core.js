@@ -42,6 +42,13 @@ define([], function() {
 
     function Link() {
     }
+    // adapte Link to force_layoutL create __src,__dst aliases
+    Link.prototype.__defineGetter__('source', function(){
+        return this.__src;
+    });
+    Link.prototype.__defineGetter__('target', function(){
+        return this.__dst;
+    });
 
     /**
      * the most flexible way to create a node: - perform spec field validation -

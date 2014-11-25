@@ -114,14 +114,6 @@ function init_force_layout(){
               .size([w, h])
               .on("tick", tick)
               .start();
-
-    // adapte Link to force_layoutL create __src,__dst aliases
-    model_core.Link.prototype.source = function(){
-        return this.__src;
-    }
-    model_core.Link.prototype.target = function(){
-        return this.__dst;
-    }
 }
 
 initDrawingArea();
