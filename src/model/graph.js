@@ -477,10 +477,7 @@ function Graph() {
     }
 
     var findNodeByName = function(name, state) {
-        if (undefined == state){
-            state = null;
-        }
-
+        state = state || null;
         for (var i = 0 ; i < nodes.length ; ++i) {
             if (compareNames(nodes[i].name, name) || nodes[i].state === state) {
                 return nodes[i];
