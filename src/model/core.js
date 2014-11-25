@@ -65,10 +65,7 @@ define([], function() {
         ret.type = node_spec.type;
 
         // status
-        if (undefined == node_spec.status) {
-            node_spec.type = 'unknown';
-        }
-        ret.status = node_spec.status;
+        ret.status = node_spec.status || 'unknown';
 
         // visual
         ret.x = node_spec.x;
@@ -79,8 +76,6 @@ define([], function() {
         ret.url = node_spec.url;
         ret.start = node_spec.start;
         ret.end = node_spec.end;
-        ret.x = node_spec.x;
-        ret.y = node_spec.y;
 
         return ret;
     }
