@@ -27,16 +27,18 @@ function Graph() {
      *
      * @param notify whether or not a presenter notification will be sent, default = true
      */
-    this.__addNode = function(node, notify) {
-        var existing_node;
-        if (undefined == node.id) {
-            existing_node = findNodeByName(node.name)
+    this.__addNode = function(spec, notify) {
+        var existing_node,
+            node;
+
+        if (undefined == spec.id) {
+            existing_node = findNodeByName(spec.name)
             if (existing_node){
                 // FIXME handle node-with-equal-name case
-                console.debug('__addNode: name collision: existing-node.name: \'' + existing_node.name + '\'' + 'new-node.name: \'' + node.name + '\'');
+                console.debug('__addNode: name collision: existing-node.name: \'' + existing_node.name + '\'' + 'new-node.name: \'' + spec.name + '\'');
                 return;
             }else{
-                node = model_core.create_node__set_random_id(node);
+                node = model_core.create_node__set_random_id(spec);
                 if (debug) {
                     if ('bubble' == node.type){
                         console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
@@ -45,6 +47,8 @@ function Graph() {
                     }
                 }
             }
+        } else {
+            node = model_core.create_node__with_optional_id(spec);
         }
 
         existing_node = findNode(node.id, null);
