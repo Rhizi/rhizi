@@ -15,8 +15,9 @@ function Graph() {
      *
      * @return node if node was actually added
      */
-    this.addNode = function(node) {
-        if (this.__addNode(node)) {
+    this.addNode = function(spec) {
+        var node = this.__addNode(spec);
+        if (node) {
             return node;
         }
     }
