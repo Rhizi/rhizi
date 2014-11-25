@@ -174,7 +174,7 @@ var textAnalyser = function (newtext, finalize) {
         if (type === undefined) {
             console.log('bug: textanalyser.addNode of type undefined');
         }
-        var node = model_core.crete_node_from_spec(
+        var node = model_core.create_node_from_spec(
                 {'name':name,
                  'type':type,
                  'state':state});
@@ -200,7 +200,7 @@ var textAnalyser = function (newtext, finalize) {
         }
         link_hash[src][dst] = 1;
 
-        var link = model_core.crete_link_from_spec(src, dst, {'name':name, 'state':state});
+        var link = model_core.create_link_from_spec(src, dst, {'name':name, 'state':state});
         ret.link_set_add.push(link);
     }
 
