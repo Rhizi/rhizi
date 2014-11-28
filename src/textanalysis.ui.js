@@ -8,18 +8,39 @@ var element_name = '#textanalyser';
 var element = $(element_name);
 var suggestionChange;
 
+var typeselection = function TypeSelectionDialog() {
+    var e = $('.typeselection'),
+        typeselection = {};
+
+    typeselection.analysisNodeStart = function() {
+        typeselection.show();
+        e.html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
+    }
+    typeselection.show = function() {
+        e.css({
+            top: window.innerHeight/2-115,
+            left: window.innerWidth/2-325});
+    }
+    typeselection.hide = function() {
+        e.css('top', -300);
+        e.css('left', 0);
+    }
+    typeselection.showChosenType = function(nodetype) {
+        e.html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
+    }
+    return typeselection;
+}();
+
 function analyzeSentence(sentence, finalize)
 {
     var ret = textanalysis.textAnalyser(sentence, finalize);
 
     switch (ret.state) {
     case textanalysis.ANALYSIS_NODE_START:
-        $('.typeselection').css({top:window.innerHeight/2-115,left:window.innerWidth/2-325});
-        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
+        typeselection.analysisNodeStart();
         break;
     case textanalysis.ANALYSIS_LINK:
-        $('.typeselection').css('top', -300);
-        $('.typeselection').css('left', 0);
+        typeselection.hide();
         break;
     }
 
@@ -27,8 +48,7 @@ function analyzeSentence(sentence, finalize)
     ret.applyToGraph(rz_core.graph, backend_commit);
 
     if (finalize || sentence.length == 0) {
-        $('.typeselection').css('top', -300);
-        $('.typeselection').css('left', 0);
+        typeselection.hide();
         $('span.ui-helper-hidden-accessible').hide();
     } else {
         $('span.ui-helper-hidden-accessible').show();
@@ -63,11 +83,11 @@ function changeType(arg) {
 
     if (arg === 'up') {
         rz_core.graph.editType(id, null, nodetype);
-        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
+        typeselection.showChosenType(nodetype);
         rz_core.graph.findCoordinates(id, null);
     } else {
         rz_core.graph.editType(id, null, nodetype);
-        $('.typeselection').html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
+        typeselection.showChosenType(nodetype);
         rz_core.graph.findCoordinates(id, null);
     }
     rz_core.update_view__graph(true);
