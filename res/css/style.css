@@ -3,7 +3,6 @@ html, body {
 }
 
 html{
-
 }
 
 body {
@@ -14,8 +13,7 @@ body {
 	padding: 0;
 	color: #FFF;
 	font-size: 14px;
-	font-family: 'Lato', sans-serif;
-	font-weight: lighter;
+    font-family: 'Source Sans Pro', sans-serif;
   background-color:#080808;
 }
 
