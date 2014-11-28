@@ -7,16 +7,19 @@ function customColor(type) {
         case "person":
             color = '#FCB924';
             break;
-        case "project":
+        case "club":
             color = '#009DDC';
             break;
         case "skill":
             color = '#62BB47';
             break;
-        case "deliverable":
+        case "third-internship-proposal":
             color = '#202020';
             break;
-        case "objective":
+        case "internship":
+            color = '#933E99';
+            break;
+        case "interest":
             color = '#933E99';
             break;
         case "empty":
@@ -42,16 +45,19 @@ function customSize(type) {
         case "person":
             size = 12;
             break;
-        case "project":
+        case "club":
             size = 12;
             break;
         case "skill":
             size = 12;
             break;
-        case "deliverable":
+        case "third-internship-proposal":
             size = 12;
             break;
-        case "objective":
+        case "internship":
+            size = 12;
+            break;
+        case "interest":
             size = 12;
             break;
         case "empty":

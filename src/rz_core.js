@@ -382,7 +382,7 @@ function update_view__graph(no_relayout) {
     var nodes = graph.nodes();
     for (var i = 0; i < nodes.length; i++) {
         var current = nodes[i];
-        if (current.type === "deliverable") {
+        if (current.type === "third-internship-proposal") {
             deliverables.push({
                 "id": nodes[i].id,
                 "startdate": nodes[i].start,
@@ -436,7 +436,7 @@ function tick(e) {
     var linktext = vis.selectAll(".linklabel").data(graph.links());
 
     function transform(d) {
-        if (graphstate === "GRAPH" || d.type === "deliverable") {
+        if (graphstate === "GRAPH" || d.type === "third-internship-proposal") {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
             }

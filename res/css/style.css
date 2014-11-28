@@ -150,16 +150,19 @@ a:active {
 .circle.person {
   fill: #FCB924; }
 
-.circle.project {
+.circle.club {
   fill: #009DDC; }
 
 .circle.skill {
   fill: #62BB47; }
 
-.circle.deliverable {
+.circle.interest {
+  fill: #f9f5f1; }
+
+.circle.third-internship-proposal {
   fill: #202020; }
 
-.circle.objective {
+.circle.internship {
   fill: #933E99; }
 
 .circle.empty {

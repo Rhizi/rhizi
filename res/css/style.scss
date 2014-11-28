@@ -187,7 +187,7 @@ input:focus {
 }
 
 
-.circle.project {
+.circle.club {
     fill: #009DDC;
 }
 
@@ -195,11 +195,15 @@ input:focus {
     fill: #62BB47;
 }
 
-.circle.deliverable {
+.circle.interest {
+  fill: #f9f5f1;
+}
+
+.circle.third-internship-proposal {
     fill: #202020;
 }
 
-.circle.objective {
+.circle.internship {
     fill: #933E99;
 }
 
@@ -386,9 +390,6 @@ input:focus {
 }
 
 .local-storage-load {
-}
-
-.deliverabletest{
 }
 
 .poweredby{
