@@ -1,0 +1,555 @@
+html, body {
+    height: 100%;
+}
+
+html{
+}
+
+body {
+	overflow-y: hidden;
+  overflow-x:auto;
+	margin: 0;
+	min-width: 980px;
+	padding: 0;
+	color: #FFF;
+	font-size: 14px;
+    font-family: 'Source Sans Pro', sans-serif;
+  background-color:#080808;
+}
+
+.title{
+	position:absolute;
+	left:0;
+	right:0;
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+	font-size: 30px;
+}
+
+textarea {
+background-color: rgba(17,17,17,0.8);
+color: white;
+border-width: 1px;
+border-color: #303030;
+font-size:14px;
+}
+
+input{
+background-color: rgba(17,17,17,0.8);
+color: white;
+border-width: 1px;
+border-color: #303030;
+font-size:14px;
+
+  outline:none;
+  border-color:#303030;
+  box-shadow:0 0 0px #303030;
+  -webkit-transition: all 0.04s ease-in-out;
+  -moz-transition: all 0.04s ease-in-out;
+  -ms-transition: all 0.04s ease-in-out;
+  -o-transition: all 0.04s ease-in-out;
+}
+
+a{
+  text-decoration: none;
+  font-style: italic;
+}
+a:link {
+    color: #FFF;
+}
+a:visited {
+    color: #FFF;
+}
+a:hover {
+    color: #EDE275;
+}
+a:active {
+    color: #FFF;
+}
+
+#textinputui {
+  position: fixed;
+  display: block;
+  top: 40px;
+  left: 20px;
+  right: 400px;
+}
+
+#textanalyser{
+  float: left;
+  height:30px;
+  max-width: 70%;
+  width:900px;
+}
+
+input:focus {
+}
+
+#suggestion{
+  list-style-type: none;
+}
+
+#search {
+    height: 30px;
+    max-width: 100%;
+}
+
+#searchdiv {
+    width: 200px;
+    float: right;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1px;
+  font-size: 16px;
+  z-index:100;
+}
+
+.ghostnode{
+
+}
+
+.circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+  z-index: 100;
+  pointer-events:all;
+  box-shadow: 0 0 0px #FFFF8F;
+}
+
+.nodetext {
+
+  fill: #FFFFFF;
+  font-size:17px;
+  z-index:3;
+}
+
+.linklabel{
+  stroke: #EEEEEE;
+  font-size:14px;
+
+}
+
+.barlabel{
+  stroke: #EEEEEE;
+  font-size:14px;
+}
+
+.link {
+  fill: none;
+  stroke: #404040;
+  z-index:1;
+}
+
+.ghostlink {
+  opacity: 0.0;
+  fill: none;
+  stroke-width: 15px;
+  z-index:2; /* higher than link, lower than node */
+}
+
+.circle.chosen {
+    stroke: #EDE275;
+}
+.circle.enter {
+    stroke: #EDE275;
+}
+.circle.bubble {
+    stroke: #101010;
+}
+.circle.exit {
+    stroke: #EDE275;
+}
+.circle.chainlink {
+    stroke: #AAA;
+}
+
+.circle.temp {
+    box-shadow: 0 0 40px #FFFF8F;
+}
+
+.circle.temp, .circle.chosen {
+    stroke-width: 3px;
+}
+
+.circle.temp.empty {
+    stroke-width: 1.5px;
+}
+
+/* Per node and edge type (type is a property of nodes and links) styling
+ * note that this should be automatically generated somehow for user settings.
+ */
+
+.circle.person {
+    fill: #FCB924;
+}
+
+
+.circle.project {
+    fill: #009DDC;
+}
+
+.circle.skill {
+    fill: #62BB47;
+}
+
+.circle.deliverable {
+    fill: #202020;
+}
+
+.circle.objective {
+    fill: #933E99;
+}
+
+.circle.empty {
+    fill: #080808;
+}
+
+.circle.chainlink {
+    fill: #fff;
+}
+
+.circle.bubble {
+    fill: rgba(0,0,0,0.2);
+}
+
+
+/* Selected parts of the graph, right now by clicking, later with search. */
+
+.notselected {
+    opacity: 0.2;
+}
+
+.graph.link.temp_and {
+    stroke-dasharray: 3,3;
+}
+
+.highlightlink {
+  fill: none;
+  stroke: #EDE275;
+  stroke-width: 2px;
+  z-index:1;
+  pointer-events: none;
+}
+
+.link.enter, .link.exit, .link.selected {
+  fill: none;
+  stroke: #EDE275;
+  stroke-width: 4px;
+  z-index:1;
+  pointer-events: none;
+}
+
+.subtitle{
+  font-style:italic;
+  color: #bbb;
+  font-size: 12px;
+  float:right;
+}
+
+.textfield{
+	position:fixed;
+	top:200px;
+	left:18px;
+	font-size: 14px;
+}
+
+.statement {
+   position:fixed;
+	 top:20px;
+	 left:20px;
+}
+.statement input {
+   clear: both;
+   background-color: rgba(17,17,17,0.5);
+   color: white;
+   border-width: 1px;
+   border-color: #303030;
+   font-size: 14px;
+}
+
+.textselect {
+   position:fixed;
+	 top:600px;
+	 left:20px;
+}
+
+.logo {
+   position:fixed;
+	 top:10px;
+	 right:10px;
+   opacity: 0.7;
+
+}
+.colorpicker{
+  position:fixed;
+  top:100px;
+  right:10px;
+
+}
+
+.colorpicker td{
+  height:40px;
+  width:100px;
+  text-align: center;
+}
+
+.status{
+  display:none;
+}
+
+.typeselection{
+  position:fixed;
+  left:0;
+  top:-300px;
+  pointer-events:none;
+}
+
+#keys{
+  opacity: 0.5;
+}
+
+#editbox input{
+  width:130px;
+}
+
+#suggestion td{
+  padding-top: 5px;
+  padding-left: 200px;
+}
+
+.typeselection td{
+  padding-top: 5px;
+  padding-left: 200px;
+}
+
+.help{
+  font-size: 20px;
+  position: fixed;
+  top: 5px;
+  left: 10px;
+  margin-left: 12px;
+}
+
+.overlay {
+  fill:none;
+  pointer-events: all;
+  z-index:0;
+
+}
+
+.colorpicker table{
+  border-width: 1px;
+   border-color: #303030;
+}
+
+.debug-ui {
+  position:fixed;
+  bottom:70px;
+  left:10px;
+  text-decoration: none;
+}
+
+.debug-ui-row {
+    float: left;
+    width: 100%;
+}
+
+.debug-ui-left {
+    float: left;
+    width: 50%;
+}
+
+.debug-ui-right {
+    float: right;
+    width: 50%;
+}
+
+.debug{
+}
+
+.history-timeline {
+    pointer-events: none;
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    justify-content: center;
+    bottom: 100px;
+}
+
+.save{
+}
+
+.export {
+}
+
+.local-storage-load {
+}
+
+.deliverabletest{
+}
+
+.poweredby{
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  vertical-align: middle;
+}
+
+.edge_info, .info {
+  background-color: rgba(17,17,17,0.8);
+	position:fixed;
+	top:150px;
+  width:250px;
+	right:10px;
+	font-size: 18px;
+  border: 1px solid;
+  padding: 5px;
+  line-height: 45px;
+  border-color: #303030;
+}
+.editinfo{
+  position: fixed;
+  top:-40px;
+  z-index:5;
+}
+
+.editlinkinfo{
+  position: fixed;
+  top:-40px;
+  z-index:5;
+}
+
+#gantbox{
+  position:absolute;
+  background-color: rgba(200,200,200,0.1);
+  height:100%;
+  width: 100%;
+  overflow: auto;
+  z-index:0;
+}
+
+.missingdates{
+  position:fixed;
+  bottom:60px;
+  left:160px;
+}
+
+
+
+.axis{
+  stroke: #ccc;
+  fill: #ccc;
+}
+
+#editlinkname{
+  width:inherit;
+  height:inherit;
+
+  font-size: 17px;
+
+}
+
+#editname{
+  width:inherit;
+  height:inherit;
+
+  font-size: 17px;
+
+}
+
+
+.axis path,.axis line {
+  fill: none;
+  stroke: #ccc;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: #33b5e5;
+}
+
+.bar-failed {
+  fill: #CC0000;
+}
+
+.bar-running {
+  fill: #669900;
+}
+
+.bar-succeeded {
+  fill: #33b5e5;
+}
+
+.bar-killed {
+  fill: #ffbb33;
+}
+
+
+
+
+.onoffswitch {
+    z-index:100;
+    position: fixed;
+    width: 160px;
+    top:35px;
+    right: 180px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+
+.onoffswitch-checkbox {
+    display: none;
+}
+
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #303030; border-radius: 5px;
+}
+
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
+    font-size: 14px; color: white; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+.onoffswitch-inner:before {
+    content: "TIMELINE VIEW";
+    padding-left: 5px;
+    background-color: #080808; color: #FFFFFF;
+}
+
+.onoffswitch-inner:after {
+    content: "GRAPH VIEW";
+    padding-right: 5px;
+    background-color: #080808; color: #FFFFFF;
+    text-align: right;
+}
+
+.onoffswitch-switch {
+    display: block; width: 35px; margin: 0px;
+    background: #3D3D3D;
+    border: 1px solid #FFFFFF; border-radius: 5px;
+    position: absolute; top: 0; bottom: 0; right: 125px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
+    background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: -webkit-linear-gradient(rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
