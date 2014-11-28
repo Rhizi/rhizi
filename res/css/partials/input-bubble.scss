@@ -1,0 +1,15 @@
+.typeselection{
+  position:fixed;
+  left:0;
+  top:-300px;
+  pointer-events:none;
+}
+
+.typeselection td{
+  padding-top: 5px;
+  padding-left: 200px;
+}
+
+#keys{
+  opacity: 0.5;
+}

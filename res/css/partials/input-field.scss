@@ -1,0 +1,42 @@
+input{
+  background-color: rgba(17,17,17,0.8);
+  color: white;
+  border-width: 1px;
+  border-color: #303030;
+  font-size:14px;
+
+  outline:none;
+  border-color:#303030;
+  box-shadow:0 0 0px #303030;
+  -webkit-transition: all 0.04s ease-in-out;
+  -moz-transition: all 0.04s ease-in-out;
+  -ms-transition: all 0.04s ease-in-out;
+  -o-transition: all 0.04s ease-in-out;
+}
+
+#textinputui {
+  position: fixed;
+  display: block;
+  top: 40px;
+  left: 20px;
+  right: 400px;
+}
+
+#textanalyser{
+  float: left;
+  height:30px;
+  max-width: 70%;
+  width:900px;
+}
+
+input:focus {
+}
+
+#suggestion{
+  list-style-type: none;
+}
+
+#suggestion td{
+  padding-top: 5px;
+  padding-left: 200px;
+}

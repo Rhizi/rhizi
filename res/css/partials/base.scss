@@ -1,0 +1,39 @@
+@import "../modules/colors";
+@import "../modules/mixins";
+
+//Globals
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow-y: hidden;
+  overflow-x:auto;
+  margin: 0;
+  min-width: 980px;
+  padding: 0;
+  color: #FFF;
+  font-size: 14px;
+  background-color:#080808;
+}
+
+a{
+  text-decoration: none;
+  font-style: italic;
+}
+
+a:link {
+  color: #FFF;
+}
+
+a:visited {
+  color: #FFF;
+}
+
+a:hover {
+  color: #EDE275;
+}
+
+a:active {
+  color: #FFF;
+}

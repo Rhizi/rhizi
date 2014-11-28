@@ -1,0 +1,179 @@
+.node {
+  stroke: #fff;
+  stroke-width: 1px;
+  font-size: 16px;
+  z-index:100;
+}
+
+.ghostnode{
+
+}
+
+.circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+  z-index: 100;
+  pointer-events:all;
+  box-shadow: 0 0 0px #FFFF8F;
+}
+
+.nodetext {
+
+  fill: #FFFFFF;
+  font-size:17px;
+  z-index:3;
+}
+
+.linklabel{
+  stroke: #EEEEEE;
+  font-size:14px;
+
+}
+
+.link {
+  fill: none;
+  stroke: #404040;
+  z-index:1;
+}
+
+.ghostlink {
+  opacity: 0.0;
+  fill: none;
+  stroke-width: 15px;
+  z-index:2; /* higher than link, lower than node */
+}
+
+.circle.chosen {
+  stroke: #EDE275;
+}
+.circle.enter {
+  stroke: #EDE275;
+}
+.circle.bubble {
+  stroke: #101010;
+}
+.circle.exit {
+  stroke: #EDE275;
+}
+.circle.chainlink {
+  stroke: #AAA;
+}
+
+.circle.temp {
+  box-shadow: 0 0 40px #FFFF8F;
+}
+
+.circle.temp, .circle.chosen {
+  stroke-width: 3px;
+}
+
+.circle.temp.empty {
+  stroke-width: 1.5px;
+}
+
+/* Per node and edge type (type is a property of nodes and links) styling
+ * note that this should be automatically generated somehow for user settings.
+ */
+
+.circle.person {
+  fill: #FCB924;
+}
+
+
+.circle.club {
+  fill: #009DDC;
+}
+
+.circle.skill {
+  fill: #62BB47;
+}
+
+.circle.interest {
+  fill: #f9f5f1;
+}
+
+.circle.third-internship-proposal {
+  fill: #202020;
+}
+
+.circle.internship {
+  fill: #933E99;
+}
+
+.circle.empty {
+  fill: #080808;
+}
+
+.circle.chainlink {
+  fill: #fff;
+}
+
+.circle.bubble {
+  fill: rgba(0,0,0,0.2);
+}
+
+
+/* Selected parts of the graph, right now by clicking, later with search. */
+
+.notselected {
+  opacity: 0.2;
+}
+
+.graph.link.temp_and {
+  stroke-dasharray: 3,3;
+}
+
+.highlightlink {
+  fill: none;
+  stroke: #EDE275;
+  stroke-width: 2px;
+  z-index:1;
+  pointer-events: none;
+}
+
+.link.enter, .link.exit, .link.selected {
+  fill: none;
+  stroke: #EDE275;
+  stroke-width: 4px;
+  z-index:1;
+  pointer-events: none;
+}
+
+#editbox input{
+  width:130px;
+}
+
+.overlay {
+  fill:none;
+  pointer-events: all;
+  z-index:0;
+
+}
+
+.editinfo{
+  position: fixed;
+  top:-40px;
+  z-index:5;
+}
+
+.editlinkinfo{
+  position: fixed;
+  top:-40px;
+  z-index:5;
+}
+
+#editlinkname{
+  width:inherit;
+  height:inherit;
+
+  font-size: 17px;
+
+}
+
+#editname{
+  width:inherit;
+  height:inherit;
+
+  font-size: 17px;
+
+}
