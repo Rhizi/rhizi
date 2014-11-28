@@ -5,3 +5,15 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 
 A.K.A The spreadsheet of tomorrow
 
+Development
+===========
+
+To update the css files you need [sass](http://sass-lang.com/)
+
+The build tool is [make](https://www.gnu.org/software/make/)
+
+To rebuild the css files issue make from the top level directory:
+
+ $ make
+
+
