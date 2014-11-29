@@ -1,12 +1,5 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core, selection) {
-
-    function getParameterByName(name) {
-        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(location.search);
-        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-    }
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection', 'util'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core, selection,          util) {
 
     function expand(obj){
         if (!obj.savesize) {
@@ -26,8 +19,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
 
         textanalysis_ui.main();
 
-        // TODO: jquery BBQ: $.deparam.querystring().json;
-        json = getParameterByName('json');
+        json = util.getParameterByName('json');
         if (json) {
             rz_core.load_from_json(json);
         }

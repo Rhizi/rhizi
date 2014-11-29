@@ -43,10 +43,19 @@ define(function() {
         return set_diff(sa, sb);
     }
 
+    // TODO: jquery BBQ: $.deparam.querystring().json;
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
     return {
-        set_from_array : set_from_array,
-        set_from_object : set_from_object,
-        set_diff : set_diff,
-        array_diff : array_diff
+        set_from_array: set_from_array,
+        set_from_object: set_from_object,
+        set_diff: set_diff,
+        array_diff: array_diff,
+        getParameterByName: getParameterByName,
     };
 });
