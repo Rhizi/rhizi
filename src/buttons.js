@@ -67,18 +67,29 @@ $('.local-storage-load a').click(function(){
   rz_core.load_from_json(json_blob);
 });
 
-$('a.set-user').click(function() {
-    $('.set-user').hide();
-    $('.set-user-form').show();
-    $('.set-user-form').submit(function() {
-        var user = $('.set-user-input').val();
-        rz_core.graph.set_user(user);
+var onUserSet = function(user) {
+    if (user) {
         $('.set-user').html('user: ' + user);
         $('.set-user').show();
         $('.set-user-form').hide();
         $('.save-history').show();
-        return false;
-    })
+    } else {
+        $('.set-user').html('');
+        $('.set-user').hide();
+        $('.set-user-form').show();
+    }
+}
+
+rz_core.graph.userBus.onValue(onUserSet);
+
+$('.set-user-form').submit(function() {
+    var user = $('.set-user-input').val();
+    rz_core.graph.set_user(user);
+    return false;
+});
+$('a.set-user').click(function() {
+    $('.set-user').hide();
+    $('.set-user-form').show();
 });
 
 $('a.save-history').click(function() {

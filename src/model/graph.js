@@ -9,8 +9,11 @@ function Graph() {
 
     var nodes = [],
         links = [],
+        user,
+        userBus = new Bacon.Bus(),
         diffBus = new Bacon.Bus();
 
+    this.userBus = userBus;
     this.diffBus = diffBus;
 
     /**
@@ -621,9 +624,12 @@ function Graph() {
     }
 
     this.set_user = function(user) {
+        var elem = $('svg g.zoom')[0];
         this.user = user;
-        this.history = new History(this.user, $('svg g.zoom')[0]);
-        console.log('new user: ' + user);
+
+        this.history = new history.History(this.user, this, elem);
+        console.log('new user: ' + this.user);
+        this.userBus.push(this.user);
     }
 
     function clear_history() {
@@ -683,6 +689,13 @@ function Graph() {
             }
         }
         return selected;
+    }
+
+    user = util.getParameterByName('user');
+    if (user) {
+        var self = this;
+        console.log('setting user from parameter to: ' + user);
+        setTimeout(function() { self.set_user(user); }, 0);
     }
 }
 
