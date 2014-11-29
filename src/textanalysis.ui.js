@@ -117,35 +117,34 @@ return {
         });
 
         $(document).keypress(function(e) {
-            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]}]);
-            if (e.keyCode == 9) {//TAB
+            var ret = undefined;
+            switch (e.keyCode) {
+            case 9: //TAB
                 e.preventDefault();
                 changeType(e.shiftKey ? "up" : "down", textanalysis.lastnode());
-                return false;
-            }
-
-            if (e.keyCode == 37) {//UP
-                  $('html, body').scrollLeft(0);
-            }
-            if (e.keyCode == 39) {//DOWN
-                  $('html, body').scrollLeft(0);
-            }
-
-            if (e.keyCode == 38) {//UP
+                ret = false;
+                break;
+            case 37: //UP
+                $('html, body').scrollLeft(0);
+                break;
+            case 39: //DOWN
+                $('html, body').scrollLeft(0);
+                break;
+            case 38: //UP
                 suggestionChange = true;
-            }
-            if (e.keyCode == 40) {//DOWN
+                break;
+            case 40: //DOWN
                 suggestionChange = true;
+                break;
             }
-
-            if (e.keyCode == 9) {//TAB
-                return false;
-            }
+            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]}]);
+            return ret;
         });
 
         element.keypress(function(e) {
-            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]}]);
-            if (e.which == 13) {
+            var ret = undefined;
+            switch (e.which) {
+            case 13:
                 if(!suggestionChange) {
                     text = element.val();
                     element.val("");
@@ -153,19 +152,21 @@ return {
                 } else {
                     suggestionChange = false;
                 }
-                return false;
-            }
-
-            if (e.which == 37) {//RIGHT
+                ret = false;
+                break;
+            case 37: //RIGHT
                 $('body').scrollLeft(0);
                 e.stopPropagation();
-                return false;
-            }
-            if (e.which == 39) { //LEFT
+                ret = false;
+                break;
+            case 39: //LEFT
                 $('body').scrollLeft(0);
                 e.stopPropagation();
-                return false;
+                ret = false;
+                break;
             }
+            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]}]);
+            return ret;
         });
 
         if ('oninput' in document.documentElement) {
