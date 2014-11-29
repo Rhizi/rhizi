@@ -1,3 +1,4 @@
+"use strict"
 // Once upon a time we shall have a versioned property graph from which history
 // will be one extractable aspect, much like a git for graphs. Now we just have
 // a plain list of events for a specific user.
