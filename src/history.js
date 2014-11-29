@@ -123,8 +123,8 @@ History.prototype.record_keystrokes = function(obj)
         return;
     }
     this.record(ACTION_KEYSTROKES, {
-        'keys': keys,
-        'where': where
+        keys: keys,
+        where: where
     });
 }
 
