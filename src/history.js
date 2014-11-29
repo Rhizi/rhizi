@@ -115,7 +115,8 @@ History.prototype.record_keystrokes = function(obj)
 
     if (where === undefined || keys === undefined || keys.length === undefined ||
         keys.length <= 0) {
-        throw "Invalid arguments";
+        console.log("invalid arguments");
+        return;
     }
     keys = keys.filter(function(k) { return k !== undefined; });
     if (keys.length == 0) {
