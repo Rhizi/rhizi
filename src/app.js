@@ -8,6 +8,7 @@
             FileSaver: lib_path + 'FileSaver',
             caret: lib_path + 'caret',
             autocomplete: lib_path + 'autocomplete',
+            Bacon: lib_path + 'Bacon',
         }
     }
 
