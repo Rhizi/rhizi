@@ -29,7 +29,8 @@ function Graph() {
      */
     this.__addNode = function(spec, notify) {
         var existing_node,
-            node;
+            node,
+            notify = undefined === notify ? true : notify;
 
         if (undefined == spec.id) {
             existing_node = findNodeByName(spec.name)
@@ -55,11 +56,9 @@ function Graph() {
             return existing_node;
         }
 
-        undefined === notify && (notify = true); // notify by default
-
         nodes.push(node);
 
-        if (undefined == notify){
+        if (notify) {
             signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {add: [node]}}]);
         }
 
