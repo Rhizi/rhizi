@@ -174,10 +174,13 @@ return {
             return ret;
         });
 
+        var input = new Bacon.Bus();
+        rz_bus.ui_input.plug(input);
         if ('oninput' in document.documentElement) {
             element.on('input', function(e) {
                 text = element.val();
                 analyzeSentence(text, false);
+                input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
             });
         } else {
             console.log('textanalysis.ui: fallback to polling');

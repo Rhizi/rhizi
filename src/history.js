@@ -31,6 +31,7 @@ function History(user, graph, transform_element) {
         return that.record_graph_diff(obj)
     });
     rz_bus.ui_key.onValue(that.record_keystrokes.bind(that));
+    rz_bus.ui_input.onValue(that.record_input.bind(that));
     // XXX create zoom behavior - then proof to event name change
     $(window).on('wheel.history', function(obj) {
         that.record_zoom(obj);
@@ -39,6 +40,7 @@ function History(user, graph, transform_element) {
 }
 
 var ACTION_KEYSTROKES = 'ACTION_KEYSTROKES';
+var ACTION_INPUT = 'ACTION_INPUT';
 var ACTION_GRAPH_DIFF = 'ACTION_GRAPH_DIFF';
 var ACTION_ZOOM = 'ACTION_ZOOM';
 
@@ -124,6 +126,18 @@ History.prototype.record_keystrokes = function(obj)
         keys: keys,
         where: where
     });
+}
+
+History.prototype.record_input = function(obj)
+{
+    var where = obj.where,
+        input = obj.input;
+
+    if (where === undefined || input === undefined || input.length === undefined || typeof input !== 'string') {
+        console.log('invalid arguments');
+        return;
+    }
+    this.record(ACTION_INPUT, {where: where, input: input});
 }
 
 return {
