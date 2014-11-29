@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'signal', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection'],
-function($, d3, consts, signal, util, model_graph, model_core, view_helpers, view, rz_observer, selection) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection'],
+function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection) {
 
 var addednodes = [];
 
@@ -597,7 +597,7 @@ function mousedown() {
 }
 
 $('#editform').keypress(function(e) {
-    signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]}]);
+    var ret = undefined;
     if (e.which == 13) {
         $('.editinfo').css('top', -100);
         $('.editinfo').css('left', 0);
@@ -606,8 +606,10 @@ $('#editform').keypress(function(e) {
         var d = element.data().d;
         graph.editName(d.id, newname);
         update_view__graph(true);
-        return false;
+        ret = false;
     }
+    rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
+    return ret;
 });
 
 

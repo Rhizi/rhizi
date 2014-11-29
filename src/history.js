@@ -16,23 +16,21 @@
 // ReferenceError: __commandLineAPI is not defined
 //var ActionEnum = Enum();
 
-define(['jquery', 'FileSaver', 'consts', 'signal'],
-    function($, saveAs, consts, signal) {
+define(['jquery', 'FileSaver', 'consts', 'rz_bus'],
+    function($, saveAs, consts, rz_bus) {
 
 /* user - username (string)
  * svg - svg element for catching zoom events (jquery DOMNode wrapper)
  */
-function History(user, transform_element) {
+function History(user, graph, transform_element) {
     var that = this;
     this.records = [];
     this.user = user;
     this.transform_element = transform_element;
-    signal.slot(consts.APPLIED_GRAPH_DIFF, function(obj) {
+    graph.diffBus.onValue(function (obj) {
         return that.record_graph_diff(obj)
     });
-    signal.slot(consts.KEYSTROKES, function(obj) {
-        return that.record_keystrokes(obj);
-    });
+    rz_bus.ui_key.onValue(that.record_keystrokes.bind(that));
     // XXX create zoom behavior - then proof to event name change
     $(window).on('wheel.history', function(obj) {
         that.record_zoom(obj);

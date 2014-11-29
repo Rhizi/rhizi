@@ -49,7 +49,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         });
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
-        textanalysis.init();
+        textanalysis.init(rz_core.graph);
     }
 
     return {

@@ -1,14 +1,17 @@
 "use strict"
 
-define(['signal', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh'],
-function (signal, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh) {
+define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh', 'history'],
+function (Bacon, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh, history) {
 
 var debug = false;
 
 function Graph() {
 
     var nodes = [],
-        links = [];
+        links = [],
+        diffBus = new Bacon.Bus();
+
+    this.diffBus = diffBus;
 
     /**
      * add node if no previous node is present whose id equals that of the node being added
@@ -59,7 +62,7 @@ function Graph() {
         nodes.push(node);
 
         if (notify) {
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {add: [node]}}]);
+            diffBus.push({nodes: {add: [node]}});
         }
 
         return node;
@@ -76,7 +79,7 @@ function Graph() {
         if (index !== undefined) {
             nodes.splice(index, 1);
         }
-        signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {removed: [id]}}]);
+        diffBus.push({nodes: {removed: [id]}});
     }
 
     this.removeNodes = function(state) {
@@ -95,7 +98,7 @@ function Graph() {
             }
         }
         if (ns.length > 0) {
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{nodes: {removed: ns.map(function(n) { return n.id; })}}]);
+            diffBus.push({nodes: {removed: ns.map(function(n) { return n.id; })}});
         }
     }
 
@@ -283,7 +286,7 @@ function Graph() {
         if (!found) {
             var link = model_core.create_link__set_random_id(src, dst, { name: name, state: state });
             links.push(link);
-            signal.signal(consts.APPLIED_GRAPH_DIFF, [{links: {add: [link]}}]);
+            diffBus.push({links: {add: [link]}});
         } else {
             found.name = name;
             found.state = state;
@@ -585,7 +588,7 @@ function Graph() {
         data.links.forEach(function(link) {
             that.addLink(link.__src, link.__dst, link.name, "perm");
         });
-        signal.signal(consts.SUGGESTED_NAME_ADD, [added_names]);
+        rz_bus.names.push(added_names);
         this.clear_history();
     }
 

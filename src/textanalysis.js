@@ -1,7 +1,7 @@
 "use strict";
 
-define(['rz_core', 'model/core', 'model/util', 'model/diff', 'signal', 'consts'],
-function(rz_core,   model_core,   model_util,   model_diff,   signal,   consts) {
+define(['rz_core', 'model/core', 'model/util', 'model/diff', 'rz_bus', 'consts'],
+function(rz_core,   model_core,   model_util,   model_diff,   rz_bus,   consts) {
 
 var typeindex = 0;
 var nodetypes = ["person", "club", "skill", "interest", "third-internship-proposal", "internship"];
@@ -466,7 +466,7 @@ var textAnalyser = function (newtext, finalize) {
     return ret;
 };
 
-function init()
+function init(graph)
 {
     function onNodeAdded(diff) {
         if (!diff || !diff.nodes || diff.nodes.added) {
@@ -480,8 +480,8 @@ function init()
     function onSuggestedNameAdd(names) {
         names.map(String.toLowerCase).forEach(autoSuggestAddName);
     }
-    signal.slot(consts.APPLIED_GRAPH_DIFF, onNodeAdded);
-    signal.slot(consts.SUGGESTED_NAME_ADD, onSuggestedNameAdd);
+    graph.diffBus.onValue(onNodeAdded);
+    rz_bus.names.onValue(onSuggestedNameAdd);
 }
 
 return {

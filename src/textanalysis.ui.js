@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'autocomplete', 'rz_core', 'textanalysis', 'signal', 'consts'],
-function($, autocomplete, rz_core, textanalysis, signal, consts) {
+define(['jquery', 'Bacon', 'consts', 'rz_bus', 'autocomplete', 'rz_core', 'textanalysis'],
+function($,        Bacon,   consts,   rz_bus,   autocomplete,   rz_core,   textanalysis) {
 
 var text = ""; // Last text of sentence
 var element_name = '#textanalyser';
@@ -116,6 +116,9 @@ return {
             },
         });
 
+        var document_keypress = new Bacon.Bus();
+        rz_bus.ui_key.plug(document_keypress);
+
         $(document).keypress(function(e) {
             var ret = undefined;
             switch (e.keyCode) {
@@ -137,10 +140,12 @@ return {
                 suggestionChange = true;
                 break;
             }
-            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]}]);
+            document_keypress.push({where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]});
             return ret;
         });
 
+        var element_keypress = new Bacon.Bus();
+        rz_bus.ui_key.plug(element_keypress);
         element.keypress(function(e) {
             var ret = undefined;
             switch (e.which) {
@@ -165,7 +170,7 @@ return {
                 ret = false;
                 break;
             }
-            signal.signal(consts.KEYSTROKES, [{where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]}]);
+            element_keypress.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]});
             return ret;
         });
 
