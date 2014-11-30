@@ -54,6 +54,33 @@ def init_logging():
 class RhiziServer(object):
     pass
 
+def init_rest_api(flask_webapp):
+    """
+    map REST API calls
+    """
+    rest_entry_set = [
+                      rest_entry('/add/node-set' , rhizi_api.add_node_set),
+                      rest_entry('/graph/clone', rhizi_api.rz_clone),
+                      rest_entry('/graph/diff-commit-set', rhizi_api.diff_commit_set),
+                      rest_entry('/graph/diff-commit-topo', rhizi_api.diff_commit_topo),
+                      rest_entry('/graph/diff-commit-attr', rhizi_api.diff_commit_attr),
+                      rest_entry('/graph/diff-commit-vis', rhizi_api.diff_commit_vis),
+                      rest_entry('/index', rhizi_api.index),
+                      rest_entry('/load/node-set-by-id', rhizi_api.load_node_set_by_id_attr),
+                      rest_entry('/load/link-set/by_link_ptr_set', rhizi_api.load_link_set_by_link_ptr_set),
+                      rest_entry('/login', rhizi_api.login, {'methods': ['GET', 'POST']}),
+                      rest_entry('/logout', rhizi_api.logout),
+                      rest_entry('/match/node-set', rhizi_api.match_node_set_by_attr_filter_map),
+                      rest_entry('/monitor/server-info', rhizi_api.monitor__server_info),
+                  ]
+
+    for re in rest_entry_set:
+        rest_path, f, flask_args = re
+        route_decorator = flask_webapp.route(rest_path, **flask_args)
+        flask_webapp.f = route_decorator(f)
+
+        if '/login' != rest_path:
+
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser(description='rhizi-server')

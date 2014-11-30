@@ -31,8 +31,6 @@ class FlaskExt(Flask):
         ret.headers['Access-Control-Allow-Headers'] = "Origin, Content-Type, Accept, Authorization"
         return ret
 
-webapp = FlaskExt(__name__)
-webapp.debug = True
 
 # injected: DB controller
 db_ctl = None
@@ -69,7 +67,6 @@ def __common_exec(op, on_success=__common_resp_handle):
         log.error(traceback.print_exc())
         return __common_resp_handle('error occurred')
 
-@webapp.route("/load/node-set-by-id", methods=['POST'])
 def load_node_set_by_id_attr():
     """
     load node-set by ID attribute
@@ -99,7 +96,6 @@ def __load_node_set_by_id_attr_common(id_set):
         log.exception(e)
         return __common_resp_handle(error='unable to load node with ids: {0}'.format(id_set))
 
-@webapp.route("/match/node-set", methods=['POST'])
 def match_node_set_by_attr_filter_map(attr_filter_map):
     """
     @param attr_filter_map
@@ -109,7 +105,6 @@ def match_node_set_by_attr_filter_map(attr_filter_map):
     op = dbc.DBO_match_node_id_set(attr_filter_map)
     return __common_exec(op)
 
-@webapp.route("/load/link-set/by_link_ptr_set", methods=['POST'])
 def load_link_set_by_link_ptr_set():
 
     def deserialize_param_set(param_json):
@@ -130,12 +125,10 @@ def load_link_set_by_link_ptr_set():
     op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
     return __common_exec(op)
 
-@webapp.route("/graph/clone", methods=['POST'])
 def rz_clone():
     op = dbc.DBO_rz_clone()
     return __common_exec(op)
 
-@webapp.route("/graph/diff-commit-set", methods=['POST'])
 def diff_commit_set():
     """
     commit a diff set
@@ -150,7 +143,6 @@ def diff_commit_set():
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
-@webapp.route("/graph/diff-commit-topo", methods=['POST'])
 def diff_commit_topo():
     """
     commit a graph topology diff
@@ -164,7 +156,6 @@ def diff_commit_topo():
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
-@webapp.route("/graph/diff-commit-attr", methods=['POST'])
 def diff_commit_attr():
     """
     commit a graph attribute diff
@@ -175,11 +166,9 @@ def diff_commit_attr():
     op = dbc.DBO_attr_diff_commit(attr_diff)
     return __common_exec(op)
 
-@webapp.route("/graph/diff-commit-vis", methods=['POST'])
 def diff_commit_vis():
     pass
 
-@webapp.route("/add/node-set", methods=['POST'])
 def add_node_set():
     """
     @deprecated: use topo_attr_commit
@@ -192,7 +181,6 @@ def add_node_set():
     op = dbc.DBO_add_node_set(node_map)
     return __common_exec(op)
 
-@webapp.route("/monitor/server-info", methods=['GET'])
 def monitor__server_info():
     """
     server monitor stub
