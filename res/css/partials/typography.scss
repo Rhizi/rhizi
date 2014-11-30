@@ -1,0 +1,24 @@
+@font-face {
+  font-family: 'MyWebFont';
+  src: url(../../font/SourceSansPro-Regular.ttf) format('ttf');
+}
+
+h1 {
+  font-size: $h1-size;
+}
+
+h2 {
+  font-size: $h2-size;
+}
+
+h1 {
+  font-size: $h3-size;
+}
+
+h2 {
+  font-size: $h4-size;
+}
+
+h1 {
+  font-size: $h5-size;
+}
