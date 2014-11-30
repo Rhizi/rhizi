@@ -1,6 +1,32 @@
-.help{
-  font-size: 20px;
-  top: 5px;
-  left: 10px;
-  margin-left: 12px;
+.task-alert{
+  position:fixed;
+  top: $top-bar-height+$search-bar-height;
+  width: 100%;
+  height:$task-alert-height;
+  background-color: #D3F2F8;//$light-cyan
+  border-top: #1D6E7F;//$dark-cyan
+  border-bottom: #1D6E7F;//$dark-cyan
+}
+.task-desc{
+  position:fixed;
+  width:100%;
+  color: #1D6E7F;//$dark-cyan
+  height: $task-desc-height;
+  top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2;
+  text-align: center;
+  font-size: $h3-size;
+}
+
+.task-close-text {
+  position:fixed;
+  top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2 + 1 ;
+  color: #1D6E7F;//$dark-cyan
+  right: 70px;
+  font-size: $h4-size;
+}
+
+.task-close-button {
+  position: fixed;
+  top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2;
+  right: 50px;
 }
