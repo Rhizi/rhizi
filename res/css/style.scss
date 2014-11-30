@@ -1,9 +1,8 @@
-//Reset CSS
-@import "partials/reset";
-
-
 // Modules and Variables
 @import "partials/base";
+
+//Reset CSS
+@import "partials/reset";
 
 // Partials
 @import "partials/buttons";
@@ -16,7 +15,6 @@
 @import "partials/metro-view";
 @import "partials/search-bar";
 @import "partials/task-alert";
-@import "partials/timeline-view";
 @import "partials/top-bar";
 @import "partials/typography";
 

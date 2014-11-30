@@ -12,9 +12,12 @@ $bold: 600;
 
 // Base font
 $base-font-family: 'Source Sans Pro', sans-serif;
+$semibold-font-family: 'Source Sans Pro Semibold', sans-serif;
+
 $base-font-weight: $regular;
 $base-font-size: 13px;
 $base-line-height: 1.4;
+
 
 // Fixed Font
 $fixed-font-family: monospace;
@@ -23,8 +26,3 @@ $fixed-line-height: $base-line-height;
 
 // Headings
 $header-font-weight: $bold;
-
-@font-face {
-  font-family: 'MyWebFont';
-  src: url(../../font/SourceSansPro-Regular.ttf) format('ttf');
-}

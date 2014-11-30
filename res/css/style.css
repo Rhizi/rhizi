@@ -1,51 +1,4 @@
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
 @import url(vendor/ui.css);
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline; }
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-  display: block; }
-
-body {
-  line-height: 1; }
-
-ol, ul {
-  list-style: none; }
-
-blockquote, q {
-  quotes: none; }
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none; }
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0; }
-
 html, body {
   height: 100%; }
 
@@ -75,87 +28,53 @@ a:hover {
 a:active {
   color: #FFF; }
 
-.onoffswitch {
-  z-index: 100;
-  position: fixed;
-  width: 160px;
-  top: 35px;
-  right: 180px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; }
-
-.onoffswitch-checkbox {
-  display: none; }
-
-.onoffswitch-label {
-  display: block;
-  overflow: hidden;
-  cursor: pointer;
-  border: 2px solid #303030;
-  border-radius: 5px; }
-
-.onoffswitch-inner {
-  display: block;
-  width: 200%;
-  margin-left: -100%;
-  -moz-transition: margin 0.3s ease-in 0s;
-  -webkit-transition: margin 0.3s ease-in 0s;
-  -o-transition: margin 0.3s ease-in 0s;
-  transition: margin 0.3s ease-in 0s; }
-
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-  display: block;
-  float: left;
-  width: 50%;
-  height: 20px;
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
   padding: 0;
-  line-height: 20px;
-  font-size: 14px;
-  color: white;
-  font-weight: bold;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  font-family: 'Source Sans Pro', sans-serif;
+  vertical-align: baseline; }
 
-.onoffswitch-inner:before {
-  content: "TIMELINE VIEW";
-  padding-left: 5px;
-  background-color: #080808;
-  color: #FFFFFF; }
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
 
-.onoffswitch-inner:after {
-  content: "GRAPH VIEW";
-  padding-right: 5px;
-  background-color: #080808;
-  color: #FFFFFF;
-  text-align: right; }
+body {
+  line-height: 1; }
 
-.onoffswitch-switch {
-  display: block;
-  width: 35px;
-  margin: 0px;
-  background: #3D3D3D;
-  border: 1px solid #FFFFFF;
-  border-radius: 5px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 125px;
-  -moz-transition: all 0.3s ease-in 0s;
-  -webkit-transition: all 0.3s ease-in 0s;
-  -o-transition: all 0.3s ease-in 0s;
-  transition: all 0.3s ease-in 0s;
-  background-image: -moz-linear-gradient(center top, rgba(0, 0, 0, 0.1) 0%, transparent 100%);
-  background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0.1) 0%, transparent 100%);
-  background-image: -o-linear-gradient(center top, rgba(0, 0, 0, 0.1) 0%, transparent 100%);
-  background-image: linear-gradient(center top, rgba(0, 0, 0, 0.1) 0%, transparent 100%); }
+ol, ul {
+  list-style: none; }
 
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-  margin-left: 0; }
+blockquote, q {
+  quotes: none; }
 
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-  right: 0px; }
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
 
 .debug-ui {
   position: fixed;
@@ -312,6 +231,10 @@ a:active {
   height: inherit;
   font-size: 17px; }
 
+.rhizi-logo {
+  position: fixed;
+  left: 800px; }
+
 input {
   background-color: rgba(17, 17, 17, 0.8);
   color: white;
@@ -387,46 +310,50 @@ input {
 
 .help {
   font-size: 20px;
-  position: fixed;
   top: 5px;
   left: 10px;
   margin-left: 12px; }
 
-.history-timeline {
-  pointer-events: none;
-  z-index: -1;
-  position: absolute;
-  width: 100%;
-  justify-content: center;
-  bottom: 100px; }
-
-#gantbox {
-  position: absolute;
-  background-color: rgba(200, 200, 200, 0.1);
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-  z-index: 0; }
-
-.missingdates {
+.top-bar {
   position: fixed;
-  bottom: 60px;
-  left: 160px; }
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 36px;
+  background-color: #363636; }
 
-.axis {
-  stroke: #ccc;
-  fill: #ccc; }
+.doc-title {
+  position: fixed;
+  font-family: "Source Sans Pro Semibold", sans-serif;
+  left: 60px;
+  top: 10px;
+  color: #f5f5fa; }
 
-.axis path, .axis line {
-  fill: none;
-  stroke: #ccc;
-  shape-rendering: crispEdges; }
+.profile-circle {
+  position: fixed;
+  right: 400px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background: #33c2e0;
+  top: 3px; }
 
-.logo {
+.profile-initials {
   position: fixed;
   top: 10px;
-  right: 10px;
-  opacity: 0.7; }
+  right: 405px;
+  color: #f5f5fa; }
+
+.profile-username {
+  position: fixed;
+  top: 10px;
+  right: 295px;
+  color: #f5f5fa; }
+
+.owner-logo {
+  position: fixed;
+  top: 3px;
+  right: 50px; }
 
 .poweredby {
   position: fixed;
@@ -437,5 +364,19 @@ input {
 @font-face {
   font-family: 'MyWebFont';
   src: url(../../font/SourceSansPro-Regular.ttf) format("ttf"); }
+h1 {
+  font-size: 30px; }
+
+h2 {
+  font-size: 24px; }
+
+h1 {
+  font-size: 18px; }
+
+h2 {
+  font-size: 14px; }
+
+h1 {
+  font-size: 12px; }
 
 /*# sourceMappingURL=style.css.map */
