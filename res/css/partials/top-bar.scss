@@ -1,5 +1,5 @@
 .top-bar{
-  position:fixed;
+  position:relative;
   top:0;
   left:0;
   width:100%;
@@ -12,6 +12,7 @@
   font-family: $semibold-font-family;
   color: $light-grey;
   margin: 10px $doc-margin 10px $doc-margin;
+  font-size: $h3-size;
 }
 
 .user-area {

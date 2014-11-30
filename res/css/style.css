@@ -1,15 +1,15 @@
 @import url(vendor/ui.css);
 @font-face {
   font-family: 'Source_Regular';
-  src: url("../../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.eot");
+  src: url("../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.eot");
   /* IE9 Compat Modes */
-  src: url("../../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("../../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.woff") format("woff"), url("../../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.ttf") format("truetype");
+  src: url("../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.woff") format("woff"), url("../font/sourcesanspro_regular/SourceSansPro-Regular-webfont.ttf") format("truetype");
   /* Safari, Android, iOS */ }
 @font-face {
   font-family: 'Source_Semibold';
-  src: url("../../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.eot");
+  src: url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.eot");
   /* IE9 Compat Modes */
-  src: url("../../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("../../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.woff") format("woff"), url("../../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.ttf") format("truetype");
+  src: url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.woff") format("woff"), url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.ttf") format("truetype");
   /* Safari, Android, iOS */ }
 html, body {
   height: 100%;
@@ -97,8 +97,8 @@ time, mark, audio, video {
   padding: 0;
   border: 0;
   font-size: 100%;
-  font: inherit;
-  font-family: 'Source Sans Pro', sans-serif;
+  /*font: inherit; */
+  font-family: "Source_Regular", sans-serif;
   vertical-align: baseline; }
 
 /* HTML5 display-role reset for older browsers */
@@ -359,15 +359,9 @@ table {
   border-color: #303030; }
 
 .search-bar {
-  position: fixed;
-  top: 36px;
   width: 100%;
   height: 48px;
-  box-shadow: black;
-  alpha: 0.3;
-  distance: 1;
   background: white;
-  border: 1px solid #919095;
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3); }
@@ -386,19 +380,23 @@ table {
   left: 70px;
   top: 50px; }
 
+input {
+  font-family: "Source_Regular", sans-serif;
+  font-size: 18px; }
+
 .task-alert {
-  position: fixed;
-  top: 88px;
+  position: relative;
   width: 100%;
   height: 48px;
-  background-color: #D3F2F8;
-  border-top: #1D6E7F;
-  border-bottom: #1D6E7F; }
+  background-color: #d3f2f8;
+  color: #1d6e7f;
+  border-top: 1px solid #8eb6bf;
+  border-bottom: 1px solid #8eb6bf;
+  z-index: -1; }
 
 .task-desc {
   position: fixed;
   width: 100%;
-  color: #1D6E7F;
   height: 20px;
   top: 98px;
   text-align: center;
@@ -407,7 +405,6 @@ table {
 .task-close-text {
   position: fixed;
   top: 99px;
-  color: #1D6E7F;
   right: 70px;
   font-size: 14px; }
 
@@ -417,7 +414,7 @@ table {
   right: 50px; }
 
 .top-bar {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
@@ -428,7 +425,8 @@ table {
   float: left;
   font-family: "Source_Semibold", sans-serif;
   color: #f5f5fa;
-  margin: 10px 70px 10px 70px; }
+  margin: 10px 70px 10px 70px;
+  font-size: 18px; }
 
 .user-area {
   float: right;

@@ -44,7 +44,7 @@ a:active {
 //input box stuff
 input{
   background-color: white;
-  color: #363636; //$dark-grey
+  color: $dark-grey;
   border: 0;
   &:focus {
     border: 0;
@@ -55,23 +55,23 @@ input{
 }
 
 ::-webkit-input-placeholder { /* WebKit browsers */
-  color:    #919095;//$mid-grey
+  color:    $mid-grey;
 }
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-  color:    #919095;//$mid-grey
+  color:    $mid-grey;
   opacity:  1;
 }
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
-  color:    #919095;//$mid-grey
+  color:    $mid-grey;
   opacity:  1;
 }
 :-ms-input-placeholder { /* Internet Explorer 10+ */
-  color:    #919095;//$mid-grey
+  color:    $mid-grey;
 }
 
 .powered-by{
   position:fixed;
-  color: #363636;//$dark-grey
+  color: $dark-grey;
   bottom:10px;
   right:10px;
   vertical-align: middle;

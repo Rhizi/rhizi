@@ -1,17 +1,17 @@
 .task-alert{
-  position:fixed;
-  top: $top-bar-height+$search-bar-height+4px;
+  position:relative;
   width: 100%;
   height:$task-alert-height;
-  background-color: #D3F2F8;//$light-cyan
-  border-top: #1D6E7F;//$dark-cyan
-  border-bottom: #1D6E7F;//$dark-cyan
+  background-color: $light-cyan;
+  color: $darker-cyan;
+  border-top: 1px solid $dark-cyan;
+  border-bottom: 1px solid $dark-cyan;
+  z-index: -1;
 }
 
 .task-desc{
   position:fixed;
   width:100%;
-  color: #1D6E7F;//$dark-cyan
   height: $task-desc-height;
   top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2;
   text-align: center;
@@ -21,7 +21,6 @@
 .task-close-text {
   position:fixed;
   top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2 + 1 ;
-  color: #1D6E7F;//$dark-cyan
   right: 70px;
   font-size: $h4-size;
 }
