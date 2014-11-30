@@ -67,3 +67,11 @@ input{
 :-ms-input-placeholder { /* Internet Explorer 10+ */
   color:    #919095;//$mid-grey
 }
+
+.powered-by{
+  position:fixed;
+  color: #363636;//$dark-grey
+  bottom:10px;
+  right:10px;
+  vertical-align: middle;
+}
