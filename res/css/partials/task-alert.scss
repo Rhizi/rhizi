@@ -1,6 +1,6 @@
 .task-alert{
   position:fixed;
-  top: $top-bar-height+$search-bar-height;
+  top: $top-bar-height+$search-bar-height+4px;
   width: 100%;
   height:$task-alert-height;
   background-color: #D3F2F8;//$light-cyan
