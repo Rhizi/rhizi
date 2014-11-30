@@ -18,13 +18,12 @@
   width: 100%;
   top: $top-bar-height+($search-bar-height - $search-icon-height)/2;
   height:$search-icon-height;
-  left: $left-margin + 40px;
+  left: $doc-margin + 40px;
 }
 .search-icon {
   position:fixed;
   width:20px;
   height:$search-icon-height;
-  left: $left-margin;
+  left: $doc-margin;
   top: $top-bar-height+($search-bar-height - $search-icon-height)/2;
-
 }

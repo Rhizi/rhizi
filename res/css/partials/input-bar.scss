@@ -1,21 +1,29 @@
 .input-bar {
+  font-family: $base-font-family;
+  color: $mid-grey;
   position: fixed;
   display: block;
   height: $input-bar-height;
   width: 420px;
   top: $top-bar-height+$search-bar-height+$task-alert-height+20px;
-  left: $left-margin;
+  left: $doc-margin;
   padding-left:8px;
   border-radius: 4px;
-  border: 1px solid #919095;//$mid-grey
+  border: 1px solid $mid-grey;
   background: white;
   &:focus {
     border-radius: 4px;
-    border: 1px solid #919095;//$mid-grey
+    border: 1px solid $mid-grey;
     -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
     -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
     box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);  }
 }
+
+#textanalyser.ui-autocomplete-input {
+  font-family: $base-font-family;
+  color: $mid-grey;
+}
+
 
 .add-button {
   position:fixed;
@@ -37,7 +45,7 @@
 .ui-helper-hidden-accessible{
   position:fixed;
   top: $top-bar-height+$search-bar-height+$task-alert-height+35px+$input-bar-height;
-  left:$left-margin+8px;
+  left:$doc-margin+8px;
   text-shadow: -1px 1px 8px #E DE275, 1px -1px 8px #EDE275;
   font-size:16px;
 }

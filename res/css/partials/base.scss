@@ -6,6 +6,7 @@
 //Globals
 html, body {
   height: 100%;
+  font-family: $base-font-family;
 }
 
 body {
@@ -15,7 +16,7 @@ body {
   min-width: 980px;
   padding: 0;
   color: #FFF;
-  font-size: 14px;
+  font-size: 12px;
   background-color:#f5f5fa;
 }
 

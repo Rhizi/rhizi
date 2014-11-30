@@ -3,45 +3,54 @@
   top:0;
   left:0;
   width:100%;
-  height:$top-bar-height;
-  background-color:#363636; //todo: $dark-grey
+  min-height:$top-bar-height;
+  background-color:$dark-grey;
 }
 
 .doc-title{
-  position:fixed;
+  float: left;
   font-family: $semibold-font-family;
-  left:$left-margin;
-  top:10px;
-  color: #f5f5fa; //todo: $light-grey:
-
+  color: $light-grey;
+  margin: 10px $doc-margin 10px $doc-margin;
 }
 
-.profile-circle {
-  position:fixed;
-  right: 400px;
+.user-area {
+  float: right;
+  margin: 3px $doc-margin 3px $doc-margin;
+}
+
+.username {
+  display: inline-block;
+  text-align: right;
+}
+
+.profile-circle{
   border-radius: 50%;
   width: 30px;
   height: 30px;
-  background: #33c2e0;//todo: $cyan
-  top:3px;
+  background: $cyan;
+  display: inline-block;
 }
 
 .profile-initials {
-  position:fixed;
-  top:10px;
-  right:405px;
-  color: #f5f5fa;//$light-grey
+  display: inline-block;
+  color: $light-grey;
+  font-size: $h4-size;
+  position: relative;
+  left: -27px;
+  top: -10px;
 }
 
 .profile-username {
-  position:fixed;
-  top:10px;
-  right: 295px;
-  color: #f5f5fa;//$light-grey
+  display: inline-block;
+  top:12px;
+  color: $light-grey;
+  position: relative;
+  left: -20px;
+  top: -10px;
 }
 
-.owner-logo {
-  position:fixed;
-  top:3px;
-  right: 50px;
+.organization-logo {
+  display: inline-block;
+  margin-left: 12px;
 }
