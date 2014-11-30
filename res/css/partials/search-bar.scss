@@ -1,9 +1,26 @@
-#search {
-  height: 30px;
-  max-width: 100%;
+.search-bar{
+  position: fixed;
+  top: $top-bar-height;
+  width:100%;
+  height:$search-bar-height;
+  box-shadow:black;
+  alpha:0.3;
+  distance:1;
+  background: white;
 }
 
-#searchdiv {
-  width: 200px;
-  float: right;
+.search-input{
+  position: fixed;
+  width: 100%;
+  top: $top-bar-height+($search-bar-height - $search-icon-height)/2;
+  height:$search-icon-height;
+  left: 100px;
+}
+.search-icon {
+  position:fixed;
+  width:20px;
+  height:$search-icon-height;
+  left: 60px;
+  top: $top-bar-height+($search-bar-height - $search-icon-height)/2;
+
 }

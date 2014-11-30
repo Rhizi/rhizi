@@ -28,6 +28,34 @@ a:hover {
 a:active {
   color: #FFF; }
 
+input {
+  background-color: white;
+  color: #363636;
+  border: 0;
+  font-size: 18px; }
+  input:focus {
+    border: 0;
+    outline: 0;
+    background-color: white; }
+
+::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: #919095; }
+
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #919095;
+  opacity: 1; }
+
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #919095;
+  opacity: 1; }
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  color: #919095; }
+
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
@@ -235,20 +263,6 @@ table {
   position: fixed;
   left: 800px; }
 
-input {
-  background-color: rgba(17, 17, 17, 0.8);
-  color: white;
-  border-width: 1px;
-  border-color: #303030;
-  font-size: 14px;
-  outline: none;
-  border-color: #303030;
-  box-shadow: 0 0 0px #303030;
-  -webkit-transition: all 0.04s ease-in-out;
-  -moz-transition: all 0.04s ease-in-out;
-  -ms-transition: all 0.04s ease-in-out;
-  -o-transition: all 0.04s ease-in-out; }
-
 #textinputui {
   position: fixed;
   display: block;
@@ -300,13 +314,29 @@ input {
   line-height: 45px;
   border-color: #303030; }
 
-#search {
-  height: 30px;
-  max-width: 100%; }
+.search-bar {
+  position: fixed;
+  top: 36px;
+  width: 100%;
+  height: 48px;
+  box-shadow: black;
+  alpha: 0.3;
+  distance: 1;
+  background: white; }
 
-#searchdiv {
-  width: 200px;
-  float: right; }
+.search-input {
+  position: fixed;
+  width: 100%;
+  top: 50px;
+  height: 20px;
+  left: 100px; }
+
+.search-icon {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  left: 60px;
+  top: 50px; }
 
 .help {
   font-size: 20px;

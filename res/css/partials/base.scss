@@ -1,6 +1,7 @@
 @import "../modules/colors";
 @import "../modules/mixins";
 @import "../modules/typography";
+@import "../modules/positions";
 
 //Globals
 html, body {
@@ -37,4 +38,32 @@ a:hover {
 
 a:active {
   color: #FFF;
+}
+
+//input box stuff
+input{
+  background-color: white;
+  color: #363636; //$dark-grey
+  border: 0;
+  &:focus {
+    border: 0;
+    outline: 0;
+    background-color: white;
+  }
+  font-size: $h3-size;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+  color:    #919095;//$mid-grey
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color:    #919095;//$mid-grey
+  opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color:    #919095;//$mid-grey
+  opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+  color:    #919095;//$mid-grey
 }
