@@ -36,7 +36,13 @@
     <h4 class="task-close-text">got it</h4>
     <img class="task-close-button" src="res/img/close-alert-button.png">
   </div>
-  <div>
+  <div class="graph-view">
+    <div class="input-container">
+      <form> <input class="input-bar" id="textanalyser" placeholder="Add nodes and relationships"/></form>
+      <img class="add-button" src="res/img/add-button.png">
+      <div class="suggestion">
+      </div>
+    </div>
     <div class="info-container">
     <div class="edge_info" style="display:none">Title: <span id="edgetitle"></span><br/>
         <button id="deleteedge">Delete</button>
@@ -66,13 +72,6 @@
 
       </form>
     </div>
-
-
-    <!--<div id="textinputui">-->
-        <!--<div id="suggestion" >-->
-           <!--<form> <input id="textanalyser" size="70" placeholder="Type here to create a network"/></form>-->
-        <!--</div>-->
-    <!--</div>-->
 
     <div class="typeselection">
       <table>
