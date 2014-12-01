@@ -1,7 +1,7 @@
 "use strict"
 
-define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh', 'history'],
-function (Bacon, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh, history) {
+define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh', 'history', 'rz_bus'],
+function (Bacon, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh, history, rz_bus) {
 
 var debug = false;
 

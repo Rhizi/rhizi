@@ -93,7 +93,7 @@ History.prototype.save_to_file = function()
     saveAs(new Blob([json], {type: 'application/json'}), 'history.json');
 };
 
-History.prototype.clear_history = function()
+History.prototype.clear = function()
 {
     this.records = [];
 }
