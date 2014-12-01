@@ -67,29 +67,37 @@ $('.local-storage-load a').click(function(){
   rz_core.load_from_json(json_blob);
 });
 
+var username_label = $('#username-label'),
+    username_form = $('#username-form'),
+    username_input = $('#username-input'),
+    username_default_text = 'logged out';
+
 var onUserSet = function(user) {
     if (user) {
-        $('.set-user').html('user: ' + user);
-        $('.set-user').show();
-        $('.set-user-form').hide();
+        username_label.html(user);
+        username_label.show();
+        username_form.hide();
         $('.save-history').show();
     } else {
-        $('.set-user').html('');
-        $('.set-user').hide();
-        $('.set-user-form').show();
+        username_label.html(username_default_text);
+        username_label.hide();
+        username_form.show();
     }
 }
 
 rz_core.graph.userBus.onValue(onUserSet);
 
-$('.set-user-form').submit(function() {
-    var user = $('.set-user-input').val();
+username_form.submit(function() {
+    var user = username_input.val();
     rz_core.graph.set_user(user);
     return false;
 });
-$('a.set-user').click(function() {
-    $('.set-user').hide();
-    $('.set-user-form').show();
+username_label.click(function() {
+    username_label.hide();
+    username_input.val(
+        username_label.text() == username_default_text ? 'J. Doe' :
+        username_label.text());
+    username_form.show();
 });
 
 $('a.save-history').click(function() {

@@ -18,7 +18,12 @@
       <div class="username">
         <div class="profile-circle"></div>
         <span class="profile-initials">UH</span>
-        <h4 class="profile-username">Username here</h4>
+        <div class="profile-username">
+            <h4 id="username-label">logged out</h4>
+            <form id="username-form" class="set-user-form" style="display: none">
+                <input id="username-input" class="set-user-input" style="width: 100px">
+            </form>
+        </div>
       </div>
       <img class="organization-logo" src="res/img/cri-logo.png">
     </div>
@@ -82,16 +87,6 @@
     </div>
 
     <div class="debug-ui">
-    <div class="debug-ui-row">
-        <div class="debug-ui-left">
-            <a class="set-user" href="#">Set user</a>
-        </div>
-        <div class="debug-ui-right">
-            <form class="set-user-form" style="display: none">
-                <input class="set-user-input" style="width: 100px" value="username">
-            </form>
-        </div>
-    </div>
     <div class="debug-ui-row">
         <div class="debug-ui-left">
             <a class="save-history" style="display: none" href="#">Save history</a>
