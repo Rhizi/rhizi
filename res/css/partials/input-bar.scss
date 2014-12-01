@@ -1,12 +1,18 @@
+.input-container {
+  position: relative;
+  margin: $two-baselines 0 0 $doc-margin;
+
+  form {
+    display: inline;
+  }
+}
+
+
 .input-bar {
   font-family: $base-font-family;
   color: $mid-grey;
-  position: fixed;
-  display: block;
-  height: $input-bar-height;
+  height: $three-baselines;
   width: 420px;
-  top: $top-bar-height+$search-bar-height+$task-alert-height+20px;
-  left: $doc-margin;
   padding-left:8px;
   border-radius: 4px;
   border: 1px solid $mid-grey;
@@ -24,13 +30,12 @@
   color: $mid-grey;
 }
 
-
 .add-button {
-  position:fixed;
-  top: $top-bar-height+$search-bar-height+$task-alert-height+22px;
-  height: 36px;
-  width: 36px;
-  left: 453px;
+  position:relative;
+  height: 30px;
+  width: 30px;
+  left: -38px;
+  top: 10px;
 }
 
 .suggestion{
@@ -44,7 +49,7 @@
 
 .ui-helper-hidden-accessible{
   position:fixed;
-  top: $top-bar-height+$search-bar-height+$task-alert-height+35px+$input-bar-height;
+  top: $three-baselines+$four-baselines+$four-baselines+35px+$three-baselines;
   left:$doc-margin+8px;
   text-shadow: -1px 1px 8px #E DE275, 1px -1px 8px #EDE275;
   font-size:16px;

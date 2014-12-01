@@ -1,6 +1,6 @@
 .search-bar{
   width:100%;
-  height:$search-bar-height;
+  height:$four-baselines;
   background: white;
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
@@ -10,16 +10,16 @@
 .search-input{
   position: fixed;
   width: 100%;
-  top: $top-bar-height+($search-bar-height - $search-icon-height)/2;
-  height:$search-icon-height;
+  top: $three-baselines+($four-baselines - $icon-height)/2;
+  height:$icon-height;
   left: $doc-margin + 40px;
 }
 .search-icon {
   position:fixed;
   width:20px;
-  height:$search-icon-height;
+  height:$icon-height;
   left: $doc-margin;
-  top: $top-bar-height+($search-bar-height - $search-icon-height)/2;
+  top: $three-baselines+($four-baselines - $icon-height)/2;
 }
 
 input {

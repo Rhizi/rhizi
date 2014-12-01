@@ -11,6 +11,8 @@
   /* IE9 Compat Modes */
   src: url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.woff") format("woff"), url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.ttf") format("truetype");
   /* Safari, Android, iOS */ }
+/* Vertical spacing */
+/* Horizontal spacing */
 html, body {
   height: 100%;
   font-family: "Source_Regular", sans-serif; }
@@ -283,15 +285,17 @@ table {
   height: inherit;
   font-size: 17px; }
 
+.input-container {
+  position: relative;
+  margin: 24px 0 0 70px; }
+  .input-container form {
+    display: inline; }
+
 .input-bar {
   font-family: "Source_Regular", sans-serif;
   color: #919095;
-  position: fixed;
-  display: block;
   height: 36px;
   width: 420px;
-  top: 152px;
-  left: 70px;
   padding-left: 8px;
   border-radius: 4px;
   border: 1px solid #919095;
@@ -308,11 +312,11 @@ table {
   color: #919095; }
 
 .add-button {
-  position: fixed;
-  top: 154px;
-  height: 36px;
-  width: 36px;
-  left: 453px; }
+  position: relative;
+  height: 30px;
+  width: 30px;
+  left: -38px;
+  top: 10px; }
 
 .suggestion {
   list-style-type: none; }
@@ -388,8 +392,8 @@ input {
   position: relative;
   width: 100%;
   height: 48px;
-  background-color: #D3F2F8;
-  color: #1D6E7F;
+  background-color: #d3f2f8;
+  color: #1d6e7f;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf;
   z-index: 1; }
@@ -478,5 +482,3 @@ h2 {
 
 h1 {
   font-size: 12px; }
-
-/*# sourceMappingURL=style.css.map */

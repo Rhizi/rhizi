@@ -1,7 +1,7 @@
 .task-alert{
   position:relative;
   width: 100%;
-  height:$task-alert-height;
+  height:$four-baselines;
   background-color: $light-cyan;
   color: $darker-cyan;
   border-top: 1px solid $dark-cyan;
@@ -12,21 +12,21 @@
 .task-desc{
   position:fixed;
   width:100%;
-  height: $task-desc-height;
-  top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2;
+  height: $icon-height;
+  top: $three-baselines + $four-baselines + ($four-baselines - $icon-height)/2;
   text-align: center;
   font-size: $h3-size;
 }
 
 .task-close-text {
   position:fixed;
-  top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2 + 1 ;
+  top: $three-baselines + $four-baselines + ($four-baselines - $icon-height)/2 + 1 ;
   right: 70px;
   font-size: $h4-size;
 }
 
 .task-close-button {
   position: fixed;
-  top: $top-bar-height + $search-bar-height + ($task-alert-height - $task-desc-height)/2;
+  top: $three-baselines + $four-baselines + ($four-baselines - $icon-height)/2;
   right: 50px;
-}
+} 
