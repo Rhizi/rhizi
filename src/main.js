@@ -47,6 +47,17 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
             }
             rz_core.update_view__graph(false);
         });
+
+        var intro_task_elem = $('#intro-task');
+        // TODO: messages (why tasks?) - this one is special but we want them to be handled in their own file.
+        if (!localStorage.intro_task_hide) {
+            intro_task_elem.show();
+        }
+        $('#intro-task .task-close-button').click(function(e) {
+            localStorage.intro_task_hide = true;
+            intro_task_elem.hide();
+        });
+
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
         textanalysis.init(rz_core.graph);

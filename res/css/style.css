@@ -392,7 +392,7 @@ input {
   color: #1D6E7F;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf;
-  z-index: -1; }
+  z-index: 1; }
 
 .task-desc {
   position: fixed;
