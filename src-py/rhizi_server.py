@@ -8,6 +8,12 @@ import neo4j_util
 import argparse
 import db_controller as dbc
 import rhizi_api
+import flask
+import crypt_util
+
+from flask import session
+from flask import redirect
+from flask import url_for
 
 class Config(object):
     """
@@ -55,6 +61,9 @@ class Config(object):
     def secret_key(self):
         return self.SECRET_KEY
 
+class RhiziServer(object):
+    pass
+
 def init_logging():
 
     log = logging.getLogger('rhizi')
@@ -64,9 +73,7 @@ def init_logging():
 
     log.addHandler(log_handler_c)
     log.addHandler(log_handler_f)
-
-class RhiziServer(object):
-    pass
+    return log
 
 def init_rest_api(flask_webapp):
     """
@@ -112,19 +119,42 @@ def init_rest_api(flask_webapp):
             # currently require login on all but /login paths
             flask_webapp.f = login_decorator(f)
 
+def init_webapp(cfg):
+    root_path = cfg.root_path
+    webapp = rhizi_api.FlaskExt(__name__,
+                                static_folder='static',
+                                template_folder=os.path.join(root_path, 'templates'),
+                                static_url_path='')
+    webapp.config.from_object(cfg)
+    webapp.root_path = root_path  # for some reason calling config.from_pyfile()
+
+    db_ctl = dbc.DB_Controller(cfg)
+    rhizi_api.db_ctl = db_ctl
+
+    webapp.rz_config = cfg
+    return webapp
+
+def init_config(cfg_dir):
+    cfg_path = os.path.join(cfg_dir, 'rhizi-server.conf')
+    cfg = Config.init_from_file(cfg_path)
+    return cfg
+
 
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser(description='rhizi-server')
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
+    p.add_argument('--init-htpasswd-db', help='init login htpasswd db', action='store_const', const=True)
     args = p.parse_args()
 
-    cfg_dir = args.config_dir
+    log = init_logging()
+    cfg = init_config(args.config_dir)
 
-    init_logging()
 
-    cfg = Config.init_from_file(os.path.join(cfg_dir, 'rhizi-server.conf'))
-    db_ctl = dbc.DB_Controller(cfg)
+    webapp = init_webapp(cfg)
+    init_rest_api(webapp)
 
-    rhizi_api.db_ctl = db_ctl
-    rhizi_api.webapp.run(host=cfg.listen_address, port=cfg.listen_port)
+    log.info('launching webapp via Flusk development server')
+    webapp.run(host=cfg.listen_address,
+               port=cfg.listen_port)
+
