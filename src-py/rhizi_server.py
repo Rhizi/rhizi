@@ -72,6 +72,21 @@ def init_rest_api(flask_webapp):
     """
     map REST API calls
     """
+
+    def rest_entry(path, f, flask_args={}):
+        return (path, f, flask_args)
+
+    def login_decorator(f):
+        """
+        check user is logged in before executing REST api call
+        """
+        def wrapped_function(*args, **kw):
+            if not 'username' in session:
+                return redirect('/login')
+            return f(*args, **kw)
+
+        return wrapped_function
+
     rest_entry_set = [
                       rest_entry('/add/node-set' , rhizi_api.add_node_set),
                       rest_entry('/graph/clone', rhizi_api.rz_clone),
@@ -94,6 +109,9 @@ def init_rest_api(flask_webapp):
         flask_webapp.f = route_decorator(f)
 
         if '/login' != rest_path:
+            # currently require login on all but /login paths
+            flask_webapp.f = login_decorator(f)
+
 
 if __name__ == "__main__":
 
