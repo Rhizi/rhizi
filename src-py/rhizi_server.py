@@ -27,10 +27,16 @@ class Config(object):
             #
             # TODO: config option documentation
             #
-            ret.neo4j_url = cfg['neo4j_url']
-            ret.listen_address = cfg['listen_address']
-            ret.listen_port = cfg['listen_port']
+            # htpasswd_path
+            # listen_address
+            # listen_port
+            # neo4j_url
+            # root_path
 
+            for k, v in cfg.items():
+                ret.__setattr__(k, v)
+
+        ret.__setattr__('config_dir', os.path.dirname(file_path))  # bypass prop restriction
         return ret
 
     @property
@@ -40,6 +46,14 @@ class Config(object):
     @property
     def tx_api_path(self):
         return '/db/data/transaction'
+
+    @property
+    def config_dir_path(self):
+        return self.config_dir
+
+    @property
+    def secret_key(self):
+        return self.SECRET_KEY
 
 def init_logging():
 
