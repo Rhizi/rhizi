@@ -192,4 +192,34 @@ def monitor__server_info():
            "time: " + dt.strftime("%H:%M:%S") + "<br>" + \
            "</p></body></html>"
 
+def index():
+    return render_template('index.html')
 
+def login():
+
+    def sanitize_input(req):
+        req_json = request.get_json()
+        u = req_json['username']
+        p = req_json['password']
+        return u, p
+
+    if request.method == 'POST':
+        try:
+            u, p = sanitize_input(request)
+            crypt_util.validate_login(flask.current_app.rz_config, u, p)
+        except Exception as e:
+            log.warn('login: unauthorized: user: %s' % (u))
+            abort(401)
+
+        # login successful
+        session['username'] = u
+        log.debug('login: success: user: %s' % (u))
+        return redirect('/index')
+
+    if request.method == 'GET':
+        return render_template('login.html')
+
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('login'))
