@@ -1,0 +1,103 @@
+<!-- 
+ Rhizi build targets
+-->
+<project name="rhizi-server" default="pkg-deb">
+
+   <macrodef name="rsync">
+      <attribute name="src" />
+      <attribute name="dst" />
+      <sequential>
+         <exec dir="${basedir}" executable="/usr/bin/rsync">
+            <arg value="-avz" />
+            <arg value="@{src}" />
+            <arg value="@{dst}" />
+         </exec>
+      </sequential>
+   </macrodef>
+
+   <property name="pkg_name" value="rhizi-server" />
+   <property name="pkg_version" value="0.1.0" />
+   <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
+
+   <fail unless="rzRootDir"
+         message="'rzRootDir' arg missing - must point to root rhizi code dir" />
+
+   <tstamp>
+      <format property="versionQualifier" pattern="yyyyMMddHHmm" />
+   </tstamp>
+
+   <target name="clean" description="remove all work folders">
+      <delete dir="dist" />
+      <delete dir="build" />
+      <delete dir="deploy-local" />
+   </target>
+
+   <target name="deploy-local" description="locally deploy webapp">
+      <local name="src__client" />
+      <local name="src__server" />
+      <local name="dst" />
+
+      <property name="src__client" value="${rzRootDir}/rhizi-client" />
+      <property name="src__server" value="${rzRootDir}/rhizi-server" />
+      <property name="dst" value="${rzRootDir}/rhizi-server/deploy-local" />
+
+      <parallel>
+         <!-- [!] trailing '/' critical -->
+         <rsync src="${src__client}/src/" dst="${dst}/static" />
+         <rsync src="${src__client}/res" dst="${dst}/static" />
+         <rsync src="${src__client}/lib" dst="${dst}/static" />
+
+         <rsync src="${src__client}/index.html" dst="${dst}/templates/" />
+
+         <rsync src="${src__server}/src-py" dst="${dst}" />
+         <rsync src="${src__server}/res/etc" dst="${dst}" />
+         <rsync src="${src__server}/res/templates/" dst="${dst}/templates" />
+      </parallel>
+
+   </target>
+
+   <target name="deploy-remote" depends="deploy-local">
+
+      <local name="src" />
+      <local name="dstPath" />
+      <local name="dstServer" />
+      <property name="src" value="${rzRootDir}/rhizi-server/deploy-local" />
+      <property name="dstPath" value="/srv/www/rhizi/rhizi.net" />
+      <property name="dstServer" value="rz_0.unige.ch" />
+
+      <rsync src="${src}/" dst="root@${dstServer}:${dstPath}" />
+      <rsync src="${rzRootDir}/rhizi-server/res/etc/rhizi-server.production.conf"
+             dst="root@${dstServer}:/etc/rhizi/rhizi-server.conf" />
+      <rsync src="${src}/etc/htpasswd.db"
+             dst="root@${dstServer}:${dstPath}/../auth/" />
+   </target>
+
+   <target name="pkg-deb" depends="clean" description="package as .deb">
+      <mkdir dir="dist" />
+      <mkdir dir="${buildDir}" />
+
+      <exec dir="${basedir}" executable="/usr/bin/git">
+         <arg value="clone" />
+         <arg line="--depth 1" />
+         <arg value="file://${basedir}" />
+         <arg value="${buildDir}" />
+      </exec>
+
+      <copy todir="${buildDir}/debian">
+         <fileset dir="debian" />
+      </copy>
+
+      <exec dir="${buildDir}" executable="/usr/bin/debuild">
+         <arg value="-b" />
+         <arg value="-us" />
+         <arg value="-uc" />
+      </exec>
+   </target>
+
+   <target name="pkg-deb.list">
+      <exec dir="${buildDir}" executable="/usr/bin/dpkg">
+         <arg line="-c rhizi-server_0.1.0_amd64.deb" />
+      </exec>
+   </target>
+
+</project>
