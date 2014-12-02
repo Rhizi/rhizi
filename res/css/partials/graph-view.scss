@@ -4,7 +4,6 @@
 }
 
 .node {
-  stroke: #fff;
   stroke-width: 1px;
   font-size: 16px;
   z-index:100;
@@ -15,7 +14,7 @@
 }
 
 .circle {
-  stroke: #fff;
+  stroke: $light-grey;
   stroke-width: 1.5px;
   z-index: 100;
   pointer-events:all;
@@ -24,13 +23,13 @@
 
 .nodetext {
 
-  fill: #FFFFFF;
+  fill: $dark-grey;
   font-size:17px;
   z-index:3;
 }
 
 .linklabel{
-  stroke: #EEEEEE;
+  stroke: $dark-grey;
   font-size:14px;
 
 }

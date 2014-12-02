@@ -149,25 +149,24 @@ table {
   background-color: #f5f5fa; }
 
 .node {
-  stroke: #fff;
   stroke-width: 1px;
   font-size: 16px;
   z-index: 100; }
 
 .circle {
-  stroke: #fff;
+  stroke: #f5f5fa;
   stroke-width: 1.5px;
   z-index: 100;
   pointer-events: all;
   box-shadow: 0 0 0px #FFFF8F; }
 
 .nodetext {
-  fill: #FFFFFF;
+  fill: #363636;
   font-size: 17px;
   z-index: 3; }
 
 .linklabel {
-  stroke: #EEEEEE;
+  stroke: #363636;
   font-size: 14px; }
 
 .link {
