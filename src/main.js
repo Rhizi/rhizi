@@ -38,7 +38,13 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         // TODO: move me somewhere
         $('#search').on('input', function(e) {
             var text = this.value.trim(),
+                r;
+
+            try {
                 r = new RegExp(text); // TODO fails for quotes
+            } catch (e) {
+                return; // don't clear selection either
+            }
             if (text.length > 0) {
                 selection.byVisitors(function (n) { return n.name.match(r); });
             } else {
