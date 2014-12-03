@@ -125,18 +125,17 @@ function Graph() {
      *
      */
     this.getConnectedNodesAndLinks = function(chosen_nodes, d) {
-        var i = 0,
-            j = 0,
-            adjacentnode,
-            link,
-            link2,
-            ret = {'nodes':[], 'links':[]};
+        var ret = {'nodes':[], 'links':[]};
 
         function addNode(node) {
             if (chosen_nodes.filter(function (n) { return n.id == node.id; }).length == 1) {
                 return;
             }
             ret.nodes.push(node);
+        }
+        function same(n1, n2) {
+            // XXX: using name comparison because one of the nodes might be stale
+            return compareNames(n1.name, n2.name);
         }
 
         if (chosen_nodes === undefined) {
@@ -152,20 +151,17 @@ function Graph() {
             console.log('getConnectedNodesAndLinks: expected array');
         }
 
-        while (i < links.length) {
-            link = links[i];
+        links.forEach(function(link) {
             chosen_nodes.forEach(function (n) {
-                // XXX: using name comparison because n might be stale
-                if (compareNames(link.__src.name, n.name)) {
+                var adjacentnode;
+                if (same(link.__src, n)) {
                     adjacentnode = findNode(link.__dst.id, null);
                     if (adjacentnode.state !== "temp") {
                         addNode({type: 'exit', node: adjacentnode});
                     }
                     ret.links.push({type: 'exit', link: link});
-
                     if (link.__dst.type === "chainlink") {
-                        while (j < links.length) {
-                            link2 = links[j];
+                        links.foreach(function(link2) {
                             if (link.__dst.id === link2.__dst.id &&
                                 link2.__dst.type === "chainlink" &&
                                 link2.__dst.state !== "temp") {
@@ -175,21 +171,18 @@ function Graph() {
                                 }
                                 ret.links.push({type: 'enter', link: link2});
                             }
-                            j++;
-                        }
+                        });
                     }
-                    j=0;
                 }
-                if (compareNames(links[i].__dst.name, n.name)) {
-                    adjacentnode = findNode(links[i].__src.id, null);
+                if (same(link.__dst, n)) {
+                    adjacentnode = findNode(link.__src.id, null);
                     if (adjacentnode.state !== "temp") {
-                        adjacentnode.state = "enter";
+                        addNode({type: 'enter', node: adjacentnode});
                     }
-                    links[i].state = "enter";
+                    ret.links.push({type: 'enter', link: link});
                 }
             });
-            i++;
-        }
+        });
         return ret;
     }
 
