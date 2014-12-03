@@ -474,7 +474,7 @@ var textAnalyser = function (newtext, finalize) {
 function init(graph)
 {
     function onNodeAdded(diff) {
-        if (!diff || !diff.nodes || diff.nodes.added) {
+        if (!diff || !diff.nodes || !diff.nodes.added) {
             return;
         }
         for (var k in diff.nodes.added) {
