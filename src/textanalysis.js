@@ -158,7 +158,7 @@ function tokenize(text, node_token, quote)
  *
  * Implementation notes:
  *  There is no well defined grammer. The translation goes from obvious to not
- *  so much for more complex sentences involving more then two nodes (two '#'
+ *  so much for more complex sentences involving more than two nodes (two '#'
  *  marks).
  *
  */
