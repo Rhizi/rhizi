@@ -13,10 +13,10 @@ function get_rz_core()
 var selected_nodes = [];
 
 function byVisitors(node_selector, link_selector) {
-    selected_nodes = get_rz_core().graph.findByVisitors(node_selector, link_selector);
+    var new_selected_nodes = get_rz_core().graph.findByVisitors(node_selector, link_selector);
 
     clear();
-    connectedComponent(selected_nodes);
+    connectedComponent(new_selected_nodes);
 }
 
 function connectedComponent(nodes) {
