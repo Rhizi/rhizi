@@ -47,14 +47,14 @@ var initDrawingArea = function () {
     }
 
     function dragged(d) {
-        d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        d.x = d3.event.x;
+        d.y = d3.event.y;
         tick();
     }
 
     function dragended(d) {
         d3.select(this).classed("dragging", false);
-        d3.select(this).classed("fixed", true);
-        d3.select(this).attr("dx", d3.event.x).attr("dy", d3.event.y);
+        d3.select(this).classed("fixed", true); // TODO: this is broken since we override all the classes. Need to switch to class addition/removal (i.e. use classed for everything) or set class in one location (so here just set a value on the node, not the element)
         if (d.dragstart.clientX - d3.event.sourceEvent.clientX != 0 ||
             d.dragstart.clientY - d3.event.sourceEvent.clientY != 0) {
             tick();
@@ -155,8 +155,7 @@ function canvas_handler_dblclick(){
     var n_ve = locate_visual_element(n); // locate visual element
 
     var on_slowdown_cb =  function(){
-        var set_focus = true;
-        editNode(n_ve, n, set_focus);
+        editNodeText($(n_ve).find('.nodetext'), n);
         observer.disconnect();
     }
     var mutation_handler = rz_observer.new_Mutation_Handler__on_dxy_slowdown(on_slowdown_cb);
@@ -289,17 +288,6 @@ function update_view__graph(no_relayout) {
         .append("g")
         .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
         .attr('visibility', 'hidden') // made visible on first tick
-        .on("click", function(d, i) {
-            if (d3.event.defaultPrevented) {
-                // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
-                return;
-            }
-            if (d.state !== "temp"){
-                editNode(this, d, i);
-                selection.clear();
-                showInfo(this.node, i);
-            }
-        })
         .call(drag);
 
     node.each(function (d) {
@@ -312,7 +300,20 @@ function update_view__graph(no_relayout) {
     nodetext = nodeEnter.insert("text")
         .attr("class", "nodetext graph")
         .attr("dx", 15)
-        .attr("dy", ".30em");
+        .attr("dy", ".30em")
+        .on("click", function(d, i) {
+            if (d3.event.defaultPrevented) {
+                // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                return;
+            }
+            if (d.state !== "temp") {
+                editNodeText(this, d);
+                selection.update([d]);
+                showNodeInfo(this.parentNode.node, i);
+                update_view__graph(true);
+            }
+            d3.event.stopPropagation();
+        });
 
     node.select('g.node text')
         .text(function(d) {
@@ -351,9 +352,7 @@ function update_view__graph(no_relayout) {
             }
             update_view__graph(true);
         });
-
-    //if(graphstate==="TIMELINE"){
-    nodeEnter.append("svg:image")
+    circle.append("svg:image")
         .attr("class", "status graph")
         .attr('x', -7)
         .attr('y', -8)
@@ -371,14 +370,7 @@ function update_view__graph(no_relayout) {
                     return "res/img/cross.png";
                     break;
             }
-        })
-        .on("click", function(d, i) {
-            if(d.state!=="temp") {
-                selection.clear();
-                showInfo(d, i);
-            }
         });
-    //}
 
     node.exit().remove();
 
@@ -564,9 +556,7 @@ function tick(e) {
     node.attr('visibility', 'visible');
 }
 
-function showInfo(d, i) {
-  if (d.state !== "chosen" && d.state !== 'temp') {
-    selection.connectedComponent([d]);
+function showNodeInfo(d, i) {
     view.node_info.show(d);
     view.node_info.on_submit(function() {
       if (d.type === "deliverable") {
@@ -584,11 +574,6 @@ function showInfo(d, i) {
         view.node_info.hide();
       }
     });
-  } else {
-    selection.clear();
-    view.node_info.hide();
-  }
-  update_view__graph(true);
 }
 
 function overlay_mousedown() {
@@ -602,8 +587,7 @@ function overlay_mousedown() {
 $('#editform').keypress(function(e) {
     var ret = undefined;
     if (e.which == 13) {
-        $('.editinfo').css('top', -100);
-        $('.editinfo').css('left', 0);
+        $('.editinfo').css({top: -100, left: 0});
         var element = $('#editname');
         var newname = element.val();
         var d = element.data().d;
@@ -620,19 +604,17 @@ $('#editform').keypress(function(e) {
  * @param e visual node element
  * @param n node model object
  */
-function editNode(e, n, set_focus) {
+function editNodeText(e, n) {
     var oldname = n.name;
     var en_element = $('#editname');
-    var offset = $(e).find('.nodetext').offset();
+    var offset = $(e).offset();
 
-    $('.editinfo').css('top', offset.top);
-    $('.editinfo').css('left', offset.left);
+    $('.editinfo').css({top: offset.top, left: offset.left});
     en_element.val(oldname);
     en_element.data().d = n;
-
-    if (set_focus){
-        en_element.focus();
-    }
+    en_element.focus();
+    // TODO: set cursor to correct location in text
+    // TODO: reparent editinfo instead of offset - will fix paning. Can I put it under an svg?
 }
 
 function editLink(link, d, i) {
