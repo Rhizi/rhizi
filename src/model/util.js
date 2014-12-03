@@ -14,7 +14,7 @@ function($, model_diff) {
         var ret;
 
         ret = $.extend({
-            'type' : n_raw['__type'].toLowerCase(), // discard all
+            'type' : n_raw['__label_set'][0].toLowerCase(), // discard all
             // labels except
             'state' : 'temp',
         }, n_raw);
@@ -45,9 +45,9 @@ function($, model_diff) {
         var ret;
 
         ret = $.extend({
-            'sourceId' : l_raw['__src'],
-            'targetId' : l_raw['__dst'],
-            'type' : l_raw['__type'].toLowerCase(), // discard all
+            '__src_id' : l_raw['__src'],
+            '__dst_id' : l_raw['__dst'],
+            'type' : l_raw['__label_set'][0].toLowerCase(), // discard all
             // labels except
             'state' : 'temp',
         }, l_raw);
