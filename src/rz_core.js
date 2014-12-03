@@ -95,7 +95,7 @@ var initDrawingArea = function () {
         .attr("height", $(el).innerHeight() * 12)
         .attr("x", -$(el).innerWidth() * 5)
         .attr("y", -$(el).innerHeight() * 5);
-    $('.overlay').click(mousedown);
+    $('.overlay').click(overlay_mousedown);
 
     // SVG rendering order is last rendered on top, so to make sure
     // all links are below the nodes we group them under a single g
@@ -594,11 +594,9 @@ function showInfo(d, i) {
   update_view__graph(true);
 }
 
-function mousedown() {
-    $('.editinfo').css('top', -100);
-    $('.editinfo').css('left', 0);
-    $('.editlinkinfo').css('top', -100);
-    $('.editlinkinfo').css('left', 0);
+function overlay_mousedown() {
+    $('.editinfo').css({top: -100, left: 0});
+    $('.editlinkinfo').css({top: -100, left: 0});
     selection.clear();
     view.hide();
     update_view__graph(true);
