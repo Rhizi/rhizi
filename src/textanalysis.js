@@ -477,8 +477,11 @@ function init(graph)
             autoSuggestAddName(node.name.toLowerCase());
         }
     }
+    function toLowerCase(n) {
+        return n.toLowerCase();
+    }
     function onSuggestedNameAdd(names) {
-        names.map(String.toLowerCase).forEach(autoSuggestAddName);
+        names.map(toLowerCase).forEach(autoSuggestAddName);
     }
     graph.diffBus.onValue(onNodeAdded);
     rz_bus.names.onValue(onSuggestedNameAdd);
