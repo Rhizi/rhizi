@@ -225,8 +225,7 @@ function update_view__graph(no_relayout) {
                 view.edge_info.hide();
             });
             view.edge_info.show(d);
-            selection.clear();
-            selection.connectedComponent([src, dst]);
+            selection.update([src, dst]);
             src.state = 'chosen';
             dst.state = 'chosen';
             update_view__graph(true);
@@ -346,11 +345,9 @@ function update_view__graph(no_relayout) {
                 return;
             }
             d3.event.stopPropagation();
-            if(d.state!=="temp") {
-                selection.clear();
-                showInfo(d, i);
-            } else {
-                selection.clear();
+            selection.update([d]);
+            if(d.state !== "temp") {
+                showNodeInfo(d, i);
             }
             update_view__graph(true);
         });
