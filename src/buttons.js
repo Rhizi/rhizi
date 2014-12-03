@@ -12,7 +12,7 @@ $('.save a').click(function(){
     localStorage.setItem(key, json);
 });
 
-$('.export a').click(function() {
+$('.export').click(function() {
     var json = rz_core.graph.save_to_json();
     var filename = 'graph.json';
     var blob = new Blob([json], {type: 'application/json'});

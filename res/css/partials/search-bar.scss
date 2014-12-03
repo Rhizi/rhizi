@@ -5,24 +5,44 @@
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
   box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+  z-index: 100;
 }
 
 .search-input{
-  position: absolute;
-  width: 100%;
-  top: $three-baselines+($four-baselines - $icon-height)/2;
+  width: 70%;
   height:$icon-height;
-  left: $doc-margin + 40px;
+  float: left;
+  margin: 8px 12px 12px $doc-margin;
 }
-.search-icon {
-  position:absolute;
-  width:20px;
-  height:$icon-height;
-  left: $doc-margin;
-  top: $three-baselines+($four-baselines - $icon-height)/2;
+
+.search-input:before {
+  content: "";
+  background: url(../img/search-icon.png);
+  padding: 0px 10px 0px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 input {
   font-family: $base-font-family;
   font-size: $h3-size;
+  width: 80%;
+}
+
+.export {
+  cursor: pointer;
+  text-align: right;
+  width: 60px;
+  float: right;
+  color: $dark-grey;
+  font-size: $h5-size;
+  margin: 14px $doc-margin 12px 12px ;
+}
+
+.export:before {
+  content: "";
+  background: url(../img/export.png);
+  padding: 0px 9px 0px 9px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
