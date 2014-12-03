@@ -3,9 +3,11 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define([], function() {
+define(['rz_config'], function(rz_config) {
 
     function RZ_API_Backend() {
+
+        var rz_server_url        = 'http://' + rz_config.rz_server_host + ':' + rz_config.rz_server_port;
 
         /**
          * issue rhizi server ajax call
@@ -41,7 +43,7 @@ define([], function() {
             req_opts.timeout = 8000; // ms
             req_opts.crossDomain = true;
 
-            $.ajax('http://127.0.0.1:3000' + path, req_opts);
+            $.ajax(rz_server_url + path, req_opts);
         }
 
         /**
