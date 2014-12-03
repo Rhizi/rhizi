@@ -119,8 +119,9 @@ return {
         var document_keypress = new Bacon.Bus();
         rz_bus.ui_key.plug(document_keypress);
 
-        $(document).keypress(function(e) {
+        element.keydown(function(e) {
             var ret = undefined;
+
             switch (e.keyCode) {
             case 9: //TAB
                 e.preventDefault();
