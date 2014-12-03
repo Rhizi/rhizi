@@ -33,41 +33,51 @@
    </target>
 
    <target name="deploy-local" description="locally deploy webapp">
-      <local name="src__client" />
-      <local name="src__server" />
+      <local name="src_client" />
+      <local name="src_server" />
       <local name="dst" />
 
-      <property name="src__client" value="${rzRootDir}/rhizi-client" />
-      <property name="src__server" value="${rzRootDir}/rhizi-server" />
+      <property name="src_client" value="${rzRootDir}/rhizi-client" />
+      <property name="src_server" value="${rzRootDir}/rhizi-server" />
       <property name="dst" value="${rzRootDir}/rhizi-server/deploy-local" />
 
       <parallel>
          <!-- [!] trailing '/' critical -->
-         <rsync src="${src__client}/src/" dst="${dst}/static" />
-         <rsync src="${src__client}/res" dst="${dst}/static" />
-         <rsync src="${src__client}/lib" dst="${dst}/static" />
+         <rsync src="${src_client}/src/" dst="${dst}/static" />
+         <rsync src="${src_client}/res" dst="${dst}/static" />
+         <rsync src="${src_client}/lib" dst="${dst}/static" />
 
-         <rsync src="${src__server}/src-py" dst="${dst}" />
-         <rsync src="${src__server}/res/etc" dst="${dst}" />
-         <rsync src="${src__server}/res/templates/" dst="${dst}/templates" />
+         <rsync src="${src_server}/src-py" dst="${dst}" />
+         <rsync src="${src_server}/res/etc" dst="${dst}" />
+         <rsync src="${src_server}/res/templates/" dst="${dst}/templates" />
       </parallel>
 
    </target>
 
    <target name="deploy-remote" depends="deploy-local">
 
-      <local name="src" />
+      <local name="src_server" />
+      <local name="src_client" />
       <local name="dstPath" />
       <local name="dstServer" />
-      <property name="src" value="${rzRootDir}/rhizi-server/deploy-local" />
+      <property name="src_client" value="${rzRootDir}/rhizi-client" />
+      <property name="src_server" value="${rzRootDir}/rhizi-server" />
       <property name="dstPath" value="/srv/www/rhizi/rhizi.net" />
       <property name="dstServer" value="rz_0.unige.ch" />
 
-      <rsync src="${src}/" dst="root@${dstServer}:${dstPath}" />
-      <rsync src="${rzRootDir}/rhizi-server/res/etc/rhizi-server.production.conf"
-             dst="root@${dstServer}:/etc/rhizi/rhizi-server.conf" />
-      <rsync src="${src}/etc/htpasswd.db"
-             dst="root@${dstServer}:${dstPath}/../auth/" />
+      <parallel>
+         <rsync src="${src_server}/deploy-local/"
+                dst="root@${dstServer}:${dstPath}" />
+
+         <!-- apply production patches -->
+         <rsync src="${src_server}/res/production-patch-set/rhizi-server.production.conf"
+                dst="root@${dstServer}:/etc/rhizi/rhizi-server.conf" />
+         <rsync src="${src_server}/res/production-patch-set/rz_config.js"
+                dst="root@${dstServer}:${dstPath}/static" />
+         <rsync src="${src_server}/res/production-patch-set/htpasswd.db"
+                dst="root@${dstServer}:${dstPath}/../auth/" />
+
+      </parallel>
    </target>
 
    <target name="pkg-deb" depends="clean" description="package as .deb">
