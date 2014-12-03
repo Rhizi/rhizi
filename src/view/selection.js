@@ -10,11 +10,10 @@ function get_rz_core()
     return rz_core;
 }
 
-var selection = false;
+var selected_nodes = [];
 
 function byVisitors(node_selector, link_selector) {
-    selection = true;
-    var selected_nodes = get_rz_core().graph.findByVisitors(node_selector, link_selector);
+    selected_nodes = get_rz_core().graph.findByVisitors(node_selector, link_selector);
 
     clear();
     connectedComponent(selected_nodes);
@@ -27,7 +26,7 @@ function connectedComponent(nodes) {
         link,
         data;
 
-    selection = true;
+    selected_nodes = nodes.map(function(x) { return x; });
 
     for (i = 0 ; i < connected.nodes.length ; ++i) {
         data = connected.nodes[i];
@@ -62,27 +61,29 @@ var node_selected = function(node) {
 }
 
 var selected_class = function(node) {
-    return selection ? (node_selected(node) ? "selected" : "notselected") : "";
+    return selected_nodes.length > 0 ? (node_selected(node) ? "selected" : "notselected") : "";
 }
 
 var clear = function() {
-    selection = false;
+    selected_nodes.length = 0;
     get_rz_core().graph.setRegularState();
 }
 
-function all(arr, pred)
+function arr_compare(a1, a2)
 {
-    return arr.length == arr.filter(pred).length;
-}
-
-function all_state(arr, state)
-{
-    return all(arr, function(a) { return a.state == state; })
+    if (a1.length != a2.length) {
+        return false;
+    }
+    for (var i = 0 ; i < a1.length ; ++i) {
+        if (a1[i] != a2[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 var update = function(nodes) {
-    // clear resets state
-    var set = !all_state(nodes, 'chosen');
+    var set = !arr_compare(nodes, selected_nodes);
     clear();
     if (set) {
         connectedComponent(nodes);
