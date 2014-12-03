@@ -70,11 +70,24 @@ var clear = function() {
     get_rz_core().graph.setRegularState();
 }
 
+function all(arr, pred)
+{
+    return arr.length == arr.filter(pred).length;
+}
+
+var update = function(nodes) {
+    clear();
+    if (all(nodes, function(node) { return node.state != 'chosen'; })) {
+        connectedComponent(nodes);
+    }
+}
+
 return {
-    'byVisitors': byVisitors,
-    'connectedComponent': connectedComponent,
-    'clear': clear,
-    'selected_class': selected_class,
+    byVisitors: byVisitors,
+    connectedComponent: connectedComponent,
+    clear: clear,
+    update: update,
+    selected_class: selected_class,
 };
 
 });
