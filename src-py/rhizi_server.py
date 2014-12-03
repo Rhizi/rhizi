@@ -80,13 +80,14 @@ def init_rest_api(flask_webapp):
     map REST API calls
     """
 
-    def rest_entry(path, f, flask_args={}):
+    def rest_entry(path, f, flask_args={'methods': ['POST']}):
         return (path, f, flask_args)
 
     def login_decorator(f):
         """
-        check user is logged in before executing REST api call
+        [!] security boundary: asserd logged-in user before executing REST api call
         """
+        @wraps(f)
         def wrapped_function(*args, **kw):
             if not 'username' in session:
                 return redirect('/login')
@@ -101,23 +102,27 @@ def init_rest_api(flask_webapp):
                       rest_entry('/graph/diff-commit-topo', rhizi_api.diff_commit_topo),
                       rest_entry('/graph/diff-commit-attr', rhizi_api.diff_commit_attr),
                       rest_entry('/graph/diff-commit-vis', rhizi_api.diff_commit_vis),
-                      rest_entry('/index', rhizi_api.index),
+                      rest_entry('/index', rhizi_api.index, {'methods': ['GET']}),
                       rest_entry('/load/node-set-by-id', rhizi_api.load_node_set_by_id_attr),
                       rest_entry('/load/link-set/by_link_ptr_set', rhizi_api.load_link_set_by_link_ptr_set),
                       rest_entry('/login', rhizi_api.login, {'methods': ['GET', 'POST']}),
-                      rest_entry('/logout', rhizi_api.logout),
+                      rest_entry('/logout', rhizi_api.logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rhizi_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rhizi_api.monitor__server_info),
                   ]
 
-    for re in rest_entry_set:
-        rest_path, f, flask_args = re
-        route_decorator = flask_webapp.route(rest_path, **flask_args)
-        flask_webapp.f = route_decorator(f)
+    for re_entry in rest_entry_set:
+        rest_path, f, flask_args = re_entry
 
         if '/login' != rest_path:
             # currently require login on all but /login paths
-            flask_webapp.f = login_decorator(f)
+            f = login_decorator(f)
+
+        # [!] order seems important - apply route decorator last
+        route_dec = flask_webapp.route(rest_path, **flask_args)
+        f = route_dec(f)
+
+        flask_webapp.f = f  # assign decorated function
 
 def init_webapp(cfg):
     root_path = cfg.root_path
