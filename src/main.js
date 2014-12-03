@@ -38,13 +38,20 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         // TODO: move me somewhere
         $('#search').on('input', function(e) {
             var text = this.value,
-                r = new RegExp(text.replace(' ', '|')); // TODO fails for quotes
+                r = new RegExp(text.trim()); // TODO fails for quotes
             if (text.length > 0) {
                 selection.byVisitors(function (n) { return n.name.match(r); });
             } else {
                 selection.clear();
             }
             rz_core.update_view__graph(false);
+            e.preventDefault();
+        });
+        $('#search').on('keypress', function(e) {
+            if (e.which == 13) {
+                return false;
+            }
+            return undefined;
         });
 
         var intro_task_elem = $('#intro-task');
