@@ -256,7 +256,7 @@ function update_view__graph(no_relayout) {
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
             if (d.state !== "temp") {
-                editLink(this, d, i);
+                editLink(this, d);
             }
         });
 
@@ -623,24 +623,24 @@ function editNodeText(e, n) {
     // TODO: reparent editinfo instead of offset - will fix paning. Can I put it under an svg?
 }
 
-function editLink(link, d, i) {
-    var offset = $(link).offset(),
-        oldname = d.name,
-        editlinkinfo = $('.editlinkinfo'),
-        editlinkname = $('#editlinkname');
-
-    editlinkinfo.show();
-    editlinkinfo.css({top: offset.top, left: offset.left});
-    editlinkname.val(oldname);
+var linkedit = (function() {
+    var editlinkinfo = $('.editlinkinfo'),
+        editlinkname = $('#editlinkname'),
+        link = null,
+        d = null;
 
     editlinkname.on('submit', function() {
-
         return false;
     });
+
     editlinkname.on('blur', function() {
         editlinkinfo.hide();
     });
+
     editlinkname.on('keydown', function(e) {
+        if (!link || !d) {
+            return false;
+        }
         switch (e.which) {
         case 27:
             editlinkinfo.hide();
@@ -653,8 +653,25 @@ function editLink(link, d, i) {
         }
     });
 
-    update_view__graph(true);
-}
+    function editLink(_link, _d) {
+        var offset = $(_link).offset(),
+            oldname = _d.name;
+
+        d = _d;
+        link = _link;
+
+        editlinkinfo.show();
+        // TODO: put under svg, or account for svg.g transform otherwise
+        editlinkinfo.css({top: offset.top, left: offset.left});
+        editlinkname.val(oldname);
+
+        update_view__graph(true);
+    }
+
+    return {editLink: editLink};
+})();
+
+var editLink = linkedit.editLink;
 
 return {
     graph: graph,
