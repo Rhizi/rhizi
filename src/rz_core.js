@@ -62,7 +62,11 @@ var initDrawingArea = function () {
         }
     }
 
+    var user_id = $('#user_id').text();
+    console.log('found user ID: \'' + user_id + '\'');
+
     graph = new model_graph.Graph();
+    graph.set_user(user);
 
     var el = document.body;
     vis = d3.select(el).append("svg:svg")

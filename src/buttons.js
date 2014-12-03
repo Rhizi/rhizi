@@ -67,37 +67,9 @@ $('.local-storage-load a').click(function(){
   rz_core.load_from_json(json_blob);
 });
 
-var username_label = $('#username-label'),
-    username_form = $('#username-form'),
-    username_input = $('#username-input'),
-    username_default_text = 'logged out';
-
-var onUserSet = function(user) {
-    if (user) {
-        username_label.html(user);
-        username_label.show();
-        username_form.hide();
-        $('.save-history').show();
-    } else {
-        username_label.html(username_default_text);
-        username_label.hide();
-        username_form.show();
-    }
-}
-
-rz_core.graph.userBus.onValue(onUserSet);
-
-username_form.submit(function() {
-    var user = username_input.val();
-    rz_core.graph.set_user(user);
-    return false;
-});
-username_label.click(function() {
-    username_label.hide();
-    username_input.val(
-        username_label.text() == username_default_text ? 'J. Doe' :
-        username_label.text());
-    username_form.show();
+var logout_button = $('#logout-button');
+logout_button.click(function() {
+    $.ajax({ type: "POST", url: '/logout'}); // server should redirect back to /login
 });
 
 $('a.save-history').click(function() {
