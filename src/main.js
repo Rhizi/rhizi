@@ -37,8 +37,8 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         };
         // TODO: move me somewhere
         $('#search').on('input', function(e) {
-            var text = this.value,
-                r = new RegExp(text.trim()); // TODO fails for quotes
+            var text = this.value.trim(),
+                r = new RegExp(text); // TODO fails for quotes
             if (text.length > 0) {
                 selection.byVisitors(function (n) { return n.name.match(r); });
             } else {
