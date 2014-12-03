@@ -132,7 +132,6 @@
   stroke: #EDE275;
   stroke-width: 2px;
   z-index:1;
-  pointer-events: none;
 }
 
 .link.enter, .link.exit, .link.selected {
@@ -140,7 +139,6 @@
   stroke: #EDE275;
   stroke-width: 4px;
   z-index:1;
-  pointer-events: none;
 }
 
 #editbox input{
