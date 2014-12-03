@@ -310,18 +310,6 @@ table {
   font-family: "Source_Regular", sans-serif;
   color: #919095; }
 
-.button {
-}
-
-.button:hover {
-  opacity: 0.7;
-}
-
-#logout-button {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
 .add-button {
   position: relative;
   height: 30px;
@@ -382,14 +370,14 @@ table {
   box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3); }
 
 .search-input {
-  position: fixed;
+  position: absolute;
   width: 100%;
   top: 50px;
   height: 20px;
   left: 110px; }
 
 .search-icon {
-  position: fixed;
+  position: absolute;
   width: 20px;
   height: 20px;
   left: 70px;

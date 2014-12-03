@@ -8,14 +8,14 @@
 }
 
 .search-input{
-  position: fixed;
+  position: absolute;
   width: 100%;
   top: $three-baselines+($four-baselines - $icon-height)/2;
   height:$icon-height;
   left: $doc-margin + 40px;
 }
 .search-icon {
-  position:fixed;
+  position:absolute;
   width:20px;
   height:$icon-height;
   left: $doc-margin;
