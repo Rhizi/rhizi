@@ -225,8 +225,6 @@ function update_view__graph(no_relayout) {
             });
             view.edge_info.show(d);
             selection.update([src, dst]);
-            src.state = 'chosen';
-            dst.state = 'chosen';
             update_view__graph(true);
         });
 

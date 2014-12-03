@@ -28,7 +28,6 @@ function connectedComponent(nodes) {
         data;
 
     selection = true;
-    nodes.forEach(function (n) { n.state = 'chosen'; });
 
     for (i = 0 ; i < connected.nodes.length ; ++i) {
         data = connected.nodes[i];
@@ -54,6 +53,7 @@ function connectedComponent(nodes) {
             break;
         };
     }
+    nodes.forEach(function (n) { n.state = 'chosen'; });
 }
 
 var node_selected = function(node) {
@@ -75,9 +75,16 @@ function all(arr, pred)
     return arr.length == arr.filter(pred).length;
 }
 
+function all_state(arr, state)
+{
+    return all(arr, function(a) { return a.state == state; })
+}
+
 var update = function(nodes) {
+    // clear resets state
+    var set = !all_state(nodes, 'chosen');
     clear();
-    if (all(nodes, function(node) { return node.state != 'chosen'; })) {
+    if (set) {
         connectedComponent(nodes);
     }
 }
