@@ -1,3 +1,4 @@
+"use strict"
 
 define(['view/internal'],
 function(internal) {
@@ -33,4 +34,3 @@ return {
     on_delete: on_delete,
 };
 });
-"use strict"
