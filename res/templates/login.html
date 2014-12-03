@@ -1,14 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
-<title>Rhizi Sandbox Login</title>
-<script src="lib/jquery.js"></script>
+<title>Welcome to Rhizi</title><link href="../css/style.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
     function submit_login_form() {
         var data = {
             username : $('#login_username').val(),
-            password : $('#login_password').val(),
+            password : $('#login_password').val()
         };
 
         // TODO: validate
@@ -24,12 +22,28 @@
 </head>
 
 <body>
-
+	<h1> Welcome to Rhizi test page </h1>
+	<p>Rhizi is a collaborative knowledge editor. With it, you can jointly define, explore and visualise projects, communities and ideas.</p>
+	<p>This test version is meant for you to try Rhizi out and provide us feedback so AIV students and teachers will have a good experience using it once we deploy.</p>
+	<h2>Try it out by doing the following things:</h2>
+	<ul>
+		<li>Login with your guest account</li>
+		<li>Create a node with your name.</li>
+		<li>Connect to your node three scientific interests you have(e.g. Systems biology, Biochemistry, Quantum physics, etc')</li>
+		<li>Connect to your node three skills you know well(e.g. Javascript, Photoshop, People management, Financing etc')</li>
+		<li><a href="mailto:dor.garbash@gmail.com">Send us an Email</a> about your experience, especially if you encountered any problem!</li>
+	</ul>
+	<h2>Out of scope</h2>
+	<ul>
+		<li>The content here may be deleted at any time.</li>
+		<li>You can export your work as a JSON, but we don't guarantee we will continue to support it later on.</li>
+		<li>We will implement a feature to generate you own Rhizi-doc in May. Until then, you will not be able to launch your own Rhizi-doc.</li>
+	</ul>
 	<div id="login_form_panel">
 		<form
 			onsubmit="submit_login_form();"
 			id="login_form">
-			<div id="login_form__heading">Rhizi Sandbox Login</div>
+			<h2 id="login_form__heading">Login</h2>
 			<br>
 			<div class="login_form__key">Username:</div>
 			<div class="login_form__value">
