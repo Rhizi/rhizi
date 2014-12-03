@@ -12,6 +12,7 @@ var lastnode;
 var sugg = {}; // suggestions for autocompletion of node names
 
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
+var ANALYSIS_NODE = 'ANALYSIS_NODE'
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
 function selectedType()
@@ -179,9 +180,8 @@ var textAnalyser = function (newtext, finalize) {
         yell_bug = false, // TODO: fix both issues
         NODE = "NODE",
         LINK = "LINK",
-        START = "START";
-
-    var ret = model_diff.new_topo_diff();
+        START = "START",
+        ret = model_diff.new_topo_diff();
 
     function addNode(name, type, state) {
         if (type === undefined) {
@@ -352,6 +352,7 @@ var textAnalyser = function (newtext, finalize) {
                 addLink(token_set_new_node_names[nodeindex - 1], token_set_new_node_names[nodeindex], token_set_new_link_names[linkindex], typesetter);
                 and_connect(token_set_new_node_names[nodeindex]);
             }
+            ret.state = ANALYSIS_NODE_START;
             break;
         case LINK:
             linkindex++;
@@ -493,6 +494,7 @@ return {
     textAnalyser:textAnalyser,
     autoSuggestAddName:autoSuggestAddName,
     ANALYSIS_NODE_START:ANALYSIS_NODE_START,
+    ANALYSIS_NODE: ANALYSIS_NODE,
     ANALYSIS_LINK:ANALYSIS_LINK,
 
     //for the external arrow-type changer
