@@ -69,7 +69,7 @@ def init_logging():
     log = logging.getLogger('rhizi')
     log.setLevel(logging.DEBUG)
     log_handler_c = logging.StreamHandler()
-    log_handler_f = logging.FileHandler('/tmp/rhizi-server.log')
+    log_handler_f = logging.FileHandler('/var/log/rhizi/rhizi-server.log')
 
     log.addHandler(log_handler_c)
     log.addHandler(log_handler_f)
