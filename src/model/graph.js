@@ -132,6 +132,13 @@ function Graph() {
             link2,
             ret = {'nodes':[], 'links':[]};
 
+        function addNode(node) {
+            if (chosen_nodes.filter(function (n) { return n.id == node.id; }).length == 1) {
+                return;
+            }
+            ret.nodes.push(node);
+        }
+
         if (chosen_nodes === undefined) {
             console.log('getConnectedNodesAndLinks: bug: called with undefined node');
             return;
@@ -152,7 +159,7 @@ function Graph() {
                 if (compareNames(link.__src.name, n.name)) {
                     adjacentnode = findNode(link.__dst.id, null);
                     if (adjacentnode.state !== "temp") {
-                        ret.nodes.push({type: 'exit', node: adjacentnode});
+                        addNode({type: 'exit', node: adjacentnode});
                     }
                     ret.links.push({type: 'exit', link: link});
 
@@ -164,7 +171,7 @@ function Graph() {
                                 link2.__dst.state !== "temp") {
                                 adjacentnode = findNode(link2.__src.id, null);
                                 if (adjacentnode.state !== "temp") {
-                                    ret.nodes.push({type: 'enter', node: adjacentnode});
+                                    addNode({type: 'enter', node: adjacentnode});
                                 }
                                 ret.links.push({type: 'enter', link: link2});
                             }
@@ -175,7 +182,9 @@ function Graph() {
                 }
                 if (compareNames(links[i].__dst.name, n.name)) {
                     adjacentnode = findNode(links[i].__src.id, null);
-                    if (adjacentnode.state !== "temp") adjacentnode.state = "enter";
+                    if (adjacentnode.state !== "temp") {
+                        adjacentnode.state = "enter";
+                    }
                     links[i].state = "enter";
                 }
             });
