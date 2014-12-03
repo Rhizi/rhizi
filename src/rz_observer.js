@@ -4,115 +4,111 @@
  * DOM object observers
  */
 define(
-        [],
-        function() {
+[],
+function() {
 
-            var MutationObserver = window.MutationObserver;
-            // more portable version: var MutationObserver =
-            // window.MutationObserver ||
-            // window.WebKitMutationObserver;
+var MutationObserver = window.MutationObserver;
+// more portable version: var MutationObserver =
+// window.MutationObserver ||
+// window.WebKitMutationObserver;
 
-            /**
-             * observe SVG object's translate attribute (x,y values), measure
-             * change rate & invoke on_slowdown_threshold_reached() upon
-             * reaching change slowdown threshold.
-             *
-             * Caller is responsible to disconnect observer.
-             */
-            function Mutation_Handler__on_dxy_slowdown(
-                    on_slowdown_threshold_reached) {
+/**
+ * observe SVG object's translate attribute (x,y values), measure
+ * change rate & invoke on_slowdown_threshold_reached() upon
+ * reaching change slowdown threshold.
+ *
+ * Caller is responsible to disconnect observer.
+ */
+function Mutation_Handler__on_dxy_slowdown(
+        on_slowdown_threshold_reached) {
 
-                var x_cur, y_cur, d, dx, dy, avg_d = 0;
+    var x_cur, y_cur, d, dx, dy, avg_d = 0;
 
-                this.on_slowdown_threshold_reached = on_slowdown_threshold_reached;
+    this.on_slowdown_threshold_reached = on_slowdown_threshold_reached;
 
-                /**
-                 * handle observer mutation
-                 */
-                this.handle_mutation = function(m) {
-                    if ('transform' != m.attributeName || null == m.oldValue) {
-                        return;
-                    }
+    /**
+     * handle observer mutation
+     */
+    this.handle_mutation = function(m) {
+        if ('transform' != m.attributeName || null == m.oldValue) {
+            return;
+        }
 
-                    /*
-                     * parsed txt example:
-                     * "translate(173.6007550157428,275.43228723527193)"
-                     */
-                    var rgx_m = m.oldValue.match(/\((\d+.\d+),(\d+.\d+)\)/);
-                    x_cur = rgx_m[1];
-                    y_cur = rgx_m[2];
-                    if (undefined == this.x_prv) {
-                        this.x_prv = x_cur;
-                        this.y_prv = y_cur;
-                        return;
-                    }
-                    dx = x_cur - this.x_prv;
-                    dy = y_cur - this.y_prv;
+        /*
+         * parsed txt example:
+         * "translate(173.6007550157428,275.43228723527193)"
+         */
+        var rgx_m = m.oldValue.match(/\((\d+.\d+),(\d+.\d+)\)/);
+        x_cur = rgx_m[1];
+        y_cur = rgx_m[2];
+        if (undefined == this.x_prv) {
+            this.x_prv = x_cur;
+            this.y_prv = y_cur;
+            return;
+        }
+        dx = x_cur - this.x_prv;
+        dy = y_cur - this.y_prv;
 
-                    var d = Math.sqrt(dx * dx + dy * dy);
-                    // average across last samples
-                    avg_d = (1.0 - this.most_recent_sample_weight) * avg_d
-                            + this.most_recent_sample_weight * d;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        // average across last samples
+        avg_d = (1.0 - this.most_recent_sample_weight) * avg_d
+                + this.most_recent_sample_weight * d;
 
-                    // debug
-                    // console.log({
-                    //     'dx' : dx,
-                    //     'dy' : dy,
-                    //     'd' : d,
-                    //     'avg_d' : avg_d,
-                    // });
+        // debug
+        // console.log({
+        //     'dx' : dx,
+        //     'dy' : dy,
+        //     'd' : d,
+        //     'avg_d' : avg_d,
+        // });
 
-                    if (avg_d < this.slowdown_threshold) {
-                        // slowdown threshold reached
-                        if (this.on_slowdown_threshold_reached) {
-                            this.on_slowdown_threshold_reached();
-                        }
-                    }
-
-                    this.x_prv = x_cur;
-                    this.y_prv = y_cur;
-                }
+        if (avg_d < this.slowdown_threshold) {
+            // slowdown threshold reached
+            if (this.on_slowdown_threshold_reached) {
+                this.on_slowdown_threshold_reached();
             }
+        }
 
-            function new_Mutation_Handler__on_dxy_slowdown(
-                    on_slowdown_threshold_reached, slowdown_threshold,
-                    most_recent_sample_weight) {
-                if (undefined == slowdown_threshold) {
-                    slowdown_threshold = 0.07;
-                }
-                if (undefined == most_recent_sample_weight) {
-                    most_recent_sample_weight = 0.3;
-                }
+        this.x_prv = x_cur;
+        this.y_prv = y_cur;
+    }
+}
 
-                var ret = new Mutation_Handler__on_dxy_slowdown(
-                        on_slowdown_threshold_reached);
-                ret.slowdown_threshold = slowdown_threshold;
-                ret.most_recent_sample_weight = most_recent_sample_weight;
-                return ret;
-            }
+function new_Mutation_Handler__on_dxy_slowdown(
+        on_slowdown_threshold_reached, slowdown_threshold,
+        most_recent_sample_weight) {
+    slowdown_threshold = slowdown_threshold || 0.07;
+    most_recent_sample_weight = most_recent_sample_weight || 0.3;
+    var ret = new Mutation_Handler__on_dxy_slowdown(
+            on_slowdown_threshold_reached);
+    ret.slowdown_threshold = slowdown_threshold;
+    ret.most_recent_sample_weight = most_recent_sample_weight;
+    return ret;
+}
 
-            function new_MutationObserver(handler) {
-                /*
-                 * FIXME implemente with inheritence - currently triggers
-                 * 'illegal invocation', possibly due to some interaction with
-                 * requirejs
-                 */
-                // var o = new
-                // window.MutationObserver(Mutation_Observer.handler);
-                // var ret = Object.create(o);
-                // ret. = undefined;
-                // return ret;
-                var for_each_mutaion = function(m_set) {
-                    m_set.forEach(function(m) {
-                        handler.handle_mutation(m);
-                    })
-                };
+function new_MutationObserver(handler) {
+    /*
+     * FIXME implemente with inheritence - currently triggers
+     * 'illegal invocation', possibly due to some interaction with
+     * requirejs
+     */
+    // var o = new
+    // window.MutationObserver(Mutation_Observer.handler);
+    // var ret = Object.create(o);
+    // ret. = undefined;
+    // return ret;
+    var for_each_mutaion = function(m_set) {
+        m_set.forEach(function(m) {
+            handler.handle_mutation(m);
+        })
+    };
 
-                return new MutationObserver(for_each_mutaion);
-            }
+    return new MutationObserver(for_each_mutaion);
+}
 
-            return {
-                new_MutationObserver : new_MutationObserver,
-                new_Mutation_Handler__on_dxy_slowdown : new_Mutation_Handler__on_dxy_slowdown,
-            };
-        });
+return {
+    new_MutationObserver : new_MutationObserver,
+    new_Mutation_Handler__on_dxy_slowdown : new_Mutation_Handler__on_dxy_slowdown,
+};
+
+});
