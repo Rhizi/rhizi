@@ -41,7 +41,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
                 r;
 
             try {
-                r = new RegExp(text); // TODO fails for quotes
+                r = new RegExp(text, 'i');
             } catch (e) {
                 return; // don't clear selection either
             }
