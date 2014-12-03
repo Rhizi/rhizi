@@ -322,8 +322,9 @@ var textAnalyser = function (newtext, finalize) {
                 break;
             case NODE:
                 addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
-                if (!starGraph) {
-                    addLink(token_set_new_node_names[nodeindex - 1], token_set_new_node_names[nodeindex],
+                if (!starGraph && nodeindex > 0) {
+                    addLink(token_set_new_node_names[nodeindex - 1],
+                            token_set_new_node_names[nodeindex],
                             token_set_new_link_names[linkindex], typesetter);
                 }
                 nodeindex++;
@@ -339,8 +340,9 @@ var textAnalyser = function (newtext, finalize) {
         case START:
             typeStack[nodeindex] = selectedType();
             addNode("new node", typeStack[nodeindex], "temp");
-            if (!starGraph) {
-                addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
+            if (!starGraph && nodeindex > 0) {
+                addLink(token_set_new_node_names[nodeindex - 1], "new node",
+                        token_set_new_link_names[linkindex], "temp");
                 and_connect("new node");
             }
             ret.state = ANALYSIS_NODE_START;
@@ -348,8 +350,10 @@ var textAnalyser = function (newtext, finalize) {
         case NODE:
             typeStack[nodeindex] = selectedType();
             addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
-            if (!starGraph) {
-                addLink(token_set_new_node_names[nodeindex - 1], token_set_new_node_names[nodeindex], token_set_new_link_names[linkindex], typesetter);
+            if (!starGraph && nodeindex > 0) {
+                addLink(token_set_new_node_names[nodeindex - 1],
+                        token_set_new_node_names[nodeindex],
+                        token_set_new_link_names[linkindex], typesetter);
                 and_connect(token_set_new_node_names[nodeindex]);
             }
             ret.state = ANALYSIS_NODE_START;
