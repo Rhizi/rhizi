@@ -39,7 +39,6 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         $('#search').on('input', function(e) {
             var text = this.value,
                 r = new RegExp(text.replace(' ', '|')); // TODO fails for quotes
-            console.log('search: ' + text);
             if (text.length > 0) {
                 selection.byVisitors(function (n) { return n.name.match(r); });
             } else {
