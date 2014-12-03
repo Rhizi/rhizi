@@ -47,8 +47,6 @@
          <rsync src="${src__client}/res" dst="${dst}/static" />
          <rsync src="${src__client}/lib" dst="${dst}/static" />
 
-         <rsync src="${src__client}/index.html" dst="${dst}/templates/" />
-
          <rsync src="${src__server}/src-py" dst="${dst}" />
          <rsync src="${src__server}/res/etc" dst="${dst}" />
          <rsync src="${src__server}/res/templates/" dst="${dst}/templates" />
