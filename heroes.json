@@ -18,19 +18,19 @@
   {"id":"The Avengers","type":"project","state":"perm"}
   ],
   "links":[
-    {"source":"Batman","target":"Justice League","name":"is in"},
-  {"source":"Superman","target":"Justice League","name":"leads"},
-  {"source":"Green Lantern","target":"Justice League","name":"is in"},
-  {"source":"Wonder Woman","target":"Justice League","name":"is in"},
-  {"source":"The Flash","target":"Justice League","name":"is in"},
-  {"source":"Aquaman","target":"Justice League","name":"is in"},
-  {"source":"Martian Manhunter","target":"Justice League","name":"is in"},
-  {"source":"Iron Man","target":"The Avengers","name":"is in"},
-  {"source":"Captain America","target":"The Avengers","name":"leads"},
-  {"source":"Hawkeye","target":"The Avengers","name":"is in"},
-  {"source":"Hulk","target":"The Avengers","name":"is in"},
-  {"source":"Black Widow","target":"The Avengers","name":"is in"},
-  {"source":"Nick Fury","target":"The Avengers","name":"is in"},
-  {"source":"Thor","target":"The Avengers","name":"is in"}
+    {"__src":"Batman","__dst":"Justice League","name":"is in"},
+  {"__src":"Superman","__dst":"Justice League","name":"leads"},
+  {"__src":"Green Lantern","__dst":"Justice League","name":"is in"},
+  {"__src":"Wonder Woman","__dst":"Justice League","name":"is in"},
+  {"__src":"The Flash","__dst":"Justice League","name":"is in"},
+  {"__src":"Aquaman","__dst":"Justice League","name":"is in"},
+  {"__src":"Martian Manhunter","__dst":"Justice League","name":"is in"},
+  {"__src":"Iron Man","__dst":"The Avengers","name":"is in"},
+  {"__src":"Captain America","__dst":"The Avengers","name":"leads"},
+  {"__src":"Hawkeye","__dst":"The Avengers","name":"is in"},
+  {"__src":"Hulk","__dst":"The Avengers","name":"is in"},
+  {"__src":"Black Widow","__dst":"The Avengers","name":"is in"},
+  {"__src":"Nick Fury","__dst":"The Avengers","name":"is in"},
+  {"__src":"Thor","__dst":"The Avengers","name":"is in"}
   ]
 }
