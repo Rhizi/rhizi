@@ -577,22 +577,28 @@ function showNodeInfo(d, i) {
 }
 
 function overlay_mousedown() {
-    $('.editinfo').css({top: -100, left: 0});
-    $('.editlinkinfo').css({top: -100, left: 0});
+    $('.editinfo').hide();
+    $('.editlinkinfo').hide();
     selection.clear();
     view.hide();
     update_view__graph(true);
 }
 
-$('#editform').keypress(function(e) {
-    var ret = undefined;
+$('#editname').keypress(function(e) {
+    var ret = undefined,
+        editinfo = $('.editinfo');
+
     if (e.which == 13) {
-        $('.editinfo').css({top: -100, left: 0});
+        editinfo.hide();
         var element = $('#editname');
         var newname = element.val();
         var d = element.data().d;
         graph.editName(d.id, newname);
         update_view__graph(true);
+        ret = false;
+    }
+    if (e.which == 27) {
+        editinfo.hide();
         ret = false;
     }
     rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
@@ -605,11 +611,13 @@ $('#editform').keypress(function(e) {
  * @param n node model object
  */
 function editNodeText(e, n) {
-    var oldname = n.name;
-    var en_element = $('#editname');
-    var offset = $(e).offset();
+    var oldname = n.name,
+        en_element = $('#editname'),
+        offset = $(e).offset(),
+        editinfo = $('.editinfo');
 
-    $('.editinfo').css({top: offset.top, left: offset.left});
+    editinfo.css({top: offset.top, left: offset.left});
+    editinfo.show();
     en_element.val(oldname);
     en_element.data().d = n;
     en_element.focus();
@@ -619,20 +627,32 @@ function editNodeText(e, n) {
 
 function editLink(link, d, i) {
     var offset = $(link).offset(),
-        oldname = d.name;
+        oldname = d.name,
+        editlinkinfo = $('.editlinkinfo'),
+        editlinkname = $('#editlinkname');
 
-    $('.editlinkinfo').css('top', offset.top);
-    $('.editlinkinfo').css('left', offset.left);
-    $('#editlinkname').val(oldname);
+    editlinkinfo.show();
+    editlinkinfo.css({top: offset.top, left: offset.left});
+    editlinkname.val(oldname);
 
-    // TODO: handle escape as well to quit without changes (enter does submit)
-    $('#editlinkform').submit(function() {
-        graph.editLink(d.__src.id, d.__dst.id, $('#editlinkname').val());
-        $('.editlinkinfo').css('top', -100);
-        $('.editlinkinfo').css('left', 0);
-        update_view__graph(true);
+    editlinkname.on('submit', function() {
 
         return false;
+    });
+    editlinkname.on('blur', function() {
+        editlinkinfo.hide();
+    });
+    editlinkname.on('keydown', function(e) {
+        switch (e.which) {
+        case 27:
+            editlinkinfo.hide();
+            return false;
+        case 13:
+            graph.editLink(d.__src.id, d.__dst.id, editlinkname.val());
+            update_view__graph(true);
+            editlinkinfo.hide();
+            return false;
+        }
     });
 
     update_view__graph(true);
