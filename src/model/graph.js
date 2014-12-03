@@ -32,8 +32,9 @@ function Graph() {
      */
     this.__addNode = function(spec, notify) {
         var existing_node,
-            node,
-            notify = undefined === notify ? true : notify;
+            node;
+
+        notify = undefined === notify ? true : notify;
 
         if (undefined == spec.id) {
             existing_node = findNodeByName(spec.name)
@@ -391,10 +392,9 @@ function Graph() {
     }
 
     this.removeLink = function(link) {
-        var link,
-            i;
+        var i;
 
-        for ( i = 0 ; i < links.length; ++i ) {
+        for (i = 0 ; i < links.length; ++i) {
             if (link.id !== undefined) {
                 if (link.id === links[i].id) {
                     links.splice(i, 1);

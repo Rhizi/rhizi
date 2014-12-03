@@ -21,8 +21,7 @@ function byVisitors(node_selector, link_selector) {
 }
 
 function connectedComponent(nodes) {
-    var nodes,
-        connected = get_rz_core().graph.getConnectedNodesAndLinks(nodes, 1),
+    var connected = get_rz_core().graph.getConnectedNodesAndLinks(nodes, 1),
         i,
         node,
         link,
