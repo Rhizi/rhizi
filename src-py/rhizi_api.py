@@ -193,7 +193,8 @@ def monitor__server_info():
            "</p></body></html>"
 
 def index():
-    return render_template('index.html')
+    username = escape(session['username'])
+    return render_template('index.html', username=username)
 
 def login():
 
@@ -208,18 +209,20 @@ def login():
             u, p = sanitize_input(request)
             crypt_util.validate_login(flask.current_app.rz_config, u, p)
         except Exception as e:
+            # login failed
             log.warn('login: unauthorized: user: %s' % (u))
-            abort(401)
+            return render_template('login.html', login_failed=True)
 
         # login successful
         session['username'] = u
         log.debug('login: success: user: %s' % (u))
-        return redirect('/index')
+        return redirect(url_for('index'))
 
     if request.method == 'GET':
         return render_template('login.html')
 
 def logout():
     # remove the username from the session if it's there
-    session.pop('username', None)
+    u = session.pop('username', None)
+    log.debug('logout: success: user: %s' % (u))
     return redirect(url_for('login'))
