@@ -217,6 +217,10 @@ var textAnalyser = function (newtext, finalize) {
         ret.link_set_add.push(link);
     }
 
+    if (newtext.indexOf('#') == -1 || finalize) {
+        lastnode = null;
+    }
+
     //Sentence Sequencing
     //Build the words and cuts the main elements
     sentence = tokenize(newtext, '#', '"');
@@ -435,7 +439,11 @@ var textAnalyser = function (newtext, finalize) {
                 if (true == finalize && node.state == 'temp') {
                     console.log('bug: temp node creation on finalize');
                 } else {
-                    lastnode = graph.addNode(node);
+                    if (!finalize) {
+                        lastnode = graph.addNode(node);
+                    } else {
+                        graph.addNode(node);
+                    }
                 }
             });
 

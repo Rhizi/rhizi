@@ -124,9 +124,11 @@ return {
 
             switch (e.keyCode) {
             case 9: //TAB
-                e.preventDefault();
-                changeType(e.shiftKey ? "up" : "down", textanalysis.lastnode());
-                ret = false;
+                if (textanalysis.lastnode()) {
+                    e.preventDefault();
+                    changeType(e.shiftKey ? "up" : "down", textanalysis.lastnode());
+                    ret = false;
+                }
                 break;
             case 37: //UP
                 $('html, body').scrollLeft(0);
