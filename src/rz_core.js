@@ -712,6 +712,7 @@ function showNodeInfo(d, i) {
       }
       graph.editType(d.id,d.type,$('#edittype').val());
       graph.editURL(d.id, d.type, $('#editurl').val());
+      graph.editStatus(d.id, d.type, $('#editstatus').val());
       update_view__graph(true);
       return false;
     });
