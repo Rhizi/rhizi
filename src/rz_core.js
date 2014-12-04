@@ -20,9 +20,8 @@ var node_text_dx = 15,
     node_text_dy = '.30em',
     svg_input_fo_node_x = node_text_dx,
     svg_input_fo_node_y = '-.70em',
-    svg_input_fo_height = '28px',
+    svg_input_fo_height = '22px',
     svg_input_fo_width = '100px';
-
 
 /**
  * svgInput - creates an embedded input element under a given
@@ -49,7 +48,20 @@ var svgInput = (function() {
         return input;
     }
 
-    function editname_on_keydown(e) {
+    var measure_span = document.createElement('span');
+    measure_span.setAttribute('id', 'measure');
+    measure_span.style.display = 'inline';
+    measure_span.style.visibility = 'none';
+    document.body.appendChild(measure_span);
+
+    function measure(e, text)
+    {
+        measure_span.style.cssText = window.getComputedStyle(e).cssText;
+        measure_span.innerHTML = text;
+        return measure_span.getBoundingClientRect().width; // $().width() works too
+    }
+
+    function onkeydown(e) {
         var ret = undefined,
             jelement = createOrGetSvgInput(),
             element = jelement[0],
@@ -78,6 +90,17 @@ var svgInput = (function() {
         return ret;
     };
 
+    function resize_measure(e) {
+        resize(measure(e.target, $(e.target).val()) + 30);
+    }
+
+    function resize(new_width) {
+        var svg_input = createOrGetSvgInput(),
+            fo = createOrGetSvgInputFO();
+
+        svg_input.css('width', new_width);
+        fo.attr('width', new_width);
+    }
 
     // FIXME: element being deleted. Some delete is legit - removal of related element. Some isn't (a click).
     // Instead of investigating (time constraint) reparenting as sibling, and introducing
@@ -91,7 +114,8 @@ var svgInput = (function() {
         if (svg_input.length == 0) {
             console.log('creating new svg-input');
             svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
-            svg_input.on('keydown', editname_on_keydown);
+            svg_input.on('keydown', onkeydown);
+            svg_input.bind('change keypress', resize_measure);
         }
         return svg_input;
     }
@@ -100,13 +124,14 @@ var svgInput = (function() {
     {
         return createOrGetSvgInput().parent().parent();
     }
+
     /*
      * @param e visual node element
      * @param n node model object
      */
     function enable(e, n) {
         var oldname = n.name,
-            svg_input = createOrGetSvgInput(e, n),
+            svg_input = createOrGetSvgInput(),
             fo = createOrGetSvgInputFO(),
             is_link = n.hasOwnProperty('__src');
 
@@ -124,7 +149,7 @@ var svgInput = (function() {
             fo.attr('class', 'svg-input-fo-node');
         }
         // Set width correctly
-        svg_input.attr('width', Math.max($(e).width() * 1.2, $(e).width() + 50));
+        resize(e.getBBox().width + 30);
         fo.show();
         svg_input.val(oldname);
         svg_input.data().d = n;
