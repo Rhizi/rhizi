@@ -3,26 +3,34 @@
 define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection'],
 function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection) {
 
-var addednodes = [];
+var addednodes = [],
+    vis,
+    graphstate = "GRAPH",
+    graphinterval = 0,
+    timeline_timer = 0,
+    deliverables = [],
+    circle, // <-- should not be module globals.
+    scrollValue = 0,
+    graph,
+    drag,
+    force;
 
-var vis;
+// SVG Util
+function appendForeignElementInputWithID(base, elemid, width, height)
+{
+    var input = document.createElement('input'),
+        body = document.createElement('body'),
+        fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
 
-var graphstate = "GRAPH";
-var graphinterval = 0;
-
-var timeline_timer = 0;
-
-var deliverables = [];
-
-var circle; // <-- should not be module globals.
-
-var scrollValue = 0;
-
-var graph;
-
-var drag;
-
-var force;
+    body.appendChild(input);
+    
+    fo.setAttribute('width', width || '100px');
+    fo.setAttribute('height', height || '100px');
+    fo.appendChild(body);
+    base.appendChild(fo);
+    input.setAttribute('id', elemid);
+    return input;
+}
 
 function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
@@ -256,7 +264,7 @@ function update_view__graph(no_relayout) {
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
             if (d.state !== "temp") {
-                editLink(this, d);
+                editLinkText(this, d);
             }
         });
 
@@ -575,103 +583,90 @@ function showNodeInfo(d, i) {
 }
 
 function overlay_mousedown() {
-    $('.editinfo').hide();
-    $('.editlinkinfo').hide();
+    createOrGetSvgInputFO().hide();
     selection.clear();
     view.hide();
     update_view__graph(true);
 }
 
-$('#editname').keypress(function(e) {
+function editname_on_keypress(e) {
     var ret = undefined,
-        editinfo = $('.editinfo');
+        element = createOrGetSvgInput(),
+        newname = element.val(),
+        fo = createOrGetSvgInputFO(),
+        d;
 
-    if (e.which == 13) {
-        editinfo.hide();
-        var element = $('#editname');
-        var newname = element.val();
-        var d = element.data().d;
-        graph.editName(d.id, newname);
-        update_view__graph(true);
-        ret = false;
+    if (element != this) {
+        console.log('unexpected editname_on_keypress this should be the svg-input element');
     }
-    if (e.which == 27) {
-        editinfo.hide();
+
+    if (e.which == 13 || e.which == 27) {
+        fo.hide();
         ret = false;
+        d = element.data().d;
+        if (e.which == 13 && newname != d.name) {
+            if (d.hasOwnProperty('__src')) {
+                graph.editLink(d.__src.id, d.__dst.id, newname);
+            } else {
+                graph.editName(d.id, newname);
+            }
+            update_view__graph(true);
+        }
     }
     rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
     return ret;
-});
+};
 
+function createOrGetSvgInput()
+{
+    var svg_input_name = 'svg-input',
+        svg_input_selector = '#' + svg_input_name,
+        svg_input = $(svg_input_selector);
+
+    if (svg_input.length == 0) {
+        console.log('creating new svg-input');
+        svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
+        svg_input.on('keypress', editname_on_keypress);
+    }
+    return svg_input;
+}
+
+function createOrGetSvgInputFO()
+{
+    return createOrGetSvgInput().parent().parent();
+}
 
 /**
  * @param e visual node element
  * @param n node model object
  */
-function editNodeText(e, n) {
+function editBothText(e, n) {
     var oldname = n.name,
-        en_element = $('#editname'),
-        offset = $(e).offset(),
-        editinfo = $('.editinfo');
+        svg_input = createOrGetSvgInput(),
+        fo = createOrGetSvgInputFO(),
+        is_link = n.hasOwnProperty('__src');
 
-    editinfo.css({top: offset.top, left: offset.left});
-    editinfo.show();
-    en_element.val(oldname);
-    en_element.data().d = n;
-    en_element.focus();
+    e.parentNode.appendChild(fo[0]); // This will unparent from the old parent
+    if (is_link) {
+        fo.attr('transform', e.getAttribute('transform'));
+        fo.attr('dx', null);
+        fo.attr('dy', null);
+        svg_input.attr('class', 'linklabel graph');
+    } else {
+        fo.attr('dx', e.getAttribute('dx'));
+        fo.attr('dy', e.getAttribute('dy'));
+        fo.attr('transform', null);
+        svg_input.attr('class', 'nodetext graph');
+    }
+    fo.show();
+    svg_input.val(oldname);
+    svg_input.data().d = n;
+    svg_input.focus();
     // TODO: set cursor to correct location in text
-    // TODO: reparent editinfo instead of offset - will fix paning. Can I put it under an svg?
 }
 
-var linkedit = (function() {
-    var editlinkinfo = $('.editlinkinfo'),
-        editlinkname = $('#editlinkname'),
-        link = null,
-        d = null;
-
-    editlinkname.on('submit', function() {
-        return false;
-    });
-
-    editlinkname.on('blur', function() {
-        editlinkinfo.hide();
-    });
-
-    editlinkname.on('keydown', function(e) {
-        if (!link || !d) {
-            return false;
-        }
-        switch (e.which) {
-        case 27:
-            editlinkinfo.hide();
-            return false;
-        case 13:
-            graph.editLink(d.__src.id, d.__dst.id, editlinkname.val());
-            update_view__graph(true);
-            editlinkinfo.hide();
-            return false;
-        }
-    });
-
-    function editLink(_link, _d) {
-        var offset = $(_link).offset(),
-            oldname = _d.name;
-
-        d = _d;
-        link = _link;
-
-        editlinkinfo.show();
-        // TODO: put under svg, or account for svg.g transform otherwise
-        editlinkinfo.css({top: offset.top, left: offset.left});
-        editlinkname.val(oldname);
-
-        update_view__graph(true);
-    }
-
-    return {editLink: editLink};
-})();
-
-var editLink = linkedit.editLink;
+var editLinkText = editBothText;
+var editNodeText = editBothText;
 
 return {
     graph: graph,
