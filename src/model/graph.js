@@ -595,6 +595,7 @@ function Graph() {
             that.addLink(link.__src, link.__dst, link.name, "perm");
         });
         this.clear_history();
+        rz_bus.names.push(added_names);
     }
 
     this.save_to_json = function() {
