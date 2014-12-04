@@ -153,12 +153,22 @@ return {
                 text = element.val();
                 element.val("");
                 analyzeSentence(text, true);
+                text = "";
             } else {
                 suggestionChange = false;
             }
         }
 
-        plus_button.bind("click", maybeSubmitNewSentence);
+        // Click is required to prevent the default action - this is a form so that's a post,
+        // and away we go.
+        // The mousedown is required because CSS3 transitions eat some events sometimes. This is
+        // the closest I've come to an explanation:
+        //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
+        plus_button.bind("click mousedown", function(e) {
+            console.dir(e);
+            maybeSubmitNewSentence();
+            e.preventDefault();
+        });
 
         var element_keypress = new Bacon.Bus();
         rz_bus.ui_key.plug(element_keypress);
