@@ -4,7 +4,7 @@ define(['rz_core', 'model/core', 'model/util', 'model/diff', 'rz_bus', 'consts']
 function(rz_core,   model_core,   model_util,   model_diff,   rz_bus,   consts) {
 
 var typeindex = 0;
-var nodetypes = ["person", "club", "skill", "interest", "third-internship-proposal", "internship"];
+var nodetypes = consts.nodetypes;
 var typeStack = [];
 
 var lastnode;

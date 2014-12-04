@@ -7,7 +7,8 @@ var text = "", // Last text of sentence
     element_name = '#textanalyser',
     element = $(element_name),
     suggestionChange,
-    plus_button = $('.add-button');
+    plus_button = $('.add-button'),
+    description = consts.description;
 
 var typeselection = function TypeSelectionDialog() {
     var e = $('.typeselection'),
@@ -27,7 +28,11 @@ var typeselection = function TypeSelectionDialog() {
         e.css('left', 0);
     }
     typeselection.showChosenType = function(nodetype) {
-        e.html('<table><tr><td style="height:28px"></td></tr><tr><td>' + "Chosen Type: " + nodetype + '</td></tr></table>');
+        var desc = description[nodetype];
+        e.html('<table><tr><td style="height:28px"></td></tr><tr><td>' +
+               "Chosen Type: " + nodetype + '</td></tr>' +
+               (desc ? '<tr><td>' + desc + '</td></tr>' : '') +
+               '</table>');
     }
     return typeselection;
 }();
