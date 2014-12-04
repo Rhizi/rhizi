@@ -369,24 +369,28 @@ function Graph() {
      * @return true if type changed
      */
     this.editType = function(id, state, newtype) {
-        var index = findNode(id, state);
-        if ((index !== undefined)) {
-            index.type = newtype;
-        }
+        return this._editProperty(id, state, 'type', newtype);
     }
 
     this.editURL = function(id, state, url) {
+        return this._editProperty(id, state, 'url', url);
+    }
+
+    this._editProperty = function(id, state, prop, value) {
         var index = findNode(id, state);
-        if ((index === undefined)) return;
-        index.url = url;
+        if ((index === undefined)) {
+            return false;
+        }
+        index[prop] = value;
+        return true;
+    }
+
+    this.editStatus = function(id, state, status) {
+        return this._editProperty(id, state, 'status', status);
     }
 
     this.editState = function(id, state, newstate) {
-        var index = findNode(id, state);
-
-        if ((index !== undefined)) {
-            index.state = newstate;
-        }
+        return this._editProperty(id, state, 'state', newstate);
     }
 
     this.findCoordinates = function(id, type) {
