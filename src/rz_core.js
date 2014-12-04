@@ -191,7 +191,6 @@ var initDrawingArea = function () {
         if (graphstate === "TIMELINE") {
             vis.attr("transform", "translate(0,0)scale(1)");
         }
-        console.log(arguments);
         d3.event.sourceEvent.stopPropagation();
     }
 
