@@ -41,7 +41,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
                 r;
 
             try {
-                r = new RegExp(text, 'i');
+                r = new RegExp(text.replace(/ /, '|'), 'i');
             } catch (e) {
                 return; // don't clear selection either
             }
