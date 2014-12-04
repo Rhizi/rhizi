@@ -20,7 +20,7 @@ var node_text_dx = 15,
     node_text_dy = '.30em',
     svg_input_fo_node_x = node_text_dx,
     svg_input_fo_node_y = '-.70em',
-    svg_input_fo_height = '22px',
+    svg_input_fo_height = '30px',
     svg_input_fo_width = '100px';
 
 /**
