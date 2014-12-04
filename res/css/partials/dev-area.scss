@@ -1,25 +1,32 @@
 .debug-ui {
-  position:fixed;
-  bottom:70px;
-  left:10px;
-  text-decoration: none;
+  display: none;
 }
 
-.debug-ui-row {
-  float: left;
-  width: 100%;
-}
+body.debug {
+    .debug-ui {
+      display: inline;
+      position:fixed;
+      bottom:70px;
+      left:10px;
+      text-decoration: none;
+    }
 
-.debug-ui-left {
-  float: left;
-  width: 50%;
-}
+    .debug-ui-row {
+      float: left;
+      width: 100%;
+    }
 
-.debug-ui-right {
-  float: right;
-  width: 50%;
-}
+    .debug-ui-left {
+      float: left;
+      width: 50%;
+    }
 
-.debug{
+    .debug-ui-right {
+      float: right;
+      width: 50%;
+    }
 
+    .debug{
+
+    }
 }

@@ -23,6 +23,9 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         if (json) {
             rz_core.load_from_json(json);
         }
+        if (util.getParameterByName('debug')) {
+            $(document.body).addClass('debug');
+        }
 
         document.body.onkeyup = function(e) {
             var key = (e.key || (e.charCode && String.fromCharCode(e.charCode))

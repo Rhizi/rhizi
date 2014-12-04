@@ -128,20 +128,21 @@ table {
   border-spacing: 0; }
 
 .debug-ui {
+  display: none; }
+
+body.debug .debug-ui {
+  display: inline;
   position: fixed;
   bottom: 70px;
   left: 10px;
   text-decoration: none; }
-
-.debug-ui-row {
+body.debug .debug-ui-row {
   float: left;
   width: 100%; }
-
-.debug-ui-left {
+body.debug .debug-ui-left {
   float: left;
   width: 50%; }
-
-.debug-ui-right {
+body.debug .debug-ui-right {
   float: right;
   width: 50%; }
 
