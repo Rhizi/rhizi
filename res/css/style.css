@@ -284,7 +284,7 @@ table {
   font-size: 17px; }
 
 .input-container {
-  position: relative;
+  position: fixed;
   margin: 24px 0 0 70px; }
   .input-container form {
     display: inline; }
