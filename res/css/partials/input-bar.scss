@@ -69,3 +69,7 @@
   text-shadow: -1px 1px 8px #E DE275, 1px -1px 8px #EDE275;
   font-size:16px;
 }
+
+.ui-helper-hidden-accessible > div {
+    color: $dark-grey;
+}
