@@ -15,22 +15,132 @@ var addednodes = [],
     drag,
     force;
 
-// SVG Util
-function appendForeignElementInputWithID(base, elemid, width, height)
-{
-    var input = document.createElement('input'),
-        body = document.createElement('body'),
-        fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+// "CSS" for SVG elements. Reused for editing elements.
+var node_text_dx = 15,
+    node_text_dy = '.30em',
+    svg_input_fo_node_x = node_text_dx,
+    svg_input_fo_node_y = '-.70em',
+    svg_input_fo_height = '28px',
+    svg_input_fo_width = '100px';
 
-    body.appendChild(input);
-    
-    fo.setAttribute('width', width || '100px');
-    fo.setAttribute('height', height || '100px');
-    fo.appendChild(body);
-    base.appendChild(fo);
-    input.setAttribute('id', elemid);
-    return input;
-}
+
+/**
+ * svgInput - creates an embedded input element under a given
+ *
+ * edit_node(@sibling, @node)
+ * edit_link(@sibling, @link)
+ */
+var svgInput = (function() {
+    function appendForeignElementInputWithID(base, elemid, width, height)
+    {
+        var input = document.createElement('input'),
+            body = document.createElement('body'),
+            fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+
+        body.appendChild(input);
+
+        fo.setAttribute('width', width || svg_input_fo_width);
+        fo.setAttribute('height', height || svg_input_fo_height);
+        fo.style.pointerEvents = 'none';
+        input.style.pointerEvents = 'all';
+        fo.appendChild(body);
+        base.appendChild(fo);
+        input.setAttribute('id', elemid);
+        return input;
+    }
+
+    function editname_on_keydown(e) {
+        var ret = undefined,
+            jelement = createOrGetSvgInput(),
+            element = jelement[0],
+            newname = jelement.val(),
+            fo = createOrGetSvgInputFO(),
+            d;
+
+        if (element != this) {
+            console.log('unexpected editname_on_keypress this should be the svg-input element');
+        }
+
+        if (e.which == 13 || e.which == 27) {
+            fo.hide();
+            ret = false;
+            d = jelement.data().d;
+            if (e.which == 13 && newname != d.name) {
+                if (d.hasOwnProperty('__src')) {
+                    graph.editLink(d.__src.id, d.__dst.id, newname);
+                } else {
+                    graph.editName(d.id, newname);
+                }
+                update_view__graph(true);
+            }
+        }
+        rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
+        return ret;
+    };
+
+
+    // FIXME: element being deleted. Some delete is legit - removal of related element. Some isn't (a click).
+    // Instead of investigating (time constraint) reparenting as sibling, and introducing
+    // this function. Cost of creation of element is negligble, it's just ugly..
+    function createOrGetSvgInput()
+    {
+        var svg_input_name = 'svg-input',
+            svg_input_selector = '#' + svg_input_name,
+            svg_input = $(svg_input_selector);
+
+        if (svg_input.length == 0) {
+            console.log('creating new svg-input');
+            svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
+            svg_input.on('keydown', editname_on_keydown);
+        }
+        return svg_input;
+    }
+
+    function createOrGetSvgInputFO()
+    {
+        return createOrGetSvgInput().parent().parent();
+    }
+    /*
+     * @param e visual node element
+     * @param n node model object
+     */
+    function enable(e, n) {
+        var oldname = n.name,
+            svg_input = createOrGetSvgInput(e, n),
+            fo = createOrGetSvgInputFO(),
+            is_link = n.hasOwnProperty('__src');
+
+        e.parentNode.appendChild(fo[0]); // This will unparent from the old parent
+        if (is_link) {
+            fo.attr('transform', e.getAttribute('transform'));
+            // XXX links set the text-anchor middle attribute. no idea how to do that
+            fo.attr('x', -$(e).width() / 2);
+            fo.attr('y', -$(e).height() / 2 - 3); // XXX This minus 3 is only kinda ok.
+            fo.attr('class', 'svg-input-fo-link');
+        } else {
+            fo.attr('x', svg_input_fo_node_x);
+            fo.attr('y', svg_input_fo_node_y);
+            fo.attr('transform', null);
+            fo.attr('class', 'svg-input-fo-node');
+        }
+        // Set width correctly
+        svg_input.attr('width', Math.max($(e).width() * 1.2, $(e).width() + 50));
+        fo.show();
+        svg_input.val(oldname);
+        svg_input.data().d = n;
+        svg_input.focus();
+        // TODO: set cursor to correct location in text
+    }
+
+    return {
+        enable: enable,
+        hide: function() {
+            createOrGetSvgInputFO().hide();
+        }
+    };
+}());
+
+
 
 function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
@@ -163,7 +273,7 @@ function canvas_handler_dblclick(){
     var n_ve = locate_visual_element(n); // locate visual element
 
     var on_slowdown_cb =  function(){
-        editNodeText($(n_ve).find('.nodetext'), n);
+        svgInput.enable($(n_ve).find('.nodetext'), n);
         observer.disconnect();
     }
     var mutation_handler = rz_observer.new_Mutation_Handler__on_dxy_slowdown(on_slowdown_cb);
@@ -264,7 +374,7 @@ function update_view__graph(no_relayout) {
         .attr("text-anchor", "middle")
         .on("click", function(d, i) {
             if (d.state !== "temp") {
-                editLinkText(this, d);
+                svgInput.enable(this, d);
             }
         });
 
@@ -305,15 +415,15 @@ function update_view__graph(no_relayout) {
 
     nodetext = nodeEnter.insert("text")
         .attr("class", "nodetext graph")
-        .attr("dx", 15)
-        .attr("dy", ".30em")
+        .attr("dx", node_text_dx)
+        .attr("dy", node_text_dy)
         .on("click", function(d, i) {
             if (d3.event.defaultPrevented) {
                 // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
                 return;
             }
             if (d.state !== "temp") {
-                editNodeText(this, d);
+                svgInput.enable(this, d);
                 selection.update([d]);
                 showNodeInfo(this.parentNode.node, i);
                 update_view__graph(true);
@@ -583,90 +693,11 @@ function showNodeInfo(d, i) {
 }
 
 function overlay_mousedown() {
-    createOrGetSvgInputFO().hide();
+    svgInput.hide();
     selection.clear();
     view.hide();
     update_view__graph(true);
 }
-
-function editname_on_keypress(e) {
-    var ret = undefined,
-        element = createOrGetSvgInput(),
-        newname = element.val(),
-        fo = createOrGetSvgInputFO(),
-        d;
-
-    if (element != this) {
-        console.log('unexpected editname_on_keypress this should be the svg-input element');
-    }
-
-    if (e.which == 13 || e.which == 27) {
-        fo.hide();
-        ret = false;
-        d = element.data().d;
-        if (e.which == 13 && newname != d.name) {
-            if (d.hasOwnProperty('__src')) {
-                graph.editLink(d.__src.id, d.__dst.id, newname);
-            } else {
-                graph.editName(d.id, newname);
-            }
-            update_view__graph(true);
-        }
-    }
-    rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
-    return ret;
-};
-
-function createOrGetSvgInput()
-{
-    var svg_input_name = 'svg-input',
-        svg_input_selector = '#' + svg_input_name,
-        svg_input = $(svg_input_selector);
-
-    if (svg_input.length == 0) {
-        console.log('creating new svg-input');
-        svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
-        svg_input.on('keypress', editname_on_keypress);
-    }
-    return svg_input;
-}
-
-function createOrGetSvgInputFO()
-{
-    return createOrGetSvgInput().parent().parent();
-}
-
-/**
- * @param e visual node element
- * @param n node model object
- */
-function editBothText(e, n) {
-    var oldname = n.name,
-        svg_input = createOrGetSvgInput(),
-        fo = createOrGetSvgInputFO(),
-        is_link = n.hasOwnProperty('__src');
-
-    e.parentNode.appendChild(fo[0]); // This will unparent from the old parent
-    if (is_link) {
-        fo.attr('transform', e.getAttribute('transform'));
-        fo.attr('dx', null);
-        fo.attr('dy', null);
-        svg_input.attr('class', 'linklabel graph');
-    } else {
-        fo.attr('dx', e.getAttribute('dx'));
-        fo.attr('dy', e.getAttribute('dy'));
-        fo.attr('transform', null);
-        svg_input.attr('class', 'nodetext graph');
-    }
-    fo.show();
-    svg_input.val(oldname);
-    svg_input.data().d = n;
-    svg_input.focus();
-    // TODO: set cursor to correct location in text
-}
-
-var editLinkText = editBothText;
-var editNodeText = editBothText;
 
 return {
     graph: graph,

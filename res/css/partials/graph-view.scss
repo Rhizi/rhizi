@@ -22,16 +22,36 @@
 }
 
 .nodetext {
-
   fill: $dark-grey;
   font-size:17px;
   z-index:3;
 }
 
+// editor for node text
+.svg-input-fo-node {
+  fill: $dark-grey;
+  z-index:3;
+}
+
+.svg-input-fo-node input {
+  font-size:17px;
+  background-color: transparent;
+}
+
 .linklabel{
   stroke: $dark-grey;
   font-size:14px;
+  background-color: transparent;
+}
 
+// editor for link text
+.svg-input-fo-link {
+    stroke: $dark-grey;
+}
+
+.svg-input-fo-link input {
+    font-size: 14px;
+  background-color: transparent;
 }
 
 .link {
