@@ -30,6 +30,16 @@ var node_text_dx = 15,
  * edit_link(@sibling, @link)
  */
 var svgInput = (function() {
+    var measure_span;
+
+    function createMeasureSpan(parent) {
+        measure_span = document.createElement('span');
+        measure_span.setAttribute('id', 'measure');
+        measure_span.style.display = 'inline';
+        measure_span.style.visibility = 'hidden';
+        parent.appendChild(measure_span);
+    }
+
     function appendForeignElementInputWithID(base, elemid, width, height)
     {
         var input = document.createElement('input'),
@@ -45,18 +55,14 @@ var svgInput = (function() {
         fo.appendChild(body);
         base.appendChild(fo);
         input.setAttribute('id', elemid);
+        createMeasureSpan(body);
         return input;
     }
-
-    var measure_span = document.createElement('span');
-    measure_span.setAttribute('id', 'measure');
-    measure_span.style.display = 'inline';
-    measure_span.style.visibility = 'none';
-    document.body.appendChild(measure_span);
 
     function measure(e, text)
     {
         measure_span.style.cssText = window.getComputedStyle(e).cssText;
+        measure_span.style.visibility = 'none';
         measure_span.innerHTML = text;
         return measure_span.getBoundingClientRect().width; // $().width() works too
     }
