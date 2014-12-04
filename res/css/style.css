@@ -292,29 +292,42 @@ table {
 .input-bar {
   font-family: "Source_Regular", sans-serif;
   color: #919095;
-  height: 36px;
-  width: 420px;
-  padding-left: 8px;
-  border-radius: 4px;
+  max-height: 36px;
+  width: 260px;
+  padding: 6px 8px 5px 8px;
   border: 1px solid #919095;
-  background: white; }
+  background: white;
+  transition-property: width;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in; }
   .input-bar:focus {
-    border-radius: 4px;
     border: 1px solid #919095;
-    -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3); }
+    width: 520px;
+    -webkit-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3); }
 
 #textanalyser.ui-autocomplete-input {
   font-family: "Source_Regular", sans-serif;
   color: #919095; }
 
 .add-button {
+  background: url(../img/plus-button.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #ee3654;
   position: relative;
-  height: 30px;
-  width: 30px;
-  left: -38px;
-  top: 10px; }
+  height: 36px;
+  width: 36px;
+  left: -39px;
+  border: 0;
+  top: 9px; }
+
+.add-button:hover {
+  background-color: #d10a40; }
+
+.add-button:focus {
+  outline: none; }
 
 .suggestion {
   list-style-type: none; }
