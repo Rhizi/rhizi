@@ -298,12 +298,15 @@ function Graph() {
 
     this.editLink = function(src_id, dst_id, newname, newstate) {
         var link = findLink(src_id, dst_id, newname);
-        if (link !== undefined) {
-            link.name = newname;
-            if (newstate !== undefined) {
-                link.state = newstate;
-            }
+
+        if (link === undefined) {
+            return;
         }
+        link.name = newname;
+        if (newstate !== undefined) {
+            link.state = newstate;
+        }
+        rz_bus.names.push([newname]);
     }
 
     this.editLinkTarget = function(src_id, dst_id, newTarget) {
@@ -331,24 +334,26 @@ function Graph() {
         var index = findNode(id, null);
         var acceptReplace=true;
 
-        if ((index !== undefined)) {
-            if (index2 !== undefined) {
-                acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
-                if (acceptReplace){
-                    for (var i = 0; i < links.length; i++) {
-                        if (links[i].__src === index) {
-                            links[i].__src = index2;
-                        }
-                        if (links[i].__dst === index) {
-                            links[i].__dst = index2;
-                        }
-                    }
-                    this.removeNode(index.id,null);
-                }
-            } else {
-                index.name = new_name;
-            }
+        if (index === undefined) {
+            return;
         }
+        if (index2 !== undefined && index.state !== 'temp') {
+            acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
+            if (acceptReplace){
+                for (var i = 0; i < links.length; i++) {
+                    if (links[i].__src === index) {
+                        links[i].__src = index2;
+                    }
+                    if (links[i].__dst === index) {
+                        links[i].__dst = index2;
+                    }
+                }
+                this.removeNode(index.id,null);
+            }
+        } else {
+            index.name = new_name;
+        }
+        rz_bus.names.push([new_name]);
     }
 
     this.editDates = function(id, type, start, end) {
