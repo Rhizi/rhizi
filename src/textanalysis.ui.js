@@ -117,8 +117,8 @@ return {
             },
         });
 
-        var document_keypress = new Bacon.Bus();
-        rz_bus.ui_key.plug(document_keypress);
+        var document_keydown = new Bacon.Bus();
+        rz_bus.ui_key.plug(document_keydown);
 
         element.keydown(function(e) {
             var ret = undefined;
@@ -144,7 +144,7 @@ return {
                 suggestionChange = true;
                 break;
             }
-            document_keypress.push({where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]});
+            document_keydown.push({where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]});
             return ret;
         });
 
@@ -170,9 +170,9 @@ return {
             e.preventDefault();
         });
 
-        var element_keypress = new Bacon.Bus();
-        rz_bus.ui_key.plug(element_keypress);
-        element.keypress(function(e) {
+        var element_keydown = new Bacon.Bus();
+        rz_bus.ui_key.plug(element_keydown);
+        element.keydown(function(e) {
             var ret = undefined;
             switch (e.which) {
             case 13:
@@ -190,7 +190,7 @@ return {
                 ret = false;
                 break;
             }
-            element_keypress.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]});
+            element_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]});
             return ret;
         });
 
