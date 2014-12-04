@@ -178,15 +178,21 @@ function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
 }
 
+// zoom or drag
+var zoomInProgress = false;
+
 var initDrawingArea = function () {
 
     function zoom() {
+        zoomInProgress = true;
         if (graphstate === "GRAPH") {
             vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         }
         if (graphstate === "TIMELINE") {
             vis.attr("transform", "translate(0,0)scale(1)");
         }
+        console.log(arguments);
+        d3.event.sourceEvent.stopPropagation();
     }
 
     function dragstarted(d) {
@@ -726,6 +732,10 @@ function showNodeInfo(d, i) {
 }
 
 function overlay_mousedown() {
+    if (zoomInProgress) {
+        zoomInProgress = false;
+        return;
+    }
     svgInput.hide();
     selection.clear();
     view.hide();
