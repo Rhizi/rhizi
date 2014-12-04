@@ -353,7 +353,6 @@ function Graph() {
         } else {
             index.name = new_name;
         }
-        rz_bus.names.push([new_name]);
     }
 
     this.editDates = function(id, type, start, end) {
@@ -595,7 +594,6 @@ function Graph() {
         data.links.forEach(function(link) {
             that.addLink(link.__src, link.__dst, link.name, "perm");
         });
-        rz_bus.names.push(added_names);
         this.clear_history();
     }
 

@@ -89,6 +89,7 @@ var svgInput = (function() {
                 } else {
                     graph.editName(d.id, newname);
                 }
+                rz_bus.names.push([newname]);
                 update_view__graph(true);
             }
         }
