@@ -3,10 +3,11 @@
 define(['jquery', 'Bacon', 'consts', 'rz_bus', 'autocomplete', 'rz_core', 'textanalysis'],
 function($,        Bacon,   consts,   rz_bus,   autocomplete,   rz_core,   textanalysis) {
 
-var text = ""; // Last text of sentence
-var element_name = '#textanalyser';
-var element = $(element_name);
-var suggestionChange;
+var text = "", // Last text of sentence
+    element_name = '#textanalyser',
+    element = $(element_name),
+    suggestionChange,
+    plus_button = $('.add-button');
 
 var typeselection = function TypeSelectionDialog() {
     var e = $('.typeselection'),
@@ -147,19 +148,25 @@ return {
             return ret;
         });
 
+        function maybeSubmitNewSentence() {
+            if(!suggestionChange) {
+                text = element.val();
+                element.val("");
+                analyzeSentence(text, true);
+            } else {
+                suggestionChange = false;
+            }
+        }
+
+        plus_button.bind("click", maybeSubmitNewSentence);
+
         var element_keypress = new Bacon.Bus();
         rz_bus.ui_key.plug(element_keypress);
         element.keypress(function(e) {
             var ret = undefined;
             switch (e.which) {
             case 13:
-                if(!suggestionChange) {
-                    text = element.val();
-                    element.val("");
-                    analyzeSentence(text, true);
-                } else {
-                    suggestionChange = false;
-                }
+                maybeSubmitNewSentence();
                 ret = false;
                 break;
             case 37: //RIGHT
