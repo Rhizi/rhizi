@@ -79,7 +79,7 @@ var completer = (function (input_element, dropdown) {
         }
         // [hash] [cursor] [space/end]
         completions(text.slice(hash + 1, space)).forEach(function(name) {
-            dropdown.append($('<div>' + name + '</div>'));
+            dropdown.append($('<div class="suggestion-item">' + name + '</div>'));
         });
         dropdown.children().each(function (index, elem) {
             elem.onclick = function() { _applySuggestion(index); };

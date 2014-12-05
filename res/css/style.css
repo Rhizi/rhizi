@@ -152,19 +152,16 @@ body.debug .debug-ui-right {
 
 .node {
   stroke-width: 1px;
-  font-size: 16px;
+  font-size: 18px;
   z-index: 100; }
 
 .circle {
-  stroke: #f5f5fa;
-  stroke-width: 1.5px;
   z-index: 100;
-  pointer-events: all;
-  box-shadow: 0 0 0px #FFFF8F; }
+  pointer-events: all; }
 
 .nodetext {
-  fill: #363636;
-  font-size: 17px;
+  fill: #919095;
+  font-size: 18px;
   z-index: 3; }
 
 .svg-input-fo-node {
@@ -177,7 +174,7 @@ body.debug .debug-ui-right {
 
 .linklabel {
   stroke: #363636;
-  font-size: 14px;
+  font-size: 12px;
   background-color: transparent; }
 
 .svg-input-fo-link {
@@ -200,7 +197,8 @@ body.debug .debug-ui-right {
   /* higher than link, lower than node */ }
 
 .circle.chosen {
-  stroke: #EDE275; }
+  stroke: #33c2e0;
+  stroke-opacity: 0.5; }
 
 .circle.enter {
   stroke: #EDE275; }
@@ -227,22 +225,25 @@ body.debug .debug-ui-right {
  * note that this should be automatically generated somehow for user settings.
  */
 .circle.person {
-  fill: #FCB924; }
+  fill: #004681; }
 
 .circle.club {
-  fill: #009DDC; }
+  fill: #8b3ab0; }
 
 .circle.skill {
-  fill: #62BB47; }
+  fill: #fad900; }
 
 .circle.interest {
-  fill: #f9f5f1; }
+  fill: #ff8b11; }
+
+.circle.project {
+  fill: #40c200; }
 
 .circle.third-internship-proposal {
-  fill: #202020; }
+  fill: #ee3654; }
 
 .circle.internship {
-  fill: #933E99; }
+  fill: #33c2e0; }
 
 .circle.empty {
   fill: #080808; }
@@ -255,14 +256,15 @@ body.debug .debug-ui-right {
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
-  opacity: 0.2; }
+  opacity: 0.3; }
 
 .graph.link.temp_and {
   stroke-dasharray: 3,3; }
 
 .highlightlink {
   fill: none;
-  stroke: #EDE275;
+  stroke: #33c2e0;
+  stroke-opacity: 0.5;
   stroke-width: 2px;
   z-index: 1; }
 
@@ -350,10 +352,30 @@ body.debug .debug-ui-right {
   outline: none; }
 
 .suggestion {
-  list-style-type: none; }
+  color: #363636;
+  max-height: 580px;
+  overflow-y: scroll;
+  font-size: 18px;
+  list-style-type: none;
+  width: inherit;
+  position: relative;
+  margin-top: 6px;
+  border: 1px solid #919095;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: white; }
+
+.suggestion-item {
+  padding: 6px 0px 6px 18px; }
 
 .suggestion .selected {
-  color: blue; }
+  padding-left: 16px;
+  background-color: #f5f5fa;
+  border-left: 2px solid #33c2e0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
 
 .suggestion td {
   position: fixed; }

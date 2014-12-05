@@ -5,7 +5,7 @@
 
 .node {
   stroke-width: 1px;
-  font-size: 16px;
+  font-size: $h3-size;
   z-index:100;
 }
 
@@ -14,16 +14,13 @@
 }
 
 .circle {
-  stroke: $light-grey;
-  stroke-width: 1.5px;
   z-index: 100;
   pointer-events:all;
-  box-shadow: 0 0 0px #FFFF8F;
 }
 
 .nodetext {
-  fill: $dark-grey;
-  font-size:17px;
+  fill: $mid-grey;
+  font-size: $h3-size;
   z-index:3;
 }
 
@@ -40,7 +37,7 @@
 
 .linklabel{
   stroke: $dark-grey;
-  font-size:14px;
+  font-size: $h5-size;
   background-color: transparent;
 }
 
@@ -68,7 +65,8 @@
 }
 
 .circle.chosen {
-  stroke: #EDE275;
+  stroke: $cyan;
+  stroke-opacity: 0.5;
 }
 .circle.enter {
   stroke: #EDE275;
@@ -100,28 +98,32 @@
  */
 
 .circle.person {
-  fill: #FCB924;
+  fill: $blue;
 }
 
 
 .circle.club {
-  fill: #009DDC;
+  fill: $purple;
 }
 
 .circle.skill {
-  fill: #62BB47;
+  fill: $yellow;
 }
 
 .circle.interest {
-  fill: #f9f5f1;
+  fill: $orange;
+}
+
+.circle.project {
+  fill: $green;
 }
 
 .circle.third-internship-proposal {
-  fill: #202020;
+  fill: $magenta;
 }
 
 .circle.internship {
-  fill: #933E99;
+  fill: $cyan;
 }
 
 .circle.empty {
@@ -140,7 +142,7 @@
 /* Selected parts of the graph, right now by clicking, later with search. */
 
 .notselected {
-  opacity: 0.2;
+  opacity: 0.3;
 }
 
 .graph.link.temp_and {
@@ -149,7 +151,8 @@
 
 .highlightlink {
   fill: none;
-  stroke: #EDE275;
+  stroke: $cyan;
+  stroke-opacity: 0.5;
   stroke-width: 2px;
   z-index:1;
 }
