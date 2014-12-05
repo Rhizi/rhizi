@@ -1,12 +1,12 @@
 "use strict"
 
-define(['jquery', 'Bacon', 'consts', 'rz_bus', 'autocomplete', 'rz_core', 'textanalysis'],
-function($,        Bacon,   consts,   rz_bus,   autocomplete,   rz_core,   textanalysis) {
+define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'view/completer'],
+function($,        Bacon,   consts,   rz_bus,   rz_core,   textanalysis,   completer) {
 
 var text = "", // Last text of sentence
     element_name = '#textanalyser',
     element = $(element_name),
-    suggestionChange,
+    element_raw = element[0],
     plus_button = $('.add-button'),
     description = consts.description;
 
@@ -37,6 +37,8 @@ var typeselection = function TypeSelectionDialog() {
     return typeselection;
 }();
 
+var analysisCompleter = completer(element, $('.suggestion'));
+
 function analyzeSentence(sentence, finalize)
 {
     var ret = textanalysis.textAnalyser(sentence, finalize);
@@ -55,9 +57,7 @@ function analyzeSentence(sentence, finalize)
 
     if (finalize || sentence.length == 0) {
         typeselection.hide();
-        $('span.ui-helper-hidden-accessible').hide();
-    } else {
-        $('span.ui-helper-hidden-accessible').show();
+        analysisCompleter.hide();
     }
 }
 
@@ -106,21 +106,7 @@ return {
             return;
         }
 
-        element.autocompleteTrigger({
-            triggerStart: '#',
-            triggerEnd: '',
-            source: textanalysis.autocompleteCallback,
-            response: function(element, ui) {
-                ui.content.forEach(function (x) {
-                    if (x.value.search(' ') != -1) {
-                        x.value = '"' + x.value + '"';
-                    }
-                });
-            },
-            open: function() {
-                $('.ui-autocomplete').css('width', '10px');
-            },
-        });
+        analysisCompleter.options.plug(textanalysis.suggestions_options);
 
         var document_keydown = new Bacon.Bus();
         rz_bus.ui_key.plug(document_keydown);
@@ -129,6 +115,12 @@ return {
             var ret = undefined;
 
             switch (e.keyCode) {
+            case 13:
+                if (!analysisCompleter.handleEnter()) {
+                    submitNewSentence();
+                }
+                ret = false;
+                break;
             case 9: //TAB
                 if (textanalysis.lastnode()) {
                     e.preventDefault();
@@ -136,32 +128,37 @@ return {
                     ret = false;
                 }
                 break;
-            case 37: //UP
-                $('html, body').scrollLeft(0);
-                break;
-            case 39: //DOWN
-                $('html, body').scrollLeft(0);
-                break;
             case 38: //UP
-                suggestionChange = true;
-                break;
             case 40: //DOWN
-                suggestionChange = true;
+                ret = false;
                 break;
             }
-            document_keydown.push({where: consts.KEYSTROKE_WHERE_DOCUMENT, keys: [e.keyCode]});
+            document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
+            return ret;
+        });
+        element.keyup(function(e) {
+            var ret = undefined;
+            switch (e.keyCode) {
+            case 38: //UP
+                analysisCompleter.prev_option();
+                ret = false;
+                break;
+            case 40: //DOWN
+                analysisCompleter.next_option();
+                ret = false;
+                break;
+            default:
+                analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
+                analysisCompleter.show();
+            }
             return ret;
         });
 
-        function maybeSubmitNewSentence() {
-            if(!suggestionChange) {
-                text = element.val();
-                element.val("");
-                analyzeSentence(text, true);
-                text = "";
-            } else {
-                suggestionChange = false;
-            }
+        function submitNewSentence() {
+            text = element.val();
+            element.val("");
+            analyzeSentence(text, true);
+            text = "";
         }
 
         // Click is required to prevent the default action - this is a form so that's a post,
@@ -171,32 +168,8 @@ return {
         //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
         plus_button.bind("click mousedown", function(e) {
             console.dir(e);
-            maybeSubmitNewSentence();
+            submitNewSentence();
             e.preventDefault();
-        });
-
-        var element_keydown = new Bacon.Bus();
-        rz_bus.ui_key.plug(element_keydown);
-        element.keydown(function(e) {
-            var ret = undefined;
-            switch (e.which) {
-            case 13:
-                maybeSubmitNewSentence();
-                ret = false;
-                break;
-            case 37: //RIGHT
-                $('body').scrollLeft(0);
-                e.stopPropagation();
-                ret = false;
-                break;
-            case 39: //LEFT
-                $('body').scrollLeft(0);
-                e.stopPropagation();
-                ret = false;
-                break;
-            }
-            element_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys:[e.which]});
-            return ret;
         });
 
         var input = new Bacon.Bus();

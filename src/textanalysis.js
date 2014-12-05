@@ -9,7 +9,8 @@ var typeStack = [];
 
 var lastnode;
 
-var sugg = {}; // suggestions for autocompletion of node names
+var sugg = {}, // suggestions for autocompletion of node names
+    suggestions_options = new Bacon.Bus(); // TODO: Property: same as bus, but with initial value
 
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_NODE = 'ANALYSIS_NODE'
@@ -24,36 +25,7 @@ function autoSuggestAddName(name)
 {
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
     sugg[name] = 1;
-}
-
-function unquoted(name)
-{
-    var start = 0,
-        end = name.length;
-
-    if (name.length >= 1) {
-        if (name.charAt(0) == '"') {
-            start = 1;
-            if (name.length > 1 && name.charAt(name.length - 1) == '"') {
-                end = name.length - 1;
-            }
-        }
-        return name.substring(start, end);
-    }
-    return name;
-}
-
-function autocompleteCallback(request, response_callback)
-{
-    var ret = [];
-    if (request.term === "" || request.term) {
-        for (var name in sugg) {
-            if (name.toLowerCase().indexOf(unquoted(request.term.toLowerCase())) === 0) {
-                ret.push(name);
-            }
-        }
-    }
-    response_callback(ret);
+    suggestions_options.push(sugg);
 }
 
 /* up_to_two_renames:
@@ -502,9 +474,8 @@ function init(graph)
 
 return {
     init:init,
-    autocompleteCallback:autocompleteCallback,
     textAnalyser:textAnalyser,
-    autoSuggestAddName:autoSuggestAddName,
+    suggestions_options: suggestions_options,
     ANALYSIS_NODE_START:ANALYSIS_NODE_START,
     ANALYSIS_NODE: ANALYSIS_NODE,
     ANALYSIS_LINK:ANALYSIS_LINK,

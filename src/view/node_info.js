@@ -1,5 +1,5 @@
-define(['jquery', 'view/helpers', 'view/internal'],
-function($, view_helpers, internal) {
+define(['jquery', 'datepicker', 'view/helpers', 'view/internal'],
+function($, _unused_datepicker,  view_helpers, internal) {
 
 function show(d) {
     var editURL = '';

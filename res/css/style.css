@@ -349,6 +349,9 @@ body.debug .debug-ui-right {
 .suggestion {
   list-style-type: none; }
 
+.suggestion .selected {
+  color: blue; }
+
 .suggestion td {
   position: fixed; }
 
