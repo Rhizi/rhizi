@@ -16,6 +16,6 @@ To rebuild the css files issue make from the top level directory:
 
  $ make
  
- For dev mode(debbuging, manual file load) use `?debug=1` at end of URL: e.g. 'file://rhizifolder/html.index?debug=1'
+ For dev mode(debbuging, manual file load) use `?debug=1` at end of URL: e.g. `file://rhizifolder/html.index?debug=1`
 
 
