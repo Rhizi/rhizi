@@ -146,11 +146,9 @@ var completer = (function (input_element, dropdown) {
     return {
         options: options_bus,
         hide: function() {
-            console.log('hide');
             dropdown.hide();
         },
         show: function() {
-            console.log('show');
             dropdown.show();
         },
         oninput: oninput,
