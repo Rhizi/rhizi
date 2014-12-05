@@ -65,8 +65,6 @@ var completer = (function (input_element, dropdown) {
         //
         // #this and #that then #he
         //             ^
-        console.log(text);
-        console.log(cursor);
         var hash = text.slice(0, cursor).lastIndexOf('#');
         // TODO check if current completion has been invalidated
         _invalidateSelection();
