@@ -1,3 +1,5 @@
+@import '../modules/mixins';
+
 .input-container {
   position: fixed;
   margin: $two-baselines 0 0 $doc-margin;
@@ -12,9 +14,10 @@
   font-family: $base-font-family;
   color: $mid-grey;
   max-height: $three-baselines;
-  width: 260px;
+  width: 280px;
   padding: 6px 8px 5px 8px;
   border: 1px solid $mid-grey;
+  @include rz-box-sizing-border;
   background: white;
   transition-property: width;
   transition-duration: 200ms;
@@ -22,9 +25,8 @@
   &:focus {
     border: 1px solid $mid-grey;
     width: 520px;
-    -webkit-box-shadow: 0px 1px 6px 0px rgba(0,0,0,0.3);
-    -moz-box-shadow: 0px 1px 6px 0px rgba(0,0,0,0.3);
-    box-shadow: 0px 1px 6px 0px rgba(0,0,0,0.3);  }
+    @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
+  }  
 }
 
 #textanalyser.ui-autocomplete-input {
@@ -33,6 +35,7 @@
 }
 
 .add-button {
+  float: right;
   background: url(../img/plus-button.png);
   background-position: center;
   background-repeat: no-repeat;
@@ -40,9 +43,8 @@
   position:relative;
   height: 36px;
   width: 36px;
-  left: -39px;
+  left: -36px;
   border: 0;
-  top: 9px;
 }
 
 .add-button:hover {
