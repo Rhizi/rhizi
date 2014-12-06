@@ -25,6 +25,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         }
         if (util.getParameterByName('debug')) {
             $(document.body).addClass('debug');
+            rz_core.graph.set_user('fakeuser');
         }
 
         document.body.onkeyup = function(e) {
