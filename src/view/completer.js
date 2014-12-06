@@ -149,12 +149,6 @@ var completer = (function (input_element, dropdown) {
 
     return {
         options: options_bus,
-        hide: function() {
-            dropdown.hide();
-        },
-        show: function() {
-            dropdown.show();
-        },
         oninput: oninput,
         next_option: next_option,
         prev_option: prev_option,
