@@ -471,7 +471,7 @@ function update_view__graph(no_relayout) {
     node.select('g.node text')
         .text(function(d) {
             if (!d.name) {
-                return "_";
+                return d.type == 'bubble' ? "" : "_";
             }
             if (d.state === "temp" || d.state === 'chosen'
              || d.state === "enter" || d.state === "exit") {
