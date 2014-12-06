@@ -127,13 +127,29 @@ class FlaskExt(Flask):
     log.addHandler(log_handler_f)
     return log
 
-def init_rest_api(flask_webapp):
+def init_rest_api(cfg, flask_webapp):
     """
     map REST API calls
     """
 
     def rest_entry(path, f, flask_args={'methods': ['POST']}):
         return (path, f, flask_args)
+
+    def dev_mode__resend_from_static(static_url):
+        """
+        redirect broken-on-local-deploy links:
+           - /src -> '': handle root based files, eg. app.js
+           - /res, /lib -> res, lib
+        """
+        static_folder = flask.current_app.static_folder
+
+        static_path = request.path
+        if static_path.startswith('/src'):
+            # TODO: clean - /src/... links should not exist
+            static_path = static_path.replace('/src', '')
+        if static_path.startswith('/'):  # convert to relative path
+            static_path = static_path[1:]
+        return send_from_directory(static_folder, static_path)
 
     def login_decorator(f):
         """
@@ -162,6 +178,15 @@ def init_rest_api(flask_webapp):
                       rest_entry('/match/node-set', rhizi_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rhizi_api.monitor__server_info),
                   ]
+
+    if cfg.development_mode:
+        dev_path_set = ['/src', '/res', '/lib']
+        rest_dev_entry_set = []
+        for dev_path in dev_path_set:
+            rest_dev_entry_set.append(rest_entry(dev_path + '/<path:static_url>',
+                                                 dev_mode__resend_from_static,
+                                                 {'methods': ['GET']}))
+        rest_entry_set += rest_dev_entry_set
 
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
