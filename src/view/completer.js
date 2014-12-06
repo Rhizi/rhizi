@@ -68,6 +68,7 @@ var completer = (function (input_element, dropdown) {
         var hash = text.slice(0, cursor).lastIndexOf(triggerStart);
         // TODO check if current completion has been invalidated
         _invalidateSelection();
+        dropdown.hide();
         dropdown_raw.innerHTML = ""; // remove all elements
         if (hash == -1) {
             return;
@@ -87,6 +88,9 @@ var completer = (function (input_element, dropdown) {
         });
         completion_start = hash + 1;
         completion_end = space;
+        if (dropdown.children().length > 0) {
+            dropdown.show();
+        }
     }
 
     function _invalidateSelection() {
