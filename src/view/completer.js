@@ -33,7 +33,8 @@ var completer = (function (input_element, dropdown) {
         selected_index = -1,
         input_element_raw = input_element[0],
         completion_start = 0,
-        completion_end = 0;
+        completion_end = 0,
+        minimum_length = 1;
 
     // turn off the browser's autocomplete
     input_element.attr('autocomplete', 'off');
@@ -78,16 +79,20 @@ var completer = (function (input_element, dropdown) {
         if (space < cursor) {
             return;
         }
+        completion_start = hash + 1;
+        completion_end = space;
+        var string = text.slice(completion_start, completion_end);
+        if (string.length < minimum_length) {
+            return;
+        }
         // [hash] [cursor] [space/end]
-        completions(text.slice(hash + 1, space)).forEach(function(name) {
+        completions(string).forEach(function(name) {
             dropdown.append($('<div class="suggestion-item">' + name + '</div>'));
         });
         dropdown.children().each(function (index, elem) {
             elem.onclick = function() { _applySuggestion(index); };
             input_element.focus();
         });
-        completion_start = hash + 1;
-        completion_end = space;
         if (dropdown.children().length > 0) {
             dropdown.show();
         }
