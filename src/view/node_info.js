@@ -1,6 +1,37 @@
 define(['jquery', 'jquery-ui', 'view/helpers', 'view/internal'],
 function($, _unused_jquery_ui,  view_helpers, internal) {
 
+var d = null,
+    submit_callback = null,
+    delete_callback = null;
+
+function _get_form() {
+    return {
+        name: $('.info #editformname').val(),
+        type: $('.info #edittype').val(),
+        url: $('.info #editurl').val(),
+        status: $('.info #editstatus').val(),
+        startdate: $("#editstartdate").val(),
+        enddate: $("#editenddate").val(),
+    };
+}
+
+internal.edit_tab.get('node', "#editbox").submit(function(e) {
+    if (submit_callback) {
+        return submit_callback(e, _get_form());
+    }
+    console.log('bug: edit tab submit called with no callback set');
+    e.preventDefault();
+})
+
+internal.edit_tab.get('node', "#deletenode").click(function(e) {
+    if (delete_callback) {
+        return delete_callback(e, _get_form());
+    }
+    console.log('bug: edit tab delete called with no callback set');
+    e.preventDefault();
+});
+
 function show(d) {
     var info = $('.info'),
         f = false,
@@ -12,18 +43,15 @@ function show(d) {
           "interest":                   [f, f, f, f, t],
           "_defaults":                  [f, f, f, f, t],
         },
-        fields = ["status", "startdate", "enddate", "desc", "url"],
+        fields = ["#status", "#startdate", "#enddate", "#desc", "#url"],
         flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
         i;
     
     internal.edit_tab.show('node');
 
     for (i = 0 ; i < flags.length; ++i) {
-        if (flags[i]) {
-            info.find(fields[i]).show();
-        } else {
-            info.find(fields[i]).hide();
-        }
+        var elem = info.find(fields[i]);
+        elem[flags[i] ? 'show' : 'hide']();
     }
 
     $('.info').attr('class', 'info');
@@ -62,12 +90,12 @@ function hide()
 
 function on_submit(f)
 {
-    internal.edit_tab.get('node', "#editbox").submit(f);
+    submit_callback = f;
 }
 
 function on_delete(f)
 {
-    internal.edit_tab.get('node', "#deletenode").click(f);
+    delete_callback = f;
 }
 
 return {

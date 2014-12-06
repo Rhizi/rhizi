@@ -708,14 +708,19 @@ function tick(e) {
 
 function showNodeInfo(d, i) {
     view.node_info.show(d);
-    view.node_info.on_submit(function() {
-      if (d.type === "deliverable") {
-        graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
+    view.node_info.on_submit(function(e, form) {
+      var old_type = d.type,
+          new_type = form.type;
+      if (d.type === "third-internship-proposal") {
+        graph.editDates(d.id, null, new Date(form.startdate), new Date(form.enddate));
       }
-      graph.editName(d.id, $('.info').find('#editformname').val());
-      graph.editType(d.id, d.type,$('#edittype').val());
-      graph.editURL(d.id, d.type, $('#editurl').val());
-      graph.editStatus(d.id, d.type, $('#editstatus').val());
+      graph.editName(d.id, form.name);
+      graph.editType(d.id, d.type, form.type);
+      graph.editURL(d.id, d.type, form.url);
+      graph.editStatus(d.id, d.type, form.status);
+      if (new_type != old_type) {
+          view.node_info.show(d);
+      }
       update_view__graph(true);
       return false;
     });
