@@ -123,7 +123,11 @@ var completer = (function (input_element, dropdown) {
         _move_option(dropdown.children().length - 1, dropdown.children().length - 1);
     }
     function _get_option(index) {
-        return dropdown.children()[index].innerHTML;
+        var s = dropdown.children()[index].innerHTML;
+        if (s.indexOf(' ') != -1) {
+            return '"' + s + '"';
+        }
+        return s;
     }
     function _choice(i) {
         return dropdown.children().eq(i);
