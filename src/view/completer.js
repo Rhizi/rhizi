@@ -26,7 +26,7 @@ function setCaret(e, num)
 
 var completer = (function (input_element, dropdown) {
     var triggerStart = '#',
-        triggerEnd = '',
+        triggerEnd = ' ',
         dropdown_raw = dropdown[0],
         options_bus = new Bacon.Bus(),
         options = [],
@@ -65,14 +65,14 @@ var completer = (function (input_element, dropdown) {
         //
         // #this and #that then #he
         //             ^
-        var hash = text.slice(0, cursor).lastIndexOf('#');
+        var hash = text.slice(0, cursor).lastIndexOf(triggerStart);
         // TODO check if current completion has been invalidated
         _invalidateSelection();
         dropdown_raw.innerHTML = ""; // remove all elements
         if (hash == -1) {
             return;
         }
-        var space = text.slice(hash).indexOf(' ');
+        var space = text.slice(hash).indexOf(triggerEnd);
         space = space == -1 ? text.length : space;
         if (space < cursor) {
             return;
