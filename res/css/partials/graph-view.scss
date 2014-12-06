@@ -31,13 +31,13 @@
 }
 
 .svg-input-fo-node input {
-  font-size:17px;
+  font-size: $h3-size;
   background-color: transparent;
 }
 
 .linklabel{
   stroke: $dark-grey;
-  font-size: $h5-size;
+  font-size: $h4-size;
   background-color: transparent;
 }
 
@@ -47,13 +47,15 @@
 }
 
 .svg-input-fo-link input {
-    font-size: 14px;
+  font-size: $h4-size;;
   background-color: transparent;
 }
 
 .link {
   fill: none;
-  stroke: #404040;
+  stroke: $mid-grey;
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
   z-index:1;
 }
 
@@ -69,13 +71,15 @@
   stroke-opacity: 0.5;
 }
 .circle.enter {
-  stroke: #EDE275;
+  stroke: $cyan;
+  stroke-opacity: 0.5;
 }
 .circle.bubble {
   stroke: #101010;
 }
 .circle.exit {
-  stroke: #EDE275;
+  stroke: $cyan;
+  stroke-opacity: 0.5;
 }
 .circle.chainlink {
   stroke: #AAA;
@@ -142,7 +146,7 @@
 /* Selected parts of the graph, right now by clicking, later with search. */
 
 .notselected {
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .graph.link.temp_and {
@@ -159,8 +163,9 @@
 
 .link.enter, .link.exit, .link.selected {
   fill: none;
-  stroke: #EDE275;
-  stroke-width: 4px;
+  stroke: $cyan;
+  stroke-opacity: 0.5;
+  stroke-width: 2px;
   z-index:1;
 }
 
