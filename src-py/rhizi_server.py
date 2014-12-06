@@ -188,10 +188,13 @@ def init_rest_api(cfg, flask_webapp):
                                                  {'methods': ['GET']}))
         rest_entry_set += rest_dev_entry_set
 
+    if False == cfg.access_control:
+        log.warn('access control disabled, public access set on all URLs')
+
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
 
-        if '/login' != rest_path:
+        if cfg.access_control and '/login' != rest_path:
             # currently require login on all but /login paths
             f = login_decorator(f)
 
