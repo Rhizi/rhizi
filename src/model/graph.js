@@ -333,6 +333,9 @@ function Graph() {
         if (index === undefined) {
             return;
         }
+        if (index.name == new_name) {
+            return;
+        }
         if (index2 !== undefined && index.state !== 'temp') {
             acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
             if (acceptReplace){
