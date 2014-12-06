@@ -18,32 +18,64 @@ from flask import url_for
 class Config(object):
     """
     rhizi-server configuration
+
+    TODO: config option documentation
+    
+        htpasswd_path
+        listen_address
+        listen_port
+        neo4j_url
+        root_path
     """
 
     @staticmethod
     def init_from_file(file_path):
-        ret = Config()
 
         if False == os.path.exists(file_path):
             raise Exception('config file not found: ' + file_path)
 
+        # apply defaults
+        cfg = {}
+        cfg['access_control'] = True
+        cfg['config_dir'] = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
+        cfg['development_mode'] = False
+        cfg['listen_address'] = '127.0.0.1'
+        cfg['listen_port'] = 8080
+        cfg['root_path'] = os.getcwd()
+        cfg['static_url_path'] = '/static'
+
+        # Flask keys
+        cfg['SECRET_KEY'] = ''
+
         with open(file_path, 'r') as f:
-            cfg = json.loads(f.read())
+            for line in f:
+                if re.match('(^#)|(\s+$)', line):
+                    continue
 
-            #
-            # TODO: config option documentation
-            #
-            # htpasswd_path
-            # listen_address
-            # listen_port
-            # neo4j_url
-            # root_path
+                kv_arr = line.split('=')
+                if 2 != len(kv_arr):
+                    raise Exception('failed to parse config line: ' + line)
 
-            for k, v in cfg.items():
-                ret.__setattr__(k, v)
+                k, v = map(str.strip, kv_arr)
 
-        ret.__setattr__('config_dir', os.path.dirname(file_path))  # bypass prop restriction
+                if None != cfg.get(k):
+                    # apply type conversion based on default value type
+                    type_f = type(cfg[k])
+                    if bool == type_f:
+                        v = v in ("True", "true")  # workaround bool('false') = True
+                    else:
+                        v = type_f(v)
+
+                # [!] we can't use k.lower() as we are loading Flask configuration
+                # keys which are expected to be capitalized
+                cfg[k] = v
+
+        ret = Config()
+        ret.__dict__ = cfg  # allows setting of @property attributes
         return ret
+
+    def __str__(self):
+        return '\n'.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
 
     @property
     def db_base_url(self):
