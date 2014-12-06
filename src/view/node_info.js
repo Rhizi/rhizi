@@ -2,34 +2,39 @@ define(['jquery', 'jquery-ui', 'view/helpers', 'view/internal'],
 function($, _unused_jquery_ui,  view_helpers, internal) {
 
 function show(d) {
-    var editURL = '',
-        name_field = 'Name: ' + '<input id="editformname">',
-        html;
-
+    var info = $('.info'), // #TODO - move to tab
+        f = false,
+        t = true,
+        visible = {
+          "third-internship-proposal":  [t, t, t, f, f],
+          "chainlink":                  [f, f, f, f, f],
+          "skill":                      [f, f, f, f, t],
+          "interest":                   [f, f, f, f, t],
+          "_defaults":                  [f, f, f, f, t],
+        },
+        fields = ["status", "startdate", "enddate", "desc", "url"],
+        flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
+        i;
+    
     internal.edit_tab.show('node');
 
-    if (d.type === "third-internship-proposal") {
-      html = '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option></select><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="approved">Approved</option><option value="notapproved">Not Approved</option></select><br/><label>Start date:</label><input id="editstartdate"/></br><label>End date:</label><input id="editenddate"/></br><button>Save</button><button id="deletenode">Delete</button></form>';
-    } else if(d.type=== "chainlink"){
-      html = '<br/><form id="editbox"><button>Save</button><button id="deletenode">Delete</button></form>';
-    }else{
-      if (d.type !== 'skill' && d.type !== 'interest') {
-        editURL = '<label>URL:</label><input id="editurl"/>'
-      }
-      html = '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option></select><br/>' + editURL + '<br/><button>Save</button><button id="deletenode">Delete</button></form>';
+    for (i = 0 ; i < flags.length; ++i) {
+        if (flags[i]) {
+            info.find(fields[i]).show();
+        } else {
+            info.find(fields[i]).hide();
+        }
     }
 
-    $('.info').html(name_field + html);
-    $('.info').css("border-color", view_helpers.customColor(d.type));
+    $('.info').attr('class', 'info');
+    $('.info').addClass('type-' + d.type); // Add a class to distinguish types for css
 
     $('.info').find('#editformname').val(d.name);
-
     $("#editenddate").datepicker({
       inline: true,
       showOtherMonths: true,
       dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     });
-
     $("#editstartdate").datepicker({
       inline: true,
       showOtherMonths: true,

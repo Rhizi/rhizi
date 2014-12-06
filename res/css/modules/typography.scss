@@ -16,6 +16,14 @@
        url('../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.ttf')  format('truetype'); /* Safari, Android, iOS */
 }
 
+@font-face {
+	font-family: 'Source_Bold';
+	src: url('../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.eot'); /* IE9 Compat Modes */
+	src: url('../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.woff') format('woff'), /* Modern Browsers */
+       url('../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.ttf')  format('truetype'); /* Safari, Android, iOS */
+}
+
 //Font size
 $h1-size: 30px;
 $h2-size: 24px;
@@ -31,6 +39,7 @@ $bold: 600;
 // Base font
 $base-font-family: 'Source_Regular', sans-serif;
 $semibold-font-family: 'Source_Semibold', sans-serif;
+$bold-font-family: 'Source_Bold', sans-serif;
 
 $base-font-weight: $regular;
 $base-font-size: 12px;

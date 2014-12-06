@@ -1,6 +1,7 @@
 .graph-view {
   width:100%;
   background-color: #f5f5fa; //$light-grey
+  position: relative;
 }
 
 .node {
@@ -106,9 +107,8 @@
   fill: $blue;
 }
 
-
 .circle.club {
-  fill: $purple;
+  fill: $magenta;
 }
 
 .circle.skill {
@@ -116,7 +116,7 @@
 }
 
 .circle.interest {
-  fill: $orange;
+  fill: $purple;
 }
 
 .circle.project {
@@ -124,23 +124,23 @@
 }
 
 .circle.third-internship-proposal {
-  fill: $magenta;
-}
-
-.circle.internship {
   fill: $cyan;
 }
 
+.circle.internship {
+  fill: $orange;
+}
+
 .circle.empty {
-  fill: #080808;
+  fill: $mid-grey;
 }
 
 .circle.chainlink {
-  fill: #fff;
+  fill: $dark-grey;
 }
 
 .circle.bubble {
-  fill: rgba(0,0,0,0.2);
+  fill: rgba(255,255,255,0.2);
 }
 
 

@@ -9,3 +9,9 @@
 	   -moz-box-sizing: border-box;
 	        box-sizing: border-box;
 }
+
+@mixin rz-box-sizing-padding() {
+	-webkit-box-sizing: padding-box;
+	   -moz-box-sizing: padding-box;
+	        box-sizing: padding-box;
+}

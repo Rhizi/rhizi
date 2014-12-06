@@ -5,35 +5,38 @@ function customColor(type) {
     var color;
     switch (type) {
         case "person":
-            color = '#FCB924';
+            color = '#FCB924'; //blue
             break;
         case "club":
-            color = '#009DDC';
+            color = '#ee3654'; //magenta
             break;
         case "skill":
-            color = '#62BB47';
+            color = '#fad900'; //yellow
             break;
         case "third-internship-proposal":
-            color = '#202020';
+            color = '#33c2e0'; //cyan
             break;
         case "internship":
-            color = '#933E99';
+            color = '#ff8b11'; //orange
             break;
         case "interest":
-            color = '#933E99';
+            color = '#8b3ab0'; //purple
+            break;
+        case "project":
+            color = "#40C200"; //green
             break;
         case "empty":
-            color = "#080808";
+            color = "#919095"; //mid-grey
             break;
         case "chainlink":
-            color = "#fff";
+            color = "#363636"; //dark-grey
             break;
         case "bubble":
-            color = "rgba(0,0,0,0.2)";
+            color = "rgba(255,255,255,0.2)"; // white, 0.2 opaque
             break;
         default:
             console.log('bug: unknown type ' + type);
-            color = '#080808';
+            color = '#d4d4d9'; //mid-light grey
             break;
     }
     return color;

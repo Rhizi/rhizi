@@ -11,6 +11,12 @@
   /* IE9 Compat Modes */
   src: url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.woff") format("woff"), url("../font/sourcesanspro_semibold/SourceSansPro-Semibold-webfont.ttf") format("truetype");
   /* Safari, Android, iOS */ }
+@font-face {
+  font-family: 'Source_Bold';
+  src: url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.eot");
+  /* IE9 Compat Modes */
+  src: url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.woff") format("woff"), url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.ttf") format("truetype");
+  /* Safari, Android, iOS */ }
 /* Vertical spacing */
 /* Horizontal spacing */
 html, body {
@@ -127,6 +133,27 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+.btn-regular {
+  cursor: pointer;
+  background-color: white;
+  font-family: "Source_Regular", sans-serif;
+  font-size: 14px;
+  color: #004681;
+  padding: 12px 24px 12px 24px;
+  margin-right: 6px;
+  border-radius: 4px;
+  border: none; }
+
+.btn-regular:hover {
+  color: #8eb6bf;
+  border-color: #8eb6bf; }
+
+.btn-regular:focus {
+  outline: none; }
+
+.btn-regular-outline {
+  border: 1px solid #004681; }
+
 .debug-ui {
   display: none; }
 
@@ -148,7 +175,8 @@ body.debug .debug-ui-right {
 
 .graph-view {
   width: 100%;
-  background-color: #f5f5fa; }
+  background-color: #f5f5fa;
+  position: relative; }
 
 .node {
   stroke-width: 1px;
@@ -233,31 +261,31 @@ body.debug .debug-ui-right {
   fill: #004681; }
 
 .circle.club {
-  fill: #8b3ab0; }
+  fill: #ee3654; }
 
 .circle.skill {
   fill: #fad900; }
 
 .circle.interest {
-  fill: #ff8b11; }
+  fill: #8b3ab0; }
 
 .circle.project {
   fill: #40c200; }
 
 .circle.third-internship-proposal {
-  fill: #ee3654; }
-
-.circle.internship {
   fill: #33c2e0; }
 
+.circle.internship {
+  fill: #ff8b11; }
+
 .circle.empty {
-  fill: #080808; }
+  fill: #919095; }
 
 .circle.chainlink {
-  fill: #fff; }
+  fill: #363636; }
 
 .circle.bubble {
-  fill: rgba(0, 0, 0, 0.2); }
+  fill: rgba(255, 255, 255, 0.2); }
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
@@ -409,6 +437,11 @@ body.debug .debug-ui-right {
 #keys {
   opacity: 0.5; }
 
+.info-container {
+  position: absolute;
+  right: 70px;
+  top: 24px; }
+
 .subtitle {
   font-style: italic;
   color: #bbb;
@@ -416,16 +449,66 @@ body.debug .debug-ui-right {
   float: right; }
 
 .edge_info, .info {
-  background-color: rgba(17, 17, 17, 0.8);
-  position: fixed;
-  top: 150px;
+  color: #363636;
+  background-color: white;
+  -webkit-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
+  position: relative;
   width: 250px;
-  right: 10px;
-  font-size: 18px;
-  border: 1px solid;
-  padding: 5px;
-  line-height: 45px;
-  border-color: #303030; }
+  padding: 24px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-top: 6px solid #363636; }
+
+.info.type-person {
+  border-top: 6px solid #004681; }
+
+.info.type-club {
+  border-top: 6px solid #ee3654; }
+
+.info.type-skill {
+  border-top: 6px solid #fad900; }
+
+.info.type-third-internship-proposal {
+  border-top: 6px solid #33c2e0; }
+
+.info.type-internship {
+  border-top: 6px solid #ff8b11; }
+
+.info.type-interest {
+  border-top: 6px solid #8b3ab0; }
+
+.info.type-empty {
+  border-top: 6px solid #919095; }
+
+.info.type-chainlink {
+  border-top: 6px solid #363636; }
+
+.info.type-project {
+  border-top: 6px solid #40c200; }
+
+.info .info-card-attr {
+  display: block;
+  text-transform: capitalize;
+  font-size: 14px;
+  font-family: "Source_Bold", sans-serif; }
+
+.info .info-card-attr-val {
+  display: block;
+  text-transform: capitalize;
+  font-size: 24px;
+  margin: 12px 0px 24px 0px; }
+
+.info hr {
+  width: 250px;
+  position: relative;
+  left: -24px;
+  border: none;
+  background-color: #d4d4d9;
+  height: 2px;
+  margin: 24px 0px 24px 0px; }
 
 .search-bar {
   width: 100%;

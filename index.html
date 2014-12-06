@@ -51,19 +51,31 @@
       </div>
     </div>
     <div class="info-container">
-    <div class="edge_info" style="display:none">Title: <span id="edgetitle"></span><br/>
-        <button id="deleteedge">Delete</button>
-    </div>
-    <div class="info" style="display:none">Node info :<br/>
+      <div class="edge_info" style="display:none">Title: <span id="edgetitle"></span><br/>
+          <button id="deleteedge">Delete</button>
+      </div>
+      <div class="info" style="display:none">
+        <p>Node info</p>
         <div class="subtitle">Click on a node to display info</div>
-        <form id="node-editbox">
-          <label>name:</label><input id="editboxname"/>
-          <label>description:</label><input id="editdescription"/>
-          <label>URL DLKJ:</label><input id="editurl"/>
-          <button>edit</button>
-        </form>
-        <button id="deletenode">Delete</button>
-    </div>
+          <form id="node-editbox">
+            <p class="info-card-attr">Name</p><p class="info-card-attr-val"><input id="editformname"></p>
+            <label class="info-card-attr">Type</label><select id="edittype">
+                <option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option>
+            </select><br/>
+            <div id="status">
+            <label class="info-card-attr">Status</label><select id="editstatus">
+                <option value="waiting">Waiting</option><option value="approved">Approved</option><option value="notapproved">Not Approved</option>
+            </select><br/>
+            </div>
+            <div id="startdate"><label class="info-card-attr">Start date</label><input id="editstartdate"/></br></div>
+            <div id="enddate"><label class="info-card-attr">End date:</label><input id="editenddate"/></div>
+            <div id="desc"><label>Description</label><input id="editdescription"/></div>
+            <div id="url"><p class="info-card-attr">URL</p><p class="info-card-attr-val"><input id="editurl"></p></div>
+            <hr>
+            <button class="btn-regular btn-regular-outline">Save</button>
+            <button id="deletenode" class="btn-regular">Delete</button>
+          </form>
+      </div>
     </div>
 
     <div class="typeselection">
