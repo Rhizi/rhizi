@@ -715,7 +715,8 @@ function showNodeInfo(d, i) {
       if (d.type === "deliverable") {
         graph.editDates(d.id, null, new Date($("#editstartdate").val()), new Date($("#editenddate").val()));
       }
-      graph.editType(d.id,d.type,$('#edittype').val());
+      graph.editName(d.id, $('.info').find('#editformname').val());
+      graph.editType(d.id, d.type,$('#edittype').val());
       graph.editURL(d.id, d.type, $('#editurl').val());
       graph.editStatus(d.id, d.type, $('#editstatus').val());
       update_view__graph(true);

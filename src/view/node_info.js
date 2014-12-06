@@ -2,22 +2,27 @@ define(['jquery', 'jquery-ui', 'view/helpers', 'view/internal'],
 function($, _unused_jquery_ui,  view_helpers, internal) {
 
 function show(d) {
-    var editURL = '';
+    var editURL = '',
+        name_field = 'Name: ' + '<input id="editformname">',
+        html;
 
     internal.edit_tab.show('node');
 
     if (d.type === "third-internship-proposal") {
-      $('.info').html('Name: ' + d.name + '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option></select><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="approved">Approved</option><option value="notapproved">Not Approved</option></select><br/><label>Start date:</label><input id="editstartdate"/></br><label>End date:</label><input id="editenddate"/></br><button>Save</button><button id="deletenode">Delete</button></form>');
+      html = '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option></select><br/><label>Status</label><select id="editstatus"><option value="waiting">Waiting</option><option value="approved">Approved</option><option value="notapproved">Not Approved</option></select><br/><label>Start date:</label><input id="editstartdate"/></br><label>End date:</label><input id="editenddate"/></br><button>Save</button><button id="deletenode">Delete</button></form>';
     } else if(d.type=== "chainlink"){
-      $('.info').html('Name: ' + d.name + '<br/><form id="editbox"><button>Save</button><button id="deletenode">Delete</button></form>');
+      html = '<br/><form id="editbox"><button>Save</button><button id="deletenode">Delete</button></form>';
     }else{
       if (d.type !== 'skill' && d.type !== 'interest') {
         editURL = '<label>URL:</label><input id="editurl"/>'
       }
-      $('.info').html('Name: ' + d.name + '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option></select><br/>' + editURL + '<br/><button>Save</button><button id="deletenode">Delete</button></form>');
+      html = '<br/><form id="editbox"><label>Type:</label><select id="edittype"><option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option></select><br/>' + editURL + '<br/><button>Save</button><button id="deletenode">Delete</button></form>';
     }
 
+    $('.info').html(name_field + html);
     $('.info').css("border-color", view_helpers.customColor(d.type));
+
+    $('.info').find('#editformname').val(d.name);
 
     $("#editenddate").datepicker({
       inline: true,
