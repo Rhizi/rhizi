@@ -160,7 +160,7 @@ body.debug .debug-ui-right {
   pointer-events: all; }
 
 .nodetext {
-  fill: #919095;
+  fill: #363636;
   font-size: 18px;
   z-index: 3; }
 
@@ -300,12 +300,12 @@ body.debug .debug-ui-right {
 #editlinkname {
   width: inherit;
   height: inherit;
-  font-size: 17px; }
+  font-size: 18px; }
 
 #editname {
   width: inherit;
   height: inherit;
-  font-size: 17px; }
+  font-size: 18px; }
 
 .input-container {
   position: fixed;

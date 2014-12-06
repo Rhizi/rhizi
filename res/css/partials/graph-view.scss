@@ -19,7 +19,7 @@
 }
 
 .nodetext {
-  fill: $mid-grey;
+  fill: $dark-grey;
   font-size: $h3-size;
   z-index:3;
 }
@@ -195,16 +195,14 @@
 #editlinkname{
   width:inherit;
   height:inherit;
-
-  font-size: 17px;
+  font-size: $h3-size;
 
 }
 
 #editname{
   width:inherit;
   height:inherit;
-
-  font-size: 17px;
+  font-size: $h3-size;
 
 }
 
