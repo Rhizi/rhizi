@@ -207,7 +207,8 @@ body.debug .debug-ui-right {
   stroke-opacity: 0.5; }
 
 .circle.bubble {
-  stroke: #101010; }
+  stroke: #101010;
+  pointer-events: none; }
 
 .circle.exit {
   stroke: #33c2e0;
