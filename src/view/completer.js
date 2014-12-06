@@ -47,7 +47,7 @@ var completer = (function (input_element, dropdown) {
     function completions(text)
     {
         var ret = [],
-            noquotes = unquoted(text);
+            noquotes = unquoted(text.toLowerCase());
 
         for (var name in options) {
             if (name.toLowerCase().indexOf(noquotes) === 0) {
