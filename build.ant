@@ -29,10 +29,18 @@
    <target name="clean" description="remove all work folders">
       <delete dir="dist" />
       <delete dir="build" />
-      <delete dir="deploy-local" />
    </target>
 
-   <target name="deploy-local" description="locally deploy webapp">
+   <target name="deploy-local.clean">
+      <delete dir="deploy-local">
+         <include name="**/*" />
+      </delete>
+   </target>
+
+   <target name="deploy-local"
+           depends="deploy-local.clean"
+           description="locally deploy webapp">
+
       <local name="src_client" />
       <local name="src_server" />
       <local name="dst" />
@@ -41,13 +49,16 @@
       <property name="src_server" value="${rzRootDir}/rhizi-server" />
       <property name="dst" value="${rzRootDir}/rhizi-server/deploy-local" />
 
+      <mkdir dir="${dst}/bin" />
+      <mkdir dir="${dst}/static" />
+
       <parallel>
          <!-- [!] trailing '/' critical -->
          <rsync src="${src_client}/src/" dst="${dst}/static" />
          <rsync src="${src_client}/res" dst="${dst}/static" />
          <rsync src="${src_client}/lib" dst="${dst}/static" />
 
-         <rsync src="${src_server}/src-py" dst="${dst}" />
+         <rsync src="${src_server}/src-py/" dst="${dst}/bin" />
          <rsync src="${src_server}/res/etc" dst="${dst}" />
          <rsync src="${src_server}/res/templates/" dst="${dst}/templates" />
       </parallel>
