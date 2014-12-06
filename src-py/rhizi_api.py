@@ -19,19 +19,6 @@ from datetime import datetime
 
 log = logging.getLogger('rhizi')
 
-class FlaskExt(Flask):
-    """
-    Flask server customization
-    """
-
-    def make_default_options_response(self):
-        # sup = super(Flask, self)
-        ret = Flask.make_default_options_response(self)
-        ret.headers['Access-Control-Allow-Origin'] = '*'
-        ret.headers['Access-Control-Allow-Headers'] = "Origin, Content-Type, Accept, Authorization"
-        return ret
-
-
 # injected: DB controller
 db_ctl = None
 

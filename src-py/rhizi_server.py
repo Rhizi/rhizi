@@ -93,10 +93,30 @@ class Config(object):
     def secret_key(self):
         return self.SECRET_KEY
 
-class RhiziServer(object):
-    pass
+class FlaskExt(Flask):
+    """
+    Flask server customization
+    """
 
-def init_logging():
+    def __init__(self, import_name, *args, **kwargs):
+        """
+        reserved for future use
+        """
+        super(FlaskExt, self).__init__(import_name, *args, **kwargs)
+
+    def before_request(self, *args, **kwargs):
+        # TODO impl
+        pass
+
+    def make_default_options_response(self):
+        ret = Flask.make_default_options_response(self)
+
+        ret.headers['Access-Control-Allow-Origin'] = 'http://rhizi.net'
+        ret.headers['Access-Control-Allow-Headers'] = "Accept, Authorization, Content-Type, Origin"
+        ret.headers['Access-Control-Allow-Credentials'] = 'true'
+
+        # ret.headers['Access-Control-Allow-Methods'] = ', '.join(m_list)
+        return ret
 
     log = logging.getLogger('rhizi')
     log.setLevel(logging.DEBUG)
