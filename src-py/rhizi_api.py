@@ -6,11 +6,19 @@ import db_controller as dbc
 import json
 import logging
 import traceback
-from flask import jsonify
+import crypt_util
 
+import flask
+from flask import jsonify
 from flask import Flask
 from flask import request
 from flask import make_response
+from flask import session
+from flask import redirect
+from flask import escape
+from flask import url_for
+from flask import render_template
+from flask import send_from_directory
 
 from model.graph import Topo_Diff
 from model.graph import Attr_Diff
@@ -180,7 +188,7 @@ def monitor__server_info():
            "</p></body></html>"
 
 def index():
-    username = escape(session['username'])
+    username = escape(session.get('username'))
     return render_template('index.html', username=username)
 
 def login():
@@ -213,3 +221,4 @@ def logout():
     u = session.pop('username', None)
     log.debug('logout: success: user: %s' % (u))
     return redirect(url_for('login'))
+
