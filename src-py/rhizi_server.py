@@ -10,10 +10,15 @@ import db_controller as dbc
 import rhizi_api
 import flask
 import crypt_util
+import re
 
+from flask import Flask
 from flask import session
 from flask import redirect
-from flask import url_for
+from flask import request
+from flask import send_from_directory
+
+from functools import wraps
 
 class Config(object):
     """
@@ -118,10 +123,14 @@ class FlaskExt(Flask):
         # ret.headers['Access-Control-Allow-Methods'] = ', '.join(m_list)
         return ret
 
+def init_log(cfg):
+    """
+    init log file, location derived from configuration
+    """
     log = logging.getLogger('rhizi')
     log.setLevel(logging.DEBUG)
     log_handler_c = logging.StreamHandler()
-    log_handler_f = logging.FileHandler('/var/log/rhizi/rhizi-server.log')
+    log_handler_f = logging.FileHandler(cfg.log_path)
 
     log.addHandler(log_handler_c)
     log.addHandler(log_handler_f)
@@ -206,12 +215,12 @@ def init_rest_api(cfg, flask_webapp):
 
 def init_webapp(cfg):
     root_path = cfg.root_path
-    webapp = rhizi_api.FlaskExt(__name__,
-                                static_folder='static',
-                                template_folder=os.path.join(root_path, 'templates'),
-                                static_url_path='')
+    webapp = FlaskExt(__name__,
+                      static_folder='static',
+                      template_folder=os.path.join(root_path, 'templates'),
+                      static_url_path=cfg.static_url_path)
     webapp.config.from_object(cfg)
-    webapp.root_path = root_path  # for some reason calling config.from_pyfile()
+    webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
 
     db_ctl = dbc.DB_Controller(cfg)
     rhizi_api.db_ctl = db_ctl
@@ -232,12 +241,16 @@ if __name__ == "__main__":
     p.add_argument('--init-htpasswd-db', help='init login htpasswd db', action='store_const', const=True)
     args = p.parse_args()
 
-    log = init_logging()
     cfg = init_config(args.config_dir)
+    log = init_log(cfg)
+    log.debug('loaded configuration:\n%s' % cfg)
 
+    if args.init_htpasswd_db:
+        init_pw_db(cfg)
+        exit(0)
 
     webapp = init_webapp(cfg)
-    init_rest_api(webapp)
+    init_rest_api(cfg, webapp)
 
     log.info('launching webapp via Flusk development server')
     webapp.run(host=cfg.listen_address,

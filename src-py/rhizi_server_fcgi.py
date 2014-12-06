@@ -13,11 +13,12 @@ cgitb.enable()
 
 if __name__ == '__main__':
     cfg_dir = '/etc/rhizi'
-    cfg = rhizi_server.Config.init_from_file(os.path.join(cfg_dir, 'rhizi-server.conf'))
 
-    log = rhizi_server.init_logging()
+    cfg = rhizi_server.init_config(os.path.join(cfg_dir, 'rhizi-server.conf'))
+    log = rhizi_server.init_log()
+
     webapp = rhizi_server.init_webapp(cfg)
-    rhizi_server.init_rest_api(webapp)
+    rhizi_server.init_rest_api(cfg, webapp)
 
     log.info('launching webapp via flup.server.fcgi.WSGIServer')
 
