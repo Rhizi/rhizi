@@ -252,7 +252,7 @@ if __name__ == "__main__":
     webapp = init_webapp(cfg)
     init_rest_api(cfg, webapp)
 
-    log.info('launching webapp via Flusk development server')
+    log.info('launching webapp via Flask development server')
     webapp.run(host=cfg.listen_address,
                port=cfg.listen_port)
 
