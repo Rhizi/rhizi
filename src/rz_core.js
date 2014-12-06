@@ -236,6 +236,19 @@ var initDrawingArea = function () {
         .append("g")
         .attr("class", "zoom");
 
+    d3.select(el).select("svg").append("svg:defs")
+        .data(["end"]) // Different link/path types can be defined here
+        .append("svg:marker") // This section adds in the arrows
+        .attr("id", String)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 22)
+        .attr("refY", -1.5)
+        .attr("markerWidth", 4)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .append("svg:path")
+        .attr("d", "M0,-5L10,0L0,5");
+
     /*
      * init zoom behavior
      */
@@ -342,22 +355,6 @@ function update_view__graph(no_relayout) {
 
     link_g = link.enter().append('g')
         .attr('class', 'link graph');
-
-    link_g.append("svg:defs").selectAll("marker")
-        .data(["end"]) // Different link/path types can be defined here
-        .append("svg:marker") // This section adds in the arrows
-        .attr("id", String)
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 22)
-        .attr("refY", -1.5)
-        .attr("markerWidth", 4)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .attr("class", function(d) {
-            return selection.selected_class(d);
-        })
-        .append("svg:path")
-        .attr("d", "M0,-5L10,0L0,5");
 
     link_g.append("path")
         .attr("class", function(d) {
