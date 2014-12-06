@@ -2,7 +2,7 @@ define(['jquery', 'jquery-ui', 'view/helpers', 'view/internal'],
 function($, _unused_jquery_ui,  view_helpers, internal) {
 
 function show(d) {
-    var info = $('.info'), // #TODO - move to tab
+    var info = $('.info'),
         f = false,
         t = true,
         visible = {
