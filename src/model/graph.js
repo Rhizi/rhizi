@@ -69,23 +69,7 @@ function Graph() {
         return node;
     }
 
-    this.removeNode = function(id, state) {
-        var i = 0;
-        var n = findNode(id, state);
-        while (i < links.length) {
-            if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) links.splice(i, 1);
-            else i++;
-        }
-        var index = findNodeIndex(id, state);
-        if (index !== undefined) {
-            nodes.splice(index, 1);
-        }
-        diffBus.push({nodes: {removed: [id]}});
-    }
-
-    this.removeNodes = function(state) {
-        var id = null;
-        var ns = findNodes(null, state);
+    this._removeNodes = function(ns) {
         for (var j = 0; j < ns.length; j++) {
             var n = ns[j];
             var i = 0;
@@ -93,7 +77,7 @@ function Graph() {
                 if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) links.splice(i, 1);
                 else i++;
             }
-            var index = findNodeIndex(id, state);
+            var index = findNodeIndex(n.id, n.state);
             if (index !== undefined) {
                 nodes.splice(index, 1);
             }
@@ -101,6 +85,18 @@ function Graph() {
         if (ns.length > 0) {
             diffBus.push({nodes: {removed: ns.map(function(n) { return n.id; })}});
         }
+    }
+
+    this.removeNode = function(id, state) {
+        var i = 0;
+        var n = findNode(id, state);
+        this._removeNodes([n]);
+    }
+
+    this.removeNodes = function(state) {
+        var id = null;
+        var ns = findNodes(null, state);
+        this._removeNodes(ns);
     }
 
     /**
