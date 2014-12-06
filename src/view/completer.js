@@ -97,7 +97,7 @@ var completer = (function (input_element, dropdown) {
         update_highlighting(-1);
     }
 
-    function move_option(change, default_value) {
+    function _move_option(change, default_value) {
         var next,
             n = dropdown.children().length;
 
@@ -112,10 +112,10 @@ var completer = (function (input_element, dropdown) {
         update_highlighting(next);
     }
     function next_option() {
-        move_option(1, 0);
+        _move_option(1, 0);
     }
     function prev_option() {
-        move_option(-1, dropdown.children().length);
+        _move_option(dropdown.children().length - 1, dropdown.children().length - 1);
     }
     function _get_option(index) {
         return dropdown.children()[index].innerHTML;
