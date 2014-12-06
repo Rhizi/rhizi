@@ -57,7 +57,6 @@ function analyzeSentence(sentence, finalize)
 
     if (finalize || sentence.length == 0) {
         typeselection.hide();
-        analysisCompleter.hide();
     }
 }
 
@@ -148,10 +147,14 @@ return {
                 ret = false;
                 break;
             default:
+                // This catches cursor move due to keyboard events. no event for cursor movement itself
+                // below we catch cursor moves due to mouse click
                 analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
-                analysisCompleter.show();
             }
             return ret;
+        });
+        element.bind('input selectionchange click', function() {
+            analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
         });
 
         function submitNewSentence() {
