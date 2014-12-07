@@ -235,7 +235,7 @@ body.debug .debug-ui-right {
   stroke-opacity: 0.5; }
 
 .circle.bubble {
-  fill: rgba(255, 255, 255, 0.9);
+  fill: rgba(255, 255, 255, 0.5);
   pointer-events: none; }
 
 .circle.exit {
