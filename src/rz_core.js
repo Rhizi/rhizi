@@ -5,7 +5,6 @@ function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, vie
 
 var addednodes = [],
     vis,
-    graphstate = "GRAPH",
     graphinterval = 0,
     timeline_timer = 0,
     deliverables = [],
@@ -14,6 +13,10 @@ var addednodes = [],
     graph,
     drag,
     force;
+
+var bi_nodes = [],
+    bi_links = [],
+    bi_bilinks = [];
 
 // "CSS" for SVG elements. Reused for editing elements.
 var node_text_dx = 15,
@@ -188,12 +191,7 @@ var initDrawingArea = function () {
 
     function zoom() {
         zoomInProgress = true;
-        if (graphstate === "GRAPH") {
-            vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        }
-        if (graphstate === "TIMELINE") {
-            vis.attr("transform", "translate(0,0)scale(1)");
-        }
+        vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         d3.event.sourceEvent.stopPropagation();
     }
 
@@ -535,8 +533,21 @@ function update_view__graph(no_relayout) {
         //Do something
     }
 
-    force.nodes(graph.nodes())
-        .links(graph.links())
+    bi_nodes = graph.nodes().slice();
+    bi_links = [];
+    bi_bilinks = [];
+
+    graph.links().forEach(function(link) {
+        var s = link.__src,
+          t = link.__dst,
+          i = {}; // intermediate node
+        bi_nodes.push(i);
+        bi_links.push({source: s, target: i}, {source: i, target: t});
+        bi_bilinks.push([s, i, t]);
+    });
+
+    force.nodes(bi_nodes)
+         .links(bi_links);
 
     if (no_relayout) {
         // XXX If we are stopped we need to update the text of the links at least,
@@ -575,124 +586,59 @@ function tick(e) {
             return d.id;
         });
     var link = vis.select("#link-group").selectAll("path.link")
-        .data(graph.links());
+        .data(bi_bilinks);
     var linktext = vis.selectAll(".linklabel").data(graph.links());
 
     function transform(d) {
-        if (graphstate === "GRAPH" || d.type === "third-internship-proposal") {
-            if (check_for_nan(d.x) || check_for_nan(d.y)) {
-                return;
-            }
-            if (d.state === "temp") {
-                return "translate(" + d.x + "," + d.y + ")";
-            } else {
-                return "translate(" + d.x + "," + d.y + ")";
-            }
-        } else {
-            return "translate(0,0)";
+        if (check_for_nan(d.x) || check_for_nan(d.y)) {
+            return;
         }
         return "translate(" + d.x + "," + d.y + ")";
     }
 
-    if (graphstate === "TIMELINE") {
-        var k = 20 * e.alpha;
-        var today = new Date();
-        var missingcounter = 0;
-
-        graph.nodes().forEach(function(d, i) {
-            if ((d.start === 0 || d.end === 0)) {
-                d.x = 450 + missingcounter * 100;
-                d.y = window.innerWidth / 2;
-                if (missingcounter >= 6) {
-                    d.x = 450 + (missingcounter - 6) * 100;
-                    d.y = window.innerWidth / 2 + 50;
-                }
-                missingcounter++;
-            } else {
-                //var min= 150+graphinterval*Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
-                //var max= 150+graphinterval*Math.ceil(Math.abs(d.end.getTime() - d.start.getTime()) / (1000 * 3600 * 24)) - $('.gantbox').scrollLeft();
-                //d.x = min+Math.sin(today.getTime()/1000*Math.PI*2/10)*max;
-                timeline_timer++;
-                if (timeline_timer < 3000) {
-                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24)) * timeline_timer / 3000;
-                    d.y = 150 + d.start.getHours() * 17;
-                } else {
-                    d.x = 150 + graphinterval * Math.ceil(Math.abs(d.start.getTime() - today.getTime()) / (1000 * 3600 * 24));
-                    d.y = 150 + d.start.getHours() * 17;
-                }
-            }
-            if (d.state === "chosen") {
-                scrollValue = d.x;
-            }
-        });
-    } else {
-        //circles animation
-        var tempcounter = 0;
-        var temptotal = 0;
-        graph.nodes().forEach(function(d, i) {
-            if (d.state === "temp" && d.type!=="chainlink" && d.type!=="bubble") {
-                temptotal++;
-            }
-        });
-        if(temptotal!==newnodes){
-                newnodes+=temptotal/15/(newnodes*newnodes);
+    //circles animation
+    var tempcounter = 0;
+    var temptotal = 0;
+    graph.nodes().forEach(function(d, i) {
+        if (d.state === "temp" && d.type!=="chainlink" && d.type!=="bubble") {
+            temptotal++;
         }
-        if(newnodes>=temptotal){
-            newnodes=temptotal;
-        }
-        if(newnodes<1)newnodes=1;
-        graph.nodes().forEach(function(d, i) {
-            if (d.state === "temp") {
-                tempcounter++;
-                if(d.type==="chainlink" || d.type==="bubble"){
-                     d.x = window.innerWidth / 2;
-                     d.y = window.innerHeight / 2;
-                } else {
-                    d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
-                    d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
-                }
-                check_for_nan(d.x);
-                check_for_nan(d.y);
-            }
-        });
+    });
+    if(temptotal!==newnodes){
+            newnodes+=temptotal/15/(newnodes*newnodes);
     }
+    if(newnodes>=temptotal){
+        newnodes=temptotal;
+    }
+    if(newnodes<1)newnodes=1;
+    graph.nodes().forEach(function(d, i) {
+        if (d.state === "temp") {
+            tempcounter++;
+            if(d.type==="chainlink" || d.type==="bubble"){
+                 d.x = window.innerWidth / 2;
+                 d.y = window.innerHeight / 2;
+            } else {
+                d.x = window.innerWidth / 2 + (60+newnodes*20) * Math.cos(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+                d.y = window.innerHeight / 2 + (60+newnodes*20)  * Math.sin(-Math.PI+Math.PI * 2 * (tempcounter-1) / newnodes+0.3);
+            }
+            check_for_nan(d.x);
+            check_for_nan(d.y);
+        }
+    });
 
     link.attr("d", function(d, i) {
-        var d_val,
+        var d_val =  "M" + d[0].x + "," + d[0].y
+                   + "S" + d[1].x + "," + d[1].y
+                   + " " + d[2].x + "," + d[2].y,
             ghost;
-
-        if (graphstate === "GRAPH") {
-            var dx = d.__dst.x - d.__src.x,
-                dy = d.__dst.y - d.__src.y,
-                dr = Math.sqrt(dx * dx + dy * dy);
-            d_val = "M" + d.__src.x + "," + d.__src.y + "A" + dr + "," + dr + " 0 0,1 " + d.__dst.x + "," + d.__dst.y;
-        } else if (graphstate === "TIMELINE") {
-            if (d.state === "enter" || d.state === "exit") {
-                var dx = d.__dst.x - d.__src.x,
-                    dy = d.__dst.y - d.__src.y,
-                    dr = Math.sqrt(dx * dx + dy * dy) * 5;
-                d_val = "M" + d.__src.x + "," + d.__src.y + "A" + dr + "," + dr + " 0 0,1 " + d.__dst.x + "," + d.__dst.y;
-            } else {
-                var dx = d.__dst.x - d.__src.x,
-                    dy = d.__dst.y - d.__src.y,
-                    dr = Math.sqrt(dx * dx + dy * dy) * 5;
-
-                d_val = "M" + 0 + "," + 0 + "A" + dr + "," + dr + " 0 0,1 " + 0 + "," + 0;
-            }
-        }
         // update ghostlink position
         ghost = $(this.nextElementSibling);
         ghost.attr("d", d_val);
         return d_val;
     });
 
-
     linktext.attr("transform", function(d) {
-        if (graphstate === "GRAPH") {
-            return "translate(" + (d.__src.x + d.__dst.x) / 2 + "," + (d.__src.y + d.__dst.y) / 2 + ")";
-        } else {
-            return "translate(0,0)";
-        }
+        return "translate(" + (d.__src.x + d.__dst.x) / 2 + "," + (d.__src.y + d.__dst.y) / 2 + ")";
     });
 
     node.attr("transform", transform);
