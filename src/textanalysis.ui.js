@@ -12,27 +12,40 @@ var text = "", // Last text of sentence
 
 var typeselection = function TypeSelectionDialog() {
     var e = $('.typeselection'),
+        e_intro = e.find('#intro'),
+        e_label = e.find('#chosentypelabel'),
+        e_name = e.find('#chosentypename'),
+        e_desc = e.find('#chosentypedesc'),
         typeselection = {};
 
     typeselection.analysisNodeStart = function() {
         typeselection.show();
-        e.html('<table><tr><td style="height:28px"></td></tr><tr><td>Use [TAB] key to pick a type</td></tr></table>');
     }
     typeselection.show = function() {
         e.css({
-            top: window.innerHeight/2-115,
-            left: window.innerWidth/2-325});
+            top: window.innerHeight / 2 - 115,
+            left: window.innerWidth / 2 - 325
+            });
+        e_label.hide();
+        e_desc.hide();
+        e_intro.show();
+        e.show();
     }
     typeselection.hide = function() {
-        e.css('top', -300);
-        e.css('left', 0);
+        e.hide();
     }
     typeselection.showChosenType = function(nodetype) {
         var desc = description[nodetype];
-        e.html('<table><tr><td style="height:28px"></td></tr><tr><td>' +
-               "Chosen Type: " + nodetype + '</td></tr>' +
-               (desc ? '<tr><td>' + desc + '</td></tr>' : '') +
-               '</table>');
+
+        e_intro.hide();
+        e_label.show();
+        e_name.html(nodetype);
+        if (desc) {
+            e_desc.html(description[nodetype]);
+            e_desc.show();
+        } else {
+            e_desc.hide();
+        }
     }
     return typeselection;
 }();
