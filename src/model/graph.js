@@ -44,10 +44,10 @@ function Graph() {
             } else {
                 node = model_core.create_node__set_random_id(spec);
                 if (debug) {
-                    if ('bubble' == node.type){
-                        console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
+                    if ('bubble' != node.type){
+                        console.log('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
                     }else {
-                        console.debug('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
+                        console.log('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
                     }
                 }
             }
