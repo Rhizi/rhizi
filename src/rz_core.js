@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection'],
-function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config'],
+function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection, rz_config) {
 
 var addednodes = [],
     vis,
@@ -268,6 +268,11 @@ var initDrawingArea = function () {
              .on("dragend", dragended);
 
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
+    if (rz_config.backend_enabled){
+        graph.load_from_backend( function(){
+            update_view__graph(false);
+        });
+    }
 }
 
 function init_force_layout(){
