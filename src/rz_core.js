@@ -736,9 +736,12 @@ function showNodeInfo(d, i) {
     });
 }
 
-function overlay_mousedown() {
+function overlay_mousedown(e) {
     if (zoomInProgress) {
         zoomInProgress = false;
+        return;
+    }
+    if (e.originalEvent.target.id == 'svg-input') {
         return;
     }
     svgInput.hide();
