@@ -8,6 +8,7 @@ var debug = false;
 function Graph() {
 
     var nodes = [],
+        id_to_node_map = {},
         links = [],
         diffBus = new Bacon.Bus();
 
@@ -54,13 +55,16 @@ function Graph() {
             node = model_core.create_node_from_spec(spec);
         }
 
-        existing_node = findNode(node.id, null);
+        existing_node = find_node__by_id(node.id);
         if (existing_node) {
-            console.debug('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\', ' + 'new-node.id: \'' + node.id + '\'');
+            console.log('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\', ' + 'new-node.id: \'' + node.id + '\'');
             return existing_node;
         }
 
+        util.assert(undefined != node.id, '__addNode: node id missing');
         nodes.push(node);
+        id_to_node_map[node.id] = node;
+        console.log('__addNode: node added: id: ' + node.id);
 
         if (notify) {
             diffBus.push({nodes: {add: [node]}});
@@ -80,6 +84,9 @@ function Graph() {
             var index = findNodeIndex(n.id, n.state);
             if (index !== undefined) {
                 nodes.splice(index, 1);
+
+                util.assert(undefined != n.id, '_removeNodes: node id missing');
+                delete id_to_node_map[n.id];
             }
         }
         if (ns.length > 0) {
