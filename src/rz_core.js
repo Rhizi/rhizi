@@ -31,7 +31,8 @@ var node_text_dx = 15,
  */
 var svgInput = (function() {
     var measure_node = $('#measure-node')[0],
-        measure_link = $('#measure-link')[0];
+        measure_link = $('#measure-link')[0],
+        original_element;
 
     function appendForeignElementInputWithID(base, elemid, width, height)
     {
@@ -78,7 +79,6 @@ var svgInput = (function() {
         }
 
         if (e.which == 13 || e.which == 27) {
-            fo.hide();
             ret = false;
             d = jelement.data().d;
             if (e.which == 13 && newname != d.name) {
@@ -90,6 +90,7 @@ var svgInput = (function() {
                 rz_bus.names.push([newname]);
                 update_view__graph(true);
             }
+            hide();
         }
         rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
         return ret;
@@ -159,14 +160,21 @@ var svgInput = (function() {
         svg_input.val(oldname);
         svg_input.data().d = n;
         svg_input.focus();
+        original_element = $(e);
+        original_element.hide();
         // TODO: set cursor to correct location in text
+    }
+
+    function hide() {
+        createOrGetSvgInputFO().hide();
+        if (original_element && original_element.show) {
+            original_element.show();
+        }
     }
 
     return {
         enable: enable,
-        hide: function() {
-            createOrGetSvgInputFO().hide();
-        }
+        hide: hide,
     };
 }());
 
