@@ -95,9 +95,8 @@ function Graph() {
         }
     }
 
-    this.removeNode = function(id, state) {
-        var i = 0;
-        var n = findNode(id, state);
+    this.removeNode = function(id) {
+        var n = find_node__by_id(id);
         this._removeNodes([n]);
     }
 
@@ -356,7 +355,7 @@ function Graph() {
                         links[i].__dst = index2;
                     }
                 }
-                this.removeNode(index.id,null);
+                this.removeNode(index.id);
             }
         } else {
             index.name = new_name;
