@@ -404,7 +404,7 @@ var textAnalyser = function (newtext, finalize) {
             });
         } else {
             // REINITIALISE GRAPH (DUMB BUT IT WORKS)
-            graph.removeNodes("temp");
+            graph.removeNodes(function(n){ return "temp" == n.state; });
             graph.removeLinks("temp");
 
             ret.for_each_node_add(function (node) {

@@ -100,9 +100,8 @@ function Graph() {
         this._remove_node_set([n]);
     }
 
-    this.removeNodes = function(state) {
-        var id = null;
-        var ns = findNodes(null, state);
+    this.removeNodes = function(n_filer) {
+        var ns = find_node_set_by_filer(n_filer);
         this._remove_node_set(ns);
     }
 
