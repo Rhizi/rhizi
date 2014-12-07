@@ -496,9 +496,23 @@ body.debug .debug-ui-right {
   font-size: 24px;
   margin: 12px 0px 24px 0px; }
 
-#editbox .info-card-attr-val input {
+.info-card-attr-val input {
   width: 100%;
   font-size: 24px; }
+
+.info-card-url input {
+  font-size: 14px;
+  margin-left: 20px; }
+
+.info-card-url:before {
+  position: absolute;
+  margin-top: 7px;
+  content: "";
+  background: url(../img/url-icon.png);
+  min-width: 14px;
+  min-height: 14px;
+  background-position: center;
+  background-repeat: no-repeat; }
 
 .select-dropdown {
   border: none;
