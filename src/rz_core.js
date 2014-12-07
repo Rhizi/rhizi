@@ -666,7 +666,7 @@ function svg_click_handler(e) {
         zoomInProgress = false;
         return;
     }
-    if (e.originalEvent.target.id == 'svg-input') {
+    if (e.originalEvent.target.nodeName != 'svg') {
         return;
     }
     svgInput.hide();
