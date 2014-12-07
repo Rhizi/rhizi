@@ -74,7 +74,7 @@ function Graph() {
     }
     this.__addNode = __addNode;
 
-    this._removeNodes = function(ns) {
+    this._remove_node_set = function(ns) {
         for (var j = 0; j < ns.length; j++) {
             var n = ns[j];
             var i = 0;
@@ -86,7 +86,7 @@ function Graph() {
             if (index !== undefined) {
                 nodes.splice(index, 1);
 
-                util.assert(undefined != n.id, '_removeNodes: node id missing');
+                util.assert(undefined != n.id, '_remove_node_set: node id missing');
                 delete id_to_node_map[n.id];
             }
         }
@@ -97,13 +97,13 @@ function Graph() {
 
     this.removeNode = function(id) {
         var n = find_node__by_id(id);
-        this._removeNodes([n]);
+        this._remove_node_set([n]);
     }
 
     this.removeNodes = function(state) {
         var id = null;
         var ns = findNodes(null, state);
-        this._removeNodes(ns);
+        this._remove_node_set(ns);
     }
 
     /**
