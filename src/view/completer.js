@@ -24,9 +24,8 @@ function setCaret(e, num)
     e.selectionStart = e.selectionEnd = num;
 }
 
-var completer = (function (input_element, dropdown) {
-    var triggerStart = '#',
-        triggerEnd = ' ',
+var completer = (function (input_element, dropdown, base_config) {
+    var config = get_config(base_config),
         dropdown_raw = dropdown[0],
         options_bus = new Bacon.Bus(),
         options = [],
@@ -44,6 +43,39 @@ var completer = (function (input_element, dropdown) {
         options = new_options;
     });
 
+    input_element.keyup(function(e) {
+        var ret = undefined;
+        switch (e.keyCode) {
+        case 38: //UP
+            prev_option();
+            ret = false;
+            break;
+        case 40: //DOWN
+            next_option();
+            ret = false;
+            break;
+        default:
+            // This catches cursor move due to keyboard events. no event for cursor movement itself
+            // below we catch cursor moves due to mouse click
+            oninput(input_element_raw.value, input_element_raw.selectionStart);
+        }
+        return ret;
+    });
+    input_element.keydown(function(e) {
+        switch (e.keyCode) {
+        case 38:
+        case 40:
+            return false;
+        }
+    });
+
+    function get_config(base) {
+        return {
+            triggerStart: base && base.triggerStart || '#',
+            triggerEnd: base && base.triggerEnd || ' ',
+        };
+    }
+
     function completions(text)
     {
         var ret = [],
@@ -57,24 +89,26 @@ var completer = (function (input_element, dropdown) {
         return ret;
     }
 
+    /***
+     * #this is a #
+     *             ^
+     *
+     * #this is a #t
+     *              ^
+     *
+     * #this and #that then #he
+     *             ^
+     */
     function oninput(text, cursor) {
-        // #this is a #
-        //             ^
-        //
-        // #this is a #t
-        //              ^
-        //
-        // #this and #that then #he
-        //             ^
-        var hash = text.slice(0, cursor).lastIndexOf(triggerStart);
+        var hash = text.slice(0, cursor).lastIndexOf(config.triggerStart);
         // TODO check if current completion has been invalidated
         _invalidateSelection();
         dropdown.hide();
         dropdown_raw.innerHTML = ""; // remove all elements
-        if (hash == -1) {
+        if (hash == -1 && config.triggerStart != ' ') { // space matches start of string too
             return;
         }
-        var space = text.slice(hash).indexOf(triggerEnd);
+        var space = text.slice(hash + 1).indexOf(config.triggerEnd);
         space = space == -1 ? text.length : space;
         if (space < cursor) {
             return;

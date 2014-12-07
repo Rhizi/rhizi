@@ -50,7 +50,7 @@ var typeselection = function TypeSelectionDialog() {
     return typeselection;
 }();
 
-var analysisCompleter = completer(element, $('.suggestion'));
+var analysisCompleter = completer(element, $('#input-suggestion'));
 
 function analyzeSentence(sentence, finalize)
 {
@@ -140,30 +140,8 @@ return {
                     ret = false;
                 }
                 break;
-            case 38: //UP
-            case 40: //DOWN
-                ret = false;
-                break;
             }
             document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
-            return ret;
-        });
-        element.keyup(function(e) {
-            var ret = undefined;
-            switch (e.keyCode) {
-            case 38: //UP
-                analysisCompleter.prev_option();
-                ret = false;
-                break;
-            case 40: //DOWN
-                analysisCompleter.next_option();
-                ret = false;
-                break;
-            default:
-                // This catches cursor move due to keyboard events. no event for cursor movement itself
-                // below we catch cursor moves due to mouse click
-                analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
-            }
             return ret;
         });
         element.bind('input selectionchange click', function() {

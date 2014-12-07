@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection', 'util'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core, selection,          util) {
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection', 'util', 'view/completer'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core, selection,          util,   completer) {
 
     function expand(obj){
         if (!obj.savesize) {
@@ -9,9 +9,13 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
     }
 
     this.main = function() {
-        var json;
+        var json,
+            search = $('#search'),
+            search_completer = completer(search, $('#search-suggestion'),
+                {triggerStart:' ', triggerEnd:' '});
 
         console.log('Rhizi main started');
+        search_completer.options.plug(textanalysis.suggestions_options);
         drag_n_drop.init();
         $('#editname').onkeyup = function() { expand(this); };
         $('#editlinkname').onkeyup = function() { expand(this); };
@@ -36,15 +40,15 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
                 $('#textanalyser').focus();
             }
             if (e.altKey && e.ctrlKey && key == 'o') {
-                $('#search').focus();
+                search.focus();
             }
             if (e.ctrlKey && key == 'z' && e.target.nodeName !== 'INPUT') {
                 // TODO: rz_core.graph.undo();
             }
         };
         // TODO: move me somewhere
-        $('#search').on('input', function(e) {
-            var text = this.value.trim(),
+        function search_on_submit() {
+            var text = search[0].value.trim(),
                 r;
 
             try {
@@ -58,10 +62,12 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
                 selection.clear();
             }
             rz_core.update_view__graph(false);
-            e.preventDefault();
-        });
-        $('#search').on('keypress', function(e) {
-            if (e.which == 13) {
+        };
+        search.on('input', search_on_submit);
+        search.on('keydown', function(e) {
+            if (e.which == 13 && !search_completer.handleEnter()) {
+                e.preventDefault();
+                search_on_submit(e);
                 return false;
             }
             return undefined;
