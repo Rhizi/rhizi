@@ -500,6 +500,28 @@ body.debug .debug-ui-right {
   font-size: 24px;
   margin: 12px 0px 24px 0px; }
 
+#editbox .info-card-attr-val input {
+  width: 100%;
+  font-size: 24px; }
+
+.select-dropdown {
+  border: none;
+  font-family: "Source_Regular", sans-serif;
+  background-color: white;
+  font-size: 18px;
+  color: #363636;
+  width: 100%;
+  padding: 0;
+  margin: 12px 0px 24px 0px; }
+
+.select-dropdown:focus {
+  outline: none; }
+
+.select-dropdown option {
+  font-size: 18px;
+  color: #363636;
+  border: 1px solid #363636; }
+
 .info hr {
   width: 250px;
   position: relative;

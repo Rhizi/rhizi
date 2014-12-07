@@ -77,6 +77,32 @@
   margin: 12px 0px 24px 0px;
 }
 
+#editbox .info-card-attr-val input{
+  width: 100%;
+  font-size: $h2-size;
+}
+
+.select-dropdown {
+  border: none;
+  font-family: $base-font-family;
+  background-color: white;
+  font-size: $h3-size;
+  color: $dark-grey;
+  width: 100%;
+  padding: 0;
+  margin: 12px 0px 24px 0px;
+}
+
+.select-dropdown:focus {
+  outline: none;
+}
+
+.select-dropdown option{
+  font-size: $h3-size;
+  color: $dark-grey;
+  border: 1px solid $dark-grey;
+}
+
 .info hr {
   width: 250px;
   position: relative;
