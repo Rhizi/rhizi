@@ -20,3 +20,12 @@
 
 // Third-party
 @import "vendor/ui.css";
+
+// Hacks
+
+// Not sure this bug is the problem, but we don't want svg selection, and since
+// editing svg nodes inline is done with an input foreign element, this doesn't
+// affect selecting there!
+// See http://stackoverflow.com/questions/18124820/html5-svg-text-selection-bug-in-chrome
+svg text::selection { background: none; }
+

@@ -686,3 +686,6 @@ h2 {
 
 h1 {
   font-size: 12px; }
+
+svg text::selection {
+  background: none; }
