@@ -32,7 +32,8 @@ var node_text_dx = 15,
 var svgInput = (function() {
     var measure_node = $('#measure-node')[0],
         measure_link = $('#measure-link')[0],
-        original_element;
+        original_element,
+        is_link;
 
     function appendForeignElementInputWithID(base, elemid, width, height)
     {
@@ -52,16 +53,11 @@ var svgInput = (function() {
         return input;
     }
 
-    function measure(e_raw, text)
+    function measure(text)
     {
-        var span,
-            e = $(e_raw);
+        var span;
 
-        if (e.attr('class').indexOf('nodetext') == -1) {
-            span = measure_link;
-        } else {
-            span = measure_node;
-        }
+        span = is_link ? measure_link : measure_node;
         span.innerHTML = text;
         return span.getBoundingClientRect().width; // $().width() works too
     }
@@ -97,7 +93,7 @@ var svgInput = (function() {
     };
 
     function resize_measure(e) {
-        resize(measure(e.target.parentNode.parentNode.parentNode.querySelector('text'), $(e.target).val()) + 30);
+        resize(measure($(e.target).val()) + 30);
     }
 
     function resize(new_width) {
@@ -138,8 +134,9 @@ var svgInput = (function() {
     function enable(e, n) {
         var oldname = n.name,
             svg_input = createOrGetSvgInput(),
-            fo = createOrGetSvgInputFO(),
-            is_link = n.hasOwnProperty('__src');
+            fo = createOrGetSvgInputFO();
+
+        is_link = n.hasOwnProperty('__src');
 
         e.parentNode.appendChild(fo[0]); // This will unparent from the old parent
         if (is_link) {
@@ -155,7 +152,7 @@ var svgInput = (function() {
             fo.attr('class', 'svg-input-fo-node');
         }
         // Set width correctly
-        resize(e.getBBox().width + 30);
+        resize(measure(oldname) + 30);
         fo.show();
         svg_input.val(oldname);
         svg_input.data().d = n;
