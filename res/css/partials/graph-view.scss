@@ -75,8 +75,9 @@
   stroke: $cyan;
   stroke-opacity: 0.5;
 }
+
 .circle.bubble {
-  stroke: #101010;
+  fill: rgba(255,255,255,0.9);
   pointer-events:none;
 }
 .circle.exit {
@@ -137,10 +138,6 @@
 
 .circle.chainlink {
   fill: $dark-grey;
-}
-
-.circle.bubble {
-  fill: rgba(255,255,255,0.2);
 }
 
 

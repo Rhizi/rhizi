@@ -235,7 +235,7 @@ body.debug .debug-ui-right {
   stroke-opacity: 0.5; }
 
 .circle.bubble {
-  stroke: #101010;
+  fill: rgba(255, 255, 255, 0.9);
   pointer-events: none; }
 
 .circle.exit {
@@ -283,9 +283,6 @@ body.debug .debug-ui-right {
 
 .circle.chainlink {
   fill: #363636; }
-
-.circle.bubble {
-  fill: rgba(255, 255, 255, 0.2); }
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
@@ -418,13 +415,15 @@ body.debug .debug-ui-right {
   position: fixed;
   top: 203px;
   left: 78px;
-  text-shadow: -1px 1px 8px #EDE275, 1px -1px 8px #EDE275;
+  text-shadow: -1px 1px 8px #E DE275, 1px -1px 8px #EDE275;
   font-size: 16px; }
 
 .ui-helper-hidden-accessible > div {
   color: #363636; }
 
 .typeselection {
+  color: #363636;
+  font-size: 24px;
   position: fixed;
   left: 0;
   top: -300px;
