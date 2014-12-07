@@ -159,7 +159,7 @@ function Graph() {
             chosen_nodes.forEach(function (n) {
                 var adjacentnode;
                 if (same(link.__src, n)) {
-                    adjacentnode = findNode(link.__dst.id, null);
+                    adjacentnode = find_node__by_id(link.__dst.id);
                     if (adjacentnode.state !== "temp") {
                         addNode({type: 'exit', node: adjacentnode});
                     }
@@ -169,7 +169,7 @@ function Graph() {
                             if (link.__dst.id === link2.__dst.id &&
                                 link2.__dst.type === "chainlink" &&
                                 link2.__dst.state !== "temp") {
-                                adjacentnode = findNode(link2.__src.id, null);
+                                adjacentnode = find_node__by_id(link2.__src.id);
                                 if (adjacentnode.state !== "temp") {
                                     addNode({type: 'enter', node: adjacentnode});
                                 }
@@ -179,7 +179,7 @@ function Graph() {
                     }
                 }
                 if (same(link.__dst, n)) {
-                    adjacentnode = findNode(link.__src.id, null);
+                    adjacentnode = find_node__by_id(link.__src.id);
                     if (adjacentnode.state !== "temp") {
                         addNode({type: 'enter', node: adjacentnode});
                     }
