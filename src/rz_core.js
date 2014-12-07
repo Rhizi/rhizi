@@ -356,6 +356,11 @@ function update_view__graph(no_relayout) {
     link_g.append("path")
         .attr("class", "ghostlink")
         .on("click", function(d, i) {
+            if (zoomInProgress) {
+                // don't disable zoomInProgress, it will be disabled by the svg_click_handler
+                // after this events bubbles to the svg element
+                return;
+            }
             var that = this,
                 src = this.link.__src,
                 dst = this.link.__dst;
