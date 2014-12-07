@@ -3,7 +3,7 @@
 /**
  * core model module - currently unused
  */
-define([], function() {
+define(['util'], function(util) {
 
     /**
      * return a random id
@@ -57,6 +57,14 @@ define([], function() {
     function create_node_from_spec(node_spec) {
         var ret = new Node();
 
+        if (undefined != node_spec.id) {
+            // reuse id if present
+            Object.defineProperty(ret, "id", {
+                value: node_spec.id, // may be undefined,
+                writable: false
+            });
+        }
+
         // name
         if (undefined == node_spec.name) {
             console.debug('create_node_from_spec: undefined name, falling back to \"\"');
@@ -88,17 +96,7 @@ define([], function() {
     }
 
     /**
-     *
-     */
-    function create_node__with_optional_id(node_spec) {
-        var node = create_node_from_spec(node_spec);
-
-        node.id = node_spec.id;
-        return node;
-    }
-
-    /**
-     *
+     * @param node_spec: id must not be defined
      */
     function create_node__set_random_id(node_spec) {
         if (undefined == node_spec) {
@@ -106,6 +104,8 @@ define([], function() {
         }
 
         var ret = create_node_from_spec(node_spec);
+        util.assert(undefined == ret.id); // id must not be defined in spec
+
         Object.defineProperty(ret, "id", {
             value: random_id(),
             writable: false
@@ -178,9 +178,9 @@ define([], function() {
         Node: Node, // allow model adaptation
         Link: Link, // allow model adaptation
         random_node_name : random_node_name,
-        create_node__with_optional_id : create_node__with_optional_id,
-        create_link_from_spec : create_link_from_spec,
+        create_node_from_spec : create_node_from_spec,
         create_node__set_random_id : create_node__set_random_id,
+        create_link_from_spec : create_link_from_spec,
         create_link__set_random_id : create_link__set_random_id,
     };
 });

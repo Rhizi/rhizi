@@ -51,7 +51,7 @@ function Graph() {
                 }
             }
         } else {
-            node = model_core.create_node__with_optional_id(spec);
+            node = model_core.create_node_from_spec(spec);
         }
 
         existing_node = findNode(node.id, null);
