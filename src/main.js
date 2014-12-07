@@ -38,6 +38,9 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
             if (e.altKey && e.ctrlKey && key == 'o') {
                 $('#search').focus();
             }
+            if (e.ctrlKey && key == 'z' && e.target.nodeName !== 'INPUT') {
+                // TODO: rz_core.graph.undo();
+            }
         };
         // TODO: move me somewhere
         $('#search').on('input', function(e) {
