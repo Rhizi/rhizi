@@ -157,7 +157,7 @@ function Graph() {
                     }
                     ret.links.push({type: 'exit', link: link});
                     if (link.__dst.type === "chainlink") {
-                        links.foreach(function(link2) {
+                        links.forEach(function(link2) {
                             if (link.__dst.id === link2.__dst.id &&
                                 link2.__dst.type === "chainlink" &&
                                 link2.__dst.state !== "temp") {
