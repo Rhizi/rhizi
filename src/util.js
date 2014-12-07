@@ -2,6 +2,16 @@
 
 define(function() {
 
+    function assert(condition, message) {
+        if (false == condition) {
+            message = message || "Assertion failed";
+            if (typeof Error !== "undefined") {
+                throw new Error(message);
+            }
+            throw message; // Fallback
+        }
+    }
+
     function set_from_array(a) {
         var ret = {};
         for (var k = 0; k < a.length; ++k) {
@@ -52,6 +62,7 @@ define(function() {
     }
 
     return {
+        assert: assert,
         set_from_array: set_from_array,
         set_from_object: set_from_object,
         set_diff: set_diff,
