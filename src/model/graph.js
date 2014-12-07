@@ -31,7 +31,7 @@ function Graph() {
      *
      * @param notify whether or not a presenter notification will be sent, default = true
      */
-    this.__addNode = function(spec, notify) {
+    function __addNode(spec, notify) {
         var existing_node,
             node;
 
@@ -72,6 +72,7 @@ function Graph() {
 
         return node;
     }
+    this.__addNode = __addNode;
 
     this._removeNodes = function(ns) {
         for (var j = 0; j < ns.length; j++) {
@@ -277,7 +278,7 @@ function Graph() {
         this.addLink(src_id, dst_id, name, state, drop_conjugator_links);
     }
 
-    this.addLink = function(src_id, dst_id, name, state, drop_conjugator_links) {
+    function addLink(src_id, dst_id, name, state, drop_conjugator_links) {
         var src = findNode(src_id, null);
         var dst = findNode(dst_id, null);
         var found = findLink(src_id,dst_id,name);
@@ -298,6 +299,7 @@ function Graph() {
             found.state = state;
         }
     }
+    this.addLink = addLink;
 
     this.editLink = function(src_id, dst_id, newname, newstate) {
         var link = findLink(src_id, dst_id, newname);
