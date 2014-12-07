@@ -19,8 +19,7 @@ var node_text_dx = 15,
     node_text_dy = '.30em',
     svg_input_fo_node_x = node_text_dx,
     svg_input_fo_node_y = '-.70em',
-    svg_input_fo_height = '30px',
-    svg_input_fo_width = '100px';
+    svg_input_fo_height = '30px';
 
 /**
  * svgInput - creates an embedded input element under a given
@@ -42,7 +41,6 @@ var svgInput = (function() {
 
         body.appendChild(input);
 
-        fo.setAttribute('width', width || svg_input_fo_width);
         fo.setAttribute('height', height || svg_input_fo_height);
         fo.style.pointerEvents = 'none';
         input.style.pointerEvents = 'all';
