@@ -618,7 +618,7 @@ function tick(e) {
         var dx = d.__dst.x - d.__src.x,
             dy = d.__dst.y - d.__src.y,
             dr = Math.sqrt(dx * dx + dy * dy);
-        d_val = "M" + d.__src.x + "," + d.__src.y + "A" + dr + "," + dr + " 0 0,1 " + d.__dst.x + "," + d.__dst.y;
+        d_val = "M" + d.__src.x + "," + d.__src.y + "L" + d.__dst.x + "," + d.__dst.y;
         // update ghostlink position
         ghost = $(this.nextElementSibling);
         ghost.attr("d", d_val);
