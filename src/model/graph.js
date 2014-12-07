@@ -480,6 +480,13 @@ function Graph() {
     }
     this.hasNode = hasNode;
 
+    /**
+     * return node whose id matches the given id or undefined if no node was found
+     */
+    var find_node__by_id = function(id) {
+        return id_to_node_map[id];
+    }
+
     var findNode = function(id, state) {
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i].id === id || nodes[i].state === state)
