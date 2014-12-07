@@ -5,12 +5,12 @@ define(function() {
     var nodetypes = ["person", "club", "skill", "interest", "third-internship-proposal", "internship"];
 
     var description = {
-        person: 'Depict a person, real or fictional',
-        club: undefined,
-        skill: 'Depicts a specific ability of expertise a person can have',
-        interest: undefined,
-        'third-internship-proposal': undefined,
-        internship: undefined,
+        person: 'A person in CRI - student or teacher',
+        club: 'A shared club or project within the CRI',
+        skill: 'Ability or expertise you possess',
+        interest: 'Scientific skill or domain expertise you wish you had',
+        'third-internship-proposal': 'Create this to submit your third internship proposal',
+        internship: "Title of first or second internship you've done"
     };
 
     // TODO: enums, sometime
