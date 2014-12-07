@@ -277,8 +277,8 @@ function Graph() {
     }
 
     function addLink(src_id, dst_id, name, state, drop_conjugator_links) {
-        var src = findNode(src_id, null);
-        var dst = findNode(dst_id, null);
+        var src = find_node__by_id(src_id);
+        var dst = find_node__by_id(dst_id);
         var found = findLink(src_id,dst_id,name);
 
         if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
@@ -312,10 +312,10 @@ function Graph() {
         rz_bus.names.push([newname]);
     }
 
-    this.editLinkTarget = function(src_id, dst_id, newTarget) {
+    this.editLinkTarget = function(src_id, dst_id, new_dst_id) {
         var link = findLink(src_id, dst_id, null);
         if (link !== undefined) {
-            link.__dst = findNode(newTarget, null);
+            link.__dst = find_node__by_id(new_dst_id);
 
         } else {
 
@@ -334,7 +334,7 @@ function Graph() {
 
     this.editName = function(id, new_name) {
         var index2 = findNodeByName(new_name, null);
-        var index = findNode(id, null);
+        var index = find_node__by_id(id);
         var acceptReplace=true;
 
         if (index === undefined) {
@@ -361,11 +361,14 @@ function Graph() {
         }
     }
 
-    this.editDates = function(id, type, start, end) {
-        var index = findNode(id, type);
-        if ((index !== undefined)) {
-            index.start = start;
-            index.end = end;
+    this.editDates = function(id, state, start, end) {
+        var n = find_node__by_id(id);
+        if (state != n.state){
+            return;
+        }
+        if ((n !== undefined)) {
+            n.start = start;
+            n.end = end;
         }
     }
 
@@ -383,11 +386,15 @@ function Graph() {
     }
 
     this._editProperty = function(id, state, prop, value) {
-        var index = findNode(id, state);
-        if ((index === undefined)) {
+        var n = find_node__by_id(id);
+        if (state != n.state){
             return false;
         }
-        index[prop] = value;
+
+        if ((n === undefined)) {
+            return false;
+        }
+        n[prop] = value;
         return true;
     }
 
@@ -494,11 +501,17 @@ function Graph() {
         return id_to_node_map[id];
     }
 
-    var findNode = function(id, state) {
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id || nodes[i].state === state)
-                return nodes[i];
-        };
+    /**
+     * @param filer: must return true in order for node to be included in the returned set
+     */
+    var find_node_set_by_filer = function(filter) {
+        var ret = [];
+        nodes.map(function(n){
+           if (true == filter(n)){
+               ret.push(n);
+           }
+        });
+        return ret;
     }
 
     var findNodeByName = function(name, state) {
