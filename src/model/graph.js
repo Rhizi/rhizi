@@ -400,11 +400,11 @@ function Graph() {
         return this._editProperty(id, state, 'state', newstate);
     }
 
-    this.findCoordinates = function(id, type) {
-        var index = findNode(id, type);
+    this.findCoordinates = function(id) {
+        var n = find_node__by_id(id);
         if ((index !== undefined)) {
-            $('.typeselection').css('top', index.y - 90);
-            $('.typeselection').css('left', index.x - 230);
+            $('.typeselection').css('top', n.y - 90);
+            $('.typeselection').css('left', n.x - 230);
         }
     }
 
