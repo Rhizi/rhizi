@@ -592,8 +592,7 @@ input {
   background-color: #d3f2f8;
   color: #1d6e7f;
   border-top: 1px solid #8eb6bf;
-  border-bottom: 1px solid #8eb6bf;
-  z-index: -1; }
+  border-bottom: 1px solid #8eb6bf; }
 
 .task-desc {
   display: inline-block;
