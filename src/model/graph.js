@@ -536,44 +536,35 @@ function Graph() {
 
     /**
      * perform initial DB load from backend
+     *
+     * @param on_success: should be used by MVP presentors to trigger UI update
      */
     // @ajax-trans
-    function load_from_backend() {
+    function load_from_backend(on_success) {
 
-        function on_success(data){
-            var n_set = [];
-            var l_set = [];
+        function on_success__ajax(data){
+            var n_set = []; // added node set
+            var l_set = []; // added link set
             var len;
 
-            len = data['node_set'].length;
-            for (var i = 0; i < len; i++) {
-                var n_raw = data['node_set'][i];
-                var n = model_util.adapt_format_read_node(n_raw);
+            data['node_set'].map(function(n_spec){
+                var n_spec = model_util.adapt_format_read_node(n_spec);
+                var n = __addNode(n_spec, false);
                 n_set.push(n);
-            }
+            });
 
-            len = data['link_set'].length;
-            for (var i = 0; i < len; i++) {
-                var l_raw = data['link_set'][i];
-                var l = model_util.adapt_format_read_link(l_raw);
+            data['link_set'].map(function(l_spec){
+                var l_spec = model_util.adapt_format_read_link(l_spec);
+                var l = addLink(l_spec.__src_id, l_spec.__dst_id, l_spec.name, "perm");
                 l_set.push(l);
-            }
+            });
 
-            len = n_set.length
-            for (var i = 0; i < len; i++) {
-                var n = n_set[i];
-                graph.addNode(n.id, n.type, n.state)
-            }
-
-            len = l_set.length
-            for (var i = 0; i < len; i++) {
-                var l = l_set[i];
-                graph.addLink_byIds(l.__src.id, l.__dst.id, l.name, "perm")
-            }
+            undefined != on_success && on_success()
         }
 
-        rz_api_backend.clone(0, on_success);
+        rz_api_backend.clone(0, on_success__ajax);
     }
+    this.load_from_backend = load_from_backend;
 
     this.load_from_json = function(json) {
         var data = JSON.parse(json),
