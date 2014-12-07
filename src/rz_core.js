@@ -30,15 +30,8 @@ var node_text_dx = 15,
  * edit_link(@sibling, @link)
  */
 var svgInput = (function() {
-    var measure_span;
-
-    function createMeasureSpan(parent) {
-        measure_span = document.createElement('span');
-        measure_span.setAttribute('id', 'measure');
-        measure_span.style.display = 'inline';
-        measure_span.style.visibility = 'hidden';
-        parent.appendChild(measure_span);
-    }
+    var measure_node = $('#measure-node')[0],
+        measure_link = $('#measure-link')[0];
 
     function appendForeignElementInputWithID(base, elemid, width, height)
     {
@@ -55,16 +48,21 @@ var svgInput = (function() {
         fo.appendChild(body);
         base.appendChild(fo);
         input.setAttribute('id', elemid);
-        createMeasureSpan(body);
         return input;
     }
 
-    function measure(e, text)
+    function measure(e_raw, text)
     {
-        measure_span.style.cssText = window.getComputedStyle(e).cssText;
-        measure_span.style.visibility = 'none';
-        measure_span.innerHTML = text;
-        return measure_span.getBoundingClientRect().width; // $().width() works too
+        var span,
+            e = $(e_raw);
+
+        if (e.attr('class').indexOf('nodetext') == -1) {
+            span = measure_link;
+        } else {
+            span = measure_node;
+        }
+        span.innerHTML = text;
+        return span.getBoundingClientRect().width; // $().width() works too
     }
 
     function onkeydown(e) {
@@ -98,7 +96,7 @@ var svgInput = (function() {
     };
 
     function resize_measure(e) {
-        resize(measure(e.target, $(e.target).val()) + 30);
+        resize(measure(e.target.parentNode.parentNode.parentNode.querySelector('text'), $(e.target).val()) + 30);
     }
 
     function resize(new_width) {
