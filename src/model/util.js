@@ -4,7 +4,7 @@
  * model utility functions:
  *    - convert from/to client/backend data representations
  */
-define(['jquery', 'model/diff'], 
+define(['jquery', 'model/diff'],
 function($, model_diff) {
 
     /**
@@ -16,7 +16,7 @@ function($, model_diff) {
         ret = $.extend({
             'type' : n_raw['__label_set'][0].toLowerCase(), // discard all
             // labels except
-            'state' : 'temp',
+            'state' : 'perm',
         }, n_raw);
 
         delete ret.__label_set;
