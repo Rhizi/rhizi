@@ -259,14 +259,7 @@ var initDrawingArea = function () {
     zoom_obj(d3.select('#canvas_d3'))
     d3.select("svg").on("dblclick.zoom", null); // disable zoom on double click
 
-    // TODO: why do we need this huge overlay (hugeness also not constant)
-    vis.append("rect")
-        .attr("class", "overlay graph")
-        .attr("width", $(el).innerWidth() * 12)
-        .attr("height", $(el).innerHeight() * 12)
-        .attr("x", -$(el).innerWidth() * 5)
-        .attr("y", -$(el).innerHeight() * 5);
-    $('.overlay').click(overlay_mousedown);
+    $('svg').click(svg_click_handler);
 
     // SVG rendering order is last rendered on top, so to make sure
     // all links are below the nodes we group them under a single g
@@ -736,7 +729,7 @@ function showNodeInfo(d, i) {
     });
 }
 
-function overlay_mousedown(e) {
+function svg_click_handler(e) {
     if (zoomInProgress) {
         zoomInProgress = false;
         return;
