@@ -154,6 +154,9 @@ var svgInput = (function() {
         svg_input.val(oldname);
         svg_input.data().d = n;
         svg_input.focus();
+        if (original_element) {
+            original_element.show();
+        }
         original_element = $(e);
         original_element.hide();
         // TODO: set cursor to correct location in text
