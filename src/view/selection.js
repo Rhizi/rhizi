@@ -96,6 +96,7 @@ return {
     clear: clear,
     update: update,
     selected_class: selected_class,
+    node_selected: node_selected,
 };
 
 });
