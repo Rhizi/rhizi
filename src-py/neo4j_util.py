@@ -86,7 +86,7 @@ def post(url, data):
     req.add_header('Accept', 'application/json; charset=UTF-8')
     req.add_header('Content-Type', 'application/json')
 
-    req.add_header('X-Stream', 'true') # enable neo4j JSON streaming
+    req.add_header('X-Stream', 'true')  # enable neo4j JSON streaming
 
     try:
         ret = request.urlopen(req, post_data_json)
@@ -166,9 +166,16 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
 
     ret = []
     for n_type, n_set in node_map.items():
-        q = cfmt("create (n:{n_type} {node_attr}) return id(n)", n_type=n_type)
+        q_arr = ['create (n:%s {node_attr})' % (n_type),
+                 'return n.id'
+                 ]
+
+        q = ' '.join(q_arr)
         q_params_set = []
         for n_prop_set in n_set:
+
+            assert None != n_prop_set['id'], 'node create query: node id attribute not set'
+
             q_params = input_to_DB_property_map(n_prop_set)
             q_params_set.append(q_params)
         ret.append((q, {'node_attr': q_params_set}))
