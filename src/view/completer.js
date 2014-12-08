@@ -157,7 +157,7 @@ var completer = (function (input_element, dropdown, base_config) {
         _move_option(dropdown.children().length - 1, dropdown.children().length - 1);
     }
     function _get_option(index) {
-        var s = dropdown.children()[index].innerHTML;
+        var s = dropdown.children()[index].innerText;
         if (s.indexOf(' ') != -1) {
             return '"' + s + '"';
         }
