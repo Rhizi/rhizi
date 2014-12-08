@@ -34,6 +34,7 @@ function($, model_diff) {
 
         delete ret.type;
         delete ret.state;
+        delete ret.status
 
         return ret
     }
