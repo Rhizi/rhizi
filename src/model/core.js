@@ -59,10 +59,7 @@ define(['util'], function(util) {
 
         if (undefined != node_spec.id) {
             // reuse id if present
-            Object.defineProperty(ret, "id", {
-                value: node_spec.id, // may be undefined,
-                writable: false
-            });
+            __set_obj_id(ret, node_spec.id);
         }
 
         // name
@@ -95,6 +92,14 @@ define(['util'], function(util) {
         return ret;
     }
 
+    function __set_obj_id(obj, id) {
+        Object.defineProperty(obj, "id", {
+            value: id,
+            enumerable: true,
+            writable: false
+        });
+    }
+
     /**
      * @param node_spec: id must not be defined
      */
@@ -104,23 +109,16 @@ define(['util'], function(util) {
         }
 
         var ret = create_node_from_spec(node_spec);
-        util.assert(undefined == ret.id); // id must not be defined in spec
 
-        Object.defineProperty(ret, "id", {
-            value: random_id(),
-            writable: false
-        });
+        util.assert(undefined == ret.id); // id must not be defined in spec
+        __set_obj_id(ret, random_id());
 
         return ret;
     }
 
     function create_link__set_random_id(src, dst, link_spec) {
         var ret = create_link_from_spec(src, dst, link_spec);
-        Object.defineProperty(ret, "id", {
-            value: random_id(),
-            writable: false
-        });
-
+        __set_obj_id(ret, random_id());
         return ret;
     }
 
