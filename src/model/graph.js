@@ -1,7 +1,7 @@
 "use strict"
 
-define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'rz_api_backend', 'rz_api_mesh', 'history', 'rz_bus'],
-function (Bacon, consts, util, model_core, model_util, rz_api_backend, rz_api_mesh, history, rz_bus) {
+define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'rz_bus', 'rz_config'],
+function (Bacon, consts, util, model_core, model_util, model_diff, rz_api_backend, rz_api_mesh, history, rz_bus, rz_config) {
 
 var debug = false;
 
@@ -31,11 +31,12 @@ function Graph() {
      *
      * @param notify whether or not a presenter notification will be sent, default = true
      */
-    function __addNode(spec, notify) {
+    function __addNode(spec, notify, peer_notify) {
         var existing_node,
             node;
 
         notify = undefined === notify ? true : notify;
+        peer_notify = undefined === peer_notify ? true : peer_notify;
 
         if (undefined == spec.id) {
             existing_node = findNodeByName(spec.name)
@@ -66,6 +67,21 @@ function Graph() {
         id_to_node_map[node.id] = node;
         console.log('__addNode: node added: id: ' + node.id);
 
+        if (rz_config.backend_enabled && peer_notify){
+            var topo_diff = new model_diff.new_topo_diff({
+                node_set_add : [node].map(model_util.adapt_format_write_node),
+            });
+            var on_success = function(){
+                // FIXME: handle possible outcomes:
+                // - id merge: node already exists -> update id
+                // - link-merge: node already exists -> merge links, recurse?
+            };
+            var on_error = function(){
+                // TODO: add problem emblem to node
+            };
+            rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
+        }
+
         if (notify) {
             diffBus.push({nodes: {add: [node]}});
         }
@@ -74,13 +90,20 @@ function Graph() {
     }
     this.__addNode = __addNode;
 
-    this._remove_node_set = function(ns) {
+    this._remove_node_set = function(ns, peer_notify) {
+
+        peer_notify = undefined === peer_notify ? true : peer_notify;
+
         for (var j = 0; j < ns.length; j++) {
             var n = ns[j];
             var i = 0;
             while (i < links.length) {
-                if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) links.splice(i, 1);
-                else i++;
+                if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) {
+                    links.splice(i, 1);
+                }
+                else {
+                    i++;
+                }
             }
             var index = findNodeIndex(n.id, n.state);
             if (index !== undefined) {
@@ -90,6 +113,21 @@ function Graph() {
                 delete id_to_node_map[n.id];
             }
         }
+
+        if (rz_config.backend_enabled && peer_notify){
+            var topo_diff = new model_diff.new_topo_diff({
+                node_set_rm : ns.map(function(n){ return n.id; }),
+            });
+            var on_success = function(){
+                // FIXME: handle possible outcomes:
+                // - rm cascade of connected links
+            };
+            var on_error = function(){
+                // TODO: add problem emblem to node
+            };
+            rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
+        }
+
         if (ns.length > 0) {
             diffBus.push({nodes: {removed: ns.map(function(n) { return n.id; })}});
         }
@@ -576,7 +614,7 @@ function Graph() {
 
             data['node_set'].map(function(n_spec){
                 var n_spec = model_util.adapt_format_read_node(n_spec);
-                var n = __addNode(n_spec, false);
+                var n = __addNode(n_spec, false, false);
                 n_set.push(n);
             });
 
@@ -612,7 +650,7 @@ function Graph() {
                                  url:node.url,
                                  x: node.x,
                                  y: node.y,
-                                }, false).name;
+                                }, false, false).name;
         });
         data.links.forEach(function(link) {
             that.addLink(link.__src, link.__dst, link.name, "perm");
@@ -663,7 +701,9 @@ function Graph() {
 
     this.clear_history = clear_history;
 
-    var get_nodes = function() { return nodes; };
+    var get_nodes = function() {
+        return nodes;
+    };
     this.nodes = get_nodes;
 
     var get_links = function() { return links; };
