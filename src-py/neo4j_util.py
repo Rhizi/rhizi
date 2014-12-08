@@ -3,6 +3,7 @@
 """
 
 import json
+import six
 from six.moves.urllib import request
 import six.moves.urllib_error as urllib_error
 import model
@@ -98,7 +99,7 @@ def statement_to_REST_form(query, parameters={}):
     """
     turn cypher query to neo4j json API format
     """
-    assert isinstance(query, basestring)
+    assert isinstance(query, six.string_types)
     if isinstance(parameters, list):
         for v in parameters:
             assert isinstance(v, dict)
@@ -235,7 +236,7 @@ def __type_check_link(link):
 
 def __type_check_link_or_node_map(x_map):
     for k, v in x_map.iteritems():  # do some type sanity checking
-        assert isinstance(k, basestring)
+        assert isinstance(k, six.string_types)
         assert isinstance(v, list)
 
 def __type_check_filter_attr_map(filter_attr_map):
@@ -244,5 +245,5 @@ def __type_check_filter_attr_map(filter_attr_map):
     """
     assert isinstance(filter_attr_map, dict)
     for k, v in filter_attr_map.items():
-        assert isinstance(k, basestring)
+        assert isinstance(k, six.string_types)
         assert isinstance(v, list)
