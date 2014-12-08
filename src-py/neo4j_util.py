@@ -207,7 +207,7 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
 
     return ret
 
-def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
+def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     """
     convert a list of maps each containing a meta_attr key into a
     meta_attr-mapped collection of lists with the meta_attr removed - eg:
@@ -217,14 +217,15 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__type'):
     """
     ret = {}
     for v in e_set:
-        assert None != v['__type']  # assert type meta-attr is present
+        assert None != v[meta_attr], 'missing type meta-attribute'
+        assert 1 == len(v[meta_attr]), 'only single-type mapping currently suppoerted'
 
-        v_type = v['__type']
+        v_type = v[meta_attr][0]
         if None == ret.get(v_type):  # init type list if necessary
             ret[v_type] = []
 
         v_no_meta = v.copy()
-        del v_no_meta['__type']
+        del v_no_meta[meta_attr]
 
         ret[v_type].append(v_no_meta)
 
