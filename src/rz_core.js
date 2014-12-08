@@ -259,6 +259,7 @@ var initDrawingArea = function () {
     // SVG rendering order is last rendered on top, so to make sure
     // all links are below the nodes we group them under a single g
     vis.append("g").attr("id", "link-group");
+    vis.append("g").attr("id", "selected-link-group");
 
     drag = d3.behavior.drag()
              .origin(function(d) { return d; })
@@ -438,8 +439,14 @@ function update_view__graph(no_relayout) {
 
     // reorder nodes so selected are last, and so rendered last, and so on top.
     (function () {
-        var ontop = [], last = node[0].length - 1, bubble,
-            parent = node[0].length > 0 ? node[0][0].parentNode : null;
+        var ontop = [],
+            last = node[0].length - 1,
+            bubble,
+            parent = node[0].length > 0 ? node[0][0].parentNode : null,
+            selected_link_group = $('#selected-link-group')[0],
+            ontop_links = [],
+            ontop_nodes = [];
+
         node.each(function (d) {
                 this.node = d;
             })
@@ -449,10 +456,23 @@ function update_view__graph(no_relayout) {
                         bubble = this;
                     } else {
                         ontop.push(this);
+                        ontop_nodes.push(d);
                     }
                 }
                 return ['node', selection.selected_class(d)].join(' ');
             });
+        // O(|links|*|ontop|)
+        link.each(function (d) {
+            var link_e = this;
+            ontop.forEach(function (node) {
+                var d_node = node.node;
+                if (d.__src == d_node || d.__dst == d_node) {
+                    console.log(link_e);
+                    ontop_links.push(link_e);
+                }
+            });
+        });
+
         if (bubble === undefined) {
             // nothing to do if there is no bubble
             return;
@@ -464,6 +484,17 @@ function update_view__graph(no_relayout) {
         ontop.reverse().forEach(function (e) {
             insertAtEnd(e);
         });
+        var unselected_link_group = link_group[0][0];
+        console.log('unselected links: ' + unselected_link_group.childElementCount);
+        $(selected_link_group).children().each(function (i, e) {
+            unselected_link_group.appendChild(e.parentNode.removeChild(e));
+        });
+        console.log('selected links:   ' + ontop_links.length);
+        ontop_links.forEach(function (e) {
+            selected_link_group.appendChild(e.parentNode.removeChild(e));
+        });
+        // put back on top link group on top
+        parent.appendChild(parent.removeChild(selected_link_group));
     })();
 
     nodetext = nodeEnter.insert("text")
