@@ -436,12 +436,35 @@ function update_view__graph(no_relayout) {
         .attr('visibility', 'hidden') // made visible on first tick
         .call(drag);
 
-    node.each(function (d) {
-            this.node = d;
-        })
-        .attr('class', function(d) {
-            return ['node', selection.selected_class(d)].join(' ');
+    // reorder nodes so selected are last, and so rendered last, and so on top.
+    (function () {
+        var ontop = [], last = node[0].length - 1, bubble,
+            parent = node[0].length > 0 ? node[0][0].parentNode : null;
+        node.each(function (d) {
+                this.node = d;
+            })
+            .attr('class', function(d) {
+                if (selection.node_selected(d)) {
+                    if (d.type == 'bubble') {
+                        bubble = this;
+                    } else {
+                        ontop.push(this);
+                    }
+                }
+                return ['node', selection.selected_class(d)].join(' ');
+            });
+        if (bubble === undefined) {
+            // nothing to do if there is no bubble
+            return;
+        }
+        function insertAtEnd(e) {
+            parent.appendChild(parent.removeChild(e));
+        }
+        insertAtEnd(bubble);
+        ontop.reverse().forEach(function (e) {
+            insertAtEnd(e);
         });
+    })();
 
     nodetext = nodeEnter.insert("text")
         .attr("class", "nodetext graph")
