@@ -73,9 +73,6 @@ var completer = (function (input_element, dropdown, base_config) {
         case 9: // Tab
             if (config.hideOnTab) {
                 hide();
-                console.log('hiding on tab');
-            } else {
-                console.log(config);
             }
             break;
         }
