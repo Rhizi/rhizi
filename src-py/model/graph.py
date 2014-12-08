@@ -18,7 +18,7 @@ class Attr_Diff(dict):
                       'attr_remove': []}
         self[n_id] = ret
         return ret
-                      
+
     def add_node_attr_write(self, n_id, attr_name, attr_val):
         n_attr_diff = self.get(n_id)
         if None == n_attr_diff:
@@ -35,15 +35,18 @@ class Topo_Diff(object):
     """
     Represents a change to the graph topology
     """
-
     def __init__(self, link_set_rm=[],
-                        node_set_rm=[],
-                        node_set_add=[],
-                        link_set_add=[]):
+                       node_set_rm=[],
+                       node_set_add=[],
+                       link_set_add=[]):
+
         self.link_set_rm = link_set_rm
         self.node_set_rm = node_set_rm
         self.node_set_add = node_set_add
         self.link_set_add = link_set_add
+
+    def __str__(self):
+        return __name__ + ': ' + ', '.join('%s: %d items' % (k, len(v)) for k, v in self.__dict__.items())
 
     def check_validity(self, topo_diff_dict):
         """
@@ -59,10 +62,10 @@ class Topo_Diff(object):
         """
         ret = Topo_Diff()
 
-        # merge keys - this allows obj constructor argument ommision,
-        # such as when constructing from POST JSON data
+        # merge keys - this allows constructor argument omission (link_set_rm,
+        # node_set_rm, etc.) such as when constructing from POST JSON data
         for k, _ in ret.__dict__.items():
-            v =  topo_diff_dict.get(k)
+            v = topo_diff_dict.get(k)
             if None != v:
                 ret.__dict__[k] = v
         return ret
