@@ -33,6 +33,24 @@ db_ctl = None
 def __sanitize_input(*args, **kw_args):
     pass
 
+def sanitize_input__node(n):
+    """
+    provide a control point as to which node fields are persisted
+    """
+    assert None != n['id'], 'invalid input: node: missing id'
+
+def sanitize_input__link(l):
+    """
+    provide a control point as to which node fields are persisted
+    """
+    pass
+
+def sanitize_input__topo_diff(topo_diff):
+    for n in topo_diff.node_set_add:
+        sanitize_input__node(n)
+    for l in topo_diff.link_set_add:
+        sanitize_input__link(l)
+
 def __response_wrap(data=None, error=None):
     """
     wrap response data/errors as dict - this should always be used when returning
@@ -132,6 +150,8 @@ def diff_commit_set():
         diff_set_dict = request.get_json()['diff_set']
         topo_diff_dict = diff_set_dict['__diff_set_topo'][0]
         topo_diff = Topo_Diff.from_dict(topo_diff_dict)
+
+        sanitize_input__topo_diff(topo_diff)
         return topo_diff;
 
     topo_diff = sanitize_input(request)
@@ -145,6 +165,8 @@ def diff_commit_topo():
     def sanitize_input(req):
         topo_diff_dict = request.get_json()['topo_diff']
         topo_diff = Topo_Diff.from_dict(topo_diff_dict)
+
+        sanitize_input__topo_diff(topo_diff)
         return topo_diff;
 
     topo_diff = sanitize_input(request)
