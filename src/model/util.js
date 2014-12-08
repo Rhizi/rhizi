@@ -29,7 +29,7 @@ function($, model_diff) {
      */
     function adapt_format_write_node(n_raw) {
         var ret = $.extend({
-            '__type' : n_raw.type,
+            '__label_set' : [n_raw.type],
         }, n_raw);
 
         delete ret.type;
@@ -66,9 +66,9 @@ function($, model_diff) {
      */
     function adapt_format_write_link(l_raw) {
         var ret = $.extend({
-            '__src' : l_raw.sourceId,
-            '__dst' : l_raw.targetId,
-            '__type' : 'textual_link',
+            '__src_id' : l_raw.sourceId,
+            '__dst_id' : l_raw.targetId,
+            '__label_set' : ['textual_link'],
         }, l_raw);
 
         delete ret.source;
