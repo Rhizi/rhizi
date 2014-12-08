@@ -49,7 +49,7 @@ define(['rz_config'], function(rz_config) {
         /**
          * common attr_diff
          */
-        this.commit_diff_attr = function(attr_diff, on_success, on_error) {
+        this.commit_diff__attr = function(attr_diff, on_success, on_error) {
 
             var post_dict = {
                 'attr_diff' : attr_diff
@@ -67,7 +67,7 @@ define(['rz_config'], function(rz_config) {
         /**
          * commit topo_diff
          */
-        this.commit_diff_topo = function(topo_diff, on_success, on_error) {
+        this.commit_diff__topo = function(topo_diff, on_success, on_error) {
 
             var post_dict = {
                 'topo_diff' : topo_diff
@@ -85,14 +85,14 @@ define(['rz_config'], function(rz_config) {
         /**
          * commit vis_diff
          */
-        this.commit_diff_vis = function(vis_diff, on_success, on_error) {
+        this.commit_diff__vis = function(vis_diff, on_success, on_error) {
             // TODO impl
         }
 
         /**
          * commit a diff_set
          */
-        this.commit_diff_set = function(diff_set, on_success, on_error) {
+        this.commit_diff__set = function(diff_set, on_success, on_error) {
 
             var post_dict = {
                 'diff_set' : diff_set
