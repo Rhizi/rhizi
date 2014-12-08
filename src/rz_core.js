@@ -628,8 +628,10 @@ function tick(e) {
         .data(force.nodes(), function(d) {
             return d.id;
         });
-    var link = vis.select("#link-group").selectAll("path.link")
-        .data(graph.links());
+    var link = vis.selectAll("path.link")
+        .data(graph.links(), function(d) {
+            return d.id;
+        });
     var linktext = vis.selectAll(".linklabel").data(graph.links());
 
     function transform(d) {
