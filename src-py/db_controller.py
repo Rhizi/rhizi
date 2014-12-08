@@ -340,18 +340,19 @@ class DBO_rm_node_set(DB_op):
 
         if rm_links:
             q_arr = ['match (n)',
-                     'where n.id in ' + str(id_set),
+                     'where n.id in {id_set}',
                      'optional match (n)-[r]-()',
                      'delete n,r'
              ]
         else:
             q_arr = ['match (n)',
-                     'where n.id in ' + str(id_set),
+                     'where n.id in {id_set}',
                      'delete n'
              ]
 
         q = ' '.join(q_arr)  # TODO: use id param upon neo4j support: q_params = {'id_set': id_set}
-        self.add_statement(q)
+        q_params = {'id_set': id_set}
+        self.add_statement(q, q_params)
 
 class DBO_rz_clone(DB_op):
     def __init__(self, filter_label=None, limit=128):
