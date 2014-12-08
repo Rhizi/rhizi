@@ -54,6 +54,9 @@ var completer = (function (input_element, dropdown, base_config) {
             next_option();
             ret = false;
             break;
+        case 27: // Escape
+            hide();
+            break;
         default:
             // This catches cursor move due to keyboard events. no event for cursor movement itself
             // below we catch cursor moves due to mouse click
@@ -89,6 +92,16 @@ var completer = (function (input_element, dropdown, base_config) {
         return ret;
     }
 
+    function show() {
+        if (dropdown.children().length > 0) {
+            dropdown.show();
+        }
+    }
+    function hide()
+    {
+        dropdown.hide();
+    }
+
     /***
      * #this is a #
      *             ^
@@ -103,7 +116,7 @@ var completer = (function (input_element, dropdown, base_config) {
         var hash = text.slice(0, cursor).lastIndexOf(config.triggerStart);
         // TODO check if current completion has been invalidated
         _invalidateSelection();
-        dropdown.hide();
+        hide();
         dropdown_raw.innerHTML = ""; // remove all elements
         if (hash == -1 && config.triggerStart != ' ') { // space matches start of string too
             return;
@@ -127,9 +140,7 @@ var completer = (function (input_element, dropdown, base_config) {
             elem.onclick = function() { _applySuggestion(index); };
             input_element.focus();
         });
-        if (dropdown.children().length > 0) {
-            dropdown.show();
-        }
+        show();
     }
 
     function _invalidateSelection() {
@@ -143,6 +154,7 @@ var completer = (function (input_element, dropdown, base_config) {
         if (n == 0) {
             return;
         }
+        show();
         if (selected_index == -1) {
             next = default_value;
         } else {
