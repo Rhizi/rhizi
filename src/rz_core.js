@@ -398,9 +398,11 @@ function update_view__graph(no_relayout) {
             this.link = d;
         });
 
-    linktext = vis.selectAll(".linklabel").data(graph.links());
+    linktext = vis.selectAll(".linklabel")
+        .data(graph.links(), function(d) { return d.id; });
     linktext.enter()
         .append("text")
+        .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
         .attr("class", function(d) {
             return ["linklabel graph", selection.selected_class(d)].join(' ');
         })
@@ -413,6 +415,7 @@ function update_view__graph(no_relayout) {
 
     linktext
         .text(function(d) {
+            console.log(d.name);
             var name = d.name || "";
             if (!(d.__dst.state === "temp" ||
                 d.__src.state === "chosen" || d.__dst.state === "chosen")) {
@@ -478,6 +481,11 @@ function update_view__graph(no_relayout) {
                 reparent(selected_link_group, this);
             } else {
                 reparent(unselected_link_group, this);
+            }
+        });
+        linktext.each(function (d) {
+            if (selection.node_selected(d)) {
+                ontop.push(this);
             }
         });
         function moveToEnd(e) {
