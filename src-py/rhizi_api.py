@@ -142,7 +142,7 @@ def rz_clone():
     op = dbc.DBO_rz_clone()
     return __common_exec(op)
 
-def diff_commit_set():
+def diff_commit__set():
     """
     commit a diff set
     """
@@ -158,7 +158,7 @@ def diff_commit_set():
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
-def diff_commit_topo():
+def diff_commit__topo():
     """
     commit a graph topology diff
     """
@@ -173,7 +173,7 @@ def diff_commit_topo():
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
-def diff_commit_attr():
+def diff_commit__attr():
     """
     commit a graph attribute diff
     """
@@ -183,7 +183,7 @@ def diff_commit_attr():
     op = dbc.DBO_attr_diff_commit(attr_diff)
     return __common_exec(op)
 
-def diff_commit_vis():
+def diff_commit__vis():
     pass
 
 def add_node_set():
