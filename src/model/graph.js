@@ -336,7 +336,7 @@ function Graph() {
         if (index.name == new_name) {
             return;
         }
-        if (index2 !== undefined && index.state !== 'temp') {
+        if (index2 !== undefined && index.state !== 'temp' && !compareNames(index.name, new_name)) {
             acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
             if (acceptReplace){
                 for (var i = 0; i < links.length; i++) {
