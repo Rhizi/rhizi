@@ -415,7 +415,6 @@ function update_view__graph(no_relayout) {
 
     linktext
         .text(function(d) {
-            console.log(d.name);
             var name = d.name || "";
             if (!(d.__dst.state === "temp" ||
                 d.__src.state === "chosen" || d.__dst.state === "chosen")) {
