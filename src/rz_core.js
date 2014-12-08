@@ -259,6 +259,7 @@ var initDrawingArea = function () {
     // SVG rendering order is last rendered on top, so to make sure
     // all links are below the nodes we group them under a single g
     vis.append("g").attr("id", "link-group");
+    vis.append("g").attr("id", "selected-link-group");
 
     drag = d3.behavior.drag()
              .origin(function(d) { return d; })
@@ -338,19 +339,21 @@ function update_view__graph(no_relayout) {
         link_g,
         linktext,
         nodetext,
-        link_group;
+        unselected_link_group = document.querySelector('#link-group'),
+        selected_link_group = document.querySelector('#selected-link-group');
 
-    link_group = vis.select('#link-group');
-    link = link_group.selectAll("g.link")
-        .data(graph.links());
+    link = vis.selectAll("g.link")
+        .data(graph.links(), function(d) { return d.id; });
 
     link_g = link.enter().append('g')
-        .attr('class', 'link graph');
+        .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
+        .attr('class', 'link graph')
 
     link_g.append("path")
         .attr("class", function(d) {
             return d.state + ' link graph';
         })
+        .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
         .attr("marker-end", "url(#end)");
 
     // second path for larger click area
@@ -389,7 +392,7 @@ function update_view__graph(no_relayout) {
 
     link.exit().remove();
 
-    link_group.selectAll('.ghostlink')
+    vis.selectAll('.ghostlink')
         .data(graph.links())
         .each(function (d) {
             this.link = d;
@@ -438,8 +441,9 @@ function update_view__graph(no_relayout) {
 
     // reorder nodes so selected are last, and so rendered last, and so on top.
     (function () {
-        var ontop = [], last = node[0].length - 1, bubble,
-            parent = node[0].length > 0 ? node[0][0].parentNode : null;
+        var ontop = [],
+            bubble;
+
         node.each(function (d) {
                 this.node = d;
             })
@@ -457,13 +461,37 @@ function update_view__graph(no_relayout) {
             // nothing to do if there is no bubble
             return;
         }
-        function insertAtEnd(e) {
-            parent.appendChild(parent.removeChild(e));
+        function reparent(new_parent, element) {
+            if (element.parentNode == new_parent) {
+                return;
+            }
+            new_parent.appendChild(element);
         }
-        insertAtEnd(bubble);
-        ontop.reverse().forEach(function (e) {
-            insertAtEnd(e);
+        // move link to correct group
+        // O(|links|*|ontop|)
+        link.each(function (d) {
+            if (ontop.some(function (node) {
+                    var d_node = node.node;
+                    return d.__src == d_node || d.__dst == d_node;
+                }))
+            {
+                reparent(selected_link_group, this);
+            } else {
+                reparent(unselected_link_group, this);
+            }
         });
+        function moveToEnd(e) {
+            e.parentNode.appendChild(e);
+        }
+        moveToEnd(bubble);
+        ontop.reverse().forEach(function (e) {
+            moveToEnd(e);
+        });
+        var count_links = function() {
+            return selected_link_group.childElementCount + unselected_link_group.childElementCount;
+        };
+        // put back on top link group on top
+        moveToEnd(selected_link_group);
     })();
 
     nodetext = nodeEnter.insert("text")
@@ -597,8 +625,10 @@ function tick(e) {
         .data(force.nodes(), function(d) {
             return d.id;
         });
-    var link = vis.select("#link-group").selectAll("path.link")
-        .data(graph.links());
+    var link = vis.selectAll("path.link")
+        .data(graph.links(), function(d) {
+            return d.id;
+        });
     var linktext = vis.selectAll(".linklabel").data(graph.links());
 
     function transform(d) {
