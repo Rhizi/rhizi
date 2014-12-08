@@ -430,6 +430,12 @@ var textAnalyser = function (newtext, finalize) {
             });
         }
 
+        if (!finalize) {
+            graph.markRelated(token_set_new_node_names);
+        } else {
+            graph.removeRelated();
+        }
+
         if (finalize && backend_commit) {
             // broadcast diff:
             //    - finalize?
