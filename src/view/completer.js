@@ -56,6 +56,7 @@ var completer = (function (input_element, dropdown, base_config) {
             break;
         case 27: // Escape
             hide();
+            ret = false;
             break;
         default:
             // This catches cursor move due to keyboard events. no event for cursor movement itself
@@ -69,6 +70,14 @@ var completer = (function (input_element, dropdown, base_config) {
         case 38:
         case 40:
             return false;
+        case 9: // Tab
+            if (config.hideOnTab) {
+                hide();
+                console.log('hiding on tab');
+            } else {
+                console.log(config);
+            }
+            break;
         }
     });
 
@@ -76,6 +85,7 @@ var completer = (function (input_element, dropdown, base_config) {
         return {
             triggerStart: base && base.triggerStart || '#',
             triggerEnd: base && base.triggerEnd || ' ',
+            hideOnTab: base && base.hasOwnProperty('hideOnTab') ? base.hideOnTab : true,
         };
     }
 

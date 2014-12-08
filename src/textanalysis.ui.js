@@ -50,7 +50,7 @@ var typeselection = function TypeSelectionDialog() {
     return typeselection;
 }();
 
-var analysisCompleter = completer(element, $('#input-suggestion'));
+var analysisCompleter = completer(element, $('#input-suggestion'), {hideOnTab: false});
 
 function analyzeSentence(sentence, finalize)
 {
