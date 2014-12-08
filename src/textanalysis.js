@@ -384,7 +384,7 @@ var textAnalyser = function (newtext, finalize) {
          * - are not of type 'bubble'
          */
         var n_set = ret.node_set_add.filter(function(node) {
-                    return false == graph.hasNodeByName(node.name, "perm")
+                    return false == graph.hasNodeByNameAndNotState(node.name, "temp")
                         && node.type !== 'bubble';
                 });
 

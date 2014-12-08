@@ -696,6 +696,27 @@ function Graph() {
         return selected;
     }
 
+    function markRelated(names) {
+        removeRelated();
+        nodes.forEach(function (node) {
+            names.forEach(function (name) {
+                if (compareNames(node.name, name) && node.state != 'temp') {
+                    node.state = 'related';
+                }
+            });
+        });
+    }
+    this.markRelated = markRelated;
+
+    function removeRelated() {
+        nodes.forEach(function (node) {
+            if (node.state == 'related') {
+                node.state = 'perm';
+            }
+        });
+    }
+    this.removeRelated = removeRelated;
+
 }
 
 return {

@@ -57,7 +57,7 @@ function connectedComponent(nodes) {
 
 var node_selected = function(node) {
     return node.state == 'chosen' || node.state == 'enter' || node.state == 'exit' || node.state == 'selected'
-           || node.state == 'temp';
+           || node.state == 'temp' || node.state == 'related';
 }
 
 var selected_class = function(node) {
