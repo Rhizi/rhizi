@@ -491,7 +491,7 @@ function update_view__graph(no_relayout) {
             return selected_link_group.childElementCount + unselected_link_group.childElementCount;
         };
         // put back on top link group on top
-        moveToEnd(selected_link_group);
+        selected_link_group.parentNode.insertBefore(selected_link_group, bubble.nextSibling);
     })();
 
     nodetext = nodeEnter.insert("text")
