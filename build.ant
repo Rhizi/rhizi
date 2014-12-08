@@ -11,6 +11,9 @@
             <arg value="-avz" />
             <arg value="@{src}" />
             <arg value="@{dst}" />
+
+            <env key="RSYNC_CONNECT_PROG"
+                 value="ssh root@%H nc 127.0.0.1 873" />
          </exec>
       </sequential>
    </macrodef>
@@ -69,24 +72,22 @@
 
       <local name="src_server" />
       <local name="src_client" />
-      <local name="dstPath" />
       <local name="dstServer" />
+      <local name="module" />
       <property name="src_client" value="${rzRootDir}/rhizi-client" />
       <property name="src_server" value="${rzRootDir}/rhizi-server" />
-      <property name="dstPath" value="/srv/www/rhizi/rhizi.net" />
       <property name="dstServer" value="rz_0.unige.ch" />
+      <property name="module" value="rhizi.net" />
 
+      <rsync src="${src_server}/deploy-local/"
+             dst="rsync://${dstServer}/${module}/" />
+   
       <parallel>
-         <rsync src="${src_server}/deploy-local/"
-                dst="root@${dstServer}:${dstPath}" />
-
          <!-- apply production patches -->
          <rsync src="${src_server}/res/production-patch-set/rhizi-server.production.conf"
-                dst="root@${dstServer}:/etc/rhizi/rhizi-server.conf" />
+                dst="rsync://${dstServer}/${module}/etc/rhizi-server.conf" />
          <rsync src="${src_server}/res/production-patch-set/rz_config.js"
-                dst="root@${dstServer}:${dstPath}/static" />
-         <rsync src="${src_server}/res/production-patch-set/htpasswd.db"
-                dst="root@${dstServer}:${dstPath}/../auth/" />
+                dst="rsync://${dstServer}/${module}/static/" />
 
       </parallel>
    </target>
