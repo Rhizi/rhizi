@@ -455,16 +455,18 @@ function Graph() {
     };
 
     var hasNodeByName = function(name, state) {
-        var i;
-
-        for (i = 0 ; i < nodes.length; ++i) {
-            if (compareNames(nodes[i].name, name) && nodes[i].state === state) {
-                return true;
-            }
-        }
-        return false;
+        return nodes.filter(function (n) {
+            return compareNames(n.name, name) && n.state === state;
+        }).length > 0;
     }
     this.hasNodeByName = hasNodeByName;
+
+    var hasNodeByNameAndNotState = function(name, state) {
+        return nodes.filter(function(n) {
+            return compareNames(n.name, name) && n.state !== state;
+        }).length > 0;
+    }
+    this.hasNodeByNameAndNotState = hasNodeByNameAndNotState;
 
     var hasNode = function(id, state) {
         var i;
