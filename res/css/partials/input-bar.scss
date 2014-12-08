@@ -56,25 +56,26 @@
 }
 
 .suggestion{
+  position: relative;
   color: $dark-grey;
   max-height: 580px;
   overflow-y: scroll;
   font-size: $h3-size;
   list-style-type: none;
   width: inherit;
-  position: relative;
   margin-top: 6px;
   border: 1px solid $mid-grey;
   @include rz-box-sizing-border;
   background: white;
-  // this box should have a shadow but we need a js solution to hide it before its appears  - @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
+  z-index: 100;
+  @include rz-box-shadow(0px, 3px, 6px, 0px, rgba(0,0,0,0.3) );
 }
 
 .suggestion-item {
   padding: 6px 0px 6px 18px;
 }
 
-.suggestion .selected {
+.suggestion-item.selected, .suggestion-item:hover {
   padding-left: 16px;
   background-color: $light-grey;
   border-left: 2px solid $cyan;

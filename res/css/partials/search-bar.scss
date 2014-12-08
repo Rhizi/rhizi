@@ -1,6 +1,7 @@
 @import '../modules/mixins'; // For box-shadow
 
 .search-bar{
+  position: relative;
   width:100%;
   height:$four-baselines;
   background: white;
@@ -23,11 +24,28 @@
   background-repeat: no-repeat;
 }
 
-input {
+#search {
   font-family: $base-font-family;
   font-size: $h3-size;
   width: 80%;
 }
+
+#search-suggestion {
+  position: absolute;
+  width: 70%;
+  margin-left: $doc-margin;
+  top: $three-baselines + 6px;
+}
+
+#search-suggestion .suggestion-item {
+  padding: $one-baseline 0px $one-baseline $two-baselines;
+}
+
+#search-suggestion .suggestion-item.selected, #search-suggestion .suggestion-item:hover {
+  padding: $one-baseline 0px $one-baseline 22px;
+}
+
+
 
 .export {
   cursor: pointer;
