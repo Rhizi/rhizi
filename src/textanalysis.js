@@ -167,7 +167,7 @@ var textAnalyser = function (newtext, finalize) {
         ret.node_set_add.push(node);
     }
 
-    function addLink(src, dst, name, state) {
+    function __addLink(src, dst, name, state) {
         if (!src || !dst) {
             if (yell_bug) {
                 console.log('bug - adding link (' + src + ', ' + dst + ')');
@@ -299,9 +299,9 @@ var textAnalyser = function (newtext, finalize) {
             case NODE:
                 addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
                 if (!starGraph && nodeindex > 0) {
-                    addLink(token_set_new_node_names[nodeindex - 1],
-                            token_set_new_node_names[nodeindex],
-                            token_set_new_link_names[linkindex], typesetter);
+                    __addLink(token_set_new_node_names[nodeindex - 1],
+                              token_set_new_node_names[nodeindex],
+                              token_set_new_link_names[linkindex], typesetter);
                 }
                 nodeindex++;
                 break;
@@ -317,8 +317,8 @@ var textAnalyser = function (newtext, finalize) {
             typeStack[nodeindex] = selectedType();
             addNode("new node", typeStack[nodeindex], "temp");
             if (!starGraph && nodeindex > 0) {
-                addLink(token_set_new_node_names[nodeindex - 1], "new node",
-                        token_set_new_link_names[linkindex], "temp");
+                __addLink(token_set_new_node_names[nodeindex - 1], "new node",
+                          token_set_new_link_names[linkindex], "temp");
                 and_connect("new node");
             }
             ret.state = ANALYSIS_NODE_START;
@@ -327,9 +327,9 @@ var textAnalyser = function (newtext, finalize) {
             typeStack[nodeindex] = selectedType();
             addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
             if (!starGraph && nodeindex > 0) {
-                addLink(token_set_new_node_names[nodeindex - 1],
-                        token_set_new_node_names[nodeindex],
-                        token_set_new_link_names[linkindex], typesetter);
+                __addLink(token_set_new_node_names[nodeindex - 1],
+                          token_set_new_node_names[nodeindex],
+                          token_set_new_link_names[linkindex], typesetter);
                 and_connect(token_set_new_node_names[nodeindex]);
             }
             ret.state = ANALYSIS_NODE_START;
@@ -338,7 +338,7 @@ var textAnalyser = function (newtext, finalize) {
             linkindex++;
             addNode("new node", selectedType(), "temp");
             if (!starGraph) {
-                addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
+                __addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
                 and_connect("new node");
             }
             ret.state = ANALYSIS_LINK;
@@ -352,9 +352,9 @@ var textAnalyser = function (newtext, finalize) {
             if(token_set_new_link_names[x])if(token_set_new_link_names[x].replace(/ /g,"")!=="and"){
                 verb = token_set_new_link_names[x];
                 for(var y=0; y<x ;y++){
-                    addLink(token_set_new_node_names[y], node, verb, typesetter);
+                    __addLink(token_set_new_node_names[y], node, verb, typesetter);
                     for(var z=x; z<token_set_new_node_names.length ;z++){
-                        addLink(token_set_new_node_names[y], token_set_new_node_names[z], verb, typesetter);
+                        __addLink(token_set_new_node_names[y], token_set_new_node_names[z], verb, typesetter);
                     }
                 }
             }
@@ -369,7 +369,7 @@ var textAnalyser = function (newtext, finalize) {
     if (starGraph) {
         addNode(completeSentence, "chainlink", typesetter);
         for (n = 0; n < token_set_new_node_names.length; n++) {
-            addLink(token_set_new_node_names[n], completeSentence, "", typesetter);
+            __addLink(token_set_new_node_names[n], completeSentence, "", typesetter);
         }
     }
 
