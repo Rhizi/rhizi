@@ -127,8 +127,8 @@ def load_link_set_by_link_ptr_set():
 
         l_ptr_set = []
         for lptr_dict in l_ptr_set_raw:
-            src_id = lptr_dict.get('__src')
-            dst_id = lptr_dict.get('__dst')
+            src_id = lptr_dict.get('__src_id')
+            dst_id = lptr_dict.get('__dst_id')
             l_ptr_set += [Link.Link_Ptr(src_id=src_id, dst_id=dst_id) ]
 
         return l_ptr_set

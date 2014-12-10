@@ -426,8 +426,8 @@ class DBO_rz_clone(DB_op):
                         continue
 
                     l = l_tuple[1]
-                    l['__src'] = n['id']
-                    l['__dst'] = l_tuple[0]
+                    l['__src_id'] = n['id']
+                    l['__dst_id'] = l_tuple[0]
                     l['__label_set'] = [l_tuple[2]]  # box single value returned by type()
 
                     ret_l_set.append(l)

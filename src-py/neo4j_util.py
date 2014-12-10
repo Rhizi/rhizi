@@ -199,16 +199,16 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
         for link in l_set:
             __type_check_link(link)
 
-            n_src = link['__src']
-            n_dst = link['__dst']
+            src_id = link['__src_id']
+            dst_id = link['__dst_id']
 
             # TODO: use object based link representation
             prop_dict = link.copy()
-            del prop_dict['__dst']
-            del prop_dict['__src']
+            del prop_dict['__dst_id']
+            del prop_dict['__src_id']
 
-            q_params = {'src': { 'id': n_src} ,
-                        'dst': { 'id': n_dst} ,
+            q_params = {'src': { 'id': src_id} ,
+                        'dst': { 'id': dst_id} ,
                         'link_attr' : input_to_DB_property_map(prop_dict)}
             ret.append((q, q_params))
 
@@ -239,8 +239,8 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     return ret
 
 def __type_check_link(link):
-    assert link.has_key('__src')
-    assert link.has_key('__dst')
+    assert link.has_key('__src_id')
+    assert link.has_key('__dst_id')
 
 def __type_check_link_or_node_map(x_map):
     for k, v in x_map.iteritems():  # do some type sanity checking
