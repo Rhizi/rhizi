@@ -311,17 +311,14 @@ function Graph() {
                         + dst_name + ' (' + dst_id + ')');
             return;
         }
-        this.addLink(src_id, dst_id, name, state, drop_conjugator_links);
+        this.addLink(src_id, dst_id, name, state);
     }
 
-    function addLink(src_id, dst_id, name, state, drop_conjugator_links) {
+    function addLink(src_id, dst_id, name, state, peer_notify) {
         var src = find_node__by_id(src_id);
         var dst = find_node__by_id(dst_id);
         var found = findLink(src_id,dst_id,name);
 
-        if (drop_conjugator_links && name && (name.replace(/ /g,"") === "and")) {
-            state = "temp";
-        }
         if (undefined === src || undefined === dst) {
             console.log('addLink: undefined src / dst');
             return;

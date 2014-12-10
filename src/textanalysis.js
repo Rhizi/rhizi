@@ -189,6 +189,12 @@ var textAnalyser = function (newtext, finalize) {
         ret.link_set_add.push(link);
     }
 
+    function apply_conjugator_link_logic(link, drop_conjugator_links){
+        if (drop_conjugator_links && link.name && (link.name.replace(/ /g,"") === "and")) {
+            link.state = "temp";
+        }
+    }
+
     if (newtext.indexOf('#') == -1 || finalize) {
         lastnode = null;
     }
@@ -396,11 +402,11 @@ var textAnalyser = function (newtext, finalize) {
             }
 
             ret.for_each_link_add(function (link) {
+                apply_conjugator_link_logic(link, ret.drop_conjugator_links);
                 graph.addLinkByName(link.__src.name,
                                     link.__dst.name,
                                     link.name,
-                                    link.state,
-                                    ret.drop_conjugator_links);
+                                    link.state);
             });
         } else {
             // REINITIALISE GRAPH (DUMB BUT IT WORKS)
@@ -421,11 +427,11 @@ var textAnalyser = function (newtext, finalize) {
 
             ret.for_each_link_add(function (link) {
                 if (false == finalize || link.name !== 'and') {
+                    apply_conjugator_link_logic(link, ret.drop_conjugator_links);
                     graph.addLinkByName(link.__src,
                                         link.__dst,
                                         link.name,
-                                        link.state,
-                                        ret.drop_conjugator_links);
+                                        link.state);
                 }
             });
         }
