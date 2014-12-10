@@ -381,7 +381,7 @@ function Graph() {
     }
 
     this.editNameByName = function(old_name, new_name) {
-        var node = findNodeByName(old_name, null);
+        var node = findNodeByName(old_name);
 
         if (node === undefined) {
             console.log('editNameByName: error: cannot find node with name ' + old_name);
@@ -391,7 +391,7 @@ function Graph() {
     }
 
     this.editName = function(id, new_name) {
-        var index2 = findNodeByName(new_name, null);
+        var index2 = findNodeByName(new_name);
         var index = find_node__by_id(id);
         var acceptReplace=true;
 
@@ -572,10 +572,9 @@ function Graph() {
         return ret;
     }
 
-    var findNodeByName = function(name, state) {
-        state = state || null;
+    var findNodeByName = function(name) {
         for (var i = 0 ; i < nodes.length ; ++i) {
-            if (compareNames(nodes[i].name, name) || nodes[i].state === state) {
+            if (compareNames(nodes[i].name, name)) {
                 return nodes[i];
             }
         }
