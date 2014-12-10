@@ -333,6 +333,8 @@ class DBO_rm_node_set(DB_op):
         """
         remove node set
         """
+        assert len(id_set) > 0, __name__ + ': empty id set'
+
         super(DBO_rm_node_set, self).__init__()
 
         if rm_links:
@@ -348,7 +350,10 @@ class DBO_rm_node_set(DB_op):
                      'return {id_set}'
              ]
 
-        q = ' '.join(q_arr)  # TODO: use id param upon neo4j support: q_params = {'id_set': id_set}
+        q = ' '.join(q_arr)
+        q_params = {'id_set': id_set}
+        self.add_statement(q, q_params)
+
 class DBO_rm_link_set(DB_op):
     def __init__(self, id_set):
         """
