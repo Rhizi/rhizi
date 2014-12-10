@@ -35,7 +35,7 @@
    </target>
 
    <target name="deploy-local.clean">
-      <delete dir="deploy-local">
+      <delete dir="deploy-local" followsymlinks="false">
          <include name="**/*" />
       </delete>
    </target>
@@ -52,7 +52,6 @@
       <property name="src_server" value="${rzRootDir}/rhizi-server" />
       <property name="dst" value="${rzRootDir}/rhizi-server/deploy-local" />
 
-      <mkdir dir="${dst}/bin" />
       <mkdir dir="${dst}/static" />
 
       <parallel>
@@ -61,7 +60,10 @@
          <rsync src="${src_client}/res" dst="${dst}/static" />
          <rsync src="${src_client}/lib" dst="${dst}/static" />
 
-         <rsync src="${src_server}/src-py/" dst="${dst}/bin" />
+         <exec executable="/bin/ln">
+            <arg line="-rs -T ${src_server}/src-py ${dst}/bin" />
+         </exec>
+
          <rsync src="${src_server}/res/etc" dst="${dst}" />
          <rsync src="${src_server}/res/templates/" dst="${dst}/templates" />
       </parallel>
@@ -81,7 +83,7 @@
 
       <rsync src="${src_server}/deploy-local/"
              dst="rsync://${dstServer}/${module}/" />
-   
+
       <parallel>
          <!-- apply production patches -->
          <rsync src="${src_server}/res/production-patch-set/rhizi-server.production.conf"
@@ -90,6 +92,11 @@
                 dst="rsync://${dstServer}/${module}/static/" />
 
       </parallel>
+   </target>
+
+   <target name="deploy-remote.htpasswd.db" description="manual invocation">
+      <rsync src="${src_server}/res/production-patch-set/htpasswd.db"
+             dst="root@rz_0.unige.ch:/srv/www/rhizi/auth/" />
    </target>
 
    <target name="pkg-deb" depends="clean" description="package as .deb">
