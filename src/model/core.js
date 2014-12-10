@@ -39,6 +39,9 @@ define(['util'], function(util) {
 
     function Node() {
     }
+    Node.prototype.equals = function(other_node){
+        return this.id == other_node.id;
+    }
 
     function Link() {
     }
