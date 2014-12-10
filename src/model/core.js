@@ -65,11 +65,8 @@ define(['util'], function(util) {
             __set_obj_id(ret, node_spec.id);
         }
 
-        // name
-        if (undefined == node_spec.name) {
-            console.debug('create_node_from_spec: undefined name, falling back to \"\"');
-            node_spec.name = "";
-        }
+        util.assert(undefined != node_spec.name, 'create_node_from_spec: name missing');
+
         ret.name = node_spec.name;
 
         // type
@@ -140,16 +137,18 @@ define(['util'], function(util) {
     }
 
     function create_link_from_spec(src, dst, link_spec) {
-        if (undefined == src) {
-            console.error('create_link_from_spec: undefined: src');
-            return null;
-        }
-        if (undefined == dst) {
-            console.error('create_link_from_spec: undefined: dst');
-            return null;
+        var ret = new Link();
+
+        if (undefined != link_spec.id) {
+            // reuse id if present
+            __set_obj_id(ret, link_spec.id);
         }
 
-        var ret = new Link();
+        util.assert(undefined != src, 'create_link_from_spec: src missing');
+        util.assert(undefined != dst, 'create_link_from_spec: dst missing');
+        util.assert(undefined != src.id, 'create_link_from_spec: src missing id');
+        util.assert(undefined != dst.id, 'create_link_from_spec: dst missing id');
+
         ret.__src = src;
         ret.__dst = dst;
         ret.__type = 'textual_link';
