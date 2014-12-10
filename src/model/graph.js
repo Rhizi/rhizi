@@ -301,8 +301,9 @@ function Graph() {
     }
 
     this.addLinkByName = function(src_name, dst_name, name, state, drop_conjugator_links) {
-        var src = findNodeByName(src_name, null),
-            dst = findNodeByName(dst_name, null),
+
+        var src = findNodeByName(src_name),
+            dst = findNodeByName(dst_name),
             src_id = src ? src.id : null,
             dst_id = dst ? dst.id : null;
 
@@ -311,25 +312,43 @@ function Graph() {
                         + dst_name + ' (' + dst_id + ')');
             return;
         }
-        this.addLink(src_id, dst_id, name, state);
+
+        var link = model_core.create_link__set_random_id(src, dst, { name: name,
+                                                                     state: state });
+        this.addLink(link);
     }
 
-    function addLink(src_id, dst_id, name, state, peer_notify) {
-        var src = find_node__by_id(src_id);
-        var dst = find_node__by_id(dst_id);
-        var found = findLink(src_id,dst_id,name);
+    function addLink(link, peer_notify) {
 
-        if (undefined === src || undefined === dst) {
-            console.log('addLink: undefined src / dst');
-            return;
-        }
-        if (!found) {
-            var link = model_core.create_link__set_random_id(src, dst, { name: name, state: state });
+        util.assert(link instanceof model_core.Link);
+
+        peer_notify = undefined === peer_notify ? true : peer_notify;
+
+        var existing_link = findLink(link.__src.id, link.__dst.id, link.name);
+
+        if (undefined == existing_link) {
+
             links.push(link);
+
+            if (rz_config.backend_enabled && peer_notify){
+                var topo_diff = new model_diff.new_topo_diff({
+                    link_set_add : [link].map(model_util.adapt_format_write_link),
+                });
+                var on_success = function(){
+                    // FIXME: handle possible outcomes:
+                    // - id merge: link already exists -> update id
+                    // - attr-merge: link already exists -> merge attrs
+                };
+                var on_error = function(){
+                    // TODO: add problem emblem to node
+                };
+                rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
+            }
+
             diffBus.push({links: {add: [link]}});
         } else {
-            found.name = name;
-            found.state = state;
+            existing_link.name = link.name;
+            existing_link.state = link.state;
         }
     }
     this.addLink = addLink;

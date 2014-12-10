@@ -185,7 +185,7 @@ var textAnalyser = function (newtext, finalize) {
         }
         link_hash[src][dst] = 1;
 
-        var link = model_core.create_link_from_spec(src, dst, {'name':name, 'state':state});
+        var link = {'__src': src, '__dst':dst, 'name':name, 'state':state}; // can't use model_core.create_link_from_spec as src,dst are only names
         ret.link_set_add.push(link);
     }
 
