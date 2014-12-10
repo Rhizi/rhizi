@@ -321,7 +321,10 @@ class DBO_match_link_id_set(DB_op):
         """
         super(DBO_match_link_id_set, self).__init__()
 
-        q = "match ()-[r{filter_label} {filter_attr}]->() return id(r)"
+        q_arr = ['match ()-[r{filter_label} {filter_attr}]->()',
+                 'return id(r)'
+        ]
+        q = ' '.join(q_arr)
         q = cfmt(q, filter_label="" if not filter_label else ":" + filter_label)
         q = cfmt(q, filter_attr=db_util.gen_clause_attr_filter_from_filter_attr_map(filter_attr_map))
         q_params = {k: v[0] for (k, v) in filter_attr_map.items()}  # pass on only first value from each value set
