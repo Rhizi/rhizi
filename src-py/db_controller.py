@@ -130,13 +130,9 @@ class DBO_topo_diff_commit(DB_composed_op):
     def __init__(self, topo_diff):
         super(DBO_topo_diff_commit, self).__init__()
 
-        # TODO rm link set
-        # TODO rm node set
-        assert 0 == len(topo_diff.link_set_rm), 'unsupported'
-
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add)
-        l_rm_set = []
+        l_rm_set = topo_diff.link_set_rm
         n_rm_set = topo_diff.node_set_rm
 
         #
@@ -151,7 +147,8 @@ class DBO_topo_diff_commit(DB_composed_op):
             self.add_sub_op(op)
 
         if len(l_rm_set) > 0:
-            pass
+            op = DBO_rm_link_set(l_rm_set)
+            self.add_sub_op(op)
 
         if len(n_rm_set) > 0:
             op = DBO_rm_node_set(n_rm_set)
@@ -351,6 +348,25 @@ class DBO_rm_node_set(DB_op):
              ]
 
         q = ' '.join(q_arr)  # TODO: use id param upon neo4j support: q_params = {'id_set': id_set}
+class DBO_rm_link_set(DB_op):
+    def __init__(self, id_set):
+        """
+        remove link set
+
+        [!] when removing as a result of node removal, use DBO_rm_node_set 
+        along with rm_links=True
+        """
+        assert len(id_set) > 0, __name__ + ': empty id set'
+
+        super(DBO_rm_link_set, self).__init__()
+
+        q_arr = ['match ()-[r]->()',
+                 'where r.id in {id_set}',
+                 'delete r',
+                 'return {id_set}'
+         ]
+
+        q = ' '.join(q_arr)
         q_params = {'id_set': id_set}
         self.add_statement(q, q_params)
 
