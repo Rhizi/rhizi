@@ -26,8 +26,8 @@ class TestDBController(unittest.TestCase):
                          ]
             }
 
-    l_map = { 'Knows' : [{'__src': 'person_00', '__dst': 'skill_00'},
-                         {'__src': 'person_00', '__dst': 'skill_01'}] }
+    l_map = { 'Knows' : [Link.link_ptr('person_00', 'skill_00'),
+                         Link.link_ptr('person_00', 'skill_01')] }
 
     @classmethod
     def setUpClass(self):
@@ -212,8 +212,8 @@ class TestDBController(unittest.TestCase):
         n_set = [{'__type': n_T, 'id': n_0_id },
                  {'__type': n_T, 'id': n_1_id },
                  {'__type': n_T, 'id': n_2_id }]
-        l_set = [{'__type': n_T, '__src': n_0_id, '__dst': n_1_id},
-                 {'__type': n_T, '__src': n_1_id, '__dst': n_0_id}]
+        l_set = [{'__type': n_T, '__src_id': n_0_id, '__dst_id': n_1_id},
+                 {'__type': n_T, '__src_id': n_1_id, '__dst_id': n_0_id}]
 
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
@@ -290,8 +290,8 @@ class TestDBController(unittest.TestCase):
                  {'__type': n_T, 'id': n_1_id },
                  {'__type': n_T, 'id': n_2_id },
                  {'__type': n_T, 'id': n_3_id }]
-        l_set = [{'__type': n_T, '__src': n_2_id, '__dst': n_2_id},
-                 {'__type': n_T, '__src': n_2_id, '__dst': n_3_id}]
+        l_set = [{'__type': n_T, '__src_id': n_2_id, '__dst_id': n_2_id},
+                 {'__type': n_T, '__src_id': n_2_id, '__dst_id': n_3_id}]
 
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
