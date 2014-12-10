@@ -94,12 +94,15 @@ function Graph() {
 
         peer_notify = undefined === peer_notify ? true : peer_notify;
 
+        var cascade_link_rm_set = []; // track cascading link removals
         for (var j = 0; j < ns.length; j++) {
             var n = ns[j];
             var i = 0;
             while (i < links.length) {
-                if ((links[i]['__src'] === n) || (links[i]['__dst'] == n)) {
+                var link = links[i];
+                if ((link['__src'].equals(n)) || (link['__dst'].equals(n))) { // compare by id
                     links.splice(i, 1);
+                    cascade_link_rm_set.push(link);
                 }
                 else {
                     i++;
@@ -117,6 +120,7 @@ function Graph() {
         if (rz_config.backend_enabled && peer_notify){
             var topo_diff = new model_diff.new_topo_diff({
                 node_set_rm : ns.map(function(n){ return n.id; }),
+                link_set_rm : cascade_link_rm_set.map(function(l){ return l.id; }),
             });
             var on_success = function(){
                 // FIXME: handle possible outcomes:
