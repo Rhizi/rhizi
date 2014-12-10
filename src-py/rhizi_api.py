@@ -43,7 +43,9 @@ def sanitize_input__link(l):
     """
     provide a control point as to which node fields are persisted
     """
-    pass
+    assert None != l['id'], 'invalid input: link: missing id'
+    assert None != l['__src_id'], 'invalid input: link: missing src id'
+    assert None != l['__dst_id'], 'invalid input: link: missing dst id'
 
 def sanitize_input__topo_diff(topo_diff):
     for n in topo_diff.node_set_add:
