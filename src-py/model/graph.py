@@ -46,7 +46,7 @@ class Topo_Diff(object):
         self.link_set_add = link_set_add
 
     def __str__(self):
-        return __name__ + ': ' + ', '.join('%s: %d items' % (k, len(v)) for k, v in self.__dict__.items())
+        return __name__ + ': ' + ', '.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
 
     def check_validity(self, topo_diff_dict):
         """
