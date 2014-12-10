@@ -633,13 +633,28 @@ function Graph() {
 
             data['node_set'].map(function(n_spec){
                 var n_spec = model_util.adapt_format_read_node(n_spec);
+
+                util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
+
                 var n = __addNode(n_spec, false, false);
                 n_set.push(n);
             });
 
             data['link_set'].map(function(l_spec){
-                var l_spec = model_util.adapt_format_read_link(l_spec);
-                var l = addLink(l_spec.__src_id, l_spec.__dst_id, l_spec.name, "perm");
+                var l_ptr = model_util.adapt_format_read_link_ptr(l_spec);
+
+                util.assert(undefined != l_ptr.id, 'load_from_backend: l_ptr missing id');
+
+                // resolve link ptr
+                var src = find_node__by_id(l_ptr.__src_id),
+                    dst = find_node__by_id(l_ptr.__dst_id);
+
+                // cleanup & reuse as link_spec
+                delete l_ptr.__src_id;
+                delete l_ptr.__dst_id;
+                var link_spec = l_ptr;
+                var link = model_core.create_link_from_spec(src, dst, link_spec);
+                var l = addLink(link, false);
                 l_set.push(l);
             });
 
