@@ -344,7 +344,8 @@ class DBO_rm_node_set(DB_op):
         else:
             q_arr = ['match (n)',
                      'where n.id in {id_set}',
-                     'delete n'
+                     'delete n',
+                     'return {id_set}'
              ]
 
         q = ' '.join(q_arr)  # TODO: use id param upon neo4j support: q_params = {'id_set': id_set}
