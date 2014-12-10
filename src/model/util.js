@@ -32,9 +32,9 @@ function($, model_diff) {
             '__label_set' : [n_raw.type],
         }, n_raw);
 
-        delete ret.type;
         delete ret.state;
         delete ret.status
+        delete ret.type;
 
         return ret
     }
@@ -42,21 +42,19 @@ function($, model_diff) {
     /**
      * read by adapting from backend format
      */
-    function adapt_format_read_link(l_raw) {
+    function adapt_format_read_link_ptr(l_raw) {
         var ret;
 
         ret = $.extend({
-            '__src_id' : l_raw['__src'],
-            '__dst_id' : l_raw['__dst'],
+            '__src_id' : l_raw['__src_id'],
+            '__dst_id' : l_raw['__dst_id'],
             'type' : l_raw['__label_set'][0].toLowerCase(), // discard all
             // labels except
-            'state' : 'temp',
+            'state' : 'perm',
         }, l_raw);
 
         ret['name'] = ret['type'];
 
-        delete ret.__src;
-        delete ret.__dst;
         delete ret.__type;
 
         return ret;
@@ -67,14 +65,17 @@ function($, model_diff) {
      */
     function adapt_format_write_link(l_raw) {
         var ret = $.extend({
-            '__src_id' : l_raw.sourceId,
-            '__dst_id' : l_raw.targetId,
-            '__label_set' : ['textual_link'],
+            '__src_id' : l_raw.source.id,
+            '__dst_id' : l_raw.target.id,
+            '__label_set' : [l_raw.name],
         }, l_raw);
 
-        delete ret.source;
-        delete ret.target;
+        delete ret.__dst;
+        delete ret.__src;
+        delete ret.source; // introduced by d3 accessor methods
         delete ret.state;
+        delete ret.status;
+        delete ret.target;
 
         return ret;
     }
@@ -110,7 +111,7 @@ function($, model_diff) {
 
     return {
         adapt_format_read_node : adapt_format_read_node,
-        adapt_format_read_link : adapt_format_read_link,
+        adapt_format_read_link_ptr : adapt_format_read_link_ptr,
         adapt_format_write_node : adapt_format_write_node,
         adapt_format_write_link : adapt_format_write_link,
         adapt_format_write_topo_diff : adapt_format_write_topo_diff,
