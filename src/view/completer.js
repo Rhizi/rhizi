@@ -139,13 +139,13 @@ var completer = (function (input_element, dropdown, base_config) {
         if (string.length < minimum_length) {
             return;
         }
-        // [hash] [cursor] [space/end]
         completions(string).forEach(function(name) {
-            dropdown.append($('<div class="suggestion-item">' + name + '</div>'));
-        });
-        dropdown.children().each(function (index, elem) {
-            elem.onclick = function() { _applySuggestion(index); };
-            input_element.focus();
+            var suggestion = $('<div class="suggestion-item">' + name + '</div>');
+            suggestion.on('click', function(e) {
+                _applySuggestion(name);
+                input_element.focus();
+            });
+            dropdown.append(suggestion);
         });
         show();
     }
@@ -176,6 +176,11 @@ var completer = (function (input_element, dropdown, base_config) {
         _move_option(dropdown.children().length - 1, dropdown.children().length - 1);
     }
     function _get_option(index) {
+        if (dropdown.children().length <= index) {
+            console.log('error: dropdown does not contain index ' + index +
+                        ', it has ' + dropdown.children().length + ' elements');
+            return '';
+        }
         var s = dropdown.children()[index].innerText;
         if (s.indexOf(' ') != -1) {
             return '"' + s + '"';
@@ -194,9 +199,9 @@ var completer = (function (input_element, dropdown, base_config) {
         }
         selected_index = new_index;
     }
-    function _applySuggestion(index) {
+    function _applySuggestion(str) {
         var cur = input_element.val(),
-            start = cur.slice(0, completion_start) + _get_option(index) + ' ';
+            start = cur.slice(0, completion_start) + str + ' ';
         input_element.val(start + cur.slice(completion_end));
         setCaret(input_element, start.length);
         oninput('', 0);
@@ -205,7 +210,7 @@ var completer = (function (input_element, dropdown, base_config) {
         if (selected_index == -1) {
             return false;
         }
-        _applySuggestion(selected_index);
+        _applySuggestion(_get_option(selected_index));
         return true;
     }
 
