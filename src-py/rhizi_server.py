@@ -77,6 +77,11 @@ class Config(object):
 
         ret = Config()
         ret.__dict__ = cfg  # allows setting of @property attributes
+
+        # validate config
+        if False == os.path.isabs(ret.root_path):
+            ret.root_path = os.path.abspath(ret.root_path)
+
         return ret
 
     def __str__(self):
