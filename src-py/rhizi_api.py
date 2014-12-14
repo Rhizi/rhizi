@@ -179,9 +179,14 @@ def diff_commit__attr():
     """
     commit a graph attribute diff
     """
-    attr_diff = request.get_json()['attr_diff']
-    __sanitize_input(attr_diff)
+    def sanitize_input(req):
+        attr_diff_dict = request.get_json()['attr_diff']
+        attr_diff = Attr_Diff.from_json_dict(attr_diff_dict)
 
+        sanitize_input__attr_diff(attr_diff)
+        return attr_diff;
+
+    attr_diff = sanitize_input(request)
     op = dbc.DBO_attr_diff_commit(attr_diff)
     return __common_exec(op)
 

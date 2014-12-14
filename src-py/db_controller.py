@@ -161,10 +161,10 @@ class DBO_attr_diff_commit(DB_op):
     def __init__(self, attr_diff):
         super(DBO_attr_diff_commit, self).__init__()
 
-        for id_attr, n_attr_diff in attr_diff.items():
+        for id_attr, n_attr_diff in attr_diff.type__node.items():
             # TODO parameterize multiple attr removal
-            r_attr_set = n_attr_diff['attr_remove']
-            w_attr_set = n_attr_diff['attr_write']
+            r_attr_set = n_attr_diff['__attr_remove']
+            w_attr_set = n_attr_diff['__attr_write']
 
             assert len(r_attr_set) > 0 or len(w_attr_set) > 0
 
@@ -183,6 +183,9 @@ class DBO_attr_diff_commit(DB_op):
 
             q = " ".join(q_arr)
             self.add_statement(q, q_param_set)
+
+        for id_attr, n_attr_diff in attr_diff.type__link.items():
+            pass  # TODO: handl link attr_diffs
 
     def process_result_set(self):
         ret = {}

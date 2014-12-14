@@ -5,31 +5,58 @@ class Attr_Diff(dict):
     changed or removed
     
     Example:
-            attr_diff = {n_id: {'attr_write': {'attr_0': 0,
-                                               'attr_1': 'a'},
-                                'attr_remove': ['attr_2'] }
+            attr_diff = {'__type_node' : {n_id: {'__attr_write': {'attr_0': 0,
+                                                                  'attr_1': 'a'},
+                                                '__attr_remove': ['attr_2'] }}
+                         '__type_link' : {l_id: ... }
                         }
     """
     def __init__(self):
-        pass
+        self['__type_node'] = {}
+        self['__type_link'] = {}
 
     def init_node_attr_diff(self, n_id):
-        ret = {'attr_write': {},
-                      'attr_remove': []}
-        self[n_id] = ret
+        ret = {'__attr_write': {},
+               '__attr_remove': []}
+        self['__type_node'][n_id] = ret
         return ret
 
+    @staticmethod
+    def from_json_dict(json_dict):
+        ret = Attr_Diff()
+        for obj_type in ret.keys():
+            obj_ad_set = json_dict.get(obj_type)
+            if None != obj_ad_set:
+                for o_id, ad in obj_ad_set.items():
+                    if None != ad.get('__attr_write'):
+                        for k, v in ad['__attr_write'].items():
+                            ret.add_node_attr_write(o_id, k, v)
+                    if None != ad.get('__attr_remove'):
+                        for k in ad['__attr_remove']:
+                            ret.add_node_attr_rm(o_id, k)
+        return ret
+
+    @property
+    def type__node(self):
+        return self['__type_node']
+
+    @property
+    def type__link(self):
+        return self['__type_link']
+
     def add_node_attr_write(self, n_id, attr_name, attr_val):
-        n_attr_diff = self.get(n_id)
+
+
+        n_attr_diff = self['__type_node'].get(n_id)
         if None == n_attr_diff:
             n_attr_diff = self.init_node_attr_diff(n_id)
-        n_attr_diff['attr_write'][attr_name] = attr_val
+        n_attr_diff['__attr_write'][attr_name] = attr_val
 
     def add_node_attr_rm(self, n_id, attr_name):
-        n_attr_diff = self.get(n_id)
+        n_attr_diff = self['__type_node'].get(n_id)
         if None == n_attr_diff:
             n_attr_diff = self.init_node_attr_diff(n_id)
-        n_attr_diff['attr_remove'].append(attr_name)
+        n_attr_diff['__attr_remove'].append(attr_name)
 
 class Topo_Diff(object):
     """
