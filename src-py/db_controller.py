@@ -344,7 +344,8 @@ class DBO_rm_node_set(DB_op):
             q_arr = ['match (n)',
                      'where n.id in {id_set}',
                      'optional match (n)-[r]-()',
-                     'delete n,r'
+                     'delete n,r',
+                     'return {id_set}'
              ]
         else:
             q_arr = ['match (n)',
