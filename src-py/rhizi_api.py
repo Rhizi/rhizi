@@ -53,6 +53,9 @@ def sanitize_input__topo_diff(topo_diff):
     for l in topo_diff.link_set_add:
         sanitize_input__link(l)
 
+def sanitize_input__attr_diff(attr_diff):
+    pass  # TODO: impl
+
 def __response_wrap(data=None, error=None):
     """
     wrap response data/errors as dict - this should always be used when returning
