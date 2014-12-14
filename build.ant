@@ -9,6 +9,7 @@
    <attribute name="extraOpts" default="" />
    <sequential>
       <exec dir="${basedir}" executable="/usr/bin/rsync" >
+         <arg line="-avz @{extraOpts}" />
          <arg value="@{src}" />
          <arg value="@{dst}" />
 
