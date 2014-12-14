@@ -23,6 +23,8 @@
    <property name="pkg_name" value="rhizi-server" />
    <property name="pkg_version" value="0.1.0" />
    <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
+   <property name="deployDirLocal"
+             value="${rzRootDir}/rhizi-server/deploy-local" />
 
    <fail unless="rzRootDir"
          message="'rzRootDir' arg missing - must point to root rhizi code dir" />
@@ -52,7 +54,7 @@
 
       <property name="src_client" value="${rzRootDir}/rhizi-client" />
       <property name="src_server" value="${rzRootDir}/rhizi-server" />
-      <property name="dst" value="${rzRootDir}/rhizi-server/deploy-local" />
+      <property name="dst" value="${deployDirLocal}" />
 
       <mkdir dir="${dst}/static" />
 
