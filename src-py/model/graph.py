@@ -83,7 +83,7 @@ class Topo_Diff(object):
         pass
 
     @staticmethod
-    def from_dict(topo_diff_dict):
+    def from_json_dict(json_dict):
         """
         construct from dict - no node/link constructor set must be provided
         """
@@ -92,7 +92,7 @@ class Topo_Diff(object):
         # merge keys - this allows constructor argument omission (link_set_rm,
         # node_set_rm, etc.) such as when constructing from POST JSON data
         for k, _ in ret.__dict__.items():
-            v = topo_diff_dict.get(k)
+            v = json_dict.get(k)
             if None != v:
                 ret.__dict__[k] = v
         return ret
