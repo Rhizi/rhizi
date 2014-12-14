@@ -7,7 +7,15 @@ import neo4j_util as db_util
 log = logging.getLogger('rhizi')
 
 class DB_Driver_Base():
-    pass
+
+    def log_committed_queries(self, statement_set):
+        for sp_dict in statement_set['statements']:
+            if None != sp_dict['parameters']:
+                msg = '\tq: {0}\n\tp: {1}'.format(sp_dict['statement'],
+                                                  sp_dict['parameters'])
+            else:
+                msg = '\tq: {0}'.format(sp_dict['statement'])
+            log.debug(msg)
 
 class DB_Driver_Embedded(DB_Driver_Base):
     def __init__(self, db_base_url):
@@ -26,10 +34,6 @@ class DB_Driver_Embedded(DB_Driver_Base):
 
     def commit_tx(self, op):
         pass
-
-    def log_committed_queries(self, statement_set):
-        for sp_dict in statement_set['statements']:
-            log.debug('\tq: {0}'.format(sp_dict['statement']))
 
 class DB_Driver_REST(DB_Driver_Base):
     def __init__(self, db_base_url):
@@ -84,8 +88,4 @@ class DB_Driver_REST(DB_Driver_Base):
             return ret
         except Exception as e:
             raise Exception('failed to commit transaction:' + e.message)
-
-    def log_committed_queries(self, statement_set):
-        for sp_dict in statement_set['statements']:
-            log.debug('\tq: {0}'.format(sp_dict['statement']))
 
