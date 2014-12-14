@@ -3,20 +3,21 @@
 -->
 <project name="rhizi-server" default="pkg-deb">
 
-   <macrodef name="rsync">
-      <attribute name="src" />
-      <attribute name="dst" />
-      <sequential>
-         <exec dir="${basedir}" executable="/usr/bin/rsync">
-            <arg value="-avz" />
-            <arg value="@{src}" />
-            <arg value="@{dst}" />
+<macrodef name="rsync">
+   <attribute name="src" />
+   <attribute name="dst" />
+   <attribute name="extraOpts" default="" />
+   <sequential>
+      <exec dir="${basedir}" executable="/usr/bin/rsync" >
+         <arg value="@{src}" />
+         <arg value="@{dst}" />
 
-            <env key="RSYNC_CONNECT_PROG"
-                 value="ssh root@%H nc 127.0.0.1 873" />
-         </exec>
-      </sequential>
-   </macrodef>
+         <!-- note: RSYNC_CONNECT_PROG has not effect when dst is local dir path -->
+         <env key="RSYNC_CONNECT_PROG"
+              value="ssh root@%H nc 127.0.0.1 873" />
+      </exec>
+   </sequential>
+</macrodef>
 
    <property name="pkg_name" value="rhizi-server" />
    <property name="pkg_version" value="0.1.0" />
