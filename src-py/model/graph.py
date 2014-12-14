@@ -46,6 +46,7 @@ class Attr_Diff(dict):
 
     def add_node_attr_write(self, n_id, attr_name, attr_val):
 
+        assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to write to \'id\' attribute'
 
         n_attr_diff = self['__type_node'].get(n_id)
         if None == n_attr_diff:
