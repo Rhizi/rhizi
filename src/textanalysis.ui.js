@@ -130,6 +130,8 @@ return {
             case 13:
                 if (!analysisCompleter.handleEnter()) {
                     submitNewSentence();
+                } else {
+                    analyzeSentence(element.val(), false);
                 }
                 ret = false;
                 break;
