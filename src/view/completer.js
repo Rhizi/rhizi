@@ -181,7 +181,8 @@ var completer = (function (input_element, dropdown, base_config) {
                         ', it has ' + dropdown.children().length + ' elements');
             return '';
         }
-        var s = dropdown.children()[index].innerText;
+        var e = dropdown.children()[index],
+            s = e.innerText || e.textContent;
         if (s.indexOf(' ') != -1) {
             return '"' + s + '"';
         }
