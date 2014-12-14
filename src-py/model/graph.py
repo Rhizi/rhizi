@@ -59,6 +59,12 @@ class Attr_Diff(dict):
             n_attr_diff = self.init_node_attr_diff(n_id)
         n_attr_diff['__attr_remove'].append(attr_name)
 
+    def add_link_attr_write(self, l_id, attr_name, attr_val):
+        assert False, 'unimplemented'
+
+    def add_link_attr_rm(self, l_id, attr_name):
+        assert False, 'unimplemented'
+
 class Topo_Diff(object):
     """
     Represents a change to the graph topology
