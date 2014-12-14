@@ -39,8 +39,12 @@
    </target>
 
    <target name="deploy-local.clean">
-      <delete dir="deploy-local" followsymlinks="false">
-         <include name="**/*" />
+      <!-- bin/ -> link: avoid specifying followsymlinks on the following delete task -->
+      <symlink action="delete" link="deploy-local/bin" />
+      <delete verbose="true" includeemptydirs="true">
+         <fileset dir="${deployDirLocal}"
+                  includes="**/*"
+                  defaultexcludes="false" />
       </delete>
    </target>
 
@@ -64,9 +68,10 @@
          <rsync src="${src_client}/res" dst="${dst}/static" />
          <rsync src="${src_client}/lib" dst="${dst}/static" />
 
-         <exec executable="/bin/ln">
-            <arg line="-rs -T ${src_server}/src-py ${dst}/bin" />
-         </exec>
+         <symlink action="single"
+                  overwrite="true"
+                  link="${dst}/bin"
+                  resource="${src_server}/src-py" />
 
          <rsync src="${src_server}/res/etc" dst="${dst}" />
          <rsync src="${src_server}/res/templates/" dst="${dst}/templates" />
@@ -85,7 +90,9 @@
       <property name="dstServer" value="rz_0.unige.ch" />
       <property name="module" value="rhizi.net" />
 
-      <rsync src="${src_server}/deploy-local/"
+      <!-- -l: traverse bin/ -> ../src-py link -->
+      <rsync src="${deployDirLocal}/"
+             extraopts="-lL"
              dst="rsync://${dstServer}/${module}/" />
 
       <parallel>
