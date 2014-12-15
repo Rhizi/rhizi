@@ -165,8 +165,11 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     __type_check_link_or_node_map(node_map)
 
     ret = []
-    for n_type, n_set in node_map.items():
-        q_arr = ['create (n:%s {node_attr})' % (n_type),
+    for label, n_set in node_map.items():
+
+        assert len(label) > 2 and label[0].isupper() and label[1:].islower(), 'malformed label: ' + label
+
+        q_arr = ['create (n:%s {node_attr})' % (label),
                  'return n.id'
                  ]
 
