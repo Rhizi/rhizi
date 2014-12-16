@@ -686,8 +686,8 @@ function Graph() {
             var l_set = []; // added link set
             var len;
 
-            data['node_set'].map(function(n_spec){
-                var n_spec = model_util.adapt_format_read_node(n_spec);
+            data['node_set'].map(function(n_spec) {
+                n_spec = model_util.adapt_format_read_node(n_spec);
 
                 util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
 
