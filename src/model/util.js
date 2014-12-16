@@ -1,11 +1,20 @@
 "use strict"
 
 /**
- * model utility functions:
- *    - convert from/to client/backend data representations
+ * model utility functions: - convert from/to client/backend data
+ * representations
  */
-define(['jquery', 'model/diff'],
-function($, model_diff) {
+define([ 'jquery', 'model/diff' ], function($, model_diff) {
+
+    function __sanitize_label__write(label_str){
+        var ret = label_str[0].toUpperCase() +
+                  label_str.substring(1).toLowerCase();
+        return ret;
+    }
+
+    function __sanitize_label__read(label_str){
+        return label_str.toLowerCase();
+    }
 
     /**
      * read by adapting from backend format
@@ -14,8 +23,10 @@ function($, model_diff) {
         var ret;
 
         ret = $.extend({
-            'type' : n_raw['__label_set'][0].toLowerCase(), // discard all
-            // labels except
+            // type:
+            // - discard all but first label
+            // - adjust to lowercase
+            'type' : __sanitize_label__read(n_raw['__label_set'][0]),
             'state' : 'perm',
         }, n_raw);
 
@@ -29,8 +40,9 @@ function($, model_diff) {
      */
     function adapt_format_write_node(n_raw) {
         var ret = $.extend({
-            '__label_set' : [n_raw.type],
         }, n_raw);
+
+        ret['__label_set'] = [__sanitize_label__write(n_raw.type)];
 
         delete ret.state;
         delete ret.status
@@ -48,14 +60,16 @@ function($, model_diff) {
         ret = $.extend({
             '__src_id' : l_raw['__src_id'],
             '__dst_id' : l_raw['__dst_id'],
-            'type' : l_raw['__label_set'][0].toLowerCase(), // discard all
-            // labels except
+            // type:
+            // - discard all but first label
+            // - adjust to lowercase
+            '__type' : __sanitize_label__read(l_raw['__label_set'][0]),
             'state' : 'perm',
         }, l_raw);
 
         ret['name'] = ret['type'];
 
-        delete ret.__type;
+        delete ret.__label_set;
 
         return ret;
     }
@@ -67,8 +81,9 @@ function($, model_diff) {
         var ret = $.extend({
             '__src_id' : l_raw.source.id,
             '__dst_id' : l_raw.target.id,
-            '__label_set' : [l_raw.name],
         }, l_raw);
+
+        ret['__label_set'] = [__sanitize_label__write(l_raw.__type)];
 
         delete ret.__dst;
         delete ret.__src;
