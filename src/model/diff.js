@@ -88,7 +88,7 @@ define([],
                 return this.init_attr_diff('link', id);
             }
 
-            Attr_Diff.prototype.add_attr_write_node = function(n_id, attr_name,
+            Attr_Diff.prototype.add_node_attr_write = function(n_id, attr_name,
                     attr_val) {
 
                 if (undefined == this.__type_node[n_id]) {
@@ -98,7 +98,7 @@ define([],
                 return this;
             }
 
-            Attr_Diff.prototype.add_attr_rm_node = function(n_id, attr_name) {
+            Attr_Diff.prototype.add_node_attr_rm = function(n_id, attr_name) {
                 if (undefined == this[n_id]) {
                     this.init_attr_diff(n_id);
                 }
