@@ -60,7 +60,7 @@ define(['rz_config'], function(rz_config) {
                 data : JSON.stringify(post_dict),
             };
 
-            return ajax_rs('/graph/attr-diff-commit', req_opts, on_success,
+            return ajax_rs('/graph/diff-commit-attr', req_opts, on_success,
                     on_error);
         }
 
