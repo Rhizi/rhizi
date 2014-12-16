@@ -109,8 +109,9 @@ function on_keyup(f) {
 return {
     show: show,
     hide: hide,
-    on_submit: on_submit,
+    on_save: on_save,
     on_delete: on_delete,
+    on_keyup: on_keyup,
 };
 
 });
