@@ -58,20 +58,18 @@ define([],
              * node,link types are supported
              */
             function Attr_Diff(obj_spec) {
-                this.__type_node = {}
-                this.__type_link = {}
+                this.__type_node = {};
+                this.__type_link = {};
             }
 
-            Attr_Diff.prototype.init_attr_diff = function(type, id) {
+            Attr_Diff.prototype.init_attr_diff = function(type_name, id) {
 
-                if ('node' != type && 'link' != type) {
-                    console
-                            .error('attempt to init attribute diff for unsupported type: '
-                                    + type);
+                if ('node' != type_name && 'link' != type_name) {
+                    console.error('attempt to init attribute diff for unsupported type: ' + type_name);
                     return;
                 }
 
-                var type_field = '__type_' + type;
+                var type_field = '__type_' + type_name;
                 this[type_field][id] = {
                     '__attr_write' : {},
                     '__attr_remove' : []
@@ -103,6 +101,24 @@ define([],
                     this.init_attr_diff(n_id);
                 }
                 this.__type_node[n_id].__attr_remove.push(attr_name);
+                return this;
+            }
+
+            Attr_Diff.prototype.add_link_attr_write = function(l_id, attr_name,
+                    attr_val) {
+
+                if (undefined == this.__type_link[l_id]) {
+                    this.init_attr_diff_link(l_id);
+                }
+                this.__type_link[l_id].__attr_write[attr_name] = attr_val;
+                return this;
+            }
+
+            Attr_Diff.prototype.add_link_attr_rm = function(l_id, attr_name) {
+                if (undefined == this[l_id]) {
+                    this.init_attr_diff(l_id);
+                }
+                this.__type_link[l_id].__attr_remove.push(attr_name);
                 return this;
             }
 
