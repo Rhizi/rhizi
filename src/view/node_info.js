@@ -16,21 +16,21 @@ function _get_form() {
     };
 }
 
-internal.edit_tab.get('node', "#editbox").submit(function(e) {
-    if (submit_callback) {
-        return submit_callback(e, _get_form());
-    }
-    console.log('bug: edit tab submit called with no callback set');
-    e.preventDefault();
-})
+//internal.edit_tab.get('node', "#editbox").submit(function(e) {
+//    if (submit_callback) {
+//        return submit_callback(e, _get_form_data());
+//    }
+//    console.log('bug: edit tab submit called with no callback set');
+//    e.preventDefault();
+//})
 
-internal.edit_tab.get('node', "#deletenode").click(function(e) {
-    if (delete_callback) {
-        return delete_callback(e, _get_form());
-    }
-    console.log('bug: edit tab delete called with no callback set');
-    e.preventDefault();
-});
+//internal.edit_tab.get('node', "#deletenode").click(function(e) {
+//    if (delete_callback) {
+//        return delete_callback(e, _get_form_data());
+//    }
+//    console.log('bug: edit tab delete called with no callback set');
+//    e.preventDefault();
+//});
 
 function show(d) {
     var info = $('.info'),
@@ -88,14 +88,22 @@ function hide()
     internal.edit_tab.hide();
 }
 
-function on_submit(f)
-{
-    submit_callback = f;
+function on_save(f) {
+    $('#edit-node-dialog__save').click(function(e) {
+            return f(e, _get_form_data());
+    });
 }
 
-function on_delete(f)
-{
-    delete_callback = f;
+function on_delete(f) {
+    $('#edit-node-dialog__delete').click(function(e) {
+        return f(e, _get_form_data());
+    });
+}
+
+function on_keyup(f) {
+    $('.info').keyup(function(e) {
+        return f(e, _get_form_data());
+    });
 }
 
 return {
