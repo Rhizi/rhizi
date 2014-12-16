@@ -5,7 +5,7 @@ var d = null,
     submit_callback = null,
     delete_callback = null;
 
-function _get_form() {
+function _get_form_data() {
     return {
         name: $('.info #editformname').val(),
         type: $('.info #edittype').val(),
