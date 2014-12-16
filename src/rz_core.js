@@ -519,7 +519,6 @@ function update_view__graph(no_relayout) {
                 svgInput.enable(this, d);
                 selection.update([d]);
                 showNodeInfo(this.parentNode.node, i);
-                update_view__graph(true);
             }
             d3.event.stopPropagation();
         });
@@ -559,7 +558,6 @@ function update_view__graph(no_relayout) {
             if(d.state !== "temp") {
                 showNodeInfo(d, i);
             }
-            update_view__graph(true);
         });
     circle.append("svg:image")
         .attr("class", "status graph")
@@ -703,23 +701,23 @@ function tick(e) {
 }
 
 function showNodeInfo(d, i) {
-    view.node_info.show(d);
-    view.node_info.on_submit(function(e, form) {
-      var old_type = d.type,
-          new_type = form.type;
-      if (d.type === "third-internship-proposal") {
-        graph.editDates(d.id, null, new Date(form.startdate), new Date(form.enddate));
-      }
-      graph.editName(d.id, form.name);
-      graph.editType(d.id, d.type, form.type);
-      graph.editURL(d.id, d.type, form.url);
-      graph.editStatus(d.id, d.type, form.status);
-      if (new_type != old_type) {
-          view.node_info.show(d);
-      }
-      update_view__graph(true);
-      return false;
+    view.node_info.on_save(function(e, form_data) {
+
+        graph.update_node(d, form_data, function(){
+            var old_type = d.type,
+                new_type = form_data.type;
+
+            if (new_type != old_type) {
+                view.node_info.show(d);
+            }
+
+            view.node_info.hide();
+            update_view__graph(true);
+        });
+
+        return false;
     });
+
     view.node_info.on_delete(function() {
       if (confirm('This node and all its connections will be deleted, are you sure?')) {
         graph.removeNode(d.id);
@@ -727,6 +725,8 @@ function showNodeInfo(d, i) {
         view.node_info.hide();
       }
     });
+
+    view.node_info.show(d);
 }
 
 function svg_click_handler(e) {
