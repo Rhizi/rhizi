@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<head>
+    <title>Rhizi Prototype </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link href="res/css/style.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="res/img/favicon2.ico" />
+
+    <script src="src/local_config.js"></script>
+    <script data-main='src/app.js' src="lib/require.js"></script>
+
+</head>
+
+<body>
+  <div id="chromeinputbugworkaround" style="position:fixed; top:0px; left:0px; width:100%">
+  <span id="measure-node" class="graph nodetext" style="position: absolute; display: inline; top: -300px; left: 0px;">suicide squade, attack!</span>
+  <span id="measure-link" class="graph linklabel" style="position: absolute; display: inline; top: -300px; left: 0px;">those who are about to cry, we kaput you.</span>
+  <div class="top-bar">
+    <h3 class="doc-title">Server test</h3>
+    <div class="user-area">
+      <div class="username">
+        <div class="profile-circle"></div>
+        <span class="profile-initials">UH</span>
+         <div class="profile-username">Welcome&nbsp;<span id="user_id">{{ username }}</span>!<span id="logout-button" class="button">Logout</span></div>
+      </div>
+      <img class="organization-logo" src="res/img/CRI-logo.png">
+    </div>
+  </div>
+  <div class="search-bar">
+      <div class="search-input">
+        <input id="search" placeholder="Search for nodes and relationships"/>
+      </div>
+      <div id="search-suggestion" class="suggestion" style="display: none">
+      </div>
+      <div class="export">
+        <a href="#">Export</a>
+      </div>
+  </div>
+  <div id="intro-task" class="task-alert" style="display:none">
+    <h3 class="task-desc">Connect between <span>yourself</span> and the  <span> clubs,</span><span> internship proposals,</span><span> skills,</span><span> and</span><span> scientific interests</span></span> you have:
+    </h3>
+    <div class="task-close-button">got it</div>
+  </div>
+  <div class="graph-view">
+    <div class="input-container">
+      <form>
+        <input class="input-bar" id="textanalyser" placeholder="Add nodes and relationships"/>
+        <button class="add-button"></button>
+      </form>
+      <div id="input-suggestion" class="suggestion" style="display: none">
+      </div>
+    </div>
+    <div class="info-container">
+      <div class="edge_info" style="display:none">Title: <span id="edgetitle"></span><br/>
+          <button id="deleteedge">Delete</button>
+      </div>
+      <div class="info" style="display:none">
+          <form id="editbox">
+            <p class="info-card-attr">Name</p><p class="info-card-attr-val"><input id="editformname"></p>
+            <label class="info-card-attr">Type</label>
+            <select id="edittype" class="select-dropdown">
+                <option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option>
+            </select><br/>
+            <div id="status">
+            <label class="info-card-attr">Status</label><select id="editstatus">
+                <option value="waiting">Waiting</option><option value="approved">Approved</option><option value="notapproved">Not Approved</option>
+            </select><br/>
+            </div>
+            <div id="startdate"><label class="info-card-attr">Start date</label><input id="editstartdate"/></br></div>
+            <div id="enddate"><label class="info-card-attr">End date:</label><input id="editenddate"/></div>
+            <div id="desc"><label>Description</label><input id="editdescription"/></div>
+            <div id="url"><p class="info-card-attr">URL</p><p class="info-card-attr-val info-card-url"><input id="editurl"></p></div>
+            <hr>
+            <button id="edit-node-dialog__save" class="btn-regular btn-regular-outline">Save</button>
+            <button id="edit-node-dialog__delete" class="btn-regular btn-regular-outline">Delete</button>
+          </form>
+      </div>
+    </div>
+
+    <div class="typeselection" style="display:none">
+      <table>
+        <tr id="intro"><td>Pick a type with [TAB] key</td></tr>
+        <tr id="chosentypelabel"><td>Chosen Type: <span id="chosentypename"/></td></tr>
+        <tr id="chosentypedesc"><td></td></tr>
+      </table>
+    </div>
+
+    <div class="debug-ui">
+    <div class="debug-ui-row">
+        <div class="debug-ui-left">
+            <a class="save-history" href="#">Save history</a>
+        </div>
+        <div class="debug-ui-right">
+            <a id="replay-history" style="display: none" href="#">Replay history</a>
+        </div>
+    </div>
+    <div class="debug-ui-row">
+        <div class="debug-ui-left">
+            <div class="save">
+                <a href="#">Save</a>
+            </div>
+        </div>
+    </div>
+    <div class="debug-ui-row">
+    <div class="debug-ui-left">
+        <div class="local-storage-load">
+            <a href="#">Load</a>
+        </div>
+    </div>
+    <div class="debug-ui-right">
+        <div class="url-copy">
+            <a href="#">Copy to URL</a>
+        </div>
+    </div>
+    </div>
+    <div class="debug-ui-row">
+        Import <input type="file" class="file-import" />
+    </div>
+    </div>
+
+  </div>
+
+  <div class="rhizi-logo"><a href="http://www.rhizi.org">
+    <img src="res/img/rhizi-logo.png"/></a>
+  </div>
+  </div>
+
+</body>
+</html>
