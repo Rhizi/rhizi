@@ -392,22 +392,17 @@ var textAnalyser = function (newtext, finalize) {
         var n_set = ret.node_set_add.filter(function(node) {
                     return false == graph.hasNodeByNameAndNotState(node.name, "temp")
                         && node.type !== 'bubble';
-                });
-
-        var comp = graph.compareSubset('temp', n_set, ret.link_set_add);
+                }),
+            link_set = ret.link_set_add.map(
+                        function (link) {
+                            return [link.__src, link.__dst];
+                        }),
+            comp = graph.compareSubset('temp', n_set, link_set);
 
         if (false == finalize && comp.graph_same) {
             if (comp.old_name && comp.new_name) {
                 up_to_two_renames(graph, comp.old_name, comp.new_name);
             }
-
-            ret.for_each_link_add(function (link) {
-                apply_conjugator_link_logic(link, ret.drop_conjugator_links);
-                graph.addLinkByName(link.__src.name,
-                                    link.__dst.name,
-                                    link.name,
-                                    link.state);
-            });
         } else {
             // REINITIALISE GRAPH (DUMB BUT IT WORKS)
             graph.removeNodes(function(n){ return "temp" == n.state; });
@@ -424,17 +419,16 @@ var textAnalyser = function (newtext, finalize) {
                     }
                 }
             });
-
-            ret.for_each_link_add(function (link) {
-                if (false == finalize || link.name !== 'and') {
-                    apply_conjugator_link_logic(link, ret.drop_conjugator_links);
-                    graph.addLinkByName(link.__src,
-                                        link.__dst,
-                                        link.name,
-                                        link.state);
-                }
-            });
         }
+        ret.for_each_link_add(function (link) {
+            if (false == finalize || link.name !== 'and') {
+                apply_conjugator_link_logic(link, ret.drop_conjugator_links);
+                graph.addLinkByName(link.__src,
+                                    link.__dst,
+                                    link.name,
+                                    link.state);
+            }
+        });
 
         if (!finalize) {
             graph.markRelated(token_set_new_node_names);
