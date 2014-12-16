@@ -67,7 +67,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
             'state' : 'perm',
         }, l_raw);
 
-        ret['name'] = ret['type'];
+        ret['name'] = ret['__type'];
 
         delete ret.__label_set;
 
