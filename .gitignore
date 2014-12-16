@@ -2,6 +2,6 @@
 Rhizi Prototype1_files/
 
 .idea/
-src/local_config.js
+src/client/local_config.js
 
 .sass-cache/
