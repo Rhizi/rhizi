@@ -391,31 +391,31 @@ function Graph() {
     }
 
     this.editName = function(id, new_name) {
-        var index2 = findNodeByName(new_name);
-        var index = find_node__by_id(id);
+        var n_eq_name = findNodeByName(new_name);
+        var n_eq_id = find_node__by_id(id);
         var acceptReplace=true;
 
-        if (index === undefined) {
+        if (n_eq_id === undefined) {
             return;
         }
-        if (index.name == new_name) {
+        if (n_eq_id.name == new_name) {
             return;
         }
-        if (index2 !== undefined && index.state !== 'temp' && !compareNames(index.name, new_name)) {
-            acceptReplace = confirm('"' + index2.name + '" will replace "' + index.name + '", are you sure?');
+        if (n_eq_name !== undefined && n_eq_id.state !== 'temp' && !compareNames(n_eq_id.name, new_name)) {
+            acceptReplace = confirm('"' + n_eq_name.name + '" will replace "' + n_eq_id.name + '", are you sure?');
             if (acceptReplace){
                 for (var i = 0; i < links.length; i++) {
-                    if (links[i].__src === index) {
-                        links[i].__src = index2;
+                    if (links[i].__src === n_eq_id) {
+                        links[i].__src = n_eq_name;
                     }
-                    if (links[i].__dst === index) {
-                        links[i].__dst = index2;
+                    if (links[i].__dst === n_eq_id) {
+                        links[i].__dst = n_eq_name;
                     }
                 }
-                this.removeNode(index.id);
+                this.removeNode(n_eq_id.id);
             }
         } else {
-            index.name = new_name;
+            n_eq_id.name = new_name;
         }
     }
 
