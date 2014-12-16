@@ -6,6 +6,9 @@ Command line use documentation can be view with:
 :$ python rhizi_server.py -h
 
 = Hacking =
+== Neo4J DB Management ==
+* Use <code>$ neo4j-shell -file reset-db__single_link.cypher</code> to bring the DB to an empty state, excluding two nodes and a single link.
+
 == Running the Tests ==
 Test code makes use of Python's unittest - run by invoking them with python,
 or by creating a launch configuration in your IDE of choice.
