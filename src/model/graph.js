@@ -68,7 +68,7 @@ function Graph() {
         console.log('__addNode: node added: id: ' + node.id);
 
         if (rz_config.backend_enabled && peer_notify){
-            var topo_diff = new model_diff.new_topo_diff({
+            var topo_diff = model_diff.new_topo_diff({
                 node_set_add : [node].map(model_util.adapt_format_write_node),
             });
             var on_success = function(){
@@ -118,7 +118,7 @@ function Graph() {
         }
 
         if (rz_config.backend_enabled && peer_notify){
-            var topo_diff = new model_diff.new_topo_diff({
+            var topo_diff = model_diff.new_topo_diff({
                 node_set_rm : ns.map(function(n){ return n.id; }),
                 link_set_rm : cascade_link_rm_set.map(function(l){ return l.id; }),
             });
@@ -335,7 +335,7 @@ function Graph() {
             links.push(link);
 
             if (rz_config.backend_enabled && peer_notify){
-                var topo_diff = new model_diff.new_topo_diff({
+                var topo_diff = model_diff.new_topo_diff({
                     link_set_add : [link].map(model_util.adapt_format_write_link),
                 });
                 var on_success = function(){
