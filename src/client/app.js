@@ -1,5 +1,5 @@
 (function() {
-    var lib_path = '../lib/';
+    var lib_path = '/res/lib/';
     var config = {
         paths: {
             jquery: lib_path + 'jquery',
