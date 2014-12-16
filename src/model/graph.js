@@ -117,6 +117,10 @@ function Graph() {
             }
         }
 
+        cascade_link_rm_set.forEach(function(n){
+            console.log('_remove_node_set: removed node: id: ' + n.id);
+        });
+
         if (rz_config.backend_enabled && peer_notify){
             var topo_diff = model_diff.new_topo_diff({
                 node_set_rm : ns.map(function(n){ return n.id; }),
