@@ -5,3 +5,5 @@ Rhizi Prototype1_files/
 src/client/local_config.js
 
 .sass-cache/
+*.pyc
+*.sw?
