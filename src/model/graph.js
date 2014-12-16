@@ -384,6 +384,57 @@ function Graph() {
         }
     }
 
+    this.update_node = function(node, new_node_spec, on_success, on_error) {
+        util.assert(node instanceof model_core.Node);
+
+        if (rz_config.backend_enabled){
+
+            if (node.name != new_node_spec.name){
+                /*
+                 * handle name update collision: suggest removal first
+                 */
+                var n_eq_name = findNodeByName(new_node_spec.name);
+                if (undefined != n_eq_name) {
+                    // delete colliding node on rename
+                    console.warn('update_node: name collision blocked due to node rename');
+                    undefined != on_error && on_error();
+                    return;
+                }
+
+                node['name'] = new_node_spec['name']; // [!] may still fail due to server NAK
+            }
+
+            var attr_diff = model_diff.new_attr_diff();
+            for (var key in new_node_spec){
+                attr_diff.add_node_attr_write(node.id, key, new_node_spec[key]);
+            }
+
+            var on_ajax_success = function(id_to_node_map){
+                var node_id = node.id; // original node id
+                if (id_to_node_map[node_id].id != node_id){
+                    // TODO: handle incoming ID update
+                    util.assert(false, 'update_node: id attr change');
+                }
+
+                var ret_node = id_to_node_map[node_id];
+                for (var key in ret_node){
+                    if ('name' == key || 'id' == key){
+                        continue;
+                    }
+                    node[key] = ret_node[key];
+                }
+
+                // TODO: handle NAK: add problem emblem to node
+                on_success();
+            };
+
+            var on_ajax_error = function(){
+            };
+
+            rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
+        }
+    }
+
     this.editNameByName = function(old_name, new_name) {
         var node = findNodeByName(old_name);
 
