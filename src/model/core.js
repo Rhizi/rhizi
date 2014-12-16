@@ -148,10 +148,11 @@ define(['util'], function(util) {
         util.assert(undefined != dst, 'create_link_from_spec: dst missing');
         util.assert(undefined != src.id, 'create_link_from_spec: src missing id');
         util.assert(undefined != dst.id, 'create_link_from_spec: dst missing id');
+        util.assert(undefined != link_spec.name, 'create_link_from_spec: name missing, unable to deduce type');
 
         ret.__src = src;
         ret.__dst = dst;
-        ret.__type = 'textual_link';
+        ret.__type = link_spec.name;
 
         if (undefined == link_spec.name){
             console.warn('create_link_from_spec: name: ' + link_spec.name);
