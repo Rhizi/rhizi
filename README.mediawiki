@@ -4,7 +4,15 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 
 A.K.A The spreadsheet of tomorrow
 
+= Requirements =
+python
+flask
+neo4j
+
 = Use =
+
+For testing locally run neo4j locally on the default 7474 port and then launch runlocal:
+./runlocal
 
 Command line use documentation can be view with:
 :$ python rhizi_server.py -h
