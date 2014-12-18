@@ -2,23 +2,25 @@
 
 A collaborative editor for organizing, communicating, and analyzing data in graph form.
 
-A.K.A The spreadsheet of tomorrow
-
 = Requirements =
-python
-flask
-neo4j
+* Neo4J DB server
+* Python 2.7
+* Flask
+* Apache Ant
 
 = Use =
+== Running Rhizi Locally ==
+To run Rhizi locally:
+For testing locally run neo4j locally on the default 7474 port and then launch runlocal:<br><code>./runlocal</code>
 
-For testing locally run neo4j locally on the default 7474 port and then launch runlocal:
-./runlocal
+Or perform the following tasks by hand:
+# Invoke the local deployment Ant target:<br><code>$ cd ./rhizi && ant -f build.ant deploy-local</code>
+# Assert Neo4J is running and listening on it's default port
+# Run rhizi-server.py:<br><code>$ cd deploy-local && python bin/rhizi_server.py --config-dir=etc</code>
 
 Command line use documentation can be view with:
 :$ python rhizi_server.py -h
-
 = Development =
-
 To update the css files you need [sass](http://sass-lang.com/)
 
 The build tool is [make](https://www.gnu.org/software/make/)
