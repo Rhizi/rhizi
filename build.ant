@@ -1,9 +1,7 @@
 <!-- 
+
  Rhizi build targets
- 
- 
- 
- 
+
 -->
 <project name="rhizi-server" default="pkg-deb">
 
@@ -24,14 +22,10 @@
       </sequential>
    </macrodef>
 
-   <fail unless="rzRootDir"
-         message="'rzRootDir' arg missing - must point to root rhizi code dir" />
-
    <property name="pkg_name" value="rhizi-server" />
    <property name="pkg_version" value="0.1.0" />
    <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
-   <property name="rhiziProjectDir" value="${rzRootDir}/rhizi" />
-   <property name="deployDirLocal" value="${rhiziProjectDir}/deploy-local" />
+   <property name="targetDeploymentDir" value="deploy-local" />
 
    <tstamp>
       <format property="versionQualifier" pattern="yyyyMMddHHmm" />
@@ -44,12 +38,12 @@
 
    <target name="deploy-local.clean">
 
-      <mkdir dir="${deployDirLocal}" description="bootstap dir if missing" />
+      <mkdir dir="${targetDeploymentDir}" description="bootstap if missing" />
 
       <!-- bin/ -> link: avoid specifying followsymlinks on the following delete task -->
       <symlink action="delete" link="deploy-local/bin" />
       <delete verbose="true" includeemptydirs="true">
-         <fileset dir="${deployDirLocal}"
+         <fileset dir="${targetDeploymentDir}"
                   includes="**/*"
                   defaultexcludes="false" />
       </delete>
@@ -58,28 +52,27 @@
    <target name="deploy-local"
            depends="deploy-local.clean"
            description="locally deploy webapp">
+
       <!-- [!] trailing '/' on rsync src targets critical -->
 
       <local name="src_client" />
       <local name="src_server" />
-      <property name="src_client" value="${rhiziProjectDir}/src/client" />
-      <property name="src_server" value="${rhiziProjectDir}/src/server" />
+      <property name="src_client" value="src/client" />
+      <property name="src_server" value="src/server" />
 
-      <mkdir dir="${deployDirLocal}/static" />
+      <mkdir dir="${targetDeploymentDir}/static" />
 
       <parallel>
-         <rsync src="${src_client}/" dst="${deployDirLocal}/static" />
-         <rsync src="${rhiziProjectDir}/res/client/"
-                dst="${deployDirLocal}/static" />
+         <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
+         <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
 
          <symlink action="single"
                   overwrite="true"
-                  link="${deployDirLocal}/bin"
-                  resource="${src_server}" />
+                  link="${targetDeploymentDir}/bin"
+                  resource="${basedir}/${src_server}" />
 
-         <rsync src="${rhiziProjectDir}/res/etc" dst="${deployDirLocal}" />
-         <rsync src="${rhiziProjectDir}/res/templates/"
-                dst="${deployDirLocal}/templates" />
+         <rsync src="res/etc" dst="${targetDeploymentDir}" />
+         <rsync src="res/templates/" dst="${targetDeploymentDir}/templates" />
       </parallel>
 
    </target>
@@ -93,15 +86,15 @@
       <property name="rsync_module" value="rhizi.net" />
 
       <!-- -l: traverse bin/ -> ../src-py link -->
-      <rsync src="${deployDirLocal}/"
+      <rsync src="${targetDeploymentDir}/"
              extraopts="-lL"
              dst="rsync://${dstServer}/${rsync_module}/" />
 
       <parallel>
          <!-- apply production patches -->
-         <rsync src="${rhiziProjectDir}/res/production-patch-set/rhizi-server.production.conf"
+         <rsync src="res/production-patch-set/rhizi-server.production.conf"
                 dst="rsync://${dstServer}/${rsync_module}/etc/rhizi-server.conf" />
-         <rsync src="${rhiziProjectDir}/res/production-patch-set/rz_config.js"
+         <rsync src="res/production-patch-set/rz_config.js"
                 dst="rsync://${dstServer}/${rsync_module}/static/" />
       </parallel>
    </target>
