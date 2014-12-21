@@ -20,6 +20,10 @@ if (window.is_node) {
     config.baseUrl = '../src/';
     window.rhizi_require_config = config;
 } else {
+    // [!] no need to configure baseUrl, as in
+    //     config.baseUrl = ...
+    //     generated script URLs include the basepath of app.js
+
     // Main app path
     require.config(config);
 
