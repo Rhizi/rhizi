@@ -568,13 +568,13 @@ function update_view__graph(no_relayout) {
         .attr("xlink:href", function(d) {
             switch (d.status) {
                 case "done":
-                    return "res/img/check.png";
+                    return "static/img/check.png";
                     break;
                 case "current":
-                    return "res/img/wait.png";
+                    return "static/img/wait.png";
                     break;
                 case "waiting":
-                    return "res/img/cross.png";
+                    return "static/img/cross.png";
                     break;
             }
         });
