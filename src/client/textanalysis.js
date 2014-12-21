@@ -425,7 +425,7 @@ var textAnalyser = function (newtext, finalize) {
                 apply_conjugator_link_logic(link, ret.drop_conjugator_links);
                 graph.addLinkByName(link.__src,
                                     link.__dst,
-                                    link.name,
+                                    link.name || '',
                                     link.state);
             }
         });
