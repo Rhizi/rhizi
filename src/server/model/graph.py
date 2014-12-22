@@ -21,19 +21,28 @@ class Attr_Diff(dict):
         self['__type_node'][n_id] = ret
         return ret
 
+    def init_link_attr_diff(self, n_id):
+        ret = {'__attr_write': {},
+               '__attr_remove': []}
+        self['__type_link'][n_id] = ret
+        return ret
+
     @staticmethod
     def from_json_dict(json_dict):
         ret = Attr_Diff()
-        for obj_type in ret.keys():
+        for obj_type, writer, remover in [
+            ('__type_node', ret.add_node_attr_write, ret.add_node_attr_rm),
+            ('__type_link', ret.add_link_attr_write, ret.add_link_attr_rm),
+            ]:
             obj_ad_set = json_dict.get(obj_type)
             if None != obj_ad_set:
                 for o_id, ad in obj_ad_set.items():
                     if None != ad.get('__attr_write'):
                         for k, v in ad['__attr_write'].items():
-                            ret.add_node_attr_write(o_id, k, v)
+                            writer(o_id, k, v)
                     if None != ad.get('__attr_remove'):
                         for k in ad['__attr_remove']:
-                            ret.add_node_attr_rm(o_id, k)
+                            remover(o_id, k)
         return ret
 
     @property
@@ -54,16 +63,25 @@ class Attr_Diff(dict):
         n_attr_diff['__attr_write'][attr_name] = attr_val
 
     def add_node_attr_rm(self, n_id, attr_name):
+        assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to remove \'id\' attribute'
         n_attr_diff = self['__type_node'].get(n_id)
         if None == n_attr_diff:
             n_attr_diff = self.init_node_attr_diff(n_id)
         n_attr_diff['__attr_remove'].append(attr_name)
 
     def add_link_attr_write(self, l_id, attr_name, attr_val):
-        assert False, 'unimplemented'
+        assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to write to \'id\' attribute'
+        l_attr_diff = self['__type_link'].get(l_id)
+        if None == l_attr_diff:
+            l_attr_diff = self.init_link_attr_diff(l_id)
+        l_attr_diff['__attr_write'][attr_name] = attr_val
 
     def add_link_attr_rm(self, l_id, attr_name):
-        assert False, 'unimplemented'
+        assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to remove \'id\' attribute'
+        l_attr_diff = self['__type_link'].get(l_id)
+        if None == l_attr_diff:
+            l_attr_diff = self.init_link_attr_diff(l_id)
+        l_attr_diff['__attr_remove'].append(attr_name)
 
 class Topo_Diff(object):
     """
