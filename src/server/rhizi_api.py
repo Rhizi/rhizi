@@ -83,7 +83,8 @@ def __common_exec(op, on_success=__common_resp_handle):
     except Exception as e:
         log.error(e.message)
         log.error(traceback.print_exc())
-        return __common_resp_handle('error occurred')
+        # [!] information about errors is returned to the client via str
+        return __common_resp_handle(error=str(e))
 
 def load_node_set_by_id_attr():
     """
