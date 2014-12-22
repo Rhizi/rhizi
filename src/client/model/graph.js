@@ -433,7 +433,7 @@ function Graph() {
             console.log('editNameByName: error: cannot find node with name ' + old_name);
             return;
         }
-        return this.editName(node.id, new_name); // TODO: introduce Node class (yes Amir, I'm now down with that).
+        return this.editName(node.id, new_name);
     }
 
     this.editName = function(id, new_name) {
