@@ -24,11 +24,18 @@ define(['rz_config'], function(rz_config) {
 
             function on_success_wrapper(xhr, text) {
                 // log wrap callback
-                var ret_data = xhr.data;
-                console.log('success: ' + JSON.stringify(ret_data));
-
-                if (on_success) {
-                    on_success(ret_data);
+                var ret_data = xhr.data,
+                    ret_error = xhr.error;
+                if (ret_error) {
+                    console.log('ajax error: ' + JSON.stringify(ret_error));
+                    if (on_error) {
+                        on_error(ret_error);
+                    }
+                } else {
+                    console.log('ajax success: ' + JSON.stringify(ret_data));
+                    if (on_success) {
+                        on_success(ret_data);
+                    }
                 }
             }
 
