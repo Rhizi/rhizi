@@ -223,7 +223,7 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     meta_attr-mapped collection of lists with the meta_attr removed - eg:
 
         in: [{'id':0, '__type': 'T'}, {'id':1, '__type': 'T'}]
-        out: { 'T', [{'id':0}, {'id':1}] }
+        out: { 'T': [{'id':0}, {'id':1}] }
     """
     ret = {}
     for v in e_set:
