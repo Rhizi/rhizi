@@ -429,6 +429,7 @@ function Graph() {
             };
 
             var on_ajax_error = function(){
+                console.log('error with commit to server: danger robinson!');
             };
 
             rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
