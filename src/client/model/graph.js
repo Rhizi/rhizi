@@ -465,17 +465,6 @@ function Graph() {
         }
     }
 
-    this.editDates = function(id, state, start, end) {
-        var n = find_node__by_id(id);
-        if (state != n.state){
-            return;
-        }
-        if ((n !== undefined)) {
-            n.start = start;
-            n.end = end;
-        }
-    }
-
     /**
      * editType:
      *
@@ -483,10 +472,6 @@ function Graph() {
      */
     this.editType = function(id, state, newtype) {
         return this._editProperty(id, state, 'type', newtype);
-    }
-
-    this.editURL = function(id, state, url) {
-        return this._editProperty(id, state, 'url', url);
     }
 
     this._editProperty = function(id, state, prop, value) {
@@ -500,14 +485,6 @@ function Graph() {
         }
         n[prop] = value;
         return true;
-    }
-
-    this.editStatus = function(id, state, status) {
-        return this._editProperty(id, state, 'status', status);
-    }
-
-    this.editState = function(id, state, newstate) {
-        return this._editProperty(id, state, 'state', newstate);
     }
 
     this.findCoordinates = function(id) {
