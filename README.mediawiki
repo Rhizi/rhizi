@@ -11,7 +11,7 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 = Use =
 == Running Rhizi Locally ==
 To run Rhizi locally:
-For testing locally run neo4j locally on the default 7474 port and then launch runlocal:<br><code>./runlocal</code>
+For testing locally run neo4j locally on the default 7474 port and then launch run-local.sh:<br><code>./run-local.sh</code>
 
 Or perform the following tasks by hand:
 # Invoke the local deployment Ant target:<br><code>$ cd ./rhizi && ant -f build.ant deploy-local</code>
