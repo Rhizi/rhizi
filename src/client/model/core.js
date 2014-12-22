@@ -45,7 +45,7 @@ define(['util'], function(util) {
 
     function Link() {
     }
-    // adapte Link to force_layoutL create __src,__dst aliases
+    // adapt Link to force_layout create __src,__dst aliases
     Link.prototype.__defineGetter__('source', function(){
         return this.__src;
     });
