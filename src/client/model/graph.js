@@ -471,6 +471,10 @@ function Graph() {
         if ((n === undefined)) {
             return false;
         }
+        // cannot assert state is temp since robot code still uses it
+        if (state != 'temp') {
+            console.log('warning: I hope robot is doing this not-through-backend property change');
+        }
         n[prop] = value;
         return true;
     }
