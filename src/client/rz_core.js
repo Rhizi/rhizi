@@ -76,7 +76,9 @@ var svgInput = (function() {
             d = jelement.data().d;
             if (e.which == 13 && newname != d.name) {
                 if (d.hasOwnProperty('__src')) {
-                    graph.editLink(d.__src.id, d.__dst.id, newname);
+                    graph.update_link(d, {name: newname}, function() {
+                        update_view__graph(true);
+                    });
                 } else {
                     graph.update_node(d, {name: newname}, function() {
                         rz_bus.names.push([newname]);

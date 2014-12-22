@@ -381,6 +381,54 @@ function Graph() {
         rz_bus.names.push([newname]);
     }
 
+    this.update_link = function(link, new_link_spec, on_success, on_error) {
+        util.assert(link instanceof model_core.Link);
+
+        // TODO - fake api for client only (debug, demo, ui work)
+        if (!rz_config.backend_enabled) return;
+
+        var attr_diff = model_diff.new_attr_diff();
+        for (var key in new_link_spec){
+            attr_diff.add_link_attr_write(link.id, key, new_link_spec[key]);
+        }
+
+        var on_ajax_success = function(id_to_link_map){
+            var link_id = link.id; // original link id
+            if (id_to_link_map[link_id].id != link_id){
+                // TODO: handle incoming ID update
+                util.assert(false, 'update_link: id attr change');
+            }
+
+            var ret_link = id_to_link_map[link_id];
+            for (var key in ret_link){
+                if ('id' == key){
+                    continue;
+                }
+                var matching = null;
+                link[key] = ret_link[key];
+                // this part is fucked up right now
+                if (key == '__type') {
+                    matching = 'name';
+                }
+                if (key == 'name') {
+                    matching = '__type';
+                }
+                if (matching) {
+                    link[matching] = link[key];
+                }
+            }
+
+            // TODO: handle NAK: add problem emblem to link
+            on_success();
+        };
+
+        var on_ajax_error = function(){
+            console.log('error with commit to server: danger robinson!');
+        };
+
+        rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
+    }
+
     this.update_node = function(node, new_node_spec, on_success, on_error) {
         util.assert(node instanceof model_core.Node);
 
