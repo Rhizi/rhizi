@@ -30,6 +30,12 @@ class DB_row(object):
     def items(self):
         return [x for x in self]
 
+    def __str__(self):
+        return str(self.items())
+
+    def __repr__(self):
+        return repr(self.items())
+
 class DB_result_set(object):
     def __init__(self, data):
         self.data = data
