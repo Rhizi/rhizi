@@ -416,7 +416,7 @@ class DBO_rz_clone(DB_op):
                 n, n_lbl_set, l_set = row.items()  # see query return statement
 
                 # reconstruct nodes
-                assert None != n['id']
+                assert 'id' in n and None != n['id'], "db contains nodes with no id"
 
                 n['__label_set'] = n_lbl_set
                 ret_n_set.append(n)
