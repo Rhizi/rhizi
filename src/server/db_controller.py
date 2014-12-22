@@ -185,7 +185,58 @@ class DBO_attr_diff_commit(DB_op):
             self.add_statement(q, q_param_set)
 
         for id_attr, n_attr_diff in attr_diff.type__link.items():
-            pass  # TODO: handl link attr_diffs
+            r_attr_set = n_attr_diff['__attr_remove']
+            w_attr_set = n_attr_diff['__attr_write']
+
+            assert len(r_attr_set) > 0 or len(w_attr_set) > 0
+            assert 'name' not in r_attr_set
+
+            # Labels on relationships are different, we use a label for the name property
+            if 'name' in w_attr_set:
+                self.add_link_rename_statements(id_attr, w_attr_set['name'])
+            del w_attr_set['name']
+            if len(w_attr_set) == 0 and len(r_attr_set) == 0:
+                print('that is all she wrote')
+                return
+
+            q_arr = ["match (a)-[l {id: {id}}]-(b)",
+                     "return l.id, l"]
+            q_param_set = {'id': id_attr}
+
+            if len(r_attr_set) > 0:
+                stmt_attr_rm = "remove " + ', '.join(['l.' + attr for attr in r_attr_set])
+                q_arr.insert(1, stmt_attr_rm)
+
+            if len(w_attr_set) > 0:
+                stmt_attr_set = "set l += {attr_set}"
+                q_arr.insert(1, stmt_attr_set)
+                q_param_set['attr_set'] = w_attr_set
+
+            q = " ".join(q_arr)
+            self.add_statement(q, q_param_set)
+
+    def add_link_rename_statements(self, id_attr, new_label):
+        # TODO - where do we sanitize the label name? any better way of doing this?
+        # XXX - the return here is a bit verbose? maybe better built on python side?
+        # NONGOALS: doing this on the client.
+
+        # Should assert the following returns 1
+        # match a-[l:new_label]->b return count(l)
+        # Not doing so to avoid roundtrip - the following doesn't require knowing
+        # the replaced label.
+
+        q_param_set = {'id': id_attr}
+        q_create_new = (' '.join([
+            "match a-[l_old {id: {id}}]->b",
+            "create a-[l_new:%s]->b set l_new=l_old",
+            "return l_new.id, {id: l_new.id, name: type(l_new)}",
+            ])% new_label)
+        q_delete_old = (' '.join([
+            "match a-[l_old {id: {id}}]->b",
+            "where type(l_old)<>'%s' delete l_old",
+            ]) % new_label)
+        self.add_statement(q_create_new, q_param_set)
+        self.add_statement(q_delete_old, q_param_set)
 
     def process_result_set(self):
         ret = {}
