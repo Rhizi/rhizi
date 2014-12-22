@@ -374,16 +374,6 @@ function Graph() {
         rz_bus.names.push([newname]);
     }
 
-    this.editLinkTarget = function(src_id, dst_id, new_dst_id) {
-        var link = findLink(src_id, dst_id, null);
-        if (link !== undefined) {
-            link.__dst = find_node__by_id(new_dst_id);
-
-        } else {
-
-        }
-    }
-
     this.update_node = function(node, new_node_spec, on_success, on_error) {
         util.assert(node instanceof model_core.Node);
 
