@@ -78,10 +78,13 @@ var svgInput = (function() {
                 if (d.hasOwnProperty('__src')) {
                     graph.editLink(d.__src.id, d.__dst.id, newname);
                 } else {
-                    graph.editName(d.id, newname);
+                    graph.update_node(d, {name: newname}, function() {
+                        rz_bus.names.push([newname]);
+                        update_view__graph(true);
+                    });
+                    // TODO - 'updating' graphic
+                    // TODO - use promises to make A follows B readable.
                 }
-                rz_bus.names.push([newname]);
-                update_view__graph(true);
             }
             hide();
         }

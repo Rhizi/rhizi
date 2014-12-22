@@ -447,22 +447,10 @@ function Graph() {
         if (n_eq_id.name == new_name) {
             return;
         }
-        if (n_eq_name !== undefined && n_eq_id.state !== 'temp' && !compareNames(n_eq_id.name, new_name)) {
-            acceptReplace = confirm('"' + n_eq_name.name + '" will replace "' + n_eq_id.name + '", are you sure?');
-            if (acceptReplace){
-                for (var i = 0; i < links.length; i++) {
-                    if (links[i].__src === n_eq_id) {
-                        links[i].__src = n_eq_name;
-                    }
-                    if (links[i].__dst === n_eq_id) {
-                        links[i].__dst = n_eq_name;
-                    }
-                }
-                this.removeNode(n_eq_id.id);
-            }
-        } else {
-            n_eq_id.name = new_name;
-        }
+        util.assert(n_eq_id.state === 'temp', 'editName should now only be used by textanalysis');
+        util.assert(n_eq_name === undefined);
+
+        n_eq_id.name = new_name;
     }
 
     /**
