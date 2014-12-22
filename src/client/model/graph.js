@@ -328,9 +328,16 @@ function Graph() {
 
     function addLink(link, peer_notify) {
 
+        var trimmed_name = link.name.trim();
+
         util.assert(link instanceof model_core.Link);
 
         peer_notify = undefined === peer_notify ? true : peer_notify;
+
+        if (link.name.length != trimmed_name.length) {
+            console.log('bug: addLink with name containing spaces - removing before sending to server');
+        }
+        link.name = trimmed_name;
 
         var existing_link = findLink(link.__src.id, link.__dst.id, link.name);
 
