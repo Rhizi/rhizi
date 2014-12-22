@@ -648,7 +648,7 @@ function Graph() {
     // @ajax-trans
     function load_from_backend(on_success) {
 
-        function on_success__ajax(data){
+        function on_success__ajax(data) {
             var n_set = []; // added node set
             var l_set = []; // added link set
             var len;
