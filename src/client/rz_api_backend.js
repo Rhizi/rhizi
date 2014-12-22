@@ -18,7 +18,7 @@ define(['rz_config'], function(rz_config) {
                 // log wrap callback
                 console.error('error: \'' + err_text + '\'');
                 if (on_error && typeof (on_error) === "function") {
-                    on_error(err_type, err_text);
+                    on_error(err_text);
                 }
             }
 
