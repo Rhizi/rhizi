@@ -163,6 +163,8 @@ def init_rest_api(cfg, flask_webapp):
             static_path = static_path.replace('/src', '')
         if static_path.startswith('/'):  # convert to relative path
             static_path = static_path[1:]
+        if static_path.startswith('res/'):
+            static_path = static_path[4:]
         return send_from_directory(static_folder, static_path)
 
     def login_decorator(f):
