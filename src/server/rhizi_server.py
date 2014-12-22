@@ -151,21 +151,16 @@ def init_rest_api(cfg, flask_webapp):
 
     def dev_mode__resend_from_static(static_url):
         """
-        redirect broken-on-local-deploy links:
-           - /src -> '': handle root based files, eg. app.js
-           - /res, /lib -> res, lib
+        redirect static links while in dev mode:
+           - /res/<path> -> <path>
         """
         static_folder = flask.current_app.static_folder
 
-        static_path = request.path
-        if static_path.startswith('/src'):
-            # TODO: clean - /src/... links should not exist
-            static_path = static_path.replace('/src', '')
-        if static_path.startswith('/'):  # convert to relative path
-            static_path = static_path[1:]
-        if static_path.startswith('res/'):
-            static_path = static_path[4:]
-        return send_from_directory(static_folder, static_path)
+        new_req_path = None
+        if request.path.startswith('/res/'):
+            # turn absolute/res/... URLs to static-folder relative
+            new_req_path = request.path.replace('/res/', '')
+        return send_from_directory(static_folder, new_req_path)
 
     def login_decorator(f):
         """
@@ -196,7 +191,7 @@ def init_rest_api(cfg, flask_webapp):
                   ]
 
     if cfg.development_mode:
-        dev_path_set = ['/src', '/res', '/lib']
+        dev_path_set = ['/static', '/res']
         rest_dev_entry_set = []
         for dev_path in dev_path_set:
             rest_dev_entry_set.append(rest_entry(dev_path + '/<path:static_url>',
