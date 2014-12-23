@@ -2,8 +2,9 @@ define(['jquery', 'jquery-ui', 'view/helpers', 'view/internal'],
 function($, _unused_jquery_ui,  view_helpers, internal) {
 
 var d = null,
-    submit_callback = null,
-    delete_callback = null;
+    save_callback = function() {},
+    delete_callback = function() {},
+    keyup_callback = function() {};
 
 function _get_form_data() {
     return {
@@ -16,21 +17,18 @@ function _get_form_data() {
     };
 }
 
-//internal.edit_tab.get('node', "#editbox").submit(function(e) {
-//    if (submit_callback) {
-//        return submit_callback(e, _get_form_data());
-//    }
-//    console.log('bug: edit tab submit called with no callback set');
-//    e.preventDefault();
-//})
+$('#edit-node-dialog__delete').click(function(e) {
+    e.preventDefault();
+    return delete_callback(e, _get_form_data());
+});
 
-//internal.edit_tab.get('node', "#deletenode").click(function(e) {
-//    if (delete_callback) {
-//        return delete_callback(e, _get_form_data());
-//    }
-//    console.log('bug: edit tab delete called with no callback set');
-//    e.preventDefault();
-//});
+$('#edit-node-dialog__save').click(function(e) {
+    e.preventDefault();
+    return save_callback(e, _get_form_data());
+});
+$('.info').keyup(function(e) {
+    return keyup_callback(e, _get_form_data());
+});
 
 function show(d) {
     var info = $('.info'),
@@ -89,23 +87,15 @@ function hide()
 }
 
 function on_save(f) {
-    $('#edit-node-dialog__save').click(function(e) {
-        e.preventDefault();
-        return f(e, _get_form_data());
-    });
+    save_callback = f;
 }
 
 function on_delete(f) {
-    $('#edit-node-dialog__delete').click(function(e) {
-        e.preventDefault();
-        return f(e, _get_form_data());
-    });
+    delete_callback = f;
 }
 
 function on_keyup(f) {
-    $('.info').keyup(function(e) {
-        return f(e, _get_form_data());
-    });
+    keyup_callback = f;
 }
 
 return {
