@@ -195,7 +195,7 @@ class DBO_attr_diff_commit(DB_op):
                 self.add_link_rename_statements(id_attr, w_attr_set['name'])
             del w_attr_set['name']
             if len(w_attr_set) == 0 and len(r_attr_set) == 0:
-                print('that is all she wrote')
+                print('that\'s all she wrote')
                 return
 
             q_arr = ["match (a)-[l {id: {id}}]-(b)",
