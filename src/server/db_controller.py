@@ -506,7 +506,7 @@ class DB_Controller:
         """
         if isinstance(op, DB_composed_op):
             # construct a list comprehension composed of all sup_op statements
-            for s_op in op.sub_op_set:
+            for s_op in op:
                 self.exec_op(s_op)
             return op.process_result_set()
 
