@@ -9,8 +9,11 @@ import six.moves.urllib_error as urllib_error
 import model
 import string
 import time
+import logging
 
 from util import debug_log_duration
+
+log = logging.getLogger('rhizi')
 
 class Neo4JException(Exception):
     def __init__(self, error_set):
@@ -218,9 +221,9 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
 
             # TODO - somewhere else?
             if '__type' in prop_dict:
-                console.log('warning: client is sending us __type link property, it should not')
+                log.warn('client is sending us __type link property, it should not')
             if 'name' in prop_dict:
-                console.log('warning: client is sending us name link property, it should not')
+                log.warn('client is sending us name link property, it should not')
             del prop_dict['__type']
             del prop_dict['name']
 
