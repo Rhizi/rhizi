@@ -380,9 +380,12 @@ function update_view__graph(no_relayout) {
                 dst = this.link.__dst;
 
             view.edge_info.on_delete(function () {
-                graph.removeLink(that.link);
-                update_view__graph(true);
                 view.edge_info.hide();
+                graph.removeLink(that.link, function() {
+                    update_view__graph(true);
+                }, function() {
+                    console.log("error: could not remove link");
+                });
             });
             view.edge_info.show(d);
             selection.update([src, dst]);

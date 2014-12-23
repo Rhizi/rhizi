@@ -542,13 +542,45 @@ function Graph() {
         }
     }
 
-    this.removeLink = function(link) {
+    var linkGetIndexFromId = function(link_id) {
+        for (var i = 0 ; i < links.length ; ++i) {
+            if (links[i].id == link_id) {
+                return i;
+            }
+        }
+    }
+
+    this.removeLink = function(link, on_success, on_error) {
         var i;
+
+        if (link.id === undefined) {
+            console.log('bug: link without an id');
+        }
+
+        function graph_on_success(ret) {
+            var link_id = ret[0][0];
+            links.splice(linkGetIndexFromId(link_id), 1);
+            if (on_success) {
+                on_success();
+            }
+        }
 
         for (i = 0 ; i < links.length; ++i) {
             if (link.id !== undefined) {
                 if (link.id === links[i].id) {
-                    links.splice(i, 1);
+                    if (link.state == 'temp') {
+                        links.splice(i, 1);
+                        if (on_success) {
+                            on_success();
+                        }
+                    } else {
+                        if (rz_config.backend_enabled) {
+                            var topo_diff = model_diff.new_topo_diff({
+                                link_set_rm: [link.id]
+                                });
+                            rz_api_backend.commit_diff__topo(topo_diff, graph_on_success, on_error);
+                        }
+                    }
                     return;
                 }
             } else {
