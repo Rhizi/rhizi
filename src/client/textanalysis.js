@@ -1,5 +1,64 @@
 "use strict";
 
+/**
+ * Tokenizer for input.
+ *
+ * node_token is it's own token, represented by itself.
+ *
+ * accepts a quotation char which allows whitespace in between.
+ *
+ * treats '\\' as a quote for the next char.
+ *
+ */
+function new_tokenize(text, node_token, quote)
+{
+    var c,
+        i,
+        tokens = [],
+        token = [],
+        inquote = false,
+        prev = null,
+        prev_whitespace = true,
+        next = function() {
+            if (token.length > 0) {
+                tokens.push(token.join(''));
+                token = [];
+            }
+        };
+    for (i = 0 ; i < text.length; ++i) {
+        c = text[i];
+        if (prev == '\\') {
+            token.push(c);
+            prev = null;
+            continue;
+        }
+        switch (c) {
+        case ' ':
+        case '\t':
+            if (inquote) {
+                token.push(c);
+            } else {
+                next();
+            }
+            break;
+        case quote:
+            inquote = !inquote;
+            token.push(c);
+            break;
+        default:
+            if (c == node_token && prev_whitespace) {
+                tokens.push(node_token);
+            } else {
+                token.push(c);
+            }
+        }
+        prev = c;
+        prev_whitespace = prev === null || prev === ' ' || prev === '\t';
+    }
+    next();
+    return tokens;
+}
+
 define(['rz_core', 'model/core', 'model/util', 'model/diff', 'rz_bus', 'consts'],
 function(rz_core,   model_core,   model_util,   model_diff,   rz_bus,   consts) {
 
