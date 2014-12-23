@@ -73,6 +73,12 @@ class Cypher_String_Formatter(string.Formatter):
 def cfmt(fmt_str, *args, **kwargs):
     return Cypher_String_Formatter().format(fmt_str, *args, **kwargs)
 
+def quote__backtick(label):
+    """
+    quote label (possibly containing spaces) with backticks
+    """
+    return '`' + label + '`'
+
 def post_neo4j(url, data):
     """
     @return dict object from the neo4j json POST response
