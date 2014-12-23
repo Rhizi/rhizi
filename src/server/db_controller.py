@@ -18,7 +18,7 @@ log = logging.getLogger('rhizi')
 
 class DB_op(object):
     """
-    tx wrapped DB operation possibly composing multiple DB queries
+    Transaction (tx) wrapped DB operation possibly composing multiple DB queries
     """
     def __init__(self):
         self.statement_set = []
