@@ -90,12 +90,14 @@ function hide()
 
 function on_save(f) {
     $('#edit-node-dialog__save').click(function(e) {
-            return f(e, _get_form_data());
+        e.preventDefault();
+        return f(e, _get_form_data());
     });
 }
 
 function on_delete(f) {
     $('#edit-node-dialog__delete').click(function(e) {
+        e.preventDefault();
         return f(e, _get_form_data());
     });
 }
