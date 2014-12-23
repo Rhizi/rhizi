@@ -135,6 +135,8 @@ class DBO_topo_diff_commit(DB_composed_op):
 
         self.n_add_map = len(n_add_map) > 0
         self.l_add_map = len(l_add_map) > 0
+        self.l_rm_set = len(l_rm_set) > 0
+        self.n_rm_set = len(n_rm_set) > 0
         #
         # [!] order critical
         #
@@ -157,6 +159,8 @@ class DBO_topo_diff_commit(DB_composed_op):
     def process_result_set(self):
         ret_n_set = []
         ret_l_set = []
+        ret_n_rm = []
+        ret_l_rm = []
         it = iter(self)
 
         if self.n_add_map:
@@ -178,8 +182,22 @@ class DBO_topo_diff_commit(DB_composed_op):
 
                     ret_l_set.append(l)
 
+        if self.l_rm_set:
+            for _, _, row_set in it.next():
+                for l_id in row_set:
+                    print("l_id: %r" % l_id)
+                    ret_l_rm.extend(l_id)
+
+        if self.n_rm_set:
+            for _, _, row_set in it.next():
+                for n_id in row_set:
+                    print("n_id: %r" % n_id)
+                    ret_n_rm.extend(n_id)
+
         return {'node_set': ret_n_set,
-                'link_set': ret_l_set }
+                'link_set': ret_l_set,
+                'node_rm': ret_n_rm,
+                'link_rm': ret_l_rm}
 
 
 class DBO_attr_diff_commit(DB_op):
@@ -424,16 +442,19 @@ class DBO_rm_node_set(DB_op):
 
         if rm_links:
             q_arr = ['match (n)',
-                     'where n.id in {id_set}',
+                     'with n, n.id as n_id',
+                     'where n_id in {id_set}',
                      'optional match (n)-[r]-()',
+                     'with n, n_id, r, r.id as r_id',
                      'delete n,r',
-                     'return {id_set}'
+                     'return n_id, collect(r_id)'
              ]
         else:
             q_arr = ['match (n)',
-                     'where n.id in {id_set}',
+                     'with n, n.id as n_id',
+                     'where n_id in {id_set}',
                      'delete n',
-                     'return {id_set}'
+                     'return n_id'
              ]
 
         q = ' '.join(q_arr)
@@ -453,9 +474,10 @@ class DBO_rm_link_set(DB_op):
         super(DBO_rm_link_set, self).__init__()
 
         q_arr = ['match ()-[r]->()',
-                 'where r.id in {id_set}',
+                 'with r, r.id as r_id',
+                 'where r_id in {id_set}',
                  'delete r',
-                 'return {id_set}'
+                 'return r_id'
          ]
 
         q = ' '.join(q_arr)
