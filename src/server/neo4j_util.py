@@ -185,7 +185,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
         assert len(label) > 2 and label[0].isupper() and label[1:].islower(), 'malformed label: ' + label
 
         q_arr = ['create (n:%s {node_attr})' % (quote__backtick(label)),
-                 'return n.id'
+                 'return n, labels(n)'
                  ]
 
         q = ' '.join(q_arr)
@@ -211,7 +211,7 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     for l_type, l_set in link_map.items():
         q = "match (src {id: {src}.id}),(dst {id: {dst}.id}) " + \
             "create (src)-[r:%(__type)s {link_attr}]->(dst) " + \
-            "return id(r)"
+            "return r, src.id, dst.id, type(r)"
         q = q % {'__type': quote__backtick(l_type)}
 
         for link in l_set:

@@ -467,17 +467,19 @@ var textAnalyser = function (newtext, finalize) {
             graph.removeNodes(function(n){ return "temp" == n.state; });
             graph.removeLinks("temp");
 
-            ret.for_each_node_add(function (node) {
-                if (true == finalize && node.state == 'temp') {
-                    console.log('bug: temp node creation on finalize');
-                } else {
-                    if (!finalize) {
-                        lastnode = graph.addNode(node);
+            if (!finalize) { // finalize done via topo diff below
+                ret.for_each_node_add(function (node) {
+                    if (true == finalize && node.state == 'temp') {
+                        console.log('bug: temp node creation on finalize');
                     } else {
-                        graph.addNode(node);
+                        if (!finalize) {
+                            lastnode = graph.addNode(node);
+                        } else {
+                            graph.addNode(node);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         ret.for_each_link_add(function (link) {
             if (false == finalize || link.name !== 'and') {
@@ -499,13 +501,19 @@ var textAnalyser = function (newtext, finalize) {
             // broadcast diff:
             //    - finalize?
             //    - broadcast_diff requested by caller
-            var topo_diff = model_util.adapt_format_write_topo_diff(ret.nodes, ret.links);
-            var diff_set = model_diff.new_diff_set();
-            diff_set.add_diff_obj(topo_diff);
-            graph.commit_diff_set(diff_set);
+            var on_success = function (ret) {
+                console.dir(ret);
+                rz_core.update_view__graph();
+            }
+            var on_error = function () {
+                console.log('askeeeeeeeeeeeeew');
+            }
+            // drop bubble node
+            ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
+            graph.commit_diff__topo(ret, on_success, on_error);
         }
 
-        // UPDATE GRAPH ONCE
+        // update graph if not going through backend
         rz_core.update_view__graph(!finalize && comp.graph_same);
     };
 

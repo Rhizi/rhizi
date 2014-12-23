@@ -27,6 +27,58 @@ function Graph() {
     }
 
     /**
+     *
+     * @param a topo_diff but that might be missing a few things, sanitize it first.
+     * all sanitation should be idempotent, but probably isn't.
+     */
+    this.commit_diff__topo = function (topo_diff, on_success, on_error) {
+        var name_to_node = {};
+        topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
+            if (n.id === undefined) {
+                n.id = model_core.random_node_name();
+            }
+            name_to_node[n.name] = n;
+            return model_util.adapt_format_write_node(n);
+        });
+
+        topo_diff.link_set_add = topo_diff.link_set_add.map(function(l) {
+            if (l.id === undefined) {
+                l.id = model_core.random_node_name();
+            }
+            if (typeof l.__src === 'string') {
+                l.__src = name_to_node[l.__src];
+            }
+            if (typeof l.__dst === 'string') {
+                l.__dst = name_to_node[l.__dst];
+            }
+            if (l.source === undefined) {
+                l.source = l.__src;
+            }
+            if (l.target === undefined) {
+                l.target = l.__dst;
+            }
+            if (l.__type === undefined) {
+                l.__type = l.name;
+            }
+            return model_util.adapt_format_write_link(l);
+        });
+        var graph_on_success = function(diff) {
+            on_backend__diff(diff);
+            if (on_success) {
+                on_success(nodes);
+            }
+        }
+        var graph_on_error = function(error) {
+            if (on_error) {
+                on_error(error);
+            }
+        }
+        console.log("COMMIT DIFF   TOPO");
+        console.dir(topo_diff);
+        rz_api_backend.commit_diff__topo(topo_diff, graph_on_success, graph_on_error);
+    }
+
+    /**
      * Inner implementation
      *
      * @param notify whether or not a presenter notification will be sent, default = true
@@ -729,6 +781,37 @@ function Graph() {
         rz_api_mesh.broadcast_possible_next_diff_block(diff_set);
     }
 
+    function on_backend__node_add(n_spec) {
+        n_spec = model_util.adapt_format_read_node(n_spec);
+
+        util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
+
+        var n = __addNode(n_spec, false, false);
+    }
+
+    function on_backend__link_add(l_spec) {
+        var l_ptr = model_util.adapt_format_read_link_ptr(l_spec);
+
+        util.assert(undefined != l_ptr.id, 'load_from_backend: l_ptr missing id');
+
+        // resolve link ptr
+        var src = find_node__by_id(l_ptr.__src_id),
+            dst = find_node__by_id(l_ptr.__dst_id);
+
+        // cleanup & reuse as link_spec
+        delete l_ptr.__src_id;
+        delete l_ptr.__dst_id;
+        var link_spec = l_ptr;
+        var link = model_core.create_link_from_spec(src, dst, link_spec);
+        var l = addLink(link, false);
+    }
+
+    function on_backend__diff(data) {
+        data['node_set'].map(on_backend__node_add);
+
+        data['link_set'].map(on_backend__link_add);
+    }
+
     /**
      * perform initial DB load from backend
      *
@@ -738,37 +821,7 @@ function Graph() {
     function load_from_backend(on_success) {
 
         function on_success__ajax(data) {
-            var n_set = []; // added node set
-            var l_set = []; // added link set
-            var len;
-
-            data['node_set'].map(function(n_spec) {
-                n_spec = model_util.adapt_format_read_node(n_spec);
-
-                util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
-
-                var n = __addNode(n_spec, false, false);
-                n_set.push(n);
-            });
-
-            data['link_set'].map(function(l_spec){
-                var l_ptr = model_util.adapt_format_read_link_ptr(l_spec);
-
-                util.assert(undefined != l_ptr.id, 'load_from_backend: l_ptr missing id');
-
-                // resolve link ptr
-                var src = find_node__by_id(l_ptr.__src_id),
-                    dst = find_node__by_id(l_ptr.__dst_id);
-
-                // cleanup & reuse as link_spec
-                delete l_ptr.__src_id;
-                delete l_ptr.__dst_id;
-                var link_spec = l_ptr;
-                var link = model_core.create_link_from_spec(src, dst, link_spec);
-                var l = addLink(link, false);
-                l_set.push(l);
-            });
-
+            on_backend__diff(data);
             undefined != on_success && on_success()
         }
 

@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'view/completer'],
-function($,        Bacon,   consts,   rz_bus,   rz_core,   textanalysis,   completer) {
+define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'rz_config', 'textanalysis', 'view/completer'],
+function($,        Bacon,   consts,   rz_bus,   rz_core,   rz_config,   textanalysis,   completer) {
 
 var text = "", // Last text of sentence
     element_name = '#textanalyser',
@@ -65,8 +65,7 @@ function analyzeSentence(sentence, finalize)
         break;
     }
 
-    var backend_commit = false;
-    ret.applyToGraph(rz_core.graph, backend_commit);
+    ret.applyToGraph(rz_core.graph, rz_config.backend_enabled);
 
     if (finalize || sentence.length == 0) {
         typeselection.hide();

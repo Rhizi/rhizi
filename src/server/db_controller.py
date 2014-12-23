@@ -133,6 +133,8 @@ class DBO_topo_diff_commit(DB_composed_op):
         l_rm_set = topo_diff.link_set_rm
         n_rm_set = topo_diff.node_set_rm
 
+        self.n_add_map = len(n_add_map) > 0
+        self.l_add_map = len(l_add_map) > 0
         #
         # [!] order critical
         #
@@ -151,6 +153,34 @@ class DBO_topo_diff_commit(DB_composed_op):
         if len(n_rm_set) > 0:
             op = DBO_rm_node_set(n_rm_set)
             self.add_sub_op(op)
+
+    def process_result_set(self):
+        ret_n_set = []
+        ret_l_set = []
+        it = iter(self)
+
+        if self.n_add_map:
+            for _, _, row_set in it.next():
+                for row in row_set:
+                    n, n_lbl_set = row.items()  # see query return statement
+
+                    assert None != n.get('id'), "db contains nodes with no id"
+
+                    n['__label_set'] = n_lbl_set
+                    ret_n_set.append(n)
+
+        if self.l_add_map:
+            for _, _, l_set in it.next():
+                for l, l_src, l_dst, l_type in l_set:
+                    l['__src_id'] = l_src
+                    l['__dst_id'] = l_dst
+                    l['__label_set'] = [l_type]  # box single value returned by type()
+
+                    ret_l_set.append(l)
+
+        return {'node_set': ret_n_set,
+                'link_set': ret_l_set }
+
 
 class DBO_attr_diff_commit(DB_op):
     """
@@ -257,13 +287,13 @@ class DBO_add_node_set(DB_op):
             self.add_statement(q, q_param_set)
 
     def process_result_set(self):
-        id_set = []
+        n_set = []
         for _, _, row_set in self:
             for row in row_set:
                 for clo in row:
-                    id_set.append(clo)
+                    n_set.append(clo)
 
-        return id_set
+        return n_set
 
 class DBO_add_link_set(DB_op):
     def __init__(self, link_map):
@@ -276,13 +306,13 @@ class DBO_add_link_set(DB_op):
             self.add_statement(q, q_params)
 
     def process_result_set(self):
-        id_set = []
+        l_set = []
         for _, _, r_set in self:
             for row in r_set:
                 for col_val in row:
-                    id_set.append(col_val)
+                    l_set.append(col_val)
 
-        return id_set
+        return l_set
 
 class DBO_load_node_set_by_DB_id(DB_op):
     def __init__(self, id_set):
