@@ -50,14 +50,12 @@ class DB_op(object):
 
         TODO: handle partial iteration due to error_set being non-empty
         """
-        i = 0
         r_set_len = len(self.result_set)
-        for s in self.statement_set:
+        for i, s in enumerate(self.statement_set):
             r_set = None  # row-set
             if i < r_set_len:  # support partial result recovery
                 r_set = DB_result_set(self.result_set[i])
             yield (i, s, r_set)
-            i = i + 1
 
     def parse_multi_statement_response_data(self, data):
         pass
