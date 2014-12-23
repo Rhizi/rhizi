@@ -223,7 +223,7 @@ class DBO_attr_diff_commit(DB_op):
         # the replaced label.
 
         q_create_new = ["match n-[l_old {id: {id}}]->m",
-                        "create n-[l_new:%s]->m set l_new=l_old" % neo4j_util.quote__backtick(new_label),
+                        "create n-[l_new:%s]->m set l_new=l_old" % db_util.quote__backtick(new_label),
                         "return l_new.id, {id: l_new.id, name: type(l_new)}",
                         ]
         q_delete_old = ["match n-[l_old {id: {id}}]->m",
