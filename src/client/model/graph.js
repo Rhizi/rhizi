@@ -148,6 +148,10 @@ function Graph() {
 
     this.removeNode = function(id) {
         var n = find_node__by_id(id);
+        if (n === undefined) {
+            console.log('bug: nonexistent node cannot be removed: ' + id);
+            return;
+        }
         this._remove_node_set([n]);
     }
 
