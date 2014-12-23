@@ -224,16 +224,17 @@ class DBO_attr_diff_commit(DB_op):
         # Not doing so to avoid roundtrip - the following doesn't require knowing
         # the replaced label.
 
+        q_create_new = ["match a-[l_old {id: {id}}]->b",
+                        "create a-[l_new:%s]->b set l_new=l_old" % new_label,
+                        "return l_new.id, {id: l_new.id, name: type(l_new)}",
+                        ]
+        q_delete_old = ["match a-[l_old {id: {id}}]->b",
+                        "where type(l_old)<>'%s' delete l_old" % new_label,
+                        ]
         q_param_set = {'id': id_attr}
-        q_create_new = (' '.join([
-            "match a-[l_old {id: {id}}]->b",
-            "create a-[l_new:%s]->b set l_new=l_old",
-            "return l_new.id, {id: l_new.id, name: type(l_new)}",
-            ])% new_label)
-        q_delete_old = (' '.join([
-            "match a-[l_old {id: {id}}]->b",
-            "where type(l_old)<>'%s' delete l_old",
-            ]) % new_label)
+
+        q_create_new = " ".join(q_create_new)
+        q_delete_old = " ".join(q_delete_old)
         self.add_statement(q_create_new, q_param_set)
         self.add_statement(q_delete_old, q_param_set)
 
