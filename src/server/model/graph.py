@@ -21,10 +21,10 @@ class Attr_Diff(dict):
         self['__type_node'][n_id] = ret
         return ret
 
-    def init_link_attr_diff(self, n_id):
+    def init_link_attr_diff(self, l_id):
         ret = {'__attr_write': {},
                '__attr_remove': []}
-        self['__type_link'][n_id] = ret
+        self['__type_link'][l_id] = ret
         return ret
 
     @staticmethod
