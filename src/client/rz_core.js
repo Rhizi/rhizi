@@ -727,11 +727,9 @@ function showNodeInfo(d, i) {
     });
 
     view.node_info.on_delete(function() {
-      if (confirm('This node and all its connections will be deleted, are you sure?')) {
-        graph.removeNode(d.id);
+        graph.removeNode(d.id); // async
         update_view__graph(false);
         view.node_info.hide();
-      }
     });
 
     view.node_info.show(d);
