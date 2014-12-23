@@ -283,15 +283,15 @@ var textAnalyser = function (newtext, finalize) {
             } else if (orderStack[orderStack.length - 1] === NODE) {
                 orderStack.push(LINK);
                 if (!token_set_new_link_names[linkindex]) {
-                    token_set_new_link_names[linkindex] = sentence[m] + " ";
+                    token_set_new_link_names[linkindex] = sentence[m];
                 } else {
-                    token_set_new_link_names[linkindex] += sentence[m] + " ";
+                    token_set_new_link_names[linkindex] += " " + sentence[m];
                 }
             } else {
                 if (!token_set_new_link_names[linkindex]) {
-                    token_set_new_link_names[linkindex] = sentence[m] + " ";
+                    token_set_new_link_names[linkindex] = sentence[m];
                 } else {
-                    token_set_new_link_names[linkindex] += sentence[m] + " ";
+                    token_set_new_link_names[linkindex] += " " + sentence[m];
                 }
             }
             if (token_set_new_node_names.length === 0) {
