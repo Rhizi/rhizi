@@ -35,7 +35,12 @@ function Graph() {
         var name_to_node = {};
         topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
             if (n.id === undefined) {
-                n.id = model_core.random_node_name();
+                var existing = findNodeByName(n.name);
+                if (existing) {
+                    n = existing;
+                } else {
+                    n.id = model_core.random_node_name();
+                }
             }
             name_to_node[n.name] = n;
             return model_util.adapt_format_write_node(n);
@@ -61,6 +66,11 @@ function Graph() {
                 l.__type = l.name;
             }
             return model_util.adapt_format_write_link(l);
+        });
+        // filter already existing nodes now, after we conveniently used them
+        // for name_to_node map
+        topo_diff.node_set_add = topo_diff.node_set_add.filter(function(n) {
+            return !hasNodeByName(n.name);
         });
         var graph_on_success = function(diff) {
             on_backend__diff(diff);
@@ -691,7 +701,7 @@ function Graph() {
 
     var hasNodeByName = function(name, state) {
         return nodes.filter(function (n) {
-            return compareNames(n.name, name) && n.state === state;
+            return compareNames(n.name, name) && (undefined === state || n.state === state);
         }).length > 0;
     }
     this.hasNodeByName = hasNodeByName;
