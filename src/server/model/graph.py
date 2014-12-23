@@ -63,21 +63,27 @@ class Attr_Diff(dict):
         n_attr_diff['__attr_write'][attr_name] = attr_val
 
     def add_node_attr_rm(self, n_id, attr_name):
+
         assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to remove \'id\' attribute'
+
         n_attr_diff = self['__type_node'].get(n_id)
         if None == n_attr_diff:
             n_attr_diff = self.init_node_attr_diff(n_id)
         n_attr_diff['__attr_remove'].append(attr_name)
 
     def add_link_attr_write(self, l_id, attr_name, attr_val):
+
         assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to write to \'id\' attribute'
+
         l_attr_diff = self['__type_link'].get(l_id)
         if None == l_attr_diff:
             l_attr_diff = self.init_link_attr_diff(l_id)
         l_attr_diff['__attr_write'][attr_name] = attr_val
 
     def add_link_attr_rm(self, l_id, attr_name):
+
         assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to remove \'id\' attribute'
+
         l_attr_diff = self['__type_link'].get(l_id)
         if None == l_attr_diff:
             l_attr_diff = self.init_link_attr_diff(l_id)
