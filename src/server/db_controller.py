@@ -220,15 +220,15 @@ class DBO_attr_diff_commit(DB_op):
         # NONGOALS: doing this on the client.
 
         # Should assert the following returns 1
-        # match a-[l:new_label]->b return count(l)
+        # match n-[l:new_label]->m return count(l)
         # Not doing so to avoid roundtrip - the following doesn't require knowing
         # the replaced label.
 
-        q_create_new = ["match a-[l_old {id: {id}}]->b",
-                        "create a-[l_new:%s]->b set l_new=l_old" % neo4j_util.quote__backtick(new_label),
+        q_create_new = ["match n-[l_old {id: {id}}]->m",
+                        "create n-[l_new:%s]->m set l_new=l_old" % neo4j_util.quote__backtick(new_label),
                         "return l_new.id, {id: l_new.id, name: type(l_new)}",
                         ]
-        q_delete_old = ["match a-[l_old {id: {id}}]->b",
+        q_delete_old = ["match n-[l_old {id: {id}}]->m",
                         "where type(l_old)<>'%s' delete l_old" % new_label,
                         ]
         q_param_set = {'id': id_attr}
