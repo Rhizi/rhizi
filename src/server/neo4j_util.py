@@ -219,14 +219,6 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
             del prop_dict['__dst_id']
             del prop_dict['__src_id']
 
-            # TODO - somewhere else?
-            if '__type' in prop_dict:
-                log.warn('client is sending us __type link property, it should not')
-            if 'name' in prop_dict:
-                log.warn('client is sending us name link property, it should not')
-            del prop_dict['__type']
-            del prop_dict['name']
-
             q_params = {'src': { 'id': src_id} ,
                         'dst': { 'id': dst_id} ,
                         'link_attr' : input_to_DB_property_map(prop_dict)}

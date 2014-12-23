@@ -37,15 +37,21 @@ def sanitize_input__node(n):
     """
     provide a control point as to which node fields are persisted
     """
-    assert None != n['id'], 'invalid input: node: missing id'
+    assert None != n.get('id'), 'invalid input: node: missing id'
 
 def sanitize_input__link(l):
     """
-    provide a control point as to which node fields are persisted
+    provide a control point as to which link fields are persisted
     """
-    assert None != l['id'], 'invalid input: link: missing id'
-    assert None != l['__src_id'], 'invalid input: link: missing src id'
-    assert None != l['__dst_id'], 'invalid input: link: missing dst id'
+
+    # expected prop assertions
+    assert None != l.get('id'), 'invalid input: link: missing id'
+    assert None != l.get('__src_id'), 'invalid input: link: missing src id'
+    assert None != l.get('__dst_id'), 'invalid input: link: missing dst id'
+
+    # unexpected prop assertions
+    assert None == l.get('__type'), 'client is sending us __type link property, it should not'
+    assert None == l.get('name'), 'client is sending us name link property, it should not'
 
 def sanitize_input__topo_diff(topo_diff):
     for n in topo_diff.node_set_add:
