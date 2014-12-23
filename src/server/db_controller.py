@@ -189,7 +189,6 @@ class DBO_attr_diff_commit(DB_op):
             w_attr_set = n_attr_diff['__attr_write']
 
             assert len(r_attr_set) > 0 or len(w_attr_set) > 0
-            assert 'name' not in r_attr_set
 
             # Labels on relationships are different, we use a label for the name property
             if 'name' in w_attr_set:

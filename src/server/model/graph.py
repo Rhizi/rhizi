@@ -83,6 +83,7 @@ class Attr_Diff(dict):
     def add_link_attr_rm(self, l_id, attr_name):
 
         assert 'id' != attr_name.lower(), 'Attr_Diff: attempt to remove \'id\' attribute'
+        assert 'name' != attr_name.lower(), 'Attr_Diff: attempt to remove link \'name\' attribute, use write instead'
 
         l_attr_diff = self['__type_link'].get(l_id)
         if None == l_attr_diff:
