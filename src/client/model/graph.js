@@ -36,7 +36,7 @@ function Graph() {
             node;
 
         notify = undefined === notify ? true : notify;
-        peer_notify = undefined === peer_notify ? true : peer_notify;
+        peer_notify = undefined === peer_notify ? spec.state != 'temp' : peer_notify;
 
         if (undefined == spec.id) {
             existing_node = findNodeByName(spec.name)
@@ -65,7 +65,8 @@ function Graph() {
         util.assert(undefined != node.id, '__addNode: node id missing');
         nodes.push(node);
         id_to_node_map[node.id] = node;
-        console.log('__addNode: node added: id: ' + node.id);
+        console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state +
+            (rz_config.backend_enabled && peer_notify ? ' _commit_ ' : ''));
 
         if (rz_config.backend_enabled && peer_notify){
             var topo_diff = model_diff.new_topo_diff({
@@ -94,10 +95,14 @@ function Graph() {
 
         peer_notify = undefined === peer_notify ? true : peer_notify;
 
-        var cascade_link_rm_set = []; // track cascading link removals
+        var cascade_link_rm_set = [], // track cascading link removals
+            has_non_temp = false;
         for (var j = 0; j < ns.length; j++) {
             var n = ns[j];
             var i = 0;
+            if (n.state != 'temp') {
+                has_non_temp = true;
+            }
             while (i < links.length) {
                 var link = links[i];
                 if ((link['__src'].equals(n)) || (link['__dst'].equals(n))) { // compare by id
@@ -121,7 +126,7 @@ function Graph() {
             console.log('_remove_node_set: removed node: id: ' + n.id);
         });
 
-        if (rz_config.backend_enabled && peer_notify){
+        if (rz_config.backend_enabled && peer_notify && has_non_temp) {
             var topo_diff = model_diff.new_topo_diff({
                 node_set_rm : ns.map(function(n){ return n.id; }),
                 link_set_rm : cascade_link_rm_set.map(function(l){ return l.id; }),
@@ -332,7 +337,7 @@ function Graph() {
 
         util.assert(link instanceof model_core.Link);
 
-        peer_notify = undefined === peer_notify ? true : peer_notify;
+        peer_notify = undefined === peer_notify ? link.state != 'temp' : peer_notify;
 
         if (link.name.length != trimmed_name.length) {
             console.log('bug: addLink with name containing spaces - removing before sending to server');
