@@ -375,7 +375,7 @@ var textAnalyser = function (newtext, finalize) {
     if (starGraph) {
         addNode(completeSentence, "chainlink", typesetter);
         for (n = 0; n < token_set_new_node_names.length; n++) {
-            __addLink(token_set_new_node_names[n], completeSentence, "", typesetter);
+            __addLink(token_set_new_node_names[n], completeSentence, "chained", typesetter);
         }
     }
 
@@ -425,7 +425,7 @@ var textAnalyser = function (newtext, finalize) {
                 apply_conjugator_link_logic(link, ret.drop_conjugator_links);
                 graph.addLinkByName(link.__src,
                                     link.__dst,
-                                    link.name || '',
+                                    link.name || 'is',
                                     link.state);
             }
         });
