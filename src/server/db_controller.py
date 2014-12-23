@@ -193,10 +193,10 @@ class DBO_attr_diff_commit(DB_op):
             # Labels on relationships are different, we use a label for the name property
             if 'name' in w_attr_set:
                 self.add_link_rename_statements(id_attr, w_attr_set['name'])
-            del w_attr_set['name']
+                del w_attr_set['name']
+
             if len(w_attr_set) == 0 and len(r_attr_set) == 0:
-                print('that\'s all she wrote')
-                return
+                continue
 
             q_arr = ["match (a)-[l {id: {id}}]-(b)",
                      "return l.id, l"]
