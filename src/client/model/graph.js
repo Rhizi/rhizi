@@ -406,7 +406,7 @@ function Graph() {
                 }
                 var matching = null;
                 link[key] = ret_link[key];
-                // this part is fucked up right now
+                // this part is askew right now
                 if (key == '__type') {
                     matching = 'name';
                 }
