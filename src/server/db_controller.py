@@ -198,7 +198,7 @@ class DBO_attr_diff_commit(DB_op):
             if len(w_attr_set) == 0 and len(r_attr_set) == 0:
                 continue
 
-            q_arr = ["match (a)-[l {id: {id}}]-(b)",
+            q_arr = ["match ()-[l {id: {id}}]-()",
                      "return l.id, l"]
             q_param_set = {'id': id_attr}
 
