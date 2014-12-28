@@ -62,6 +62,9 @@ function Graph() {
             if (l.target === undefined) {
                 l.target = l.__dst;
             }
+            if (l.name == undefined) {
+                l.name = 'is'; // cannot have a zero length name, using name as label in neo4j
+            }
             if (l.__type === undefined) {
                 l.__type = l.name;
             }
