@@ -241,10 +241,6 @@ def init_config(cfg_dir):
     cfg = Config.init_from_file(cfg_path)
     return cfg
 
-def test(cfg_dir):
-    cfg = init_config(cfg_dir)
-    init_webapp(cfg)
-    return rhizi_api.db_ctl
 
 if __name__ == "__main__":
 
