@@ -1,3 +1,5 @@
+import json
+
 class Attr_Diff(dict):
     """
     Represents a change to note attributes, where nodes can represent
