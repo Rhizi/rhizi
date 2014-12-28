@@ -13,12 +13,14 @@ import crypt_util
 import re
 
 from flask import Flask
+from flask import Response
 from flask import session
 from flask import redirect
 from flask import request
 from flask import send_from_directory
 
 from functools import wraps
+from rz_mesh import init_ws_interface
 
 class Config(object):
     """
@@ -141,9 +143,9 @@ def init_log(cfg):
     log.addHandler(log_handler_f)
     return log
 
-def init_rest_api(cfg, flask_webapp):
+def init_rest_interface(cfg, flask_webapp):
     """
-    map REST API calls
+    Initialize REST interface
     """
 
     def rest_entry(path, f, flask_args={'methods': ['POST']}):
@@ -218,8 +220,13 @@ def init_rest_api(cfg, flask_webapp):
 
         flask_webapp.f = f  # assign decorated function
 
-def init_webapp(cfg):
+def init_webapp(cfg, db_ctl=None):
+    """
+    Initialize webapp:
+       - call init_rest_interface()
+    """
     root_path = cfg.root_path
+
     webapp = FlaskExt(__name__,
                       static_folder='static',
                       template_folder=os.path.join(root_path, 'templates'),
@@ -227,10 +234,13 @@ def init_webapp(cfg):
     webapp.config.from_object(cfg)
     webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
 
-    db_ctl = dbc.DB_Controller(cfg)
+    if None == db_ctl:
+        db_ctl = dbc.DB_Controller(cfg)
     rhizi_api.db_ctl = db_ctl
 
     webapp.rz_config = cfg
+
+    init_rest_interface(cfg, webapp)
     return webapp
 
 def init_config(cfg_dir):
@@ -259,9 +269,7 @@ if __name__ == "__main__":
         exit(0)
 
     webapp = init_webapp(cfg)
-    init_rest_api(cfg, webapp)
+    ws_srv = init_ws_interface(cfg, webapp)
+    ws_srv.serve_forever()
 
-    log.info('launching webapp via Flask development server')
-    webapp.run(host=cfg.listen_address,
-               port=cfg.listen_port)
 
