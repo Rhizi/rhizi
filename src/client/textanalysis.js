@@ -364,7 +364,7 @@ var textAnalyser = function (newtext, finalize) {
                 break;
             case NODE:
                 addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
-                if (!starGraph && nodeindex > 0) {
+                if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                     __addLink(token_set_new_node_names[nodeindex - 1],
                               token_set_new_node_names[nodeindex],
                               token_set_new_link_names[linkindex], typesetter);
@@ -392,7 +392,7 @@ var textAnalyser = function (newtext, finalize) {
         case NODE:
             typeStack[nodeindex] = selectedType();
             addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
-            if (!starGraph && nodeindex > 0) {
+            if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                 __addLink(token_set_new_node_names[nodeindex - 1],
                           token_set_new_node_names[nodeindex],
                           token_set_new_link_names[linkindex], typesetter);
