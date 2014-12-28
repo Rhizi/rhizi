@@ -149,6 +149,11 @@ def init_rest_api(cfg, flask_webapp):
     def rest_entry(path, f, flask_args={'methods': ['POST']}):
         return (path, f, flask_args)
 
+    def redirect_entry(path, path_to, flask_args):
+        def redirector():
+            return redirect(path_to, code=302)
+        return (path, redirector, flask_args)
+
     def dev_mode__resend_from_static(static_url):
         """
         redirect static links while in dev mode:
@@ -175,6 +180,7 @@ def init_rest_api(cfg, flask_webapp):
         return wrapped_function
 
     rest_entry_set = [
+                      redirect_entry('/', '/index', {'methods': ['GET']}),
                       rest_entry('/add/node-set' , rhizi_api.add_node_set),
                       rest_entry('/graph/clone', rhizi_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rhizi_api.diff_commit__set),
