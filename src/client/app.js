@@ -1,14 +1,18 @@
 (function() {
     var lib_path = '/res/lib/';
     var config = {
+        shim: {
+            'socketio': { exports: 'io' },
+        },
         paths: {
-            jquery: lib_path + 'jquery',
-            'jquery-ui': lib_path + 'jquery-ui',
+            autocomplete: lib_path + 'autocomplete',
+            caret: lib_path + 'caret',
+            Bacon: lib_path + 'Bacon',
             'd3': lib_path + 'd3/d3',
             FileSaver: lib_path + 'FileSaver',
-            caret: lib_path + 'caret',
-            autocomplete: lib_path + 'autocomplete',
-            Bacon: lib_path + 'Bacon',
+            jquery: lib_path + 'jquery',
+            'jquery-ui': lib_path + 'jquery-ui',
+            socketio: lib_path + '/socket.io/socket.io.min_0.9.10',
         }
     }
 
