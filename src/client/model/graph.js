@@ -610,7 +610,8 @@ function Graph() {
 
     this.findCoordinates = function(id) {
         var n = find_node__by_id(id);
-        if ((index !== undefined)) {
+
+        if (n !== undefined) {
             $('.typeselection').css('top', n.y - 90);
             $('.typeselection').css('left', n.x - 230);
         }
