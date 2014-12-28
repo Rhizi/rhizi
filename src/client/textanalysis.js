@@ -507,6 +507,8 @@ var textAnalyser = function (newtext, finalize) {
             }
             // drop bubble node
             ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
+            // drop and links
+            ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
             graph.commit_diff__topo(ret, on_success, on_error);
         }
 
