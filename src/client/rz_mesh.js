@@ -3,7 +3,7 @@
 /**
  * Manage backend websocket connection
  */
-define([ 'rz_config' ], function(rz_config) {
+define([ 'rz_config', 'util', 'model/diff', 'socketio'], function(rz_config, util, model_diff, io) {
 
     var rz_server_url = 'http://' + rz_config.rz_server_host + ':'
             + rz_config.rz_server_port;
