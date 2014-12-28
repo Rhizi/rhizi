@@ -94,6 +94,18 @@ class Topo_Diff(object):
     """
     Represents a change to the graph topology
     """
+
+    class JSON_Encoder(json.JSONEncoder):
+        """
+        Topo_Diff is not a plain dict, so we provide a json encoder
+        """
+        def default(self, obj):
+            ret = {k: getattr(obj, k) for k in ['link_set_rm',
+                                                'node_set_rm',
+                                                'node_set_add',
+                                                'link_set_add'] }
+            return ret
+
     def __init__(self, link_set_rm=[],
                        node_set_rm=[],
                        node_set_add=[],
