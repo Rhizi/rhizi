@@ -5,5 +5,6 @@ define(function() {
         'rz_server_host': 'rhizi.local',
         'rz_server_port': '8080',
         'backend_enabled': true,
+        'backend__maintain_ws_connection': false,
     };
 });

@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config'],
-function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection, rz_config) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config', 'rz_mesh'],
+function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection, rz_config, rz_mesh) {
 
 var addednodes = [],
     vis,
@@ -294,8 +294,19 @@ function init_force_layout(){
               .start();
 }
 
+/**
+ * Initialize backend websocket connection - this will have no effect if
+ * rz_config.backend__maintain_ws_connection is set to 'false'
+ */
+function init_ws_connection(){
+    if (true == rz_config.backend__maintain_ws_connection){
+        rz_mesh.init();
+    }
+}
+
 initDrawingArea();
 init_force_layout();
+init_ws_connection();
 
 /**
  * find the visual element counterpart of a given model object. This relies on
