@@ -227,7 +227,8 @@ def monitor__server_info():
            "</p></body></html>"
 
 def index():
-    username = escape(session.get('username'))
+    session_username = session.get('username')
+    username = escape(session_username if session_username != None else "Anonymous Stranger")
     return render_template('index.html', username=username)
 
 def login():

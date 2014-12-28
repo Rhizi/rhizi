@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <script type="text/javascript">
+  var logged_username = "{{ username }}";
+  </script>
   <div id="chromeinputbugworkaround" style="position:fixed; top:0px; left:0px; width:100%">
   <span id="measure-node" class="graph nodetext" style="position: absolute; display: inline; top: -300px; left: 0px;">suicide squade, attack!</span>
   <span id="measure-link" class="graph linklabel" style="position: absolute; display: inline; top: -300px; left: 0px;">those who are about to cry, we kaput you.</span>
@@ -19,8 +22,8 @@
     <div class="user-area">
       <div class="username">
         <div class="profile-circle"></div>
-        <span class="profile-initials">UH</span>
-         <div class="profile-username">Welcome&nbsp;<span id="user_id">{{ username }}</span>!<span id="logout-button" class="button">Logout</span></div>
+        <span class="profile-initials">AN<!-- must be two letters because of css --></span>
+         <div class="profile-username">Welcome&nbsp;<span id="user_id">Anonymous</span>! <span id="logout-button" class="button">Logout</span></div>
       </div>
       <img class="organization-logo" src="/res/img/CRI-logo.png">
     </div>
