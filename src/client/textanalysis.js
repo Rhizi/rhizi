@@ -205,6 +205,7 @@ var textAnalyser = function (newtext, finalize) {
         m,
         word,
         completeSentence,
+        completeSentenceParts,
         typesetter, starGraph,
         n,
         link_hash = {},
@@ -320,18 +321,18 @@ var textAnalyser = function (newtext, finalize) {
     linkindex = 0;
     nodeindex = 0;
     word = "";
-    completeSentence = prefix.length > 0 ? String(prefix) + " " : "";
+    completeSentenceParts = prefix.length > 0 ? [String(prefix)] : [];
     for (m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === NODE) {
             word += " (" + token_set_new_node_names[nodeindex] + ") ";
-            completeSentence += token_set_new_node_names[nodeindex] + " ";
+            completeSentenceParts.push(token_set_new_node_names[nodeindex]);
             nodeindex++;
         } else if (orderStack[m] === LINK) {
             word += " -->" + token_set_new_link_names[nodeindex] + " --> ";
-            completeSentence += token_set_new_link_names[nodeindex];
+            completeSentenceParts.push(token_set_new_link_names[nodeindex]);
         }
     }
-    completeSentence = completeSentence.trim();
+    completeSentence = completeSentenceParts.join(" ").trim();
 
     //REBUILD GRAPH
     linkindex = 0;
@@ -425,10 +426,6 @@ var textAnalyser = function (newtext, finalize) {
             }
         }
     }
-
-    /*console.log(sentence);
-    console.log(completeSentence);
-    console.log(orderStack);*/
 
     //STAR CASE
     if (starGraph) {
