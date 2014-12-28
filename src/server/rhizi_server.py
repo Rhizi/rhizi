@@ -205,9 +205,6 @@ def init_rest_api(cfg, flask_webapp):
                                                  {'methods': ['GET']}))
         rest_entry_set += rest_dev_entry_set
 
-    if False == cfg.access_control:
-        log.warn('access control disabled, public access set on all URLs')
-
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
 
@@ -251,7 +248,11 @@ if __name__ == "__main__":
 
     cfg = init_config(args.config_dir)
     log = init_log(cfg)
-    log.debug('loaded configuration:\n%s' % cfg)
+
+    cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
+    log.debug('loaded configuration:\n%s' % cfg_indent_str)  # print indented
+    if False == cfg.access_control:
+        log.warn('access control disabled, all-granted access set on all URLs')
 
     if args.init_htpasswd_db:
         init_pw_db(cfg)
