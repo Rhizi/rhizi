@@ -633,8 +633,9 @@ function Graph() {
         }
 
         function graph_on_success(ret) {
-            var link_id = ret[0][0];
-            links.splice(linkGetIndexFromId(link_id), 1);
+            ret.link_rm.forEach(function (link_id) {
+                links.splice(linkGetIndexFromId(link_id), 1);
+            });
             if (on_success) {
                 on_success();
             }
