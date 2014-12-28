@@ -6,11 +6,51 @@ function get_rz_core()
     // circular dependency on rz_core, so require.js cannot solve it.
     if (rz_core === undefined) {
         rz_core = require('rz_core');
+        rz_core.graph.diffBus.onValue(updateSelectionOnDiff);
     }
     return rz_core;
 }
 
 var selected_nodes = [];
+
+function sortedArrayDiff(a, b, a_cmp_b)
+{
+    var a_i = 0,
+        b_i = 0,
+        ret = [];
+
+    while (a_i < a.length && b_i < b.length) {
+        while (a_i < a.length && a_cmp_b(a[a_i], b[b_i]) == -1) {
+            ret.push(a[a_i]);
+            a_i += 1;
+        }
+        while (b_i < b.length && a_i < a.length && a_cmp_b(a[a_i], b[b_i]) == 0) {
+            b_i += 1;
+            a_i += 1;
+        }
+        while (b_i < b.length && a_cmp_b(a[a_i], b[b_i]) == 1) {
+            b_i += 1;
+        }
+    }
+    for (; a_i < a.length ; ++a_i) {
+        ret.push(a[a_i]);
+    }
+    return ret;
+}
+
+function updateSelectionOnDiff(diff)
+{
+    var node_node_cmp = (function (a, b) { return a.id > b.id; }),
+        node_id_cmp = (function (a, b) { return a.id === b ? 0 : (a.id > b ? 1 : -1); });
+
+    if (diff.nodes.removed === undefined || selected_nodes.length == 0) {
+        return;
+    }
+    console.log("selection enter: " + String(selected_nodes.map(function(x) { return x.id; })));
+    console.log("removed nodes enter: " + String(diff.nodes.removed));
+    selected_nodes = sortedArrayDiff(selected_nodes.sort(node_node_cmp), diff.nodes.removed.sort(), node_id_cmp);
+    console.log("selection exit: " + String(selected_nodes.map(function(x) { return x.id; })));
+}
 
 function byVisitors(node_selector, link_selector) {
     var new_selected_nodes = get_rz_core().graph.findByVisitors(node_selector, link_selector);
