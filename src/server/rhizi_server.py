@@ -248,12 +248,16 @@ def init_config(cfg_dir):
     cfg = Config.init_from_file(cfg_path)
     return cfg
 
+def init_pw_db(cfg, user_pw_list_file):
+    pass  # TODO: stub, will move to tools/
+
 
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser(description='rhizi-server')
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     p.add_argument('--init-htpasswd-db', help='init login htpasswd db', action='store_const', const=True)
+    p.add_argument('--htpasswd-init-file', help='htpasswd db initialization file in \'user,pw\' format')
     args = p.parse_args()
 
     cfg = init_config(args.config_dir)
@@ -265,7 +269,7 @@ if __name__ == "__main__":
         log.warn('access control disabled, all-granted access set on all URLs')
 
     if args.init_htpasswd_db:
-        init_pw_db(cfg)
+        init_pw_db(cfg, args.htpasswd_init_file)
         exit(0)
 
     webapp = init_webapp(cfg)
