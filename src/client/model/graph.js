@@ -593,7 +593,7 @@ function Graph() {
 
     this._editProperty = function(id, state, prop, value) {
         var n = find_node__by_id(id);
-        if (state != n.state){
+        if (state !== null && state != n.state){
             return false;
         }
 

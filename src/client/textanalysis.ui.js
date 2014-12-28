@@ -91,7 +91,7 @@ function changeType(arg) {
         nodetype,
         id;
 
-    if(!lastnode) {
+    if (!lastnode) {
         id = "new node";
     } else {
         id = lastnode.id;
