@@ -21,7 +21,7 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     """
     def multicast_msg(self, msg_name, *args):
         multicast_size = len(self.socket.server.sockets) - 1  # subtract self socket
-        log.info('ws: tx: %s: cast-size ~= %d' % (msg_name, multicast_size))  # race conditions apply
+        log.info('ws: tx: msg: \'%s\': cast-size ~= %d' % (msg_name, multicast_size))  # ~=: as race conditions apply
         super(WebSocket_Graph_NS, self).broadcast_event_not_me(msg_name, *args)
 
     def _log_conn(self, prefix_msg):
