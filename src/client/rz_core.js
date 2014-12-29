@@ -220,6 +220,10 @@ var initDrawingArea = function () {
     }
 
     graph = new model_graph.Graph();
+    graph.diffBus.onValue(function (diff) {
+        var relayout = false == rz_diff.is_attr_diff(diff);
+        update_view__graph(relayout);
+    });
 
     var user_id = $('#user_id'),
         user = user_id.text();

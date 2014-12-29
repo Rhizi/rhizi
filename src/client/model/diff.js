@@ -180,5 +180,6 @@ define([],
                 new_attr_diff : new_attr_diff,
                 new_vis_diff : new_vis_diff,
                 new_diff_set : new_diff_set,
+                is_attr_diff: function (obj) { return obj instanceof Attr_Diff; },
             }
         });
