@@ -9,6 +9,11 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 * Apache Ant
 
 = Use =
+
+== requirements ==
+Install [neo4j](http://neo4j.com/download/)
+
+Install [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/) Or <code> Run pip install gevent-socketio </code>
 == Running Rhizi Locally ==
 To run Rhizi locally:
 For testing locally run neo4j locally on the default 7474 port and then launch run-local.sh:<br><code>./run-local.sh</code>
