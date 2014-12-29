@@ -137,15 +137,12 @@ define([],
                  * validate obj_spec
                  */
                 var ret;
-                if (undefined == obj_spec) {
-                    obj_spec = {
-                        node_set_add : [],
-                        link_set_add : [],
-                    }
-                    ret = new Topo_Diff(obj_spec);
-                } else {
-                    ret = new Topo_Diff(obj_spec);
-                }
+                undefined == obj_spec && (obj_spec = {});
+                undefined == obj_spec.node_set_add && (obj_spec.node_set_add = []);
+                undefined == obj_spec.link_set_add && (obj_spec.link_set_add = []);
+                undefined == obj_spec.node_set_rm && (obj_spec.node_set_rm = []);
+                undefined == obj_spec.link_set_rm && (obj_spec.link_set_rm = []);
+                ret = new Topo_Diff(obj_spec);
                 return ret;
             }
 
