@@ -11,7 +11,6 @@ from socketio.mixins import BroadcastMixin
 from socketio.server import SocketIOServer
 
 from geventwebsocket.handler import WebSocketHandler
-#from geventwebsocket import WebSocketServer, WebSocketApplication, Resource
 
 log = logging.getLogger('rhizi')
 
