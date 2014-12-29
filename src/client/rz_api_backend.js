@@ -93,7 +93,17 @@ define(['rz_config'], function(rz_config) {
          * commit vis_diff
          */
         this.commit_diff__vis = function(vis_diff, on_success, on_error) {
-            // TODO impl
+            var post_dict = {
+                'vis_diff' : vis_diff
+            }
+
+            var req_opts = {
+                type : 'POST',
+                data : JSON.stringify(post_dict),
+            };
+
+            return ajax_rs('/graph/diff-commit-vis', req_opts, on_success,
+                    on_error);
         }
 
         /**
