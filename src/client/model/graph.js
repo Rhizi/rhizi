@@ -1,7 +1,7 @@
 "use strict"
 
-define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'rz_bus', 'rz_config'],
-function (Bacon, consts, util, model_core, model_util, model_diff, rz_api_backend, rz_api_mesh, history, rz_bus, rz_config) {
+define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'rz_config'],
+function (Bacon, consts, util, model_core, model_util, model_diff, rz_api_backend, rz_api_mesh, history, rz_config) {
 
 var debug = false;
 
@@ -12,7 +12,15 @@ function Graph() {
         links = [],
         diffBus = new Bacon.Bus();
 
+    // All operations done on the graph. When the server is used (i.e. always) this
+    // bus contains the server events, not the user events (most of the time the same just with delay).
     this.diffBus = diffBus;
+
+    // debug
+    diffBus.onValue(function (v) {
+        console.log("=================");
+        console.dir(v);
+    });
 
     /**
      * add node if no previous node is present whose id equals that of the node being added
@@ -148,10 +156,6 @@ function Graph() {
             rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
         }
 
-        if (notify) {
-            diffBus.push({nodes: {add: [node]}});
-        }
-
         return node;
     }
     this.__addNode = __addNode;
@@ -204,10 +208,6 @@ function Graph() {
                 // TODO: add problem emblem to node
             };
             rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
-        }
-
-        if (ns.length > 0) {
-            diffBus.push({nodes: {removed: ns.map(function(n) { return n.id; })}});
         }
     }
 
@@ -433,8 +433,6 @@ function Graph() {
                 };
                 rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
             }
-
-            diffBus.push({links: {add: [link]}});
         } else {
             existing_link.name = link.name;
             existing_link.state = link.state;
@@ -538,7 +536,6 @@ function Graph() {
         var on_ajax_error = function(){
             console.log('error with commit to server: danger robinson!');
         };
-
         rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     }
 
@@ -812,6 +809,7 @@ function Graph() {
         data['node_set'].map(on_backend__node_add);
 
         data['link_set'].map(on_backend__link_add);
+        diffBus.push(data);
     }
 
     /**
@@ -833,7 +831,7 @@ function Graph() {
 
     this.load_from_json = function(json) {
         var data = JSON.parse(json),
-            added_names,
+            added_nodes,
             that = this;
 
         clear();
@@ -856,7 +854,6 @@ function Graph() {
             that.addLink(link.__src, link.__dst, link.name, "perm");
         });
         this.clear_history();
-        rz_bus.names.push(added_names);
     }
 
     this.save_to_json = function() {

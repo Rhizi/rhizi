@@ -59,8 +59,8 @@ function new_tokenize(text, node_token, quote)
     return tokens;
 }
 
-define(['rz_core', 'model/core', 'model/util', 'model/diff', 'rz_bus', 'consts'],
-function(rz_core,   model_core,   model_util,   model_diff,   rz_bus,   consts) {
+define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts'],
+function(rz_core,   model_core,   model_util,   model_diff,   consts) {
 
 var typeindex = 0;
 var nodetypes = consts.nodetypes;
@@ -84,6 +84,12 @@ function autoSuggestAddName(name)
 {
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
     sugg[name] = 1;
+    suggestions_options.push(sugg);
+}
+
+function autoSuggestRemoveName(name)
+{
+    delete sugg[name];
     suggestions_options.push(sugg);
 }
 
@@ -525,23 +531,26 @@ var textAnalyser = function (newtext, finalize) {
 
 function init(graph)
 {
-    function onNodeAdded(diff) {
-        if (!diff || !diff.nodes || !diff.nodes.added) {
-            return;
-        }
-        for (var k in diff.nodes.added) {
-            var node = diff.nodes[k];
-            autoSuggestAddName(node.name.toLowerCase());
-        }
-    }
-    function toLowerCase(n) {
-        return n.toLowerCase();
-    }
-    function onSuggestedNameAdd(names) {
-        names.map(toLowerCase).forEach(autoSuggestAddName);
-    }
-    graph.diffBus.onValue(onNodeAdded);
-    rz_bus.names.onValue(onSuggestedNameAdd);
+    // deal with new nodes
+    graph.diffBus.filter(function (diff) {
+        return diff.nodes && diff.nodes.added;
+    }).map(function (diff) {
+        return diff.nodes.added.toLowerCase();
+    }).onValue(autoSuggestAddName);
+
+    // deal with renamed links
+    graph.diffBus.filter(function (diff) {
+        return diff && diff.changed && diff.changed.links;
+    }).map(function (diff) {
+        return diff.changed.links;
+    }).flatMap(Bacon.fromArray)
+    .onValue(function (diff) {
+        console.log('renamed link ' + diff.removed + ' -> ' + diff.added);
+        autoSuggestRemoveName(diff.removed.toLowerCase());
+        autoSuggestAddName(diff.added.toLowerCase());
+    });
+
+    // TODO renamed nodes, plus reuse part of the pipeline.
 }
 
 return {

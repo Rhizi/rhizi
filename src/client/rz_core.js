@@ -81,7 +81,6 @@ var svgInput = (function() {
                     });
                 } else {
                     graph.update_node(d, {name: newname}, function() {
-                        rz_bus.names.push([newname]);
                         update_view__graph(true);
                     });
                     // TODO - 'updating' graphic
@@ -300,7 +299,7 @@ function init_force_layout(){
  */
 function init_ws_connection(){
     if (true == rz_config.backend__maintain_ws_connection){
-        rz_mesh.init();
+        rz_mesh.init({graph: graph});
     }
 }
 
