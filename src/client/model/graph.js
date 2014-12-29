@@ -442,19 +442,6 @@ function Graph() {
     }
     this.addLink = addLink;
 
-    this.editLink = function(src_id, dst_id, newname, newstate) {
-        var link = findLink(src_id, dst_id, newname);
-
-        if (link === undefined) {
-            return;
-        }
-        link.name = newname;
-        if (newstate !== undefined) {
-            link.state = newstate;
-        }
-        rz_bus.names.push([newname]);
-    }
-
     this.update_link = function(link, new_link_spec, on_success, on_error) {
         util.assert(link instanceof model_core.Link);
 
