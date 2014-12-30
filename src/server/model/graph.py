@@ -106,9 +106,9 @@ class Topo_Diff(object):
 
     def to_json_dict(self):
         ret = {k: getattr(self, k) for k in ['link_set_rm',
-                                              'node_set_rm',
-                                              'node_set_add',
-                                              'link_set_add'] }
+                                             'node_set_rm',
+                                             'node_set_add',
+                                             'link_set_add'] }
         return ret
 
     def __init__(self, link_set_rm=[],

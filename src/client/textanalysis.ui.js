@@ -107,7 +107,6 @@ function changeType(arg) {
         typeselection.showChosenType(nodetype);
         rz_core.graph.findCoordinates(id);
     }
-    rz_core.update_view__graph(true);
 }
 
 return {

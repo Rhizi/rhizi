@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config', 'rz_mesh'],
-function($, d3, consts, rz_bus, util, model_graph, model_core, view_helpers, view, rz_observer, selection, rz_config, rz_mesh) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config', 'rz_mesh', 'model/diff'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   view,        rz_observer,   selection,        rz_config,   rz_mesh,   model_diff) {
 
 var addednodes = [],
     vis,
@@ -76,15 +76,11 @@ var svgInput = (function() {
             d = jelement.data().d;
             if (e.which == 13 && newname != d.name) {
                 if (d.hasOwnProperty('__src')) {
-                    graph.update_link(d, {name: newname}, function() {
-                        update_view__graph(true);
-                    });
+                    graph.update_link(d, {name: newname});
                 } else {
-                    graph.update_node(d, {name: newname}, function() {
-                        update_view__graph(true);
-                    });
-                    // TODO - 'updating' graphic
+                    // TODO - display hourglass
                     // TODO - use promises to make A follows B readable.
+                    graph.update_node(d, {name: newname});
                 }
             }
             hide();
@@ -221,9 +217,21 @@ var initDrawingArea = function () {
 
     graph = new model_graph.Graph();
     graph.diffBus.onValue(function (diff) {
-        var relayout = false == rz_diff.is_attr_diff(diff);
+        var relayout = (false == model_diff.is_attr_diff(diff));
+        console.log('*************');
+        console.dir(diff);
         update_view__graph(relayout);
     });
+    // TODO: we are listening both on graph.diffBus and selection.selectionChangedBus,
+    //  but the relation is actually:
+    //
+    //  diffBus -> SelectedNodesBus -> us
+    //  diffBus         ->             us
+    //
+    //  we need to deduplicate this event
+    // but there is no coordination, resulting in double updates.
+    selection.selectionChangedBus.onValue(
+        function() { update_view__graph(false); });
 
     var user_id = $('#user_id'),
         user = user_id.text();
@@ -277,9 +285,7 @@ var initDrawingArea = function () {
 
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
     if (rz_config.backend_enabled){
-        graph.load_from_backend( function(){
-            update_view__graph(false);
-        });
+        graph.load_from_backend();
     }
 }
 
@@ -333,8 +339,9 @@ function canvas_handler_dblclick(){
     var n = model_core.create_node__set_random_id();
     n.name = ''; // will be set by user
 
-    graph.addNode(n);
-    update_view__graph();
+    graph.commit_and_tx_diff__topo(model_diff.new_topo({
+            node_set_add : [n].map(model_util.adapt_format_write_node),
+        }));
 
     var n_ve = locate_visual_element(n); // locate visual element
 
@@ -357,14 +364,15 @@ function canvas_handler_dblclick(){
 /**
  * update view: graph
  */
-function update_view__graph(no_relayout) {
+function update_view__graph(relayout) {
     var node,
         link,
         link_g,
         linktext,
         nodetext,
         unselected_link_group = document.querySelector('#link-group'),
-        selected_link_group = document.querySelector('#selected-link-group');
+        selected_link_group = document.querySelector('#selected-link-group'),
+        relayout = relayout || true;
 
     link = vis.selectAll("g.link")
         .data(graph.links(), function(d) { return d.id; });
@@ -395,15 +403,10 @@ function update_view__graph(no_relayout) {
 
             view.edge_info.on_delete(function () {
                 view.edge_info.hide();
-                graph.removeLink(that.link, function() {
-                    update_view__graph(true);
-                }, function() {
-                    console.log("error: could not remove link");
-                });
+                graph.removeLink(that.link);
             });
             view.edge_info.show(d);
             selection.update([src, dst]);
-            update_view__graph(true);
         });
 
     link.attr("class", function(d, i){
@@ -621,12 +624,12 @@ function update_view__graph(no_relayout) {
     force.nodes(graph.nodes())
         .links(graph.links())
 
-    if (no_relayout) {
+    if (relayout) {
+        force.alpha(0.1).start();
+    } else {
         // XXX If we are stopped we need to update the text of the links at least,
         // and this is the simplest way
         tick();
-    } else {
-        force.alpha(0.1).start();
     }
 }
 
@@ -722,31 +725,39 @@ function tick(e) {
     node.attr('visibility', 'visible');
 }
 
-function showNodeInfo(d, i) {
-    view.node_info.on_save(function(e, form_data) {
+function showNodeInfo(node, i) {
+    var closed = false;
 
-        graph.update_node(d, form_data, function(){
-            var old_type = d.type,
+    view.node_info.on_save(function(e, form_data) {
+        closed = true;
+        graph.update_node(node, form_data, function() {
+            var old_type = node.type,
                 new_type = form_data.type;
 
-            if (new_type != old_type) {
-                view.node_info.show(d);
-            }
-
-            view.node_info.hide();
-            update_view__graph(true);
         });
-
+        view.node_info.hide();
         return false;
     });
 
-    view.node_info.on_delete(function() {
-        graph.removeNode(d.id); // async
-        update_view__graph(false);
-        view.node_info.hide();
+    // FIXME - attribute diff, ignore uninteresting diffs via filtering
+    graph.diffBus.onValue(function () {
+        if (closed) {
+            return Bacon.noMore;
+        }
+        view.node_info.show(node);
     });
 
-    view.node_info.show(d);
+    view.node_info.on_delete(function() {
+        var topo_diff = model_diff.new_topo_diff({
+                node_set_rm: [node.id]
+            });
+        console.log("closing node info");
+        closed = true;
+        view.node_info.hide();
+        graph.commit_and_tx_diff__topo(topo_diff);
+    });
+
+    view.node_info.show(node);
 }
 
 function svg_click_handler(e) {
@@ -760,7 +771,7 @@ function svg_click_handler(e) {
     svgInput.hide();
     selection.clear();
     view.hide();
-    update_view__graph(true);
+    update_view__graph(false);
 }
 
 return {
@@ -769,7 +780,7 @@ return {
     load_from_json: function(result) {
         graph.load_from_json(result);
         recenterZoom();
-        update_view__graph(false);
+        update_view__graph(true);
     },
     update_view__graph : update_view__graph,
 }

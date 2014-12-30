@@ -68,7 +68,8 @@ var typeStack = [];
 
 var lastnode;
 
-var sugg = {}, // suggestions for autocompletion of node names
+var sugg_name = {},
+    id_to_name_map = {},
     suggestions_options = new Bacon.Bus(); // TODO: Property: same as bus, but with initial value
 
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
@@ -80,16 +81,27 @@ function selectedType()
     return nodetypes[typeindex];
 }
 
-function autoSuggestAddName(name)
+/*
+ * id - undefined | node id 
+ *
+ */
+function auto_suggest__update_name(name, id)
 {
+    if (id !== undefined && id_to_name_map[id] !== undefined) {
+        delete sugg[id_to_name_map[id]];
+        id_to_name_map[id] = name;
+    }
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
     sugg[name] = 1;
     suggestions_options.push(sugg);
 }
 
-function autoSuggestRemoveName(name)
+function auto_suggest_remove_name(name, id)
 {
     delete sugg[name];
+    if (id !== undefined) {
+        delete sugg[id];
+    }
     suggestions_options.push(sugg);
 }
 
@@ -349,7 +361,7 @@ var textAnalyser = function (newtext, finalize) {
     if (finalize === true) {
         typesetter = "perm";
         for (n = 0; n < token_set_new_node_names.length; n++) {
-            autoSuggestAddName(token_set_new_node_names[n]);
+            auto_suggest__update_name(token_set_new_node_names[n]);
         }
     } else {
         typesetter = "temp";
@@ -467,7 +479,7 @@ var textAnalyser = function (newtext, finalize) {
             }
         } else {
             // REINITIALISE GRAPH (DUMB BUT IT WORKS)
-            graph.removeNodes(function(n){ return "temp" == n.state; });
+            graph.removeNodes("temp");
             graph.removeLinks("temp");
 
             if (!finalize) { // finalize done via topo diff below
@@ -504,22 +516,12 @@ var textAnalyser = function (newtext, finalize) {
             // broadcast diff:
             //    - finalize?
             //    - broadcast_diff requested by caller
-            var on_success = function (ret) {
-                console.dir(ret);
-                rz_core.update_view__graph();
-            }
-            var on_error = function () {
-                console.log('askeeeeeeeeeeeeew');
-            }
             // drop bubble node
             ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
             // drop and links
             ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
-            graph.commit_diff__topo(ret, on_success, on_error);
+            graph.commit_and_tx__topo(ret);
         }
-
-        // update graph if not going through backend
-        rz_core.update_view__graph(!finalize && comp.graph_same);
     };
 
     if (finalize) {
@@ -532,24 +534,31 @@ var textAnalyser = function (newtext, finalize) {
 function init(graph)
 {
     // deal with new nodes
-    graph.diffBus.filter(function (diff) {
-        return diff.nodes && diff.nodes.added;
-    }).map(function (diff) {
-        return diff.nodes.added.toLowerCase();
-    }).onValue(autoSuggestAddName);
+    graph.diffBus
+        .filter(function (diff) {
+            return diff.node_set_add && diff.node_set_add.length > 0;
+        })
+        .map(".node_set_rm")
+        .flatMap(Bacon.fromArray)
+        .map(".name")
+        .map(function (name) { return name.toLowerCase(); })
+        .onValue(auto_suggest__update_name);
 
     // deal with renamed links
-    graph.diffBus.filter(function (diff) {
-        return diff && diff.changed && diff.changed.links;
-    }).map(function (diff) {
-        return diff.changed.links;
-    }).flatMap(Bacon.fromArray)
-    .onValue(function (diff) {
-        console.log('renamed link ' + diff.removed + ' -> ' + diff.added);
-        autoSuggestRemoveName(diff.removed.toLowerCase());
-        autoSuggestAddName(diff.added.toLowerCase());
-    });
-
+    /*
+    // TODO renamed links - broken in server, DBO_attr_diff_commit doesn't return an Attr_Diff
+    graph.diffBus
+        .filter(function (diff) {
+            return diff && diff.link_set_rm && diff.link_set_rm.length > 0;
+        })
+        .map(".link_set_rm")
+        .flatMap(Bacon.fromArray)
+        .onValue(function (name) {
+            var name = TODO,
+                id = TODO;
+            auto_suggest__update_name(name, id);
+        });
+    */
     // TODO renamed nodes, plus reuse part of the pipeline.
 }
 

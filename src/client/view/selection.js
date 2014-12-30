@@ -1,17 +1,31 @@
-define(['rz_core'],
-function(rz_core) {
+define(['rz_core', 'Bacon'],
+function(rz_core,   Bacon) {
 
 function get_rz_core()
 {
     // circular dependency on rz_core, so require.js cannot solve it.
     if (rz_core === undefined) {
         rz_core = require('rz_core');
-        rz_core.graph.diffBus.onValue(updateSelectionOnDiff);
+        listen_on_diff_bus(rz_core.graph.diffBus);
     }
     return rz_core;
 }
 
-var selected_nodes = [];
+var selected_nodes = [],
+    selectionChangedBus = new Bacon.Bus();
+
+function listen_on_diff_bus(diffBus)
+{
+    diffBus
+        .filter(".node_set_rm")
+        .onValue(function (diff) {
+            var node_node_cmp = (function (a, b) { return a.id > b.id; }),
+                node_id_cmp = (function (a, b) { return a.id === b ? 0 : (a.id > b ? 1 : -1); });
+
+            updateSelectedNodesBus(sortedArrayDiff(selected_nodes.sort(node_node_cmp),
+                                             diff.node_set_rm.sort(), node_id_cmp));
+        });
+}
 
 function sortedArrayDiff(a, b, a_cmp_b)
 {
@@ -38,18 +52,10 @@ function sortedArrayDiff(a, b, a_cmp_b)
     return ret;
 }
 
-function updateSelectionOnDiff(diff)
+function updateSelectedNodesBus(new_selected_nodes)
 {
-    var node_node_cmp = (function (a, b) { return a.id > b.id; }),
-        node_id_cmp = (function (a, b) { return a.id === b ? 0 : (a.id > b ? 1 : -1); });
-
-    if (diff.nodes.removed === undefined || selected_nodes.length == 0) {
-        return;
-    }
-    console.log("selection enter: " + String(selected_nodes.map(function(x) { return x.id; })));
-    console.log("removed nodes enter: " + String(diff.nodes.removed));
-    selected_nodes = sortedArrayDiff(selected_nodes.sort(node_node_cmp), diff.nodes.removed.sort(), node_id_cmp);
-    console.log("selection exit: " + String(selected_nodes.map(function(x) { return x.id; })));
+    selected_nodes = new_selected_nodes;
+    selectionChangedBus.push(selected_nodes);
 }
 
 function byVisitors(node_selector, link_selector) {
@@ -66,7 +72,7 @@ function connectedComponent(nodes) {
         link,
         data;
 
-    selected_nodes = nodes.map(function(x) { return x; });
+    updateSelectedNodesBus(nodes.map(function(x) { return x; }));
 
     for (i = 0 ; i < connected.nodes.length ; ++i) {
         data = connected.nodes[i];
@@ -137,6 +143,7 @@ return {
     update: update,
     selected_class: selected_class,
     node_selected: node_selected,
+    selectionChangedBus: selectionChangedBus,
 };
 
 });
