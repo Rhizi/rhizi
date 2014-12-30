@@ -242,7 +242,8 @@ class TestDBController(unittest.TestCase):
     def test_attr_diff_commit(self):
         # create test node
         n_id = rand_id()
-        topo_diff = Topo_Diff(node_set_add=[{'__type': 'T_test_attr_diff_commit', 'id': n_id, 'attr_rm': 0}])
+        topo_diff = Topo_Diff(node_set_add=[{'__label_set': ['T_test_attr_diff_commit'],
+                                             'id': n_id, 'attr_0': 0}])
         op = dbc.DBO_topo_diff_commit(topo_diff)
         self.db_ctl.exec_op(op)
 
@@ -250,30 +251,29 @@ class TestDBController(unittest.TestCase):
         attr_diff = Attr_Diff()
         attr_diff.add_node_attr_write(n_id, 'attr_0', 0)
         attr_diff.add_node_attr_write(n_id, 'attr_1', 'a')
-        attr_diff.add_node_attr_rm(n_id, 'attr_rm')
+        attr_diff.add_node_attr_rm(n_id, 'attr_2')
 
         op = dbc.DBO_attr_diff_commit(attr_diff)
-        n_map = self.db_ctl.exec_op(op)
-        self.assertEqual(len(n_map), 1)
-        n = n_map.get(n_id)
-        self.assertTrue(None != n)
-        self.assertTrue(None == n.get('attr_rm'))
-        self.assertEqual(0, n.get('attr_0'))
-        self.assertEqual('a', n.get('attr_1'))
+        ret_diff = self.db_ctl.exec_op(op)
+
+        self.assertEqual(len(ret_diff.type__node), 1)
+        self.assertTrue(None != ret_diff.type__node[n_id])
 
         # attr-set only
         attr_diff = Attr_Diff()
         attr_diff.add_node_attr_write(n_id, 'attr_2', 0)
 
         op = dbc.DBO_attr_diff_commit(attr_diff)
-        n_map = self.db_ctl.exec_op(op)
+        ret_diff = self.db_ctl.exec_op(op)
+        self.assertTrue(None != ret_diff.type__node[n_id]['__attr_write'].get('attr_2'))
 
         # attr-remove only
         attr_diff = Attr_Diff()
         attr_diff.add_node_attr_rm(n_id, 'attr_2')
 
         op = dbc.DBO_attr_diff_commit(attr_diff)
-        n_map = self.db_ctl.exec_op(op)
+        ret_diff = self.db_ctl.exec_op(op)
+        self.assertTrue('attr_2' in ret_diff.type__node[n_id]['__attr_remove'])
 
     def test_rm_node_set(self):
         n_0_id = rand_id()
