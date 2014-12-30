@@ -77,6 +77,10 @@ function svg_extract_translate_and_scale(e)
 
 History.prototype.record_zoom = function(d)
 {
+    if (this.transform_element === undefined) {
+        // FIXME why is it undefined? set in constructor above
+        return;
+    }
     var transform = svg_extract_translate_and_scale(this.transform_element);
 
     if (transform === undefined) {
