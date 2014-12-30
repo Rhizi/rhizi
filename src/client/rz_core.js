@@ -218,7 +218,11 @@ var initDrawingArea = function () {
     graph = new model_graph.Graph();
     graph.diffBus.onValue(function (diff) {
         var relayout = (false == model_diff.is_attr_diff(diff));
-        console.log('*************');
+        if (relayout) {
+            console.log('****** graph relayout *******');
+        } else {
+            console.log('****** graph update   *******');
+        }
         console.dir(diff);
         update_view__graph(relayout);
     });
@@ -464,6 +468,8 @@ function update_view__graph(relayout) {
         .data(graph.nodes(), function(d) {
             return d.id;
         });
+    console.log("update update update update");
+    console.dir(node);
 
     var nodeEnter = node.enter()
         .append("g")
@@ -657,7 +663,7 @@ function tick(e) {
     //console.log(e);
     //$(".debug").html(force.alpha());
     var node = vis.selectAll(".node")
-        .data(force.nodes(), function(d) {
+        .data(graph.nodes(), function(d) {
             return d.id;
         });
     var link = vis.selectAll("path.link")

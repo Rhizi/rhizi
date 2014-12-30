@@ -483,14 +483,14 @@ var textAnalyser = function (newtext, finalize) {
             graph.removeLinks("temp");
 
             if (!finalize) { // finalize done via topo diff below
-                ret.for_each_node_add(function (node) {
+                ret.for_each_node_add(function (node_spec) {
+                    var new_node;
                     if (true == finalize && node.state == 'temp') {
                         console.log('bug: temp node creation on finalize');
                     } else {
+                        new_node = graph.addTempNode(node_spec);
                         if (!finalize) {
-                            lastnode = graph.addNode(node);
-                        } else {
-                            graph.addNode(node);
+                            lastnode = new_node;
                         }
                     }
                 });
@@ -512,15 +512,17 @@ var textAnalyser = function (newtext, finalize) {
             graph.removeRelated();
         }
 
+        // drop bubble node
+        ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
+        // drop and links
+        ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
         if (finalize && backend_commit) {
             // broadcast diff:
             //    - finalize?
             //    - broadcast_diff requested by caller
-            // drop bubble node
-            ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
-            // drop and links
-            ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
-            graph.commit_and_tx__topo(ret);
+            graph.commit_and_tx_diff__topo(ret);
+        } else {
+            graph.commit_diff__topo(ret);
         }
     };
 

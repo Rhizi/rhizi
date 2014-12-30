@@ -7,32 +7,40 @@ var debug = false;
 
 function Graph() {
 
-    var nodes = [],
-        id_to_node_map = {},
-        id_to_node_index_map = {},
-        links = [],
+    var id_to_node_map = {},
+        node_map = {},
         id_to_link_map = {},
-        id_to_link_index_map = {},
-        diffBus = new Bacon.Bus();
+        link_map = {},
+        diffBus = new Bacon.Bus(),
+        cached_links,
+        invalidate_links,
+        cached_nodes,
+        invalidate_nodes;
 
     // All operations done on the graph. When the server is used (i.e. always) this
     // bus contains the server events, not the user events (most of the time the same just with delay).
     this.diffBus = diffBus;
 
-    // debug
-    diffBus.onValue(function (v) {
-        console.log("=================");
-        console.dir(v);
-    });
+    var links_forEach = function (f) {
+        for (var link_key in link_map) {
+            f(link_map[link_key]);
+        }
+    }
+
+    var nodes_forEach = function (f) {
+        for (var node_key in node_map) {
+            f(node_map[node_key]);
+        }
+    }
 
     /**
      * add node if no previous node is present whose id equals that of the node being added
      *
      * @return node if node was actually added
      */
-    this.addNode = function(spec) {
-        var node = this.__addNode(spec);
-        return node;
+    this.addTempNode = function(spec) {
+        util.assert(spec.state === 'temp', "node is not a temp node");
+        return this.__addNode(spec);
     }
 
     var nodes_to_touched_links = function (node_id_set) {
@@ -40,7 +48,7 @@ function Graph() {
 
         node_id_set.forEach(function (n_id) {
             var n = id_to_node_map[n_id];
-            links.forEach(function (link) {
+            links_forEach(function (link) {
                 if ((link['__src'].equals(n)) || (link['__dst'].equals(n))) { // compare by id
                     touched_links.push(link);
                 }
@@ -122,12 +130,9 @@ function Graph() {
      *
      * @param notify whether or not a presenter notification will be sent, default = true
      */
-    function __addNode(spec, notify, peer_notify) {
+    function __addNode(spec) {
         var existing_node,
             node;
-
-        notify = undefined === notify ? true : notify;
-        peer_notify = undefined === peer_notify ? spec.state != 'temp' : peer_notify;
 
         if (undefined == spec.id) {
             existing_node = findNodeByName(spec.name)
@@ -155,54 +160,50 @@ function Graph() {
 
         util.assert(undefined != node.id, '__addNode: node id missing');
         _node_add_helper(node);
-        console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state +
-            (rz_config.backend_enabled && peer_notify ? ' _commit_ ' : ''));
-
-        if (rz_config.backend_enabled && peer_notify){
-            var topo_diff = model_diff.new_topo_diff({
-                node_set_add : [node].map(model_util.adapt_format_write_node),
-            });
-            var on_success = function(){
-                // FIXME: handle possible outcomes:
-                // - id merge: node already exists -> update id
-                // - link-merge: node already exists -> merge links, recurse?
-            };
-            var on_error = function(){
-                // TODO: add problem emblem to node
-            };
-            rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
-        }
+        console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state);
 
         return node;
     }
     this.__addNode = __addNode;
 
-    var _node_remove_helper_by_index = function (i) {
-        var id = nodes[i].id;
-        delete id_to_node_index_map[id];
-        delete id_to_node_map[id];
-        nodes.splice(i, 1);
+    var _node_key = function (node) {
+        return node.name + '|' + node.id
+    }
+
+    var _link_key = function (link) {
+        return link.name + '|' + link.id
+    }
+
+    var _node_remove_helper = function (node) {
+        if (node.id !== undefined) {
+            delete id_to_node_map[node.id];
+        }
+        delete node_map[_node_key(node)];
+        invalidate_nodes = true;
     }
 
     var _node_add_helper = function (node) {
-        id_to_node_map[node.id] = node;
-        id_to_node_index_map[node.id] = nodes.length;
-        nodes.push(node);
-        util.assert(nodes[id_to_node_index_map[node.id]] === node, "master?");
+        if (node.id !== undefined) {
+            id_to_node_map[node.id] = node;
+        }
+        node_map[_node_key(node)] = node;
+        invalidate_nodes = true;
     }
 
-    var _link_remove_helper_by_index = function (i) {
-        var id = links[i].id;
-        delete id_to_link_index_map[id];
-        delete id_to_link_map[id];
-        links.splice(i, 1);
+    var _link_remove_helper = function (link) {
+        if (link.id !== undefined) {
+            delete id_to_link_map[link.id];
+        }
+        delete link_map[_link_key(link)];
+        invalidate_links = true;
     }
 
     var _link_add_helper = function (link) {
-        id_to_link_map[link.id] = link;
-        id_to_link_index_map[link.id] = links.length;
-        links.push(link);
-        util.assert(links[id_to_link_index_map[link.id]] === link, "whaaa?");
+        if (link.id !== undefined) {
+            id_to_link_map[link.id] = link;
+        }
+        link_map[_link_key(link)] = link;
+        invalidate_links = true;
     }
 
     var _remove_node_set = function(node_id_set) {
@@ -211,7 +212,7 @@ function Graph() {
                 console.log("warning: server returned an id we don't have " + id);
                 return;
             }
-            _node_remove_helper_by_index(id_to_node_index_map[id]);
+            _node_remove_helper(id);
             console.log('_remove_node_set: ' + id);
         });
     }
@@ -265,7 +266,7 @@ function Graph() {
             console.log('getConnectedNodesAndLinks: expected array');
         }
 
-        links.forEach(function(link) {
+        links_forEach(function(link) {
             chosen_nodes.forEach(function (n) {
                 var adjacentnode;
                 if (same(link.__src, n)) {
@@ -275,7 +276,7 @@ function Graph() {
                     }
                     ret.links.push({type: 'exit', link: link});
                     if (link.__dst.type === "chainlink") {
-                        links.forEach(function(link2) {
+                        links_forEach(function(link2) {
                             if (link.__dst.id === link2.__dst.id &&
                                 link2.__dst.type === "chainlink" &&
                                 link2.__dst.state !== "temp") {
@@ -387,50 +388,38 @@ function Graph() {
             return;
         }
 
+        util.assert(src.state === 'temp' && dst.state === 'temp' && state == "temp",
+                    "creation of link not through commit_and_tx that isn't temporary");
+
         var link = model_core.create_link__set_random_id(src, dst, { name: name,
                                                                      state: state });
-        this.addLink(link);
+        __addLink(link);
     }
 
-    function addLink(link, peer_notify) {
+    function __addLink(link) {
 
         var trimmed_name = link.name.trim();
 
         util.assert(link instanceof model_core.Link);
 
-        peer_notify = undefined === peer_notify ? link.state != 'temp' : peer_notify;
-
         if (link.name.length != trimmed_name.length) {
-            console.log('bug: addLink with name containing spaces - removing before sending to server');
+            console.log('bug: __addLink with name containing spaces - removing before sending to server');
         }
         link.name = trimmed_name;
 
         var existing_link = findLink(link.__src.id, link.__dst.id, link.name);
 
         if (undefined == existing_link) {
-
             _link_add_helper(link);
-
-            if (rz_config.backend_enabled && peer_notify){
-                var topo_diff = model_diff.new_topo_diff({
-                    link_set_add : [link].map(model_util.adapt_format_write_link),
-                });
-                var on_success = function(){
-                    // FIXME: handle possible outcomes:
-                    // - id merge: link already exists -> update id
-                    // - attr-merge: link already exists -> merge attrs
-                };
-                var on_error = function(){
-                    // TODO: add problem emblem to node
-                };
-                rz_api_backend.commit_diff__topo(topo_diff, on_success, on_error);
-            }
         } else {
             existing_link.name = link.name;
             existing_link.state = link.state;
         }
     }
-    this.addLink = addLink;
+    this.addTempLink = function (link) {
+        util.assert(link.state === "temp", "link is not temporary");
+        return __addLink(link);
+    }
 
     this.update_link = function(link, new_link_spec, on_success, on_error) {
         util.assert(link instanceof model_core.Link);
@@ -612,25 +601,25 @@ function Graph() {
 
     var _remove_link_set = function(link_id_set) {
         link_id_set.forEach(function (id) {
-            var index = id_to_link_index_map[id];
-            if (undefined === index) {
+            var link = id_to_link_map[id];
+            if (undefined === link) {
                 console.log("warning: server returned an id we don't have " + id);
                 return;
             }
-            _link_remove_helper_by_index(index);
+            _link_remove_helper(link);
             console.log('_remove_link_set: ' + id);
         });
     }
     this._remove_link_set = _remove_link_set;
 
     this.removeNodes = function(state) {
-        var temp_node_ids = nodes.filter(function (n) { return n.state == state; })
+        var temp_node_ids = get_nodes().filter(function (n) { return n.state == state; })
                                  .map(function (n) { return n.id; }),
             topo_diff = model_diff.new_topo_diff({
                 node_set_rm : temp_node_ids,
             });
 
-        this.commit_and_tx_diff__topo(topo_diff);
+        this.commit_diff__topo(topo_diff);
     }
 
     this.removeLinks = function(state) {
@@ -647,20 +636,23 @@ function Graph() {
     }
 
     var findLink = function(src_id, dst_id, name) {
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].__src.id === src_id && links[i].__dst.id === dst_id) {
-                return links[i];
+        var link_key, link;
+
+        for (link_key in link_map) {
+            link = link_map[link_key];
+            if (link.__src.id === src_id && link.__dst.id === dst_id) {
+                return link;
             }
         }
     }
 
     var findLinks = function(state) {
         var foundLinks = [];
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].state == state) {
-                foundLinks.push(links[i]);
+        links_forEach(function (link) {
+            if (link.state == state) {
+                foundLinks.push(link);
             }
-        }
+        });
         return foundLinks;
     }
 
@@ -669,30 +661,18 @@ function Graph() {
     };
 
     var hasNodeByName = function(name, state) {
-        return nodes.filter(function (n) {
+        return get_nodes().filter(function (n) {
             return compareNames(n.name, name) && (undefined === state || n.state === state);
         }).length > 0;
     }
     this.hasNodeByName = hasNodeByName;
 
     var hasNodeByNameAndNotState = function(name, state) {
-        return nodes.filter(function(n) {
+        return get_nodes().filter(function(n) {
             return compareNames(n.name, name) && n.state !== state;
         }).length > 0;
     }
     this.hasNodeByNameAndNotState = hasNodeByNameAndNotState;
-
-    var hasNode = function(id, state) {
-        var i;
-
-        for (i = 0 ; i < nodes.length; ++i) {
-            if (nodes[i].id === id && nodes[i].state === state) {
-                return true;
-            }
-        }
-        return false;
-    }
-    this.hasNode = hasNode;
 
     /**
      * return node whose id matches the given id or undefined if no node was found
@@ -715,9 +695,9 @@ function Graph() {
     }
 
     var findNodeByName = function(name) {
-        for (var i = 0 ; i < nodes.length ; ++i) {
-            if (compareNames(nodes[i].name, name)) {
-                return nodes[i];
+        for (var k in node_map) {
+            if (compareNames(node_map[k].name, name)) {
+                return node_map[k];
             }
         }
     }
@@ -725,10 +705,10 @@ function Graph() {
     var findNodes = function(id, state) {
         // id=id.toLowerCase();
         var foundNodes = [];
-        for (var i = 0; i < nodes.length; i++) {
-            if ((id && nodes[i].id === id) || (state && nodes[i].state === state))
-                foundNodes.push(nodes[i]);
-        }
+        nodes_forEach(function (node) {
+            if ((id && node.id === id) || (state && node.state === state))
+                foundNodes.push(node);
+        });
         return foundNodes;
     }
 
@@ -758,7 +738,7 @@ function Graph() {
 
         util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
 
-        var n = __addNode(n_spec, false, false);
+        return n_spec;
     }
 
     function on_backend__link_add(l_spec) {
@@ -766,27 +746,40 @@ function Graph() {
 
         util.assert(undefined != l_ptr.id, 'load_from_backend: l_ptr missing id');
 
-        // resolve link ptr
-        var src = find_node__by_id(l_ptr.__src_id),
-            dst = find_node__by_id(l_ptr.__dst_id);
-
         // cleanup & reuse as link_spec
         delete l_ptr.__src_id;
         delete l_ptr.__dst_id;
         var link_spec = l_ptr;
         var link_spec = l_ptr;
-        var link = model_core.create_link_from_spec(src, dst, link_spec);
-        var l = addLink(link, false);
+        return link_spec;
+    }
+
+    function __commit_diff_ajax__topo(diff) {
+        diff.node_set_add = diff.node_set_add.map(
+            on_backend__node_add);
+        diff.link_set_add = diff.link_set_add.map(
+            on_backend__link_add);
+        commit_diff__topo(diff);
     }
 
     function commit_diff__topo(diff) {
         // done under protest
-        diff.node_set_add.map(on_backend__node_add);
-        diff.link_set_add.map(on_backend__link_add);
+        diff.node_set_add.map(function (node_spec) {
+            __addNode(node_spec);
+        });
+        diff.link_set_add.map(function (link_spec) {
+            // resolve link ptr
+            var src = find_node__by_id(link_spec.__src_id),
+                dst = find_node__by_id(link_spec.__dst_id),
+                link = model_core.create_link_from_spec(src, dst, link_spec);
+
+            __addLink(link);
+        });
         _remove_link_set(diff.link_set_rm);
         _remove_node_set(diff.node_set_rm);
         diffBus.push(diff);
     }
+    this.commit_diff__topo = commit_diff__topo;
 
     /**
      * perform initial DB load from backend
@@ -797,6 +790,7 @@ function Graph() {
     function load_from_backend(on_success) {
 
         function on_success__ajax(diff) {
+            console.dir(diff);
             commit_diff__topo(diff);
             undefined != on_success && on_success()
         }
@@ -824,10 +818,10 @@ function Graph() {
                                  url:node.url,
                                  x: node.x,
                                  y: node.y,
-                                }, false, false).name;
+                                }).name;
         });
         data.links.forEach(function(link) {
-            that.addLink(link.__src, link.__dst, link.name, "perm");
+            __addLink(link.__src, link.__dst, link.name, "perm");
         });
         this.clear_history();
     }
@@ -874,26 +868,44 @@ function Graph() {
 
     this.clear_history = clear_history;
 
+    var object_values = function (obj) {
+        var values = [];
+        for (var o in obj) {
+            values.push(obj[o]);
+        }
+        return values;
+    }
+
     var get_nodes = function() {
-        return nodes;
+        if (cached_nodes === undefined || invalidate_nodes) {
+            cached_nodes = object_values(node_map);
+            invalidate_nodes = false;
+        }
+        return cached_nodes;
     };
     this.nodes = get_nodes;
 
-    var get_links = function() { return links; };
+    var get_links = function() {
+        if (cached_links === undefined || invalidate_links) {
+            cached_links = object_values(link_map);
+            invalidate_links = false;
+        }
+        return cached_links;
+    };
     this.links = get_links;
 
     function setRegularState() {
         var x, node, link, s;
 
-        for (x in nodes) {
-            node = nodes[x];
+        for (x in node_map) {
+            node = node_map[x];
             s = node.state;
             if (s === 'chosen' || s === 'enter' || s === 'exit') {
                 node.state = 'perm';
             }
         }
-        for (x in links) {
-            link = links[x];
+        for (x in link_map) {
+            link = link_map[x];
             s = link.state;
             if (s === 'chosen' || s === 'enter' || s === 'exit') {
                 link.state = 'perm';
@@ -903,7 +915,9 @@ function Graph() {
     this.setRegularState = setRegularState;
 
     this.findByVisitors = function(node_visitor, link_visitor) {
-        var n_length = nodes.length,
+        var nodes = get_nodes(),
+            links = get_links(),
+            n_length = nodes.length,
             l_length = links.length,
             selected = [],
             i,
@@ -929,7 +943,7 @@ function Graph() {
 
     function markRelated(names) {
         removeRelated();
-        nodes.forEach(function (node) {
+        nodes_forEach(function (node) {
             names.forEach(function (name) {
                 if (compareNames(node.name, name) && node.state != 'temp') {
                     node.state = 'related';
@@ -940,7 +954,7 @@ function Graph() {
     this.markRelated = markRelated;
 
     function removeRelated() {
-        nodes.forEach(function (node) {
+        nodes_forEach(function (node) {
             if (node.state == 'related') {
                 node.state = 'perm';
             }
