@@ -46,11 +46,11 @@ function run_tests(settings) {
         settings.created(undefined, window);
     }
     debugger
-    addScript(window, '../client/require.js')
+    addScript(window, '../../res/client/lib/require.js')
         .load_next('../client/app.js')
         .done(function () {
             console.log('test harness: starting script loading with requirejs');
-            console.dir(window.require);
+            console.dir(window.rhizi_require_config);
             window.require.config(window.rhizi_require_config);
             window.requirejs(['main'], function(main) {
                 console.log('test harness: main loaded');

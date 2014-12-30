@@ -72,7 +72,7 @@ function Graph() {
         $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
             if (n.id === undefined) {
-                var existing = findNodeByName(n.name);
+                var existing = find_node__by_name(n.name);
                 if (existing) {
                     n = existing;
                 } else {
@@ -135,7 +135,7 @@ function Graph() {
             node;
 
         if (undefined == spec.id) {
-            existing_node = findNodeByName(spec.name)
+            existing_node = find_node__by_name(spec.name)
             if (existing_node){
                 return existing_node;
             } else {
@@ -377,8 +377,8 @@ function Graph() {
 
     this.addLinkByName = function(src_name, dst_name, name, state, drop_conjugator_links) {
 
-        var src = findNodeByName(src_name),
-            dst = findNodeByName(dst_name),
+        var src = find_node__by_name(src_name),
+            dst = find_node__by_name(dst_name),
             src_id = src ? src.id : null,
             dst_id = dst ? dst.id : null;
 
@@ -479,7 +479,7 @@ function Graph() {
             /*
              * handle name update collision: suggest removal first
              */
-            var n_eq_name = findNodeByName(new_node_spec.name);
+            var n_eq_name = find_node__by_name(new_node_spec.name);
             if (undefined != n_eq_name) {
                 // delete colliding node on rename
                 console.warn('update_node: name collision blocked due to node rename');
@@ -521,7 +521,7 @@ function Graph() {
     }
 
     this.editNameByName = function(old_name, new_name) {
-        var node = findNodeByName(old_name);
+        var node = find_node__by_name(old_name);
 
         if (node === undefined) {
             console.log('editNameByName: error: cannot find node with name ' + old_name);
@@ -531,7 +531,7 @@ function Graph() {
     }
 
     this.editName = function(id, new_name) {
-        var n_eq_name = findNodeByName(new_name);
+        var n_eq_name = find_node__by_name(new_name);
         var n_eq_id = find_node__by_id(id);
         var acceptReplace=true;
 
@@ -623,16 +623,8 @@ function Graph() {
     }
 
     this.removeLinks = function(state) {
-        var id = null;
         var ls = findLinks(state);
-        for (var j = 0; j < ls.length; j++) {
-            var l = ls[j];
-            var i = 0;
-            while (i < links.length) {
-                if (links[i] === l) links.splice(i, 1);
-                else i++;
-            }
-        }
+        ls.map(_link_remove_helper);
     }
 
     var findLink = function(src_id, dst_id, name) {
@@ -668,6 +660,7 @@ function Graph() {
     this.hasNodeByName = hasNodeByName;
 
     var hasNodeByNameAndNotState = function(name, state) {
+        util.assert(state === 'temp', "this is deprecated and to be removed but anyway just for temp");
         return get_nodes().filter(function(n) {
             return compareNames(n.name, name) && n.state !== state;
         }).length > 0;
@@ -694,13 +687,14 @@ function Graph() {
         return ret;
     }
 
-    var findNodeByName = function(name) {
+    var find_node__by_name = function(name) {
         for (var k in node_map) {
             if (compareNames(node_map[k].name, name)) {
                 return node_map[k];
             }
         }
     }
+    this.find_node__by_name = find_node__by_name;
 
     var findNodes = function(id, state) {
         // id=id.toLowerCase();
@@ -763,6 +757,7 @@ function Graph() {
     }
 
     function commit_diff__topo(diff) {
+        console.dir(diff);
         // done under protest
         diff.node_set_add.map(function (node_spec) {
             __addNode(node_spec);
@@ -770,7 +765,7 @@ function Graph() {
         diff.link_set_add.map(function (link_spec) {
             // resolve link ptr
             var src = find_node__by_id(link_spec.__src_id),
-                dst = find_node__by_id(link_spec.__dst_id),
+                dst = find_node__by_id(link_spec.__dst_id) || find_node__by_name(link_spec.__dst.name),
                 link = model_core.create_link_from_spec(src, dst, link_spec);
 
             __addLink(link);

@@ -378,6 +378,8 @@ function update_view__graph(relayout) {
         selected_link_group = document.querySelector('#selected-link-group'),
         relayout = relayout || true;
 
+    //return;
+
     link = vis.selectAll("g.link")
         .data(graph.links(), function(d) { return d.id; });
 

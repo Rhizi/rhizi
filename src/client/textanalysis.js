@@ -59,8 +59,8 @@ function new_tokenize(text, node_token, quote)
     return tokens;
 }
 
-define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts'],
-function(rz_core,   model_core,   model_util,   model_diff,   consts) {
+define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
+function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 
 var typeindex = 0;
 var nodetypes = consts.nodetypes;
@@ -108,7 +108,7 @@ function auto_suggest_remove_name(name, id)
 /* up_to_two_renames:
  *
  * allow one letter or 'new node' to anything changes */
-function up_to_two_renames(graph, old_name, new_name)
+function up_to_two_renames(graph, old_name, new_name, link_set_add)
 {
     var not_one_letter = false;
     var k;
@@ -152,6 +152,15 @@ function up_to_two_renames(graph, old_name, new_name)
     }
     for (k = 0 ; k < old_name.length ; ++k) {
         graph.editNameByName(old_name[k], new_name[k]);
+        // very disappointing. suicide threats are ok?
+        link_set_add.forEach(function (link) {
+            if (link.__src.name == old_name[k]) {
+                link.__src.name = new_name[k];
+            }
+            if (link.__dst.name == old_name[k]) {
+                link.__dst.name = new_name[k];
+            }
+        });
     }
 }
 
@@ -245,32 +254,42 @@ var textAnalyser = function (newtext, finalize) {
         ret.node_set_add.push(node);
     }
 
-    function __addLink(src, dst, name, state) {
-        if (!src || !dst) {
-            if (yell_bug) {
-                console.log('bug - adding link (' + src + ', ' + dst + ')');
+    var __sourceNodeFromName = function (name) {
+        for (var key in ret.node_set_add) {
+            var node = ret.node_set_add[key];
+            if (node.name == name) {
+                return node;
             }
-            return;
         }
-        if (link_hash[src] && link_hash[src][dst]) {
-            if (yell_bug) {
-                console.log('bug - adding link twice (' + src + ', ' + dst + ')');
-            }
-            return;
-        }
-        if (!link_hash[src]) {
-            link_hash[src] = {};
-        }
-        link_hash[src][dst] = 1;
+        return {'existing': name};
+    };
 
-        var link = {'__src': src, '__dst':dst, 'name':name, 'state':state}; // can't use model_core.create_link_from_spec as src,dst are only names
+    function __addLink(src_name, dst_name, name, state) {
+        if (!src_name || !dst_name) {
+            if (yell_bug) {
+                console.log('bug - adding link (' + src_name + ', ' + dst_name + ')');
+            }
+            return;
+        }
+        name = name || 'is';
+        if (link_hash[src_name] && link_hash[src_name][dst_name]) {
+            if (yell_bug) {
+                console.log('bug - adding link twice (' + src_name + ', ' + dst_name + ')');
+            }
+            return;
+        }
+        if (!link_hash[src_name]) {
+            link_hash[src_name] = {};
+        }
+        link_hash[src_name][dst_name] = 1;
+
+        var link = {
+            '__src': src_name,
+            '__dst': dst_name,
+            'name':name,
+            'state':state
+        };
         ret.link_set_add.push(link);
-    }
-
-    function apply_conjugator_link_logic(link, drop_conjugator_links){
-        if (drop_conjugator_links && link.name && (link.name.replace(/ /g,"") === "and")) {
-            link.state = "temp";
-        }
     }
 
     if (newtext.indexOf('#') == -1 || finalize) {
@@ -458,6 +477,20 @@ var textAnalyser = function (newtext, finalize) {
     ret.applyToGraph = function(graph, backend_commit) {
         window.ret = ret;
 
+        ret.link_set_add.forEach(function (link) {
+            if (ret.drop_conjugator_links && (link.name.replace(/ /g,"") === "and")) {
+                link.state = "temp";
+            }
+            link.__src = graph.find_node__by_name(link.__src) || __sourceNodeFromName(link.__src);
+            link.__dst = graph.find_node__by_name(link.__dst) || __sourceNodeFromName(link.__dst);
+            if (link.__src.id !== undefined) {
+                link.__src_id = link.__src.id;
+            }
+            if (link.__dst.id !== undefined) {
+                link.__dst_id = link.__dst.id;
+            }
+        });
+
         /*
          * generate fitered node set who:
          * - are not name-present in graph
@@ -469,42 +502,25 @@ var textAnalyser = function (newtext, finalize) {
                 }),
             link_set = ret.link_set_add.map(
                         function (link) {
-                            return [link.__src, link.__dst];
+                            return [link.__src.name, link.__dst.name];
                         }),
             comp = graph.compareSubset('temp', n_set, link_set);
 
         if (false == finalize && comp.graph_same) {
+            console.log('close enough');
             if (comp.old_name && comp.new_name) {
-                up_to_two_renames(graph, comp.old_name, comp.new_name);
+                up_to_two_renames(graph, comp.old_name, comp.new_name, ret.link_set_add);
             }
         } else {
+            console.log('not close enough (or finalize)');
             // REINITIALISE GRAPH (DUMB BUT IT WORKS)
+            //
+            // FIXME: have temp nodes on a separete graph
+            // finalize - take temp graph and create a single topo_diff
+            // else - update temp graph with this topodiff, first clear it every time.
             graph.removeNodes("temp");
             graph.removeLinks("temp");
-
-            if (!finalize) { // finalize done via topo diff below
-                ret.for_each_node_add(function (node_spec) {
-                    var new_node;
-                    if (true == finalize && node.state == 'temp') {
-                        console.log('bug: temp node creation on finalize');
-                    } else {
-                        new_node = graph.addTempNode(node_spec);
-                        if (!finalize) {
-                            lastnode = new_node;
-                        }
-                    }
-                });
-            }
         }
-        ret.for_each_link_add(function (link) {
-            if (false == finalize || link.name !== 'and') {
-                apply_conjugator_link_logic(link, ret.drop_conjugator_links);
-                graph.addLinkByName(link.__src,
-                                    link.__dst,
-                                    link.name || 'is',
-                                    link.state);
-            }
-        });
 
         if (!finalize) {
             graph.markRelated(token_set_new_node_names);
@@ -512,17 +528,19 @@ var textAnalyser = function (newtext, finalize) {
             graph.removeRelated();
         }
 
-        // drop bubble node
-        ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
-        // drop and links
-        ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
         if (finalize && backend_commit) {
             // broadcast diff:
             //    - finalize?
             //    - broadcast_diff requested by caller
+            // drop bubble node
+            ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
+            // drop and links
+            ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
             graph.commit_and_tx_diff__topo(ret);
         } else {
-            graph.commit_diff__topo(ret);
+            if (!comp.graph_same) {
+                graph.commit_diff__topo(ret);
+            }
         }
     };
 
