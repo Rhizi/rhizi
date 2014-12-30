@@ -36,10 +36,6 @@ class TestDBController(unittest.TestCase):
         self.log = logging.getLogger('rhizi')
         self.log.addHandler(logging.StreamHandler())
 
-        # TODO rm when implemented: neo4j_test_util
-        self.db_ctl.exec_cypher_query('create index on :Person(id)')
-        self.db_ctl.exec_cypher_query('create index on :Skill(id)')
-
     def setUp(self):
         flush_db(self.db_ctl)  # remove once embedded DB test mode is supported
         self.db_ctl.exec_op(dbc.DBO_add_node_set(self.n_map))
