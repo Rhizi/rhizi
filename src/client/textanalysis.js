@@ -233,7 +233,7 @@ var textAnalyser = function (newtext, finalize) {
         START = "START",
         ret = model_diff.new_topo_diff();
 
-    function addNode(name, type, state) {
+    function __addNode(name, type, state) {
         if (type === undefined) {
             console.log('bug: textanalyser.addNode of type undefined');
         }
@@ -369,7 +369,7 @@ var textAnalyser = function (newtext, finalize) {
 
     //ADD SURROUNDING BUBBLE
     if (orderStack.length > 0) {
-        addNode("", "bubble","temp");
+        __addNode("", "bubble","temp");
     }
 
     //0-N ORDER STACK
@@ -381,7 +381,7 @@ var textAnalyser = function (newtext, finalize) {
                 }
                 break;
             case NODE:
-                addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
+                __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
                 if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                     __addLink(token_set_new_node_names[nodeindex - 1],
                               token_set_new_node_names[nodeindex],
@@ -399,7 +399,7 @@ var textAnalyser = function (newtext, finalize) {
     switch (orderStack[orderStack.length - 1]) {
         case START:
             typeStack[nodeindex] = selectedType();
-            addNode("new node", typeStack[nodeindex], "temp");
+            __addNode("new node", typeStack[nodeindex], "temp");
             if (!starGraph && nodeindex > 0) {
                 __addLink(token_set_new_node_names[nodeindex - 1], "new node",
                           token_set_new_link_names[linkindex], "temp");
@@ -409,7 +409,7 @@ var textAnalyser = function (newtext, finalize) {
             break;
         case NODE:
             typeStack[nodeindex] = selectedType();
-            addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
+            __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
             if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                 __addLink(token_set_new_node_names[nodeindex - 1],
                           token_set_new_node_names[nodeindex],
@@ -420,7 +420,7 @@ var textAnalyser = function (newtext, finalize) {
             break;
         case LINK:
             linkindex++;
-            addNode("new node", selectedType(), "temp");
+            __addNode("new node", selectedType(), "temp");
             if (!starGraph) {
                 __addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
                 and_connect("new node");
@@ -447,7 +447,7 @@ var textAnalyser = function (newtext, finalize) {
 
     //STAR CASE
     if (starGraph) {
-        addNode(completeSentence, "chainlink", typesetter);
+        __addNode(completeSentence, "chainlink", typesetter);
         for (n = 0; n < token_set_new_node_names.length; n++) {
             __addLink(token_set_new_node_names[n], completeSentence, "chained", typesetter);
         }
