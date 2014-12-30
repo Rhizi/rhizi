@@ -17,12 +17,12 @@ class TestDBController(unittest.TestCase):
     db_ctl = None
     log = None
 
-    n_map = { 'Skill': [{'name': 'Kung Fu', 'id': 'skill_00' },
-                        {'name': 'Judo', 'id': 'skill_01' }
+    n_map = { 'Skill': [{'id': 'skill_00', 'name': 'Kung Fu'},
+                        {'id': 'skill_01', 'name': 'Judo'}
                         ],
 
-              'Person': [{'name': 'Bob', 'id': 'person_00', 'age': 128 },
-                         {'name': 'Alice', 'id': 'person_01', 'age': 256 }
+              'Person': [{'id': 'person_00', 'age': 128, 'name': 'Bob'},
+                         {'id': 'person_01', 'age': 256, 'name': 'Alice' }
                          ]
             }
 
