@@ -5,6 +5,7 @@ import logging
 import os
 import re
 import traceback
+import neo4j_util
 
 from db_driver import DB_Driver_REST, DB_Driver_Base
 from model.graph import Attr_Diff
@@ -205,7 +206,11 @@ class DBO_topo_diff_commit(DB_composed_op):
 
 class DBO_attr_diff_commit(DB_op):
     """
-    commit a Attr_Diff
+    commit a Attr_Diff, return an Attr_Diff
+
+    @return: an Attr_Diff upon success - it is important to note that written-
+             to attributes do not imply necessarily that the attribute has
+             actually changed, only that it has been 'touched'
     """
     def __init__(self, attr_diff):
         super(DBO_attr_diff_commit, self).__init__()
