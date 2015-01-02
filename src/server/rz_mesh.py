@@ -19,8 +19,7 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     Rhizi '/graph' websocket namespace
     """
     def multicast_msg(self, msg_name, *args):
-        multicast_size = len(self.socket.server.sockets) - 1  # subtract self socket
-        log.info('ws: tx: msg: \'%s\': cast-size ~= %d' % (msg_name, multicast_size))  # ~=: as race conditions apply
+        self.socket.server.log_multicast(msg_name)
         super(WebSocket_Graph_NS, self).broadcast_event_not_me(msg_name, *args)
 
     def _log_conn(self, prefix_msg):
@@ -69,7 +68,10 @@ class RZ_WebSocket_Server(SocketIOServer):
                                 resource='socket.io',
                                 policy_server=False)
 
-def init_ws_interface(cfg, flask_webapp):
+    def log_multicast(self, msg_name):
+        multicast_size = len(self.sockets) - 1  # subtract self socket
+        log.info('ws: multicast: msg: \'%s\', cast-size ~= %d' % (msg_name, multicast_size))  # ~=: as race conditions apply
+
     """
     Initialize websocket interface:
        - apply websocket route handlers
