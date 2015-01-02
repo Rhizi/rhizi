@@ -20,6 +20,8 @@ from flask import url_for
 from flask import render_template
 from flask import send_from_directory
 
+from rz_kernel import RZ_Kernel
+
 from model.graph import Topo_Diff
 from model.graph import Attr_Diff
 from model.model import Link
@@ -186,7 +188,9 @@ def diff_commit__set():
 
 def diff_commit__topo():
     """
-    commit a graph topology diff
+    REST API wrapper around diff_commit__topo():
+       - extract topo_diff from request
+       - handle success/error outcomes
     """
     def sanitize_input(req):
         topo_diff_dict = request.get_json()['topo_diff']
@@ -195,9 +199,20 @@ def diff_commit__topo():
         sanitize_input__topo_diff(topo_diff)
         return topo_diff;
 
-    topo_diff = sanitize_input(request)
-    op = dbc.DBO_topo_diff_commit(topo_diff)
-    return __common_exec(op)
+    try:
+        topo_diff = sanitize_input(request)
+    except Exception as e:
+        return __common_resp_handle(error='malformed input')
+
+    try:
+        kernel = flask.current_app.kernel
+        topo_diff = kernel.diff_commit__topo(db_ctl, topo_diff)
+        topo_diff_json = topo_diff.to_json_dict()
+        return __common_resp_handle(data=topo_diff_json)
+    except Exception as e:
+        log.error(e.message)
+        log.error(traceback.print_exc())
+        return __common_resp_handle(error=e)
 
 def diff_commit__attr():
     """
@@ -210,9 +225,24 @@ def diff_commit__attr():
         sanitize_input__attr_diff(attr_diff)
         return attr_diff;
 
-    attr_diff = sanitize_input(request)
-    op = dbc.DBO_attr_diff_commit(attr_diff)
-    return __common_exec(op)
+    def on_error(e):
+        # handle DB ERRORS, eg. name attr change error
+        return __common_resp_handle(error='error occurred')
+
+    try:
+        attr_diff = sanitize_input(request)
+        _validate_obj__attr_diff(attr_diff)
+    except Exception as e:
+        return __common_resp_handle(error='malformed input')
+
+    try:
+        kernel = flask.current_app.kernel
+        attr_diff = kernel.diff_commit__attr(db_ctl, attr_diff)
+        return __common_resp_handle(data=attr_diff)
+    except Exception as e:
+        log.error(e.message)
+        log.error(traceback.print_exc())
+        return __common_resp_handle(error=e)
 
 def diff_commit__vis():
     pass

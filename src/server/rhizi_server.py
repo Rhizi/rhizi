@@ -21,6 +21,7 @@ from flask import send_from_directory
 
 from functools import wraps
 from rz_mesh import init_ws_interface
+from rz_kernel import RZ_Kernel
 
 class Config(object):
     """
@@ -220,7 +221,7 @@ def init_rest_interface(cfg, flask_webapp):
 
         flask_webapp.f = f  # assign decorated function
 
-def init_webapp(cfg, db_ctl=None):
+def init_webapp(cfg, kernel, db_ctl=None):
     """
     Initialize webapp:
        - call init_rest_interface()
@@ -239,6 +240,7 @@ def init_webapp(cfg, db_ctl=None):
     rhizi_api.db_ctl = db_ctl
 
     webapp.rz_config = cfg
+    webapp.kernel = kernel
 
     init_rest_interface(cfg, webapp)
     return webapp
@@ -272,8 +274,8 @@ if __name__ == "__main__":
         init_pw_db(cfg, args.htpasswd_init_file)
         exit(0)
 
-    webapp = init_webapp(cfg)
-    ws_srv = init_ws_interface(cfg, webapp)
+    kernel = RZ_Kernel()
+    webapp = init_webapp(cfg, kernel)
+    ws_srv = init_ws_interface(cfg, kernel, webapp)
+
     ws_srv.serve_forever()
-
-
