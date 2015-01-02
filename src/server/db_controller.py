@@ -124,6 +124,8 @@ class DBO_cypher_query(DB_op):
 class DBO_topo_diff_commit(DB_composed_op):
     """
     commit a Topo_Diff
+
+    @return: a Topo_Diff of the actual committed changes
     """
     def __init__(self, topo_diff):
         super(DBO_topo_diff_commit, self).__init__()
@@ -194,10 +196,11 @@ class DBO_topo_diff_commit(DB_composed_op):
                     print("n_id: %r" % n_id)
                     ret_n_rm.extend(n_id)
 
-        return {'node_set': ret_n_set,
-                'link_set': ret_l_set,
-                'node_rm': ret_n_rm,
-                'link_rm': ret_l_rm}
+        topo_diff = Topo_Diff(node_set_add=ret_n_set,
+                              link_set_add=ret_l_set,
+                              node_set_rm=ret_n_rm,
+                              link_set_rm=ret_l_rm)
+        return topo_diff
 
 
 class DBO_attr_diff_commit(DB_op):
