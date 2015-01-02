@@ -93,15 +93,18 @@ def __common_resp_handle(data=None, error=None):
 
     return resp
 
-def __common_exec(op, on_success=__common_resp_handle):
+def __common_exec(op, on_success=__common_resp_handle, on_error=__common_resp_handle):
+    """
+    @param on_success: should return a Flask Response object
+    @param on_error: should return a Flask Response object
+    """
     try:
         op_ret = db_ctl.exec_op(op)
         return on_success(op_ret)
     except Exception as e:
         log.error(e.message)
         log.error(traceback.print_exc())
-        # [!] information about errors is returned to the client via str
-        return __common_resp_handle(error=str(e))
+        return on_error(error='error occurred')
 
 def load_node_set_by_id_attr():
     """
