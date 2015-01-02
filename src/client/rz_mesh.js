@@ -28,6 +28,7 @@ define([ 'rz_config', 'util', 'model/diff', 'socketio'], function(rz_config, uti
         socket.on('disconnect', on_disconnect);
         socket.on('error', on_error);
         socket.on('diff_commit__topo', diff_merge__topo);
+        socket.on('diff_commit__attr', diff_merge__attr);
     }
 
     function on_connect() {
@@ -49,6 +50,11 @@ define([ 'rz_config', 'util', 'model/diff', 'socketio'], function(rz_config, uti
         rz_mesh_graph_ref.commit_diff__topo(topo_diff);
     }
 
+    function diff_merge__attr(attr_diff_raw) {
+        console.log('ws: rx: diff_merge__attr');
+        var attr_diff_json = JSON.parse(attr_diff_raw);
+        var attr_diff = model_diff.new_attr_diff(attr_diff_json);
+        rz_mesh_graph_ref.commit_diff__attr(attr_diff);
     }
 
     return {
