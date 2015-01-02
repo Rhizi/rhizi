@@ -207,6 +207,8 @@ class DBO_attr_diff_commit(DB_op):
     def __init__(self, attr_diff):
         super(DBO_attr_diff_commit, self).__init__()
 
+        self.op_return_value__attr_diff = attr_diff  # cache attr_diff as return value on success
+
         for id_attr, n_attr_diff in attr_diff.type__node.items():
             # TODO parameterize multiple attr removal
             r_attr_set = n_attr_diff['__attr_remove']
@@ -215,7 +217,7 @@ class DBO_attr_diff_commit(DB_op):
             assert len(r_attr_set) > 0 or len(w_attr_set) > 0
 
             q_arr = ["match (n {id: {id}}) ",
-                     "return n.id, n"]
+                     "return n.id, n"]  # currently unused
             q_param_set = {'id': id_attr}
 
             if len(r_attr_set) > 0:
@@ -245,7 +247,7 @@ class DBO_attr_diff_commit(DB_op):
                 continue
 
             q_arr = ["match ()-[l {id: {id}}]-()",
-                     "return l.id, l"]
+                     "return l.id, l"]  # currently unused
             q_param_set = {'id': id_attr}
 
             if len(r_attr_set) > 0:
@@ -272,7 +274,7 @@ class DBO_attr_diff_commit(DB_op):
 
         q_create_new = ["match n-[l_old {id: {id}}]->m",
                         "create n-[l_new:%s]->m set l_new=l_old" % db_util.quote__backtick(new_label),
-                        "return l_new.id, {id: l_new.id, name: type(l_new)}",
+                        "return l_new.id, {id: l_new.id, name: type(l_new)}",  # currently unused
                         ]
         q_delete_old = ["match n-[l_old {id: {id}}]->m",
                         "where type(l_old)<>'%s' delete l_old" % new_label,
@@ -285,12 +287,17 @@ class DBO_attr_diff_commit(DB_op):
         self.add_statement(q_delete_old, q_param_set)
 
     def process_result_set(self):
-        ret = {}
-        for _, _, r_set in self:
-            for row in r_set:
-                n_id, n = [v for v in row]  # we expect a [n_id, n] array
-                ret[n_id] = n
-        return ret
+        # currently we have not straightforward way to discern which attributes were
+        # actually written from the neo4j return value, so we simply echo the attr_diff
+        # back to the client
+
+        # ret = {}
+        # for _, _, r_set in self:
+        #     for row in r_set:
+        #         n_id, n = [v for v in row]  # we expect a [n_id, n] array
+        #         ret[n_id] = n
+
+        return self.op_return_value__attr_diff
 
 class DBO_add_node_set(DB_op):
     def __init__(self, node_map):
