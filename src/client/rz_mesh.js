@@ -46,7 +46,9 @@ define([ 'rz_config', 'util', 'model/diff', 'socketio'], function(rz_config, uti
         console.log('ws: rx: diff_merge__topo');
         var topo_diff_json = JSON.parse(topo_diff_raw);
         var topo_diff = model_diff.new_topo_diff(topo_diff_json);
-        rz_mesh_graph_ref.on_backend__diff(topo_diff);
+        rz_mesh_graph_ref.commit_diff__topo(topo_diff);
+    }
+
     }
 
     return {
