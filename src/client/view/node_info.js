@@ -44,7 +44,7 @@ function show(d) {
         fields = ["#status", "#startdate", "#enddate", "#desc", "#url"],
         flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
         i;
-    
+
     internal.edit_tab.show('node');
 
     for (i = 0 ; i < flags.length; ++i) {
@@ -68,11 +68,8 @@ function show(d) {
     });
 
     $('#editdescription').val(d.type);
-
     $('#edittype').val(d.type);
-
     $('#editurl').val(d.url);
-
     $('#editstatus').val(d.status);
 
     if (d.type === "third-internship-proposal") {
@@ -81,8 +78,7 @@ function show(d) {
     }
 }
 
-function hide()
-{
+function hide() {
     internal.edit_tab.hide();
 }
 

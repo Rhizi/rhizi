@@ -20,7 +20,7 @@ def flush_db(db_ctl):
     db_ctl.exec_cypher_query('match (n) optional match (n)-[r]-() delete n,r')
 
 
-def gen_rand_data(db_ctl, lim_n=128, lim_r=256, prob_link_create = 0.3):
+def gen_rand_data(db_ctl, lim_n=128, lim_r=256, prob_link_create=0.3):
     """
     generate random DB data
     
@@ -44,7 +44,7 @@ def gen_rand_data(db_ctl, lim_n=128, lim_r=256, prob_link_create = 0.3):
              'with s,d',
              'limit %d' % (lim_r - 1),
              'where rand() < %.2f' % (prob_link_create),
-             'create (s)-[:%s {l_attr_0:toInt(%d * rand())}]->(d)' % (r_label,lim_r)]
+             'create (s)-[:%s {l_attr_0:toInt(%d * rand())}]->(d)' % (r_label, lim_r)]
 
     q = ' '.join(q_arr)
     op = dbc.DBO_cypher_query(q)

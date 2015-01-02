@@ -3,11 +3,12 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define(['rz_config'], function(rz_config) {
+define([ 'rz_config' ], function(rz_config) {
 
     function RZ_API_Backend() {
 
-        var rz_server_url        = 'http://' + rz_config.rz_server_host + ':' + rz_config.rz_server_port;
+        var rz_server_url = 'http://' + rz_config.rz_server_host + ':'
+                + rz_config.rz_server_port;
 
         /**
          * issue rhizi server ajax call

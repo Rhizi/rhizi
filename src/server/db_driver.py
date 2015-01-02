@@ -3,7 +3,6 @@ import logging
 from neo4j_util import Neo4JException
 import neo4j_util as db_util
 
-
 log = logging.getLogger('rhizi')
 
 class DB_Driver_Base():
@@ -53,7 +52,7 @@ class DB_Driver_REST(DB_Driver_Base):
 
             log.debug('tx-open: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))
         except Exception as e:
-            raise Exception('failed to open transaction:' + e.message)
+            raise Exception('failed to open transaction: ' + e.message)
 
     def exec_statement_set(self, op):
 
@@ -88,4 +87,3 @@ class DB_Driver_REST(DB_Driver_Base):
             return ret
         except Exception as e:
             raise Exception('failed to commit transaction:' + e.message)
-
