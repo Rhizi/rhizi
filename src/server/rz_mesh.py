@@ -39,6 +39,10 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         log.info('ws: rx: topo diff: ' + str(topo_diff))
         self.multicast_msg('diff_commit__topo', topo_diff)
 
+    def on_diff_commit__attr(self, attr_diff):
+        log.info('ws: rx: attr diff: ' + str(attr_diff))
+        self.multicast_msg('diff_commit__attr', attr_diff)
+
 class RZ_WebSocket_Server(SocketIOServer):
     """
     Rhizi customized SocketIOServer:
