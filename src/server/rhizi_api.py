@@ -79,9 +79,13 @@ def __response_wrap(data=None, error=None):
 def __common_resp_handle(data=None, error=None):
     """
     provide common response handling
+    
+    @data must be json serializable
+    @error will be serialized with str()
     """
-    ret_data = __response_wrap(data, error)
-    resp = jsonify(ret_data)
+    error_str = str(error)  # convert any Exception objects to serializable form
+    ret_data = __response_wrap(data, error_str)
+    resp = jsonify(ret_data)  # this will create a Flask Response object
 
     resp.headers['Access-Control-Allow-Origin'] = '*'
 
