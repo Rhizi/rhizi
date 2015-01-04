@@ -43,7 +43,10 @@ def __common_resp_handle(data=None, error=None):
     @data must be json serializable
     @error will be serialized with str()
     """
-    error_str = str(error)  # convert any Exception objects to serializable form
+    if error is None:
+        error_str = ""
+    else:
+        error_str = str(error)  # convert any Exception objects to serializable form
     ret_data = __response_wrap(data, error_str)
     resp = jsonify(ret_data)  # this will create a Flask Response object
 
