@@ -102,11 +102,14 @@ class Topo_Diff(object):
         Topo_Diff is not a plain dict, so we provide a json encoder
         """
         def default(self, obj):
-            ret = {k: getattr(obj, k) for k in ['link_set_rm',
-                                                'node_set_rm',
-                                                'node_set_add',
-                                                'link_set_add'] }
-            return ret
+            return obj.to_json_dict()
+
+    def to_json_dict(self):
+        ret = {k: getattr(self, k) for k in ['link_set_rm',
+                                              'node_set_rm',
+                                              'node_set_add',
+                                              'link_set_add'] }
+        return ret
 
     def __init__(self, link_set_rm=[],
                        node_set_rm=[],
