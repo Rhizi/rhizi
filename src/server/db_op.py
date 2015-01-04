@@ -127,16 +127,17 @@ class DBO_block_chain__commit(DB_op):
     def __init__(self, blob_obj):
         """
         @param blob_obj: serializable blob
+        @return: old_head, new_head, new_head.hash_value
         """
-        super(DBO_chain_commit_block, self).__init__()
+        super(DBO_block_chain__commit, self).__init__()
 
         self.blob_obj = blob_obj
-        hash_value = DBO_chain_commit_block.calc_blob_hash(blob_obj)
+        hash_value = DBO_block_chain__commit.calc_blob_hash(blob_obj)
         q_arr = ["match (old_head:__HEAD:__Commit)",
                  "create (new_head:__HEAD:__Commit {hash: {hash_value}, blob: {blob_value}})",
                  "create new_head-[r:__Parent]->old_head",
                  "remove old_head:__HEAD",
-                 "return old_head, new_head"]
+                 "return old_head, new_head, {hash_value}"]
 
         q = " ".join(q_arr)
         q_param_set = {'hash_value': hash_value, 'blob_value': blob_obj}
