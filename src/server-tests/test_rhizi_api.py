@@ -1,6 +1,6 @@
 import unittest
 import db_controller as dbc
-import rhizi_api
+import rz_api
 import json
 import logging
 

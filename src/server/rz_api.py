@@ -174,7 +174,7 @@ def login():
         # login successful
         session['username'] = u
         log.debug('login: success: user: %s' % (u))
-        return redirect(url_for('index'))
+        return redirect('/index')
 
     if request.method == 'GET':
         return render_template('login.html')

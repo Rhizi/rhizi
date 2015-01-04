@@ -7,7 +7,6 @@ import os
 import neo4j_util
 import argparse
 import db_controller as dbc
-import rhizi_api
 import flask
 import crypt_util
 import re
@@ -22,6 +21,7 @@ from flask import send_from_directory
 from functools import wraps
 from rz_mesh import init_ws_interface
 from rz_kernel import RZ_Kernel
+import rz_api
 import rz_api_rest
 
 class Config(object):
@@ -238,7 +238,7 @@ def init_webapp(cfg, kernel, db_ctl=None):
 
     if None == db_ctl:
         db_ctl = dbc.DB_Controller(cfg)
-    rhizi_api.db_ctl = db_ctl
+    rz_api.db_ctl = db_ctl
     rz_api_rest.db_ctl = db_ctl
 
     webapp.rz_config = cfg
