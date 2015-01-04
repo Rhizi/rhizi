@@ -425,8 +425,8 @@ var textAnalyser = function (newtext, finalize) {
         ret.link_set_add = ret.link_set_add
             .filter(function (link) {
                 return !finalize ||
-                       (ret.drop_conjugator_links &&
-                        (link.name.replace(/ /g,"") === "and"));
+                       !ret.drop_conjugator_links ||
+                       (link.name.replace(/ /g,"") !== "and");
                 })
             .map(function (link) {
                 link.__src = edit_graph.find_node__by_name(link.__src) ||
