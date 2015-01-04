@@ -10,7 +10,7 @@ create constraint on (x:Person) assert x.name is unique;
 create constraint on (x:Skill) assert x.name is unique;
 
 // init commit block chain
-create (n:__HEAD:__Commit {hash: 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc', blob: ''}) create (n)-[:__Parent]->(n);
+create (n:__HEAD:__Commit {hash: 'da39a3ee5e6b4b0d3255bfef95601890afd80709', blob: ''});
 
 // Data
 create (x:Person {name:'Bob',     id: 'p_0', description: 'Bob is ...' });
