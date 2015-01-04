@@ -71,8 +71,8 @@ define(['util'], function(util) {
 
         // type
         if (undefined == node_spec.type) {
-            console.debug('create_node_from_spec: undefined type, falling back to \'empty\'');
-            node_spec.type = 'empty';
+            console.debug('create_node_from_spec: undefined type, falling back to \'perm\'');
+            node_spec.type = 'perm';
         }
         ret.type = node_spec.type;
 

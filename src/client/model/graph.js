@@ -688,14 +688,17 @@ function Graph(temporary) {
         return foundNodes;
     }
 
-    function clear() {
+    function clear(push_diff) {
+        push_diff = push_diff === undefined ? true : push_diff;
         id_to_node_map = {};
         node_map = {}
         id_to_link_map = {};
         link_map = {};
         invalidate_links = true;
         invalidate_nodes = true;
-        // FIXME: push on diffBus?
+        if (push_diff) {
+            diffBus.push({}); // FIXME: better value
+        }
     }
     this.clear = clear;
 

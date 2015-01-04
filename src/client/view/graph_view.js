@@ -25,32 +25,53 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3', 'Bacon', 'util', 'view/selection', 'view/helpers', 'model/diff'],
-function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff) {
+define(['d3', 'Bacon', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view'],
+function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  view) {
 
+/*
+ * Creates a new view on the given graph contained in an appended last child
+ * to the given parent node, parent
+ *
+ */
 function GraphView(spec) {
-    var forceEnabled = spec.forceEnabled,
-        temporary = spec.forceEnabled, // graph wide variable, not per node/link
-        vis = spec.vis,
+    var temporary = spec.temporary,
+        force_enabled = !spec.temporary,
+        parent_element = spec.parent_element,
         graph_name = spec.graph_name, 
         graph = spec.graph,
-        zoomProperty = spec.zoomProperty,
+        zoom_property = spec.zoom_property,
         node_text_dx = spec.node_text_dx,
         node_text_dy = spec.node_text_dy,
+        svgInput = spec.svgInput,
+        bubble_radius = 0,
 
         zoomInProgress = false,
         force,
-        drag;
+        drag,
+        vis,
+        // FIXME - want to use parent_element
+        w = $(document.body).innerWidth(),
+        h = $(document.body).innerHeight(),
+        cx = w / 2,
+        cy = h / 2;
 
-    util.assert(vis !== undefined && graph_name !== undefined &&
-                graph !== undefined && zoomProperty !== undefined &&
-                (temporary !== undefined) && (forceEnabled !== undefined) &&
-                node_text_dx !== undefined && node_text_dy !== undefined,
+    util.assert(parent_element !== undefined && graph_name !== undefined &&
+                graph !== undefined && zoom_property !== undefined &&
+                temporary !== undefined && force_enabled !== undefined &&
+                node_text_dx !== undefined && node_text_dy !== undefined &&
+                (temporary || svgInput !== undefined),
                 "missing spec variable");
     
-    zoomProperty.onValue(function (val) {
+    zoom_property.onValue(function (val) {
         zoomInProgress = val;
     });
+
+    if (spec.bubble_property) {
+        spec.bubble_property.onValue(function (r) {
+            bubble_radius = r;
+            update_view(false);
+        });
+    }
 
     graph.diffBus.onValue(function (diff) {
         var relayout = !temporary && (false == model_diff.is_attr_diff(diff));
@@ -63,11 +84,48 @@ function GraphView(spec) {
         update_view(relayout);
     });
 
+    function showNodeInfo(node, i) {
+        var closed = false;
+
+        util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
+
+        view.node_info.on_save(function(e, form_data) {
+            closed = true;
+            graph.update_node(node, form_data, function() {
+                var old_type = node.type,
+                    new_type = form_data.type;
+
+            });
+            view.node_info.hide();
+            return false;
+        });
+
+        // FIXME - attribute diff, ignore uninteresting diffs via filtering
+        graph.diffBus.onValue(function () {
+            if (closed) {
+                return Bacon.noMore;
+            }
+            view.node_info.show(node);
+        });
+
+        view.node_info.on_delete(function() {
+            var topo_diff = model_diff.new_topo_diff({
+                    node_set_rm: [node.id]
+                });
+            console.log("closing node info");
+            closed = true;
+            view.node_info.hide();
+            graph.commit_and_tx_diff__topo(topo_diff);
+        });
+
+        view.node_info.show(node);
+    }
+
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
         d.dragstart = {clientX:d3.event.sourceEvent.clientX, clientY:d3.event.sourceEvent.clientY};
-        if (forceEnabled) {
+        if (force_enabled) {
             force.stop();
         }
     }
@@ -84,7 +142,7 @@ function GraphView(spec) {
         if (d.dragstart.clientX - d3.event.sourceEvent.clientX != 0 ||
             d.dragstart.clientY - d3.event.sourceEvent.clientY != 0) {
             tick();
-            if (forceEnabled) {
+            if (force_enabled) {
                 force.resume();
             }
         }
@@ -97,8 +155,10 @@ function GraphView(spec) {
             link_g,
             linktext,
             nodetext,
-            unselected_link_group = document.querySelector('#link-group'),
-            selected_link_group = document.querySelector('#selected-link-group');
+            unselected_selector = '#' + graph_name + ' #link-group',
+            selected_selector = '#' + graph_name + ' #selected-link-group',
+            unselected_link_group = document.querySelector(unselected_selector),
+            selected_link_group = document.querySelector(selected_selector);
 
         relayout = relayout || true;
 
@@ -145,7 +205,7 @@ function GraphView(spec) {
 
         link.selectAll('path.link')
             .attr('class', function(d) {
-                return [d.state, selection.selected_class(d), "link graph"].join(' ');
+                return [d.state || "perm", selection.selected_class(d), "link graph"].join(' ');
             });
 
         link.exit().remove();
@@ -340,9 +400,9 @@ function GraphView(spec) {
             //Do something
         }
 
-        if (forceEnabled) {
+        if (force_enabled) {
             force.nodes(graph.nodes())
-                .links(graph.links())
+                 .links(graph.links());
 
             if (relayout) {
                 force.alpha(0.1).start();
@@ -351,7 +411,25 @@ function GraphView(spec) {
                 // and this is the simplest way
                 tick();
             }
+        } else {
+            start_layout_animation();
         }
+    }
+
+    function start_layout_animation() {
+        var interval_id,
+            count = 0,
+            on_interval = function() {
+                tick();
+                count += 1;
+                if (count > 30) {
+                    clearInterval(interval_id);
+                    console.log('stopping layout animation');
+                }
+            };
+        console.log('starting layout animation');
+        interval_id = setInterval(on_interval, 30);
+        on_interval();
     }
 
     var debug_print = function(message) {
@@ -366,7 +444,7 @@ function GraphView(spec) {
     function check_for_nan(x) {
         if (Number.isNaN(x)) {
             console.log('nan problem');
-            if (forceEnabled) {
+            if (force_enabled) {
                 force.stop();
             }
         }
@@ -389,18 +467,33 @@ function GraphView(spec) {
         graph.nodes().forEach(function(d, i) {
             var r, a;
             tempcounter++;
-            if (d.type==="chainlink") {
-                 d.x = window.innerWidth / 2;
-                 d.y = window.innerHeight / 2;
+            if (d.type === "chainlink") {
+                 d.x = cx;
+                 d.y = cy;
             } else {
                 r = 60 + newnodes * 20;
                 a = -Math.PI + Math.PI * 2 * (tempcounter-1) / newnodes + 0.3;
-                d.x = window.innerWidth / 2 + r * Math.cos(a);
-                d.y = window.innerHeight / 2 + r * Math.sin(a);
+                console.log(tempcounter);
+                d.x = cx + r * Math.cos(a);
+                d.y = cy + r * Math.sin(a);
             }
             check_for_nan(d.x);
             check_for_nan(d.y);
         });
+    }
+
+    function bubble_transform(d) {
+        if (bubble_radius == 0) {
+            return d;
+        }
+        console.log(graph_name + ': with bubble');
+        var dx = d.x - cx,
+            dy = d.y - cy,
+            r = Math.sqrt(dx * dx + dy * dy),
+            a = Math.atan2(dx, dy);
+        // FIXME: r == 0 (or close enough)
+        return {x: cx + (r + bubble_radius) * Math.cos(a),
+                y: cy + (r + bubble_radius) * Math.sin(a)};
     }
 
     function tick(e) {
@@ -420,7 +513,8 @@ function GraphView(spec) {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
             }
-            return "translate(" + d.x + "," + d.y + ")";
+            var d2 = bubble_transform(d);
+            return "translate(" + d2.x + "," + d2.y + ")";
         }
 
         if (temporary) {
@@ -454,6 +548,8 @@ function GraphView(spec) {
 
     // SVG rendering order is last rendered on top, so to make sure
     // all links are below the nodes we group them under a single g
+    vis = parent_element.append("g");
+    vis.attr("id", graph_name);
     vis.append("g").attr("id", "link-group");
     vis.append("g").attr("id", "selected-link-group");
 
@@ -463,11 +559,7 @@ function GraphView(spec) {
              .on("drag", dragged)
              .on("dragend", dragended);
 
-    function init_force_layout(){
-        var el = document.body;
-        var w = $(el).innerWidth(),
-            h = $(el).innerHeight();
-
+    function init_force_layout() {
         force = d3.layout.force()
                   .distance(120)
                   .gravity(0.12)
@@ -477,7 +569,7 @@ function GraphView(spec) {
                   .start();
     }
 
-    if (forceEnabled) {
+    if (force_enabled) {
         init_force_layout();
     }
     return {

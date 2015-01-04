@@ -178,7 +178,7 @@ var svgInput = (function() {
 
 var zoomProgress = false;
 var zoomBus = new Bacon.Bus();
-var zoomProperty = zoomBus.toProperty();
+var zoom_property = zoomBus.toProperty();
 zoomBus.push(zoomProgress); // set initial value
 
 function svg_click_handler(e) {
@@ -263,20 +263,29 @@ var initDrawingArea = function () {
     $('svg').click(svg_click_handler);
 
     main_graph_view = graph_view.GraphView({
-            vis: vis.append('g'),
+            parent_element: vis,
             graph_name: "main",
             graph: main_graph,
-            zoomProperty: zoomProperty,
-            forceEnabled: true,
+            zoom_property: zoom_property,
+            temporary: false,
             node_text_dx: node_text_dx,
             node_text_dy: node_text_dy,
+            svgInput: svgInput,
+            // FIXME: good place to animate bubble radius
+            bubble_property: edit_graph.diffBus.map(function () {
+                if (edit_graph.nodes().length == 0) {
+                    return 0;
+                } else {
+                    return 180;
+                }
+            }),
         });
     edit_graph_view = graph_view.GraphView({
-            vis: vis.append('g'),
+            parent_element: vis,
             graph_name: "edit",
             graph: edit_graph,
-            zoomProperty: zoomProperty,
-            forceEnabled: false,
+            zoom_property: zoom_property,
+            temporary: true,
             node_text_dx: node_text_dx,
             node_text_dy: node_text_dy,
         });
@@ -342,41 +351,6 @@ function canvas_handler_dblclick(){
         attributes: true,
         attributeOldValue : true,
     });
-}
-
-function showNodeInfo(node, i) {
-    var closed = false;
-
-    view.node_info.on_save(function(e, form_data) {
-        closed = true;
-        main_graph.update_node(node, form_data, function() {
-            var old_type = node.type,
-                new_type = form_data.type;
-
-        });
-        view.node_info.hide();
-        return false;
-    });
-
-    // FIXME - attribute diff, ignore uninteresting diffs via filtering
-    main_graph.diffBus.onValue(function () {
-        if (closed) {
-            return Bacon.noMore;
-        }
-        view.node_info.show(node);
-    });
-
-    view.node_info.on_delete(function() {
-        var topo_diff = model_diff.new_topo_diff({
-                node_set_rm: [node.id]
-            });
-        console.log("closing node info");
-        closed = true;
-        view.node_info.hide();
-        main_graph.commit_and_tx_diff__topo(topo_diff);
-    });
-
-    view.node_info.show(node);
 }
 
 function update_view__graph(relayout)

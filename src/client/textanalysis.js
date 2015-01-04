@@ -443,7 +443,8 @@ var textAnalyser = function (newtext, finalize) {
             });
 
         // REINITIALISE GRAPH (DUMB BUT IT WORKS)
-        edit_graph.clear();
+        edit_graph.clear(false
+                    /* don't push diff, avoid bubble on main_graph going to zero */);
 
         if (!finalize) {
             main_graph.markRelated(token_set_new_node_names);
