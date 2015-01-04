@@ -106,11 +106,6 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         var new_n_set = $.extend([], n_set);
         var new_l_set = $.extend([], l_set);
 
-        // filter out 'bubble' nodes
-        new_n_set = new_n_set.filter(function(n) {
-            return 'bubble' != n.type;
-        });
-
         new_n_set = $.map(new_n_set, function(n, _) {
             return adapt_format_write_node(n);
         })

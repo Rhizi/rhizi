@@ -45,7 +45,8 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         }
         if (util.getParameterByName('debug')) {
             $(document.body).addClass('debug');
-            rz_core.graph.set_user('fakeuser');
+            rz_core.edit_graph.set_user('fakeuser');
+            rz_core.main_graph.set_user('fakeuser');
         }
 
         document.body.onkeyup = function(e) {
@@ -59,7 +60,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
                 search.focus();
             }
             if (e.ctrlKey && key == 'z' && e.target.nodeName !== 'INPUT') {
-                // TODO: rz_core.graph.undo();
+                // TODO: rz_core.main_graph.undo();
             }
         };
         // TODO: move me somewhere
@@ -101,7 +102,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
 
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
-        textanalysis.init(rz_core.graph);
+        textanalysis.init(rz_core.main_graph);
     }
 
     return {

@@ -70,7 +70,10 @@ var lastnode;
 
 var sugg_name = {},
     id_to_name_map = {},
-    suggestions_options = new Bacon.Bus(); // TODO: Property: same as bus, but with initial value
+    suggestions_bus = new Bacon.Bus(),
+    suggestions_options = suggestions_bus.toProperty();
+
+suggestions_bus.push([]);
 
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_NODE = 'ANALYSIS_NODE'
@@ -88,80 +91,24 @@ function selectedType()
 function auto_suggest__update_name(name, id)
 {
     if (id !== undefined && id_to_name_map[id] !== undefined) {
-        delete sugg[id_to_name_map[id]];
+        delete sugg_name[id_to_name_map[id]];
         id_to_name_map[id] = name;
     }
     /* note that name can contain spaces - this is ok. We might want to limit this though? */
-    sugg[name] = 1;
-    suggestions_options.push(sugg);
+    sugg_name[name] = 1;
+    suggestions_bus.push(sugg_name);
 }
 
 function auto_suggest_remove_name(name, id)
 {
-    delete sugg[name];
+    if (name !== undefined) {
+        delete sugg_name[name];
+    }
     if (id !== undefined) {
-        delete sugg[id];
+        delete sugg_name[id_to_name_map[id]];
+        delete id_to_name_map[id];
     }
-    suggestions_options.push(sugg);
-}
-
-/* up_to_two_renames:
- *
- * allow one letter or 'new node' to anything changes */
-function up_to_two_renames(graph, old_name, new_name, link_set_add)
-{
-    var not_one_letter = false;
-    var k;
-    /* Allowed renames:
-     * no change
-     * s1 is substring of s2
-     * older (s1) node being 'new node'
-     */
-    function allowed_rename(s1, s2)
-    {
-        return (s1 == s2 ||
-                s1 == 'new node' ||
-                s1.substr(0, s2.length) == s2 ||
-                s2.substr(0, s1.length) == s1);
-    }
-
-    if (old_name.length != new_name.length) {
-        console.log('bug: up_to_two_renames: not equal inputs');
-        return;
-    }
-    if (old_name.length > 2) {
-        console.log('bug: up_to_two_renames: input length 2 < ' + old_name.length);
-        return;
-    }
-    if (old_name.length == 2) {
-        if (allowed_rename(old_name[0], new_name[1]) &&
-            allowed_rename(old_name[1], new_name[0])) {
-            old_name = [old_name[1], old_name[0]];
-        } else {
-            if (!allowed_rename(old_name[0], new_name[0]) ||
-                !allowed_rename(old_name[1], new_name[1])) {
-                not_one_letter = true;
-            }
-        }
-    }
-    if (not_one_letter) {
-        console.log('bug: up_to_two_renames: not one letter changes');
-        console.log(old_name);
-        console.log(new_name);
-        return;
-    }
-    for (k = 0 ; k < old_name.length ; ++k) {
-        graph.editNameByName(old_name[k], new_name[k]);
-        // very disappointing. suicide threats are ok?
-        link_set_add.forEach(function (link) {
-            if (link.__src.name == old_name[k]) {
-                link.__src.name = new_name[k];
-            }
-            if (link.__dst.name == old_name[k]) {
-                link.__dst.name = new_name[k];
-            }
-        });
-    }
+    suggestions_bus.push(sugg_name);
 }
 
 // TODO: add escape char, i.e. r"bla\"bla" -> ['bla"bla']
@@ -233,7 +180,7 @@ var textAnalyser = function (newtext, finalize) {
         word,
         completeSentence,
         completeSentenceParts,
-        typesetter, starGraph,
+        starGraph,
         n,
         link_hash = {},
         yell_bug = false, // TODO: fix both issues
@@ -242,14 +189,14 @@ var textAnalyser = function (newtext, finalize) {
         START = "START",
         ret = model_diff.new_topo_diff();
 
-    function __addNode(name, type, state) {
+    function __addNode(name, type) {
         if (type === undefined) {
             console.log('bug: textanalyser.addNode of type undefined');
         }
-        var node = model_core.create_node_from_spec(
-                {'name':name,
-                 'type':type,
-                 'state':state});
+        var node = model_core.create_node_from_spec({
+                    'name':name,
+                    'type':type,
+                });
 
         ret.node_set_add.push(node);
     }
@@ -264,7 +211,7 @@ var textAnalyser = function (newtext, finalize) {
         return {'existing': name};
     };
 
-    function __addLink(src_name, dst_name, name, state) {
+    function __addLink(src_name, dst_name, name) {
         if (!src_name || !dst_name) {
             if (yell_bug) {
                 console.log('bug - adding link (' + src_name + ', ' + dst_name + ')');
@@ -287,7 +234,6 @@ var textAnalyser = function (newtext, finalize) {
             '__src': src_name,
             '__dst': dst_name,
             'name':name,
-            'state':state
         };
         ret.link_set_add.push(link);
     }
@@ -376,19 +322,10 @@ var textAnalyser = function (newtext, finalize) {
     nodeindex = 0;
 
     //CHANGE TO PERMANENT STATE AND UPDATE SUGGESTIONLIST
-    typesetter = "";
     if (finalize === true) {
-        typesetter = "perm";
         for (n = 0; n < token_set_new_node_names.length; n++) {
             auto_suggest__update_name(token_set_new_node_names[n]);
         }
-    } else {
-        typesetter = "temp";
-    }
-
-    //ADD SURROUNDING BUBBLE
-    if (orderStack.length > 0) {
-        __addNode("", "bubble","temp");
     }
 
     //0-N ORDER STACK
@@ -400,11 +337,11 @@ var textAnalyser = function (newtext, finalize) {
                 }
                 break;
             case NODE:
-                __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
+                __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex]);
                 if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                     __addLink(token_set_new_node_names[nodeindex - 1],
                               token_set_new_node_names[nodeindex],
-                              token_set_new_link_names[linkindex], typesetter);
+                              token_set_new_link_names[linkindex]);
                 }
                 nodeindex++;
                 break;
@@ -428,11 +365,11 @@ var textAnalyser = function (newtext, finalize) {
             break;
         case NODE:
             typeStack[nodeindex] = selectedType();
-            __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex], typesetter);
+            __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex]);
             if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                 __addLink(token_set_new_node_names[nodeindex - 1],
                           token_set_new_node_names[nodeindex],
-                          token_set_new_link_names[linkindex], typesetter);
+                          token_set_new_link_names[linkindex]);
                 and_connect(token_set_new_node_names[nodeindex]);
             }
             ret.state = ANALYSIS_NODE_START;
@@ -455,9 +392,10 @@ var textAnalyser = function (newtext, finalize) {
             if(token_set_new_link_names[x])if(token_set_new_link_names[x].replace(/ /g,"")!=="and"){
                 verb = token_set_new_link_names[x];
                 for(var y=0; y<x ;y++){
-                    __addLink(token_set_new_node_names[y], node, verb, typesetter);
+                    __addLink(token_set_new_node_names[y], node, verb);
                     for(var z=x; z<token_set_new_node_names.length ;z++){
-                        __addLink(token_set_new_node_names[y], token_set_new_node_names[z], verb, typesetter);
+                        __addLink(token_set_new_node_names[y],
+                                  token_set_new_node_names[z], verb);
                     }
                 }
             }
@@ -466,81 +404,57 @@ var textAnalyser = function (newtext, finalize) {
 
     //STAR CASE
     if (starGraph) {
-        __addNode(completeSentence, "chainlink", typesetter);
+        __addNode(completeSentence, "chainlink");
         for (n = 0; n < token_set_new_node_names.length; n++) {
-            __addLink(token_set_new_node_names[n], completeSentence, "chained", typesetter);
+            __addLink(token_set_new_node_names[n], completeSentence, "chained");
         }
     }
 
     ret.drop_conjugator_links = and_count < linkindex;
 
-    ret.applyToGraph = function(graph, backend_commit) {
+    ret.applyToGraph = function(spec) {
+        var main_graph = spec.main_graph,
+            edit_graph = spec.edit_graph,
+            backend_commit = spec.backend_commit;
+
+        util.assert(main_graph !== undefined &&
+                    edit_graph !== undefined &&
+                    backend_commit !== undefined, "missing inputs");
         window.ret = ret;
 
-        ret.link_set_add.forEach(function (link) {
-            if (ret.drop_conjugator_links && (link.name.replace(/ /g,"") === "and")) {
-                link.state = "temp";
-            }
-            link.__src = graph.find_node__by_name(link.__src) || __sourceNodeFromName(link.__src);
-            link.__dst = graph.find_node__by_name(link.__dst) || __sourceNodeFromName(link.__dst);
-            if (link.__src.id !== undefined) {
-                link.__src_id = link.__src.id;
-            }
-            if (link.__dst.id !== undefined) {
-                link.__dst_id = link.__dst.id;
-            }
-        });
+        ret.link_set_add = ret.link_set_add
+            .filter(function (link) {
+                return !finalize ||
+                       (ret.drop_conjugator_links &&
+                        (link.name.replace(/ /g,"") === "and"));
+                })
+            .map(function (link) {
+                link.__src = edit_graph.find_node__by_name(link.__src) ||
+                             __sourceNodeFromName(link.__src);
+                link.__dst = edit_graph.find_node__by_name(link.__dst) ||
+                             __sourceNodeFromName(link.__dst);
+                if (link.__src.id !== undefined) {
+                    link.__src_id = link.__src.id;
+                }
+                if (link.__dst.id !== undefined) {
+                    link.__dst_id = link.__dst.id;
+                }
+                return link;
+            });
 
-        /*
-         * generate fitered node set who:
-         * - are not name-present in graph
-         * - are not of type 'bubble'
-         */
-        var n_set = ret.node_set_add.filter(function(node) {
-                    return false == graph.hasNodeByNameAndNotState(node.name, "temp")
-                        && node.type !== 'bubble';
-                }),
-            link_set = ret.link_set_add.map(
-                        function (link) {
-                            return [link.__src.name, link.__dst.name];
-                        }),
-            comp = graph.compareSubset('temp', n_set, link_set);
-
-        if (false == finalize && comp.graph_same) {
-            console.log('close enough');
-            if (comp.old_name && comp.new_name) {
-                up_to_two_renames(graph, comp.old_name, comp.new_name, ret.link_set_add);
-            }
-        } else {
-            console.log('not close enough (or finalize)');
-            // REINITIALISE GRAPH (DUMB BUT IT WORKS)
-            //
-            // FIXME: have temp nodes on a separete graph
-            // finalize - take temp graph and create a single topo_diff
-            // else - update temp graph with this topodiff, first clear it every time.
-            graph.removeNodes("temp");
-            graph.removeLinks("temp");
-        }
+        // REINITIALISE GRAPH (DUMB BUT IT WORKS)
+        edit_graph.clear();
 
         if (!finalize) {
-            graph.markRelated(token_set_new_node_names);
+            main_graph.markRelated(token_set_new_node_names);
         } else {
-            graph.removeRelated();
+            main_graph.removeRelated();
         }
 
         if (finalize && backend_commit) {
-            // broadcast diff:
-            //    - finalize?
-            //    - broadcast_diff requested by caller
-            // drop bubble node
-            ret.node_set_add = ret.node_set_add.filter(function(n) { return n.type != 'bubble'; });
-            // drop and links
-            ret.link_set_add = ret.link_set_add.filter(function(l) { return l.name !== 'and'; });
-            graph.commit_and_tx_diff__topo(ret);
+            main_graph.commit_and_tx_diff__topo(ret);
         } else {
-            if (!comp.graph_same) {
-                graph.commit_diff__topo(ret);
-            }
+            edit_graph.commit_diff__topo(ret);
         }
     };
 
@@ -551,10 +465,10 @@ var textAnalyser = function (newtext, finalize) {
     return ret;
 };
 
-function init(graph)
+function init(main_graph)
 {
     // deal with new nodes
-    graph.diffBus
+    main_graph.diffBus
         .filter(function (diff) {
             return diff.node_set_add && diff.node_set_add.length > 0;
         })
@@ -562,12 +476,13 @@ function init(graph)
         .flatMap(Bacon.fromArray)
         .map(".name")
         .map(function (name) { return name.toLowerCase(); })
+        // FIXME - should be removal of existing name via id, we know the id too.
         .onValue(auto_suggest__update_name);
 
     // deal with renamed links
     /*
     // TODO renamed links - broken in server, DBO_attr_diff_commit doesn't return an Attr_Diff
-    graph.diffBus
+    main_graph.diffBus
         .filter(function (diff) {
             return diff && diff.link_set_rm && diff.link_set_rm.length > 0;
         })

@@ -5,7 +5,7 @@ function (Bacon, consts, util, model_core, model_util, model_diff, rz_api_backen
 
 var debug = false;
 
-function Graph() {
+function Graph(temporary) {
 
     var id_to_node_map = {},
         node_map = {},
@@ -38,9 +38,11 @@ function Graph() {
      *
      * @return node if node was actually added
      */
-    this.addTempNode = function(spec) {
-        util.assert(spec.state === 'temp', "node is not a temp node");
-        return this.__addNode(spec);
+    // FIXME: is this a good idea? i.e. changing API based on constructor? just in dynamic city
+    if (temporary) {
+        this.addTempNode = function(spec) {
+            return this.__addNode(spec);
+        }
     }
 
     var nodes_to_touched_links = function (node_id_set) {
@@ -141,11 +143,7 @@ function Graph() {
             } else {
                 node = model_core.create_node__set_random_id(spec);
                 if (debug) {
-                    if ('bubble' != node.type){
-                        console.log('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\' (bubble)');
-                    }else {
-                        console.log('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
-                    }
+                    console.log('__addNode: stamping node id: ' + node.id + ', name: \'' + node.name + '\'');
                 }
             }
         } else {
@@ -228,7 +226,7 @@ function Graph() {
      *
      * NOTE: chainlinks are treated specially, they don't count for distance. So all their decendants will be added.
      *
-     * NOTE: temp state nodes (n.state === 'temp') are ignored.
+     * NOTE: Doesn't handle inter graph links
      *
      * @return - {
      *  'node': [node]
@@ -271,19 +269,14 @@ function Graph() {
                 var adjacentnode;
                 if (same(link.__src, n)) {
                     adjacentnode = find_node__by_id(link.__dst.id);
-                    if (adjacentnode.state !== "temp") {
-                        addNode({type: 'exit', node: adjacentnode});
-                    }
+                    addNode({type: 'exit', node: adjacentnode});
                     ret.links.push({type: 'exit', link: link});
                     if (link.__dst.type === "chainlink") {
                         links_forEach(function(link2) {
                             if (link.__dst.id === link2.__dst.id &&
-                                link2.__dst.type === "chainlink" &&
-                                link2.__dst.state !== "temp") {
+                                link2.__dst.type === "chainlink") {
                                 adjacentnode = find_node__by_id(link2.__src.id);
-                                if (adjacentnode.state !== "temp") {
-                                    addNode({type: 'enter', node: adjacentnode});
-                                }
+                                addNode({type: 'enter', node: adjacentnode});
                                 ret.links.push({type: 'enter', link: link2});
                             }
                         });
@@ -291,9 +284,7 @@ function Graph() {
                 }
                 if (same(link.__dst, n)) {
                     adjacentnode = find_node__by_id(link.__src.id);
-                    if (adjacentnode.state !== "temp") {
-                        addNode({type: 'enter', node: adjacentnode});
-                    }
+                    addNode({type: 'enter', node: adjacentnode});
                     ret.links.push({type: 'enter', link: link});
                 }
             });
@@ -309,11 +300,7 @@ function Graph() {
      *  a single node id change. false otherwise
      */
     this.compareSubset = function(state, new_nodes, new_links) {
-        // Note: the nodes include a state=='temp', type=='bubble' node
-        // but it's ok since it exists both in new_nodes and in state_nodes
-        var state_nodes = findNodes(null, state).filter(function (nd) {
-            return nd.type !== 'bubble';
-        });
+        var state_nodes = findNodes(null, state);
         var state_links = findLinks(state).map(function(link) {
             return [link.__src.name, link.__dst.name];
         }).sort();
@@ -388,7 +375,7 @@ function Graph() {
             return;
         }
 
-        util.assert(src.state === 'temp' && dst.state === 'temp' && state == "temp",
+        util.assert(temporary,
                     "creation of link not through commit_and_tx that isn't temporary");
 
         var link = model_core.create_link__set_random_id(src, dst, { name: name,
@@ -416,9 +403,11 @@ function Graph() {
             existing_link.state = link.state;
         }
     }
-    this.addTempLink = function (link) {
-        util.assert(link.state === "temp", "link is not temporary");
-        return __addLink(link);
+    // FIXME: good idea to add API based on constructor parameter?
+    if (temporary) {
+        this.addTempLink = function (link) {
+            return __addLink(link);
+        }
     }
 
     this.update_link = function(link, new_link_spec, on_success, on_error) {
@@ -541,7 +530,7 @@ function Graph() {
         if (n_eq_id.name == new_name) {
             return;
         }
-        util.assert(n_eq_id.state === 'temp', 'editName should now only be used by textanalysis');
+        util.assert(temporary, 'editName should now only be used on temporary graphs');
         util.assert(n_eq_name === undefined);
 
         n_eq_id.name = new_name;
@@ -574,6 +563,7 @@ function Graph() {
         if ((n === undefined)) {
             return false;
         }
+        console.debug("deprecated and broken probably");
         // cannot assert state is temp since robot code still uses it
         if (state != 'temp') {
             console.log('warning: I hope robot is doing this not-through-backend property change');
@@ -613,10 +603,10 @@ function Graph() {
     this._remove_link_set = _remove_link_set;
 
     this.removeNodes = function(state) {
-        var temp_node_ids = get_nodes().filter(function (n) { return n.state == state; })
+        var node_ids = get_nodes().filter(function (n) { return n.state == state; })
                                  .map(function (n) { return n.id; }),
             topo_diff = model_diff.new_topo_diff({
-                node_set_rm : temp_node_ids,
+                node_set_rm : node_ids,
             });
 
         this.commit_diff__topo(topo_diff);
@@ -659,14 +649,6 @@ function Graph() {
     }
     this.hasNodeByName = hasNodeByName;
 
-    var hasNodeByNameAndNotState = function(name, state) {
-        util.assert(state === 'temp', "this is deprecated and to be removed but anyway just for temp");
-        return get_nodes().filter(function(n) {
-            return compareNames(n.name, name) && n.state !== state;
-        }).length > 0;
-    }
-    this.hasNodeByNameAndNotState = hasNodeByNameAndNotState;
-
     /**
      * return node whose id matches the given id or undefined if no node was found
      */
@@ -707,8 +689,13 @@ function Graph() {
     }
 
     function clear() {
-        nodes.length = 0;
-        links.length = 0;
+        id_to_node_map = {};
+        node_map = {}
+        id_to_link_map = {};
+        link_map = {};
+        invalidate_links = true;
+        invalidate_nodes = true;
+        // FIXME: push on diffBus?
     }
     this.clear = clear;
 
@@ -764,8 +751,10 @@ function Graph() {
         });
         diff.link_set_add.map(function (link_spec) {
             // resolve link ptr
-            var src = find_node__by_id(link_spec.__src_id),
-                dst = find_node__by_id(link_spec.__dst_id) || find_node__by_name(link_spec.__dst.name),
+            var src = find_node__by_id(link_spec.__src_id)
+                        || (temporary && find_node__by_name(link_spec.__src.name)),
+                dst = find_node__by_id(link_spec.__dst_id)
+                        || (temporary && find_node__by_name(link_spec.__dst.name)),
                 link = model_core.create_link_from_spec(src, dst, link_spec);
 
             __addLink(link);
@@ -926,9 +915,6 @@ function Graph() {
 
         for (i = 0 ; i < n_length; ++i) {
             node = nodes[i];
-            if (node.state == 'temp') {
-                continue;
-            }
             if (node_visitor(node)) {
                 selected.push(node);
             }
@@ -940,7 +926,7 @@ function Graph() {
         removeRelated();
         nodes_forEach(function (node) {
             names.forEach(function (name) {
-                if (compareNames(node.name, name) && node.state != 'temp') {
+                if (compareNames(node.name, name)) {
                     node.state = 'related';
                 }
             });
@@ -949,8 +935,9 @@ function Graph() {
     this.markRelated = markRelated;
 
     function removeRelated() {
+        // FIXME: related should use separate variable, not overload 'state' (bad bad bad)
         nodes_forEach(function (node) {
-            if (node.state == 'related') {
+            if (node.state === 'related') {
                 node.state = 'perm';
             }
         });

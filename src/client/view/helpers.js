@@ -31,9 +31,6 @@ function customColor(type) {
         case "chainlink":
             color = "#363636"; //dark-grey
             break;
-        case "bubble":
-            color = "rgba(255,255,255,0.2)"; // white, 0.2 opaque
-            break;
         default:
             console.log('bug: unknown type ' + type);
             color = '#d4d4d9'; //mid-light grey
@@ -68,9 +65,6 @@ function customSize(type) {
             break;
         case "chainlink":
             size = 8;
-            break;
-        case "bubble":
-            size = 180;
             break;
         default:
             size = 9;

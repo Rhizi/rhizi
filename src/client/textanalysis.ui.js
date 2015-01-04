@@ -65,7 +65,11 @@ function analyzeSentence(sentence, finalize)
         break;
     }
 
-    ret.applyToGraph(rz_core.graph, rz_config.backend_enabled);
+    ret.applyToGraph({
+        main_graph: rz_core.main_graph,
+        edit_graph: rz_core.edit_graph,
+        backend_commit: rz_config.backend_enabled,
+    });
 
     if (finalize || sentence.length == 0) {
         typeselection.hide();
@@ -99,13 +103,13 @@ function changeType(arg) {
     nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
     if (arg === 'up') {
-        rz_core.graph.editType(id, null, nodetype);
+        rz_core.edit_graph.editType(id, null, nodetype);
         typeselection.showChosenType(nodetype);
-        rz_core.graph.findCoordinates(id);
+        rz_core.edit_graph.findCoordinates(id);
     } else {
-        rz_core.graph.editType(id, null, nodetype);
+        rz_core.edit_graph.editType(id, null, nodetype);
         typeselection.showChosenType(nodetype);
-        rz_core.graph.findCoordinates(id);
+        rz_core.edit_graph.findCoordinates(id);
     }
 }
 

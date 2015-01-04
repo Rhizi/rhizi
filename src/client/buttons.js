@@ -7,13 +7,13 @@ var key="#47989379";
 
 
 $('.save a').click(function(){
-    var json = rz_core.graph.save_to_json();
+    var json = rz_core.main_graph.save_to_json();
     console.log('saving to local storage ' + json.length + ' bytes');
     localStorage.setItem(key, json);
 });
 
 $('.export').click(function() {
-    var json = rz_core.graph.save_to_json();
+    var json = rz_core.main_graph.save_to_json();
     var filename = 'graph.json';
     var blob = new Blob([json], {type: 'application/json'});
     console.log('saving ' + json.length + ' bytes to ' + filename);
@@ -21,14 +21,14 @@ $('.export').click(function() {
 });
 
 $('.url-copy a').click(function() {
-    var json = rz_core.graph.save_to_json();
+    var json = rz_core.main_graph.save_to_json();
     // TODO use jquery BBQ $.param({json: json});
     var encoded = document.location.origin + '/?json=' + encodeURIComponent(json);
     window.prompt('Copy to clipboard: Ctrl-C, Enter (or Cmd-C for Mac)', encoded);
 });
 
 var really_load = function() {
-  if (!rz_core.graph.empty()) {
+  if (!rz_core.main_graph.empty()) {
     return confirm('All unsaved changes will be deleted, are you sure?');
   }
   return true;
@@ -73,10 +73,10 @@ logout_button.click(function() {
 });
 
 $('a.save-history').click(function() {
-    if (rz_core.graph.history === undefined) {
+    if (rz_core.main_graph.history === undefined) {
         throw "History is undefined";
     }
-    rz_core.graph.history.save_to_file();
+    rz_core.main_graph.history.save_to_file();
 });
 return {'buttons': 'nothing here'};
 }); // define

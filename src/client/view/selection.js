@@ -6,7 +6,7 @@ function get_rz_core()
     // circular dependency on rz_core, so require.js cannot solve it.
     if (rz_core === undefined) {
         rz_core = require('rz_core');
-        listen_on_diff_bus(rz_core.graph.diffBus);
+        listen_on_diff_bus(rz_core.main_graph.diffBus);
     }
     return rz_core;
 }
@@ -59,14 +59,14 @@ function updateSelectedNodesBus(new_selected_nodes)
 }
 
 function byVisitors(node_selector, link_selector) {
-    var new_selected_nodes = get_rz_core().graph.findByVisitors(node_selector, link_selector);
+    var new_selected_nodes = get_rz_core().main_graph.findByVisitors(node_selector, link_selector);
 
     clear();
     connectedComponent(new_selected_nodes);
 }
 
 function connectedComponent(nodes) {
-    var connected = get_rz_core().graph.getConnectedNodesAndLinks(nodes, 1),
+    var connected = get_rz_core().main_graph.getConnectedNodesAndLinks(nodes, 1),
         i,
         node,
         link,
@@ -112,7 +112,7 @@ var selected_class = function(node) {
 
 var clear = function() {
     selected_nodes.length = 0;
-    get_rz_core().graph.setRegularState();
+    get_rz_core().main_graph.setRegularState();
 }
 
 function arr_compare(a1, a2)
