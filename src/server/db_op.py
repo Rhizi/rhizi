@@ -106,7 +106,7 @@ class DB_composed_op(DB_op):
             ret.append(s_result_set)
         return ret
 
-class DBO_chain_commit_block(DB_op):
+class DBO_block_chain__commit(DB_op):
     """
     Labels in use:
        - __HEAD: HEAD commit, unique
@@ -188,7 +188,7 @@ class DBO_topo_diff_commit(DB_composed_op):
             self.add_sub_op(op)
 
         blob = json.dumps(topo_diff.to_json_dict())
-        chain_commit_op = DBO_chain_commit_block(blob)
+        chain_commit_op = DBO_block_chain__commit(blob)
         self.add_sub_op(chain_commit_op)
 
     def process_result_set(self):
@@ -303,7 +303,7 @@ class DBO_attr_diff_commit(DB_op):
             self.add_statement(q, q_param_set)
 
         blob = json.dumps(attr_diff)
-        chain_commit_op = DBO_chain_commit_block(blob)
+        chain_commit_op = DBO_block_chain__commit(blob)
         self.add_sub_op(chain_commit_op)
 
     def add_link_rename_statements(self, id_attr, new_label):
