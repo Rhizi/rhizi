@@ -3,44 +3,16 @@ from flask import request
 from geventwebsocket.handler import WebSocketHandler
 import logging
 from socketio import socketio_manage
-from socketio.mixins import BroadcastMixin
-from socketio.namespace import BaseNamespace
+
 from socketio.server import SocketIOHandler
 from socketio.server import SocketIOServer
 from functools import wraps
 
 from rz_kernel import RZ_Kernel
 from model.graph import Attr_Diff, Topo_Diff
+from rz_api_websocket import WebSocket_Graph_NS
 
 log = logging.getLogger('rhizi')
-
-class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
-    """
-    Rhizi '/graph' websocket namespace
-    """
-    def multicast_msg(self, msg_name, *args):
-        self.socket.server.log_multicast(msg_name)
-        super(WebSocket_Graph_NS, self).broadcast_event_not_me(msg_name, *args)
-
-    def _log_conn(self, prefix_msg):
-        rmt_addr = self.environ['REMOTE_ADDR']
-        rmt_port = self.environ['REMOTE_PORT']
-        sid = self.environ['socketio'].sessid
-        log.info('ws: %s: sid: %s, remote-socket: %s:%s' % (prefix_msg, sid, rmt_addr, rmt_port))
-
-    def recv_connect(self):
-        self._log_conn('conn open')
-
-    def recv_disconnect(self):
-        self._log_conn('conn close')
-
-    def on_diff_commit__topo(self, topo_diff):
-        log.info('ws: rx: topo diff: ' + str(topo_diff))
-        self.multicast_msg('diff_commit__topo', topo_diff)
-
-    def on_diff_commit__attr(self, attr_diff):
-        log.info('ws: rx: attr diff: ' + str(attr_diff))
-        self.multicast_msg('diff_commit__attr', attr_diff)
 
 class RZ_WebSocket_Server(SocketIOServer):
     """

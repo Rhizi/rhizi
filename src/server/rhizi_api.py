@@ -1,99 +1,38 @@
 """
 Rhizi web API
+
+@deprecated: destined to split into rz_api_rest & rz_api_websocket
 """
-import os
-import db_controller as dbc
+from datetime import datetime
+from flask import Flask
+from flask import escape
+from flask import jsonify
+from flask import make_response
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import send_from_directory
+from flask import session
+from flask import url_for
+import flask
 import json
 import logging
+import os
 import traceback
+
 import crypt_util
-
-import flask
-from flask import jsonify
-from flask import Flask
-from flask import request
-from flask import make_response
-from flask import session
-from flask import redirect
-from flask import escape
-from flask import url_for
-from flask import render_template
-from flask import send_from_directory
-
+import db_controller as dbc
+from model.graph import Topo_Diff
+from model.model import Link
+from rz_api_common import __sanitize_input
+from rz_api_common import sanitize_input__topo_diff
+from rz_api_rest import __common_resp_handle
 from rz_kernel import RZ_Kernel
 
-from model.graph import Topo_Diff
-from model.graph import Attr_Diff
-from model.model import Link
-from datetime import datetime
 
 log = logging.getLogger('rhizi')
 
-# injected: DB controller
-db_ctl = None
-
-def __sanitize_input(*args, **kw_args):
-    pass
-
-def sanitize_input__node(n):
-    """
-    provide a control point as to which node fields are persisted
-    """
-    assert None != n.get('id'), 'invalid input: node: missing id'
-
-def sanitize_input__link(l):
-    """
-    provide a control point as to which link fields are persisted
-    """
-
-    # expected prop assertions
-    assert None != l.get('id'), 'invalid input: link: missing id'
-    assert None != l.get('__src_id'), 'invalid input: link: missing src id'
-    assert None != l.get('__dst_id'), 'invalid input: link: missing dst id'
-
-    # unexpected prop assertions
-    assert None == l.get('__type'), 'client is sending us __type link property, it should not'
-    assert None == l.get('name'), 'client is sending us name link property, it should not'
-
-def sanitize_input__topo_diff(topo_diff):
-    for n in topo_diff.node_set_add:
-        sanitize_input__node(n)
-    for l in topo_diff.link_set_add:
-        sanitize_input__link(l)
-
-def sanitize_input__attr_diff(attr_diff):
-    pass  # TODO: impl
-
-def _validate_obj__attr_diff(ad):
-    # check for name attr changes, which are currently forbidden
-    for n_id, node_attr_diff_set in ad['__type_node'].items():
-        for attr_name in node_attr_diff_set['__attr_write'].keys():
-            if 'id' == attr_name:
-                raise Exception('validation error: Attr_Diff: forbidden attribute change: \'id\', n_id: ' + n_id)
-
-def __response_wrap(data=None, error=None):
-    """
-    wrap response data/errors as dict - this should always be used when returning
-    data to allow easy return of list objects, assist in error case distinction, etc. 
-    """
-    return dict(data=data, error=error)
-
-def __common_resp_handle(data=None, error=None):
-    """
-    provide common response handling
-    
-    @data must be json serializable
-    @error will be serialized with str()
-    """
-    error_str = str(error)  # convert any Exception objects to serializable form
-    ret_data = __response_wrap(data, error_str)
-    resp = jsonify(ret_data)  # this will create a Flask Response object
-
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-
-    # more response processing
-
-    return resp
+db_ctl = None  # injected: DB controller
 
 def __common_exec(op, on_success=__common_resp_handle, on_error=__common_resp_handle):
     """
@@ -183,69 +122,9 @@ def diff_commit__set():
         return topo_diff;
 
     topo_diff = sanitize_input(request)
+
     op = dbc.DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
-
-def diff_commit__topo():
-    """
-    REST API wrapper around diff_commit__topo():
-       - extract topo_diff from request
-       - handle success/error outcomes
-    """
-    def sanitize_input(req):
-        topo_diff_dict = request.get_json()['topo_diff']
-        topo_diff = Topo_Diff.from_json_dict(topo_diff_dict)
-
-        sanitize_input__topo_diff(topo_diff)
-        return topo_diff;
-
-    try:
-        topo_diff = sanitize_input(request)
-    except Exception as e:
-        return __common_resp_handle(error='malformed input')
-
-    try:
-        kernel = flask.current_app.kernel
-        topo_diff = kernel.diff_commit__topo(db_ctl, topo_diff)
-        topo_diff_json = topo_diff.to_json_dict()
-        return __common_resp_handle(data=topo_diff_json)
-    except Exception as e:
-        log.error(e.message)
-        log.error(traceback.print_exc())
-        return __common_resp_handle(error=e)
-
-def diff_commit__attr():
-    """
-    commit a graph attribute diff
-    """
-    def sanitize_input(req):
-        attr_diff_dict = request.get_json()['attr_diff']
-        attr_diff = Attr_Diff.from_json_dict(attr_diff_dict)
-
-        sanitize_input__attr_diff(attr_diff)
-        return attr_diff;
-
-    def on_error(e):
-        # handle DB ERRORS, eg. name attr change error
-        return __common_resp_handle(error='error occurred')
-
-    try:
-        attr_diff = sanitize_input(request)
-        _validate_obj__attr_diff(attr_diff)
-    except Exception as e:
-        return __common_resp_handle(error='malformed input')
-
-    try:
-        kernel = flask.current_app.kernel
-        attr_diff = kernel.diff_commit__attr(db_ctl, attr_diff)
-        return __common_resp_handle(data=attr_diff)
-    except Exception as e:
-        log.error(e.message)
-        log.error(traceback.print_exc())
-        return __common_resp_handle(error=e)
-
-def diff_commit__vis():
-    pass
 
 def add_node_set():
     """
