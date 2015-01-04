@@ -115,7 +115,7 @@ class DBO_block_chain__commit(DB_op):
     """
 
     @staticmethod
-    def calc_blob_hash(blob):
+    def calc_blob_hash(blob=''):
         """
         Calculate blog hash value
         """
