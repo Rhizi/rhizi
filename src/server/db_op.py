@@ -106,6 +106,36 @@ class DB_composed_op(DB_op):
             ret.append(s_result_set)
         return ret
 
+class DBO_chain_commit_block(DB_op):
+
+    @staticmethod
+    def calc_blob_hash(blob):
+        """
+        Calculate blog hash value
+        """
+        sha1 = hashlib.sha1()
+        sha1.update(blob)
+        ret = sha1.hexdigest()
+        return ret
+
+    def __init__(self, blob_obj):
+        """
+        @param blob_obj: serializable blob
+        """
+        super(DBO_chain_commit_block, self).__init__()
+
+        self.blob_obj = blob_obj
+        hash_value = DBO_chain_commit_block.calc_blob_hash(blob_obj)
+        q_arr = ["match (old_head:__HEAD:__Commit)",
+                 "create (new_head:__HEAD:__Commit {hash: {hash_value}, blob: {blob_value}})",
+                 "create new_head-[l:__Parent]->old_head",
+                 "remove old_head:HEAD",
+                 "return old_head, new_head"]
+
+        q = " ".join(q_arr)
+        q_param_set = {'hash_value': hash_value, 'blob_value': blob_obj}
+        self.add_statement(q, q_param_set)
+
 class DBO_cypher_query(DB_op):
     """
     freeform cypher query
@@ -150,6 +180,10 @@ class DBO_topo_diff_commit(DB_composed_op):
         if len(n_rm_set) > 0:
             op = DBO_rm_node_set(n_rm_set)
             self.add_sub_op(op)
+
+        blob = json.dumps(topo_diff.to_json_dict())
+        chain_commit_op = DBO_chain_commit_block(blob)
+        self.add_sub_op(chain_commit_op)
 
     def process_result_set(self):
         ret_n_set = []
@@ -261,6 +295,10 @@ class DBO_attr_diff_commit(DB_op):
 
             q = " ".join(q_arr)
             self.add_statement(q, q_param_set)
+
+        blob = json.dumps(attr_diff)
+        chain_commit_op = DBO_chain_commit_block(blob)
+        self.add_sub_op(chain_commit_op)
 
     def add_link_rename_statements(self, id_attr, new_label):
         # TODO - where do we sanitize the label name? any better way of doing this?
