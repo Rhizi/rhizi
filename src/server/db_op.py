@@ -107,6 +107,12 @@ class DB_composed_op(DB_op):
         return ret
 
 class DBO_chain_commit_block(DB_op):
+    """
+    Labels in use:
+       - __HEAD: HEAD commit, unique
+       - __Parent: parent commit relationship
+       - __Commit: node type
+    """
 
     @staticmethod
     def calc_blob_hash(blob):
@@ -128,8 +134,8 @@ class DBO_chain_commit_block(DB_op):
         hash_value = DBO_chain_commit_block.calc_blob_hash(blob_obj)
         q_arr = ["match (old_head:__HEAD:__Commit)",
                  "create (new_head:__HEAD:__Commit {hash: {hash_value}, blob: {blob_value}})",
-                 "create new_head-[l:__Parent]->old_head",
-                 "remove old_head:HEAD",
+                 "create new_head-[r:__Parent]->old_head",
+                 "remove old_head:__HEAD",
                  "return old_head, new_head"]
 
         q = " ".join(q_arr)
