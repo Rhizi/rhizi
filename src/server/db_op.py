@@ -143,6 +143,39 @@ class DBO_block_chain__commit(DB_op):
         q_param_set = {'hash_value': hash_value, 'blob_value': blob_obj}
         self.add_statement(q, q_param_set)
 
+class DBO_block_chain__list(DB_op):
+    """
+    Return block chain hash list
+    
+    @return: hash list where last list item corresponds to earliest commit
+    """
+
+    def __init__(self, length_lim=None):
+        """
+        @param blob_obj: serializable blob
+        """
+        super(DBO_block_chain__list, self).__init__()
+
+        # FIXME: use cleaner query:
+        # match p=(n:__HEAD)-[r:__Parent*]->(m) return extract(n in nodes(p) | n.hash);
+        q_arr = ["match (n:__HEAD)-[r:__Parent*]->(m)",
+                 "return [n.hash] + collect(m.hash)"
+                 ]
+
+        if None != length_lim:
+            # inject maxHops limit if available
+            q_arr[0] = "match (n:__HEAD)-[r:__Parent*..%d]->m" % (length_lim),
+
+        q = " ".join(q_arr)
+        self.add_statement(q)
+
+    def process_result_set(self):
+        # optimize for single statement
+        for _, _, r_set in self:
+            for row in r_set:
+                for col in row:
+                    return col
+
 class DBO_cypher_query(DB_op):
     """
     freeform cypher query
