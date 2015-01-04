@@ -1,7 +1,7 @@
 """
 Various test utilities
 """
-from rhizi_server import init_webapp
+from rz_server import init_webapp
 from rz_mesh import init_ws_interface
 import db_controller as dbc
 

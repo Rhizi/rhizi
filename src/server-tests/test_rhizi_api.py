@@ -4,6 +4,7 @@ import rz_api
 import json
 import logging
 
+from rz_server import Config
 from rhizi_server import Config
 from werkzeug.test import EnvironBuilder
 from werkzeug.test import Client

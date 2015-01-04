@@ -2,7 +2,7 @@ import unittest
 import logging
 import db_controller as dbc
 
-from rhizi_server import Config
+from rz_server import Config
 from neo4j_test_util import rand_id
 from neo4j_test_util import flush_db
 from neo4j_test_util import gen_rand_data
