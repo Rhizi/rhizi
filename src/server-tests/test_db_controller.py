@@ -109,6 +109,21 @@ class TestDBController(unittest.TestCase):
         l_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(l_set), 2)
 
+    def test_block_chain__commit_and_print(self):
+        op_0 = DBO_block_chain__commit(blob_obj='blob 1')
+        op_1 = DBO_block_chain__commit(blob_obj='blob 2')
+        op_print = DBO_block_chain__list()
+
+        _, _, hash_ret1 = self.db_ctl.exec_op(op_0)
+        _, _, hash_ret2 = self.db_ctl.exec_op(op_1)
+        hash_list = self.db_ctl.exec_op(op_print)
+
+        hash_commit_0 = DBO_block_chain__commit.calc_blob_hash()  # default empty blob hash
+
+        self.assertEqual(hash_list.pop(), hash_commit_0)
+        self.assertEqual(hash_list.pop(), hash_ret1)
+        self.assertEqual(hash_list.pop(), hash_ret2)
+
     def test_match_node_set_by_type(self):
         op = DBO_match_node_id_set(filter_label='Person')
         id_set = self.db_ctl.exec_op(op)
