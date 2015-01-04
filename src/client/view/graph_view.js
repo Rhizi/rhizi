@@ -43,8 +43,8 @@ function GraphView(spec) {
         node_text_dx = spec.node_text_dx,
         node_text_dy = spec.node_text_dy,
         svgInput = spec.svgInput,
-        bubble_radius = 0,
 
+        bubble_radius = 0,
         zoomInProgress = false,
         force,
         drag,
@@ -66,8 +66,39 @@ function GraphView(spec) {
         zoomInProgress = val;
     });
 
+    function range(start, end, number) {
+        var ret = [],
+            i,
+            divisor = number <= 1 ? 1 : number - 1,
+            difference = end - start;
+
+        for (i = 0; i < number; ++i) {
+            ret.push(difference * i / divisor + start);
+        }
+        return ret;
+    }
+
+    // TODO: nice animation FRP using Bacon combine/flatMap.
+    // 0
+    // 180   10
+    // ..    20
+    //       30
+    //       40
+    // 0     30
+    //       20
+    //       10
+    //       0
+    //
+    //
+    // Animation target is set by stream, and initialized if not already
     if (spec.bubble_property) {
-        spec.bubble_property.onValue(function (r) {
+        spec.bubble_property.skipDuplicates()
+        .flatMap(function (r) {
+            // lame animation - works, but doesn't handle more events while
+            // animating
+            return Bacon.sequentially(20, range(bubble_radius, r, 10));
+        })
+        .onValue(function (r) {
             bubble_radius = r;
             update_view(false);
         });
@@ -424,10 +455,9 @@ function GraphView(spec) {
                 count += 1;
                 if (count > 30) {
                     clearInterval(interval_id);
-                    console.log('stopping layout animation');
+                    console.log('stopping layout animation ' + interval_id);
                 }
             };
-        console.log('starting layout animation');
         interval_id = setInterval(on_interval, 30);
         on_interval();
     }
@@ -486,11 +516,10 @@ function GraphView(spec) {
         if (bubble_radius == 0) {
             return d;
         }
-        console.log(graph_name + ': with bubble');
         var dx = d.x - cx,
             dy = d.y - cy,
             r = Math.sqrt(dx * dx + dy * dy),
-            a = Math.atan2(dx, dy);
+            a = Math.atan2(dy, dx);
         // FIXME: r == 0 (or close enough)
         return {x: cx + (r + bubble_radius) * Math.cos(a),
                 y: cy + (r + bubble_radius) * Math.sin(a)};
