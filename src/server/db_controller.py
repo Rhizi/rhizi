@@ -6,6 +6,7 @@ import traceback
 from db_driver import DB_Driver_REST, DB_Driver_Base
 from db_op import DB_composed_op
 from db_op import DB_op
+from neo4j_util import Neo4JException
 import neo4j_util as db_util
 
 
@@ -42,9 +43,13 @@ class DB_Controller:
 
             log.debug('exec_op:' + op.name + ': return value: ' + str(ret))
             return ret
+        except Neo4JException as e:
+            log.error(e.error_set[0]['stackTrace'])
+            raise e
         except Exception as e:
             # here we watch for IOExecptions, etc - not db errors
             # these are returned in the db response itself
+
             log.error(e.message)
             log.error(traceback.print_exc())
             raise e
