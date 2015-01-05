@@ -681,7 +681,8 @@ function Graph(spec) {
     this.clear = clear;
 
     function empty() {
-        return nodes.length == 0 && links.length == 0;
+        // FIXME: O(|nodes|+|links|)
+        return get_nodes().length == 0 && get_links().length == 0;
     }
     this.empty = empty;
 
