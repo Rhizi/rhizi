@@ -113,10 +113,12 @@ def load_link_set_by_link_ptr_set():
     return __common_exec(op)
 
 def rz_clone():
+
     def on_success(topo_diff):
-        # serialize Topo_Diff before returning it
+        # serialize Topo_Diff before including in response
         topo_diff_json = topo_diff.to_json_dict()
         return __common_resp_handle(topo_diff_json)
+
     op = DBO_rz_clone()
     return __common_exec(op, on_success=on_success)
 
