@@ -51,6 +51,7 @@ function GraphView(spec) {
         force,
         drag,
         vis,
+        deliverables,
         // FIXME - want to use parent_element
         w = $(document.body).innerWidth(),
         h = $(document.body).innerHeight(),
@@ -108,12 +109,6 @@ function GraphView(spec) {
 
     graph.diffBus.onValue(function (diff) {
         var relayout = !temporary && (false == model_diff.is_attr_diff(diff));
-        if (relayout) {
-            console.log('****** ' + graph_name + ' graph relayout *******');
-        } else {
-            console.log('****** ' + graph_name + ' graph update   *******');
-        }
-        console.dir(diff);
         update_view(relayout);
     });
 
@@ -188,6 +183,7 @@ function GraphView(spec) {
             link_g,
             linktext,
             nodetext,
+            circle,
             unselected_selector = '#' + graph_name + ' #link-group',
             selected_selector = '#' + graph_name + ' #selected-link-group',
             unselected_link_group = document.querySelector(unselected_selector),
@@ -286,8 +282,6 @@ function GraphView(spec) {
             .data(graph.nodes(), function(d) {
                 return d.id;
             });
-        console.log("update update update update");
-        console.dir(node);
 
         var nodeEnter = node.enter()
             .append("g")

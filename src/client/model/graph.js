@@ -109,8 +109,6 @@ function Graph(spec) {
             console.log('error:');
             console.dir(error);
         }
-        console.log("COMMIT DIFF   TOPO");
-        console.dir(topo_diff);
         rz_api_backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo, graph_on_error);
     }
     this.commit_and_tx_diff__topo = commit_and_tx_diff__topo;
@@ -752,7 +750,6 @@ function Graph(spec) {
      * FIXME: use a different object? different properties in the same object?
      */
     function commit_diff__topo(diff) {
-        console.dir(diff);
         _add_node_set(diff.node_set_add);
         _add_link_set(diff.link_set_add);
         // done under protest
@@ -771,9 +768,8 @@ function Graph(spec) {
     function load_from_backend(on_success) {
 
         function on_success__ajax(diff) {
-            console.dir(diff);
             __commit_diff_ajax__topo(diff);
-            undefined != on_success && on_success()
+            undefined != on_success && on_success();
         }
 
         rz_api_backend.clone(0, on_success__ajax);
