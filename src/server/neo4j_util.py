@@ -124,24 +124,30 @@ def post(url, data):
 
     return ret
 
-def statement_to_REST_form(query, parameters={}):
-    """
-    turn cypher query to neo4j json API format
-    """
-    assert isinstance(query, six.string_types)
-
-    if isinstance(parameters, list):
-        for v in parameters:
-            assert isinstance(v, dict)
-    else:
-        assert isinstance(parameters, dict)
-
-    return {'statement' : query, 'parameters': parameters}
-
 def statement_set_to_REST_form(statement_set):
     assert isinstance(statement_set, list)
 
-    return {'statements': statement_set}
+    def _adapt_single_statement_to_REST_form(query, parameters={}):
+        """
+        turn cypher query to neo4j json API format
+        """
+        assert isinstance(query, six.string_types)
+
+        if isinstance(parameters, list):
+            for v in parameters:
+                assert isinstance(v, dict)
+        else:
+            assert isinstance(parameters, dict)
+
+        return {'statement' : query, 'parameters': parameters}
+
+    rest_statement_set = []
+    for db_query in statement_set:
+        rest_statement = _adapt_single_statement_to_REST_form(db_query.statement,
+                                                              db_query.param_set)
+        rest_statement_set.append(rest_statement)
+
+    return {'statements': rest_statement_set}
 
 def gen_clause_attr_filter_from_filter_attr_map(filter_attr_map, node_label="n"):
     if not filter_attr_map:

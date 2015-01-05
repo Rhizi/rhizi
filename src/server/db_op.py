@@ -6,6 +6,7 @@ from model.graph import Topo_Diff
 from neo4j_util import DB_result_set
 from neo4j_util import cfmt
 import neo4j_util as db_util
+from neo4j_util import DB_Query
 import hashlib
 
 class DB_op(object):
