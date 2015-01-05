@@ -552,11 +552,14 @@ function Graph(spec) {
         }
     }
 
-    this.removeLink = function(link) {
+    this.links_rm = function(links) {
+        var ids = links.map(function (link) {
+            util.assert(link.id !== undefined, 'bug: link without an id');
+            return link.id;
+        });
 
-        util.assert(link.id !== undefined, 'bug: link without an id');
-
-        this._remove_link_set([link]);
+        var topo_diff = model_diff.new_topo_diff({link_set_rm: ids});
+        this.commit_and_tx_diff__topo(topo_diff);
     }
 
     var _remove_link_set = function(link_id_set) {
@@ -572,19 +575,14 @@ function Graph(spec) {
     }
     this._remove_link_set = _remove_link_set;
 
-    this.removeNodes = function(state) {
+    this.nodes_rm = function(state) {
         var node_ids = get_nodes().filter(function (n) { return n.state == state; })
                                  .map(function (n) { return n.id; }),
             topo_diff = model_diff.new_topo_diff({
                 node_set_rm : node_ids,
             });
 
-        this.commit_diff__topo(topo_diff);
-    }
-
-    this.removeLinks = function(state) {
-        var ls = find_links__by_state(state);
-        ls.map(_link_remove_helper);
+        this.commit_and_tx_diff__topo(topo_diff);
     }
 
     var findLink = function(src_id, dst_id, name) {

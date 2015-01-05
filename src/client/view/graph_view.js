@@ -224,7 +224,7 @@ function GraphView(spec) {
 
                 view.edge_info.on_delete(function () {
                     view.edge_info.hide();
-                    graph.removeLink(that.link);
+                    graph.links_rm([that.link]);
                 });
                 view.edge_info.show(d);
                 selection.update([src, dst]);
