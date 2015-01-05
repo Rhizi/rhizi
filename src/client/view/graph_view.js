@@ -233,12 +233,12 @@ function GraphView(spec) {
         link.attr("class", function(d, i){
                 var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && temporary) ? "temp_and" : "";
 
-                return ["graph link", temp_and, selection.selected_class(d)].join(' ');
+                return ["graph link", temp_and, selection.selected_class__link(d)].join(' ');
             });
 
         link.selectAll('path.link')
             .attr('class', function(d) {
-                return [d.state || "perm", selection.selected_class(d), "link graph"].join(' ');
+                return [d.state || "perm", selection.selected_class__link(d), "link graph"].join(' ');
             });
 
         link.exit().remove();
@@ -255,7 +255,7 @@ function GraphView(spec) {
             .append("text")
             .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
             .attr("class", function(d) {
-                return ["linklabel graph", selection.selected_class(d)].join(' ');
+                return ["linklabel graph", selection.selected_class__link(d)].join(' ');
             })
             .attr("text-anchor", "middle")
             .on("click", function(d, i) {
@@ -306,7 +306,7 @@ function GraphView(spec) {
                     if (selection.node_selected(d)) {
                         ontop.push(this);
                     }
-                    return ['node', selection.selected_class(d)].join(' ');
+                    return ['node', selection.selected_class__node(d)].join(' ');
                 });
             function reparent(new_parent, element) {
                 if (element.parentNode == new_parent) {

@@ -111,8 +111,13 @@ var node_selected = function(node) {
     return selected_nodes__by_id[node.id] !== undefined;
 }
 
-var selected_class = function(node) {
+var selected_class__node = function(node) {
     return selected_nodes.length > 0 ? (node_selected(node) ? "selected" : "notselected") : "";
+}
+
+var selected_class__link = function(link) {
+    return selected_nodes.length > 0 ? (node_selected(link.__src) || node_selected(link.__dst) ?
+        "selected" : "notselected") : "";
 }
 
 var clear = function() {
@@ -146,7 +151,8 @@ return {
     connectedComponent: connectedComponent,
     clear: clear,
     update: update,
-    selected_class: selected_class,
+    selected_class__node: selected_class__node,
+    selected_class__link: selected_class__link,
     node_selected: node_selected,
     selectionChangedBus: selectionChangedBus,
 };
