@@ -44,7 +44,7 @@ class DB_Controller:
             log.debug('exec_op:' + op.name + ': return value: ' + str(ret))
             return ret
         except Neo4JException as e:
-            log.error(e.error_set[0]['stackTrace'])
+            log.error(str(e))  # Neo4JException may be composed of several sub errors, defer to class __str__
             raise e
         except Exception as e:
             # here we watch for IOExecptions, etc - not db errors
