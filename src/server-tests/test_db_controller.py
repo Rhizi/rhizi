@@ -128,6 +128,82 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(hash_list.pop(), hash_ret1)
         self.assertEqual(hash_list.pop(), hash_ret2)
 
+    def test_diff_commit__topo(self):
+        n_0_id = rand_id()
+        n_1_id = rand_id()
+        n_2_id = rand_id()
+        n_T = 'T_test_diff_commit__topo'
+
+        n_set = [{'__label_set': n_T, 'id': n_0_id },
+                 {'__label_set': n_T, 'id': n_1_id },
+                 {'__label_set': n_T, 'id': n_2_id }]
+        l_set = [{'__label_set': n_T, '__src_id': n_0_id, '__dst_id': n_1_id},
+                 {'__label_set': n_T, '__src_id': n_1_id, '__dst_id': n_0_id}]
+
+        topo_diff = Topo_Diff(node_set_add=n_set,
+                              link_set_add=l_set)
+
+        op = DBO_diff_commit__topo(topo_diff)
+        op_ret = self.db_ctl.exec_op(op)
+        self.assertEqual(len(op_ret), 2)  # to id-sets, nodes & links
+        self.assertEqual(len(op_ret[0]), 3)  # expect id-set of length 3
+        self.assertEqual(len(op_ret[1]), 2)  # expect id-set of length 2
+
+        id_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
+        self.assertEqual(len(id_set), 2)
+
+        l_ptr = Link.link_ptr(src_id=n_0_id, dst_id=n_1_id)
+        id_set = self.db_ctl.exec_op(DBO_load_link_set.init_from_link_ptr(l_ptr))
+        self.assertEqual(len(id_set), 1)
+
+        l_ptr = Link.link_ptr(src_id=n_1_id, dst_id=n_0_id)
+        id_set = self.db_ctl.exec_op(DBO_load_link_set.init_from_link_ptr(l_ptr))
+        self.assertEqual(len(id_set), 1)
+
+        id_set_rm = [n_2_id]
+        topo_diff = Topo_Diff(node_set_rm=id_set_rm)
+        op = DBO_diff_commit__topo(topo_diff)
+        self.db_ctl.exec_op(op)
+        op = DBO_match_node_set_by_id_attribute(id_set_rm)
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
+
+    def test_diff_commit__attr(self):
+        # create test node
+        n_id = rand_id()
+        topo_diff = Topo_Diff(node_set_add=[{'__label_set': ['T_test_diff_commit__attr'],
+                                             'id': n_id, 'attr_0': 0}])
+        op = DBO_diff_commit__topo(topo_diff)
+        self.db_ctl.exec_op(op)
+
+        # apply attr_diff
+        attr_diff = Attr_Diff()
+        attr_diff.add_node_attr_write(n_id, 'attr_0', 0)
+        attr_diff.add_node_attr_write(n_id, 'attr_1', 'a')
+        attr_diff.add_node_attr_rm(n_id, 'attr_2')
+
+        op = DBO_diff_commit__attr(attr_diff)
+        ret_diff = self.db_ctl.exec_op(op)
+
+        self.assertEqual(len(ret_diff.type__node), 1)
+        self.assertTrue(None != ret_diff.type__node[n_id])
+
+        # attr-set only
+        attr_diff = Attr_Diff()
+        attr_diff.add_node_attr_write(n_id, 'attr_2', 0)
+
+        op = DBO_diff_commit__attr(attr_diff)
+        ret_diff = self.db_ctl.exec_op(op)
+        self.assertTrue(None != ret_diff.type__node[n_id]['__attr_write'].get('attr_2'))
+
+        # attr-remove only
+        attr_diff = Attr_Diff()
+        attr_diff.add_node_attr_rm(n_id, 'attr_2')
+
+        op = DBO_diff_commit__attr(attr_diff)
+        ret_diff = self.db_ctl.exec_op(op)
+        self.assertTrue('attr_2' in ret_diff.type__node[n_id]['__attr_remove'])
+
     def test_match_node_set_by_type(self):
         op = DBO_match_node_id_set(filter_label='Person')
         id_set = self.db_ctl.exec_op(op)
@@ -233,82 +309,6 @@ class TestDBController(unittest.TestCase):
         # assert node creation did not persist
         n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_id]))
         self.assertEqual(len(n_set), 0)
-
-    def test_diff_commit__topo(self):
-        n_0_id = rand_id()
-        n_1_id = rand_id()
-        n_2_id = rand_id()
-        n_T = 'T_test_diff_commit__topo'
-
-        n_set = [{'__label_set': n_T, 'id': n_0_id },
-                 {'__label_set': n_T, 'id': n_1_id },
-                 {'__label_set': n_T, 'id': n_2_id }]
-        l_set = [{'__label_set': n_T, '__src_id': n_0_id, '__dst_id': n_1_id},
-                 {'__label_set': n_T, '__src_id': n_1_id, '__dst_id': n_0_id}]
-
-        topo_diff = Topo_Diff(node_set_add=n_set,
-                              link_set_add=l_set)
-
-        op = DBO_diff_commit__topo(topo_diff)
-        op_ret = self.db_ctl.exec_op(op)
-        self.assertEqual(len(op_ret), 2)  # to id-sets, nodes & links
-        self.assertEqual(len(op_ret[0]), 3)  # expect id-set of length 3
-        self.assertEqual(len(op_ret[1]), 2)  # expect id-set of length 2
-
-        id_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
-        self.assertEqual(len(id_set), 2)
-
-        l_ptr = Link.link_ptr(src_id=n_0_id, dst_id=n_1_id)
-        id_set = self.db_ctl.exec_op(DBO_load_link_set.init_from_link_ptr(l_ptr))
-        self.assertEqual(len(id_set), 1)
-
-        l_ptr = Link.link_ptr(src_id=n_1_id, dst_id=n_0_id)
-        id_set = self.db_ctl.exec_op(DBO_load_link_set.init_from_link_ptr(l_ptr))
-        self.assertEqual(len(id_set), 1)
-
-        id_set_rm = [n_2_id]
-        topo_diff = Topo_Diff(node_set_rm=id_set_rm)
-        op = DBO_diff_commit__topo(topo_diff)
-        self.db_ctl.exec_op(op)
-        op = DBO_match_node_set_by_id_attribute(id_set_rm)
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 0)
-
-    def test_diff_commit__attr(self):
-        # create test node
-        n_id = rand_id()
-        topo_diff = Topo_Diff(node_set_add=[{'__label_set': ['T_test_diff_commit__attr'],
-                                             'id': n_id, 'attr_0': 0}])
-        op = DBO_diff_commit__topo(topo_diff)
-        self.db_ctl.exec_op(op)
-
-        # apply attr_diff
-        attr_diff = Attr_Diff()
-        attr_diff.add_node_attr_write(n_id, 'attr_0', 0)
-        attr_diff.add_node_attr_write(n_id, 'attr_1', 'a')
-        attr_diff.add_node_attr_rm(n_id, 'attr_2')
-
-        op = DBO_diff_commit__attr(attr_diff)
-        ret_diff = self.db_ctl.exec_op(op)
-
-        self.assertEqual(len(ret_diff.type__node), 1)
-        self.assertTrue(None != ret_diff.type__node[n_id])
-
-        # attr-set only
-        attr_diff = Attr_Diff()
-        attr_diff.add_node_attr_write(n_id, 'attr_2', 0)
-
-        op = DBO_diff_commit__attr(attr_diff)
-        ret_diff = self.db_ctl.exec_op(op)
-        self.assertTrue(None != ret_diff.type__node[n_id]['__attr_write'].get('attr_2'))
-
-        # attr-remove only
-        attr_diff = Attr_Diff()
-        attr_diff.add_node_attr_rm(n_id, 'attr_2')
-
-        op = DBO_diff_commit__attr(attr_diff)
-        ret_diff = self.db_ctl.exec_op(op)
-        self.assertTrue('attr_2' in ret_diff.type__node[n_id]['__attr_remove'])
 
     def test_rm_node_set(self):
         n_0_id = rand_id()
