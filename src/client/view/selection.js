@@ -12,6 +12,7 @@ function get_rz_core()
 }
 
 var selected_nodes = [],
+    selected_nodes__by_id = {},
     selectionChangedBus = new Bacon.Bus();
 
 function listen_on_diff_bus(diffBus)
@@ -55,6 +56,11 @@ function sortedArrayDiff(a, b, a_cmp_b)
 function updateSelectedNodesBus(new_selected_nodes)
 {
     selected_nodes = new_selected_nodes;
+    selected_nodes__by_id = selected_nodes.reduce(
+        function(d, v) {
+            d[v.id] = v;
+            return d;
+        }, {});
     selectionChangedBus.push(selected_nodes);
 }
 
@@ -102,8 +108,7 @@ function connectedComponent(nodes) {
 }
 
 var node_selected = function(node) {
-    return node.state == 'chosen' || node.state == 'enter' || node.state == 'exit' || node.state == 'selected'
-           || node.state == 'temp' || node.state == 'related';
+    return selected_nodes__by_id[node.id] !== undefined;
 }
 
 var selected_class = function(node) {
@@ -111,7 +116,7 @@ var selected_class = function(node) {
 }
 
 var clear = function() {
-    selected_nodes.length = 0;
+    updateSelectedNodesBus([]);
     get_rz_core().main_graph.setRegularState();
 }
 
