@@ -155,6 +155,7 @@ return {
     selected_class__link: selected_class__link,
     node_selected: node_selected,
     selectionChangedBus: selectionChangedBus,
+    __get_selected_nodes: function() { return selected_nodes; },
 };
 
 });
