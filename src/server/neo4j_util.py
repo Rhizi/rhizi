@@ -212,10 +212,13 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
 
     ret = []
     for l_type, l_set in link_map.items():
-        q = "match (src {id: {src}.id}),(dst {id: {dst}.id}) " + \
-            "create (src)-[r:%(__type)s {link_attr}]->(dst) " + \
-            "return r, src.id, dst.id, type(r)"
-        q = q % {'__type': quote__backtick(l_type)}
+
+        assert len(l_type) > 2 and l_type[0].isupper(), 'malformed label: ' + l_type
+
+        q_arr = ['match (src {id: {src}.id}),(dst {id: {dst}.id})',
+                 'create (src)-[r:%(__type)s {link_attr}]->(dst)' % {'__type': quote__backtick(l_type)},
+                 'return { id: r.id, src_id: src.id, dst_id: dst.id, type: type(r)}',
+                 ]
 
         for link in l_set:
             __type_check_link(link)
@@ -231,7 +234,7 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
             q_params = {'src': { 'id': src_id} ,
                         'dst': { 'id': dst_id} ,
                         'link_attr' : input_to_DB_property_map(prop_dict)}
-            ret.append((q, q_params))
+            ret.append((q_arr, q_params))
 
     return ret
 

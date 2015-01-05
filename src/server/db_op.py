@@ -359,8 +359,7 @@ class DBO_attr_diff_commit(DB_op):
                 q_arr.insert(1, stmt_attr_set)
                 q_param_set['attr_set'] = w_attr_set
 
-            q = " ".join(q_arr)
-            self.add_statement(q, q_param_set)
+            self.add_statement(q_arr, q_param_set)
 
         for id_attr, n_attr_diff in attr_diff.type__link.items():
             r_attr_set = n_attr_diff['__attr_remove']
@@ -389,8 +388,7 @@ class DBO_attr_diff_commit(DB_op):
                 q_arr.insert(1, stmt_attr_set)
                 q_param_set['attr_set'] = w_attr_set
 
-            q = " ".join(q_arr)
-            self.add_statement(q, q_param_set)
+            self.add_statement(q_arr, q_param_set)
 
         blob = json.dumps(attr_diff)
         chain_commit_op = DBO_block_chain__commit(blob)
@@ -485,7 +483,7 @@ class DBO_load_link_set(DB_op):
 
         This class should be instantiated through a static factory function
 
-        @link_ptr_set link pointer set
+        @param link_ptr_set link pointer set
         @return: a set of loaded links
         """
         super(DBO_load_link_set, self).__init__()
