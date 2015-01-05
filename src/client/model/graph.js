@@ -446,7 +446,7 @@ function Graph(spec) {
         }
 
         var attr_diff = model_diff.new_attr_diff();
-        for (var key in new_node_spec){
+        for (var key in new_node_spec) {
             attr_diff.add_node_attr_write(node.id, key, new_node_spec[key]);
         }
 
