@@ -174,7 +174,8 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     generate a set of node create queries
 
     @param node_map: is a node-type to node map
-    @input_to_DB_property_map: optional function which takes a map of input properties and returns a map of DB properties - use to map input schemas to DB schemas
+    @input_to_DB_property_map: optional function which takes a map of input 
+    properties and returns a map of DB properties - use to map input schemas to DB schemas
 
     @return: a (query, query_parameteres) set of create queries
     """
@@ -183,7 +184,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     ret = []
     for label, n_set in node_map.items():
 
-        assert len(label) > 2 and label[0].isupper() and label[1:].islower(), 'malformed label: ' + label
+        assert len(label) > 2 and label[0].isupper(), 'malformed label: ' + label
 
         q_arr = ['create (n:%s {node_attr})' % (quote__backtick(label)),
                  'return n, labels(n)'
