@@ -69,7 +69,13 @@ class DB_op(object):
         return ret
 
 class DB_composed_op(DB_op):
-
+    """
+    A DB_op composed of sup-operations with the intention of being able to 
+    partially succeed in sub-op execution. This op class will reject addition 
+    of direct query statements.
+    
+    Note: this class may be removed in future releases. 
+    """
     def __init__(self):
         super(DB_composed_op, self).__init__()
         self.sub_op_set = []
