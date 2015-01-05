@@ -22,6 +22,20 @@ class Neo4JException(Exception):
     def __str__(self):
         return 'neo4j error set: ' + str(self.error_set)
 
+class DB_Query(object):
+
+    def __init__(self, q_str_or_array, param_set):
+        """
+        @param q_str_or_array: cypher query to add - if passed as an array ' '.join(q_str_or_array)
+        is used to convert it to string type
+        """
+        if type(q_str_or_array) is list:
+            q_str_or_array = ' '.join(q_str_or_array)
+
+        q_str = q_str_or_array
+        self.statement = q_str
+        self.param_set = param_set
+
 class DB_row(object):
     def __init__(self, data):
         self.data = data
