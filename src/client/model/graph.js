@@ -769,12 +769,7 @@ function Graph(spec) {
 
         function on_success__ajax(diff) {
             console.dir(diff);
-            __commit_diff_ajax__topo({
-                node_set_add: diff.node_set,
-                link_set_add: diff.link_set,
-                node_set_rm: [],
-                link_set_rm: [],
-            });
+            __commit_diff_ajax__topo(diff);
             undefined != on_success && on_success()
         }
 
