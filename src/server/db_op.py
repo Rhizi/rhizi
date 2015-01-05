@@ -622,5 +622,6 @@ class DBO_rz_clone(DB_op):
 
                     ret_l_set.append(l)
 
-        return {'node_set': ret_n_set,
-                'link_set': ret_l_set }
+        topo_diff = Topo_Diff(node_set_add=ret_n_set,
+                              link_set_add=ret_l_set)
+        return topo_diff
