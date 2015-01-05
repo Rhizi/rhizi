@@ -266,13 +266,14 @@ function GraphView(spec) {
 
         linktext
             .text(function(d) {
-                var name = d.name || "";
-                if (!(temporary ||
-                    d.__src.state === "chosen" || d.__dst.state === "chosen")) {
+                var name = d.name || "",
+                    src_selected = selection.node_selected(d.__src),
+                    dst_selected = selection.node_selected(d.__dst);
+
+                if (!temporary && !src_selected && !dst_selected) {
                     return "";
                 }
-                if (name.length < 25 || d.__src.state === "chosen" ||
-                    d.__dst.state === "chosen" || temporary) {
+                if (temporary || name.length < 25 || src_selected || dst_selected) {
                     return name;
                 } else {
                     return name.substring(0, 14) + "...";
