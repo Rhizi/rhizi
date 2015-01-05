@@ -24,12 +24,18 @@ class DB_op(object):
         id_str = m.group('id')
         self.tx_id = int(id_str)
 
-    def add_statement(self, query, query_params={}):
+    def add_statement(self, q_str_or_array, query_params={}):
         """
         add a DB query language statement
+        
+        @param q_str_or_array: cypher query to add - if passed as an array ' '.join(q_str_or_array)
+        is used to convert it to string type
         @return: statement index (zero based)
         """
-        s = db_util.statement_to_REST_form(query, query_params)
+        if type(q_str_or_array) is list:
+            q_str_or_array = ' '.join(q_str_or_array)
+
+        s = db_util.statement_to_REST_form(q_str_or_array, query_params)
         self.statement_set.append(s)
         return len(self.statement_set)
 
@@ -344,6 +350,7 @@ class DBO_attr_diff_commit(DB_op):
 
         blob = json.dumps(attr_diff)
         chain_commit_op = DBO_block_chain__commit(blob)
+
         self.add_sub_op(chain_commit_op)
 
     def add_link_rename_statements(self, id_attr, new_label):
@@ -548,9 +555,8 @@ class DBO_rm_node_set(DB_op):
                      'return n_id'
              ]
 
-        q = ' '.join(q_arr)
         q_params = {'id_set': id_set}
-        self.add_statement(q, q_params)
+        self.add_statement(q_arr, q_params)
 
 class DBO_rm_link_set(DB_op):
     def __init__(self, id_set):
@@ -571,9 +577,8 @@ class DBO_rm_link_set(DB_op):
                  'return r_id'
          ]
 
-        q = ' '.join(q_arr)
         q_params = {'id_set': id_set}
-        self.add_statement(q, q_params)
+        self.add_statement(q_arr, q_params)
 
 class DBO_rz_clone(DB_op):
     def __init__(self, filter_label=None, limit=128):
@@ -598,8 +603,7 @@ class DBO_rz_clone(DB_op):
                  'optional match (n)-[r]->(m)',
                  'return n,labels(n),collect([m.id, r, type(r)])']
 
-        q = ' '.join(q_arr)
-        self.add_statement(q)
+        self.add_statement(q_arr)
 
     def process_result_set(self):
         ret_n_set = []

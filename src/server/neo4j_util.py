@@ -115,6 +115,7 @@ def statement_to_REST_form(query, parameters={}):
     turn cypher query to neo4j json API format
     """
     assert isinstance(query, six.string_types)
+
     if isinstance(parameters, list):
         for v in parameters:
             assert isinstance(v, dict)
@@ -188,7 +189,6 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
                  'return n, labels(n)'
                  ]
 
-        q = ' '.join(q_arr)
         q_params_set = []
         for n_prop_set in n_set:
 
@@ -196,7 +196,9 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
 
             q_params = input_to_DB_property_map(n_prop_set)
             q_params_set.append(q_params)
-        ret.append((q, {'node_attr': q_params_set}))
+
+        ret.append((q_arr, {'node_attr': q_params_set}))
+
     return ret
 
 def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: _):

@@ -24,18 +24,14 @@ class DBO_random_data_generation(DB_op):
                  '|',
                  'create (:%s {id: \'test-id_\' + toString(rid), n_attr_0:toInt(%d * rand())}))' % (self.n_label, lim_n)
                 ]
-
-        q = ' '.join(q_arr)
-        self.add_statement(q)
+        self.add_statement(q_arr)
 
         q_arr = ['match (s:%s),(d:%s)' % (self.n_label, self.n_label),
                  'with s,d',
                  'limit %d' % (lim_r - 1),
                  'where rand() < %.2f' % (prob_link_create),
                  'create (s)-[:%s {l_attr_0:toInt(%d * rand())}]->(d)' % (self.r_label, lim_r)]
-
-        q = ' '.join(q_arr)
-        self.add_statement(q)
+        self.add_statement(q_arr)
 
     @property
     def node_set_label(self):
