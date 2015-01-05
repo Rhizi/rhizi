@@ -28,14 +28,9 @@ class DB_op(object):
         """
         add a DB query language statement
         
-        @param q_str_or_array: cypher query to add - if passed as an array ' '.join(q_str_or_array)
-        is used to convert it to string type
         @return: statement index (zero based)
         """
-        if type(q_str_or_array) is list:
-            q_str_or_array = ' '.join(q_str_or_array)
-
-        s = db_util.statement_to_REST_form(q_str_or_array, query_params)
+        s = DB_Query(q_str_or_array, query_params)
         self.statement_set.append(s)
         return len(self.statement_set)
 
