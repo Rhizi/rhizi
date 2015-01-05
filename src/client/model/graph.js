@@ -76,7 +76,7 @@ function Graph(spec) {
      * NOTE: currently this function transmits only. Later we want to optimistically
      * first commit and then transmit.
      */
-    this.commit_and_tx_diff__topo = function (topo_diff) {
+    var commit_and_tx_diff__topo = function (topo_diff) {
         $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
             util.assert(n.id !== undefined, "undefined id in node in topo diff");
@@ -113,6 +113,7 @@ function Graph(spec) {
         console.dir(topo_diff);
         rz_api_backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo, graph_on_error);
     }
+    this.commit_and_tx_diff__topo = commit_and_tx_diff__topo;
 
     /**
      * Inner implementation
