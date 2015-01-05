@@ -518,10 +518,11 @@ function GraphView(spec) {
         var dx = d.x - cx,
             dy = d.y - cy,
             r = Math.sqrt(dx * dx + dy * dy),
-            a = Math.atan2(dy, dx);
+            a = Math.atan2(dy, dx),
+            new_r = r > bubble_radius * 2 ? r : r / 2 + bubble_radius;
         // FIXME: r == 0 (or close enough)
-        return {x: cx + (r + bubble_radius) * Math.cos(a),
-                y: cy + (r + bubble_radius) * Math.sin(a)};
+        return {x: cx + new_r * Math.cos(a),
+                y: cy + new_r * Math.sin(a)};
     }
 
     function tick(e) {
