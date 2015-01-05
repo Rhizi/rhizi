@@ -199,8 +199,8 @@ function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
 }
 
-main_graph = new model_graph.Graph(false);
-edit_graph = new model_graph.Graph(true);
+main_graph = new model_graph.Graph({temporary: false, base: null});
+edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
 
 var initDrawingArea = function () {
 

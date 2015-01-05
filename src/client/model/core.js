@@ -137,18 +137,17 @@ define(['util'], function(util) {
     }
 
     function create_link_from_spec(src, dst, link_spec) {
-        var ret = new Link(),
-            temp = link_spec.state === 'temp';
+        var ret = new Link();
 
-        if (undefined != link_spec.id) {
+        if (undefined !== link_spec.id) {
             // reuse id if present
             __set_obj_id(ret, link_spec.id);
         }
 
         util.assert(undefined != src, 'create_link_from_spec: src missing');
         util.assert(undefined != dst, 'create_link_from_spec: dst missing');
-        util.assert(temp || undefined != src.id, 'create_link_from_spec: non temp src missing id');
-        util.assert(temp || undefined != dst.id, 'create_link_from_spec: non temp dst missing id');
+        util.assert(undefined != src.id, 'create_link_from_spec: src missing id');
+        util.assert(undefined != dst.id, 'create_link_from_spec: dst missing id');
         util.assert(undefined != link_spec.name, 'create_link_from_spec: name missing, unable to deduce type');
 
         ret.__src = src;

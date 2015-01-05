@@ -100,7 +100,7 @@ function GraphView(spec) {
         })
         .onValue(function (r) {
             bubble_radius = r;
-            update_view(false);
+            tick();
         });
     }
 
@@ -503,7 +503,6 @@ function GraphView(spec) {
             } else {
                 r = 60 + newnodes * 20;
                 a = -Math.PI + Math.PI * 2 * (tempcounter-1) / newnodes + 0.3;
-                console.log(tempcounter);
                 d.x = cx + r * Math.cos(a);
                 d.y = cy + r * Math.sin(a);
             }
@@ -554,10 +553,12 @@ function GraphView(spec) {
             var d_val,
                 ghost;
 
-            var dx = d.__dst.x - d.__src.x,
-                dy = d.__dst.y - d.__src.y,
-                dr = Math.sqrt(dx * dx + dy * dy);
-            d_val = "M" + d.__src.x + "," + d.__src.y + "L" + d.__dst.x + "," + d.__dst.y;
+            util.assert(d.__src && d.__dst && d.__src.x && d.__src.y &&
+                        d.__dst.x && d.__dst.y, "missing src and dst points");
+
+            var src = bubble_transform(d.__src),
+                dst = bubble_transform(d.__dst);
+            d_val = "M" + src.x + "," + src.y + "L" + dst.x + "," + dst.y;
             // update ghostlink position
             ghost = $(this.nextElementSibling);
             ghost.attr("d", d_val);

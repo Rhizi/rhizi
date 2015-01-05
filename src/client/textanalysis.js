@@ -187,29 +187,21 @@ var textAnalyser = function (newtext, finalize) {
         NODE = "NODE",
         LINK = "LINK",
         START = "START",
+        node_by_name = {},
+        nodes = [],
+        links = [],
         ret = model_diff.new_topo_diff();
 
     function __addNode(name, type) {
         if (type === undefined) {
             console.log('bug: textanalyser.addNode of type undefined');
         }
-        var node = model_core.create_node_from_spec({
+        var node = {
                     'name':name,
                     'type':type,
-                });
-
-        ret.node_set_add.push(node);
+                   };
+        nodes.push(node);
     }
-
-    var __sourceNodeFromName = function (name) {
-        for (var key in ret.node_set_add) {
-            var node = ret.node_set_add[key];
-            if (node.name == name) {
-                return node;
-            }
-        }
-        return {'existing': name};
-    };
 
     function __addLink(src_name, dst_name, name) {
         if (!src_name || !dst_name) {
@@ -231,11 +223,11 @@ var textAnalyser = function (newtext, finalize) {
         link_hash[src_name][dst_name] = 1;
 
         var link = {
-            '__src': src_name,
-            '__dst': dst_name,
-            'name':name,
+            src_name: src_name,
+            dst_name: dst_name,
+            name: name,
         };
-        ret.link_set_add.push(link);
+        links.push(link);
     }
 
     if (newtext.indexOf('#') == -1 || finalize) {
@@ -413,32 +405,43 @@ var textAnalyser = function (newtext, finalize) {
     ret.drop_conjugator_links = and_count < linkindex;
 
     ret.applyToGraph = function(spec) {
-        var main_graph = spec.main_graph,
-            edit_graph = spec.edit_graph,
-            backend_commit = spec.backend_commit;
+        var edit_graph = spec.edit_graph,
+            backend_commit = spec.backend_commit,
+            main_graph = edit_graph.base;
 
-        util.assert(main_graph !== undefined &&
-                    edit_graph !== undefined &&
+        util.assert(edit_graph !== undefined &&
+                    main_graph !== undefined &&
                     backend_commit !== undefined, "missing inputs");
         window.ret = ret;
 
-        ret.link_set_add = ret.link_set_add
+        ret.node_set_add = nodes.map(function (node) {
+            var main_node = main_graph.find_node__by_name(node.name);
+            if (main_node) {
+                console.log('!!! returning a node from the parent graph');
+                return main_node;
+            }
+            return model_core.create_node__set_random_id(node);
+        });
+        // fill in hash to be used for link creation
+        ret.node_set_add.forEach(function (node) {
+            node_by_name[node.name] = node;
+        });
+
+        ret.link_set_add = links
             .filter(function (link) {
                 return !finalize ||
                        !ret.drop_conjugator_links ||
                        (link.name.replace(/ /g,"") !== "and");
                 })
-            .map(function (link) {
-                link.__src = edit_graph.find_node__by_name(link.__src) ||
-                             __sourceNodeFromName(link.__src);
-                link.__dst = edit_graph.find_node__by_name(link.__dst) ||
-                             __sourceNodeFromName(link.__dst);
-                if (link.__src.id !== undefined) {
-                    link.__src_id = link.__src.id;
-                }
-                if (link.__dst.id !== undefined) {
-                    link.__dst_id = link.__dst.id;
-                }
+            .map(function (link_spec) {
+                var src = node_by_name[link_spec.src_name],
+                    dst = node_by_name[link_spec.dst_name],
+                    link = model_core.create_link__set_random_id(src, dst, {
+                        name: link_spec.name,
+                        state: 'perm', // FIXME: this is meaningless now with graph separation
+                    });
+                link.__src_id = src.id;
+                link.__dst_id = dst.id;
                 return link;
             });
 

@@ -5,7 +5,7 @@ function (Bacon, consts, util, model_core, model_util, model_diff, rz_api_backen
 
 var debug = false;
 
-function Graph(temporary) {
+function Graph(spec) {
 
     var id_to_node_map = {},
         node_map = {},
@@ -15,7 +15,14 @@ function Graph(temporary) {
         cached_links,
         invalidate_links,
         cached_nodes,
-        invalidate_nodes;
+        invalidate_nodes,
+        temporary = spec.temporary,
+        base = spec.base;
+
+    this.temporary = temporary;
+    this.base = base;
+
+    util.assert(temporary !== undefined && base !== undefined, "missing inputs");
 
     // All operations done on the graph. When the server is used (i.e. always) this
     // bus contains the server events, not the user events (most of the time the same just with delay).
@@ -70,31 +77,14 @@ function Graph(temporary) {
      * first commit and then transmit.
      */
     this.commit_and_tx_diff__topo = function (topo_diff) {
-        var name_to_node = {};
         $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
-            if (n.id === undefined) {
-                var existing = find_node__by_name(n.name);
-                if (existing) {
-                    n = existing;
-                } else {
-                    n.id = model_core.random_node_name();
-                }
-            }
-            name_to_node[n.name] = n;
+            util.assert(n.id !== undefined, "undefined id in node in topo diff");
             return model_util.adapt_format_write_node(n);
         });
 
         topo_diff.link_set_add = topo_diff.link_set_add.map(function(l) {
-            if (l.id === undefined) {
-                l.id = model_core.random_node_name();
-            }
-            if (typeof l.__src === 'string') {
-                l.__src = name_to_node[l.__src];
-            }
-            if (typeof l.__dst === 'string') {
-                l.__dst = name_to_node[l.__dst];
-            }
+            util.assert(l.id !== undefined, "undefined id in link in topo diff");
             if (l.source === undefined) {
                 l.source = l.__src;
             }
@@ -115,16 +105,13 @@ function Graph(temporary) {
             return !hasNodeByName(n.name);
         });
 
-        var graph_on_success = function(diff) {
-            commit_diff__topo(diff);
-        }
         var graph_on_error = function(error) {
             console.log('error:');
             console.dir(error);
         }
         console.log("COMMIT DIFF   TOPO");
         console.dir(topo_diff);
-        rz_api_backend.commit_diff__topo(topo_diff, graph_on_success, graph_on_error);
+        rz_api_backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo, graph_on_error);
     }
 
     /**
@@ -300,8 +287,8 @@ function Graph(temporary) {
      *  a single node id change. false otherwise
      */
     this.compareSubset = function(state, new_nodes, new_links) {
-        var state_nodes = findNodes(null, state);
-        var state_links = findLinks(state).map(function(link) {
+        var state_nodes = find_nodes__by_state(state);
+        var state_links = find_links__by_state(state).map(function(link) {
             return [link.__src.name, link.__dst.name];
         }).sort();
         var k;
@@ -360,27 +347,6 @@ function Graph(temporary) {
             }
         }
         return {graph_same: true, old_name: changed_nodes.a_b, new_name: changed_nodes.b_a};
-    }
-
-    this.addLinkByName = function(src_name, dst_name, name, state, drop_conjugator_links) {
-
-        var src = find_node__by_name(src_name),
-            dst = find_node__by_name(dst_name),
-            src_id = src ? src.id : null,
-            dst_id = dst ? dst.id : null;
-
-        if (src_id === null || dst_id === null) {
-            console.log('error: link of missing nodes: ' + src_name + ' (' + src_id + ') -> '
-                        + dst_name + ' (' + dst_id + ')');
-            return;
-        }
-
-        util.assert(temporary,
-                    "creation of link not through commit_and_tx that isn't temporary");
-
-        var link = model_core.create_link__set_random_id(src, dst, { name: name,
-                                                                     state: state });
-        __addLink(link);
     }
 
     function __addLink(link) {
@@ -613,7 +579,7 @@ function Graph(temporary) {
     }
 
     this.removeLinks = function(state) {
-        var ls = findLinks(state);
+        var ls = find_links__by_state(state);
         ls.map(_link_remove_helper);
     }
 
@@ -628,7 +594,7 @@ function Graph(temporary) {
         }
     }
 
-    var findLinks = function(state) {
+    var find_links__by_state = function(state) {
         var foundLinks = [];
         links_forEach(function (link) {
             if (link.state == state) {
@@ -653,13 +619,21 @@ function Graph(temporary) {
      * return node whose id matches the given id or undefined if no node was found
      */
     var find_node__by_id = function(id) {
+        if (base) {
+            var base_node = base.find_node__by_id(id);
+            if (base_node) {
+                console.log('!!! returning base node');
+                return base_node;
+            }
+        }
         return id_to_node_map[id];
     }
+    this.find_node__by_id = find_node__by_id;
 
     /**
      * @param filter: must return true in order for node to be included in the returned set
      */
-    var find_node_set_by_filter = function(filter) {
+    var find_nodes__by_filter = function(filter) {
         var ret = [];
         nodes.map(function(n){
            if (true == filter(n)){
@@ -678,12 +652,12 @@ function Graph(temporary) {
     }
     this.find_node__by_name = find_node__by_name;
 
-    var findNodes = function(id, state) {
-        // id=id.toLowerCase();
+    var find_nodes__by_state = function(state) {
         var foundNodes = [];
         nodes_forEach(function (node) {
-            if ((id && node.id === id) || (state && node.state === state))
+            if (node.state === state) {
                 foundNodes.push(node);
+            }
         });
         return foundNodes;
     }
@@ -726,42 +700,59 @@ function Graph(temporary) {
     }
 
     function on_backend__link_add(l_spec) {
-        var l_ptr = model_util.adapt_format_read_link_ptr(l_spec);
+        var src_id = l_spec.__src_id,
+            dst_id = l_spec.__dst_id,
+            l_ptr = model_util.adapt_format_read_link_ptr(l_spec);
 
         util.assert(undefined != l_ptr.id, 'load_from_backend: l_ptr missing id');
+        util.assert(undefined != src_id, 'load_from_backend: link missing __src_id');
+        util.assert(undefined != dst_id, 'load_from_backend: link missing __dst_id');
 
         // cleanup & reuse as link_spec
         delete l_ptr.__src_id;
         delete l_ptr.__dst_id;
         var link_spec = l_ptr;
-        var link_spec = l_ptr;
+        link_spec.__src = find_node__by_id(src_id);
+        link_spec.__dst = find_node__by_id(dst_id);
         return link_spec;
     }
 
     function __commit_diff_ajax__topo(diff) {
-        diff.node_set_add = diff.node_set_add.map(
-            on_backend__node_add);
-        diff.link_set_add = diff.link_set_add.map(
-            on_backend__link_add);
-        commit_diff__topo(diff);
+        _add_node_set(diff.node_set_add.map(on_backend__node_add));
+        _add_link_set(diff.link_set_add.map(on_backend__link_add));
+        // FIXME: this diff is not the same as that pushed by commit_diff__topo
+        diffBus.push(diff);
     }
 
-    function commit_diff__topo(diff) {
-        console.dir(diff);
-        // done under protest
-        diff.node_set_add.map(function (node_spec) {
+    function _add_node_set(node_specs) {
+        node_specs.map(function (node_spec) {
             __addNode(node_spec);
         });
-        diff.link_set_add.map(function (link_spec) {
+    }
+
+    function _add_link_set(link_specs) {
+        link_specs.map(function (link_spec) {
             // resolve link ptr
-            var src = find_node__by_id(link_spec.__src_id)
-                        || (temporary && find_node__by_name(link_spec.__src.name)),
-                dst = find_node__by_id(link_spec.__dst_id)
-                        || (temporary && find_node__by_name(link_spec.__dst.name)),
+            var src = (link_spec.__src && (find_node__by_id(link_spec.__src.id) || link_spec.__src))
+                        || find_node__by_id(link_spec.__src_id),
+                dst = (link_spec.__dst && (find_node__by_id(link_spec.__dst.id) || link_spec.__dst))
+                        || find_node__by_id(link_spec.__dst_id),
                 link = model_core.create_link_from_spec(src, dst, link_spec);
 
             __addLink(link);
         });
+    }
+
+    /*
+     * Inputs are specs, not raw - after adaptation from the on wire format.
+     *
+     * FIXME: use a different object? different properties in the same object?
+     */
+    function commit_diff__topo(diff) {
+        console.dir(diff);
+        _add_node_set(diff.node_set_add);
+        _add_link_set(diff.link_set_add);
+        // done under protest
         _remove_link_set(diff.link_set_rm);
         _remove_node_set(diff.node_set_rm);
         diffBus.push(diff);
@@ -778,7 +769,12 @@ function Graph(temporary) {
 
         function on_success__ajax(diff) {
             console.dir(diff);
-            commit_diff__topo(diff);
+            __commit_diff_ajax__topo({
+                node_set_add: diff.node_set,
+                link_set_add: diff.link_set,
+                node_set_rm: [],
+                link_set_rm: [],
+            });
             undefined != on_success && on_success()
         }
 
@@ -901,7 +897,7 @@ function Graph(temporary) {
     }
     this.setRegularState = setRegularState;
 
-    this.findByVisitors = function(node_visitor, link_visitor) {
+    this.find__by_visitors = function(node_visitor, link_visitor) {
         var nodes = get_nodes(),
             links = get_links(),
             n_length = nodes.length,
@@ -946,7 +942,6 @@ function Graph(temporary) {
         });
     }
     this.removeRelated = removeRelated;
-
 }
 
 return {
