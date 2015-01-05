@@ -452,6 +452,9 @@ function Graph(spec) {
 
         var on_ajax_success = function(id_to_node_map){
             var node_id = node.id; // original node id
+
+            util.assert(id_to_node_map && id_to_node_map[node_id], "bad return value from ajax");
+
             if (id_to_node_map[node_id].id != node_id){
                 // TODO: handle incoming ID update
                 util.assert(false, 'update_node: id attr change');
