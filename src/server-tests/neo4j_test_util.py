@@ -44,12 +44,14 @@ class DBO_random_data_generation(DB_op):
 def rand_id():
     return str(uuid.uuid4())
 
-def rand_label(length=8):
+def rand_label(prefix='T_', length=8):
     """
-    return random label
+    return a prefixed random label, where the default prefix is 'T_'
     """
     char_set = string.ascii_lowercase + string.ascii_uppercase + string.digits
-    return ''.join([choice(string.ascii_lowercase)] + [choice(char_set) for _ in range(length - 1)])
+    ret = ''.join([choice(string.ascii_lowercase)] + [choice(char_set) for _ in range(length - 1)])
+    ret = prefix + ret
+    return ret
 
 def flush_db(db_ctl):
     """
