@@ -150,43 +150,31 @@ function Graph(spec) {
     }
     this.__addNode = __addNode;
 
-    var _node_key = function (node) {
-        return node.name + '|' + node.id
-    }
-
-    var _link_key = function (link) {
-        return link.name + '|' + link.id
-    }
-
-    var _node_remove_helper = function (node) {
-        if (node.id !== undefined) {
-            delete id_to_node_map[node.id];
-        }
-        delete node_map[_node_key(node)];
+    var _node_remove_helper = function (node_id) {
+        util.assert(node_id, "missing node id");
+        delete id_to_node_map[node_id];
+        delete node_map[node_id];
         invalidate_nodes = true;
     }
 
     var _node_add_helper = function (node) {
-        if (node.id !== undefined) {
-            id_to_node_map[node.id] = node;
-        }
-        node_map[_node_key(node)] = node;
+        util.assert(node.id, "missing node id");
+        id_to_node_map[node.id] = node;
+        node_map[node.id] = node;
         invalidate_nodes = true;
     }
 
-    var _link_remove_helper = function (link) {
-        if (link.id !== undefined) {
-            delete id_to_link_map[link.id];
-        }
-        delete link_map[_link_key(link)];
+    var _link_remove_helper = function (link_id) {
+        util.assert(link_id, "missing link id");
+        delete id_to_link_map[link_id];
+        delete link_map[link_id];
         invalidate_links = true;
     }
 
     var _link_add_helper = function (link) {
-        if (link.id !== undefined) {
-            id_to_link_map[link.id] = link;
-        }
-        link_map[_link_key(link)] = link;
+        util.assert(link.id, "missing link id");
+        id_to_link_map[link.id] = link;
+        link_map[link.id] = link;
         invalidate_links = true;
     }
 
