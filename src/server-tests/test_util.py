@@ -26,7 +26,10 @@ def init_test_ws_server(cfg, db_ctl):
 def generate_random_node_dict(n_type, nid=None):
     """
     @param n_type: is converted to a label set
+    
+    @return: a dict based node object representation and the generated node id
     """
     if None == nid:
         nid = rand_id()
-    return {'__label_set': ['T_' + n_type], 'id': nid }
+
+    return {'__label_set': ['T_' + n_type], 'id': nid }, nid
