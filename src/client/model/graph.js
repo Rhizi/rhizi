@@ -707,10 +707,11 @@ function Graph(spec) {
     }
 
     function __commit_diff_ajax__topo(diff) {
+        // must add nodes first because links may point to them
         _add_node_set(diff.node_set_add.map(on_backend__node_add));
-        _add_link_set(diff.link_set_add.map(on_backend__link_add));
-        // FIXME: this diff is not the same as that pushed by commit_diff__topo
-        diffBus.push(diff);
+        diff.node_set_add = [];
+        diff.link_set_add = diff.link_set_add.map(on_backend__link_add);
+        commit_diff__topo(diff);
     }
 
     function _add_node_set(node_specs) {
