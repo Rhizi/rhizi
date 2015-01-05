@@ -45,4 +45,6 @@ To rebuild the css files issue make from the top level directory:
 Test code makes use of Python's unittest - run by invoking them with python,
 or by creating a launch configuration in your IDE of choice.
 
+Note: server test-cases do not yet support pre-run DB state validation and are
 likely to leave DB side-effects.
+
