@@ -45,21 +45,25 @@ function run_tests(settings) {
     if (settings.created) {
         settings.created(undefined, window);
     }
-    debugger
     addScript(window, '../../res/client/lib/require.js')
         .load_next('../client/app.js')
         .done(function () {
             console.log('test harness: starting script loading with requirejs');
             console.dir(window.rhizi_require_config);
-            window.require.config(window.rhizi_require_config);
-            window.requirejs(['main'], function(main) {
-                console.log('test harness: main loaded');
-                main.main();
-                if (settings.done) {
-                    settings.done(undefined, window);
-                }
-                process.quit();
-            });
+            debugger;
+            try {
+                window.require.config(window.rhizi_require_config);
+                window.requirejs(['main'], function(main) {
+                    console.log('test harness: main loaded');
+                    main.main();
+                    if (settings.done) {
+                        settings.done(undefined, window);
+                    }
+                    process.quit();
+                });
+            } catch (e) {
+                debugger;
+            }
         });
     //window.setInterval(function() { console.log('.'); return true; }, 100);
 }
