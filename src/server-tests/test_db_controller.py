@@ -84,10 +84,10 @@ class TestDBController(unittest.TestCase):
             i = i + 1
 
     def test_add_node_set(self):
-        n_label = neo4j_test_util.rand_label()
-        n_0 = test_util.generate_random_node_dict(n_label)
-        n_1 = test_util.generate_random_node_dict(n_label)
-        n_map = { n_label: [n_0, n_1] }
+        test_label = neo4j_test_util.rand_label()
+        n_0 = test_util.generate_random_node_dict(test_label)
+        n_1 = test_util.generate_random_node_dict(test_label)
+        n_map = { test_label: [n_0, n_1] }
         op = DBO_add_node_set(n_map)
 
         self.assertEqual(len(op.statement_set), 1)  # assert a single statement is issued
@@ -96,17 +96,17 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(id_set), 2)
 
     def test_add_link_set(self):
-        src_id = rand_id()
-        dst_id_0 = rand_id()
-        dst_id_1 = rand_id()
-        n_map = { 'T_test_add_node_set': [{'id': src_id },
-                                          {'id': dst_id_0 },
-                                          {'id': dst_id_1 }] }
-        self.db_ctl.exec_op(DBO_add_node_set(n_map))
+        test_label = neo4j_test_util.rand_label()
+        n_0, n_0_id = test_util.generate_random_node_dict(test_label)
+        n_1, n_1_id = test_util.generate_random_node_dict(test_label)
+        n_2, n_2_id = test_util.generate_random_node_dict(test_label)
 
-        l_map = { 'T_test_add_link_set' : [{'__src': src_id, '__dst': dst_id_0},
-                                           {'__src': src_id, '__dst': dst_id_1}] }
+        n_map = { test_label: [n_0, n_1, n_2] }
+        op = DBO_add_node_set(n_map)
+        self.db_ctl.exec_op(op)
 
+        l_map = { test_label : [Link.link_ptr(n_0_id, n_1_id),
+                                Link.link_ptr(n_0_id, n_2_id)]}
         op = DBO_add_link_set(l_map)
         self.assertEqual(len(op.statement_set), 2)  # no support yet for parameterized statements for link creation
 
