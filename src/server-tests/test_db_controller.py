@@ -338,11 +338,15 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(id_set), 0)
 
     def test_rz_clone(self):
-        l_n, l_r = gen_rand_data(self.db_ctl, lim_n=8, lim_r=16, prob_link_create=0.7)
-        op = DBO_rz_clone(filter_label=l_n, limit=32)
-        ret = self.db_ctl.exec_op(op)
-        n_set = ret['node_set']
-        l_set = ret['link_set']
+        op = DBO_random_data_generation(lim_n=8, lim_r=16, prob_link_create=0.7)
+        n_label = op.node_set_label
+        l_label = op.link_set_label
+        self.db_ctl.exec_op(op)  # commit random data
+
+        op = DBO_rz_clone(filter_label=n_label, limit=32)
+        topo_diff = self.db_ctl.exec_op(op)
+        n_set = topo_diff.node_set_add
+        l_set = topo_diff.link_set_add
 
         # TODO improve assertions
         self.assertTrue(0 < len(n_set))
