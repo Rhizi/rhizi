@@ -34,7 +34,10 @@ function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  
  *
  */
 function GraphView(spec) {
-    var temporary = spec.temporary,
+    var gv = {
+            bubble_radius: 0,
+        },
+        temporary = spec.temporary,
         force_enabled = !spec.temporary,
         parent_element = spec.parent_element,
         graph_name = spec.graph_name, 
@@ -44,7 +47,6 @@ function GraphView(spec) {
         node_text_dy = spec.node_text_dy,
         svgInput = spec.svgInput,
 
-        bubble_radius = 0,
         zoomInProgress = false,
         force,
         drag,
@@ -96,10 +98,10 @@ function GraphView(spec) {
         .flatMap(function (r) {
             // lame animation - works, but doesn't handle more events while
             // animating
-            return Bacon.sequentially(20, range(bubble_radius, r, 10));
+            return Bacon.sequentially(20, range(gv.bubble_radius, r, 10));
         })
         .onValue(function (r) {
-            bubble_radius = r;
+            gv.bubble_radius = r;
             tick();
         });
     }
@@ -446,6 +448,7 @@ function GraphView(spec) {
             start_layout_animation();
         }
     }
+    gv.update_view = update_view;
 
     function start_layout_animation() {
         var interval_id,
@@ -511,7 +514,7 @@ function GraphView(spec) {
         });
     }
 
-    function bubble_transform(d) {
+    function bubble_transform(d, bubble_radius) {
         if (bubble_radius == 0) {
             return d;
         }
@@ -542,13 +545,18 @@ function GraphView(spec) {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
             }
-            var d2 = bubble_transform(d);
+            var d2 = bubble_transform(d, gv.bubble_radius);
+            d.bx = d2.x;
+            d.by = d2.y;
             return "translate(" + d2.x + "," + d2.y + ")";
         }
 
         if (temporary) {
             temporary_set_positions();
         }
+
+        // transform nodes first to record bubble x & y (bx & by)
+        node.attr("transform", transform);
 
         link.attr("d", function(d, i) {
             var d_val,
@@ -557,9 +565,9 @@ function GraphView(spec) {
             util.assert(d.__src && d.__dst && d.__src.x && d.__src.y &&
                         d.__dst.x && d.__dst.y, "missing src and dst points");
 
-            var src = bubble_transform(d.__src),
-                dst = bubble_transform(d.__dst);
-            d_val = "M" + src.x + "," + src.y + "L" + dst.x + "," + dst.y;
+            var src = d.__src,
+                dst = d.__dst;
+            d_val = "M" + src.bx + "," + src.by + "L" + dst.bx + "," + dst.by;
             // update ghostlink position
             ghost = $(this.nextElementSibling);
             ghost.attr("d", d_val);
@@ -569,8 +577,6 @@ function GraphView(spec) {
         linktext.attr("transform", function(d) {
             return "translate(" + (d.__src.x + d.__dst.x) / 2 + "," + (d.__src.y + d.__dst.y) / 2 + ")";
         });
-
-        node.attr("transform", transform);
 
         // After initial placement we can make the nodes visible.
         //links.attr('visibility', 'visible');
@@ -603,9 +609,7 @@ function GraphView(spec) {
     if (force_enabled) {
         init_force_layout();
     }
-    return {
-        update_view: update_view,
-    };
+    return gv;
 }
 
 return {
