@@ -784,29 +784,29 @@ function Graph(spec) {
 
     var new_topo_diff__from_nodes_links = function (nodes, links) {
         var diff,
-            node_by_id = {};
+            node_by_id = {},
+            old_id_to_new_id = {};
 
         diff = model_diff.new_topo_diff();
-        diff.node_set_add = nodes.map(function(node) {
-                return model_core.create_node_from_spec({
-                       id: node.id,
-                       name: node.name ? node.name : node.id,
-                       type: node.type,
+        diff.node_set_add = nodes.map(function(spec) {
+                var node =  model_core.create_node__set_random_id({
+                       name: spec.name ? spec.name : spec.id,
+                       type: spec.type,
                        state: "perm",
-                       start: new Date(node.start),
-                       end: new Date(node.end),
-                       status: node.status,
-                       url: node.url,
-                       x: node.x,
-                       y: node.y,
+                       start: new Date(spec.start),
+                       end: new Date(spec.end),
+                       status: spec.status,
+                       url: spec.url,
+                       x: spec.x,
+                       y: spec.y,
                 });
+                old_id_to_new_id[spec.id] = node.id,
+                node_by_id[node.id] = node;
+                return node;
             });
-        diff.node_set_add.forEach(function (node) {
-            node_by_id[node.id] = node;
-        });
         diff.link_set_add = links.map(function (link_spec) {
-                var src = node_by_id[link_spec.__src],
-                    dst = node_by_id[link_spec.__dst],
+                var src = node_by_id[old_id_to_new_id[link_spec.__src]],
+                    dst = node_by_id[old_id_to_new_id[link_spec.__dst]],
                     link = model_core.create_link__set_random_id(src, dst, {
                         name: link_spec.name,
                         state: 'perm', // FIXME: this is meaningless now with graph separation
