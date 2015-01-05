@@ -403,13 +403,13 @@ class DBO_add_node_set(DB_op):
             self.add_statement(q, q_param_set)
 
     def process_result_set(self):
-        n_set = []
+        n_id_set = []
         for _, _, row_set in self:
             for row in row_set:
                 for clo in row:
-                    n_set.append(clo)
+                    n_id_set.append(clo['id'])
 
-        return n_set
+        return n_id_set
 
 class DBO_add_link_set(DB_op):
     def __init__(self, link_map):

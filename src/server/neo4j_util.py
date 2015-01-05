@@ -187,7 +187,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
         assert len(label) > 2 and label[0].isupper(), 'malformed label: ' + label
 
         q_arr = ['create (n:%s {node_attr})' % (quote__backtick(label)),
-                 'return n, labels(n)'
+                 'return {id: n.id, label_set: labels(n)}'
                  ]
 
         q_params_set = []
