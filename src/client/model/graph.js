@@ -8,9 +8,7 @@ var debug = false;
 function Graph(spec) {
 
     var id_to_node_map = {},
-        node_map = {},
         id_to_link_map = {},
-        link_map = {},
         diffBus = new Bacon.Bus(),
         cached_links,
         invalidate_links,
@@ -29,14 +27,14 @@ function Graph(spec) {
     this.diffBus = diffBus;
 
     var links_forEach = function (f) {
-        for (var link_key in link_map) {
-            f(link_map[link_key]);
+        for (var link_key in id_to_link_map) {
+            f(id_to_link_map[link_key]);
         }
     }
 
     var nodes_forEach = function (f) {
-        for (var node_key in node_map) {
-            f(node_map[node_key]);
+        for (var node_key in id_to_node_map) {
+            f(id_to_node_map[node_key]);
         }
     }
 
@@ -153,28 +151,25 @@ function Graph(spec) {
     var _node_remove_helper = function (node_id) {
         util.assert(node_id, "missing node id");
         delete id_to_node_map[node_id];
-        delete node_map[node_id];
         invalidate_nodes = true;
     }
 
     var _node_add_helper = function (node) {
         util.assert(node.id, "missing node id");
         id_to_node_map[node.id] = node;
-        node_map[node.id] = node;
         invalidate_nodes = true;
     }
 
     var _link_remove_helper = function (link_id) {
         util.assert(link_id, "missing link id");
         delete id_to_link_map[link_id];
-        delete link_map[link_id];
+        util.assert(id_to_link_map[link_id] === undefined, "delete failed?!");
         invalidate_links = true;
     }
 
     var _link_add_helper = function (link) {
         util.assert(link.id, "missing link id");
         id_to_link_map[link.id] = link;
-        link_map[link.id] = link;
         invalidate_links = true;
     }
 
@@ -555,7 +550,7 @@ function Graph(spec) {
                 console.log("warning: server returned an id we don't have " + id);
                 return;
             }
-            _link_remove_helper(link);
+            _link_remove_helper(id);
             console.log('_remove_link_set: ' + id);
         });
     }
@@ -574,8 +569,8 @@ function Graph(spec) {
     var findLink = function(src_id, dst_id, name) {
         var link_key, link;
 
-        for (link_key in link_map) {
-            link = link_map[link_key];
+        for (link_key in id_to_link_map) {
+            link = id_to_link_map[link_key];
             if (link.__src.id === src_id && link.__dst.id === dst_id) {
                 return link;
             }
@@ -632,9 +627,9 @@ function Graph(spec) {
     }
 
     var find_node__by_name = function(name) {
-        for (var k in node_map) {
-            if (compareNames(node_map[k].name, name)) {
-                return node_map[k];
+        for (var k in id_to_node_map) {
+            if (compareNames(id_to_node_map[k].name, name)) {
+                return id_to_node_map[k];
             }
         }
     }
@@ -653,9 +648,9 @@ function Graph(spec) {
     function clear(push_diff) {
         push_diff = push_diff === undefined ? true : push_diff;
         id_to_node_map = {};
-        node_map = {}
+        id_to_node_map = {}
         id_to_link_map = {};
-        link_map = {};
+        id_to_link_map = {};
         invalidate_links = true;
         invalidate_nodes = true;
         if (push_diff) {
@@ -868,7 +863,7 @@ function Graph(spec) {
 
     var get_nodes = function() {
         if (cached_nodes === undefined || invalidate_nodes) {
-            cached_nodes = object_values(node_map);
+            cached_nodes = object_values(id_to_node_map);
             invalidate_nodes = false;
         }
         return cached_nodes;
@@ -877,7 +872,7 @@ function Graph(spec) {
 
     var get_links = function() {
         if (cached_links === undefined || invalidate_links) {
-            cached_links = object_values(link_map);
+            cached_links = object_values(id_to_link_map);
             invalidate_links = false;
         }
         return cached_links;
@@ -887,15 +882,15 @@ function Graph(spec) {
     function setRegularState() {
         var x, node, link, s;
 
-        for (x in node_map) {
-            node = node_map[x];
+        for (x in id_to_node_map) {
+            node = id_to_node_map[x];
             s = node.state;
             if (s === 'chosen' || s === 'enter' || s === 'exit') {
                 node.state = 'perm';
             }
         }
-        for (x in link_map) {
-            link = link_map[x];
+        for (x in id_to_link_map) {
+            link = id_to_link_map[x];
             s = link.state;
             if (s === 'chosen' || s === 'enter' || s === 'exit') {
                 link.state = 'perm';
