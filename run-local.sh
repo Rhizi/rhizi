@@ -10,4 +10,4 @@ if [ $neo4j_count == "0" ]; then
 fi
 ant -f build.ant deploy-local
 cd deploy-local
-python bin/rhizi_server.py --config-dir etc
+python bin/rz_server.py --config-dir etc
