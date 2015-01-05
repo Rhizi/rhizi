@@ -22,12 +22,19 @@ import traceback
 
 import crypt_util
 import db_controller as dbc
+
 from model.graph import Topo_Diff
 from model.model import Link
 from rz_api_common import __sanitize_input
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_rest import __common_resp_handle
 from rz_kernel import RZ_Kernel
+from db_op import DBO_match_node_set_by_id_attribute
+from db_op import DBO_match_node_id_set
+from db_op import DBO_load_link_set
+from db_op import DBO_rz_clone
+from db_op import DBO_topo_diff_commit
+from db_op import DBO_add_node_set
 
 
 log = logging.getLogger('rhizi')
@@ -68,7 +75,7 @@ def __load_node_set_by_id_attr_common(id_set):
     @param f_k: optional attribute filter key
     @param f_vset: possible key values to match against
     """
-    op = dbc.DBO_match_node_set_by_id_attribute(id_set=id_set)
+    op = DBO_match_node_set_by_id_attribute(id_set=id_set)
     try:
         n_set = db_ctl.exec_op(op)
         return __common_resp_handle(data=n_set)
@@ -82,7 +89,7 @@ def match_node_set_by_attr_filter_map(attr_filter_map):
     
     @return: a set of node DB id's
     """
-    op = dbc.DBO_match_node_id_set(attr_filter_map)
+    op = DBO_match_node_id_set(attr_filter_map)
     return __common_exec(op)
 
 def load_link_set_by_link_ptr_set():
@@ -102,11 +109,11 @@ def load_link_set_by_link_ptr_set():
 
     l_ptr_set = deserialize_param_set(request.get_json())
 
-    op = dbc.DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
+    op = DBO_load_link_set.init_from_link_ptr_set(l_ptr_set)
     return __common_exec(op)
 
 def rz_clone():
-    op = dbc.DBO_rz_clone()
+    op = DBO_rz_clone()
     return __common_exec(op)
 
 def diff_commit__set():
@@ -123,7 +130,7 @@ def diff_commit__set():
 
     topo_diff = sanitize_input(request)
 
-    op = dbc.DBO_topo_diff_commit(topo_diff)
+    op = DBO_topo_diff_commit(topo_diff)
     return __common_exec(op)
 
 def add_node_set():
@@ -135,7 +142,7 @@ def add_node_set():
     node_map = request.get_json()['node_map']
     __sanitize_input(node_map)
 
-    op = dbc.DBO_add_node_set(node_map)
+    op = DBO_add_node_set(node_map)
     return __common_exec(op)
 
 def monitor__server_info():
