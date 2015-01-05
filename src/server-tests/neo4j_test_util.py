@@ -22,7 +22,7 @@ class DBO_random_data_generation(DB_op):
         q_arr = ['with 0 as _',  # TODO clean: foreach triggers SyntaxException: otherwise
                  'foreach (rid in range(0,%d)' % (lim_n - 1),
                  '|',
-                 'create (:%s {id: rid, n_attr_0:toInt(%d * rand())}))' % (self.n_label, lim_n)
+                 'create (:%s {id: \'test-id_\' + toString(rid), n_attr_0:toInt(%d * rand())}))' % (self.n_label, lim_n)
                 ]
 
         q = ' '.join(q_arr)
