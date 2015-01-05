@@ -185,19 +185,19 @@ def init_rest_interface(cfg, flask_webapp):
 
     rest_entry_set = [
                       redirect_entry('/', '/index', {'methods': ['GET']}),
-                      rest_entry('/add/node-set' , rhizi_api.add_node_set),
-                      rest_entry('/graph/clone', rhizi_api.rz_clone),
-                      rest_entry('/graph/diff-commit-set', rhizi_api.diff_commit__set),
-                      rest_entry('/graph/diff-commit-topo', rhizi_api.diff_commit__topo),
-                      rest_entry('/graph/diff-commit-attr', rhizi_api.diff_commit__attr),
-                      rest_entry('/graph/diff-commit-vis', rhizi_api.diff_commit__vis),
-                      rest_entry('/index', rhizi_api.index, {'methods': ['GET']}),
-                      rest_entry('/load/node-set-by-id', rhizi_api.load_node_set_by_id_attr),
-                      rest_entry('/load/link-set/by_link_ptr_set', rhizi_api.load_link_set_by_link_ptr_set),
-                      rest_entry('/login', rhizi_api.login, {'methods': ['GET', 'POST']}),
-                      rest_entry('/logout', rhizi_api.logout, {'methods': ['GET', 'POST']}),
-                      rest_entry('/match/node-set', rhizi_api.match_node_set_by_attr_filter_map),
-                      rest_entry('/monitor/server-info', rhizi_api.monitor__server_info),
+                      rest_entry('/add/node-set' , rz_api.add_node_set),
+                      rest_entry('/graph/clone', rz_api.rz_clone),
+                      rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
+                      rest_entry('/graph/diff-commit-topo', rz_api_rest.diff_commit__topo),
+                      rest_entry('/graph/diff-commit-attr', rz_api_rest.diff_commit__attr),
+                      rest_entry('/graph/diff-commit-vis', rz_api_rest.diff_commit__vis),
+                      rest_entry('/index', rz_api.index, {'methods': ['GET']}),
+                      rest_entry('/load/node-set-by-id', rz_api.load_node_set_by_id_attr),
+                      rest_entry('/load/link-set/by_link_ptr_set', rz_api.load_link_set_by_link_ptr_set),
+                      rest_entry('/login', rz_api.login, {'methods': ['GET', 'POST']}),
+                      rest_entry('/logout', rz_api.logout, {'methods': ['GET', 'POST']}),
+                      rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
+                      rest_entry('/monitor/server-info', rz_api.monitor__server_info),
                   ]
 
     if cfg.development_mode:
