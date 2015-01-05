@@ -74,6 +74,46 @@ class DB_op(object):
                     ret.append(col)
         return ret
 
+class DBO_add_node_set(DB_op):
+    def __init__(self, node_map):
+        """
+        DB op: add node set
+
+        @param node_map: node-type to node-set map
+        @return: set of new node DB ids
+        """
+        super(DBO_add_node_set, self).__init__()
+        for q, q_param_set in db_util.gen_query_create_from_node_map(node_map):
+            self.add_statement(q, q_param_set)
+
+    def process_result_set(self):
+        n_id_set = []
+        for _, _, row_set in self:
+            for row in row_set:
+                for clo in row:
+                    n_id_set.append(clo['id'])
+
+        return n_id_set
+
+class DBO_add_link_set(DB_op):
+    def __init__(self, link_map):
+        """
+        @param link_map: is a link-type to link-set map - see model.link
+        @return: set of new node DB ids
+        """
+        super(DBO_add_link_set, self).__init__()
+        for q, q_params in db_util.gen_query_create_from_link_map(link_map):
+            self.add_statement(q, q_params)
+
+    def process_result_set(self):
+        l_set = []
+        for _, _, r_set in self:
+            for row in r_set:
+                for col_val in row:
+                    l_set.append(col_val)
+
+        return l_set
+
 class DB_composed_op(DB_op):
     """
     A DB_op composed of sup-operations with the intention of being able to 
@@ -393,46 +433,6 @@ class DBO_attr_diff_commit(DB_op):
         #         ret[n_id] = n
 
         return self.op_return_value__attr_diff
-
-class DBO_add_node_set(DB_op):
-    def __init__(self, node_map):
-        """
-        DB op: add node set
-
-        @param node_map: node-type to node-set map
-        @return: set of new node DB ids
-        """
-        super(DBO_add_node_set, self).__init__()
-        for q, q_param_set in db_util.gen_query_create_from_node_map(node_map):
-            self.add_statement(q, q_param_set)
-
-    def process_result_set(self):
-        n_id_set = []
-        for _, _, row_set in self:
-            for row in row_set:
-                for clo in row:
-                    n_id_set.append(clo['id'])
-
-        return n_id_set
-
-class DBO_add_link_set(DB_op):
-    def __init__(self, link_map):
-        """
-        @param link_map: is a link-type to link-set map - see model.link
-        @return: set of new node DB ids
-        """
-        super(DBO_add_link_set, self).__init__()
-        for q, q_params in db_util.gen_query_create_from_link_map(link_map):
-            self.add_statement(q, q_params)
-
-    def process_result_set(self):
-        l_set = []
-        for _, _, r_set in self:
-            for row in r_set:
-                for col_val in row:
-                    l_set.append(col_val)
-
-        return l_set
 
 class DBO_load_node_set_by_DB_id(DB_op):
     def __init__(self, id_set):
