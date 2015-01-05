@@ -191,7 +191,7 @@ function GraphView(spec) {
             unselected_link_group = document.querySelector(unselected_selector),
             selected_link_group = document.querySelector(selected_selector);
 
-        relayout = relayout || true;
+        relayout = (relayout === undefined && true) || relayout;
 
         link = vis.selectAll("g.link")
             .data(graph.links(), function(d) { return d.id; });
