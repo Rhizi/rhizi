@@ -21,10 +21,11 @@ from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
 from neo4j_test_util import flush_db
-from neo4j_test_util import gen_rand_data
+from neo4j_test_util import DBO_random_data_generation
 from neo4j_test_util import rand_id
 from neo4j_util import Neo4JException
 from rz_server import Config
+import neo4j_test_util
 
 
 class TestDBController(unittest.TestCase):
@@ -83,7 +84,10 @@ class TestDBController(unittest.TestCase):
             i = i + 1
 
     def test_add_node_set(self):
-        n_map = { 'T_test_add_node_set': [{'id': rand_id()}, {'id': rand_id()}] }
+        n_label = neo4j_test_util.rand_label()
+        n_0 = test_util.generate_random_node_dict(n_label)
+        n_1 = test_util.generate_random_node_dict(n_label)
+        n_map = { n_label: [n_0, n_1] }
         op = DBO_add_node_set(n_map)
 
         self.assertEqual(len(op.statement_set), 1)  # assert a single statement is issued
