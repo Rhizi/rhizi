@@ -36,6 +36,18 @@ function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  
 function GraphView(spec) {
     var gv = {
             bubble_radius: 0,
+            layout_animation: {
+                interval: null,
+                endtime: null,
+                starttime: null,
+                current: 30,
+                target: 30,
+                step_msec: 30,
+                bubble_radius: {
+                    target: 0,
+                    start: 0,
+                },
+            },
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
@@ -95,16 +107,17 @@ function GraphView(spec) {
     //
     // Animation target is set by stream, and initialized if not already
     if (spec.bubble_property) {
-        spec.bubble_property.skipDuplicates()
-        .flatMap(function (r) {
-            // lame animation - works, but doesn't handle more events while
-            // animating
-            return Bacon.sequentially(20, range(gv.bubble_radius, r, 10));
-        })
-        .onValue(function (r) {
-            gv.bubble_radius = r;
-            tick();
-        });
+        spec.bubble_property
+            .skipDuplicates()
+            .onValue(function (r) {
+                var now = (new Date()).getTime();
+                console.log("setting bubble to " + r + "(time = " + now + ")");
+                gv.layout_animation.bubble_radius.target = r;
+                gv.layout_animation.bubble_radius.start = gv.bubble_radius;
+                gv.layout_animation.starttime = now;
+                gv.layout_animation.endtime = now + 300; // FIXME: use constant change?
+                start_layout_animation();
+            });
     }
 
     graph.diffBus.onValue(function (diff) {
@@ -444,19 +457,47 @@ function GraphView(spec) {
         }
     }
     gv.update_view = update_view;
-
     function start_layout_animation() {
-        var interval_id,
-            count = 0,
             on_interval = function() {
-                tick();
-                count += 1;
-                if (count > 30) {
-                    clearInterval(interval_id);
-                    console.log('stopping layout animation ' + interval_id);
+                var now = (new Date()).getTime(),
+                    end_now = gv.layout_animation.endtime - now,
+                    b_dict = gv.layout_animation.bubble_radius,
+                    end_start = gv.layout_animation.endtime - gv.layout_animation.starttime,
+                    now_start = now - gv.layout_animation.starttime,
+                    d_current = gv.layout_animation.target - gv.layout_animation.current,
+                    d_bubble_radius = b_dict.target - gv.bubble_radius,
+                    step_msec = gv.layout_animation.step_msec;
+
+                util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
+                console.log(graph_name + ": bubble " + b_dict.target + ", " + gv.bubble_radius + ", " + now_start);
+                // we loop some just to settle the temporary graph animation
+                if (d_current == 0 && d_bubble_radius == 0) {
+                    console.log(graph_name + ': clearing interval ' + gv.layout_animation.interval);
+                    clearInterval(gv.layout_animation.interval);
+                    gv.layout_animation.interval = null;
+                } else {
+                    if (d_current > 0) {
+                        gv.layout_animation.current += 1;
+                    }
+                    if (d_bubble_radius != 0) {
+                        if (end_now <= 0) {
+                            gv.bubble_radius = b_dict.target;
+                        } else {
+                            gv.bubble_radius = b_dict.start +
+                                (b_dict.target - b_dict.start) * (now_start / end_start);
+                        }
+                    }
                 }
+                util.assert(gv.bubble_radius !== undefined, "bug");
+                tick();
             };
-        interval_id = setInterval(on_interval, 30);
+        if (gv.layout_animation.interval == null) {
+            gv.layout_animation.interval = setInterval(on_interval, gv.layout_animation.step_msec);
+            console.log(graph_name + ': starting interval ' + gv.layout_animation.interval);
+        }
+        if (temporary) {
+            gv.layout_animation.current = 0;
+        }
         on_interval();
     }
 
