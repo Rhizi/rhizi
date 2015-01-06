@@ -469,10 +469,8 @@ function GraphView(spec) {
                     step_msec = gv.layout_animation.step_msec;
 
                 util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
-                console.log(graph_name + ": bubble " + b_dict.target + ", " + gv.bubble_radius + ", " + now_start);
                 // we loop some just to settle the temporary graph animation
                 if (d_current == 0 && d_bubble_radius == 0) {
-                    console.log(graph_name + ': clearing interval ' + gv.layout_animation.interval);
                     clearInterval(gv.layout_animation.interval);
                     gv.layout_animation.interval = null;
                 } else {
@@ -493,7 +491,6 @@ function GraphView(spec) {
             };
         if (gv.layout_animation.interval == null) {
             gv.layout_animation.interval = setInterval(on_interval, gv.layout_animation.step_msec);
-            console.log(graph_name + ': starting interval ' + gv.layout_animation.interval);
         }
         if (temporary) {
             gv.layout_animation.current = 0;
