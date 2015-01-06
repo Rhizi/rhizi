@@ -19,10 +19,12 @@ function new_tokenize(text, node_token, quote)
         inquote = false,
         prev = null,
         prev_whitespace = true,
+        start = 0,
         next = function() {
             if (token.length > 0) {
-                tokens.push(token.join(''));
+                tokens.push({start: start, end: i, token: token.join('')});
                 token = [];
+                start = i;
             }
         };
     for (i = 0 ; i < text.length; ++i) {
@@ -47,7 +49,7 @@ function new_tokenize(text, node_token, quote)
             break;
         default:
             if (c == node_token && prev_whitespace) {
-                tokens.push(node_token);
+                tokens.push({start: i, end: i + 1, token: node_token});
             } else {
                 token.push(c);
             }
