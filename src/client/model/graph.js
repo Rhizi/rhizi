@@ -15,7 +15,8 @@ function Graph(spec) {
         cached_nodes,
         invalidate_nodes,
         temporary = spec.temporary,
-        base = spec.base;
+        base = spec.base,
+        server_pending_objects = [];
 
     this.temporary = temporary;
     this.base = base;
@@ -77,7 +78,12 @@ function Graph(spec) {
     var commit_and_tx_diff__topo = function (topo_diff) {
         $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
-            util.assert(n.id !== undefined, "undefined id in node in topo diff");
+            util.assert(undefined !== n.id, "undefined id in node in topo diff");
+            util.assert(undefined === server_pending_objects[n.id], "cache full at id");
+
+            server_pending_objects[n.id] = {
+                name: n.name,
+            }; // FIXME: url, startdate, etc - all properties. i.e. a Node to spec function
             return model_util.adapt_format_write_node(n);
         });
 
@@ -680,6 +686,14 @@ function Graph(spec) {
 
         util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
 
+        // server returns a bare node, just the id, we fill it in from cached nodes
+        // we sent the server, and clean our cache.
+        // FIXME: should track cache
+        if (undefined !== server_pending_objects[n_spec.id]) {
+            $.extend(n_spec, server_pending_objects[n_spec.id]);
+            delete server_pending_objects[n_spec.idd];
+        }
+
         return n_spec;
     }
 
@@ -688,9 +702,9 @@ function Graph(spec) {
             dst_id = l_spec.__dst_id,
             l_ptr = model_util.adapt_format_read_link_ptr(l_spec);
 
-        util.assert(undefined != l_ptr.id, 'load_from_backend: l_ptr missing id');
-        util.assert(undefined != src_id, 'load_from_backend: link missing __src_id');
-        util.assert(undefined != dst_id, 'load_from_backend: link missing __dst_id');
+        util.assert(undefined !== l_ptr.id, 'load_from_backend: l_ptr missing id');
+        util.assert(undefined !== src_id, 'load_from_backend: link missing __src_id');
+        util.assert(undefined !== dst_id, 'load_from_backend: link missing __dst_id');
 
         // cleanup & reuse as link_spec
         delete l_ptr.__src_id;
@@ -698,6 +712,7 @@ function Graph(spec) {
         var link_spec = l_ptr;
         link_spec.__src = find_node__by_id(src_id);
         link_spec.__dst = find_node__by_id(dst_id);
+
         return link_spec;
     }
 
