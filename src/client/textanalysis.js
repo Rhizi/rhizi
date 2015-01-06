@@ -252,7 +252,9 @@ var textAnalyser = function (spec) {
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
-    sentence = tokenize(newtext, '#', '"');
+    sentence = new_tokenize(newtext, '#', '"').map(function (d) {
+            return d.token;
+        });
 
     // build new node,link arrays in order of appearance
     for (m = 0; m < sentence.length; m++) {
