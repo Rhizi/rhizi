@@ -101,20 +101,20 @@ class DBO_add_link_set(DB_op):
     def __init__(self, link_map):
         """
         @param link_map: is a link-type to link-set map - see model.link
-        @return: set of new node DB ids
+        @return: set of new link DB ids
         """
         super(DBO_add_link_set, self).__init__()
-        for q, q_params in db_util.gen_query_create_from_link_map(link_map):
-            self.add_statement(q, q_params)
+        for q, q_param_set in db_util.gen_query_create_from_link_map(link_map):
+            self.add_statement(q, q_param_set)
 
     def process_result_set(self):
-        l_set = []
+        l_id_set = []
         for _, _, r_set in self:
             for row in r_set:
-                for col_val in row:
-                    l_set.append(col_val)
+                for ret_dict in row:
+                    l_id_set.append(ret_dict['id'])
 
-        return l_set
+        return l_id_set
 
 class DB_composed_op(DB_op):
     """
