@@ -111,7 +111,6 @@ function GraphView(spec) {
             .skipDuplicates()
             .onValue(function (r) {
                 var now = (new Date()).getTime();
-                console.log("setting bubble to " + r + "(time = " + now + ")");
                 gv.layout_animation.bubble_radius.target = r;
                 gv.layout_animation.bubble_radius.start = gv.bubble_radius;
                 gv.layout_animation.starttime = now;

@@ -97,14 +97,16 @@ function textSelect(inp, s, e) {
 }
 
 function changeType(arg) {
-    var lastnode = textanalysis.lastnode(),
+    var lastnode = textanalysis.lastnode(rz_core.edit_graph),
         nodetype,
-        id;
+        id,
+        name;
 
     if (!lastnode) {
-        id = "new node";
+        name = id = "new node";
     } else {
         id = lastnode.id;
+        name = lastnode.name;
     }
     nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
@@ -117,6 +119,7 @@ function changeType(arg) {
         typeselection.showChosenType(nodetype);
         rz_core.edit_graph.findCoordinates(id);
     }
+    textanalysis.set_type(name, nodetype);
 }
 
 return {
@@ -148,9 +151,9 @@ return {
                 ret = false;
                 break;
             case 9: //TAB
-                if (textanalysis.lastnode()) {
+                if (textanalysis.lastnode(rz_core.edit_graph)) {
                     e.preventDefault();
-                    changeType(e.shiftKey ? "up" : "down", textanalysis.lastnode());
+                    changeType(e.shiftKey ? "up" : "down");
                     ret = false;
                 }
                 break;

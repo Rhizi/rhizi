@@ -9,8 +9,23 @@
  *
  * treats '\\' as a quote for the next char.
  *
+ * TODO:  should only apply if cursor is actually on token,
+ *
+ * so need tokenise to be fixed to split according to actual tokens,
+ * i.e.:
+ * #"one two" four five #six
+ * is exactly 3 tokens:
+ * #"one two"
+ * four five
+ * #six
+ * or 5 if you assign a token for the '#' char:
+ * #
+ * "one two"
+ * four five
+ * #
+ * six
  */
-function new_tokenize(text, node_token, quote)
+function tokenize(text, node_token, quote)
 {
     var c,
         i,
@@ -50,6 +65,7 @@ function new_tokenize(text, node_token, quote)
         default:
             if (c == node_token && prev_whitespace) {
                 tokens.push({start: i, end: i + 1, token: node_token});
+                start = i + 1;
             } else {
                 token.push(c);
             }
@@ -64,11 +80,13 @@ function new_tokenize(text, node_token, quote)
 define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
 function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 
-var typeindex = 0;
-var nodetypes = consts.nodetypes;
-var typeStack = [];
+var typeindex = 0,
+    nodetypes = consts.nodetypes,
+    typeStack = [];
 
-var lastnode;
+var _get_lastnode,
+    get_lastnode = function (editgraph) { return _get_lastnode(editgraph); },
+    node_name_to_type = {};
 
 var sugg_name = {},
     id_to_name_map = {},
@@ -123,43 +141,6 @@ function auto_suggest__update_from_graph()
     suggestions_bus.push(sugg_name);
 }
 
-// TODO: add escape char, i.e. r"bla\"bla" -> ['bla"bla']
-function tokenize(text, node_token, quote)
-{
-    var segment = [],
-        subsegment = [],
-        sentence = [],
-        quoteword;
-    var j;
-
-    segment = text.split(node_token);
-    for (j = 0; j < segment.length; j++) {
-        if (j !== 0) sentence.push(node_token);
-        subsegment = segment[j].split(" ");
-        if (subsegment.length === 0) {
-            sentence.push(" ");
-        }
-        for (var k = 0; k < subsegment.length; k++) {
-            if (subsegment[k] !== " " && subsegment[k] !== "") {
-                if (subsegment[k].charAt(0) === quote) {
-                    quoteword = "";
-                    do {
-                        quoteword += subsegment[k] + ' ';
-                        if(subsegment[k].charAt(subsegment[k].length-1) !== quote)k++;
-                    } while (k < subsegment.length && subsegment[k].charAt(subsegment[k].length - 1) !== quote);
-                    if (subsegment[k] && subsegment[k]!==quoteword.replace(/ /g, "")) {
-                        quoteword += subsegment[k];
-                    }
-                    sentence.push(quoteword.replace(new RegExp(quote, 'g'), ""));
-                } else {
-                    sentence.push(subsegment[k]);
-                }
-            }
-        }
-    }
-    return sentence;
-}
-
 /*
  * textAnalyser
  *
@@ -183,6 +164,8 @@ var textAnalyser = function (spec) {
     var newtext = spec.sentence,
         finalize = spec.finalize,
         cursor = spec.cursor,
+
+        tokens,
         sentence,
         token_set_new_node_names = [], // token set representing new node names
         token_set_new_link_names = [], // token set representing new link names
@@ -252,9 +235,8 @@ var textAnalyser = function (spec) {
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
-    sentence = new_tokenize(newtext, '#', '"').map(function (d) {
-            return d.token;
-        });
+    tokens = tokenize(newtext, '#', '"');
+    sentence = tokens.map(function (d) { return d.token; });
 
     // build new node,link arrays in order of appearance
     for (m = 0; m < sentence.length; m++) {
@@ -473,15 +455,29 @@ var textAnalyser = function (spec) {
         }
     };
 
-    function lookup_node_in_bounds(cursor) {
-        // TODO
-        return null;
+    function lookup_node_in_bounds(edit_graph) {
+        var i, d, j, name, node;
+
+        // go forward to find cursor location in tokens
+        for (i = 0 ; i < tokens.length; ++i) {
+            d = tokens[i];
+            if (cursor >= d.start && cursor < d.end) {
+                break;
+            }
+        }
+        // go back to find token
+        for (j = i - 1; j >= 0 && tokens[j].token != '#'; --j) {}
+        name = tokens[j + 1] ? tokens[j + 1].token : 'new node';
+        node = edit_graph.find_node__by_name(name);
+        util.assert(node !== undefined, "can't find node");
+        return node;
     }
 
     if (finalize) {
         typeStack = [];
     }
-    lastnode = finalize ? null : lookup_node_in_bounds(cursor);
+    _get_lastnode = finalize || tokens.length == 0 ? function () { return null }
+                                                  : lookup_node_in_bounds;
 
     return ret;
 };
@@ -501,7 +497,10 @@ return {
     ANALYSIS_LINK:ANALYSIS_LINK,
 
     //for the external arrow-type changer
-    lastnode: function() { return lastnode; },
+    lastnode: get_lastnode,
+    set_type: function(name, nodetype) {
+        node_name_to_type[name] = nodetype;
+    },
 
     selected_type_next: function() {
         typeindex = (typeindex + 1) % 5;

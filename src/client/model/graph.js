@@ -146,7 +146,7 @@ function Graph(spec) {
 
         existing_node = find_node__by_id(node.id);
         if (existing_node) {
-            console.log('__addNode: id collision: existing-node.id: \'' + existing_node.id + '\', ' + 'new-node.id: \'' + node.id + '\'');
+            console.log('__addNode: id collision: existing-node.id: \'' + existing_node.id);
             return existing_node;
         }
 
@@ -510,7 +510,7 @@ function Graph(spec) {
 
     function new_attr_diff_prop_value(id, prop, value)
     {
-        var diff = rz_diff.new_attr_diff();
+        var diff = model_diff.new_attr_diff();
 
         diff.add_node_attr_write(id, prop, value);
         return diff;
