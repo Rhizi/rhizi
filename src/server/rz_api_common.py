@@ -25,9 +25,9 @@ def sanitize_input__link(l):
     assert None != l.get('id'), 'invalid input: link: missing id'
     assert None != l.get('__src_id'), 'invalid input: link: missing src id'
     assert None != l.get('__dst_id'), 'invalid input: link: missing dst id'
+    assert None != l.get('__type'), 'invalid input: link: missing type'
 
     # unexpected prop assertions
-    assert None == l.get('__type'), 'client is sending us __type link property, it should not'
     assert None == l.get('name'), 'client is sending us name link property, it should not'
 
 def sanitize_input__topo_diff(topo_diff):

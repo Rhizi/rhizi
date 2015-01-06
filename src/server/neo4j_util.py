@@ -284,11 +284,14 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     for v in e_set:
         meta_attr_list = v.get(meta_attr)
         assert None != meta_attr_list, 'missing type meta-attribute'
-        assert list == type(meta_attr_list), 'type meta-attribute not in list form'
-        assert len(meta_attr_list) < 2, 'only single-type mapping currently suppoerted'
-        assert 1 == len(meta_attr_list), 'missing meta attribute __label_set or __type'
 
-        v_type = v[meta_attr][0]
+        # Amir - refactor at will
+        # handle either a list or a string - we use a list for __label_set
+        # and a string for __type
+        if list == type(meta_attr_list):
+            v_type = v[meta_attr][0]
+        else:
+            v_type = v[meta_attr]
         if None == ret.get(v_type):  # init type list if necessary
             ret[v_type] = []
 
