@@ -52,9 +52,15 @@ var typeselection = function TypeSelectionDialog() {
 
 var analysisCompleter = completer(element, $('#input-suggestion'), {hideOnTab: false});
 
-function analyzeSentence(sentence, finalize)
+function analyzeSentence(spec)
 {
-    var ret = textanalysis.textAnalyser(sentence, finalize);
+    util.assert(spec.sentence !== undefined &&
+                spec.finalize !== undefined &&
+                spec.cursor !== undefined, "bad input");
+
+    var sentence = spec.sentence,
+        finalize = spec.finalize,
+        ret = textanalysis.textAnalyser(spec);
 
     switch (ret.state) {
     case textanalysis.ANALYSIS_NODE_START:
@@ -133,7 +139,11 @@ return {
                 if (!analysisCompleter.handleEnter()) {
                     submitNewSentence();
                 } else {
-                    analyzeSentence(element.val(), false);
+                    analyzeSentence({
+                        sentence: element.val(),
+                        finalize: false,
+                        cursor: element_raw.selectionStart,
+                    });
                 }
                 ret = false;
                 break;
@@ -155,7 +165,10 @@ return {
         function submitNewSentence() {
             text = element.val();
             element.val("");
-            analyzeSentence(text, true);
+            analyzeSentence({
+                sentence: text,
+                finalize: true,
+                cursor: element_raw.selectionStart});
             text = "";
         }
 
@@ -175,7 +188,11 @@ return {
         if ('oninput' in document.documentElement) {
             element.on('input', function(e) {
                 text = element.val();
-                analyzeSentence(text, false);
+                analyzeSentence({
+                    sentence: text,
+                    finalize: false,
+                    cursor: element_raw.selectionStart
+                });
                 input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
             });
         } else {

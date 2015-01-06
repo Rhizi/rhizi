@@ -179,8 +179,11 @@ function tokenize(text, node_token, quote)
  *  marks).
  *
  */
-var textAnalyser = function (newtext, finalize) {
-    var sentence,
+var textAnalyser = function (spec) {
+    var newtext = spec.sentence,
+        finalize = spec.finalize,
+        cursor = spec.cursor,
+        sentence,
         token_set_new_node_names = [], // token set representing new node names
         token_set_new_link_names = [], // token set representing new link names
         linkindex = 0,
@@ -203,6 +206,11 @@ var textAnalyser = function (newtext, finalize) {
         nodes = [],
         links = [],
         ret = model_diff.new_topo_diff();
+
+    util.assert(spec.sentence !== undefined &&
+                spec.finalize !== undefined &&
+                spec.cursor !== undefined,
+                "bad input");
 
     function __addNode(name, type) {
         if (type === undefined) {
