@@ -192,39 +192,40 @@ class TestDBController(unittest.TestCase):
 
     def test_diff_commit__attr(self):
         # create test node
-        n_id = rand_id()
-        topo_diff = Topo_Diff(node_set_add=[{'__label_set': ['T_test_diff_commit__attr'],
-                                             'id': n_id, 'attr_0': 0}])
+        test_label = neo4j_test_util.rand_label()
+        n_0, n_0_id = generate_random_node_dict(test_label)
+        n_0['attr_0'] = 0
+        topo_diff = Topo_Diff(node_set_add=[n_0])
         op = DBO_diff_commit__topo(topo_diff)
         self.db_ctl.exec_op(op)
 
         # apply attr_diff
         attr_diff = Attr_Diff()
-        attr_diff.add_node_attr_write(n_id, 'attr_0', 0)
-        attr_diff.add_node_attr_write(n_id, 'attr_1', 'a')
-        attr_diff.add_node_attr_rm(n_id, 'attr_2')
+        attr_diff.add_node_attr_write(n_0_id, 'attr_0', 0)
+        attr_diff.add_node_attr_write(n_0_id, 'attr_1', 'a')
+        attr_diff.add_node_attr_rm(n_0_id, 'attr_2')
 
         op = DBO_diff_commit__attr(attr_diff)
         ret_diff = self.db_ctl.exec_op(op)
 
         self.assertEqual(len(ret_diff.type__node), 1)
-        self.assertTrue(None != ret_diff.type__node[n_id])
+        self.assertTrue(None != ret_diff.type__node[n_0_id])
 
         # attr-set only
         attr_diff = Attr_Diff()
-        attr_diff.add_node_attr_write(n_id, 'attr_2', 0)
+        attr_diff.add_node_attr_write(n_0_id, 'attr_2', 0)
 
         op = DBO_diff_commit__attr(attr_diff)
         ret_diff = self.db_ctl.exec_op(op)
-        self.assertTrue(None != ret_diff.type__node[n_id]['__attr_write'].get('attr_2'))
+        self.assertTrue(None != ret_diff.type__node[n_0_id]['__attr_write'].get('attr_2'))
 
         # attr-remove only
         attr_diff = Attr_Diff()
-        attr_diff.add_node_attr_rm(n_id, 'attr_2')
+        attr_diff.add_node_attr_rm(n_0_id, 'attr_2')
 
         op = DBO_diff_commit__attr(attr_diff)
         ret_diff = self.db_ctl.exec_op(op)
-        self.assertTrue('attr_2' in ret_diff.type__node[n_id]['__attr_remove'])
+        self.assertTrue('attr_2' in ret_diff.type__node[n_0_id]['__attr_remove'])
 
     def test_match_node_set_by_type(self):
         op = DBO_match_node_id_set(filter_label='Person')
