@@ -686,14 +686,6 @@ function Graph(spec) {
 
         util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
 
-        // server returns a bare node, just the id, we fill it in from cached nodes
-        // we sent the server, and clean our cache.
-        // FIXME: should track cache
-        if (undefined !== server_pending_objects[n_spec.id]) {
-            $.extend(n_spec, server_pending_objects[n_spec.id]);
-            delete server_pending_objects[n_spec.idd];
-        }
-
         return n_spec;
     }
 
@@ -726,6 +718,13 @@ function Graph(spec) {
 
     function _add_node_set(node_specs) {
         node_specs.map(function (node_spec) {
+            // server returns a bare node, just the id, we fill it in from cached nodes
+            // we sent the server, and clean our cache.
+            // FIXME: should track cache
+            if (undefined !== server_pending_objects[node_spec.id]) {
+                $.extend(node_spec, server_pending_objects[node_spec.id]);
+                delete server_pending_objects[node_spec.idd];
+            }
             __addNode(node_spec);
         });
     }
