@@ -10,13 +10,13 @@ from db_op import DBO_block_chain__list
 from db_op import DBO_match_node_set_by_id_attribute
 from db_op import DBO_match_link_id_set
 from db_op import DBO_add_node_set
-from db_op import DBO_attr_diff_commit
+from db_op import DBO_diff_commit__attr
 from db_op import DBO_load_link_set
 from db_op import DBO_load_node_set_by_DB_id
 from db_op import DBO_match_node_id_set
 from db_op import DBO_rm_node_set
 from db_op import DBO_rz_clone
-from db_op import DBO_topo_diff_commit
+from db_op import DBO_diff_commit__topo
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
@@ -234,11 +234,11 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_id]))
         self.assertEqual(len(n_set), 0)
 
-    def test_topo_diff_commit(self):
+    def test_diff_commit__topo(self):
         n_0_id = rand_id()
         n_1_id = rand_id()
         n_2_id = rand_id()
-        n_T = 'T_test_topo_diff_commit'
+        n_T = 'T_test_diff_commit__topo'
 
         n_set = [{'__label_set': n_T, 'id': n_0_id },
                  {'__label_set': n_T, 'id': n_1_id },
@@ -249,7 +249,7 @@ class TestDBController(unittest.TestCase):
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
 
-        op = DBO_topo_diff_commit(topo_diff)
+        op = DBO_diff_commit__topo(topo_diff)
         op_ret = self.db_ctl.exec_op(op)
         self.assertEqual(len(op_ret), 2)  # to id-sets, nodes & links
         self.assertEqual(len(op_ret[0]), 3)  # expect id-set of length 3
@@ -268,18 +268,18 @@ class TestDBController(unittest.TestCase):
 
         id_set_rm = [n_2_id]
         topo_diff = Topo_Diff(node_set_rm=id_set_rm)
-        op = DBO_topo_diff_commit(topo_diff)
+        op = DBO_diff_commit__topo(topo_diff)
         self.db_ctl.exec_op(op)
         op = DBO_match_node_set_by_id_attribute(id_set_rm)
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
-    def test_attr_diff_commit(self):
+    def test_diff_commit__attr(self):
         # create test node
         n_id = rand_id()
-        topo_diff = Topo_Diff(node_set_add=[{'__label_set': ['T_test_attr_diff_commit'],
+        topo_diff = Topo_Diff(node_set_add=[{'__label_set': ['T_test_diff_commit__attr'],
                                              'id': n_id, 'attr_0': 0}])
-        op = DBO_topo_diff_commit(topo_diff)
+        op = DBO_diff_commit__topo(topo_diff)
         self.db_ctl.exec_op(op)
 
         # apply attr_diff
@@ -288,7 +288,7 @@ class TestDBController(unittest.TestCase):
         attr_diff.add_node_attr_write(n_id, 'attr_1', 'a')
         attr_diff.add_node_attr_rm(n_id, 'attr_2')
 
-        op = DBO_attr_diff_commit(attr_diff)
+        op = DBO_diff_commit__attr(attr_diff)
         ret_diff = self.db_ctl.exec_op(op)
 
         self.assertEqual(len(ret_diff.type__node), 1)
@@ -298,7 +298,7 @@ class TestDBController(unittest.TestCase):
         attr_diff = Attr_Diff()
         attr_diff.add_node_attr_write(n_id, 'attr_2', 0)
 
-        op = DBO_attr_diff_commit(attr_diff)
+        op = DBO_diff_commit__attr(attr_diff)
         ret_diff = self.db_ctl.exec_op(op)
         self.assertTrue(None != ret_diff.type__node[n_id]['__attr_write'].get('attr_2'))
 
@@ -306,7 +306,7 @@ class TestDBController(unittest.TestCase):
         attr_diff = Attr_Diff()
         attr_diff.add_node_attr_rm(n_id, 'attr_2')
 
-        op = DBO_attr_diff_commit(attr_diff)
+        op = DBO_diff_commit__attr(attr_diff)
         ret_diff = self.db_ctl.exec_op(op)
         self.assertTrue('attr_2' in ret_diff.type__node[n_id]['__attr_remove'])
 
@@ -327,7 +327,7 @@ class TestDBController(unittest.TestCase):
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
 
-        op = DBO_topo_diff_commit(topo_diff)
+        op = DBO_diff_commit__topo(topo_diff)
         self.db_ctl.exec_op(op)
 
         op = DBO_rm_node_set([n_0_id, n_1_id])

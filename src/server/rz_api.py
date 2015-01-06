@@ -33,7 +33,7 @@ from db_op import DBO_match_node_set_by_id_attribute
 from db_op import DBO_match_node_id_set
 from db_op import DBO_load_link_set
 from db_op import DBO_rz_clone
-from db_op import DBO_topo_diff_commit
+from db_op import DBO_diff_commit__topo
 from db_op import DBO_add_node_set
 
 
@@ -136,7 +136,7 @@ def diff_commit__set():
 
     topo_diff = sanitize_input(request)
 
-    op = DBO_topo_diff_commit(topo_diff)
+    op = DBO_diff_commit__topo(topo_diff)
     return __common_exec(op)
 
 def add_node_set():

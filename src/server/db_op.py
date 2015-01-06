@@ -232,14 +232,14 @@ class DBO_cypher_query(DB_op):
         super(DBO_cypher_query, self).__init__()
         self.add_statement(q, q_params)
 
-class DBO_topo_diff_commit(DB_composed_op):
+class DBO_diff_commit__topo(DB_composed_op):
     """
     commit a Topo_Diff
 
     @return: a Topo_Diff of the actual committed changes
     """
     def __init__(self, topo_diff):
-        super(DBO_topo_diff_commit, self).__init__()
+        super(DBO_diff_commit__topo, self).__init__()
 
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add)
@@ -322,7 +322,7 @@ class DBO_topo_diff_commit(DB_composed_op):
         return topo_diff
 
 
-class DBO_attr_diff_commit(DB_op):
+class DBO_diff_commit__attr(DB_op):
     """
     commit a Attr_Diff, return an Attr_Diff
 
@@ -331,7 +331,7 @@ class DBO_attr_diff_commit(DB_op):
              actually changed, only that it has been 'touched'
     """
     def __init__(self, attr_diff):
-        super(DBO_attr_diff_commit, self).__init__()
+        super(DBO_diff_commit__attr, self).__init__()
 
         self.op_return_value__attr_diff = attr_diff  # cache attr_diff as return value on success
 
