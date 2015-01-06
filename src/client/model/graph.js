@@ -76,6 +76,7 @@ function Graph(spec) {
      * first commit and then transmit.
      */
     var commit_and_tx_diff__topo = function (topo_diff) {
+        util.assert(temporary === false, "cannot be temporary");
         $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add
             .filter(function(n) {
@@ -728,7 +729,7 @@ function Graph(spec) {
             // FIXME: should track cache
             if (undefined !== server_pending_objects[node_spec.id]) {
                 $.extend(node_spec, server_pending_objects[node_spec.id]);
-                delete server_pending_objects[node_spec.idd];
+                delete server_pending_objects[node_spec.id];
             }
             __addNode(node_spec);
         });
