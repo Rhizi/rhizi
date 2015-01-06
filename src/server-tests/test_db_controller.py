@@ -150,13 +150,21 @@ class TestDBController(unittest.TestCase):
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
 
-        # test return set lengths
+        # commit diff
         op = DBO_diff_commit__topo(topo_diff)
         ret_topo_diff = self.db_ctl.exec_op(op)
-        self.assertEqual(len(ret_topo_diff.node_set_add), len(n_set))
-        self.assertEqual(len(ret_topo_diff.link_set_add), len(l_set))
-        self.assertEqual(len(ret_topo_diff.node_set_rm), 0)
-        self.assertEqual(len(ret_topo_diff.link_set_rm), 0)
+
+        # test return type
+        self.assertTrue(hasattr(ret_topo_diff, 'node_id_set_add'))
+        self.assertTrue(hasattr(ret_topo_diff, 'link_id_set_add'))
+        self.assertTrue(hasattr(ret_topo_diff, 'node_id_set_rm'))
+        self.assertTrue(hasattr(ret_topo_diff, 'link_id_set_rm'))
+
+        # test return set lengths
+        self.assertEqual(len(ret_topo_diff.node_id_set_add), len(n_set))
+        self.assertEqual(len(ret_topo_diff.link_id_set_add), len(l_set))
+        self.assertEqual(len(ret_topo_diff.node_id_set_rm), 0)
+        self.assertEqual(len(ret_topo_diff.link_id_set_rm), 0)
 
         # assert nodes persisted
         id_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
@@ -173,7 +181,7 @@ class TestDBController(unittest.TestCase):
         topo_diff = Topo_Diff(link_set_rm=[l_0_id, l_1_id])
         op = DBO_diff_commit__topo(topo_diff)
         ret_topo_diff = self.db_ctl.exec_op(op)
-        self.assertEqual(len(ret_topo_diff.link_set_rm), 2)
+        self.assertEqual(len(ret_topo_diff.link_id_set_rm), 2)
 
         # assert links removed
         op = DBO_load_link_set.init_from_link_ptr_set([l_ptr_0, l_ptr_1])
@@ -184,7 +192,7 @@ class TestDBController(unittest.TestCase):
         topo_diff = Topo_Diff(node_set_rm=[n_2_id])
         op = DBO_diff_commit__topo(topo_diff)
         ret_topo_diff = self.db_ctl.exec_op(op)
-        self.assertEqual(len(ret_topo_diff.node_set_rm), 1)
+        self.assertEqual(len(ret_topo_diff.node_id_set_rm), 1)
 
         # assert nodes removed
         op = DBO_match_node_set_by_id_attribute([n_2_id])
