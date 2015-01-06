@@ -77,15 +77,20 @@ function Graph(spec) {
      */
     var commit_and_tx_diff__topo = function (topo_diff) {
         $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
-        topo_diff.node_set_add = topo_diff.node_set_add.map(function(n) {
-            util.assert(undefined !== n.id, "undefined id in node in topo diff");
-            util.assert(undefined === server_pending_objects[n.id], "cache full at id");
-
-            server_pending_objects[n.id] = {
-                name: n.name,
-            }; // FIXME: url, startdate, etc - all properties. i.e. a Node to spec function
-            return model_util.adapt_format_write_node(n);
-        });
+        topo_diff.node_set_add = topo_diff.node_set_add
+            .filter(function(n) {
+                util.assert(undefined !== n.id, "undefined id in node in topo diff");
+                util.assert(undefined === server_pending_objects[n.id], "cache full at id");
+                return find_node__by_id(n.id) === undefined;
+            })
+            .map(function(n) {
+                // FIXME: url, startdate, etc - all properties.  i.e. a Node to
+                // spec function
+                server_pending_objects[n.id] = {
+                    name: n.name,
+                };
+                return model_util.adapt_format_write_node(n);
+            });
 
         topo_diff.link_set_add = topo_diff.link_set_add.map(function(l) {
             util.assert(l.id !== undefined, "undefined id in link in topo diff");
