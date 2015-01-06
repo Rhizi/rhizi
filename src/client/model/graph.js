@@ -716,8 +716,8 @@ function Graph(spec) {
 
     function __commit_diff_ajax__clone(clone) {
         var node_specs = clone.node_set_add.map(on_backend__node_add),
-            link_specs = clone.link_set_add.map(on_backend__link_add),
             nodes = _add_node_set(node_specs),
+            link_specs = clone.link_set_add.map(on_backend__link_add),
             links = _add_link_set(link_specs);
         diffBus.push({node_set_add: nodes, link_set_add: links});
     }
