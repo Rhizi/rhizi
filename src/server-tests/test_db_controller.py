@@ -100,21 +100,25 @@ class TestDBController(unittest.TestCase):
 
     def test_add_link_set(self):
         test_label = neo4j_test_util.rand_label()
-        n_0, n_0_id = test_util.generate_random_node_dict(test_label)
-        n_1, n_1_id = test_util.generate_random_node_dict(test_label)
-        n_2, n_2_id = test_util.generate_random_node_dict(test_label)
+        n_0, n_0_id = generate_random_node_dict(test_label)
+        n_1, n_1_id = generate_random_node_dict(test_label)
+        n_2, n_2_id = generate_random_node_dict(test_label)
+
+        l_0, l_0_id = generate_random_link_dict(test_label, n_0_id, n_1_id)
+        l_1, l_1_id = generate_random_link_dict(test_label, n_0_id, n_2_id)
 
         n_map = { test_label: [n_0, n_1, n_2] }
         op = DBO_add_node_set(n_map)
         self.db_ctl.exec_op(op)
 
-        l_map = { test_label : [Link.link_ptr(n_0_id, n_1_id),
-                                Link.link_ptr(n_0_id, n_2_id)]}
+        l_map = { test_label : [l_0, l_1]}
         op = DBO_add_link_set(l_map)
         self.assertEqual(len(op.statement_set), 2)  # no support yet for parameterized statements for link creation
 
-        l_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(l_set), 2)
+        ret_id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(ret_id_set), 2)
+        self.assertTrue(l_0_id in ret_id_set)
+        self.assertTrue(l_1_id in ret_id_set)
 
     def test_block_chain__commit_and_print(self):
         op_0 = DBO_block_chain__commit(blob_obj='blob 1')
