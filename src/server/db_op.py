@@ -247,11 +247,15 @@ class DBO_topo_diff_commit(DB_composed_op):
         if self.n_add_map:
             for _, _, row_set in it.next():
                 for row in row_set:
-                    n, n_lbl_set = row.items()  # see query return statement
+                    item = row.items()[0]
+                    assert len(row.items()) == 1
+                    n = {
+                        'id': item['id'],
+                        '__label_set': item['label_set'],
+                    }
 
                     assert None != n.get('id'), "db contains nodes with no id"
 
-                    n['__label_set'] = n_lbl_set
                     ret_n_set.append(n)
 
         if self.l_add_map:
