@@ -76,7 +76,7 @@ def diff_commit__topo():
 
     try:
         kernel = flask.current_app.kernel
-        topo_diff = kernel.diff_commit__topo(db_ctl, topo_diff)
+        topo_diff = kernel.diff_commit__topo(topo_diff)
         topo_diff_json = topo_diff.to_json_dict()
         return __common_resp_handle(data=topo_diff_json)
     except Exception as e:
@@ -107,7 +107,7 @@ def diff_commit__attr():
 
     try:
         kernel = flask.current_app.kernel
-        attr_diff = kernel.diff_commit__attr(db_ctl, attr_diff)
+        attr_diff = kernel.diff_commit__attr(attr_diff)
         return __common_resp_handle(data=attr_diff)
     except Exception as e:
         log.error(e.message)

@@ -240,6 +240,7 @@ def init_webapp(cfg, kernel, db_ctl=None):
         db_ctl = dbc.DB_Controller(cfg)
     rz_api.db_ctl = db_ctl
     rz_api_rest.db_ctl = db_ctl
+    kernel.db_ctl = db_ctl
 
     webapp.rz_config = cfg
     webapp.kernel = kernel
