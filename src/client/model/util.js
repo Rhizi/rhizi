@@ -63,13 +63,12 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
             // type:
             // - discard all but first label
             // - adjust to lowercase
-            '__type' : __sanitize_label__read(l_raw['__type'][0]),
+            '__type' : __sanitize_label__read(l_raw['__type']),
             'state' : 'perm',
         }, l_raw);
 
         ret['name'] = ret['__type'];
-
-        delete ret.__label_set;
+        delete ret.__type;
 
         return ret;
     }
@@ -83,7 +82,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
             '__dst_id' : l_raw.target.id,
         }, l_raw);
 
-        ret['__type'] = [__sanitize_label__write(l_raw.__type)];
+        ret['__type'] = __sanitize_label__write(l_raw.__type);
 
         delete ret.__dst;
         delete ret.__src;

@@ -584,9 +584,8 @@ class DBO_rz_clone(DB_op):
         """
         clone rhizi
 
-        @return: a dict: {'node_set': n_set,
-                          'link_set': l_set }
-                 where l_set is a list of (src.id, dst.id, link) tuples
+        @return: a Topo_Diff with the appropriate node_set_add, link_set_add
+        fields filled
         """
         super(DBO_rz_clone, self).__init__()
 
@@ -628,7 +627,7 @@ class DBO_rz_clone(DB_op):
                     l = l_tuple[1]
                     l['__src_id'] = n['id']
                     l['__dst_id'] = l_tuple[0]
-                    l['__label_set'] = [l_tuple[2]]  # box single value returned by type()
+                    l['__type'] = l_tuple[2]
 
                     ret_l_set.append(l)
 
