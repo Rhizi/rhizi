@@ -8,6 +8,7 @@ from neo4j_util import cfmt
 import neo4j_util as db_util
 from neo4j_util import DB_Query
 import hashlib
+from collections import namedtuple
 
 class DB_op(object):
     """
@@ -247,7 +248,6 @@ class DBO_diff_commit__topo(DB_composed_op):
     def __init__(self, topo_diff):
         super(DBO_diff_commit__topo, self).__init__()
 
-        self.topo_diff = topo_diff  # used to construct return value
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add, meta_attr='__type')
         l_rm_set = topo_diff.link_set_rm
@@ -282,53 +282,45 @@ class DBO_diff_commit__topo(DB_composed_op):
         self.add_sub_op(chain_commit_op)
 
     def process_result_set(self):
-        ret_n_set = []
-        ret_l_set = []
-        ret_n_rm = []
-        ret_l_rm = []
+        ret_nid_set_add = []
+        ret_lid_set_add = []
+        ret_nid_set_rm = []
+        ret_lid_set_rm = []
         it = iter(self)
 
         if self.n_add_map:
-            ret_id_set__n = []
             for _, _, r_set in it.next():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
                         n_id = ret_dict['id']  # see query return statement
-                        ret_id_set__n.append(n_id)
-
-            # fetch nodes from original topo_diff
-            for n in self.topo_diff.node_set_add:
-                if n_id in ret_id_set__n:
-                    ret_n_set.append(n)
+                        ret_nid_set_add.append(n_id)
 
         if self.l_add_map:
-            ret_id_set__l = []
             for _, _, r_set in it.next():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
                         l_id = ret_dict['id']  # see query return statement
-                        ret_id_set__l.append(l_id)
-
-            # fetch links from original topo_diff
-            for l in self.topo_diff.link_set_add:
-                if l_id in ret_id_set__l:
-                    ret_l_set.append(l)
+                        ret_lid_set_add.append(l_id)
 
         if self.l_rm_set:
             for _, _, row_set in it.next():
                 for l_id in row_set:
-                    ret_l_rm.extend(l_id)
+                    ret_lid_set_rm.extend(l_id)
 
         if self.n_rm_set:
             for _, _, row_set in it.next():
                 for n_id in row_set:
-                    ret_n_rm.extend(n_id)
+                    ret_nid_set_rm.extend(n_id)
 
-        topo_diff = Topo_Diff(node_set_add=ret_n_set,
-                              link_set_add=ret_l_set,
-                              node_set_rm=ret_n_rm,
-                              link_set_rm=ret_l_rm)
-        return topo_diff
+        ret = namedtuple('Topo_Diff_Result', ['node_id_set_add',
+                                              'link_id_set_add',
+                                              'node_id_set_rm',
+                                              'link_id_set_rm'])
+        ret.node_id_set_add = ret_nid_set_add
+        ret.link_id_set_add = ret_lid_set_add
+        ret.node_id_set_rm = ret_nid_set_rm
+        ret.link_id_set_rm = ret_lid_set_rm
+        return ret
 
 
 class DBO_diff_commit__attr(DB_op):
