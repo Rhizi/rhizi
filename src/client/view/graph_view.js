@@ -151,7 +151,7 @@ function GraphView(spec) {
 
         view.node_info.on_delete(function() {
             var topo_diff = model_diff.new_topo_diff({
-                    node_set_rm: [node.id]
+                    node_id_set_rm: [node.id]
                 });
             console.log("closing node info");
             closed = true;

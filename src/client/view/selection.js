@@ -18,13 +18,13 @@ var selected_nodes = [],
 function listen_on_diff_bus(diffBus)
 {
     diffBus
-        .filter(".node_set_rm")
+        .filter(".node_id_set_rm")
         .onValue(function (diff) {
             var node_node_cmp = (function (a, b) { return a.id > b.id; }),
                 node_id_cmp = (function (a, b) { return a.id === b ? 0 : (a.id > b ? 1 : -1); });
 
             updateSelectedNodesBus(sortedArrayDiff(selected_nodes.sort(node_node_cmp),
-                                             diff.node_set_rm.sort(), node_id_cmp));
+                                             diff.node_id_set_rm.sort(), node_id_cmp));
         });
 }
 

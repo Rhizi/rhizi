@@ -77,37 +77,35 @@ function Graph(spec) {
      */
     var commit_and_tx_diff__topo = function (topo_diff) {
         util.assert(temporary === false, "cannot be temporary");
-        $.merge(topo_diff.link_set_rm, nodes_to_touched_links(topo_diff.node_set_rm));
+        $.merge(topo_diff.link_id_set_rm, nodes_to_touched_links(topo_diff.node_id_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add
             .filter(function(n) {
                 util.assert(undefined !== n.id, "undefined id in node in topo diff");
                 util.assert(undefined === server_pending_objects[n.id], "cache full at id");
                 return find_node__by_id(n.id) === undefined;
             })
-            .map(function(n) {
-                // FIXME: url, startdate, etc - all properties.  i.e. a Node to
-                // spec function
-                server_pending_objects[n.id] = {
-                    name: n.name,
-                };
-                return model_util.adapt_format_write_node(n);
+            .map(function(n_spec) {
+                server_pending_objects[n_spec.id] = n_spec;
+                return model_util.adapt_format_write_node(n_spec);
             });
 
-        topo_diff.link_set_add = topo_diff.link_set_add.map(function(l) {
-            util.assert(l.id !== undefined, "undefined id in link in topo diff");
-            if (l.source === undefined) {
-                l.source = l.__src;
+        topo_diff.link_set_add = topo_diff.link_set_add.map(function(l_spec) {
+            util.assert(l_spec.id !== undefined, "undefined id in link in topo diff");
+            if (l_spec.source === undefined) {
+                l_spec.source = l_spec.__src;
             }
-            if (l.target === undefined) {
-                l.target = l.__dst;
+            if (l_spec.target === undefined) {
+                l_spec.target = l_spec.__dst;
             }
-            if (l.name == undefined) {
-                l.name = 'is'; // cannot have a zero length name, using name as label in neo4j
+            if (l_spec.name == undefined) {
+                // cannot have a zero length name, using name as label in neo4j
+                l_spec.name = 'is';
             }
-            if (l.__type === undefined) {
-                l.__type = l.name;
+            if (l_spec.__type === undefined) {
+                l_spec.__type = l_spec.name;
             }
-            return model_util.adapt_format_write_link(l);
+            server_pending_objects[l_spec.id] = l_spec;
+            return model_util.adapt_format_write_link(l_spec);
         });
         // filter already existing nodes now, after we conveniently used them
         // for name_to_node map
@@ -551,7 +549,7 @@ function Graph(spec) {
             return link.id;
         });
 
-        var topo_diff = model_diff.new_topo_diff({link_set_rm: ids});
+        var topo_diff = model_diff.new_topo_diff({link_id_set_rm: ids});
         this.commit_and_tx_diff__topo(topo_diff);
     }
 
@@ -572,7 +570,7 @@ function Graph(spec) {
         var node_ids = get_nodes().filter(function (n) { return n.state == state; })
                                  .map(function (n) { return n.id; }),
             topo_diff = model_diff.new_topo_diff({
-                node_set_rm : node_ids,
+                node_id_set_rm : node_ids,
             });
 
         this.commit_and_tx_diff__topo(topo_diff);
@@ -714,29 +712,39 @@ function Graph(spec) {
         return link_spec;
     }
 
+    function __commit_diff_ajax__clone(clone) {
+        var node_specs = clone.node_set_add.map(on_backend__node_add),
+            link_specs = clone.link_set_add.map(on_backend__link_add),
+            nodes = _add_node_set(node_specs),
+            links = _add_link_set(link_specs);
+        diffBus.push({node_set_add: nodes, link_set_add: links});
+    }
+
     function __commit_diff_ajax__topo(diff) {
-        // must add nodes first because links may point to them
-        _add_node_set(diff.node_set_add.map(on_backend__node_add));
-        diff.node_set_add = [];
-        diff.link_set_add = diff.link_set_add.map(on_backend__link_add);
+        diff.node_set_add = diff.node_id_set_add.map(_get_server_pending);
+        diff.link_set_add = diff.link_id_set_add.map(_get_server_pending);
         commit_diff__topo(diff);
     }
 
+    function _get_server_pending(id) {
+        // FIXME: should track cache
+        var spec;
+
+        util.assert(undefined !== server_pending_objects[id]);
+
+        spec = server_pending_objects[id];
+        delete server_pending_objects[id];
+        return spec;
+    }
+
     function _add_node_set(node_specs) {
-        node_specs.map(function (node_spec) {
-            // server returns a bare node, just the id, we fill it in from cached nodes
-            // we sent the server, and clean our cache.
-            // FIXME: should track cache
-            if (undefined !== server_pending_objects[node_spec.id]) {
-                $.extend(node_spec, server_pending_objects[node_spec.id]);
-                delete server_pending_objects[node_spec.id];
-            }
+        return node_specs.map(function (node_spec) {
             __addNode(node_spec);
         });
     }
 
     function _add_link_set(link_specs) {
-        link_specs.map(function (link_spec) {
+        return link_specs.map(function (link_spec) {
             // resolve link ptr
             var src = (link_spec.__src && (find_node__by_id(link_spec.__src.id) || link_spec.__src))
                         || find_node__by_id(link_spec.__src_id),
@@ -757,8 +765,8 @@ function Graph(spec) {
         _add_node_set(diff.node_set_add);
         _add_link_set(diff.link_set_add);
         // done under protest
-        _remove_link_set(diff.link_set_rm);
-        _remove_node_set(diff.node_set_rm);
+        _remove_link_set(diff.link_id_set_rm);
+        _remove_node_set(diff.node_id_set_rm);
         diffBus.push(diff);
     }
     this.commit_diff__topo = commit_diff__topo;
@@ -771,8 +779,8 @@ function Graph(spec) {
     // @ajax-trans
     function load_from_backend(on_success) {
 
-        function on_success__ajax(diff) {
-            __commit_diff_ajax__topo(diff);
+        function on_success__ajax(clone) {
+            __commit_diff_ajax__clone(clone);
             undefined != on_success && on_success();
         }
 

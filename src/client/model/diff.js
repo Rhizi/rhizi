@@ -31,8 +31,8 @@ define([],
              */
             function Topo_Diff(obj_spec) {
 
-                this.link_set_rm = obj_spec.link_set_rm;
-                this.node_set_rm = obj_spec.node_set_rm;
+                this.link_id_set_rm = obj_spec.link_id_set_rm;
+                this.node_id_set_rm = obj_spec.node_id_set_rm;
                 this.node_set_add = obj_spec.node_set_add;
                 this.link_set_add = obj_spec.link_set_add;
 
@@ -42,7 +42,7 @@ define([],
             }
 
             Topo_Diff.prototype.for_each_node_rm = function(callback, this_arg) {
-                this.node_set_rm.forEach(callback, this_arg);
+                this.node_id_set_rm.forEach(callback, this_arg);
             }
 
             Topo_Diff.prototype.for_each_link_add = function(callback, this_arg) {
@@ -50,7 +50,7 @@ define([],
             }
 
             Topo_Diff.prototype.for_each_link_rm = function(callback, this_arg) {
-                this.link_set_rm.forEach(callback, this_arg);
+                this.link_id_set_rm.forEach(callback, this_arg);
             }
 
             /**
@@ -140,8 +140,8 @@ define([],
                 undefined == obj_spec && (obj_spec = {});
                 undefined == obj_spec.node_set_add && (obj_spec.node_set_add = []);
                 undefined == obj_spec.link_set_add && (obj_spec.link_set_add = []);
-                undefined == obj_spec.node_set_rm && (obj_spec.node_set_rm = []);
-                undefined == obj_spec.link_set_rm && (obj_spec.link_set_rm = []);
+                undefined == obj_spec.node_id_set_rm && (obj_spec.node_id_set_rm = []);
+                undefined == obj_spec.link_id_set_rm && (obj_spec.link_id_set_rm = []);
                 ret = new Topo_Diff(obj_spec);
                 return ret;
             }

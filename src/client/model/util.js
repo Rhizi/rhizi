@@ -90,7 +90,6 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         delete ret.state;
         delete ret.status;
         delete ret.target;
-        delete ret.__type;
         delete ret.name;
 
         return ret;
