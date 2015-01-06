@@ -111,6 +111,16 @@ function auto_suggest_remove_name(name, id)
     suggestions_bus.push(sugg_name);
 }
 
+function auto_suggest__update_from_graph()
+{
+    sugg_name = {};
+    id_to_name_map = {};
+    rz_core.main_graph.nodes().forEach(function (node) {
+        auto_suggest__update_name(node.name.toLowerCase(), node.id);
+    });
+    suggestions_bus.push(sugg_name);
+}
+
 // TODO: add escape char, i.e. r"bla\"bla" -> ['bla"bla']
 function tokenize(text, node_token, quote)
 {
@@ -313,13 +323,6 @@ var textAnalyser = function (newtext, finalize) {
     linkindex = 0;
     nodeindex = 0;
 
-    //CHANGE TO PERMANENT STATE AND UPDATE SUGGESTIONLIST
-    if (finalize === true) {
-        for (n = 0; n < token_set_new_node_names.length; n++) {
-            auto_suggest__update_name(token_set_new_node_names[n]);
-        }
-    }
-
     //0-N ORDER STACK
     for (m = 0; m < orderStack.length - 1; m++) {
         switch (orderStack[m]) {
@@ -471,34 +474,8 @@ var textAnalyser = function (newtext, finalize) {
 
 function init(main_graph)
 {
-    // deal with new nodes
     main_graph.diffBus
-        .filter(function (diff) {
-            return diff.node_set_add && diff.node_set_add.length > 0;
-        })
-        .map(".node_set_rm")
-        .flatMap(Bacon.fromArray)
-        .map(".name")
-        .map(function (name) { return name.toLowerCase(); })
-        // FIXME - should be removal of existing name via id, we know the id too.
-        .onValue(auto_suggest__update_name);
-
-    // deal with renamed links
-    /*
-    // TODO renamed links - broken in server, DBO_attr_diff_commit doesn't return an Attr_Diff
-    main_graph.diffBus
-        .filter(function (diff) {
-            return diff && diff.link_set_rm && diff.link_set_rm.length > 0;
-        })
-        .map(".link_set_rm")
-        .flatMap(Bacon.fromArray)
-        .onValue(function (name) {
-            var name = TODO,
-                id = TODO;
-            auto_suggest__update_name(name, id);
-        });
-    */
-    // TODO renamed nodes, plus reuse part of the pipeline.
+        .onValue(auto_suggest__update_from_graph);
 }
 
 return {
