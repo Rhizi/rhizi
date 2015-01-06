@@ -136,42 +136,57 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(hash_list.pop(), hash_ret2)
 
     def test_diff_commit__topo(self):
-        n_0_id = rand_id()
-        n_1_id = rand_id()
-        n_2_id = rand_id()
-        n_T = 'T_test_diff_commit__topo'
+        test_label = neo4j_test_util.rand_label()
+        n_0, n_0_id = generate_random_node_dict(test_label)
+        n_1, n_1_id = generate_random_node_dict(test_label)
+        n_2, n_2_id = generate_random_node_dict(test_label)
 
-        n_set = [{'__label_set': n_T, 'id': n_0_id },
-                 {'__label_set': n_T, 'id': n_1_id },
-                 {'__label_set': n_T, 'id': n_2_id }]
-        l_set = [{'__label_set': n_T, '__src_id': n_0_id, '__dst_id': n_1_id},
-                 {'__label_set': n_T, '__src_id': n_1_id, '__dst_id': n_0_id}]
+        l_0, l_0_id = generate_random_link_dict(test_label, n_0_id, n_1_id)
+        l_1, l_1_id = generate_random_link_dict(test_label, n_0_id, n_2_id)
 
+        n_set = [n_0, n_1, n_2]
+        l_set = [l_0, l_1]
         topo_diff = Topo_Diff(node_set_add=n_set,
                               link_set_add=l_set)
 
+        # test return set lengths
         op = DBO_diff_commit__topo(topo_diff)
-        op_ret = self.db_ctl.exec_op(op)
-        self.assertEqual(len(op_ret), 2)  # to id-sets, nodes & links
-        self.assertEqual(len(op_ret[0]), 3)  # expect id-set of length 3
-        self.assertEqual(len(op_ret[1]), 2)  # expect id-set of length 2
+        ret_topo_diff = self.db_ctl.exec_op(op)
+        self.assertEqual(len(ret_topo_diff.node_set_add), len(n_set))
+        self.assertEqual(len(ret_topo_diff.link_set_add), len(l_set))
+        self.assertEqual(len(ret_topo_diff.node_set_rm), 0)
+        self.assertEqual(len(ret_topo_diff.link_set_rm), 0)
 
+        # assert nodes persisted
         id_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_0_id, n_1_id]))
         self.assertEqual(len(id_set), 2)
 
-        l_ptr = Link.link_ptr(src_id=n_0_id, dst_id=n_1_id)
-        id_set = self.db_ctl.exec_op(DBO_load_link_set.init_from_link_ptr(l_ptr))
-        self.assertEqual(len(id_set), 1)
+        # assert links persisted
+        l_ptr_0 = Link.link_ptr(src_id=n_0_id, dst_id=n_1_id)
+        l_ptr_1 = Link.link_ptr(src_id=n_0_id, dst_id=n_2_id)
+        op = DBO_load_link_set.init_from_link_ptr_set([l_ptr_0, l_ptr_1])
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 2)
 
-        l_ptr = Link.link_ptr(src_id=n_1_id, dst_id=n_0_id)
-        id_set = self.db_ctl.exec_op(DBO_load_link_set.init_from_link_ptr(l_ptr))
-        self.assertEqual(len(id_set), 1)
-
-        id_set_rm = [n_2_id]
-        topo_diff = Topo_Diff(node_set_rm=id_set_rm)
+        # remova links
+        topo_diff = Topo_Diff(link_set_rm=[l_0_id, l_1_id])
         op = DBO_diff_commit__topo(topo_diff)
-        self.db_ctl.exec_op(op)
-        op = DBO_match_node_set_by_id_attribute(id_set_rm)
+        ret_topo_diff = self.db_ctl.exec_op(op)
+        self.assertEqual(len(ret_topo_diff.link_set_rm), 2)
+
+        # assert links removed
+        op = DBO_load_link_set.init_from_link_ptr_set([l_ptr_0, l_ptr_1])
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
+
+        # removal nodes
+        topo_diff = Topo_Diff(node_set_rm=[n_2_id])
+        op = DBO_diff_commit__topo(topo_diff)
+        ret_topo_diff = self.db_ctl.exec_op(op)
+        self.assertEqual(len(ret_topo_diff.node_set_rm), 1)
+
+        # assert nodes removed
+        op = DBO_match_node_set_by_id_attribute([n_2_id])
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
