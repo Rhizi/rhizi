@@ -25,15 +25,21 @@ class DB_op(object):
         id_str = m.group('id')
         self.tx_id = int(id_str)
 
+    def add_db_query(self, db_q):
+
+        assert type(db_q) == DB_Query
+
+        self.statement_set.append(db_q)
+        return len(self.statement_set)
+
     def add_statement(self, q_str_or_array, query_params={}):
         """
         add a DB query language statement
         
         @return: statement index (zero based)
         """
-        s = DB_Query(q_str_or_array, query_params)
-        self.statement_set.append(s)
-        return len(self.statement_set)
+        db_q = DB_Query(q_str_or_array, query_params)
+        return self.add_db_query(db_q)
 
     def __iter__(self):
         """
