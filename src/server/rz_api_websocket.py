@@ -35,8 +35,22 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
 
     def on_diff_commit__topo(self, topo_diff):
         log.info('ws: rx: topo diff: ' + str(topo_diff))
-        self.multicast_msg('diff_commit__topo', topo_diff)
+
+        kernel = self.request.kernel
+        try:
+            topo_diff_ret = kernel.diff_commit__topo(topo_diff)
+            self.multicast_msg('diff_commit__topo', topo_diff_ret)
+        except Exception as e:
+            # TODO handle exception
+            pass
 
     def on_diff_commit__attr(self, attr_diff):
         log.info('ws: rx: attr diff: ' + str(attr_diff))
-        self.multicast_msg('diff_commit__attr', attr_diff)
+
+        kernel = self.request.kernel
+        try:
+            attr_diff_ret = kernel.diff_commit__attr(attr_diff)
+            self.multicast_msg('diff_commit__attr', attr_diff_ret)
+        except Exception as e:
+            # TODO handle exception
+            pass
