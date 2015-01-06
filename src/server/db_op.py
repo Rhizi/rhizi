@@ -92,8 +92,8 @@ class DBO_add_node_set(DB_op):
         n_id_set = []
         for _, _, row_set in self:
             for row in row_set:
-                for clo in row:
-                    n_id_set.append(clo['id'])
+                for ret_dict in row:
+                    n_id_set.append(ret_dict['id'])
 
         return n_id_set
 
