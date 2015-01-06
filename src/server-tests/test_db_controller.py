@@ -28,6 +28,7 @@ from rz_server import Config
 import neo4j_test_util
 from test_util import generate_random_link_dict
 from test_util import generate_random_node_dict
+from neo4j_util import meta_attr_list_to_meta_attr_map
 
 class TestDBController(unittest.TestCase):
 
@@ -88,7 +89,7 @@ class TestDBController(unittest.TestCase):
         test_label = neo4j_test_util.rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
         n_1, n_1_id = generate_random_node_dict(test_label)
-        n_map = { test_label: [n_0, n_1] }
+        n_map = meta_attr_list_to_meta_attr_map([n_0, n_1])
         op = DBO_add_node_set(n_map)
 
         self.assertEqual(len(op.statement_set), 1)  # assert a single statement is issued
@@ -107,7 +108,7 @@ class TestDBController(unittest.TestCase):
         l_0, l_0_id = generate_random_link_dict(test_label, n_0_id, n_1_id)
         l_1, l_1_id = generate_random_link_dict(test_label, n_0_id, n_2_id)
 
-        n_map = { test_label: [n_0, n_1, n_2] }
+        n_map = meta_attr_list_to_meta_attr_map([n_0, n_1, n_2])
         op = DBO_add_node_set(n_map)
         self.db_ctl.exec_op(op)
 
