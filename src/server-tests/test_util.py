@@ -7,6 +7,7 @@ import db_controller as dbc
 
 from neo4j_test_util import rand_id
 from rz_kernel import RZ_Kernel
+from model.model import Link
 
 def init_test_db_controller(cfg):
     ret = dbc.DB_Controller(cfg)
@@ -32,4 +33,18 @@ def generate_random_node_dict(n_type, nid=None):
     if None == nid:
         nid = rand_id()
 
-    return {'__label_set': ['T_' + n_type], 'id': nid }, nid
+    return {'__label_set': [n_type], 'id': nid }, nid
+
+def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
+    """
+    @param l_type: is converted to a single item type array
+    
+    @return: a dict based node object representation and the generated node id
+    """
+    if None == lid:
+        lid = rand_id()
+
+    ret_dict = Link.link_ptr(src_id, dst_id)
+    ret_dict['__type'] = [l_type]
+    ret_dict['id'] = lid
+    return ret_dict, lid
