@@ -215,12 +215,14 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
         q_params_set = []
         for n_prop_set in n_set:
 
-            assert None != n_prop_set['id'], 'node create query: node id attribute not set'
+            assert n_prop_set.has_key('id'), 'node create query: node id attribute not set'
+            assert not n_prop_set.has_key('__label_set'), 'node create query: out-of-place \'__label_set\' attribute in attribute set'
 
             q_params = input_to_DB_property_map(n_prop_set)
             q_params_set.append(q_params)
 
-        ret.append((q_arr, {'node_attr': q_params_set}))
+        q_tuple = (q_arr, {'node_attr': q_params_set})
+        ret.append(q_tuple)
 
     return ret
 
@@ -228,7 +230,7 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     """
     generate a set of link create queries
 
-    @param link_map: is a link-type to link map - see model.link
+    @param link_map: is a link-type to link-pointer map - see model.link
     """
     __type_check_link_or_node_map(link_map)
 
@@ -250,14 +252,19 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
             assert link.has_key('id'), 'link create query: link id attribute not set'
 
             # TODO: use object based link representation
-            prop_dict = link.copy()
-            del prop_dict['__dst_id']
-            del prop_dict['__src_id']
+            l_prop_set = link.copy()
 
+            del l_prop_set['__dst_id']
+            del l_prop_set['__src_id']
+
+            src_id = link['__src_id']
+            dst_id = link['__dst_id']
             q_params = {'src': { 'id': src_id} ,
                         'dst': { 'id': dst_id} ,
-                        'link_attr' : input_to_DB_property_map(prop_dict)}
-            ret.append((q_arr, q_params))
+                        'link_attr' : input_to_DB_property_map(l_prop_set)}
+
+            q_tuple = (q_arr, q_params)
+            ret.append(q_tuple)
 
     return ret
 
