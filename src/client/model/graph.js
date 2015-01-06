@@ -152,7 +152,9 @@ function Graph(spec) {
 
         util.assert(undefined != node.id, '__addNode: node id missing');
         _node_add_helper(node);
-        console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state);
+        if (debug) {
+            console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state);
+        }
 
         return node;
     }
