@@ -275,11 +275,18 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
 
         in: [{'id':0, '__type': 'T'}, {'id':1, '__type': 'T'}]
         out: { 'T': [{'id':0}, {'id':1}] }
+        
+    [!] as of 2015-01 multiple labels for relations are not supported,
+        which is why meta_attr='__type' should be used when calling this
+        function to map links
     """
     ret = {}
     for v in e_set:
-        assert None != v[meta_attr], 'missing type meta-attribute'
-        assert 1 == len(v[meta_attr]), 'only single-type mapping currently suppoerted'
+        meta_attr_list = v.get(meta_attr)
+        assert None != meta_attr_list, 'missing type meta-attribute'
+        assert list == type(meta_attr_list), 'type meta-attribute not in list form'
+        assert len(meta_attr_list) < 2, 'only single-type mapping currently suppoerted'
+        assert 1 == len(meta_attr_list), 'missing meta attribute __label_set or __type'
 
         v_type = v[meta_attr][0]
         if None == ret.get(v_type):  # init type list if necessary
