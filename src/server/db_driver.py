@@ -45,7 +45,7 @@ class DB_Driver_REST(DB_Driver_Base):
             #
             # [!] neo4j seems picky about receiving an additional empty statement list
             #
-            data = db_util.statement_set_to_REST_form(op.statement_set)
+            data = db_util.statement_set_to_REST_form([])  # open TX with empty statement_set
             ret = db_util.post_neo4j(tx_open_url, data)
             tx_commit_url = ret['commit']
             op.parse_tx_id(tx_commit_url)
@@ -79,7 +79,7 @@ class DB_Driver_REST(DB_Driver_Base):
             #
             # [!] neo4j seems picky about receiving an additional empty statement list
             #
-            data = db_util.statement_set_to_REST_form([])
+            data = db_util.statement_set_to_REST_form([])  # close TX with empty statement_set
             ret = db_util.post(tx_commit_url, data)
 
             log.debug('tx-commit: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))
