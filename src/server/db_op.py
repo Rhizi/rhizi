@@ -388,8 +388,8 @@ class DBO_attr_diff_commit(DB_op):
 
         blob = json.dumps(attr_diff)
         chain_commit_op = DBO_block_chain__commit(blob)
-
-        self.add_sub_op(chain_commit_op)
+        for db_q in chain_commit_op.statement_set:
+            self.add_statement(db_q)
 
     def add_link_rename_statements(self, id_attr, new_label):
         # TODO - where do we sanitize the label name? any better way of doing this?
