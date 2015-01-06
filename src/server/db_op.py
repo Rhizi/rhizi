@@ -239,6 +239,11 @@ class DBO_cypher_query(DB_op):
         super(DBO_cypher_query, self).__init__()
         self.add_statement(q, q_params)
 
+Topo_Diff_Result = namedtuple('Topo_Diff_Result', ['node_id_set_add',
+                                                   'link_id_set_add',
+                                                   'node_id_set_rm',
+                                                   'link_id_set_rm'])
+
 class DBO_diff_commit__topo(DB_composed_op):
     """
     commit a Topo_Diff
@@ -312,14 +317,11 @@ class DBO_diff_commit__topo(DB_composed_op):
                 for n_id in row_set:
                     ret_nid_set_rm.extend(n_id)
 
-        ret = namedtuple('Topo_Diff_Result', ['node_id_set_add',
-                                              'link_id_set_add',
-                                              'node_id_set_rm',
-                                              'link_id_set_rm'])
-        ret.node_id_set_add = ret_nid_set_add
-        ret.link_id_set_add = ret_lid_set_add
-        ret.node_id_set_rm = ret_nid_set_rm
-        ret.link_id_set_rm = ret_lid_set_rm
+        ret = Topo_Diff_Result(
+                node_id_set_add=ret_nid_set_add,
+                link_id_set_add=ret_lid_set_add,
+                node_id_set_rm=ret_nid_set_rm,
+                link_id_set_rm=ret_lid_set_rm)
         return ret
 
 
