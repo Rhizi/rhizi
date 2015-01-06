@@ -26,7 +26,8 @@ from neo4j_test_util import rand_id
 from neo4j_util import Neo4JException
 from rz_server import Config
 import neo4j_test_util
-
+from test_util import generate_random_link_dict
+from test_util import generate_random_node_dict
 
 class TestDBController(unittest.TestCase):
 
