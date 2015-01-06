@@ -247,6 +247,7 @@ class DBO_diff_commit__topo(DB_composed_op):
     def __init__(self, topo_diff):
         super(DBO_diff_commit__topo, self).__init__()
 
+        self.topo_diff = topo_diff  # used to construct return value
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add, meta_attr='__type')
         l_rm_set = topo_diff.link_set_rm
@@ -256,6 +257,7 @@ class DBO_diff_commit__topo(DB_composed_op):
         self.l_add_map = len(l_add_map) > 0
         self.l_rm_set = len(l_rm_set) > 0
         self.n_rm_set = len(n_rm_set) > 0
+
         #
         # [!] order critical
         #
@@ -287,38 +289,39 @@ class DBO_diff_commit__topo(DB_composed_op):
         it = iter(self)
 
         if self.n_add_map:
-            for _, _, row_set in it.next():
-                for row in row_set:
-                    item = row.items()[0]
-                    assert len(row.items()) == 1
-                    n = {
-                        'id': item['id'],
-                        '__label_set': item['label_set'],
-                    }
+            ret_id_set__n = []
+            for _, _, r_set in it.next():  # iterate over result sets
+                for row in r_set:
+                    for ret_dict in row:
+                        n_id = ret_dict['id']  # see query return statement
+                        ret_id_set__n.append(n_id)
 
-                    assert None != n.get('id'), "db contains nodes with no id"
-
+            # fetch nodes from original topo_diff
+            for n in self.topo_diff.node_set_add:
+                if n_id in ret_id_set__n:
                     ret_n_set.append(n)
 
         if self.l_add_map:
-            for _, _, l_set in it.next():
-                for l, l_src, l_dst, l_type in l_set:
-                    l['__src_id'] = l_src
-                    l['__dst_id'] = l_dst
-                    l['__label_set'] = [l_type]  # box single value returned by type()
+            ret_id_set__l = []
+            for _, _, r_set in it.next():  # iterate over result sets
+                for row in r_set:
+                    for ret_dict in row:
+                        l_id = ret_dict['id']  # see query return statement
+                        ret_id_set__l.append(l_id)
 
+            # fetch links from original topo_diff
+            for l in self.topo_diff.link_set_add:
+                if l_id in ret_id_set__l:
                     ret_l_set.append(l)
 
         if self.l_rm_set:
             for _, _, row_set in it.next():
                 for l_id in row_set:
-                    print("l_id: %r" % l_id)
                     ret_l_rm.extend(l_id)
 
         if self.n_rm_set:
             for _, _, row_set in it.next():
                 for n_id in row_set:
-                    print("n_id: %r" % n_id)
                     ret_n_rm.extend(n_id)
 
         topo_diff = Topo_Diff(node_set_add=ret_n_set,
