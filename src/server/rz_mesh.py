@@ -11,6 +11,7 @@ from functools import wraps
 from rz_kernel import RZ_Kernel
 from model.graph import Attr_Diff, Topo_Diff
 from rz_api_websocket import WebSocket_Graph_NS
+from collections import namedtuple
 
 log = logging.getLogger('rhizi')
 
@@ -52,10 +53,13 @@ def init_ws_interface(cfg, kernel, flask_webapp):
     @return: an initialized RZ_WebSocket_Server object
     """
 
-    rz_request_env = {}  # available in namespace functions via 'self.request' - see socketio_manage
+    # init websocket-env
+    ws_env = namedtuple('RZ_websocket_env', ['kernel'])
+    ws_env.kernel = kernel
+
     def socketio_route_handler(url_path):
         try:
-            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, rz_request_env)
+            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_env)
         except:
             flask_webapp.logger.error("Exception while handling socketio connection",
                              exc_info=True)
