@@ -250,10 +250,6 @@ var textAnalyser = function (spec) {
         links.push(link);
     }
 
-    if (newtext.indexOf('#') == -1 || finalize) {
-        lastnode = null;
-    }
-
     //Sentence Sequencing
     //Build the words and cuts the main elements
     sentence = tokenize(newtext, '#', '"');
@@ -475,9 +471,15 @@ var textAnalyser = function (spec) {
         }
     };
 
+    function lookup_node_in_bounds(cursor) {
+        // TODO
+        return null;
+    }
+
     if (finalize) {
         typeStack = [];
     }
+    lastnode = finalize ? null : lookup_node_in_bounds(cursor);
 
     return ret;
 };
