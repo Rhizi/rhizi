@@ -86,15 +86,17 @@ class TestDBController(unittest.TestCase):
 
     def test_add_node_set(self):
         test_label = neo4j_test_util.rand_label()
-        n_0 = test_util.generate_random_node_dict(test_label)
-        n_1 = test_util.generate_random_node_dict(test_label)
+        n_0, n_0_id = generate_random_node_dict(test_label)
+        n_1, n_1_id = generate_random_node_dict(test_label)
         n_map = { test_label: [n_0, n_1] }
         op = DBO_add_node_set(n_map)
 
         self.assertEqual(len(op.statement_set), 1)  # assert a single statement is issued
 
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 2)
+        ret_id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(ret_id_set), 2)
+        self.assertTrue(n_0_id in ret_id_set)
+        self.assertTrue(n_1_id in ret_id_set)
 
     def test_add_link_set(self):
         test_label = neo4j_test_util.rand_label()
