@@ -245,10 +245,9 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
                  ]
 
         for link in l_set:
-            __type_check_link(link)
-
-            src_id = link['__src_id']
-            dst_id = link['__dst_id']
+            assert link.has_key('__src_id')
+            assert link.has_key('__dst_id')
+            assert link.has_key('id'), 'link create query: link id attribute not set'
 
             # TODO: use object based link representation
             prop_dict = link.copy()
@@ -285,10 +284,6 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
         ret[v_type].append(v_no_meta)
 
     return ret
-
-def __type_check_link(link):
-    assert link.has_key('__src_id')
-    assert link.has_key('__dst_id')
 
 def __type_check_link_or_node_map(x_map):
     for k, v in x_map.iteritems():  # do some type sanity checking
