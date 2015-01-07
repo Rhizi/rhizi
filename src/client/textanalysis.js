@@ -82,11 +82,10 @@ function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 
 var typeindex = 0,
     nodetypes = consts.nodetypes,
-    typeStack = [];
+    node_name_to_type = {};
 
 var _get_lastnode,
-    get_lastnode = function (editgraph) { return _get_lastnode(editgraph); },
-    node_name_to_type = {};
+    get_lastnode = function (editgraph) { return _get_lastnode(editgraph); };
 
 var sugg_name = {},
     id_to_name_map = {},
@@ -195,13 +194,10 @@ var textAnalyser = function (spec) {
                 spec.cursor !== undefined,
                 "bad input");
 
-    function __addNode(name, type) {
-        if (type === undefined) {
-            console.log('bug: textanalyser.addNode of type undefined');
-        }
+    function __addNode(name) {
         var node = {
-                    'name':name,
-                    'type':type,
+                    'name': name,
+                    'type': node_name_to_type[name] || selectedType(),
                    };
         nodes.push(node);
     }
@@ -317,12 +313,9 @@ var textAnalyser = function (spec) {
     for (m = 0; m < orderStack.length - 1; m++) {
         switch (orderStack[m]) {
             case START:
-                if (!typeStack[nodeindex]) {
-                    typeStack[nodeindex] = selectedType();
-                }
                 break;
             case NODE:
-                __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex]);
+                __addNode(token_set_new_node_names[nodeindex]);
                 if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                     __addLink(token_set_new_node_names[nodeindex - 1],
                               token_set_new_node_names[nodeindex],
@@ -339,8 +332,7 @@ var textAnalyser = function (spec) {
     //FINAL N ORDER
     switch (orderStack[orderStack.length - 1]) {
         case START:
-            typeStack[nodeindex] = selectedType();
-            __addNode("new node", typeStack[nodeindex], "temp");
+            __addNode("new node");
             if (!starGraph && nodeindex > 0) {
                 __addLink(token_set_new_node_names[nodeindex - 1], "new node",
                           token_set_new_link_names[linkindex], "temp");
@@ -349,8 +341,7 @@ var textAnalyser = function (spec) {
             ret.state = ANALYSIS_NODE_START;
             break;
         case NODE:
-            typeStack[nodeindex] = selectedType();
-            __addNode(token_set_new_node_names[nodeindex], typeStack[nodeindex]);
+            __addNode(token_set_new_node_names[nodeindex]);
             if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
                 __addLink(token_set_new_node_names[nodeindex - 1],
                           token_set_new_node_names[nodeindex],
@@ -473,9 +464,6 @@ var textAnalyser = function (spec) {
         return node;
     }
 
-    if (finalize) {
-        typeStack = [];
-    }
     _get_lastnode = finalize || tokens.length == 0 ? function () { return null }
                                                   : lookup_node_in_bounds;
 
