@@ -11,6 +11,12 @@ import flask
 import crypt_util
 import re
 
+try:
+    import simplejson # we don't use it but we rely on it
+except:
+    print("missing simplejson, which is required due to namedtuple usage")
+    raise SystemExit
+
 from flask import Flask
 from flask import Response
 from flask import session

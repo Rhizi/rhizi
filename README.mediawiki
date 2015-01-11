@@ -14,6 +14,12 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 Install [neo4j](http://neo4j.com/download/)
 
 Install [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/) Or <code> Run pip install gevent-socketio </code>
+
+Install [simplejson](http://undefined.org/python/#simplejson) Or <code> Run pip install simplejson </code>
+ - flask uses itsdangerous which uses simplejson
+ - the default json converts namedtuples to arrays stripping the names.
+ - simplejson converts them to a dictionary, a behavior we rely on.
+
 == Running Rhizi Locally ==
 To run Rhizi locally:
 For testing locally run neo4j locally on the default 7474 port and then launch run-local.sh:<br><code>./run-local.sh</code>
