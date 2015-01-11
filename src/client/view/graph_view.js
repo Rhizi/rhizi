@@ -208,7 +208,7 @@ function GraphView(spec) {
 
         link_g = link.enter().append('g')
             .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
-            .attr('class', 'link graph')
+            .attr('class', 'link graph');
 
         link_g.append("path")
             .attr("class", function(d) {
