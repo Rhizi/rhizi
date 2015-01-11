@@ -11,7 +11,8 @@ function get_rz_core()
     return rz_core;
 }
 
-var selected_nodes = [],
+var root_nodes = [], // these are the nodes that are requested via update
+    selected_nodes = [],      // these are the nodes that are highlighted, generally the neighbours of selection_request
     selected_nodes__by_id = {},
     selectionChangedBus = new Bacon.Bus();
 
@@ -78,8 +79,6 @@ function connectedComponent(nodes) {
         link,
         data;
 
-    updateSelectedNodesBus(nodes.map(function(x) { return x; }));
-
     for (i = 0 ; i < connected.nodes.length ; ++i) {
         data = connected.nodes[i];
         node = data.node;
@@ -105,6 +104,8 @@ function connectedComponent(nodes) {
         };
     }
     nodes.forEach(function (n) { n.state = 'chosen'; });
+    selected_nodes = connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
+    updateSelectedNodesBus(selected_nodes);
 }
 
 var node_selected = function(node) {
@@ -116,13 +117,13 @@ var selected_class__node = function(node) {
 }
 
 var selected_class__link = function(link) {
-    return selected_nodes.length > 0 ? (node_selected(link.__src) || node_selected(link.__dst) ?
+    return selected_nodes.length > 0 ? (node_selected(link.__src) && node_selected(link.__dst) ?
         "selected" : "notselected") : "";
 }
 
 var clear = function() {
+    root_nodes = [];
     updateSelectedNodesBus([]);
-    get_rz_core().main_graph.setRegularState();
 }
 
 function arr_compare(a1, a2)
@@ -139,9 +140,10 @@ function arr_compare(a1, a2)
 }
 
 var update = function(nodes) {
-    var set = !arr_compare(nodes, selected_nodes);
+    var set = !arr_compare(nodes, root_nodes);
     clear();
     if (set) {
+        root_nodes = nodes;
         connectedComponent(nodes);
     }
 }
@@ -155,6 +157,7 @@ return {
     selected_class__link: selected_class__link,
     node_selected: node_selected,
     selectionChangedBus: selectionChangedBus,
+    __get_root_nodes: function() { return root_nodes; },
     __get_selected_nodes: function() { return selected_nodes; },
 };
 

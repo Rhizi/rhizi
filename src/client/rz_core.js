@@ -219,8 +219,11 @@ var initDrawingArea = function () {
     //  we need to deduplicate this event
     // but there is no coordination, resulting in double updates.
     selection.selectionChangedBus.onValue(
-        function() { update_view__graph(false);
-    });
+        function() {
+            main_graph.setRegularState();
+            update_view__graph(false);
+        }
+    );
 
     var user_id = $('#user_id'),
         user = user_id.text();
