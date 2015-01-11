@@ -49,6 +49,62 @@
   margin-left: 150px;
   margin-right: 150px;
   text-align: center;
+  padding: 20px;
+  width: 300px;
+  position: relative;
+}
+
+
+.clearfix {
+  *zoom: 1;
+
+  &:before,
+  &:after {
+    content: ' ';
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+
+}
+
+.login-input {
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  -webkit-appearance: none;
+  &:focus {
+    outline: none;
+  }
+  &[type="submit"] {
+    cursor: pointer;
+    background: $magenta;
+    border-radius: 3px;
+    color: #fff;
+    float: right;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 12px 20px;
+    &:hover {
+      background: $dark-magenta;
+    }
+  }
+  &[type="email"] {
+    border: 1px solid #dcdcdc;
+    padding: 12px 10px;
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+  }
+  &[type="password"] {
+    border: 1px solid #dcdcdc;
+    padding: 12px 10px;
+    width: 100%;
+    border-top: none;
+    border-radius: 0px 0px 3px 3px;
+  }
 }
 
 .forgot-password {

@@ -172,14 +172,49 @@ table {
   margin-bottom: 50px;
   margin-left: 150px;
   margin-right: 150px;
-  text-align: center; }
+  text-align: center;
+  padding: 20px;
+  width: 300px;
+  position: relative; }
 
-input {
+.clearfix {
+  *zoom: 1; }
+  .clearfix:before, .clearfix:after {
+    content: ' ';
+    display: table; }
+  .clearfix:after {
+    clear: both; }
+
+.login-input {
   border: none;
   font-family: inherit;
   font-size: inherit;
   margin: 0;
   -webkit-appearance: none; }
+  .login-input:focus {
+    outline: none; }
+  .login-input[type="submit"] {
+    cursor: pointer;
+    background: #ee3654;
+    border-radius: 3px;
+    color: #fff;
+    float: right;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 12px 20px; }
+    .login-input[type="submit"]:hover {
+      background: #d10a40; }
+  .login-input[type="email"] {
+    border: 1px solid #dcdcdc;
+    padding: 12px 10px;
+    width: 100%;
+    border-radius: 3px 3px 0 0; }
+  .login-input[type="password"] {
+    border: 1px solid #dcdcdc;
+    padding: 12px 10px;
+    width: 100%;
+    border-top: none;
+    border-radius: 0px 0px 3px 3px; }
 
 .forgot-password {
   color: #919095;
