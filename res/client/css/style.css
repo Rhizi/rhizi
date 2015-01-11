@@ -133,6 +133,12 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+.login-background {
+  background: url(../img/login-background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center; }
+
 .btn-regular {
   cursor: pointer;
   background-color: white;
@@ -270,7 +276,7 @@ body.debug .debug-ui-right {
   fill: #8b3ab0; }
 
 .circle.project {
-  fill: #40c200; }
+  fill: #40C200; }
 
 .circle.third-internship-proposal {
   fill: #33c2e0; }
@@ -487,7 +493,7 @@ body.debug .debug-ui-right {
   border-top: 6px solid #363636; }
 
 .info.type-project {
-  border-top: 6px solid #40c200; }
+  border-top: 6px solid #40C200; }
 
 .info .info-card-attr {
   display: block;
@@ -607,8 +613,8 @@ body.debug .debug-ui-right {
   width: 100%;
   min-height: 48px;
   text-align: center;
-  background-color: #d3f2f8;
-  color: #1d6e7f;
+  background-color: #D3F2F8;
+  color: #1D6E7F;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf; }
 
@@ -707,3 +713,5 @@ h1 {
 
 svg text::selection {
   background: none; }
+
+/*# sourceMappingURL=style.css.map */
