@@ -408,7 +408,9 @@ function Graph(spec) {
             }
 
             // TODO: handle NAK: add problem emblem to link
-            on_success();
+            if (on_success !== undefined) {
+                on_success();
+            }
         };
 
         var on_ajax_error = function(){
@@ -429,7 +431,7 @@ function Graph(spec) {
              * handle name update collision: suggest removal first
              */
             var n_eq_name = find_node__by_name(new_node_spec.name);
-            if (undefined != n_eq_name) {
+            if (undefined !== n_eq_name && n_eq_name !== node) {
                 // delete colliding node on rename
                 console.warn('update_node: name collision blocked due to node rename');
                 undefined != on_error && on_error();
