@@ -1,4 +1,6 @@
 %.css: %.scss
 	sass $< $@
 
-res/css/style.css: ./res/css/style.scss ./res/css/modules/positions.scss ./res/css/modules/colors.scss ./res/css/modules/typography.scss ./res/css/modules/mixins.scss ./res/css/partials/input-bar.scss ./res/css/partials/reset.scss ./res/css/partials/input-bubble.scss ./res/css/partials/top-bar.scss ./res/css/partials/metro-view.scss ./res/css/partials/graph-view.scss ./res/css/partials/info-card.scss ./res/css/partials/base.scss ./res/css/partials/search-bar.scss ./res/css/partials/grid.scss ./res/css/partials/dev-area.scss ./res/css/partials/typography.scss ./res/css/partials/buttons.scss ./res/css/partials/task-alert.scss
+CSS=res/client/css
+
+$(CSS)/style.css: $(CSS)/style.scss $(CSS)/modules/positions.scss $(CSS)/modules/colors.scss $(CSS)/modules/typography.scss $(CSS)/modules/mixins.scss $(CSS)/partials/input-bar.scss $(CSS)/partials/reset.scss $(CSS)/partials/input-bubble.scss $(CSS)/partials/top-bar.scss $(CSS)/partials/metro-view.scss $(CSS)/partials/graph-view.scss $(CSS)/partials/info-card.scss $(CSS)/partials/base.scss $(CSS)/partials/search-bar.scss $(CSS)/partials/grid.scss $(CSS)/partials/dev-area.scss $(CSS)/partials/typography.scss $(CSS)/partials/buttons.scss $(CSS)/partials/task-alert.scss
