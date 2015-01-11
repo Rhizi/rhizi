@@ -301,6 +301,9 @@ function GraphView(spec) {
             .attr('visibility', 'hidden') // made visible on first tick
             .call(drag);
 
+        node.attr('class', function(d) {
+                return ['node', selection.selected_class__node(d)].join(' ');
+            });
         // reorder nodes so selected are last, and so rendered last, and so on top.
         // FIXME: with b-ubble removed this is probably broken. actually also before. links are not correctly ordered.
         (function () {
@@ -308,12 +311,9 @@ function GraphView(spec) {
 
             node.each(function (d) {
                     this.node = d;
-                })
-                .attr('class', function(d) {
                     if (selection.node_selected(d)) {
                         ontop.push(this);
                     }
-                    return ['node', selection.selected_class__node(d)].join(' ');
                 });
             function reparent(new_parent, element) {
                 if (element.parentNode == new_parent) {
@@ -348,7 +348,7 @@ function GraphView(spec) {
             var count_links = function() {
                 return selected_link_group.childElementCount + unselected_link_group.childElementCount;
             };
-        })();
+        }); //();
 
         nodetext = nodeEnter.insert("text")
             .attr("class", "nodetext graph")
