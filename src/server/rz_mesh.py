@@ -79,25 +79,31 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         @param f: [!] wrapped function, name used to derive socket message name
         """
 
+        def _prep_for_serialization(o):
+            # handle special serialization cases
+            if isinstance(o, Topo_Diff):
+                return o.to_json_dict()
+            return o
+
         @wraps(f)
         def wrapped_function(*args, **kw):
-            f_ret = f(*args, **kw)
+            f_ret_list = f(*args, **kw)
 
-            pkt_data = f_ret
-            if isinstance(f_ret, Topo_Diff):
-                pkt_data = f_ret.to_json_dict()
+            assert type(f_ret_list) in [list, tuple]
+
+            pkt_data = map(_prep_for_serialization, f_ret_list)
 
             msg_name = f.__name__
             pkt = dict(type="event",
                        name=msg_name,
-                       args=[pkt_data],
+                       args=pkt_data,
                        endpoint='/graph')
 
             ws_srv.log_multicast(msg_name)
             for sessid, socket in ws_srv.sockets.iteritems():
                 socket.send_packet(pkt)
 
-            return f_ret
+            return f_ret_list
 
         return wrapped_function
 
