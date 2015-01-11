@@ -460,7 +460,10 @@ function Graph(spec) {
             }
 
             // TODO: handle NAK: add problem emblem to node
-            on_success();
+            if (on_success !== undefined) {
+                on_success();
+            }
+            diffBus.push(attr_diff);
         };
 
         var on_ajax_error = function(){
