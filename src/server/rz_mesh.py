@@ -1,17 +1,17 @@
+from collections import namedtuple
 from flask import Response
 from flask import request
+from functools import wraps
 from geventwebsocket.handler import WebSocketHandler
 import logging
 from socketio import socketio_manage
-
 from socketio.server import SocketIOHandler
 from socketio.server import SocketIOServer
-from functools import wraps
 
-from rz_kernel import RZ_Kernel
 from model.graph import Attr_Diff, Topo_Diff
 from rz_api_websocket import WebSocket_Graph_NS
-from collections import namedtuple
+from rz_kernel import RZ_Kernel
+
 
 log = logging.getLogger('rhizi')
 
