@@ -444,14 +444,19 @@ function Graph(spec) {
             attr_diff.add_node_attr_write(node.id, key, new_node_spec[key]);
         }
 
-        var on_ajax_success = function(id_to_node_map){
+        var on_ajax_success = function(attr_diff_spec){
+            var attr_diff = model_util.adapt_format_read_diff__attr(attr_diff_spec);
+            var id_to_node_map = attr_diff.id_to_node_map
             var node_id = node.id; // original node id
 
             util.assert(id_to_node_map && id_to_node_map[node_id], "bad return value from ajax");
 
             var ret_node = id_to_node_map[node_id];
-            for (var key in ret_node){
-                node[key] = ret_node[key];
+            for (var key in ret_node['__attr_write']){
+                node[key] = ret_node['__attr_write'][key];
+            }
+            for (var key in ret_node['__attr_remove']){
+                delete node[key];
             }
 
             // TODO: handle NAK: add problem emblem to node
