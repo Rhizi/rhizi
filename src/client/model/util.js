@@ -119,6 +119,16 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         return topo_diff;
     }
 
+    /**
+     * read adapt attr_diff from backend format
+     */
+    function adapt_format_read_diff__attr(diff_spec) {
+        var attr_diff = new model_diff.new_attr_diff();
+        attr_diff.id_to_node_map = diff_spec['__type_node'];
+        attr_diff.id_to_link_map = diff_spec['__type_link'];
+        return attr_diff;
+    }
+
     return {
         adapt_format_read_node : adapt_format_read_node,
         adapt_format_read_link_ptr : adapt_format_read_link_ptr,
@@ -126,5 +136,6 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         adapt_format_write_link : adapt_format_write_link,
 
         adapt_format_write_diff__topo : adapt_format_write_diff__topo,
+        adapt_format_read_diff__attr : adapt_format_read_diff__attr,
     }
 });
