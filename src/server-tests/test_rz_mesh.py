@@ -9,6 +9,7 @@ from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from neo4j_test_util import rand_id
 import neo4j_test_util
+from rz_api_websocket import WebSocket_Graph_NS
 import test_util
 
 
@@ -52,10 +53,9 @@ class TestMeshAPI(unittest.TestCase):
 
         class NS_test(BaseNamespace):
 
-            def on_diff_commit__topo(self, json_dict):
-                ret_diff = Topo_Diff.Commit_Result_Type.from_json_dict(json_dict)
-                greenlet.getcurrent().received_diff = ret_diff
-                self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
+            def on_diff_commit__topo(self, *data):
+                greenlet.getcurrent().data = data
+                raise KeyboardInterrupt()  # TODO: cleanup: properly close socket
 
         test_label = neo4j_test_util.rand_label()
         n, n_id = test_util.generate_random_node_dict(test_label)
@@ -78,21 +78,20 @@ class TestMeshAPI(unittest.TestCase):
             c0_t.switch()
 
         c0_t = greenlet(c_0)
-        c0_t.received_diff = None
+        c0_t.data = None
         c1_t = greenlet(c_1)
         c0_t.switch()
 
-        self.assertTrue(None != c0_t.received_diff)
-        self.assertEqual(1, len(c0_t.received_diff.node_id_set_add))
+        self.assertTrue(None != c0_t.data)
+        self.assertEqual(2, len(c1_t.data))
 
     def test_ws_event__topo_diff(self):
 
         class NS_test(BaseNamespace):
 
-            def on_diff_commit__topo(self, json_dict):
-                ret_diff = Topo_Diff.Commit_Result_Type.from_json_dict(json_dict)
-                greenlet.getcurrent().received_diff = ret_diff
-                self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
+            def on_diff_commit__topo(self, *data):
+                greenlet.getcurrent().data = data
+                raise KeyboardInterrupt()  # TODO: cleanup: properly close socket
 
         test_label = neo4j_test_util.rand_label()
         n, n_id = test_util.generate_random_node_dict(test_label)
@@ -112,20 +111,25 @@ class TestMeshAPI(unittest.TestCase):
 
         c0_t = greenlet(c_0)
         c1_t = greenlet(c_1)
-        c1_t.received_diff = None
+        c1_t.data = None
         c0_t.switch()
 
-        self.assertTrue(None != c1_t.received_diff)
-        self.assertEqual(1, len(c1_t.received_diff.node_id_set_add))
+        self.assertTrue(None != c1_t.data)
+        self.assertEqual(2, len(c1_t.data))
+
+        diff_in = Topo_Diff.from_json_dict(c1_t.data[0])
+        commit_ret = Topo_Diff.Commit_Result_Type.from_json_dict(c1_t.data[1])
+
+        self.assertEqual(Topo_Diff, type(diff_in))
+        self.assertEqual(Topo_Diff.Commit_Result_Type, type(commit_ret))
 
     def test_ws_event__attr_diff(self):
 
         class NS_test(BaseNamespace):
 
-            def on_diff_commit__attr(self, json_str):
-                attr_diff = Attr_Diff.from_json_dict(json_str)
-                greenlet.getcurrent().received_diff = attr_diff
-                self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
+            def on_diff_commit__attr(self, *data):
+                greenlet.getcurrent().data = data
+                raise KeyboardInterrupt()  # TODO: cleanup: properly close socket
 
         test_label = neo4j_test_util.rand_label()
         n, n_id = test_util.generate_random_node_dict(test_label)
@@ -150,11 +154,17 @@ class TestMeshAPI(unittest.TestCase):
 
         c0_t = greenlet(c_0)
         c1_t = greenlet(c_1)
-        c1_t.received_diff = None
+        c1_t.data = None
         c0_t.switch()
 
-        self.assertTrue(None != c1_t.received_diff)
-        self.assertEqual(1, len(c1_t.received_diff.type__node))
+        self.assertTrue(None != c1_t.data)
+        self.assertEqual(2, len(c1_t.data))
+
+        diff_in = Attr_Diff.from_json_dict(c1_t.data[0])
+        commit_ret = Attr_Diff.from_json_dict(c1_t.data[1])
+
+        self.assertEqual(Attr_Diff, type(diff_in))
+        self.assertEqual(Attr_Diff, type(commit_ret))
 
 if __name__ == "__main__":
 
