@@ -10,6 +10,7 @@ import db_controller as dbc
 import flask
 import crypt_util
 import re
+from functools import wraps
 
 try:
     import simplejson # we don't use it but we rely on it
@@ -24,7 +25,6 @@ from flask import redirect
 from flask import request
 from flask import send_from_directory
 
-from functools import wraps
 from rz_mesh import init_ws_interface
 from rz_kernel import RZ_Kernel
 import rz_api
