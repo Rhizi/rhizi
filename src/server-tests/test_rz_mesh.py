@@ -57,8 +57,8 @@ class TestMeshAPI(unittest.TestCase):
 
                 self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
 
-        n = test_util.generate_random_node_dict('test_ws_event__topo_diff')
-        n_id = n['id']
+        test_label = neo4j_test_util.rand_label()
+        n, n_id = test_util.generate_random_node_dict(test_label)
         topo_diff = Topo_Diff(node_set_add=[n])
 
         def c_0():
@@ -93,8 +93,8 @@ class TestMeshAPI(unittest.TestCase):
 
                 self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
 
-        n = test_util.generate_random_node_dict('test_ws_event__topo_diff')
-        n_id = n['id']
+        test_label = neo4j_test_util.rand_label()
+        n, n_id = test_util.generate_random_node_dict(test_label)
         topo_diff = Topo_Diff(node_set_add=[n])
 
         def c_0():
@@ -126,8 +126,8 @@ class TestMeshAPI(unittest.TestCase):
 
                 self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
 
-        n = test_util.generate_random_node_dict('test_ws_event__attr_diff')
-        n_id = n['id']
+        test_label = neo4j_test_util.rand_label()
+        n, n_id = test_util.generate_random_node_dict(test_label)
 
         # apply attr_diff
         attr_diff = Attr_Diff()
