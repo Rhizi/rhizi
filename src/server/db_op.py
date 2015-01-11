@@ -406,9 +406,6 @@ class DBO_diff_commit__attr(DB_op):
                         "where type(l_old)<>'%s' delete l_old" % new_label,
                         ]
         q_param_set = {'id': id_attr}
-
-        q_create_new = " ".join(q_create_new)
-        q_delete_old = " ".join(q_delete_old)
         self.add_statement(q_create_new, q_param_set)
         self.add_statement(q_delete_old, q_param_set)
 
