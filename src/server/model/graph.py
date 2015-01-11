@@ -97,6 +97,25 @@ class Topo_Diff(object):
     Represents a change to the graph topology
     """
 
+    class Commit_Result_Type(dict):
+        """
+        Topo_Diff graph commit result type
+        """
+        def __init__(self, node_id_set_add=[],
+                           link_id_set_add=[],
+                           node_id_set_rm=[],
+                           link_id_set_rm=[]):
+            self['node_id_set_add'] = node_id_set_add
+            self['link_id_set_add'] = link_id_set_add
+            self['node_id_set_rm'] = node_id_set_rm
+            self['link_id_set_rm'] = link_id_set_rm
+
+        @staticmethod
+        def from_json_dict(json_dict):
+            ret = Topo_Diff.Commit_Result_Type()
+            ret.__dict__ = json_dict
+            return ret
+
     class JSON_Encoder(json.JSONEncoder):
         """
         Topo_Diff is not a plain dict, so we provide a json encoder
