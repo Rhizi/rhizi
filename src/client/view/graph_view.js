@@ -262,9 +262,6 @@ function GraphView(spec) {
         linktext.enter()
             .append("text")
             .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
-            .attr("class", function(d) {
-                return ["linklabel graph", selection.selected_class__link(d)].join(' ');
-            })
             .attr("text-anchor", "middle")
             .on("click", function(d, i) {
                 if (!temporary) { // FIXME: if temporary don't even put a click handler
@@ -286,6 +283,9 @@ function GraphView(spec) {
                 } else {
                     return name.substring(0, 14) + "...";
                 }
+            })
+            .attr("class", function(d) {
+                return ["linklabel graph", selection.selected_class__link(d)].join(' ');
             });
 
         linktext.exit().remove();
