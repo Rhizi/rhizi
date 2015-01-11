@@ -57,7 +57,7 @@ define([],
              * Attribute diff object, organized by type, where currently
              * node,link types are supported
              */
-            function Attr_Diff(obj_spec) {
+            function Attr_Diff() {
                 this.__type_node = {};
                 this.__type_link = {};
             }
@@ -74,6 +74,9 @@ define([],
                     '__attr_write' : {},
                     '__attr_remove' : []
                 };
+
+                this.id_to_node_map = this.__type_node;
+                this.id_to_link_map = this.__type_link;
 
                 return this;
             }
@@ -146,12 +149,12 @@ define([],
                 return ret;
             }
 
-            function new_attr_diff(obj_spec) {
+            function new_attr_diff() {
                 /*
                  * validate obj_spec
                  */
                 // TODO
-                var ret = new Attr_Diff(obj_spec);
+                var ret = new Attr_Diff();
                 ret.__type_node = {}; // id-to-obj map
                 ret.__type_link = {}; // id-to-obj map
                 return ret;
