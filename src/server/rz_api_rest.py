@@ -76,8 +76,8 @@ def diff_commit__topo():
 
     try:
         kernel = flask.current_app.kernel
-        topo_diff = kernel.diff_commit__topo(topo_diff)
-        return __common_resp_handle(data=topo_diff)
+        _, commit_ret = kernel.diff_commit__topo(topo_diff)
+        return __common_resp_handle(data=commit_ret)
     except Exception as e:
         log.error(e.message)
         log.error(traceback.print_exc())
@@ -106,8 +106,8 @@ def diff_commit__attr():
 
     try:
         kernel = flask.current_app.kernel
-        attr_diff = kernel.diff_commit__attr(attr_diff)
-        return __common_resp_handle(data=attr_diff)
+        _, commit_ret = kernel.diff_commit__attr(attr_diff)
+        return __common_resp_handle(data=commit_ret)
     except Exception as e:
         log.error(e.message)
         log.error(traceback.print_exc())
