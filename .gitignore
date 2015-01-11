@@ -7,3 +7,4 @@ src/client/local_config.js
 .sass-cache/
 *.pyc
 *.sw?
+deploy-local/
