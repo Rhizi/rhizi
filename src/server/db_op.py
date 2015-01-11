@@ -194,10 +194,8 @@ class DBO_block_chain__commit(DB_op):
                  "create new_head-[r:__Parent]->old_head",
                  "remove old_head:__HEAD",
                  "return old_head, new_head, {hash_value}"]
-
-        q = " ".join(q_arr)
         q_param_set = {'hash_value': hash_value, 'blob_value': blob_obj}
-        self.add_statement(q, q_param_set)
+        self.add_statement(q_arr, q_param_set)
 
 class DBO_block_chain__list(DB_op):
     """
@@ -222,8 +220,8 @@ class DBO_block_chain__list(DB_op):
             # inject maxHops limit if available
             q_arr[0] = "match (n:__HEAD)-[r:__Parent*..%d]->m" % (length_lim),
 
-        q = " ".join(q_arr)
-        self.add_statement(q)
+        self.add_statement(q_arr)
+
 
     def process_result_set(self):
         # optimize for single statement
