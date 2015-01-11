@@ -124,7 +124,7 @@ function GraphView(spec) {
         update_view(relayout);
     });
 
-    function showNodeInfo(node, i) {
+    function showNodeInfo(node) {
         var closed = false;
 
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
@@ -362,7 +362,7 @@ function GraphView(spec) {
                 if (!temporary) {
                     svgInput.enable(this, d);
                     selection.update([d]);
-                    showNodeInfo(this.parentNode.node, i);
+                    showNodeInfo(graph.find_node__by_id(this.parentNode.id));
                 }
                 d3.event.stopPropagation();
             });
@@ -400,7 +400,7 @@ function GraphView(spec) {
                 d3.event.stopPropagation();
                 selection.update([d]);
                 if(!temporary) {
-                    showNodeInfo(d, i);
+                    showNodeInfo(d);
                 }
             });
         circle.append("svg:image")
