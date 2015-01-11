@@ -163,7 +163,6 @@ function auto_suggest__update_from_graph()
 var textAnalyser = function (spec) {
     var newtext = spec.sentence,
         finalize = spec.finalize,
-        cursor = spec.cursor,
 
         tokens,
         sentence,
@@ -192,7 +191,6 @@ var textAnalyser = function (spec) {
 
     util.assert(spec.sentence !== undefined &&
                 spec.finalize !== undefined &&
-                spec.cursor !== undefined,
                 "bad input");
 
     function __addNode(name) {
@@ -447,21 +445,34 @@ var textAnalyser = function (spec) {
         }
     };
 
-    function lookup_node_in_bounds(edit_graph) {
-        var i, d, j, name, node;
+    function lookup_node_in_bounds(edit_graph, cursor) {
+        var i, d, d_next, j, name, node;
 
+        if (nodes.length <= 0) {
+            return null;
+        }
+        if (nodes.length == 1) {
+            return edit_graph.find_node__by_name(nodes[0].name);
+        }
         // go forward to find cursor location in tokens
         for (i = 0 ; i < tokens.length; ++i) {
             d = tokens[i];
-            if (cursor >= d.start && cursor < d.end) {
+            d_next = tokens[i + 1];
+            if (cursor >= d.start && (d_next === undefined || cursor < d_next.end)) {
                 break;
             }
         }
+        i = Math.min(tokens.length - 1, i);
+        // go forward if on a token
+        for (; tokens[i] !== undefined && tokens[i].token === '#'; ++i) {}
         // go back to find token
-        for (j = i - 1; j >= 0 && tokens[j].token != '#'; --j) {}
+        for (j = i; j >= 0 && tokens[j] === undefined || tokens[j].token !== '#'; --j) {}
         name = tokens[j + 1] ? tokens[j + 1].token : 'new node';
         node = edit_graph.find_node__by_name(name);
-        util.assert(node !== undefined, "can't find node");
+        if (node === undefined) {
+            // return the first node by default
+            util.assert(node !== undefined, "can't find node");
+        }
         return node;
     }
 

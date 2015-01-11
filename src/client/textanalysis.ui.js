@@ -55,8 +55,8 @@ var analysisCompleter = completer(element, $('#input-suggestion'), {hideOnTab: f
 function analyzeSentence(spec)
 {
     util.assert(spec.sentence !== undefined &&
-                spec.finalize !== undefined &&
-                spec.cursor !== undefined, "bad input");
+                spec.finalize !== undefined,
+                "bad input");
 
     var sentence = spec.sentence,
         finalize = spec.finalize,
@@ -97,7 +97,7 @@ function textSelect(inp, s, e) {
 }
 
 function changeType(arg) {
-    var lastnode = textanalysis.lastnode(rz_core.edit_graph),
+    var lastnode = textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart),
         nodetype,
         id,
         name;
@@ -110,15 +110,9 @@ function changeType(arg) {
     }
     nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
-    if (arg === 'up') {
-        rz_core.edit_graph.editType(id, null, nodetype);
-        typeselection.showChosenType(nodetype);
-        rz_core.edit_graph.findCoordinates(id);
-    } else {
-        rz_core.edit_graph.editType(id, null, nodetype);
-        typeselection.showChosenType(nodetype);
-        rz_core.edit_graph.findCoordinates(id);
-    }
+    rz_core.edit_graph.editType(id, null, nodetype);
+    typeselection.showChosenType(nodetype);
+    rz_core.edit_graph.findCoordinates(id);
     textanalysis.set_type(name, nodetype);
 }
 
@@ -145,13 +139,12 @@ return {
                     analyzeSentence({
                         sentence: element.val(),
                         finalize: false,
-                        cursor: element_raw.selectionStart,
                     });
                 }
                 ret = false;
                 break;
             case 9: //TAB
-                if (textanalysis.lastnode(rz_core.edit_graph)) {
+                if (textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart)) {
                     e.preventDefault();
                     changeType(e.shiftKey ? "up" : "down");
                     ret = false;
@@ -171,7 +164,7 @@ return {
             analyzeSentence({
                 sentence: text,
                 finalize: true,
-                cursor: element_raw.selectionStart});
+                });
             text = "";
         }
 
@@ -194,7 +187,6 @@ return {
                 analyzeSentence({
                     sentence: text,
                     finalize: false,
-                    cursor: element_raw.selectionStart
                 });
                 input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
             });
