@@ -186,6 +186,7 @@ def init_rest_interface(cfg, flask_webapp):
 
     rest_entry_set = [
                       redirect_entry('/', '/index', {'methods': ['GET']}),
+                      redirect_entry('/index.html', '/index', {'methods': ['GET']}),
                       rest_entry('/add/node-set' , rz_api.add_node_set),
                       rest_entry('/graph/clone', rz_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
