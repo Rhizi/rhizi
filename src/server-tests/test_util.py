@@ -1,13 +1,13 @@
 """
 Various test utilities
 """
-from rz_server import init_webapp
-from rz_mesh import init_ws_interface
 import db_controller as dbc
-
-from neo4j_test_util import rand_id
-from rz_kernel import RZ_Kernel
 from model.model import Link
+from neo4j_test_util import rand_id, gen_random_name
+from rz_kernel import RZ_Kernel
+from rz_mesh import init_ws_interface
+from rz_server import init_webapp
+
 
 def init_test_db_controller(cfg):
     ret = dbc.DB_Controller(cfg)
@@ -33,7 +33,9 @@ def generate_random_node_dict(n_type, nid=None):
     if None == nid:
         nid = rand_id()
 
-    return {'__label_set': [n_type], 'id': nid }, nid
+    return {'__label_set': [n_type],
+            'id': nid,
+            'name': gen_random_name() }, nid
 
 def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     """
