@@ -273,25 +273,33 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     convert a list of maps each containing a meta_attr key into a
     meta_attr-mapped collection of lists with the meta_attr removed - eg:
 
-        in: [{'id':0, '__type': 'T'}, {'id':1, '__type': 'T'}]
+        nodes:
+        in: [{'id':0, '__label_set': ['T']}, {'id':1, '__label_set': ['T']}]
+        out: { 'T': [{'id':0}, {'id':1}] }
+
+        links:
+        in: [{'id':0, '__type': ['T']}, {'id':1, '__type': ['T']}]
         out: { 'T': [{'id':0}, {'id':1}] }
         
     [!] as of 2015-01 multiple labels for relations are not supported,
         which is why meta_attr='__type' should be used when calling this
         function to map links
     """
+
+    assert '__label_set' == meta_attr or '__type' == meta_attr, 'type meta-attribute != __label_set or __type'
+
     ret = {}
     for v in e_set:
         meta_attr_list = v.get(meta_attr)
-        assert None != meta_attr_list, 'missing type meta-attribute'
+        assert None != meta_attr_list, 'element missing type meta-attribute'
+        assert list == type(meta_attr_list), 'element with non-list type meta-attribute set: ' + str(v)
 
-        # Amir - refactor at will
-        # handle either a list or a string - we use a list for __label_set
-        # and a string for __type
-        if list == type(meta_attr_list):
-            v_type = v[meta_attr][0]
-        else:
-            v_type = v[meta_attr]
+        if '__label_set' == meta_attr:
+            assert 1 == len(meta_attr_list), 'only single-label mapping currently supported for nodes'
+        if '__type' == meta_attr:
+            assert 1 == len(meta_attr_list), 'only single-type mapping currently supported by neo4j for links'
+
+        v_type = v[meta_attr][0]
         if None == ret.get(v_type):  # init type list if necessary
             ret[v_type] = []
 
