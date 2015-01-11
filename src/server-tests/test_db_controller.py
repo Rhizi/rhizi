@@ -61,31 +61,6 @@ class TestDBController(unittest.TestCase):
         # self.db_ctl.exec_op(DBO_add_link_set(self.l_map))
         pass
 
-    def test_db_op_statement_iteration(self):
-        s_arr = ['create (b:Book {title: \'foo\'}) return b',
-                 'match (n) return n', ]
-
-        op = dbc.DB_op()
-        op.add_statement(s_arr[0])
-        op.add_statement(s_arr[1])
-
-        i = 0
-        for _, s, r in op:
-            # access: second tuple item -> REST-form 'statement' key
-            self.assertEqual(s_arr[i], s['statement'])
-            self.assertEqual(None, r)
-            i = i + 1
-
-        self.db_ctl.exec_op(op)
-
-        i = 0
-        for _, s, r_set in op:
-            # access: second tuple item -> REST-form 'statement' key
-            self.assertNotEqual(None, r_set)
-            for x in r_set:
-                pass
-            i = i + 1
-
     def test_add_node_set(self):
         test_label = neo4j_test_util.rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
@@ -136,6 +111,31 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(hash_list.pop(), hash_commit_0)
         self.assertEqual(hash_list.pop(), hash_ret1)
         self.assertEqual(hash_list.pop(), hash_ret2)
+
+    def test_db_op_statement_iteration(self):
+        s_arr = ['create (b:Book {title: \'foo\'}) return b',
+                 'match (n) return n', ]
+
+        op = dbc.DB_op()
+        op.add_statement(s_arr[0])
+        op.add_statement(s_arr[1])
+
+        i = 0
+        for _, s, r in op:
+            # access: second tuple item -> REST-form 'statement' key
+            self.assertTrue(type(s), DB_Query)
+            self.assertEqual(None, r)
+            i = i + 1
+
+        self.db_ctl.exec_op(op)
+
+        i = 0
+        for _, s, r_set in op:
+            # access: second tuple item -> REST-form 'statement' key
+            self.assertNotEqual(None, r_set)
+            for x in r_set:
+                pass
+            i = i + 1
 
     def test_diff_commit__topo(self):
         test_label = neo4j_test_util.rand_label()
