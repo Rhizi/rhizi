@@ -449,11 +449,11 @@ function Graph(spec) {
         var on_ajax_success = function(attr_diff_spec){
             var attr_diff = model_util.adapt_format_read_diff__attr(attr_diff_spec);
             var id_to_node_map = attr_diff.id_to_node_map
-            var node_id = node.id; // original node id
+            var n_id = node.id; // original node id
 
-            util.assert(id_to_node_map && id_to_node_map[node_id], "bad return value from ajax");
+            util.assert(id_to_node_map && id_to_node_map[n_id], "bad return value from ajax");
 
-            var ret_node = id_to_node_map[node_id];
+            var ret_node = id_to_node_map[n_id];
             for (var key in ret_node['__attr_write']){
                 node[key] = ret_node['__attr_write'][key];
             }
