@@ -99,7 +99,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
      * write adapt diff from node set, link set. sets may be passed by reference
      * as they are cloned
      */
-    function adapt_format_write_topo_diff(n_set, l_set) {
+    function adapt_format_write_diff__topo(n_set, l_set) {
 
         var new_n_set = $.extend([], n_set);
         var new_l_set = $.extend([], l_set);
@@ -124,6 +124,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         adapt_format_read_link_ptr : adapt_format_read_link_ptr,
         adapt_format_write_node : adapt_format_write_node,
         adapt_format_write_link : adapt_format_write_link,
-        adapt_format_write_topo_diff : adapt_format_write_topo_diff,
+
+        adapt_format_write_diff__topo : adapt_format_write_diff__topo,
     }
 });
