@@ -798,19 +798,26 @@ function Graph(spec) {
             old_id_to_new_id = {};
 
         diff = model_diff.new_topo_diff();
-        diff.node_set_add = nodes.map(function(spec) {
-                var node =  model_core.create_node__set_random_id({
-                       name: spec.name ? spec.name : spec.id,
-                       type: spec.type,
+        diff.node_set_add = nodes.map(function(ext_spec) {
+                var node_spec = {
+                       name: ext_spec.name ? ext_spec.name : ext_spec.id,
+                       type: ext_spec.type,
                        state: "perm",
-                       start: new Date(spec.start),
-                       end: new Date(spec.end),
-                       status: spec.status,
-                       url: spec.url,
-                       x: spec.x,
-                       y: spec.y,
-                });
-                old_id_to_new_id[spec.id] = node.id,
+                       status: ext_spec.status,
+                       url: ext_spec.url,
+                       x: ext_spec.x,
+                       y: ext_spec.y,
+                    },
+                    node;
+
+                if (ext_spec.start) {
+                    node_spec.start = new Date(ext_spec.start);
+                }
+                if (ext_spec.end) {
+                    node_spec.end = new Date(ext_spec.end);
+                }
+                node = model_core.create_node__set_random_id(node_spec);
+                old_id_to_new_id[ext_spec.id] = node.id,
                 node_by_id[node.id] = node;
                 return node;
             });
