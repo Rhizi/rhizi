@@ -156,6 +156,7 @@ def init_rest_interface(cfg, flask_webapp):
     def redirect_entry(path, path_to, flask_args):
         def redirector():
             return redirect(path_to, code=302)
+        redirector.func_name = 'redirector_%s' % path.replace('/', '_')
         return (path, redirector, flask_args)
 
     def dev_mode__resend_from_static(static_url):
