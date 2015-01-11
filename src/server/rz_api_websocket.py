@@ -17,13 +17,16 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     """
     Rhizi '/graph' websocket namespace
     """
-
     def __init__(self, *args, **kw):
-         super(WebSocket_Graph_NS, self).__init__(*args, **kw)
+        super(WebSocket_Graph_NS, self).__init__(*args, **kw)
 
     def multicast_msg(self, msg_name, *args):
         self.socket.server.log_multicast(msg_name)
-        super(WebSocket_Graph_NS, self).broadcast_event_not_me(msg_name, *args)
+        try:
+            super(WebSocket_Graph_NS, self).broadcast_event_not_me(msg_name, *args)
+        except Exception as e:
+            log.error(e.message)
+            log.error(traceback.print_exc())
 
     def _log_conn(self, prefix_msg):
         rmt_addr = self.environ['REMOTE_ADDR']
@@ -37,26 +40,30 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     def recv_disconnect(self):
         self._log_conn('conn close')
 
-    def on_diff_commit__topo(self, json_str):
-        topo_diff = Topo_Diff.from_json_dict(json.loads(json_str))
+    def on_diff_commit__topo(self, json_data):
+        json_dict = json.loads(json_data)
+        topo_diff = Topo_Diff.from_json_dict(json_dict)
         log.info('ws: rx: topo diff: ' + str(topo_diff))
 
         kernel = self.request.kernel
-        try:
-            topo_diff_ret = kernel.diff_commit__topo(topo_diff)
-            self.multicast_msg('diff_commit__topo', topo_diff_ret)
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
+        topo_diff, commit_ret = kernel.diff_commit__topo(topo_diff)
 
-    def on_diff_commit__attr(self, json_str):
-        attr_diff = Attr_Diff.from_json_dict(json.loads(json_str))
+        # handle serialization
+        topo_diff_dict = topo_diff.to_json_dict()
+
+        assert Topo_Diff.Commit_Result_Type == type(commit_ret)
+
+        return self.multicast_msg('diff_commit__topo', topo_diff_dict, commit_ret)
+
+    def on_diff_commit__attr(self, json_data):
+        json_dict = json.loads(json_data)
+        attr_diff = Attr_Diff.from_json_dict(json_dict)
         log.info('ws: rx: attr diff: ' + str(attr_diff))
 
         kernel = self.request.kernel
-        try:
-            attr_diff_ret = kernel.diff_commit__attr(attr_diff)
-            self.multicast_msg('diff_commit__attr', attr_diff_ret)
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
+        attr_diff, commit_ret = kernel.diff_commit__attr(attr_diff)
+
+        # [!] note: here we actually send the attr_diff twice, but in the future
+        # commit_ret may not be the same
+        return self.multicast_msg('diff_commit__attr', attr_diff, commit_ret)
+
