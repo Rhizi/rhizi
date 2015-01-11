@@ -179,7 +179,7 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(id_set), 2)
 
         # remova links
-        topo_diff = Topo_Diff(link_set_rm=[l_0_id, l_1_id])
+        topo_diff = Topo_Diff(link_id_set_rm=[l_0_id, l_1_id])
         op = DBO_diff_commit__topo(topo_diff)
         ret_topo_diff = self.db_ctl.exec_op(op)
         self.assertEqual(len(ret_topo_diff.link_id_set_rm), 2)
@@ -190,7 +190,7 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(len(id_set), 0)
 
         # removal nodes
-        topo_diff = Topo_Diff(node_set_rm=[n_2_id])
+        topo_diff = Topo_Diff(node_id_set_rm=[n_2_id])
         op = DBO_diff_commit__topo(topo_diff)
         ret_topo_diff = self.db_ctl.exec_op(op)
         self.assertEqual(len(ret_topo_diff.node_id_set_rm), 1)
