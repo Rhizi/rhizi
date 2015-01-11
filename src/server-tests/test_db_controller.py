@@ -237,40 +237,6 @@ class TestDBController(unittest.TestCase):
         ret_diff = self.db_ctl.exec_op(op)
         self.assertTrue('attr_2' in ret_diff.type__node[n_0_id]['__attr_remove'])
 
-    def test_match_node_set_by_type(self):
-        op = DBO_match_node_id_set(filter_label='Person')
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 2)
-
-        op = DBO_match_node_id_set(filter_label='Nan_Type')
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 0)
-
-    def test_match_node_set_by_attribute(self):
-        fam = { 'name': ['Bob', u'Judo'], 'age': [128] }
-        n_set = self.db_ctl.exec_op(DBO_match_node_id_set(filter_attr_map=fam))
-        self.assertEqual(len(n_set), 1)
-
-        fam = { 'age': [128, 256, 404] }
-        n_set = self.db_ctl.exec_op(DBO_match_node_id_set(filter_attr_map=fam))
-        self.assertEqual(len(n_set), 2)
-
-    def test_match_node_set_by_DB_id(self):
-        pass  # TODO
-
-    def test_match_node_set_by_id_attribute(self):
-        n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute(['skill_00', 'person_01']))
-        self.assertEqual(len(n_set), 2)
-
-    def test_match_link_set_by_type(self):
-        op = DBO_match_link_id_set(filter_label='Knows')
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 2)
-
-        op = DBO_match_link_id_set(filter_label='Nan_Type')
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 0)
-
     def test_load_link_set(self):
 
         # load by l_ptr
@@ -316,6 +282,40 @@ class TestDBController(unittest.TestCase):
         op = DBO_load_node_set_by_DB_id(id_set)
         n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
+
+    def test_match_node_set_by_type(self):
+        op = DBO_match_node_id_set(filter_label='Person')
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 2)
+
+        op = DBO_match_node_id_set(filter_label='Nan_Type')
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
+
+    def test_match_node_set_by_attribute(self):
+        fam = { 'name': ['Bob', u'Judo'], 'age': [128] }
+        n_set = self.db_ctl.exec_op(DBO_match_node_id_set(filter_attr_map=fam))
+        self.assertEqual(len(n_set), 1)
+
+        fam = { 'age': [128, 256, 404] }
+        n_set = self.db_ctl.exec_op(DBO_match_node_id_set(filter_attr_map=fam))
+        self.assertEqual(len(n_set), 2)
+
+    def test_match_node_set_by_DB_id(self):
+        pass  # TODO
+
+    def test_match_node_set_by_id_attribute(self):
+        n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute(['skill_00', 'person_01']))
+        self.assertEqual(len(n_set), 2)
+
+    def test_match_link_set_by_type(self):
+        op = DBO_match_link_id_set(filter_label='Knows')
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 2)
+
+        op = DBO_match_link_id_set(filter_label='Nan_Type')
+        id_set = self.db_ctl.exec_op(op)
+        self.assertEqual(len(id_set), 0)
 
     def test_partial_query_set_execution_success(self):
         """
