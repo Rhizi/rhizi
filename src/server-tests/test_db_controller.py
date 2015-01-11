@@ -343,37 +343,6 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_id]))
         self.assertEqual(len(n_set), 0)
 
-    def test_rm_node_set(self):
-        n_0_id = rand_id()
-        n_1_id = rand_id()
-        n_2_id = rand_id()
-        n_3_id = rand_id()
-        n_T = 'T_test_rm_node_set'
-
-        n_set = [{'__label_set': [n_T], 'id': n_0_id },
-                 {'__label_set': [n_T], 'id': n_1_id },
-                 {'__label_set': [n_T], 'id': n_2_id },
-                 {'__label_set': [n_T], 'id': n_3_id }]
-        l_set = [{'__label_set': [n_T], '__src_id': n_2_id, '__dst_id': n_2_id},
-                 {'__label_set': [n_T], '__src_id': n_2_id, '__dst_id': n_3_id}]
-
-        topo_diff = Topo_Diff(node_set_add=n_set,
-                              link_set_add=l_set)
-
-        op = DBO_diff_commit__topo(topo_diff)
-        self.db_ctl.exec_op(op)
-
-        op = DBO_rm_node_set([n_0_id, n_1_id])
-        self.db_ctl.exec_op(op)
-
-        op = DBO_rm_node_set([n_2_id, n_3_id], rm_links=True)
-        self.db_ctl.exec_op(op)
-
-        # assert all deleted
-        op = DBO_match_node_id_set(filter_label=n_T)
-        id_set = self.db_ctl.exec_op(op)
-        self.assertEqual(len(id_set), 0)
-
     def test_rz_clone(self):
         op = DBO_random_data_generation(lim_n=8, lim_r=16, prob_link_create=0.7)
         n_label = op.node_set_label
