@@ -2,9 +2,13 @@
 Rhizi websocket web API
 """
 
+import json
 import logging
 from socketio.mixins import BroadcastMixin
 from socketio.namespace import BaseNamespace
+import traceback
+
+from model.graph import Attr_Diff, Topo_Diff
 
 
 log = logging.getLogger('rhizi')
@@ -33,7 +37,8 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     def recv_disconnect(self):
         self._log_conn('conn close')
 
-    def on_diff_commit__topo(self, topo_diff):
+    def on_diff_commit__topo(self, json_str):
+        topo_diff = Topo_Diff.from_json_dict(json.loads(json_str))
         log.info('ws: rx: topo diff: ' + str(topo_diff))
 
         kernel = self.request.kernel
@@ -41,10 +46,11 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
             topo_diff_ret = kernel.diff_commit__topo(topo_diff)
             self.multicast_msg('diff_commit__topo', topo_diff_ret)
         except Exception as e:
-            # TODO handle exception
-            pass
+            log.error(e.message)
+            log.error(traceback.print_exc())
 
-    def on_diff_commit__attr(self, attr_diff):
+    def on_diff_commit__attr(self, json_str):
+        attr_diff = Attr_Diff.from_json_dict(json.loads(json_str))
         log.info('ws: rx: attr diff: ' + str(attr_diff))
 
         kernel = self.request.kernel
@@ -52,5 +58,5 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
             attr_diff_ret = kernel.diff_commit__attr(attr_diff)
             self.multicast_msg('diff_commit__attr', attr_diff_ret)
         except Exception as e:
-            # TODO handle exception
-            pass
+            log.error(e.message)
+            log.error(traceback.print_exc())
