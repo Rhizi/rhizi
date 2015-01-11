@@ -30,7 +30,6 @@ body {
   margin: 0;
   min-width: 980px;
   padding: 0;
-  color: #FFF;
   font-size: 12px;
   background-color: #f5f5fa; }
 
@@ -133,11 +132,60 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+* {
+  box-sizing: border-box; }
+  *:before, *:after {
+    box-sizing: border-box; }
+
 .login-background {
   background: url(../img/login-background.jpg);
   background-repeat: no-repeat;
-  background-size: cover;
   background-position: center; }
+
+.welcome-box {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  width: 600px;
+  height: 800px;
+  background: white; }
+
+.login-rhizi-logo {
+  margin-left: auto;
+  display: block;
+  margin-right: auto;
+  padding-top: 25px; }
+
+.login-header {
+  margin-top: 35px;
+  margin-bottom: 35px;
+  text-align: center;
+  color: #ee3654; }
+
+.login-text {
+  margin-left: 35px;
+  margin-right: 35px;
+  text-align: center; }
+
+.login-form {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  margin-left: 150px;
+  margin-right: 150px;
+  text-align: center; }
+
+input {
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  -webkit-appearance: none; }
+
+.forgot-password {
+  color: #919095;
+  text-decoration: none; }
+  .forgot-password:hover {
+    color: #363636; }
 
 .btn-regular {
   cursor: pointer;
@@ -702,14 +750,21 @@ h1 {
 h2 {
   font-size: 24px; }
 
-h1 {
+h3 {
   font-size: 18px; }
 
-h2 {
+h4 {
   font-size: 14px; }
 
-h1 {
-  font-size: 12px; }
+h5 {
+  font-size: 12px;
+  line-height: 1.4; }
+
+/* Paragraph */
+p {
+  font-size: 12px;
+  color: #363636;
+  line-height: 1.4; }
 
 svg text::selection {
   background: none; }

@@ -1,6 +1,60 @@
+* {
+    box-sizing: border-box;
+
+    &:before,
+    &:after {
+      box-sizing: border-box;
+    }
+
+  }
+
 .login-background {
   background: url(../img/login-background.jpg);
   background-repeat: no-repeat;
-  background-size: contain;
   background-position: center;
+}
+
+.welcome-box {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  width: 600px;
+  height: 800px;
+  background: white;
+}
+
+.login-rhizi-logo {
+  margin-left: auto;
+  display: block;
+  margin-right: auto;
+  padding-top: 25px;
+}
+
+.login-header {
+  margin-top: 35px;
+  margin-bottom: 35px;
+  text-align: center;
+  color: $magenta;
+}
+
+.login-text {
+  margin-left:35px;
+  margin-right:35px;
+  text-align: center;
+}
+
+.login-form {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  margin-left: 150px;
+  margin-right: 150px;
+  text-align: center;
+}
+
+.forgot-password {
+  color: $mid-grey;
+  text-decoration: none;
+  &:hover {
+    color: $dark-grey;
+  }
 }

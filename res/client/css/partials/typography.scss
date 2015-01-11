@@ -8,14 +8,24 @@ h2 {
   font-size: $h2-size;
 }
 
-h1 {
+h3 {
   font-size: $h3-size;
 }
 
-h2 {
+h4 {
   font-size: $h4-size;
 }
 
-h1 {
+h5 {
   font-size: $h5-size;
+  line-height: $base-line-height;
+}
+
+
+/* Paragraph */
+
+p {
+  font-size: $base-font-size;
+  color: $dark-grey;
+  line-height: $base-line-height;
 }

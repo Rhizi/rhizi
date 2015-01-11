@@ -27,41 +27,39 @@
 </head>
 
 <body class="login-background">
-<h1> Welcome to Rhizi!</h1>
-
-	<p>Rhizi is a collaborative knowledge editor. With it, you can upload your internship proposals for review and share the skills, interests and project you participate in.</p>
-	<p>The resulting interactome allows the entire CRI to better collaborate with AIV students</p>
-	<p><a href="mailto:dor.garbash@gmail.com">Send us an Email</a> about your experience, especially if you encountered any problem!</p>
-
-	<div id="login_form_panel">
-		<form
-			onsubmit="submit_login_form();"
-			id="login_form">
-			<h2 id="login_form__heading">Login</h2>
+	<div class="welcome-box">
+		<img src="/res/img/logo-red.png" class="login-rhizi-logo">
+		<div class="login-text">
+			<h1 class="login-header"> Welcome to Rhizi!</h1>
+			<h5>Rhizi is a collaborative knowledge editor.</h5>
+			<p>With it, you can upload your internship proposals for review and share the skills, interests and project you participate in.</p>
 			<br>
-			<div class="login_form__key">Username:</div>
-			<div class="login_form__value">
-				<input
-					type="text"
-					id="login_username">
-			</div>
-			<br>
-			<div class="login_form__key">Password:</div>
-			<div class="login_form__value">
-				<input
-					type="password"
-					id="login_password">
-			</div>
-			<p>
-				<input
-					type="submit"
-					value="Login">
-			</p>
-		</form>
-		<div id="failed-login">
-			{% if login_failed %}<b>Login Failed</b>{% endif %}
+			<p>The resulting interactome allows the entire CRI to better collaborate with AIV students</p>
 		</div>
-	</div>
+		<div id="login_form_panel" class="login-form">
+			<fieldset>
+				<form onsubmit="submit_login_form();" id="login_form">
 
+					<div class="login_form__value">
+						<input type="text" id="login_username" placeholder="Email">
+					</div>
+					<div class="login_form__value">
+						<input type="password" id="login_password" placeholder="Password">
+					</div>
+					<p>
+						<input type="submit" value="Sign in">
+					</p>
+					<a class="forgot-password"> forgot password? </a>
+				</form>
+			</fieldset>
+			<div id="failed-login">
+				{% if login_failed %}<b>Login Failed</b>{% endif %}
+			</div>
+		</div>
+		<img> logo here
+		<p class="login-text"><a href="mailto:dor.garbash@gmail.com">Send us an Email</a> about your experience, especially if you encountered any problem!</p>
+
+
+	</div>
 </body>
 </html>
