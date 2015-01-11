@@ -8,6 +8,7 @@ if [ $neo4j_count == "0" ]; then
     echo run neo4j please
     exit 0
 fi
+make # building css relies on Makefile
 ant -f build.ant deploy-local
 cd deploy-local
 python bin/rz_server.py --config-dir etc
