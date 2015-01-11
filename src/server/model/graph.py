@@ -105,19 +105,19 @@ class Topo_Diff(object):
             return obj.to_json_dict()
 
     def to_json_dict(self):
-        ret = {k: getattr(self, k) for k in ['link_set_rm',
-                                             'node_set_rm',
+        ret = {k: getattr(self, k) for k in ['link_id_set_rm',
+                                             'node_id_set_rm',
                                              'node_set_add',
                                              'link_set_add'] }
         return ret
 
-    def __init__(self, link_set_rm=[],
-                       node_set_rm=[],
+    def __init__(self, link_id_set_rm=[],
+                       node_id_set_rm=[],
                        node_set_add=[],
                        link_set_add=[]):
 
-        self.link_set_rm = link_set_rm
-        self.node_set_rm = node_set_rm
+        self.link_id_set_rm = link_id_set_rm
+        self.node_id_set_rm = node_id_set_rm
         self.node_set_add = node_set_add
         self.link_set_add = link_set_add
 
@@ -138,8 +138,8 @@ class Topo_Diff(object):
         """
         ret = Topo_Diff()
 
-        # merge keys - this allows constructor argument omission (link_set_rm,
-        # node_set_rm, etc.) such as when constructing from POST JSON data
+        # merge keys - this allows constructor argument omission (link_id_set_rm,
+        # node_id_set_rm, etc.) such as when constructing from POST JSON data
         for k, _ in ret.__dict__.items():
             v = json_dict.get(k)
             if None != v:

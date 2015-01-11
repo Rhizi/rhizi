@@ -255,8 +255,8 @@ class DBO_diff_commit__topo(DB_composed_op):
 
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add, meta_attr='__type')
-        l_rm_set = topo_diff.link_set_rm
-        n_rm_set = topo_diff.node_set_rm
+        l_rm_set = topo_diff.link_id_set_rm
+        n_rm_set = topo_diff.node_id_set_rm
 
         self.n_add_map = len(n_add_map) > 0
         self.l_add_map = len(l_add_map) > 0
