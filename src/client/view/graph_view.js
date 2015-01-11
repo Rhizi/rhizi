@@ -335,7 +335,7 @@ function GraphView(spec) {
                 }
             });
             linktext.each(function (d) {
-                if (selection.node_selected(d)) {
+                if (selection.link_selected(d)) {
                     ontop.push(this);
                 }
             });

@@ -112,13 +112,16 @@ var node_selected = function(node) {
     return selected_nodes__by_id[node.id] !== undefined;
 }
 
+var link_selected = function(link) {
+    return node_selected(link.__src) && node_selected(link.__dst);
+}
+
 var selected_class__node = function(node) {
     return selected_nodes.length > 0 ? (node_selected(node) ? "selected" : "notselected") : "";
 }
 
 var selected_class__link = function(link) {
-    return selected_nodes.length > 0 ? (node_selected(link.__src) && node_selected(link.__dst) ?
-        "selected" : "notselected") : "";
+    return selected_nodes.length > 0 ? (link_selected(link) ? "selected" : "notselected") : "";
 }
 
 var clear = function() {
@@ -156,6 +159,7 @@ return {
     selected_class__node: selected_class__node,
     selected_class__link: selected_class__link,
     node_selected: node_selected,
+    link_selected: link_selected,
     selectionChangedBus: selectionChangedBus,
     __get_root_nodes: function() { return root_nodes; },
     __get_selected_nodes: function() { return selected_nodes; },
