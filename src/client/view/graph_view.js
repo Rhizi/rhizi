@@ -203,7 +203,7 @@ function GraphView(spec) {
 
         relayout = (relayout === undefined && true) || relayout;
 
-        link = vis.selectAll("g.link")
+        link = d3.select(unselected_link_group).selectAll("g.link")
             .data(graph.links(), function(d) { return d.id; });
 
         link_g = link.enter().append('g')
