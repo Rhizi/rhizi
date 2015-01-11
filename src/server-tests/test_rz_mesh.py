@@ -5,10 +5,12 @@ from socketIO_client import SocketIO, BaseNamespace
 import unittest
 import urllib2
 
-import test_util
-from model.graph import Topo_Diff
 from model.graph import Attr_Diff
+from model.graph import Topo_Diff
 from neo4j_test_util import rand_id
+import neo4j_test_util
+import test_util
+
 
 class TestMeshAPI(unittest.TestCase):
     """
@@ -50,11 +52,9 @@ class TestMeshAPI(unittest.TestCase):
 
         class NS_test(BaseNamespace):
 
-            def on_diff_commit__topo(self, json_str):
-                topo_diff = Topo_Diff.from_json_dict(json_str)
-                n_id = topo_diff.node_set_add[0].get('id')
-                greenlet.getcurrent().n_id_received = n_id
-
+            def on_diff_commit__topo(self, json_dict):
+                ret_diff = Topo_Diff.Commit_Result_Type.from_json_dict(json_dict)
+                greenlet.getcurrent().received_diff = ret_diff
                 self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
 
         test_label = neo4j_test_util.rand_label()
@@ -78,19 +78,20 @@ class TestMeshAPI(unittest.TestCase):
             c0_t.switch()
 
         c0_t = greenlet(c_0)
+        c0_t.received_diff = None
         c1_t = greenlet(c_1)
         c0_t.switch()
-        self.assertEqual(c0_t.n_id_received, n_id)
+
+        self.assertTrue(None != c0_t.received_diff)
+        self.assertEqual(1, len(c0_t.received_diff.node_id_set_add))
 
     def test_ws_event__topo_diff(self):
 
         class NS_test(BaseNamespace):
 
-            def on_diff_commit__topo(self, json_str):
-                todo_diff = Topo_Diff.from_json_dict(json.loads(json_str))
-                n_id = todo_diff.node_set_add[0].get('id')
-                greenlet.getcurrent().n_id_received = n_id
-
+            def on_diff_commit__topo(self, json_dict):
+                ret_diff = Topo_Diff.Commit_Result_Type.from_json_dict(json_dict)
+                greenlet.getcurrent().received_diff = ret_diff
                 self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
 
         test_label = neo4j_test_util.rand_label()
@@ -111,19 +112,19 @@ class TestMeshAPI(unittest.TestCase):
 
         c0_t = greenlet(c_0)
         c1_t = greenlet(c_1)
+        c1_t.received_diff = None
         c0_t.switch()
 
-        self.assertEqual(c1_t.n_id_received, n_id)
+        self.assertTrue(None != c1_t.received_diff)
+        self.assertEqual(1, len(c1_t.received_diff.node_id_set_add))
 
     def test_ws_event__attr_diff(self):
 
         class NS_test(BaseNamespace):
 
             def on_diff_commit__attr(self, json_str):
-                attr_diff = Attr_Diff.from_json_dict(json.loads(json_str))
-                n_id = attr_diff.type_node.node_set_add[0].get('id')
-                greenlet.getcurrent().n_id_received = n_id
-
+                attr_diff = Attr_Diff.from_json_dict(json_str)
+                greenlet.getcurrent().received_diff = attr_diff
                 self._transport._connection.send_close()  # FIXME: properly close socket, avoid c_1 socket wait
 
         test_label = neo4j_test_util.rand_label()
@@ -149,9 +150,11 @@ class TestMeshAPI(unittest.TestCase):
 
         c0_t = greenlet(c_0)
         c1_t = greenlet(c_1)
+        c1_t.received_diff = None
         c0_t.switch()
 
-        self.assertEqual(c1_t.n_id_received, n_id)
+        self.assertTrue(None != c1_t.received_diff)
+        self.assertEqual(1, len(c1_t.received_diff.type__node))
 
 if __name__ == "__main__":
 
