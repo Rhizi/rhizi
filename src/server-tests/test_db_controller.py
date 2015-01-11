@@ -1,34 +1,35 @@
 import logging
 import unittest
 
-import test_util
 import db_controller as dbc
 from db_op import DBO_add_link_set
-from db_op import DBO_rz_clone
+from db_op import DBO_add_node_set
 from db_op import DBO_block_chain__commit
 from db_op import DBO_block_chain__list
-from db_op import DBO_match_node_set_by_id_attribute
-from db_op import DBO_match_link_id_set
-from db_op import DBO_add_node_set
 from db_op import DBO_diff_commit__attr
+from db_op import DBO_diff_commit__topo
 from db_op import DBO_load_link_set
 from db_op import DBO_load_node_set_by_DB_id
+from db_op import DBO_match_link_id_set
 from db_op import DBO_match_node_id_set
+from db_op import DBO_match_node_set_by_id_attribute
 from db_op import DBO_rm_node_set
 from db_op import DBO_rz_clone
-from db_op import DBO_diff_commit__topo
+from db_op import DBO_rz_clone
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
-from neo4j_test_util import flush_db
 from neo4j_test_util import DBO_random_data_generation
+from neo4j_test_util import flush_db
 from neo4j_test_util import rand_id
-from neo4j_util import Neo4JException
-from rz_server import Config
 import neo4j_test_util
+from neo4j_util import Neo4JException, DB_Query
+from neo4j_util import meta_attr_list_to_meta_attr_map
+from rz_server import Config
 from test_util import generate_random_link_dict
 from test_util import generate_random_node_dict
-from neo4j_util import meta_attr_list_to_meta_attr_map
+import test_util
+
 
 class TestDBController(unittest.TestCase):
 

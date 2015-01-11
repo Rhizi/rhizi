@@ -1,14 +1,15 @@
-import re
+from collections import namedtuple
+import hashlib
 import json
+import re
 
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
+from neo4j_util import DB_Query
 from neo4j_util import DB_result_set
 from neo4j_util import cfmt
 import neo4j_util as db_util
-from neo4j_util import DB_Query
-import hashlib
-from collections import namedtuple
+
 
 class DB_op(object):
     """
