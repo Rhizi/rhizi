@@ -1,5 +1,31 @@
 "use strict";
 
+define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
+function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
+
+var typeindex = 0,
+    nodetypes = consts.nodetypes,
+    node_name_to_type = {};
+
+var _get_lastnode,
+    get_lastnode = function (editgraph, cursor) { return _get_lastnode(editgraph, cursor); };
+
+var sugg_name = {},
+    id_to_name_map = {},
+    suggestions_bus = new Bacon.Bus(),
+    suggestions_options = suggestions_bus.toProperty();
+
+suggestions_bus.push([]);
+
+var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
+var ANALYSIS_NODE = 'ANALYSIS_NODE'
+var ANALYSIS_LINK = 'ANALYSIS_LINK';
+
+function selectedType()
+{
+    return nodetypes[typeindex];
+}
+
 /**
  * Tokenizer for input.
  *
@@ -77,31 +103,6 @@ function tokenize(text, node_token, quote)
     return tokens;
 }
 
-define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
-function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
-
-var typeindex = 0,
-    nodetypes = consts.nodetypes,
-    node_name_to_type = {};
-
-var _get_lastnode,
-    get_lastnode = function (editgraph) { return _get_lastnode(editgraph); };
-
-var sugg_name = {},
-    id_to_name_map = {},
-    suggestions_bus = new Bacon.Bus(),
-    suggestions_options = suggestions_bus.toProperty();
-
-suggestions_bus.push([]);
-
-var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
-var ANALYSIS_NODE = 'ANALYSIS_NODE'
-var ANALYSIS_LINK = 'ANALYSIS_LINK';
-
-function selectedType()
-{
-    return nodetypes[typeindex];
-}
 
 /*
  * id - undefined | node id 
