@@ -381,36 +381,26 @@ function Graph(spec) {
             attr_diff.add_link_attr_write(link.id, key, new_link_spec[key]);
         }
 
-        var on_ajax_success = function(id_to_link_map) {
-            var link_id = link.id; // original link id
-            if (id_to_link_map[link_id].id != link_id) {
-                // TODO: handle incoming ID update
-                util.assert(false, 'update_link: id attr change');
-            }
+        var on_ajax_success = function(attr_diff_spec) {
+            var attr_diff = model_util.adapt_format_read_diff__attr(attr_diff_spec);
+            var id_to_link_map = attr_diff.id_to_link_map
+            var l_id = link.id; // original node id
+
+            util.assert(id_to_link_map && id_to_link_map[l_id], "bad return value from ajax");
 
             var ret_link = id_to_link_map[link_id];
-            for (var key in ret_link) {
-                if ('id' == key){
-                    continue;
-                }
-                var matching = null;
-                link[key] = ret_link[key];
-                // this part is askew right now
-                if (key == '__type') {
-                    matching = 'name';
-                }
-                if (key == 'name') {
-                    matching = '__type';
-                }
-                if (matching) {
-                    link[matching] = link[key];
-                }
+            for (var key in ret_link['__attr_write']){
+                link[key] = ret_link['__attr_write'][key];
+            }
+            for (var key in ret_link['__attr_remove']){
+                delete link[key];
             }
 
             // TODO: handle NAK: add problem emblem to link
             if (on_success !== undefined) {
                 on_success();
             }
+            diffBus.push(attr_diff);
         };
 
         var on_ajax_error = function(){
