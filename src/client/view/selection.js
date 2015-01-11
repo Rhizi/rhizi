@@ -1,14 +1,14 @@
 define(['rz_core', 'Bacon'],
 function(rz_core,   Bacon) {
 
-function get_rz_core()
+function get_main_graph()
 {
     // circular dependency on rz_core, so require.js cannot solve it.
     if (rz_core === undefined) {
         rz_core = require('rz_core');
         listen_on_diff_bus(rz_core.main_graph.diffBus);
     }
-    return rz_core;
+    return rz_core.main_graph;
 }
 
 var root_nodes = [], // these are the nodes that are requested via update
@@ -66,14 +66,14 @@ function updateSelectedNodesBus(new_selected_nodes)
 }
 
 function byVisitors(node_selector, link_selector) {
-    var new_selected_nodes = get_rz_core().main_graph.find__by_visitors(node_selector, link_selector);
+    var new_selected_nodes = get_main_graph().find__by_visitors(node_selector, link_selector);
 
     clear();
     connectedComponent(new_selected_nodes);
 }
 
 function connectedComponent(nodes) {
-    var connected = get_rz_core().main_graph.getConnectedNodesAndLinks(nodes, 1),
+    var connected = get_main_graph().getConnectedNodesAndLinks(nodes, 1),
         i,
         node,
         link,
