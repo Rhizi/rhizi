@@ -126,6 +126,26 @@ define([],
             }
 
             /**
+             * @param callback signature: 'function (n_id, n_attr_diff) { ... }
+             */
+            Attr_Diff.prototype.for_each_node = function(callback) {
+                for (var n_id in this['__type_node']) {
+                    var n_attr_diff = this['__type_node'][n_id];
+                    callback(n_id, n_attr_diff);
+                }
+            }
+
+            /**
+             * @param callback signature: 'function (l_id, l_attr_diff) { ... }
+             */
+            Attr_Diff.prototype.for_each_link = function(callback) {
+                for (var l_id in this['__type_link']) {
+                    var l_attr_diff = this['__type_link'][l_id];
+                    callback(l_id, l_attr_diff);
+                }
+            }
+
+            /**
              * Visual diff object expressing any visual change to the state of a
              * particular visualization type.
              *
