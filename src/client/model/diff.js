@@ -160,6 +160,48 @@ define([],
                 return ret;
             }
 
+            /**
+             * Convert a Attr_Diff spec to an Attr_Diff object
+             *
+             */
+            function new_attr_diff_from_spec(attr_diff_spec) {
+                var ret = new_attr_diff();
+
+                for (var n_id in attr_diff_spec['__type_node']) {
+
+                    var n_attr_diff = attr_diff_spec['__type_node'][n_id];
+
+                    // process attr writes: node
+                    for (var attr_name in n_attr_diff['__attr_write']) {
+                        var attr_val = n_attr_diff['__attr_write'][attr_name];
+                        ret.add_node_attr_write(n_id, attr_name, attr_val);
+                    };
+
+                    // process attr removals: node
+                    for (var attr_name in n_attr_diff['__attr_remove']) {
+                        ret.add_node_attr_remove(n_id, attr_name);
+                    };
+                };
+
+                for (var l_id in attr_diff_spec['__type_link']) {
+
+                    var n_attr_diff = attr_diff_spec['__type_link'][l_id];
+
+                    // process attr writes: link
+                    for (var attr_name in n_attr_diff['__attr_write']) {
+                        var attr_val = n_attr_diff['__attr_write'][attr_name];
+                        ret.add_link_attr_write(l_id, attr_name, attr_val);
+                    };
+
+                    // process attr removals: link
+                    for (var attr_name in n_attr_diff['__attr_remove']) {
+                        ret.add_link_attr_remove(l_id, attr_name);
+                    };
+                };
+
+                return ret;
+            }
+
             function new_vis_diff(obj_spec) {
                 /*
                  * validate obj_spec
@@ -181,6 +223,7 @@ define([],
             return {
                 new_topo_diff : new_topo_diff,
                 new_attr_diff : new_attr_diff,
+                new_attr_diff_from_spec : new_attr_diff_from_spec,
                 new_vis_diff : new_vis_diff,
                 new_diff_set : new_diff_set,
                 is_attr_diff: function (obj) { return obj instanceof Attr_Diff; },
