@@ -3,7 +3,7 @@
 /**
  * Manage backend websocket connection
  */
-define([ 'rz_config', 'util', 'model/diff', 'socketio'], function(rz_config, util, model_diff, io) {
+define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(rz_config, util, model_diff, model_util, io) {
 
     var ws_server_url = 'http://' + rz_config.rz_server_host + ':'
                         + rz_config.rz_server_port
@@ -43,12 +43,29 @@ define([ 'rz_config', 'util', 'model/diff', 'socketio'], function(rz_config, uti
         console.log('ws: error: ' + err);
     }
 
-    function diff_merge__topo(topo_diff_raw) {
-        console.log('ws: rx: diff_merge__topo');
-        var topo_diff_json = JSON.parse(topo_diff_raw);
-        var topo_diff = model_diff.new_topo_diff(topo_diff_json);
-        rz_mesh_graph_ref.commit_diff__topo(topo_diff);
+    /**
+     * Handle websocket incoming Topo_Diffs
+     *
+     * @param topo_diff_cr: Topo_Diff commit result object
+     */
     function ws_diff_merge__topo(topo_diff_spec_raw, topo_diff_cr) {
+
+        // adapt from wire format, no need to do the same for id_sets
+        var node_set_add = topo_diff_spec_raw.node_set_add.map(model_util.adapt_format_read_node)
+        var link_ptr_set = topo_diff_spec_raw.link_set_add.map(model_util.adapt_format_read_link_ptr)
+
+        var topo_diff_spec = { node_set_add: node_set_add,
+                               link_set_add: link_ptr_set,
+                               node_id_set_rm: topo_diff_spec_raw.node_id_set_rm,
+                               link_id_set_rm: topo_diff_spec_raw.link_id_set_rm };
+
+        // [!] note: this is not a pure Topo_Diff object in the sense it contain a link_ptr_set,
+        // not a resolved link object set
+        var topo_diff = model_diff.new_topo_diff(topo_diff_spec); // run through validation
+
+        console.log('ws: rx: diff_merge__topo, committing wire-adapted topo_diff:', topo_diff);
+
+        rz_mesh_graph_ref.commit_diff__topo(topo_diff_spec);
     }
 
     function diff_merge__attr(attr_diff_raw) {
