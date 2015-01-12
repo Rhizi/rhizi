@@ -99,7 +99,7 @@ define([],
                 return this;
             }
 
-            Attr_Diff.prototype.add_node_attr_rm = function(n_id, attr_name) {
+            Attr_Diff.prototype.add_node_attr_remove = function(n_id, attr_name) {
                 if (undefined == this[n_id]) {
                     this.init_attr_diff(n_id);
                 }
@@ -117,7 +117,7 @@ define([],
                 return this;
             }
 
-            Attr_Diff.prototype.add_link_attr_rm = function(l_id, attr_name) {
+            Attr_Diff.prototype.add_link_attr_remove = function(l_id, attr_name) {
                 if (undefined == this[l_id]) {
                     this.init_attr_diff(l_id);
                 }
