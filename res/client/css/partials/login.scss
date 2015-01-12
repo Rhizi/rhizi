@@ -99,7 +99,7 @@
     }
   }
   &[type="email"] {
-    background: url(../img/mail-icon.png) no-repeat scroll 20px 15px;
+    background: url(../static/img/mail-icon.png) no-repeat scroll 20px 15px;
     background-color:$light-grey;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
@@ -109,7 +109,7 @@
   }
 
   &[type="password"] {
-    background: url(../img/password-icon.png) no-repeat scroll 20px 15px;
+    background: url(../static/img/password-icon.png) no-repeat scroll 20px 15px;
     background-color:$light-grey;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
@@ -154,7 +154,7 @@
   text-align: center;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  background: url(../img/hr-email-icon.png) no-repeat;
+  background: url(../static/img/hr-email-icon.png) no-repeat;
   margin-left: auto;
   display: inline-block;
   margin-right: auto;

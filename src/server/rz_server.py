@@ -58,6 +58,7 @@ class Config(object):
         cfg['listen_port'] = 8080
         cfg['root_path'] = os.getcwd()
         cfg['static_url_path'] = '/static'
+        cfg['htpasswd_path'] = os.path.join(cfg['config_dir'], 'htpasswd')
 
         # Flask keys
         cfg['SECRET_KEY'] = ''
@@ -165,19 +166,6 @@ def init_rest_interface(cfg, flask_webapp):
         redirector.func_name = 'redirector_%s' % path.replace('/', '_')
         return (path, redirector, flask_args)
 
-    def dev_mode__resend_from_static(static_url):
-        """
-        redirect static links while in dev mode:
-           - /res/<path> -> <path>
-        """
-        static_folder = flask.current_app.static_folder
-
-        new_req_path = None
-        if request.path.startswith('/res/'):
-            # turn absolute/res/... URLs to static-folder relative
-            new_req_path = request.path.replace('/res/', '')
-        return send_from_directory(static_folder, new_req_path)
-
     def login_decorator(f):
         """
         [!] security boundary: asserd logged-in user before executing REST api call
@@ -208,15 +196,6 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info),
                   ]
 
-    if cfg.development_mode:
-        dev_path_set = ['/static', '/res']
-        rest_dev_entry_set = []
-        for dev_path in dev_path_set:
-            rest_dev_entry_set.append(rest_entry(dev_path + '/<path:static_url>',
-                                                 dev_mode__resend_from_static,
-                                                 {'methods': ['GET']}))
-        rest_entry_set += rest_dev_entry_set
-
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
 
@@ -229,6 +208,14 @@ def init_rest_interface(cfg, flask_webapp):
         f = route_dec(f)
 
         flask_webapp.f = f  # assign decorated function
+
+    # install 404 handler to redirect to root - which redirects further to login (index if access disabled)
+    @flask_webapp.errorhandler(404)
+    def page_not_found(e):
+        # FIXME: template for 404 which redirects (html, not http)
+        log.debug("failed redirection: request = %s" % request)
+        return redirect('/')
+
 
 def init_webapp(cfg, kernel, db_ctl=None):
     """
@@ -262,8 +249,13 @@ def init_config(cfg_dir):
     return cfg
 
 def init_pw_db(cfg, user_pw_list_file):
-    pass  # TODO: stub, will move to tools/
-
+    if not os.path.exists(user_pw_list_file):
+        print("error: missing specified htpasswd init file '%s'" % user_pw_list_file)
+        raise SystemExit
+    with open(user_pw_list_file) as user_pwd_list_fd:
+        for line in user_pwd_list_fd:
+            u, p = [word.strip() for word in line.split(',')]
+            crypt_util.add_user_login(cfg, u, p)
 
 if __name__ == "__main__":
 
