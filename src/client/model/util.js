@@ -58,16 +58,10 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         var ret;
 
         ret = $.extend({
-            '__src_id' : l_raw['__src_id'],
-            '__dst_id' : l_raw['__dst_id'],
-            // type:
-            // - discard all but first label
-            // - adjust to lowercase
-            '__type' : __sanitize_label__read(l_raw['__type'][0]),
             'state' : 'perm',
         }, l_raw);
 
-        ret['name'] = ret['__type'];
+        ret['name'] = __sanitize_label__read(ret['__type'][0]);
         delete ret.__type;
 
         return ret;
