@@ -768,6 +768,67 @@ function Graph(spec) {
     }
     this.commit_diff__topo = commit_diff__topo;
 
+    function commit_diff__attr(attr_diff) {
+        util.assert(model_diff.is_attr_diff(attr_diff), 'commit_diff__attr: argument type != Attr_Diff');
+
+        // process nodes
+        attr_diff.for_each_node(function(n_id, n_attr_diff) {
+
+            var node = id_to_node_map[n_id];
+            if (undefined == node) {
+                console.warn('commit_diff__attr: incoming attr diff for non-existing node, discarding');
+                return;
+            }
+
+            // apply attr writes: node
+            var count_w = 0;
+            for (var attr_key in n_attr_diff['__attr_write']) {
+                var attr_value = n_attr_diff['__attr_write'][attr_key];
+                node[attr_key] = attr_value; // write each new attr update
+                count_w = count_w + 1;
+            };
+
+            // apply attr removals: node
+            var count_d = 0;
+            for (var attr_key in n_attr_diff['__attr_remove']) {
+                delete node[attr_key];  // apply each attr removal
+                count_d = count_d + 1;
+            };
+
+            console.log('commit_diff__attr: n_id: \'' + n_id + '\', write-count: ' + count_w + ', rm-count: ' + count_d);
+        });
+
+        // process links
+        attr_diff.for_each_link(function(l_id, n_attr_diff) {
+
+            var link = id_to_link_map[l_id];
+            if (undefined == link) {
+                console.warn('commit_diff__attr: incoming attr diff for non-existing link, discarding');
+                return;
+            }
+
+            // apply attr writes: link
+            var count_w = 0;
+            for (var attr_key in n_attr_diff['__attr_write']) {
+                var attr_value = n_attr_diff['__attr_write'][attr_key];
+                link[attr_key] = attr_value; // write each new attr update
+                count_w = count_w + 1;
+            };
+
+            // apply attr removals: link
+            var count_d = 0;
+            for (var attr_key in n_attr_diff['__attr_remove']) {
+                delete link[attr_key];  // apply each attr removal
+                count_d = count_d + 1;
+            };
+
+            console.log('commit_diff__attr: l_id: \'' + l_id + '\', write-count: ' + count_w + ', rm-count: ' + count_d);
+        });
+
+        diffBus.push(attr_diff);
+    }
+    this.commit_diff__attr = commit_diff__attr;
+
     /**
      * perform initial DB load from backend
      *
