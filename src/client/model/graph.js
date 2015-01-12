@@ -703,6 +703,9 @@ function Graph(spec) {
         link_spec.__src = find_node__by_id(src_id);
         link_spec.__dst = find_node__by_id(dst_id);
 
+        util.assert(undefined !== link_spec.__src, "src_id not found");
+        util.assert(undefined !== link_spec.__dst, "dst_id not found");
+
         return link_spec;
     }
 
