@@ -88,11 +88,10 @@ var completer = (function (input_element, dropdown, base_config) {
 
     function completions(text)
     {
-        var ret = [],
-            noquotes = unquoted(text.toLowerCase());
+        var ret = [];
 
         for (var name in options) {
-            if (name.toLowerCase().indexOf(noquotes) === 0) {
+            if (name.toLowerCase().indexOf(text.toLowerCase()) === 0) {
                 ret.push(name);
             }
         }
@@ -135,7 +134,7 @@ var completer = (function (input_element, dropdown, base_config) {
         }
         completion_start = hash + 1;
         completion_end = space;
-        var string = text.slice(completion_start, completion_end);
+        var string = unquoted(text.slice(completion_start, completion_end));
         if (string.length < minimum_length) {
             return;
         }

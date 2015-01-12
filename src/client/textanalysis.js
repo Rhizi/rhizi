@@ -86,7 +86,6 @@ function tokenize(text, node_token, quote)
             break;
         case quote:
             inquote = !inquote;
-            token.push(c);
             break;
         default:
             if (c == node_token && prev_whitespace) {
