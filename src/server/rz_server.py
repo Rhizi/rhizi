@@ -230,6 +230,13 @@ def init_rest_interface(cfg, flask_webapp):
 
         flask_webapp.f = f  # assign decorated function
 
+    # install 404 handler to redirect to root - which redirects further to login (index if access disabled)
+    @flask_webapp.errorhandler(404)
+    def page_not_found(e):
+        # FIXME: template for 404 which redirects (html, not http)
+        return redirect('/')
+
+
 def init_webapp(cfg, kernel, db_ctl=None):
     """
     Initialize webapp:
