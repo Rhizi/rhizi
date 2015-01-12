@@ -7,6 +7,9 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 * Python 2.7
 * Flask
 * Apache Ant
+* python-gevent
+* python-gevent-websocket
+* python-socketio
 
 = Use =
 
