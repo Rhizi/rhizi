@@ -826,6 +826,9 @@ body.debug .debug-ui-right {
   min-height: 30px;
   min-width: 30px; }
 
+.logout-form {
+  display: inline; }
+
 /* Headings */
 h1 {
   font-size: 30px; }

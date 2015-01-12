@@ -170,7 +170,7 @@ def index():
 def login():
 
     def sanitize_input(req):
-        req_json = request.get_json()
+        req_json = request.form.to_dict()
         u = req_json['username']
         p = req_json['password']
         return u, p
@@ -178,6 +178,10 @@ def login():
     if request.method == 'POST':
         try:
             u, p = sanitize_input(request)
+        except:
+            log.warn('failed to sanitize inputs. request: %s' % request)
+            return render_template('login.html', login_failed=True)
+        try:
             crypt_util.validate_login(flask.current_app.rz_config, u, p)
         except Exception as e:
             # login failed
