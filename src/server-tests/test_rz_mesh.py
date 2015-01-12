@@ -94,8 +94,10 @@ class TestMeshAPI(unittest.TestCase):
                 raise KeyboardInterrupt()  # TODO: cleanup: properly close socket
 
         test_label = neo4j_test_util.rand_label()
-        n, n_id = test_util.generate_random_node_dict(test_label)
-        topo_diff = Topo_Diff(node_set_add=[n])
+        n_0, n_0_id = test_util.generate_random_node_dict(test_label)
+        n_1, n_1_id = test_util.generate_random_node_dict(test_label)
+        l, l_id = test_util.generate_random_link_dict(test_label, n_0_id, n_1_id)
+        topo_diff = Topo_Diff(node_set_add=[n_0, n_1], link_set_add=[l])
 
         def c_0():
             with TestMeshAPI.rz_socket(namespace=NS_test) as (_, ns_sock):
