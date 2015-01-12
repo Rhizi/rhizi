@@ -1,10 +1,11 @@
-
 Rhizi Prototype1_files/
-
 .idea/
 src/client/local_config.js
-
 .sass-cache/
 *.pyc
 *.sw?
 deploy-local/
+res/etc/htpasswd
+res/etc/htpasswd-init-file
+
+
