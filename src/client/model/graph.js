@@ -768,6 +768,13 @@ function Graph(spec) {
     }
     this.commit_diff__topo = commit_diff__topo;
 
+    /**
+     * Apply a Attr_Diff:
+     *    - commit diff to the local graph instanse
+     *    - emit a diffBus event
+     *
+     * This function should not trigger remote transmission of diff object
+     */
     function commit_diff__attr(attr_diff) {
         util.assert(model_diff.is_attr_diff(attr_diff), 'commit_diff__attr: argument type != Attr_Diff');
 
