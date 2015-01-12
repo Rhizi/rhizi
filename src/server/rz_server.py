@@ -58,6 +58,7 @@ class Config(object):
         cfg['listen_port'] = 8080
         cfg['root_path'] = os.getcwd()
         cfg['static_url_path'] = '/static'
+        cfg['htpasswd_path'] = os.path.join(cfg['config_dir'], 'htpasswd')
 
         # Flask keys
         cfg['SECRET_KEY'] = ''
@@ -269,8 +270,13 @@ def init_config(cfg_dir):
     return cfg
 
 def init_pw_db(cfg, user_pw_list_file):
-    pass  # TODO: stub, will move to tools/
-
+    if not os.path.exists(user_pw_list_file):
+        print("error: missing specified htpasswd init file '%s'" % user_pw_list_file)
+        raise SystemExit
+    with open(user_pw_list_file) as user_pwd_list_fd:
+        for line in user_pwd_list_fd:
+            u, p = [word.strip() for word in line.split(',')]
+            crypt_util.add_user_login(cfg, u, p)
 
 if __name__ == "__main__":
 

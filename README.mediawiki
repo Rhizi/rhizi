@@ -25,13 +25,27 @@ To run Rhizi locally:
 For testing locally run neo4j locally on the default 7474 port and then launch run-local.sh:<br><code>./run-local.sh</code>
 
 Or perform the following tasks by hand:
+# Update css files from scss sources using <code>make</code>
 # Invoke the local deployment Ant target:<br><code>$ cd ./rhizi && ant -f build.ant deploy-local</code>
 # Assert Neo4J is running and listening on it's default port
 # Run rhizi-server.py:<br><code>$ cd deploy-local && python bin/rz_server.py --config-dir=etc</code>
 
 Command line use documentation can be view with:
 :$ python rz_server.py -h
+
+== Installation ==
+
+=== Setup user password file ===
+The following works in conjunction with run-local.sh, for real deployment place the resulting htpasswd file in the location matching the config you use.
+# put a SECRET_KEY entry in the config file:
+  echo SECRET_KEY=mysecret >> res/etc/rhizi-server.conf
+# create an initialization file with email/password separated by a comma:
+  echo test@example.com,test > res/etc/htpasswd-init-file
+# create the htpasswd file:
+  python src/server/rz_server.py --init-htpasswd-db --htpasswd-init-file res/etc/htpasswd-init-file
+
 = Development =
+
 To update the css files you need [sass](http://sass-lang.com/)
 
 The build tool is [make](https://www.gnu.org/software/make/)
