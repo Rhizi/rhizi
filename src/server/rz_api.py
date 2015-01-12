@@ -170,7 +170,7 @@ def index():
 def login():
 
     def sanitize_input(req):
-        req_json = request.form.to_dict()
+        req_json = request.get_json()
         u = req_json['username']
         p = req_json['password']
         return u, p
@@ -191,7 +191,7 @@ def login():
         # login successful
         session['username'] = u
         log.debug('login: success: user: %s' % (u))
-        return redirect('/index')
+        return '{}';
 
     if request.method == 'GET':
         return render_template('login.html')

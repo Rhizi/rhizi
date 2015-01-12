@@ -67,6 +67,21 @@ $('.local-storage-load a').click(function(){
   rz_core.load_from_json(json_blob);
 });
 
+var logout_button = $('#logout-button');
+logout_button.click(function() {
+    $.ajax({
+        type: "POST",
+        url: '/logout',
+        success: function () {
+            document.location = "/login";
+        },
+        error: function () {
+            console.log("failed to logout");
+            document.location = "/login";
+        },
+    }); // server should redirect back to /login
+});
+
 $('a.save-history').click(function() {
     if (rz_core.main_graph.history === undefined) {
         throw "History is undefined";
