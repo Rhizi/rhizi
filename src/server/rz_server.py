@@ -235,6 +235,7 @@ def init_rest_interface(cfg, flask_webapp):
     @flask_webapp.errorhandler(404)
     def page_not_found(e):
         # FIXME: template for 404 which redirects (html, not http)
+        log.debug("failed redirection: request = %s" % request)
         return redirect('/')
 
 
