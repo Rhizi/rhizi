@@ -1,23 +1,17 @@
-import pickle
 import hashlib, uuid
-import os
 import logging
+import pickle
+
 
 log = logging.getLogger('rhizi')
 
-def add_user_login(config, u, p):
-    htpasswd_path = config.htpasswd_path
-
-    if False == os.path.exists(htpasswd_path):
-        with open(htpasswd_path, 'wb') as f:
-            pickle.dump({}, f)
+def add_user_login(htpasswd_path, salt, u, p):
 
     with open(htpasswd_path, 'rb') as f:
         data = f.read()
         pw_db = pickle.loads(data)
 
     with open(htpasswd_path, 'wb') as f:
-        salt = config.secret_key
         pw_db[u] = hash_pw(str(p), salt)
         pickle.dump(pw_db, f)
 
@@ -38,9 +32,9 @@ def validate_login(config, u, p):
 
         existing_pw_hash = pw_db.get(u)
         if None == existing_pw_hash:
-            raise Exception('Not autorhized')
+            raise Exception('Not authorized')
 
         if hash_pw(p, salt) != existing_pw_hash:
-            raise Exception('Not autorhized')
+            raise Exception('Not authorized')
 
 
