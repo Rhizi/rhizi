@@ -63,16 +63,19 @@ define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(
         // not a resolved link object set
         var topo_diff = model_diff.new_topo_diff(topo_diff_spec); // run through validation
 
-        console.log('ws: rx: diff_merge__topo, committing wire-adapted topo_diff:', topo_diff);
+        console.log('ws: rx: ws_diff_merge__topo, committing wire-adapted topo_diff:', topo_diff);
 
         rz_mesh_graph_ref.commit_diff__topo(topo_diff_spec);
     }
 
-    function diff_merge__attr(attr_diff_raw) {
+    /**
+     * Handle websocket incoming Attr_Diffs
+     *
+     * @param attr_diff_cr: Attr_Diff commit result object
+     */
     function ws_diff_merge__attr(attr_diff_spec, attr_diff_cr) {
-        console.log('ws: rx: diff_merge__attr');
-        var attr_diff_json = JSON.parse(attr_diff_raw);
-        var attr_diff = model_diff.new_attr_diff(attr_diff_json);
+        var attr_diff = model_diff.new_attr_diff_from_spec(attr_diff_spec); // run through validation
+        console.log('ws: rx: ws_diff_merge__attr, committing wire-adapted topo_diff:', attr_diff);
         rz_mesh_graph_ref.commit_diff__attr(attr_diff);
     }
 
