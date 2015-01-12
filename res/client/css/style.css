@@ -146,8 +146,8 @@ table {
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
-  width: 600px;
-  height: 800px;
+  width: 445px;
+  height: 640px;
   background: white; }
 
 .login-rhizi-logo {
@@ -163,15 +163,18 @@ table {
   color: #ee3654; }
 
 .login-text {
-  margin-left: 35px;
-  margin-right: 35px;
+  font-size: 14px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-right: 45px;
+  padding-left: 45px;
   text-align: center; }
 
 .login-form {
-  margin-top: 50px;
-  margin-bottom: 50px;
-  margin-left: 150px;
-  margin-right: 150px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
   padding: 20px;
   width: 300px;
@@ -208,6 +211,7 @@ table {
       background: #d10a40; }
   .login-input[type="email"] {
     background: url(../img/mail-icon.png) no-repeat scroll 20px 15px;
+    background-color: #f5f5fa;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
     width: 100%;
@@ -215,6 +219,7 @@ table {
     padding-left: 60px; }
   .login-input[type="password"] {
     background: url(../img/password-icon.png) no-repeat scroll 20px 15px;
+    background-color: #f5f5fa;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
     width: 100%;
@@ -227,6 +232,43 @@ table {
   text-decoration: none; }
   .forgot-password:hover {
     color: #363636; }
+
+.contact-us-div {
+  text-align: center; }
+  .contact-us-div:before {
+    content: "";
+    width: 112px;
+    margin-top: 10px;
+    position: absolute;
+    height: 0;
+    margin-left: -118px;
+    border-top: 1px solid #ee3654; }
+  .contact-us-div:after {
+    content: "";
+    width: 112px;
+    margin-top: 10px;
+    position: absolute;
+    margin-left: 4px;
+    height: 0;
+    border-top: 1px solid #ee3654; }
+
+.contact-us-icon {
+  text-align: center;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url(../img/hr-email-icon.png) no-repeat;
+  margin-left: auto;
+  display: inline-block;
+  margin-right: auto;
+  height: 25px;
+  width: 25px; }
+
+.contact-us-text {
+  color: #ee3654; }
+
+.contact-us-link {
+  color: #ee3654;
+  text-decoration: underline; }
 
 .btn-regular {
   cursor: pointer;
