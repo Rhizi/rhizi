@@ -2,6 +2,7 @@ from collections import namedtuple
 import hashlib
 import json
 import re
+from copy import deepcopy
 
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
@@ -330,7 +331,7 @@ class DBO_diff_commit__attr(DB_op):
     def __init__(self, attr_diff):
         super(DBO_diff_commit__attr, self).__init__()
 
-        self.op_return_value__attr_diff = attr_diff  # cache attr_diff as return value on success
+        self.op_return_value__attr_diff = deepcopy(attr_diff)  # cache copy as return value on success
 
         for id_attr, n_attr_diff in attr_diff.type__node.items():
             # TODO parameterize multiple attr removal
