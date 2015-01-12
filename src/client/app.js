@@ -12,7 +12,9 @@
             FileSaver: lib_path + 'FileSaver',
             jquery: lib_path + 'jquery',
             'jquery-ui': lib_path + 'jquery-ui',
-            socketio: lib_path + '/socket.io/socket.io.min_0.9.10',
+            socketio: lib_path + 'socket.io/socket.io.min_0.9.10',
+            html2canvas: lib_path + 'html2canvas',
+            feedback: lib_path + 'feedback',
         }
     }
 

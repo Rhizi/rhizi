@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection', 'util', 'view/search'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core,        selection,   util,   search) {
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_config', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_config,   rz_core,        selection,   util,   search, feedback) {
 
     function expand(obj){
         if (!obj.savesize) {
@@ -74,6 +74,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         model_core.init(rz_config);
         textanalysis.init(rz_core.main_graph);
         search.init();
+        $.feedback({ajaxURL: rz_config.feedback_url});
     }
 
     return {

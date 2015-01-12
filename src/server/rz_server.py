@@ -29,6 +29,7 @@ from rz_mesh import init_ws_interface
 from rz_kernel import RZ_Kernel
 import rz_api
 import rz_api_rest
+import rz_feedback
 
 class Config(object):
     """
@@ -194,12 +195,16 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/logout', rz_api.logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info),
+                      rest_entry('/feedback', rz_feedback.feedback),
                   ]
+
+    # FIXME: but should be rate limited (everything should be, regardless of login)
+    no_login_paths = set(['/login', '/feedback'])
 
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
 
-        if cfg.access_control and '/login' != rest_path:
+        if cfg.access_control and rest_path not in no_login_paths:
             # currently require login on all but /login paths
             f = login_decorator(f)
 
