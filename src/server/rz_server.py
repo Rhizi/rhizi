@@ -166,19 +166,6 @@ def init_rest_interface(cfg, flask_webapp):
         redirector.func_name = 'redirector_%s' % path.replace('/', '_')
         return (path, redirector, flask_args)
 
-    def dev_mode__resend_from_static(static_url):
-        """
-        redirect static links while in dev mode:
-           - /res/<path> -> <path>
-        """
-        static_folder = flask.current_app.static_folder
-
-        new_req_path = None
-        if request.path.startswith('/res/'):
-            # turn absolute/res/... URLs to static-folder relative
-            new_req_path = request.path.replace('/res/', '')
-        return send_from_directory(static_folder, new_req_path)
-
     def login_decorator(f):
         """
         [!] security boundary: asserd logged-in user before executing REST api call
@@ -208,15 +195,6 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info),
                   ]
-
-    if cfg.development_mode:
-        dev_path_set = ['/static', '/res']
-        rest_dev_entry_set = []
-        for dev_path in dev_path_set:
-            rest_dev_entry_set.append(rest_entry(dev_path + '/<path:static_url>',
-                                                 dev_mode__resend_from_static,
-                                                 {'methods': ['GET']}))
-        rest_entry_set += rest_dev_entry_set
 
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
