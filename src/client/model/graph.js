@@ -388,7 +388,7 @@ function Graph(spec) {
 
             util.assert(id_to_link_map && id_to_link_map[l_id], "bad return value from ajax");
 
-            var ret_link = id_to_link_map[link_id];
+            var ret_link = id_to_link_map[l_id];
             for (var key in ret_link['__attr_write']){
                 link[key] = ret_link['__attr_write'][key];
             }
