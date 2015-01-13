@@ -393,7 +393,7 @@ var textAnalyser = function (spec) {
         }
     }
 
-    ret.drop_conjugator_links = and_count < linkindex;
+    ret.drop_conjugator_links = true; // leaving since we might change behavior again
 
     ret.applyToGraph = function(spec) {
         var edit_graph = spec.edit_graph,
