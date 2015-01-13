@@ -26,7 +26,6 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         var json;
 
         console.log('Rhizi main started');
-        drag_n_drop.init();
         $('#editname').onkeyup = function() { expand(this); };
         $('#editlinkname').onkeyup = function() { expand(this); };
         $('#textanalyser').onkeyup = function() { expand(this); };
@@ -43,6 +42,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
             $(document.body).addClass('debug');
             rz_core.edit_graph.set_user('fakeuser');
             rz_core.main_graph.set_user('fakeuser');
+            drag_n_drop.init();
         }
 
         document.body.onkeyup = function(e) {
