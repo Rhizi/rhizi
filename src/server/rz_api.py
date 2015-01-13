@@ -22,26 +22,26 @@ import traceback
 
 import crypt_util
 import db_controller as dbc
-
+from db_op import DBO_add_node_set
+from db_op import DBO_diff_commit__topo
+from db_op import DBO_load_link_set
+from db_op import DBO_match_node_id_set
+from db_op import DBO_match_node_set_by_id_attribute
+from db_op import DBO_rz_clone
 from model.graph import Topo_Diff
 from model.model import Link
 from rz_api_common import __sanitize_input
 from rz_api_common import sanitize_input__topo_diff
-from rz_api_rest import __common_resp_handle
+from rz_api_rest import common_resp_handle
 from rz_kernel import RZ_Kernel
-from db_op import DBO_match_node_set_by_id_attribute
-from db_op import DBO_match_node_id_set
-from db_op import DBO_load_link_set
-from db_op import DBO_rz_clone
-from db_op import DBO_diff_commit__topo
-from db_op import DBO_add_node_set
+from rz_req_handling import make_json_response
 
 
 log = logging.getLogger('rhizi')
 
 db_ctl = None  # injected: DB controller
 
-def __common_exec(op, on_success=__common_resp_handle, on_error=__common_resp_handle):
+def __common_exec(op, on_success=common_resp_handle, on_error=common_resp_handle):
     """
     @param on_success: should return a Flask Response object
     @param on_error: should return a Flask Response object
@@ -78,10 +78,10 @@ def __load_node_set_by_id_attr_common(id_set):
     op = DBO_match_node_set_by_id_attribute(id_set=id_set)
     try:
         n_set = db_ctl.exec_op(op)
-        return __common_resp_handle(data=n_set)
+        return common_resp_handle(data=n_set)
     except Exception as e:
         log.exception(e)
-        return __common_resp_handle(error='unable to load node with ids: {0}'.format(id_set))
+        return common_resp_handle(error='unable to load node with ids: {0}'.format(id_set))
 
 def match_node_set_by_attr_filter_map(attr_filter_map):
     """
@@ -117,7 +117,7 @@ def rz_clone():
     def on_success(topo_diff):
         # serialize Topo_Diff before including in response
         topo_diff_json = topo_diff.to_json_dict()
-        return __common_resp_handle(topo_diff_json)
+        return common_resp_handle(topo_diff_json)
 
     op = DBO_rz_clone()
     return __common_exec(op, on_success=on_success)
@@ -180,18 +180,18 @@ def login():
             u, p = sanitize_input(request)
         except:
             log.warn('failed to sanitize inputs. request: %s' % request)
-            return render_template('login.html', login_failed=True)
+            return make_json_response(status=401)  # return empty response
         try:
             crypt_util.validate_login(flask.current_app.rz_config, u, p)
         except Exception as e:
             # login failed
             log.warn('login: unauthorized: user: %s' % (u))
-            return render_template('login.html', login_failed=True)
+            return make_json_response(status=401)  # return empty response
 
         # login successful
         session['username'] = u
         log.debug('login: success: user: %s' % (u))
-        return '{}';
+        return make_json_response(status=200)  # return empty response
 
     if request.method == 'GET':
         return render_template('login.html')
