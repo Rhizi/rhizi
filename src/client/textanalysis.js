@@ -195,10 +195,17 @@ var textAnalyser = function (spec) {
                 "bad input");
 
     function __addNode(name) {
+        var type;
+        if (name == NEW_NODE_NAME) {
+            type = selectedType()
+        } else {
+            type = node_name_to_type[name] || nodetypes[0];
+        }
         var node = {
                     'name': name,
-                    'type': node_name_to_type[name] || selectedType(),
+                    'type': type,
                    };
+        node_name_to_type[name] = type;
         nodes.push(node);
     }
 
