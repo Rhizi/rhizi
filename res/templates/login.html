@@ -24,7 +24,7 @@
             success : function () {
                 document.location = "/index";
             },
-            error : function () {
+            error : function (xhr, status, err_thrown) {
                 document.location = "/login";
             }
         });
