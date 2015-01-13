@@ -50,6 +50,13 @@ class Config(object):
         cfg['static_url_path'] = '/static'
         cfg['htpasswd_path'] = os.path.join(cfg['config_dir'], 'htpasswd')
 
+        # Mail settings
+        cfg['mail_hostname'] = 'localhost'
+        cfg['mail_port'] = 25
+
+        # User feedback settings
+        cfg['feedback_recipient'] = 'feedback@localhost'
+
         # Flask keys
         cfg['SECRET_KEY'] = ''
 
@@ -259,6 +266,5 @@ if __name__ == "__main__":
     kernel = RZ_Kernel()
     webapp = init_webapp(cfg, kernel)
     ws_srv = init_ws_interface(cfg, kernel, webapp)
-    init_mail(webapp)
 
     ws_srv.serve_forever()

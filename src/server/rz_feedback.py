@@ -46,7 +46,7 @@ watching URL:
 Left note:
 %(note)s
 """ % dict(url=url, note=note, user=session_user if session_user else "Not logged in")
-    send_message(recipients=[current_app.rz_config.FEEDBACK_RECIPIENT],
+    send_message(recipients=[current_app.rz_config.feedback_recipient],
                  subject="User feedback from Rhizi",
                  body=feedback_body,
                  attachments=[
