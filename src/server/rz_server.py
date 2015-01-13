@@ -93,7 +93,14 @@ class Config(object):
         return ret
 
     def __str__(self):
-        return '\n'.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
+        kv_item_set = []
+        for k, v in self.__dict__.items():
+            if k == 'SECRET_KEY':  # exclude key from logs
+                v = v[:3] + '...'
+            kv_item_set.append('%s: %s' % (k, v))
+
+        kv_item_set.sort()
+        return '\n'.join(kv_item_set)
 
     @property
     def db_base_url(self):
