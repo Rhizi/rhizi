@@ -1,36 +1,24 @@
 #!/usr/bin/python
 
-import logging
-import json
-import util
-import os
-import neo4j_util
 import argparse
-import db_controller as dbc
-import flask
-import crypt_util
-import re
-from functools import wraps
-
-try:
-    import simplejson # we don't use it but we rely on it
-except:
-    print("missing simplejson, which is required due to namedtuple usage")
-    raise SystemExit
-
 from flask import Flask
 from flask import Response
-from flask import session
 from flask import redirect
 from flask import request
 from flask import send_from_directory
+from flask import session
+import flask
+from functools import wraps
+import logging
+import os
+import re
 
-from rz_mesh import init_ws_interface
-from rz_kernel import RZ_Kernel
-from rz_mail import init_mail
+import db_controller as dbc
 import rz_api
 import rz_api_rest
 import rz_feedback
+from rz_kernel import RZ_Kernel
+from rz_mesh import init_ws_interface
 
 class Config(object):
     """
