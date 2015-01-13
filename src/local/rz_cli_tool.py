@@ -1,9 +1,16 @@
+#!/bin/env python
+
 import argparse
 import os
 import pickle
 import re
+import sys
 
-import crypt_util
+# access to crypt_util & rz_server
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'server'))
+#import pdb; pdb.set_trace()
+
+from crypt_util import hash_pw
 from rz_server import init_config
 
 
@@ -18,7 +25,7 @@ def init_pw_db(cfg, user_pw_list_file):
             pw_db[u] = hash_pw(str(p), salt)
             pickle.dump(pw_db, f)
 
-        log.info('htpasswd db: added entry: user: %s, pw: %s...' % (u, pw_db[u][:5]))
+        print('htpasswd db: added entry: user: %s, pw: %s...' % (u, pw_db[u][:5]))
 
     htpasswd_path = cfg.htpasswd_path
 
