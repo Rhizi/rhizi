@@ -8,6 +8,18 @@ from rz_server import init_config
 
 
 def init_pw_db(cfg, user_pw_list_file):
+
+    def add_user_login(htpasswd_path, salt, u, p):
+        with open(htpasswd_path, 'rb') as f:
+            data = f.read()
+            pw_db = pickle.loads(data)
+
+        with open(htpasswd_path, 'wb') as f:
+            pw_db[u] = hash_pw(str(p), salt)
+            pickle.dump(pw_db, f)
+
+        log.info('htpasswd db: added entry: user: %s, pw: %s...' % (u, pw_db[u][:5]))
+
     htpasswd_path = cfg.htpasswd_path
 
     if os.path.exists(htpasswd_path):
@@ -32,7 +44,7 @@ def init_pw_db(cfg, user_pw_list_file):
                 raise Exception('failed to parse user,pw line: ' + line)
 
             user, pw = map(str.strip, kv_arr)
-            crypt_util.add_user_login(htpasswd_path, salt, user, pw)
+            add_user_login(htpasswd_path, salt, user, pw)
             print('added user: u: ' + user)
             u_count = u_count + 1
     print('htpasswd generated: path: %s, user-count: %d' % (htpasswd_path, u_count))
