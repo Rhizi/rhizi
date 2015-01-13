@@ -43,6 +43,8 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
             rz_core.edit_graph.set_user('fakeuser');
             rz_core.main_graph.set_user('fakeuser');
             drag_n_drop.init();
+        } else {
+            drag_n_drop.prevent_default_drop_behavior();
         }
 
         document.body.onkeyup = function(e) {

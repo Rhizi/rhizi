@@ -26,6 +26,22 @@ $(document).on('dragover', function (e)
     return false;
 });
 };
-return {'init': init };
+
+function prevent_default_drop_behavior() {
+    $(document).on("drop", function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+    });
+    $(document).on('dragover', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+    });
+}
+return {
+    'init': init,
+    'prevent_default_drop_behavior': prevent_default_drop_behavior
+};
 
 }); // define
