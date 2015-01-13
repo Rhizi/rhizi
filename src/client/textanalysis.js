@@ -21,6 +21,8 @@ var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_NODE = 'ANALYSIS_NODE'
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
+var NEW_NODE_NAME = "new node";
+
 function selectedType()
 {
     return nodetypes[typeindex];
@@ -330,11 +332,11 @@ var textAnalyser = function (spec) {
     //FINAL N ORDER
     switch (orderStack[orderStack.length - 1]) {
         case START:
-            __addNode("new node");
+            __addNode(NEW_NODE_NAME);
             if (!starGraph && nodeindex > 0) {
-                __addLink(token_set_new_node_names[nodeindex - 1], "new node",
+                __addLink(token_set_new_node_names[nodeindex - 1], NEW_NODE_NAME,
                           token_set_new_link_names[linkindex], "temp");
-                and_connect("new node");
+                and_connect(NEW_NODE_NAME);
             }
             ret.state = ANALYSIS_NODE_START;
             break;
@@ -350,10 +352,10 @@ var textAnalyser = function (spec) {
             break;
         case LINK:
             linkindex++;
-            __addNode("new node", selectedType(), "temp");
+            __addNode(NEW_NODE_NAME, selectedType(), "temp");
             if (!starGraph) {
-                __addLink(token_set_new_node_names[nodeindex - 1], "new node", token_set_new_link_names[linkindex], "temp");
-                and_connect("new node");
+                __addLink(token_set_new_node_names[nodeindex - 1], NEW_NODE_NAME, token_set_new_link_names[linkindex], "temp");
+                and_connect(NEW_NODE_NAME);
             }
             ret.state = ANALYSIS_LINK;
             break;
@@ -466,7 +468,7 @@ var textAnalyser = function (spec) {
         for (; tokens[i] !== undefined && tokens[i].token === '#'; ++i) {}
         // go back to find token
         for (j = i; j >= 0 && tokens[j] === undefined || tokens[j].token !== '#'; --j) {}
-        name = tokens[j + 1] ? tokens[j + 1].token : 'new node';
+        name = tokens[j + 1] ? tokens[j + 1].token : NEW_NODE_NAME;
         node = edit_graph.find_node__by_name(name);
         if (node === undefined) {
             // return the first node by default
