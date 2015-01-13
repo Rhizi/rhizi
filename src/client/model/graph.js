@@ -82,7 +82,7 @@ function Graph(spec) {
             .filter(function(n) {
                 util.assert(undefined !== n.id, "undefined id in node in topo diff");
                 util.assert(undefined === server_pending_objects[n.id], "cache full at id");
-                return find_node__by_id(n.id) === undefined;
+                return find_node__by_id(n.id) === null;
             })
             .map(function(n_spec) {
                 server_pending_objects[n_spec.id] = n_spec;
