@@ -21,5 +21,6 @@ define(function() {
         INPUT_WHERE_TEXTANALYSIS: 'input_where_textanalysis',
         nodetypes: nodetypes,
         description: description,
+        NEW_NODE_NAME: 'new node',
     };
 });

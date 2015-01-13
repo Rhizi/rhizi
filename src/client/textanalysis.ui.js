@@ -103,7 +103,7 @@ function changeType(arg) {
         name;
 
     if (!lastnode) {
-        name = id = "new node";
+        name = id = consts.NEW_NODE_NAME;
     } else {
         id = lastnode.id;
         name = lastnode.name;

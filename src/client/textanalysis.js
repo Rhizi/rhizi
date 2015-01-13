@@ -21,7 +21,7 @@ var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_NODE = 'ANALYSIS_NODE'
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
-var NEW_NODE_NAME = "new node";
+var NEW_NODE_NAME = consts.NEW_NODE_NAME;
 
 function selectedType()
 {
