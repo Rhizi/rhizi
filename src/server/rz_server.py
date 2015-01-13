@@ -27,6 +27,7 @@ from flask import send_from_directory
 
 from rz_mesh import init_ws_interface
 from rz_kernel import RZ_Kernel
+from rz_mail import init_mail
 import rz_api
 import rz_api_rest
 import rz_feedback
@@ -270,5 +271,6 @@ if __name__ == "__main__":
     kernel = RZ_Kernel()
     webapp = init_webapp(cfg, kernel)
     ws_srv = init_ws_interface(cfg, kernel, webapp)
+    init_mail(webapp)
 
     ws_srv.serve_forever()

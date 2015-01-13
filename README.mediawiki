@@ -14,14 +14,29 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 = Use =
 
 == requirements ==
+=== Server ===
+==== neo4j ====
 Install [neo4j](http://neo4j.com/download/)
 
-Install [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/) Or <code> Run pip install gevent-socketio </code>
+==== python libs ====
+Install all of:
+# [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/)
+# [flask](http://flask.pocoo.org/)
+# [flask-mail](https://github.com/mattupstate/flask-mail)
 
-Install [simplejson](http://undefined.org/python/#simplejson) Or <code> Run pip install simplejson </code>
- - flask uses itsdangerous which uses simplejson
- - the default json converts namedtuples to arrays stripping the names.
- - simplejson converts them to a dictionary, a behavior we rely on.
+Or install it all via pip:
+<code>
+ pip install gevent-socketio
+ pip install flask
+ pip install flask-mail
+</code>
+
+=== Client ===
+All of the following are already bundled but noted here for reference:
+# [feedback](https://github.com/ivoviz/feedback) (it also bundles [html2canvas](http://html2canvas.hertzen.com/))
+# jquery
+# d3
+# FileSaver
 
 == Running Rhizi Locally ==
 To run Rhizi locally:
