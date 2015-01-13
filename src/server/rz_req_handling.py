@@ -7,7 +7,7 @@ def make_json_response(status=200, data='{}'):
     """
     resp = make_response(data)
     resp.headers['Content-Type'] = "application/json"
-    resp.status = status
+    resp.status = str(status)
     return resp
 
 def common_resp_handle(data=None, error=None):
