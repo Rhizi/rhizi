@@ -9,6 +9,7 @@ define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(
                         + rz_config.rz_server_port
                         + '/graph'; // socketio namespace
 
+    var socket;
     var rz_mesh_graph_ref;
 
     /**
@@ -16,7 +17,7 @@ define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(
      */
     function init(init_spec) {
 
-        var socket = io.connect(ws_server_url, {
+        socket = io.connect(ws_server_url, {
             'reconnectionDelay': 3000,
         });
 
@@ -29,6 +30,13 @@ define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(
         socket.on('error', on_error);
         socket.on('diff_commit__topo', ws_diff_merge__topo);
         socket.on('diff_commit__attr', ws_diff_merge__attr);
+
+        // attempt to actively disconnect on tab/window close
+        // ref: https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers.onbeforeunload
+        window.addEventListener("beforeunload", function(e){
+            socket.close();
+            console.log('ws: connection closed on \'beforeunload\' event'); // no one will ever see this but still
+        });
     }
 
     function on_connect() {
@@ -36,7 +44,7 @@ define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(
     }
 
     function on_disconnect() {
-        // TODO: call when possible
+        console.log('ws: connection closed on peer disconnect, endpoint: ' + ws_server_url);
     }
 
     function on_error(err) {
