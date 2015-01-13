@@ -463,6 +463,7 @@ function Graph(spec) {
         };
         rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     }
+    var update_node = this.update_node;
 
     this.editNameByName = function(old_name, new_name) {
         var node = find_node__by_name(old_name);
@@ -509,15 +510,28 @@ function Graph(spec) {
     }
 
     this._editProperty = function(id, prop, value) {
-        var n = find_node__by_id(id);
+        var n = find_node__by_id(id),
+            local = find_node__by_id(id, false);
 
         if ((n === undefined)) {
             return false;
         }
-        console.debug("deprecated and broken probably");
-        // cannot assert state is temp since robot code still uses it
-        n[prop] = value;
-        diffBus.push(new_attr_diff_prop_value(id, prop, value));
+        if (local === null) {
+            return base._editProperty(id, prop, value);
+        }
+        if (temporary) {
+            n[prop] = value;
+            diffBus.push(new_attr_diff_prop_value(id, prop, value));
+        } else {
+            // FIXME: should not do a server roundtrip, should keep this data local
+            // and part of the temporary graph, and send it on user enter in a single commit.
+            // The current implementation is just a quick way to get sorta the same outcome.
+            // it misses atomicity (since we create a commit for every tab click on an existing node),
+            // and responsiveness (since there is a roundtrip to the server and it isn't client side)
+            var props = {};
+            props[prop] = value;
+            update_node(n, props);
+        }
         return true;
     }
 
