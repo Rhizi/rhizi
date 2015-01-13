@@ -110,7 +110,7 @@ function changeType(arg) {
     }
     nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
-    rz_core.edit_graph.editType(id, null, nodetype);
+    rz_core.edit_graph.editType(id, nodetype);
     typeselection.showChosenType(nodetype);
     rz_core.edit_graph.findCoordinates(id);
     textanalysis.set_type(name, nodetype);

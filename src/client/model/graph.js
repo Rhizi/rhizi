@@ -496,8 +496,8 @@ function Graph(spec) {
      *
      * @return true if type changed
      */
-    this.editType = function(id, state, newtype) {
-        return this._editProperty(id, state, 'type', newtype);
+    this.editType = function(id, newtype) {
+        return this._editProperty(id, 'type', newtype);
     }
 
     function new_attr_diff_prop_value(id, prop, value)
@@ -508,21 +508,14 @@ function Graph(spec) {
         return diff;
     }
 
-    this._editProperty = function(id, state, prop, value) {
+    this._editProperty = function(id, prop, value) {
         var n = find_node__by_id(id);
-
-        if (state !== null && state != n.state){
-            return false;
-        }
 
         if ((n === undefined)) {
             return false;
         }
         console.debug("deprecated and broken probably");
         // cannot assert state is temp since robot code still uses it
-        if (state != 'temp') {
-            console.log('warning: I hope robot is doing this not-through-backend property change');
-        }
         n[prop] = value;
         diffBus.push(new_attr_diff_prop_value(id, prop, value));
         return true;
