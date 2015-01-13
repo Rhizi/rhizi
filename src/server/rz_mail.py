@@ -1,14 +1,6 @@
-import magic
-
 from flask_mail import Mail, Message
 
 mail = None
-
-magic_mime = magic.open(magic.MAGIC_MIME)
-magic_mime.load()
-
-def mimetype(data):
-    return magic_mime.buffer(data).split(';')[0]
 
 def init_mail(webapp):
     global mail
@@ -21,7 +13,7 @@ def send_message(recipients, subject, attachments, body):
     """
     msg = Message(subject, recipients=recipients)
     msg.body = body
-    for filename, data in attachments:
-        msg.attach(filename=filename, content_type=mimetype(data), data=data)
+    for filename, mimetype, data in attachments:
+        msg.attach(filename=filename, content_type=mimetype, data=data)
     mail.send(msg)
 

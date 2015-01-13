@@ -50,8 +50,8 @@ Left note:
                  subject="User feedback from Rhizi",
                  body=feedback_body,
                  attachments=[
-                    ('feedback_screenshot.png', img),
-                    ('feedback_page.html', html),
+                    ('feedback_screenshot.png', 'image/png', img),
+                    ('feedback_page.html', 'text/html', html),
                  ])
 
     return "{}" # expects json encoded, contents discarded
