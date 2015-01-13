@@ -398,23 +398,30 @@ var textAnalyser = function (spec) {
     ret.applyToGraph = function(spec) {
         var edit_graph = spec.edit_graph,
             backend_commit = spec.backend_commit,
-            main_graph = edit_graph.base;
+            main_graph = edit_graph.base,
+            existing_nodes = [];
 
         util.assert(edit_graph !== undefined &&
                     main_graph !== undefined &&
                     backend_commit !== undefined, "missing inputs");
         window.ret = ret;
 
-        ret.node_set_add = nodes.map(function (node) {
-            var main_node = main_graph.find_node__by_name(node.name);
-            if (main_node) {
-                console.log('!!! returning a node from the parent graph');
-                return main_node;
-            }
-            return model_core.create_node__set_random_id(node);
-        });
-        // fill in hash to be used for link creation
+        ret.node_set_add = nodes
+            .filter(function (node_spec) {
+                var main_node = main_graph.find_node__by_name(node_spec.name);
+                if (main_node) {
+                    existing_nodes.push(main_node);
+                }
+                return main_node === null;
+            })
+            .map(function (node_spec) {
+                return model_core.create_node__set_random_id(node_spec);
+            });
+        // fill in hash to be used for link creation, new and existing nodes
         ret.node_set_add.forEach(function (node) {
+            node_by_name[node.name] = node;
+        });
+        existing_nodes.forEach(function (node) {
             node_by_name[node.name] = node;
         });
 
