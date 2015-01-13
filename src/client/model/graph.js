@@ -416,7 +416,7 @@ function Graph(spec) {
         // TODO - fake api for client only (debug, demo, ui work)
         if (!rz_config.backend_enabled) return;
 
-        if (node.name != new_node_spec.name){
+        if (new_node_spec.name !== undefined && node.name != new_node_spec.name){
             /*
              * handle name update collision: suggest removal first
              */
