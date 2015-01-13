@@ -477,10 +477,7 @@ var textAnalyser = function (spec) {
         for (j = i; j >= 0 && tokens[j] === undefined || tokens[j].token !== '#'; --j) {}
         name = tokens[j + 1] ? tokens[j + 1].token : NEW_NODE_NAME;
         node = edit_graph.find_node__by_name(name);
-        if (node === undefined) {
-            // return the first node by default
-            util.assert(node !== undefined, "can't find node");
-        }
+        util.assert(node !== undefined, "can't find node");
         return node;
     }
 

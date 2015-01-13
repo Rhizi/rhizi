@@ -598,15 +598,16 @@ function Graph(spec) {
     /**
      * return node whose id matches the given id or undefined if no node was found
      */
-    var find_node__by_id = function(id) {
-        if (base) {
-            var base_node = base.find_node__by_id(id);
+    var find_node__by_id = function(id, recursive) {
+        // default to recursion
+        recursive = recursive === undefined ? true : recursive;
+        if (recursive && base) {
+            var base_node = base.find_node__by_id(id, recursive);
             if (base_node) {
-                console.log('!!! returning base node');
                 return base_node;
             }
         }
-        return id_to_node_map[id];
+        return id_to_node_map[id] || null;
     }
     this.find_node__by_id = find_node__by_id;
 
@@ -623,12 +624,21 @@ function Graph(spec) {
         return ret;
     }
 
-    var find_node__by_name = function(name) {
+    var find_node__by_name = function(name, recursive) {
+        // default to recursion
+        recursive = recursive === undefined ? true : recursive;
+        if (recursive && base) {
+            var node = base.find_node__by_name(name, true);
+            if (node !== null) {
+                return node;
+            }
+        }
         for (var k in id_to_node_map) {
             if (compareNames(id_to_node_map[k].name, name)) {
                 return id_to_node_map[k];
             }
         }
+        return null;
     }
     this.find_node__by_name = find_node__by_name;
 
