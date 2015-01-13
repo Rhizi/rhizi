@@ -59,10 +59,14 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
     def socketio_route_handler(url_path):
         try:
+            if None == request.environ.get('socketio'):
+                # avoid python-socketio's direct access to environ['socketio']
+                raise Exception('failed to obtain socketio object from WSGI environment')
+
+            # connect socketio manager
             socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_env)
         except:
-            flask_webapp.logger.error("Exception while handling socketio connection",
-                             exc_info=True)
+            flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
         return Response()
 
     # connect socketio route
