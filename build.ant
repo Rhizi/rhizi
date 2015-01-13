@@ -84,17 +84,21 @@
       <local name="rsync_module" />
       <property name="dstServer" value="rz_0.unige.ch" />
       <property name="rsync_module" value="rhizi.net" />
+      <property name="filter_list_str"
+                value="-f '- __pycache__/' -f '- *.pyc'" />
 
       <!-- -l: traverse bin/ -> ../src-py link -->
       <rsync src="${targetDeploymentDir}/"
-             extraopts="-lL"
+             extraopts="-lL --delete ${filter_list_str}"
              dst="rsync://${dstServer}/${rsync_module}/" />
 
       <parallel>
          <!-- apply production patches -->
-         <rsync src="res/production-patch-set/rhizi-server.production.conf"
+         <rsync extraopts="--delete"
+                src="res/production-patch-set/rhizi-server.production.conf"
                 dst="rsync://${dstServer}/${rsync_module}/etc/rhizi-server.conf" />
-         <rsync src="res/production-patch-set/rz_config.js"
+         <rsync extraopts="--delete"
+                src="res/production-patch-set/rz_config.js"
                 dst="rsync://${dstServer}/${rsync_module}/static/" />
       </parallel>
    </target>
