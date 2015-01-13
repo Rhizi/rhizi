@@ -421,7 +421,7 @@ function Graph(spec) {
              * handle name update collision: suggest removal first
              */
             var n_eq_name = find_node__by_name(new_node_spec.name);
-            if (undefined !== n_eq_name && n_eq_name !== node) {
+            if (null !== n_eq_name && n_eq_name !== node) {
                 // delete colliding node on rename
                 console.warn('update_node: name collision blocked due to node rename');
                 undefined != on_error && on_error();
