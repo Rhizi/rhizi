@@ -621,7 +621,7 @@ class DBO_rz_clone(DB_op):
                     l = l_tuple[1]
                     l['__src_id'] = n['id']
                     l['__dst_id'] = l_tuple[0]
-                    l['__type'] = l_tuple[2]
+                    l['__type'] = [l_tuple[2]]
 
                     ret_l_set.append(l)
 
