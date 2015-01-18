@@ -8,7 +8,7 @@ import urllib2
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 import neo4j_test_util
-from neo4j_util import rand_id
+from neo4j_util import generate_random_id__uuid
 from rz_api_websocket import WebSocket_Graph_NS
 import test_util
 
@@ -44,7 +44,7 @@ class TestMeshAPI(unittest.TestCase):
 
     def _emit_tx_topo_diff(self):
         with TestMeshAPI.rz_socket() as (_, ns_sock):
-            n_set = [{'__label_set': ['xxx'], 'id': rand_id() }]
+            n_set = [{'__label_set': ['xxx'], 'id': generate_random_id__uuid() }]
             topo_diff = Topo_Diff(node_set_add=n_set)
             data = json.dumps(topo_diff, cls=Topo_Diff.JSON_Encoder)
             ns_sock.emit('diff_commit__topo', data)

@@ -4,7 +4,7 @@ Various test utilities
 import db_controller as dbc
 from model.model import Link
 from neo4j_test_util import gen_random_name
-from neo4j_util import rand_id
+from neo4j_util import generate_random_id__uuid
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
 from rz_server import init_webapp
@@ -32,7 +32,7 @@ def generate_random_node_dict(n_type, nid=None):
     @return: a dict based node object representation and the generated node id
     """
     if None == nid:
-        nid = rand_id()
+        nid = generate_random_id__uuid()
 
     return {'__label_set': [n_type],
             'id': nid,
@@ -45,7 +45,7 @@ def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     @return: a dict based node object representation and the generated node id
     """
     if None == lid:
-        lid = rand_id()
+        lid = generate_random_id__uuid()
 
     ret_dict = Link.link_ptr(src_id, dst_id)
     ret_dict['__type'] = [l_type]

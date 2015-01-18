@@ -312,7 +312,10 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
 
     return ret
 
-def rand_id():
+def generate_random_id__uuid():
+    """
+    generate a random UUID based string ID
+    """
     return str(uuid.uuid4())
 
 def __type_check_link_or_node_map(x_map):
