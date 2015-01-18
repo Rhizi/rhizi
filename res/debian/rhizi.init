@@ -16,7 +16,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="rhizi-server"
 NAME=rhizi
 DAEMON=/srv/www/rhizi/rhizi.net/bin/rz_server.py
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/$NAME/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 USERNAME=www-data
 GROUPNAME=www-data
@@ -37,6 +37,12 @@ ARGS__START_STOP_DAEMON="--make-pidfile --background --chuid ${USERNAME}:${GROUP
 # Depend on lsb-base (>= 3.2-14) to ensure that this file is present
 # and status_of_proc is working.
 . /lib/lsb/init-functions
+
+# make sure /var/run/$NAME exists with proper +w mode as the uid:gid used to fork the server
+if [ ! -d /var/run/$NAME ]; then
+	mkdir /var/run/$NAME
+	chown ${USERNAME}:${GROUPNAME} /var/run/$NAME
+fi
 
 #
 # Function that starts the daemon/service
