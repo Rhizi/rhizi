@@ -50,6 +50,7 @@ def send_user_feedback__email():
         u_feedback = sanitize_input(request)
     except:
         log.warn('failed to sanitize inputs. request: %s' % request)
+        return make_json_response(status=400)  # bad Request
 
     # FIXME: should be async via celery (or another method)
     session_user = session.get('username')
