@@ -82,7 +82,7 @@
 
       <local name="dstServer" />
       <local name="rsync_module" />
-      <property name="dstServer" value="rz_0.unige.ch" />
+      <property name="dstServer" value="rz-0.unige.ch" />
       <property name="rsync_module" value="rhizi.net" />
       <property name="filter_list_str"
                 value="-f '- __pycache__/' -f '- *.pyc'" />
@@ -105,7 +105,7 @@
 
    <target name="deploy-remote.htpasswd.db" description="manual invocation">
       <rsync src="${src_server}/res/production-patch-set/htpasswd.db"
-             dst="root@rz_0.unige.ch:/srv/www/rhizi/auth/" />
+             dst="root@rz-0.unige.ch:/srv/www/rhizi/auth/" />
    </target>
 
    <target name="pkg-deb" depends="clean" description="package as .deb">
