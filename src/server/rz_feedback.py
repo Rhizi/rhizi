@@ -40,21 +40,14 @@ def send_user_feedback__email():
 
     # FIXME: should be async via celery (or another method)
     session_user = session.get('username')
-    feedback_body = """Feedback from user:
-%(user)s
 
-watching URL:
-%(url)s
+    msg_body = ['Feedback from user:',
+                     '',
+                     'user: %s' % (session_user if session_user else "<not-logged-in>"),
+                     'user-agent: %s' % (u_feedback.user_agent),
+                     'watching URL: %s' % (u_feedback.url),
+                     'user-note: %s' % (u_feedback.note),
+                     ''
+                     ]
+    msg_body = '\n'.join(msg_body)
 
-Left note:
-%(note)s
-""" % dict(url=url, note=note, user=session_user if session_user else "Not logged in")
-    send_message(recipients=[current_app.rz_config.feedback_recipient],
-                 subject="User feedback from Rhizi",
-                 body=feedback_body,
-                 attachments=[
-                    ('feedback_screenshot.png', 'image/png', img),
-                    ('feedback_page.html', 'text/html', html),
-                 ])
-
-    return "{}" # expects json encoded, contents discarded
