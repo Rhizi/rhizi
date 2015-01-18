@@ -14,7 +14,7 @@ from db_controller import DB_Driver_Embedded
 class TestRhiziAPI(unittest.TestCase):
 
     def setUp(self):
-        self.flush_db()
+        pass
 
     @classmethod
     def setUpClass(self):
@@ -27,12 +27,6 @@ class TestRhiziAPI(unittest.TestCase):
         log.setLevel(logging.DEBUG)
         log_handler_c = logging.StreamHandler()
         log.addHandler(log_handler_c)
-
-    def flush_db(self):
-        """
-        complete DB flush: remove all nodes & links
-        """
-        self.db_ctl.exec_cypher_query('match (n) optional match (n)-[r]-() delete n,r')
 
     def test_add_node_set(self):
         """

@@ -3,8 +3,18 @@ import random
 import string
 import uuid
 
-from db_op import DB_op
+from db_op import DB_op, DBO_cypher_query
 
+class DBO_flush_db(DBO_cypher_query):
+    """
+    complete DB flush: remove all nodes & links
+    """
+    def __init__(self):
+        q_arr = ['match (n)',
+                 'optional match (n)-[r]-()',
+                 'delete n,r'
+                ]
+        super(DBO_flush_db, self).__init__(q_arr)
 
 class DBO_random_data_generation(DB_op):
 
@@ -56,18 +66,3 @@ def rand_label(prefix='T_', length=8):
     ret = ''.join([choice(string.ascii_lowercase)] + [choice(char_set) for _ in range(length - 1)])
     ret = prefix + ret
     return ret
-
-def flush_db(db_ctl):
-    """
-    complete DB flush: remove all nodes & links
-    """
-    db_ctl.exec_cypher_query('match (n) optional match (n)-[r]-() delete n,r')
-
-
-
-    q = ' '.join(q_arr)
-    op = DBO_cypher_query(q)
-    db_ctl.exec_op(op)
-
-    return (n_label, r_label)
-

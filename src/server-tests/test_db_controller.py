@@ -19,8 +19,7 @@ from db_op import DBO_rz_clone
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
-from neo4j_test_util import DBO_random_data_generation
-from neo4j_test_util import flush_db
+from neo4j_test_util import DBO_random_data_generation, DBO_flush_db
 import neo4j_test_util
 from neo4j_util import Neo4JException, DB_Query
 from neo4j_util import meta_attr_list_to_meta_attr_map
@@ -55,7 +54,10 @@ class TestDBController(unittest.TestCase):
         self.log.addHandler(logging.StreamHandler())
 
     def setUp(self):
-        # flush_db(self.db_ctl)  # remove once embedded DB test mode is supported
+        # flush_DB
+        # op = DBO_flush_db()
+        # self.db_ctl.exec_op(op)
+
         # self.db_ctl.exec_op(DBO_add_node_set(self.n_map))
         # self.db_ctl.exec_op(DBO_add_link_set(self.l_map))
         pass
