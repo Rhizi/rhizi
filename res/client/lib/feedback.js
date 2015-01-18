@@ -505,12 +505,15 @@ define(['jquery', 'html2canvas'], function($, _unused_html2canvas) {
 
 						post.img = img;
 						post.note = $('#feedback-note').val();
-                        var data = {feedback: JSON.stringify(post)};
+
+						// 2015-01-18: Rhizi feedback: forcing application/json encoding
+						var data = JSON.stringify(post);
 						$.ajax({
 							url: settings.ajaxURL,
 							dataType: 'json',
 							type: 'POST',
 							data: data,
+							contentType : "application/json; charset=utf-8",
 							success: function() {
 								$('#feedback-module').append(settings.tpl.submitSuccess);
 							},
