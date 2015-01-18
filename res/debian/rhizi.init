@@ -5,10 +5,8 @@
 # Required-Stop:     $local_fs $network $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: <Enter a short description of the software>
-# Description:       <Enter a long description of the software>
-#                    <...>
-#                    <...>
+# Short-Description: Rhizi service
+# Description:       Rhizi kernel & accompanying web-server
 ### END INIT INFO
 
 # Do NOT "set -e"
