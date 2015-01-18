@@ -1,12 +1,13 @@
-import logging
 import base64
-
-from flask import request
-from flask import json
 from flask import current_app
+from flask import json
+from flask import request
 from flask import session
+import logging
 
 from rz_mail import send_message
+from rz_req_handling import make_json_response
+
 
 log = logging.getLogger('rhizi')
 
@@ -30,7 +31,7 @@ def decode_base64_uri(base64_encoded_data_uri):
 
 def send_user_feedback__email():
     """
-    Email all parts as attachments to configured feedback email
+    Send user feedback by email along with screen capture attachments
     """
 
     def sanitize_input(req):
