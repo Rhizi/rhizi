@@ -7,6 +7,8 @@ from email.utils import COMMASPACE, formatdate
 from email import Encoders
 
 from flask import current_app
+import logging
+log = logging.getLogger('rhizi')
 
 def send_message(recipients, subject, attachments, body):
     send_from = current_app.rz_config.mail_default_sender
@@ -14,6 +16,8 @@ def send_message(recipients, subject, attachments, body):
     send_message_helper(smtp_hostname=smtp_hostname,
                         send_from=send_from, recipients=recipients,
                         subject=subject, attachments=attachments, body=body)
+
+    log.info('email sent: recipients: %s: subject: %s, attachment-count: %d' % (recipients, subject, len(attachments)))
 
 def send_message_helper(smtp_hostname, send_from, recipients, subject, attachments, body):
     """
