@@ -10,6 +10,19 @@ from rz_mail import send_message
 
 log = logging.getLogger('rhizi')
 
+class RZ_User_Feedback(object):
+    def __init__(self, url=None,
+                       note=None,
+                       img=None,
+                       html=None,
+                       user_agent=None):
+
+        self.url = url,
+        self.note = note
+        self.img = img
+        self.html = html
+        self.user_agent = user_agent
+
 def decode_base64_uri(base64_encoded_data_uri):
     start = base64_encoded_data_uri.find(',') + 1
     encoded = base64_encoded_data_uri[start:]
@@ -34,7 +47,7 @@ def send_user_feedback__email():
                                 user_agent=user_agent)
 
     try:
-        url, note, img, html = sanitize_input(request)
+        u_feedback = sanitize_input(request)
     except:
         log.warn('failed to sanitize inputs. request: %s' % request)
 
@@ -50,4 +63,13 @@ def send_user_feedback__email():
                      ''
                      ]
     msg_body = '\n'.join(msg_body)
+
+    try:
+        send_message(recipients=[current_app.rz_config.feedback_recipient],
+                     subject="User Feedback",
+                     body=msg_body,
+                     attachments=[('feedback_screenshot.png', 'image/png', u_feedback.img),
+                                  ('feedback_page.html', 'text/html', u_feedback.html),
+                                  ])
+        return json.dumps({})  # expects json encoded, contents discarded
 
