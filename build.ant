@@ -71,7 +71,8 @@
                   link="${targetDeploymentDir}/bin"
                   resource="${basedir}/${src_server}" />
 
-         <rsync src="res/etc" dst="${targetDeploymentDir}" />
+         <copy file="res/etc/rhizi-server.conf.example"
+               tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
          <rsync src="res/templates/" dst="${targetDeploymentDir}/templates" />
       </parallel>
 
