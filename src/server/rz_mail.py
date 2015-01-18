@@ -1,13 +1,14 @@
-import smtplib
-from os.path import basename
+from email import Encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
-from email import Encoders
-
 from flask import current_app
 import logging
+from os.path import basename
+import smtplib
+
+
 log = logging.getLogger('rhizi')
 
 def send_message(recipients, subject, attachments, body):
