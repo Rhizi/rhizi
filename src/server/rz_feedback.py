@@ -21,14 +21,17 @@ def send_user_feedback__email():
     """
 
     def sanitize_input(req):
-        d = request.form.to_dict()
-        feedback = d['feedback']
-        req_json = json.loads(feedback)
-        url = req_json['url']
-        note = req_json['note']
-        img = decode_base64_uri(req_json['img'])
-        html = req_json['html']
-        return url, note, img, html
+        req_dict = req.get_json()
+        url = req_dict['url']
+        note = req_dict['note']
+        img = decode_base64_uri(req_dict['img'])
+        html = req_dict['html']
+        user_agent = req_dict['browser']['userAgent']
+        return RZ_User_Feedback(url=url,
+                                note=note,
+                                img=img,
+                                html=html,
+                                user_agent=user_agent)
 
     try:
         url, note, img, html = sanitize_input(request)
