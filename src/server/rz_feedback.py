@@ -15,7 +15,7 @@ def decode_base64_uri(base64_encoded_data_uri):
     encoded = base64_encoded_data_uri[start:]
     return base64.decodestring(encoded)
 
-def feedback():
+def send_user_feedback__email():
     """
     Email all parts as attachments to configured feedback email
     """

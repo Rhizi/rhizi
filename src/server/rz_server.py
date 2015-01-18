@@ -198,7 +198,7 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/logout', rz_api.logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info),
-                      rest_entry('/feedback', rz_feedback.feedback),
+                      rest_entry('/feedback', rz_feedback.send_user_feedback__email),
                   ]
 
     # FIXME: but should be rate limited (everything should be, regardless of login)
