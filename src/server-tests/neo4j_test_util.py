@@ -42,9 +42,6 @@ class DBO_random_data_generation(DB_op):
     def link_set_label(self):
         return self.r_label
 
-def rand_id():
-    return str(uuid.uuid4())
-
 def gen_random_name(size=8, char_set=string.ascii_uppercase + string.digits):
     """
     used for random node generation

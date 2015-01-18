@@ -7,8 +7,8 @@ import urllib2
 
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
-from neo4j_test_util import rand_id
 import neo4j_test_util
+from neo4j_util import rand_id
 from rz_api_websocket import WebSocket_Graph_NS
 import test_util
 

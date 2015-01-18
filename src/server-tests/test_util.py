@@ -3,7 +3,8 @@ Various test utilities
 """
 import db_controller as dbc
 from model.model import Link
-from neo4j_test_util import rand_id, gen_random_name
+from neo4j_test_util import gen_random_name
+from neo4j_util import rand_id
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
 from rz_server import init_webapp

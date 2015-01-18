@@ -21,7 +21,6 @@ from model.graph import Topo_Diff
 from model.model import Link
 from neo4j_test_util import DBO_random_data_generation
 from neo4j_test_util import flush_db
-from neo4j_test_util import rand_id
 import neo4j_test_util
 from neo4j_util import Neo4JException, DB_Query
 from neo4j_util import meta_attr_list_to_meta_attr_map

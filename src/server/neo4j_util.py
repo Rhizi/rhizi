@@ -3,15 +3,17 @@
 """
 
 import json
+import logging
 import six
-from six.moves.urllib import request
-import six.moves.urllib_error as urllib_error
-import model
 import string
 import time
-import logging
+import uuid
 
+import model
+from six.moves.urllib import request
+import six.moves.urllib_error as urllib_error
 from util import debug_log_duration
+
 
 log = logging.getLogger('rhizi')
 
@@ -309,6 +311,9 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
         ret[v_type].append(v_no_meta)
 
     return ret
+
+def rand_id():
+    return str(uuid.uuid4())
 
 def __type_check_link_or_node_map(x_map):
     for k, v in x_map.iteritems():  # do some type sanity checking
