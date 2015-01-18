@@ -19,6 +19,11 @@ DAEMON=/srv/www/rhizi/rhizi.net/bin/rz_server.py
 DAEMON_ARGS="--config-dir=/etc/rhizi"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
+USERNAME=www-data
+GROUPNAME=www-data
+
+ARGS__DAEMON="--config-dir=/etc/rhizi"
+ARGS__START_STOP_DAEMON="--make-pidfile --background --chuid ${USERNAME}:${GROUPNAME}"
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
