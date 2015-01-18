@@ -74,3 +74,6 @@ def send_user_feedback__email():
                                   ])
         return json.dumps({})  # expects json encoded, contents discarded
 
+    except Exception:
+        log.exception('send_user_feedback__email: exception while sending email')
+        return make_json_response(status=500)
