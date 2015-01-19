@@ -62,6 +62,10 @@ define([],
                 this.__type_link = {};
             }
 
+            Attr_Diff.prototype.toString = function() {
+                return 'AttrDiff<' + JSON.stringify(this) + '>';
+            }
+
             Attr_Diff.prototype.init_attr_diff = function(type_name, id) {
 
                 if ('node' != type_name && 'link' != type_name) {
