@@ -139,18 +139,6 @@ def diff_commit__set():
     op = DBO_diff_commit__topo(topo_diff)
     return __common_exec(op)
 
-def add_node_set():
-    """
-    @deprecated: use topo_attr_commit
-
-    @param node_map: node type to node map, eg. { 'Skill': { 'name': 'kung-fu' } }
-    """
-    node_map = request.get_json()['node_map']
-    __sanitize_input(node_map)
-
-    op = DBO_add_node_set(node_map)
-    return __common_exec(op)
-
 def monitor__server_info():
     """
     server monitor stub

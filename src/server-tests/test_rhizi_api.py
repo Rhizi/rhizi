@@ -28,19 +28,6 @@ class TestRhiziAPI(unittest.TestCase):
         log_handler_c = logging.StreamHandler()
         log.addHandler(log_handler_c)
 
-    def test_add_node_set(self):
-        """
-        add node set test
-        """
-        node_map = { 'Skill': [{ 'name': 'kung-fu' }, { 'name': 'judo' }] }
-        with rhizi_api.webapp.test_client() as c:
-            req = c.post('/add/node-set',
-                         content_type='application/json',
-                         data=json.dumps(dict(node_map=node_map)))
-            id_set = json.loads(req.data)['data']
-            self.assertEqual(2, len(id_set))
-            self.assertTrue(isinstance(id_set[0], int))
-
     def test_load_node_non_existing(self):
         """
         loading a non existing node test
