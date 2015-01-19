@@ -123,13 +123,6 @@ class Topo_Diff(object):
         def default(self, obj):
             return obj.to_json_dict()
 
-    def to_json_dict(self):
-        ret = {k: getattr(self, k) for k in ['link_id_set_rm',
-                                             'node_id_set_rm',
-                                             'node_set_add',
-                                             'link_set_add'] }
-        return ret
-
     def __init__(self, link_id_set_rm=[],
                        node_id_set_rm=[],
                        node_set_add=[],
@@ -142,6 +135,13 @@ class Topo_Diff(object):
 
     def __str__(self):
         return __name__ + ': ' + ', '.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
+
+    def to_json_dict(self):
+        ret = {k: getattr(self, k) for k in ['link_id_set_rm',
+                                             'node_id_set_rm',
+                                             'node_set_add',
+                                             'link_set_add'] }
+        return ret
 
     def check_validity(self, topo_diff_dict):
         """
