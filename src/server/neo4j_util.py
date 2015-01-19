@@ -38,6 +38,9 @@ class DB_Query(object):
         self.statement = q_str
         self.param_set = param_set
 
+    def __str__(self):
+        return 'q: %s, params: %s' % (self.statement, str(self.param_set))
+
 class DB_row(object):
     def __init__(self, data):
         self.data = data
