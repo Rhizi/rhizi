@@ -1,15 +1,14 @@
-import unittest
-import db_controller as dbc
-import rz_api
 import json
 import logging
-
-from rz_server import Config
-from rhizi_server import Config
-from werkzeug.test import EnvironBuilder
+import unittest
 from werkzeug.test import Client
+from werkzeug.test import EnvironBuilder
 
 from db_controller import DB_Driver_Embedded
+import db_controller as dbc
+from rhizi_server import Config
+import rz_api
+from rz_server import Config
 
 class TestRhiziAPI(unittest.TestCase):
 
@@ -20,7 +19,7 @@ class TestRhiziAPI(unittest.TestCase):
     def setUpClass(self):
         cfg = Config.init_from_file('res/etc/rhizi-server.conf')
         self.db_ctl = dbc.DB_Controller(cfg)
-        rhizi_api.db_ctl = self.db_ctl
+        rz_api.db_ctl = self.db_ctl
 
         # TODO extract to superclass
         log = logging.getLogger('rhizi')
@@ -33,7 +32,7 @@ class TestRhiziAPI(unittest.TestCase):
         loading a non existing node test
         """
         id_set = ['non_existing_id']
-        with rhizi_api.webapp.test_client() as c:
+        with rz_api.webapp.test_client() as c:
             req = c.post('/load/node-set-by-id',
                          content_type='application/json',
                          data=json.dumps({ 'id_set': id_set}))
@@ -50,7 +49,7 @@ class TestRhiziAPI(unittest.TestCase):
         id_set = ['skill_00']
         self.db_ctl.exec_cypher_query('create (s:Skill {id: \'skill_00\'} )')
 
-        with rhizi_api.webapp.test_client() as c:
+        with rz_api.webapp.test_client() as c:
             req = c.post('/load/node-set-by-id',
                          content_type='application/json',
                          data=json.dumps({ 'id_set': id_set}))
