@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import logging
-import traceback
 
 from db_driver import DB_Driver_REST, DB_Driver_Base
 from db_op import DB_composed_op
@@ -44,14 +43,13 @@ class DB_Controller:
             log.debug('exec_op:' + op.name + ': return value: ' + str(ret))
             return ret
         except Neo4JException as e:
-            log.error(str(e))  # Neo4JException may be composed of several sub errors, defer to class __str__
+            log.exception(e)  # Neo4JException may be composed of several sub errors, defer to class __str__
             raise e
         except Exception as e:
             # here we watch for IOExecptions, etc - not db errors
             # these are returned in the db response itself
 
-            log.error(e.message)
-            log.error(traceback.print_exc())
+            log.exception(e)
             raise e
 
     def create_db_op(self, f_work, f_cont):
@@ -67,6 +65,5 @@ class DB_Controller:
         try:
             db_util.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
         except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
+            log.exception(e)
             raise e
