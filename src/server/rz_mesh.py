@@ -8,6 +8,7 @@ from socketio import socketio_manage
 from socketio.server import SocketIOHandler
 from socketio.server import SocketIOServer
 
+from db_op import DBO_block_chain__commit
 from model.graph import Attr_Diff, Topo_Diff
 from rz_api_websocket import WebSocket_Graph_NS
 from rz_kernel import RZ_Kernel
@@ -88,12 +89,18 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
         @wraps(f)
         def wrapped_function(*args, **kw):
-            f_ret_list = f(*args, **kw)
 
-            assert type(f_ret_list) in [list, tuple]
+            f_ret = f(*args, **kw)
 
-            pkt_data = map(_prep_for_serialization, f_ret_list)
+            bc_commit = False
+            if 'ctx' in kw and kw.get('ctx')['__caller'] == 'ws':
+                bc_commit = False
 
+            # assert type(f_ret) in [list, tuple]
+
+            gen_copy = [o for o in f_ret]  # copy generator items
+
+            pkt_data = map(_prep_for_serialization, [diff_obj for (diff_obj, op, op_ret) in gen_copy])
             msg_name = f.__name__
             pkt = dict(type="event",
                        name=msg_name,
@@ -101,10 +108,25 @@ def init_ws_interface(cfg, kernel, flask_webapp):
                        endpoint='/graph')
 
             ws_srv.log_multicast(msg_name)
-
             ws_broadcast_to_all(pkt)
 
-            return f_ret
+            if bc_commit == False:
+                for f_ret_item in gen_copy:
+
+                    diff_obj, op, op_ret = f_ret_item
+                    if not isinstance(op, DBO_block_chain__commit):
+                        continue
+
+                    pkt_data = _prep_for_serialization(op_ret)
+                    msg_name = f.__name__
+                    pkt = dict(type="event",
+                               name=msg_name,
+                               args=pkt_data,
+                               endpoint='/graph')
+                    ws_broadcast_to_all(pkt)
+
+            for o in gen_copy:
+                yield o
 
         return wrapped_function
 
