@@ -199,10 +199,10 @@ class DBO_block_chain__commit(DB_op):
         name_value = hash_value[:8] + '...' if commit_obj == None else str(commit_obj)
         l_id = generate_random_id__uuid()
 
-        q_arr = ['match (old_head:HEAD:Commit)',
-                 'create (new_head:HEAD:Commit {commit_attr})',
-                 'create new_head-[r:Parent {link_attr}]->old_head',
-                 'remove old_head:HEAD',
+        q_arr = ['match (old_head:__HEAD:__Commit)',
+                 'create (new_head:__HEAD:__Commit {commit_attr})',
+                 'create new_head-[r:__Parent {link_attr}]->old_head',
+                 'remove old_head:__HEAD',
                  'set new_head.ts_created=timestamp()',
                  'return {`HEAD^`: old_head, HEAD: new_head}'
                  ]
@@ -244,11 +244,11 @@ class DBO_block_chain__commit(DB_op):
 
         ret.node_set_add = [{'id': self.n_id,
                              'name': self.n_name_value,
-                             '__label_set': ['Commit']}
+                             '__label_set': ['__Commit']}
                            ]
         l = Link.Link_Ptr(src_id=hash_parent, dst_id=hash_child)
         l['id'] = self.l_id
-        l['__type'] = 'Parent'
+        l['__type'] = '__Parent'
         ret.link_set_add = [l]
         return ret
 
