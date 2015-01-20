@@ -13,7 +13,7 @@ log = logging.getLogger('rhizi')
 
 class RZ_Kernel(object):
 
-    def diff_commit__topo(self, topo_diff):
+    def diff_commit__topo(self, topo_diff, ctx={}):
         """
         commit a graph topology diff - this is a common pathway for:
            - RESP API calls
@@ -24,14 +24,14 @@ class RZ_Kernel(object):
         """
         op = DBO_diff_commit__topo(topo_diff)
         try:
-            op_ret = self.db_ctl.exec_op(op)
-            return topo_diff, op_ret
+            for op, op_ret in self.db_ctl.exec_op(op):
+                yield topo_diff, op, op_ret
         except Exception as e:
             log.error(e.message)
             log.error(traceback.print_exc())
             raise e
 
-    def diff_commit__attr(self, attr_diff):
+    def diff_commit__attr(self, attr_diff, ctx={}):
         """
         commit a graph attribute diff - this is a common pathway for:
            - RESP API calls
@@ -42,8 +42,8 @@ class RZ_Kernel(object):
         """
         op = DBO_diff_commit__attr(attr_diff)
         try:
-            op_ret = self.db_ctl.exec_op(op)
-            return attr_diff, op_ret
+            for op, op_ret in self.db_ctl.exec_op(op):
+                yield attr_diff, op, op_ret
         except Exception as e:
             log.error(e.message)
             log.error(traceback.print_exc())
