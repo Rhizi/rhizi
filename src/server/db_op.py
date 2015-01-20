@@ -212,8 +212,9 @@ class DBO_block_chain__commit(DB_op):
                                        'hash': hash_value,
                                        'id': hash_value,
                                        'name': name_value},
-                       'link_attr': {'id': self.l_id},
+                       'link_attr': {'id': l_id},
                        }
+
         self.add_statement(q_arr, q_param_set)
 
         # cache values necessary to generate op result
@@ -250,6 +251,7 @@ class DBO_block_chain__commit(DB_op):
         l['__type'] = 'Parent'
         ret.link_set_add = [l]
         return ret
+
 class DBO_block_chain__list(DB_op):
     """
     Return block chain hash list
@@ -274,7 +276,6 @@ class DBO_block_chain__list(DB_op):
             q_arr[0] = "match (n:HEAD)-[r:Parent*..%d]->m" % (length_lim),
 
         self.add_statement(q_arr)
-
 
     def process_result_set(self):
         # optimize for single statement
@@ -660,6 +661,7 @@ class DBO_rz_clone(DB_op):
                 assert None != n.get('id'), "db contains nodes with no id"
 
                 n['__label_set'] = n_lbl_set
+
                 ret_n_set.append(n)
 
                 # reconstruct links from link tuples
