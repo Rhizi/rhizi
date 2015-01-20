@@ -331,7 +331,7 @@ class DBO_diff_commit__topo(DB_composed_op):
             self.add_sub_op(op)
 
         blob = json.dumps(topo_diff.to_json_dict())
-        chain_commit_op = DBO_block_chain__commit(blob)
+        chain_commit_op = DBO_block_chain__commit(blob, commit_obj=topo_diff)
         self.add_sub_op(chain_commit_op)
 
     def process_result_set(self):
@@ -437,7 +437,7 @@ class DBO_diff_commit__attr(DB_op):
             self.add_statement(q_arr, q_param_set)
 
         blob = json.dumps(attr_diff)
-        chain_commit_op = DBO_block_chain__commit(blob)
+        chain_commit_op = DBO_block_chain__commit(blob, commit_obj=attr_diff)
         for db_q in chain_commit_op.statement_set:
             self.add_db_query(db_q)
 
