@@ -219,6 +219,33 @@ class DBO_block_chain__commit(DB_op):
                        }
         self.add_statement(q_arr, q_param_set)
 
+    def process_result_set(self):
+        """
+        @return: a Topo_Diff object consisting of the commit node and parent link
+        """
+        ret = Topo_Diff()
+
+        hash_parent = None
+        hash_child = None
+        for _, _, r_set in self:
+            for row in r_set:
+                for ret_dict in row:
+
+                    assert None == hash_parent  # assert hash values set once only
+                    assert None == hash_child
+
+                    hash_parent = ret_dict['HEAD^']['hash']
+                    hash_child = ret_dict['HEAD']['hash']
+
+        ret.node_set_add = [{'id': self.n_id,
+                             'name': self.n_name_value,
+                             '__label_set': ['Commit']}
+                           ]
+        l = Link.Link_Ptr(src_id=hash_parent, dst_id=hash_child)
+        l['id'] = self.l_id
+        l['__type'] = '__Parent'
+        ret.link_set_add = [l]
+        return ret
 class DBO_block_chain__list(DB_op):
     """
     Return block chain hash list
