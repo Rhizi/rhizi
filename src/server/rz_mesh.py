@@ -69,6 +69,9 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
         return Response()
 
+    def ws_broadcast_to_all(pkt):
+        for sessid, socket in ws_srv.sockets.iteritems():
+            socket.send_packet(pkt)
 
     # link ws hooks: multicast on topo_diff, attr_diff
     def decorator__ws_multicast(ws_srv, f, f_multicast):
@@ -97,10 +100,10 @@ def init_ws_interface(cfg, kernel, flask_webapp):
                        endpoint='/graph')
 
             ws_srv.log_multicast(msg_name)
-            for sessid, socket in ws_srv.sockets.iteritems():
-                socket.send_packet(pkt)
 
-            return f_ret_list
+            ws_broadcast_to_all(pkt)
+
+            return f_ret
 
         return wrapped_function
 
