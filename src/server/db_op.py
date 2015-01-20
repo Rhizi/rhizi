@@ -331,10 +331,6 @@ class DBO_diff_commit__topo(DB_composed_op):
             op = DBO_rm_node_set(n_rm_set)
             self.add_sub_op(op)
 
-        blob = json.dumps(topo_diff.to_json_dict())
-        chain_commit_op = DBO_block_chain__commit(blob, commit_obj=topo_diff)
-        self.add_sub_op(chain_commit_op)
-
     def process_result_set(self):
         ret_nid_set_add = []
         ret_lid_set_add = []
@@ -437,10 +433,6 @@ class DBO_diff_commit__attr(DB_op):
 
             self.add_statement(q_arr, q_param_set)
 
-        blob = json.dumps(attr_diff)
-        chain_commit_op = DBO_block_chain__commit(blob, commit_obj=attr_diff)
-        for db_q in chain_commit_op.statement_set:
-            self.add_db_query(db_q)
 
     def add_link_rename_statements(self, id_attr, new_label):
         # TODO - where do we sanitize the label name? any better way of doing this?
