@@ -46,19 +46,25 @@ class DB_op(object):
 
     def __iter__(self):
         """
-        iterate over (statement_index, statement, result, error)
+        iterate over (DB_Query index, DB_Query, result | error)
         where result & error are mutually exclusive
 
-        note: statement_index is zero based
+        note: index is zero based
 
         TODO: handle partial iteration due to error_set being non-empty
         """
         r_set_len = len(self.result_set)
-        for i, s in enumerate(self.statement_set):
-            r_set = None  # row-set
+
+        #
+        # i: statement index
+        # dbq: db query
+        # row-set: query result
+        #
+        for i, dbq in enumerate(self.statement_set):
+            r_set = None
             if i < r_set_len:  # support partial result recovery
                 r_set = DB_result_set(self.result_set[i])
-            yield (i, s, r_set)
+            yield (i, dbq, r_set)
 
     def parse_multi_statement_response_data(self, data):
         pass
@@ -73,8 +79,8 @@ class DB_op(object):
         assists in parsing response data from a single query.
         """
         ret = []
-        for _, _, r_set in self:
-            for row in r_set:
+        for _, _, row_set in self:
+            for row in row_set:
                 for col in row:
                     ret.append(col)
         return ret
