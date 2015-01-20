@@ -207,6 +207,7 @@ class DBO_block_chain__commit(DB_op):
                  'create (new_head:__HEAD:Commit {commit_attr})',
                  'create new_head-[r:__Parent {link_attr}]->old_head',
                  'remove old_head:__HEAD',
+                 'set new_head.ts_created=timestamp()',
                  'return {`HEAD^`: old_head, HEAD: new_head}'
                  ]
         q_param_set = {'commit_attr': {
