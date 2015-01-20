@@ -188,7 +188,7 @@ class DBO_block_chain__commit(DB_op):
         ret = sha1.hexdigest()
         return ret
 
-    def __init__(self, blob_obj, commit_obj=None):
+    def __init__(self, blob_obj, commit_obj=None, ctx=None):
         """
         @param blob_obj: serializable blob
         @return: old_head, new_head, new_head.hash_value
