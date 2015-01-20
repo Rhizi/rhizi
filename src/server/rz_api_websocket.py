@@ -46,12 +46,14 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         log.info('ws: rx: topo diff: ' + str(topo_diff))
 
         kernel = self.request.kernel
-        topo_diff, commit_ret = kernel.diff_commit__topo(topo_diff)
+
+        gen = kernel.diff_commit__topo(topo_diff, ctx={'__caller': 'ws'})
+        topo_diff, _, commit_ret = gen.next()
 
         # handle serialization
         topo_diff_dict = topo_diff.to_json_dict()
 
-        assert Topo_Diff.Commit_Result_Type == type(commit_ret)
+        # assert Topo_Diff.Commit_Result_Type == type(commit_ret)
 
         return self.multicast_msg('diff_commit__topo', topo_diff_dict, commit_ret)
 
@@ -61,7 +63,8 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         log.info('ws: rx: attr diff: ' + str(attr_diff))
 
         kernel = self.request.kernel
-        attr_diff, commit_ret = kernel.diff_commit__attr(attr_diff)
+        gen = kernel.diff_commit__attr(attr_diff, ctx={'__caller': 'ws'})
+        attr_diff, _, commit_ret = gen.next()
 
         # [!] note: here we actually send the attr_diff twice, but in the future
         # commit_ret may not be the same
