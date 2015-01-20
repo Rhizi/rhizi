@@ -200,7 +200,7 @@ class DBO_block_chain__commit(DB_op):
                  "create (new_head:__HEAD:__Commit {hash: {hash_value}, blob: {blob_value}})",
                  "create new_head-[r:__Parent]->old_head",
                  "remove old_head:__HEAD",
-                 "return old_head, new_head, {hash_value}"]
+                 "return {`HEAD^`: old_head, HEAD: new_head}"
         q_param_set = {'hash_value': hash_value, 'blob_value': blob_obj}
         self.add_statement(q_arr, q_param_set)
 
