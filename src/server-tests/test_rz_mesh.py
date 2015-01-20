@@ -41,13 +41,6 @@ class TestMeshAPI(unittest.TestCase):
     def tearDownClass(cls):
         pass
 
-    def _emit_tx_topo_diff(self):
-        with TestMeshAPI.rz_socket() as (_, ns_sock):
-            n_set = [{'__label_set': ['xxx'], 'id': generate_random_id__uuid() }]
-            topo_diff = Topo_Diff(node_set_add=n_set)
-            data = json.dumps(topo_diff, cls=Topo_Diff.JSON_Encoder)
-            ns_sock.emit('diff_commit__topo', data)
-
     def test_REST_post_triggers_ws_multicast__topo_diff(self):
 
         class NS_test(BaseNamespace):

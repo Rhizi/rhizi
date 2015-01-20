@@ -1,13 +1,18 @@
 """
 Various test utilities
 """
+import json
+
 import db_controller as dbc
+from model.graph import Topo_Diff
 from model.model import Link
-from neo4j_test_util import gen_random_name
+from neo4j_test_util import gen_random_name, rand_label
 from neo4j_util import generate_random_id__uuid
+import neo4j_util
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
 from rz_server import init_webapp
+import test_rz_mesh
 
 
 def init_test_db_controller(cfg):
@@ -51,3 +56,15 @@ def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     ret_dict['__type'] = [l_type]
     ret_dict['id'] = lid
     return ret_dict, lid
+
+def ws_emit__topo_diff():
+    import logging
+
+    r_label = rand_label()
+    n, n_id = generate_random_node_dict(r_label)
+    topo_diff = Topo_Diff(node_set_add=[n])
+    data = json.dumps(topo_diff, cls=Topo_Diff.JSON_Encoder)
+
+    with test_rz_mesh.RZ_websocket() as (_, ns_sock):
+        ns_sock.emit('diff_commit__topo', data)
+
