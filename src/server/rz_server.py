@@ -255,6 +255,15 @@ def init_config(cfg_dir):
     cfg = Config.init_from_file(cfg_path)
     return cfg
 
+
+def init_signal_handlers():
+
+    def signal_handler__exit(signum, frame):
+        log.info('received exit signal: SIGINT')
+        exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler__exit)
+
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser(description='rhizi-server')
@@ -269,8 +278,13 @@ if __name__ == "__main__":
     if False == cfg.access_control:
         log.warn('access control disabled, all-granted access set on all URLs')
 
+    init_signal_handlers()
+
     kernel = RZ_Kernel()
     webapp = init_webapp(cfg, kernel)
     ws_srv = init_ws_interface(cfg, kernel, webapp)
 
-    ws_srv.serve_forever()
+    try:
+        ws_srv.serve_forever()
+    except Exception as e:
+        log.exception(e)
