@@ -27,21 +27,22 @@ class DB_Controller:
         """
         execute operation within a DB transaction
         """
-        if isinstance(op, DB_composed_op):
-            # construct a list comprehension composed of all sup_op statements
-            for s_op in op:
-                self.exec_op(s_op)
-            return op.process_result_set()
-
         try:
-            self.db_driver.begin_tx(op)
-            self.db_driver.exec_statement_set(op)
-            self.db_driver.commit_tx(op)
 
-            ret = op.process_result_set()
+            if not isinstance(op, DB_composed_op):  # non composed DB op
+                self.db_driver.begin_tx(op)
+                self.db_driver.exec_statement_set(op)
+                self.db_driver.commit_tx(op)
 
-            log.debug('exec_op:' + op.name + ': return value: ' + str(ret))
-            return ret
+                op_ret = op.process_result_set()
+                log.debug('exec_op:' + op.name + ': return value: ' + str(op_ret))
+                yield op, op_ret
+
+            else:  # composed DB op
+                for sub_op in op:
+                    sub_op, sub_op_ret = self.exec_op(sub_op).next()  # recursive call
+                    yield sub_op, sub_op_ret
+
         except Neo4JException as e:
             log.exception(e)  # Neo4JException may be composed of several sub errors, defer to class __str__
             raise e
