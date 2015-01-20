@@ -114,10 +114,15 @@ def load_link_set_by_link_ptr_set():
 
 def rz_clone():
 
-    def on_success(topo_diff):
+    def on_success(op_op_ret_pair):
         # serialize Topo_Diff before including in response
-        topo_diff_json = topo_diff.to_json_dict()
-        return common_resp_handle(topo_diff_json)
+        for _, op_ret in op_op_ret_pair:  # discard op
+
+            assert isinstance(op_ret, Topo_Diff), 'rz_clone: op_ret != Topo_Diff'
+
+            topo_diff = op_ret
+            topo_diff_json = topo_diff.to_json_dict()
+            return common_resp_handle(topo_diff_json)
 
     op = DBO_rz_clone()
     return __common_exec(op, on_success=on_success)
