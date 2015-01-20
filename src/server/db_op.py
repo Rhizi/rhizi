@@ -188,21 +188,16 @@ class DBO_block_chain__commit(DB_op):
         ret = sha1.hexdigest()
         return ret
 
-    def __init__(self, blob_obj):
+    def __init__(self, blob_obj, commit_obj=None):
         """
         @param blob_obj: serializable blob
         @return: old_head, new_head, new_head.hash_value
         """
         super(DBO_block_chain__commit, self).__init__()
 
-        self.blob_obj = blob_obj
-        hash_value = DBO_block_chainCommit.calc_blob_hash(blob_obj)
-
-        name_value = hash_value[:8] + '...' if commit_obj == None else commit_obj.to_str__commit_name()
-
-        self.n_name_value = name_value
-        self.n_id = hash_value
-        self.l_id = generate_random_id__uuid()
+        hash_value = DBO_block_chain__commit.calc_blob_hash(blob_obj)
+        name_value = hash_value[:8] + '...' if commit_obj == None else str(commit_obj)
+        l_id = generate_random_id__uuid()
 
         q_arr = ['match (old_head:__HEAD:Commit)',
                  'create (new_head:__HEAD:Commit {commit_attr})',
@@ -219,6 +214,13 @@ class DBO_block_chain__commit(DB_op):
                        'link_attr': {'id': self.l_id},
                        }
         self.add_statement(q_arr, q_param_set)
+
+        # cache values necessary to generate op result
+        self.blob_obj = blob_obj
+        self.commit_obj = commit_obj
+        self.n_id = hash_value
+        self.n_name_value = name_value
+        self.l_id = l_id
 
     def process_result_set(self):
         """
