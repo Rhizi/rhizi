@@ -173,9 +173,9 @@ class DB_composed_op(DB_op):
 class DBO_block_chain__commit(DB_op):
     """
     Labels in use:
-       - __HEAD: HEAD commit, unique
-       - __Parent: parent commit relationship
-       - __Commit: node type
+       - HEAD: HEAD commit, unique
+       - Parent: parent commit relationship
+       - Commit: node type
     """
 
     @staticmethod
@@ -199,13 +199,14 @@ class DBO_block_chain__commit(DB_op):
         name_value = hash_value[:8] + '...' if commit_obj == None else str(commit_obj)
         l_id = generate_random_id__uuid()
 
-        q_arr = ['match (old_head:__HEAD:Commit)',
-                 'create (new_head:__HEAD:Commit {commit_attr})',
-                 'create new_head-[r:__Parent {link_attr}]->old_head',
-                 'remove old_head:__HEAD',
+        q_arr = ['match (old_head:HEAD:Commit)',
+                 'create (new_head:HEAD:Commit {commit_attr})',
+                 'create new_head-[r:Parent {link_attr}]->old_head',
+                 'remove old_head:HEAD',
                  'set new_head.ts_created=timestamp()',
                  'return {`HEAD^`: old_head, HEAD: new_head}'
                  ]
+
         q_param_set = {'commit_attr': {
                                        'blob': blob_obj,
                                        'hash': hash_value,
@@ -246,7 +247,7 @@ class DBO_block_chain__commit(DB_op):
                            ]
         l = Link.Link_Ptr(src_id=hash_parent, dst_id=hash_child)
         l['id'] = self.l_id
-        l['__type'] = '__Parent'
+        l['__type'] = 'Parent'
         ret.link_set_add = [l]
         return ret
 class DBO_block_chain__list(DB_op):
@@ -263,14 +264,14 @@ class DBO_block_chain__list(DB_op):
         super(DBO_block_chain__list, self).__init__()
 
         # FIXME: use cleaner query:
-        # match p=(n:__HEAD)-[r:__Parent*]->(m) return extract(n in nodes(p) | n.hash);
-        q_arr = ["match (n:__HEAD)-[r:__Parent*]->(m)",
-                 "return [n.hash] + collect(m.hash)"
+        # match p=(n:HEAD)-[r:Parent*]->(m) return extract(n in nodes(p) | n.hash);
+        q_arr = ['match (n:HEAD)-[r:Parent*]->(m)',
+                 'return [n.hash] + collect(m.hash)'
                  ]
 
         if None != length_lim:
             # inject maxHops limit if available
-            q_arr[0] = "match (n:__HEAD)-[r:__Parent*..%d]->m" % (length_lim),
+            q_arr[0] = "match (n:HEAD)-[r:Parent*..%d]->m" % (length_lim),
 
         self.add_statement(q_arr)
 
