@@ -69,13 +69,6 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
         return Response()
 
-    # connect socketio route
-    route_dec = flask_webapp.route('/socket.io/<path:url_path>')
-    f = route_dec(socketio_route_handler)
-    flask_webapp.f = f
-
-    # init ws server
-    ws_srv = RZ_WebSocket_Server(cfg, flask_webapp)
 
     # link ws hooks: multicast on topo_diff, attr_diff
     def decorator__ws_multicast(ws_srv, f, f_multicast):
@@ -110,6 +103,14 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             return f_ret_list
 
         return wrapped_function
+
+    # connect socketio route
+    route_dec = flask_webapp.route('/socket.io/<path:url_path>')
+    f = route_dec(socketio_route_handler)
+    flask_webapp.f = f
+
+    # init ws server
+    ws_srv = RZ_WebSocket_Server(cfg, flask_webapp)
 
     kernel.diff_commit__topo = decorator__ws_multicast(ws_srv,
                                                        kernel.diff_commit__topo,

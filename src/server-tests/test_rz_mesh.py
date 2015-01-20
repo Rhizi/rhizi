@@ -12,6 +12,19 @@ from neo4j_util import generate_random_id__uuid
 from rz_api_websocket import WebSocket_Graph_NS
 import test_util
 
+class RZ_websocket(object):
+
+    def __init__(self, namespace=BaseNamespace):
+        self.namespace = namespace
+
+    def __enter__(self):
+        sock = SocketIO('rhizi.local', 8080)
+        ns_sock = sock.define(self.namespace, '/graph')
+        self.sock = sock
+        return sock, ns_sock
+
+    def __exit__(self, e_type, e_value, e_traceback):
+        self.sock.disconnect()
 
 class TestMeshAPI(unittest.TestCase):
     """
@@ -27,20 +40,6 @@ class TestMeshAPI(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         pass
-
-    class rz_socket:
-
-        def __init__(self, namespace=BaseNamespace):
-            self.namespace = namespace
-
-        def __enter__(self):
-            sock = SocketIO('rhizi.local', 8080)
-            ns_sock = sock.define(self.namespace, '/graph')
-            self.sock = sock
-            return sock, ns_sock
-
-        def __exit__(self, e_type, e_value, e_traceback):
-            self.sock.disconnect()
 
     def _emit_tx_topo_diff(self):
         with TestMeshAPI.rz_socket() as (_, ns_sock):
@@ -63,7 +62,7 @@ class TestMeshAPI(unittest.TestCase):
 
         def c_0():
 
-            with TestMeshAPI.rz_socket(namespace=NS_test) as (sock, _):
+            with RZ_websocket(namespace=NS_test) as (sock, _):
                 c1_t.switch()  # allow peer to POST
                 sock.wait(8)  # allow self to receive
 
@@ -100,14 +99,14 @@ class TestMeshAPI(unittest.TestCase):
         topo_diff = Topo_Diff(node_set_add=[n_0, n_1], link_set_add=[l])
 
         def c_0():
-            with TestMeshAPI.rz_socket(namespace=NS_test) as (_, ns_sock):
+            with RZ_websocket(namespace=NS_test) as (_, ns_sock):
                 c1_t.switch()  # allow peer to connect
                 data = json.dumps(topo_diff, cls=Topo_Diff.JSON_Encoder)
                 ns_sock.emit('diff_commit__topo', data)
                 c1_t.switch()
 
         def c_1():
-            with TestMeshAPI.rz_socket(namespace=NS_test) as (sock, _):
+            with RZ_websocket(namespace=NS_test) as (sock, _):
                 c0_t.switch()  # allow peer to emit
                 sock.wait(8)  # allow self to receive
 
@@ -143,14 +142,14 @@ class TestMeshAPI(unittest.TestCase):
         attr_diff.add_node_attr_rm(n_id, 'attr_2')
 
         def c_0():
-            with TestMeshAPI.rz_socket(namespace=NS_test) as (_, ns_sock):
+            with RZ_websocket(namespace=NS_test) as (_, ns_sock):
                 c1_t.switch()  # allow peer to connect
                 data = json.dumps(attr_diff)
                 ns_sock.emit('diff_commit__attr', data)
                 c1_t.switch()
 
         def c_1():
-            with TestMeshAPI.rz_socket(namespace=NS_test) as (sock, _):
+            with RZ_websocket(namespace=NS_test) as (sock, _):
                 c0_t.switch()  # allow peer to emit
                 sock.wait(8)  # allow self to receive
 
