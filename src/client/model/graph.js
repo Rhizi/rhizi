@@ -151,6 +151,23 @@ function Graph(spec) {
         }
 
         util.assert(undefined != node.id, '__addNode: node id missing');
+
+        /*
+         * Fix node position if of 'commit' type
+         */
+        if (node.type == 'head') {
+            node.x = 50;
+            node.y = 250;
+            node.fixed = true;
+        } else if (node.type == 'commit') {
+            node.__commit_seq = window.commit_idx;
+            Object.defineProperty(node, 'x',  { get: function() { return 50; }});
+            Object.defineProperty(node, 'px', { get: function() { return 50; }});
+            Object.defineProperty(node, 'y',  { get: function() { return 250 + 50 * this.__commit_seq; }});
+            Object.defineProperty(node, 'py', { get: function() { return 250 + 50 * this.__commit_seq; }});
+            window.commit_idx += 1;
+        }
+
         _node_add_helper(node);
         if (debug) {
             console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state);
@@ -159,6 +176,7 @@ function Graph(spec) {
         return node;
     }
     this.__addNode = __addNode;
+    window.commit_idx = 1;
 
     var _node_remove_helper = function (node_id) {
         util.assert(node_id, "missing node id");
