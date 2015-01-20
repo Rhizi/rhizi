@@ -26,7 +26,7 @@ class Neo4JException(Exception):
 
 class DB_Query(object):
 
-    def __init__(self, q_str_or_array, param_set):
+    def __init__(self, q_str_or_array, param_set={}):
         """
         @param q_str_or_array: cypher query to add - if passed as an array ' '.join(q_str_or_array)
         is used to convert it to string type
