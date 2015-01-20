@@ -195,13 +195,27 @@ class DBO_block_chain__commit(DB_op):
         super(DBO_block_chain__commit, self).__init__()
 
         self.blob_obj = blob_obj
-        hash_value = DBO_block_chain__commit.calc_blob_hash(blob_obj)
-        q_arr = ["match (old_head:__HEAD:__Commit)",
-                 "create (new_head:__HEAD:__Commit {hash: {hash_value}, blob: {blob_value}})",
-                 "create new_head-[r:__Parent]->old_head",
-                 "remove old_head:__HEAD",
-                 "return {`HEAD^`: old_head, HEAD: new_head}"
-        q_param_set = {'hash_value': hash_value, 'blob_value': blob_obj}
+        hash_value = DBO_block_chainCommit.calc_blob_hash(blob_obj)
+
+        name_value = hash_value[:8] + '...' if commit_obj == None else commit_obj.to_str__commit_name()
+
+        self.n_name_value = name_value
+        self.n_id = hash_value
+        self.l_id = generate_random_id__uuid()
+
+        q_arr = ['match (old_head:__HEAD:Commit)',
+                 'create (new_head:__HEAD:Commit {commit_attr})',
+                 'create new_head-[r:__Parent {link_attr}]->old_head',
+                 'remove old_head:__HEAD',
+                 'return {`HEAD^`: old_head, HEAD: new_head}'
+                 ]
+        q_param_set = {'commit_attr': {
+                                       'blob': blob_obj,
+                                       'hash': hash_value,
+                                       'id': hash_value,
+                                       'name': name_value},
+                       'link_attr': {'id': self.l_id},
+                       }
         self.add_statement(q_arr, q_param_set)
 
 class DBO_block_chain__list(DB_op):
