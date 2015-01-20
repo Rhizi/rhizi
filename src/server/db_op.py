@@ -672,9 +672,8 @@ class DBO_rz_clone(DB_op):
                         # as link matching is optional, collect may yield empty sets
                         continue
 
-                    l = l_tuple[1]
-                    l['__src_id'] = n['id']
-                    l['__dst_id'] = l_tuple[0]
+                    l = Link.Link_Ptr(src_id=n['id'], dst_id=l_tuple[0])
+                    l['id'] = l_tuple[1]['id']
                     l['__type'] = [l_tuple[2]]
 
                     ret_l_set.append(l)
