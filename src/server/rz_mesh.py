@@ -88,11 +88,11 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
         @wraps(f)
         def wrapped_function(*args, **kw):
-            f_ret_list = f(*args, **kw)
+            f_ret = f(*args, **kw)
 
-            assert type(f_ret_list) in [list, tuple]
+            assert type(f_ret) in [list, tuple]
 
-            pkt_data = map(_prep_for_serialization, f_ret_list)
+            pkt_data = map(_prep_for_serialization, f_ret)
 
             msg_name = f.__name__
             pkt = dict(type="event",
