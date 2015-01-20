@@ -33,11 +33,12 @@ class RZ_WebSocket_Server(SocketIOServer):
         def upgrade_websocket(self):
             return WebSocketHandler.upgrade_websocket(self)
 
-    def __init__ (self, cfg, webapp):
+    def __init__ (self, cfg, wsgi_app):
+        self.wsgi_app = wsgi_app
         # Thread.__init__(self)
         SocketIOServer.__init__(self,
                                 (cfg.listen_address, cfg.listen_port),
-                                webapp,
+                                wsgi_app,
                                 resource='socket.io',
                                 policy_server=False)
 
@@ -79,11 +80,11 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         @param f: [!] wrapped function, name used to derive socket message name
         """
 
-        def _prep_for_serialization(o):
+        def _prep_for_serialization(obj):
             # handle special serialization cases
-            if isinstance(o, Topo_Diff):
-                return o.to_json_dict()
-            return o
+            if isinstance(obj, Topo_Diff):
+                return obj.to_json_dict()
+            return obj
 
         @wraps(f)
         def wrapped_function(*args, **kw):
