@@ -12,8 +12,10 @@ import smtplib
 log = logging.getLogger('rhizi')
 
 def send_message(recipients, subject, attachments, body):
+
     send_from = current_app.rz_config.mail_default_sender
     smtp_hostname = current_app.rz_config.mail_hostname
+
     send_message_helper(smtp_hostname=smtp_hostname,
                         send_from=send_from, recipients=recipients,
                         subject=subject, attachments=attachments, body=body)
@@ -28,6 +30,7 @@ def send_message_helper(smtp_hostname, send_from, recipients, subject, attachmen
     python batteries-included packages
     """
     assert isinstance(recipients, list)
+
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = COMMASPACE.join(recipients)
@@ -41,7 +44,7 @@ def send_message_helper(smtp_hostname, send_from, recipients, subject, attachmen
         part.set_payload(data)
         Encoders.encode_base64(part)
         part.add_header('Content-Disposition', 'attachment', filename=filename)
-        #Content_Disposition: attachment; filename="feedback_page.html"
+        # Content_Disposition: attachment; filename="feedback_page.html"
         msg.attach(part)
 
     smtp = smtplib.SMTP(smtp_hostname)
