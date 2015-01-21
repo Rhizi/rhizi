@@ -25,7 +25,7 @@
                 document.location = "/index";
             },
             error : function (xhr, status, err_thrown) {
-                document.location = "/login";
+                $('#failed-login').show();
             }
         });
     }
@@ -50,8 +50,8 @@
 					<a class="forgot-password">Forgot your password?</a>
 				</form>
 			</fieldset>
-			<div id="failed-login">
-				{% if login_failed %}<b>Login Failed</b>{% endif %}
+			<div id="failed-login" style="display: none">
+				<b>Login Failed</b>
 			</div>
 		</div>
 		<div class="contact-us-div"><span class="contact-us-icon"></span></div>
