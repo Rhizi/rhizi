@@ -318,7 +318,7 @@ init_ws_connection();
  */
 function locate_visual_element(model_obj){
     var id_sel = $('#' + model_obj.id);
-    if (0 == id_sel.length){
+    if (0 === id_sel.length) {
         console.warn('unable to find visual element for model object: object id: ' + model_obj.id.toString())
         return null;
     }
@@ -336,7 +336,7 @@ function canvas_handler_dblclick(){
             node_set_add : [n].map(model_util.adapt_format_write_node),
         }));
 
-    var n_ve = locate_visual_element(n); // locate visual element
+    var n_ve = locate_visual_element(n);
 
     var on_slowdown_cb =  function(){
         svgInput.enable($(n_ve).find('.nodetext'), n);
