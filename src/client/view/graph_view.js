@@ -409,8 +409,6 @@ function GraphView(spec) {
             return d.url !== undefined && d.url !== null && d.url.length > 0;
         };
 
-        noderef.attr("visibility", function(d) { return urlValid(d) ? "visible" : "hidden"; });
-        noderef.attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
         var nodeText = function(d) {
             if (!d.name) {
                 return "_";
@@ -429,7 +427,9 @@ function GraphView(spec) {
         node.select('g.node text')
             .text(nodeText);
         node.select('g.node a')
-            .attr("xlink:href", function (d) { return d.url; });
+            .attr("xlink:href", function (d) { return d.url; })
+            .attr("visibility", function(d) { return urlValid(d) ? "visible" : "hidden"; })
+            .attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
         node.select('g.node text')
             .attr("dx", nodeTextX);
 
