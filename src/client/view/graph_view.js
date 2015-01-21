@@ -28,6 +28,25 @@
 define(['d3', 'Bacon', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view'],
 function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  view) {
 
+/* debugging helper */
+function enableDebugViewOfDiffs(graph)
+{
+    var debugView = document.createElement('div');
+    document.body.appendChild(debugView);
+    debugView.style['pointer-events'] = 'none';
+    debugView.style.id = 'graphviewdiffdebug';
+    debugView.style.position = 'absolute';
+    debugView.style.left = '100px';
+    debugView.style.top = '100px';
+    debugView.innerHTML = '<div>debug view</div>';
+    debugView.append = function (diff) {
+        debugView.innerHTML = debugView.innerHTML + '<div>' + diff + '</div>';
+    }
+    graph.diffBus.onValue(function (diff) {
+        debugView.append(diff);
+    });
+}
+
 /*
  * Creates a new view on the given graph contained in an appended last child
  * to the given parent node, parent

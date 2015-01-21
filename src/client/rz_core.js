@@ -129,7 +129,7 @@ var svgInput = (function() {
      * @param e visual node element
      * @param n node model object
      */
-    function enable(e, n) {
+    function enable(e, n, x) {
         var oldname = n.name,
             svg_input = createOrGetSvgInput(),
             fo = createOrGetSvgInputFO();
@@ -144,7 +144,7 @@ var svgInput = (function() {
             fo.attr('y', -$(e).height() / 2 - 3); // XXX This minus 3 is only kinda ok.
             fo.attr('class', 'svg-input-fo-link');
         } else {
-            fo.attr('x', svg_input_fo_node_x);
+            fo.attr('x', x);
             fo.attr('y', svg_input_fo_node_y);
             fo.attr('transform', null);
             fo.attr('class', 'svg-input-fo-node');
