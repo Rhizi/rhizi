@@ -656,7 +656,7 @@ function GraphView(spec) {
         });
 
         linktext.attr("transform", function(d) {
-            return "translate(" + (d.__src.x + d.__dst.x) / 2 + "," + (d.__src.y + d.__dst.y) / 2 + ")";
+            return "translate(" + (d.__src.bx + d.__dst.bx) / 2 + "," + (d.__src.by + d.__dst.by) / 2 + ")";
         });
 
         // After initial placement we can make the nodes visible.
