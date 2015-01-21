@@ -62,6 +62,9 @@
 
       <mkdir dir="${targetDeploymentDir}/static" />
 
+      <copy file="res/etc/rhizi-server.conf.example"
+            tofile="res/etc/rhizi-server.conf" />
+
       <parallel>
          <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
          <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
@@ -71,7 +74,7 @@
                   link="${targetDeploymentDir}/bin"
                   resource="${basedir}/${src_server}" />
 
-         <copy file="res/etc/rhizi-server.conf.example"
+         <copy file="res/etc/rhizi-server.conf"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
          <copy file="res/etc/htpasswd"
                tofile="${targetDeploymentDir}/etc/htpasswd" />

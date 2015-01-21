@@ -64,7 +64,6 @@ define(['util'], function(util) {
             // reuse id if present
             __set_obj_id(ret, node_spec.id);
         }
-        delete node_spec.id;
 
         util.assert(undefined != node_spec.name, 'create_node_from_spec: name missing');
 
@@ -92,6 +91,9 @@ define(['util'], function(util) {
 
         // other
         for (var property in node_spec) {
+            if (property === 'id') {
+                continue;
+            }
             ret[property] = node_spec[property];
         }
 
