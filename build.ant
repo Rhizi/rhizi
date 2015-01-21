@@ -62,6 +62,8 @@
 
       <mkdir dir="${targetDeploymentDir}/static" />
 
+      <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
+
       <copy file="res/etc/rhizi-server.conf.example"
             tofile="res/etc/rhizi-server.conf" />
 
