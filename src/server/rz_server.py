@@ -1,6 +1,12 @@
 #!/usr/bin/python
 
+from functools import wraps
 import argparse
+import logging
+import os
+import re
+import signal
+
 from flask import Flask
 from flask import Response
 from flask import redirect
@@ -8,10 +14,6 @@ from flask import request
 from flask import send_from_directory
 from flask import session
 import flask
-from functools import wraps
-import logging
-import os
-import re
 
 import db_controller as dbc
 import rz_api
