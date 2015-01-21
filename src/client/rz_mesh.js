@@ -34,8 +34,12 @@ define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(
         // attempt to actively disconnect on tab/window close
         // ref: https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers.onbeforeunload
         window.addEventListener("beforeunload", function(e){
-            socket.close();
-            console.log('ws: connection closed on \'beforeunload\' event'); // no one will ever see this but still
+            if (socket.close) {
+                socket.close();
+                console.log('ws: connection closed on \'beforeunload\' event'); // no one will ever see this but still
+            } else {
+                console.log('ws: wanted to close on \'beforeunload\' event but no close function');
+            }
         });
     }
 
