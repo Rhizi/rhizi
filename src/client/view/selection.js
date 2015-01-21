@@ -44,7 +44,7 @@ function sortedArrayDiff(a, b, a_cmp_b)
             b_i += 1;
             a_i += 1;
         }
-        while (b_i < b.length && a_cmp_b(a[a_i], b[b_i]) == 1) {
+        while (b_i < b.length && a_i < a.length && a_cmp_b(a[a_i], b[b_i]) == 1) {
             b_i += 1;
         }
     }
