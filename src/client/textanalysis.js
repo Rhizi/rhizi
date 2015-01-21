@@ -137,7 +137,7 @@ function auto_suggest__update_from_graph()
     sugg_name = {};
     id_to_name_map = {};
     rz_core.main_graph.nodes().forEach(function (node) {
-        auto_suggest__update_name(node.name.toLowerCase(), node.id);
+        auto_suggest__update_name(node.name, node.id);
     });
     suggestions_bus.push(sugg_name);
 }
