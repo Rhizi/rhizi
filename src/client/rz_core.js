@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config', 'rz_mesh', 'model/diff', "view/graph_view"],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   view,        rz_observer,   selection,        rz_config,   rz_mesh,   model_diff,   graph_view) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   view,        rz_observer,   selection,        rz_config,   rz_mesh,   model_diff,   graph_view,       svg_input) {
 
 var addednodes = [],
     vis,
@@ -17,168 +17,12 @@ var addednodes = [],
 
 // "CSS" for SVG elements. Reused for editing elements.
 var node_text_dx = 15,
-    node_text_dy = '.30em',
-    svg_input_fo_node_y = '-.70em',
-    svg_input_fo_height = '30px';
-
-/**
- * svgInput - creates an embedded input element under a given
- *
- * edit_node(@sibling, @node)
- * edit_link(@sibling, @link)
- */
-var svgInput = (function() {
-    var measure_node = $('#measure-node')[0],
-        measure_link = $('#measure-link')[0],
-        original_element,
-        is_link;
-
-    function appendForeignElementInputWithID(base, elemid, width, height)
-    {
-        var input = document.createElement('input'),
-            body = document.createElement('body'),
-            fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-
-        body.appendChild(input);
-
-        fo.setAttribute('height', height || svg_input_fo_height);
-        fo.style.pointerEvents = 'none';
-        input.style.pointerEvents = 'all';
-        fo.appendChild(body);
-        base.appendChild(fo);
-        input.setAttribute('id', elemid);
-        return input;
-    }
-
-    function measure(text)
-    {
-        var span;
-
-        span = is_link ? measure_link : measure_node;
-        span.innerHTML = text;
-        return span.getBoundingClientRect().width; // $().width() works too
-    }
-
-    function onkeydown(e) {
-        var ret = undefined,
-            jelement = createOrGetSvgInput(),
-            element = jelement[0],
-            newname = jelement.val(),
-            fo = createOrGetSvgInputFO(),
-            d;
-
-        if (element != this) {
-            console.log('unexpected editname_on_keypress this should be the svg-input element');
-        }
-
-        if (e.which == 13 || e.which == 27) {
-            ret = false;
-            d = jelement.data().d;
-            if (e.which == 13 && newname != d.name) {
-                if (d.hasOwnProperty('__src')) {
-                    main_graph.update_link(d, {name: newname});
-                } else {
-                    // TODO - display hourglass
-                    // TODO - use promises to make A follows B readable.
-                    main_graph.update_node(d, {name: newname});
-                }
-            }
-            hide();
-        }
-        rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
-        return ret;
-    };
-
-    function resize_measure(e) {
-        resize(measure($(e.target).val()) + 30);
-    }
-
-    function resize(new_width) {
-        var svg_input = createOrGetSvgInput(),
-            fo = createOrGetSvgInputFO();
-
-        svg_input.css('width', new_width);
-        fo.attr('width', new_width);
-    }
-
-    // FIXME: element being deleted. Some delete is legit - removal of related element. Some isn't (a click).
-    // Instead of investigating (time constraint) reparenting as sibling, and introducing
-    // this function. Cost of creation of element is negligble, it's just ugly..
-    function createOrGetSvgInput()
-    {
-        var svg_input_name = 'svg-input',
-            svg_input_selector = '#' + svg_input_name,
-            svg_input = $(svg_input_selector);
-
-        if (svg_input.length == 0) {
-            console.log('creating new svg-input');
-            svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
-            svg_input.on('keydown', onkeydown);
-            svg_input.bind('change keypress', resize_measure);
-        }
-        return svg_input;
-    }
-
-    function createOrGetSvgInputFO()
-    {
-        return createOrGetSvgInput().parent().parent();
-    }
-
-    /*
-     * @param e visual node element
-     * @param n node model object
-     */
-    function enable(e, n, x) {
-        var oldname = n.name,
-            svg_input = createOrGetSvgInput(),
-            fo = createOrGetSvgInputFO();
-
-        is_link = n.hasOwnProperty('__src');
-
-        e.parentNode.appendChild(fo[0]); // This will unparent from the old parent
-        if (is_link) {
-            fo.attr('transform', e.getAttribute('transform'));
-            // XXX links set the text-anchor middle attribute. no idea how to do that
-            fo.attr('x', -$(e).width() / 2);
-            fo.attr('y', -$(e).height() / 2 - 3); // XXX This minus 3 is only kinda ok.
-            fo.attr('class', 'svg-input-fo-link');
-        } else {
-            fo.attr('x', x);
-            fo.attr('y', svg_input_fo_node_y);
-            fo.attr('transform', null);
-            fo.attr('class', 'svg-input-fo-node');
-        }
-        // Set width correctly
-        resize(measure(oldname) + 30);
-        fo.show();
-        svg_input.val(oldname);
-        svg_input.data().d = n;
-        svg_input.focus();
-        if (original_element) {
-            original_element.show();
-        }
-        original_element = $(e);
-        original_element.hide();
-        // TODO: set cursor to correct location in text
-    }
-
-    function hide() {
-        createOrGetSvgInputFO().hide();
-        if (original_element && original_element.show) {
-            original_element.show();
-        }
-    }
-
-    return {
-        enable: enable,
-        hide: hide,
-    };
-}());
+    node_text_dy = '.30em';
 
 var zoomProgress = false;
 var zoomBus = new Bacon.Bus();
-var zoom_property = zoomBus.toProperty();
-zoomBus.push(zoomProgress); // set initial value
+var zoom_property = zoomBus.toProperty(zoomProgress);
+var svgInput;
 
 function svg_click_handler(e) {
     if (zoomProgress) {
@@ -241,6 +85,8 @@ var initDrawingArea = function () {
         .attr("pointer-events", "all")
         .append("g")
         .attr("class", "zoom");
+
+    svgInput = svg_input(vis, main_graph);
 
     d3.select(el).select("svg").append("svg:defs")
         .data(["end"]) // Different link/path types can be defined here
