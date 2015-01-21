@@ -162,9 +162,8 @@ function GraphView(spec) {
             return false;
         });
 
-        // FIXME - attribute diff, ignore uninteresting diffs via filtering
-        graph.diffBus.onValue(function () {
-            if (closed) {
+        graph.diffBus.onValue(function (diff) {
+            if (closed || !model_diff.is_attr_diff(diff)) {
                 return Bacon.noMore;
             }
             view.node_info.show(node);
