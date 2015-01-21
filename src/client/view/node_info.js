@@ -35,13 +35,13 @@ function show(d) {
         f = false,
         t = true,
         visible = {
-          "third-internship-proposal":  [t, t, t, f, f],
-          "chainlink":                  [f, f, f, f, f],
-          "skill":                      [f, f, f, f, t],
-          "interest":                   [f, f, f, f, t],
-          "_defaults":                  [f, f, f, f, t],
+          "third-internship-proposal":  [t, t, t, t, f],
+          "chainlink":                  [f, f, f, t, f],
+          "skill":                      [f, f, f, t, t],
+          "interest":                   [f, f, f, t, t],
+          "_defaults":                  [f, f, f, t, t],
         },
-        fields = ["#status", "#startdate", "#enddate", "#desc", "#url"],
+        fields = ["#status", "#startdate", "#enddate", "#description", "#url"],
         flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
         i;
 
