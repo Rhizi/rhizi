@@ -49,7 +49,7 @@ var initDrawingArea = function () {
 
     function zoom() {
         zoomProgress = true;
-        vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        zoom_g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         d3.event.sourceEvent.stopPropagation();
     }
 
@@ -82,9 +82,13 @@ var initDrawingArea = function () {
         .attr('id', 'canvas_d3')
         .attr("width", '100%')
         .attr("height", '100%')
-        .attr("pointer-events", "all")
+        .attr("pointer-events", "all");
+
+    var zoom_g = vis
         .append("g")
         .attr("class", "zoom");
+
+    var nozoom_g = vis.append("g");
 
     svgInput = svg_input(vis, main_graph);
 
@@ -105,7 +109,7 @@ var initDrawingArea = function () {
      * init zoom behavior
      */
     var zoom_obj = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-    zoom_obj(d3.select('#canvas_d3'));
+    zoom_obj(vis);
     d3.select("svg").on("dblclick.zoom", null); // disable zoom on double click
 
     $('svg').click(svg_click_handler);
@@ -115,7 +119,7 @@ var initDrawingArea = function () {
         }).skipDuplicates();
 
     main_graph_view = graph_view.GraphView({
-            parent_element: vis,
+            parent_element: zoom_g,
             graph_name: "main",
             graph: main_graph,
             zoom_property: zoom_property,
@@ -127,7 +131,7 @@ var initDrawingArea = function () {
             bubble_property: bubble_property,
         });
     edit_graph_view = graph_view.GraphView({
-            parent_element: vis,
+            parent_element: nozoom_g,
             graph_name: "edit",
             graph: edit_graph,
             zoom_property: zoom_property,
