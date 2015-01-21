@@ -142,6 +142,17 @@ function auto_suggest__update_from_graph()
     suggestions_bus.push(sugg_name);
 }
 
+function lowerCaseHash() {
+    var hash = {};
+    hash.set = function (name, value) {
+        hash[name.toLowerCase()] = value;
+    }
+    hash.get = function (name) {
+        return hash[name.toLowerCase()];
+    }
+    return hash;
+}
+
 /*
  * textAnalyser
  *
@@ -185,7 +196,7 @@ var textAnalyser = function (spec) {
         NODE = "NODE",
         LINK = "LINK",
         START = "START",
-        node_by_name = {},
+        node_by_name = lowerCaseHash(),
         nodes = [],
         links = [],
         ret = model_diff.new_topo_diff();
@@ -419,10 +430,10 @@ var textAnalyser = function (spec) {
             });
         // fill in hash to be used for link creation, new and existing nodes
         ret.node_set_add.forEach(function (node) {
-            node_by_name[node.name] = node;
+            node_by_name.set(node.name, node);
         });
         existing_nodes.forEach(function (node) {
-            node_by_name[node.name] = node;
+            node_by_name.set(node.name, node);
         });
 
         ret.link_set_add = links
@@ -432,8 +443,8 @@ var textAnalyser = function (spec) {
                        (link.name.replace(/ /g,"") !== "and");
                 })
             .map(function (link_spec) {
-                var src = node_by_name[link_spec.src_name],
-                    dst = node_by_name[link_spec.dst_name],
+                var src = node_by_name.get(link_spec.src_name),
+                    dst = node_by_name.get(link_spec.dst_name),
                     link = model_core.create_link__set_random_id(src, dst, {
                         name: link_spec.name,
                         state: 'perm', // FIXME: this is meaningless now with graph separation
