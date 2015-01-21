@@ -150,10 +150,23 @@ def monitor__server_info():
            "time: " + dt.strftime("%H:%M:%S") + "<br>" + \
            "</p></body></html>"
 
+def username_initials(username):
+    """
+    return two letter (always) initials of username.
+    we do it here rather then on the client side to avoid rendering twice, once
+    'annonymous' and later the real name, because of loading delays
+    """
+    words = username.split(' ')
+    first_initial = words[0][0] if len(words) >= 1 and len(words[0]) >= 1 else ' '
+    second_initial = (words[1][0] if len(words) >= 2 and len(words[1]) >= 1 else
+        (words[0][1] if len(words) >= 1 and len(words[0]) > 1 else '_'))
+    return (first_initial + second_initial).upper()
+
 def index():
     session_username = session.get('username')
     username = escape(session_username if session_username != None else "Anonymous Stranger")
-    return render_template('index.html', username=username)
+    profileinitials = username_initials(username)
+    return render_template('index.html', username=username, profileinitials=profileinitials)
 
 def login():
 

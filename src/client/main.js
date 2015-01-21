@@ -8,20 +8,6 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         obj.size = Math.max(obj.savesize, obj.value.length);
     }
 
-    function get_user_initials() {
-        var words = logged_username.split(' '),
-            first_initial = words.length >= 1 && words[0].length >= 1 ? words[0][0] : ' ',
-            second_initial = words.length >= 2 && words[1].length >= 1 ? words[1][0] : (words.length >= 1 && words[0].length > 1 ? words[0][1] : '_');
-
-        return (first_initial + second_initial).toUpperCase();
-    }
-
-    function update_username_ui() {
-        // logged_username is defined in the body via a template server set variable
-        $('.profile-initials').html(get_user_initials());
-        $('#user_id').html(logged_username);
-    }
-
     this.main = function() {
         var json;
 
@@ -31,8 +17,6 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         $('#textanalyser').onkeyup = function() { expand(this); };
 
         textanalysis_ui.main();
-
-        update_username_ui();
 
         json = util.getParameterByName('json');
         if (json) {
