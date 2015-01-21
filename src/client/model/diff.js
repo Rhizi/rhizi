@@ -150,6 +150,20 @@ define([],
             }
 
             /**
+             * @param id of node to check for inclusion of
+             */
+            Attr_Diff.prototype.has_node_id_attr_write = function(n_id, attr) {
+                return this.__type_node[n_id] !== undefined && this.__type_node[n_id].__attr_write[attr];
+            }
+
+            /**
+             * @param id of link to check for inclusion of
+             */
+            Attr_Diff.prototype.has_link_id_attr_write = function(n_id, attr) {
+                return this.__type_link[n_id] !== undefined && this.__type_link[n_id].__attr_write[attr];
+            }
+
+            /**
              * Visual diff object expressing any visual change to the state of a
              * particular visualization type.
              *
