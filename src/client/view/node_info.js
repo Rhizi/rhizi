@@ -14,6 +14,7 @@ function _get_form_data() {
         status: $('.info #editstatus').val(),
         startdate: $("#editstartdate").val(),
         enddate: $("#editenddate").val(),
+        description: $("#editdescription").val(),
     };
 }
 
