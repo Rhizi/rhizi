@@ -64,30 +64,36 @@ define(['util'], function(util) {
             // reuse id if present
             __set_obj_id(ret, node_spec.id);
         }
+        delete node_spec.id;
 
         util.assert(undefined != node_spec.name, 'create_node_from_spec: name missing');
 
         ret.name = node_spec.name;
+        delete node_spec.name;
 
         // type
         if (undefined == node_spec.type) {
             console.debug('create_node_from_spec: undefined type, falling back to \'perm\'');
             node_spec.type = 'perm';
         }
+        delete node_spec.state;
         ret.type = node_spec.type;
+        delete node_spec.type
 
         // status
         ret.status = node_spec.status || 'unknown';
+        delete node_spec.status;
 
         // visual
         ret.x = node_spec.x;
         ret.y = node_spec.y;
+        delete node_spec.x;
+        delete node_spec.y;
 
         // other
-        ret.state = node_spec.state;
-        ret.url = node_spec.url;
-        ret.start = node_spec.start;
-        ret.end = node_spec.end;
+        for (var property in node_spec) {
+            ret[property] = node_spec[property];
+        }
 
         return ret;
     }

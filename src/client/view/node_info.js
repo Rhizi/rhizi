@@ -67,7 +67,7 @@ function show(d) {
       dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     });
 
-    $('#editdescription').val(d.type);
+    $('#editdescription').val(d.description);
     $('#edittype').val(d.type);
     $('#editurl').val(d.url);
     $('#editstatus').val(d.status);
