@@ -410,11 +410,12 @@ function GraphView(spec) {
         };
 
         var nodeText = function(d) {
+            var selected = selection.node_selected(d);
+
             if (!d.name) {
                 return "_";
             }
-            if (temporary || d.state === 'chosen'
-             || d.state === "enter" || d.state === "exit") {
+            if (temporary || selected) {
                  return d.name;
             } else {
                 if (d.name.length < 28) {
