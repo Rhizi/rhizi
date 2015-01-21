@@ -73,6 +73,8 @@
 
          <copy file="res/etc/rhizi-server.conf.example"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
+         <copy file="res/etc/htpasswd"
+               tofile="${targetDeploymentDir}/etc/htpasswd" />
          <rsync src="res/templates/" dst="${targetDeploymentDir}/templates" />
       </parallel>
 
