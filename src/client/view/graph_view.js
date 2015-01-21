@@ -369,9 +369,13 @@ function GraphView(spec) {
             };
         }); //();
 
+        var node_url_dx = 15;
+        var nodeTextX = function(d) {
+            return urlValid(d) ? node_text_dx + node_url_dx : node_text_dx;
+        }
+
         nodetext = nodeEnter.insert("text")
             .attr("class", "nodetext graph")
-            .attr("dx", node_text_dx)
             .attr("dy", node_text_dy)
             .on("click", function(d, i) {
                 if (d3.event.defaultPrevented) {
@@ -379,29 +383,52 @@ function GraphView(spec) {
                     return;
                 }
                 if (!temporary) {
-                    svgInput.enable(this, d);
+                    svgInput.enable(this, d, nodeTextX(d));
                     selection.update([d]);
                     showNodeInfo(graph.find_node__by_id(this.parentNode.id));
                 }
                 d3.event.stopPropagation();
             });
+        noderef = nodeEnter.insert('a')
+            .attr("class", "nodeurl graph")
+            .attr("transform", "translate(10,-7)")
+        noderef.insert("image")
+            .attr("width", "14")
+            .attr("height", "14")
+            .attr("xlink:href", "/static/img/url-icon.png");
 
-        node.select('g.node text')
-            .text(function(d) {
-                if (!d.name) {
-                    return "_";
-                }
-                if (temporary || d.state === 'chosen'
-                 || d.state === "enter" || d.state === "exit") {
-                     return d.name;
+        noderef_a = noderef.insert("a")
+        noderef_a.insert("text")
+            .attr("class", "nodetext graph")
+            .attr("dy", node_text_dy);
+
+        var urlValid = function(d) {
+            return d.url !== undefined && d.url !== null && d.url.length > 0;
+        };
+
+        noderef.attr("visibility", function(d) { return urlValid(d) ? "visible" : "hidden"; });
+        noderef.attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
+        var nodeText = function(d) {
+            if (!d.name) {
+                return "_";
+            }
+            if (temporary || d.state === 'chosen'
+             || d.state === "enter" || d.state === "exit") {
+                 return d.name;
+            } else {
+                if (d.name.length < 28) {
+                    return d.name;
                 } else {
-                    if (d.name.length < 28) {
-                        return d.name;
-                    } else {
-                        return d.name.substring(0, 25) + "...";
-                    }
+                    return d.name.substring(0, 25) + "...";
                 }
-            });
+            }
+        };
+        node.select('g.node text')
+            .text(nodeText);
+        node.select('g.node a')
+            .attr("xlink:href", function (d) { return d.url; });
+        node.select('g.node text')
+            .attr("dx", nodeTextX);
 
         circle = nodeEnter.insert("circle");
         node.select('g.node circle')
