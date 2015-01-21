@@ -263,6 +263,10 @@ var initDrawingArea = function () {
     d3.select("svg").on("dblclick.zoom", null); // disable zoom on double click
 
     $('svg').click(svg_click_handler);
+    var bubble_property =
+        edit_graph.diffBus.map(function () {
+            return edit_graph.nodes().length == 0 ? 0 : 180;
+        }).skipDuplicates();
 
     main_graph_view = graph_view.GraphView({
             parent_element: vis,
@@ -274,13 +278,7 @@ var initDrawingArea = function () {
             node_text_dy: node_text_dy,
             svgInput: svgInput,
             // FIXME: good place to animate bubble radius
-            bubble_property: edit_graph.diffBus.map(function () {
-                if (edit_graph.nodes().length == 0) {
-                    return 0;
-                } else {
-                    return 180;
-                }
-            }),
+            bubble_property: bubble_property,
         });
     edit_graph_view = graph_view.GraphView({
             parent_element: vis,
@@ -290,6 +288,7 @@ var initDrawingArea = function () {
             temporary: true,
             node_text_dx: node_text_dx,
             node_text_dy: node_text_dy,
+            bubble_property: bubble_property,
         });
 
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138

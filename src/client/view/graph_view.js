@@ -25,8 +25,8 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3', 'Bacon', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view'],
-function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  view) {
+define(['d3', 'Bacon', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble'],
+function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  view, view_bubble) {
 
 /* debugging helper */
 function enableDebugViewOfDiffs(graph)
@@ -126,16 +126,19 @@ function GraphView(spec) {
     //
     // Animation target is set by stream, and initialized if not already
     if (spec.bubble_property) {
-        spec.bubble_property
-            .skipDuplicates()
-            .onValue(function (r) {
-                var now = (new Date()).getTime();
-                gv.layout_animation.bubble_radius.target = r;
-                gv.layout_animation.bubble_radius.start = gv.bubble_radius;
-                gv.layout_animation.starttime = now;
-                gv.layout_animation.endtime = now + 300; // FIXME: use constant change?
-                start_layout_animation();
-            });
+        if (temporary) {
+            view_bubble.Bubble(parent_element[0][0], spec.bubble_property);
+        } else {
+            spec.bubble_property
+                .onValue(function (r) {
+                    var now = (new Date()).getTime();
+                    gv.layout_animation.bubble_radius.target = r;
+                    gv.layout_animation.bubble_radius.start = gv.bubble_radius;
+                    gv.layout_animation.starttime = now;
+                    gv.layout_animation.endtime = now + 300; // FIXME: use constant change?
+                    start_layout_animation();
+                });
+        }
     }
 
     graph.diffBus.onValue(function (diff) {
