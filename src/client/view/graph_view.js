@@ -263,12 +263,12 @@ function GraphView(spec) {
         link.attr("class", function(d, i){
                 var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && temporary) ? "temp_and" : "";
 
-                return ["graph link", temp_and, selection.selected_class__link(d)].join(' ');
+                return ["graph link", temp_and, selection.selected_class__link(d, temporary)].join(' ');
             });
 
         link.selectAll('path.link')
             .attr('class', function(d) {
-                return [d.state || "perm", selection.selected_class__link(d), "link graph"].join(' ');
+                return [d.state || "perm", selection.selected_class__link(d, temporary), "link graph"].join(' ');
             });
 
         link.exit().remove();
@@ -307,7 +307,7 @@ function GraphView(spec) {
                 }
             })
             .attr("class", function(d) {
-                return ["linklabel graph", selection.selected_class__link(d)].join(' ');
+                return ["linklabel graph", selection.selected_class__link(d, temporary)].join(' ');
             });
 
         linktext.exit().remove();
@@ -324,7 +324,7 @@ function GraphView(spec) {
             .call(drag);
 
         node.attr('class', function(d) {
-                return ['node', selection.selected_class__node(d)].join(' ');
+                return ['node', selection.selected_class__node(d, temporary)].join(' ');
             });
         // reorder nodes so selected are last, and so rendered last, and so on top.
         // FIXME: with b-ubble removed this is probably broken. actually also before. links are not correctly ordered.
@@ -696,5 +696,5 @@ function GraphView(spec) {
 return {
     GraphView: GraphView,
 };
-    
+
 });

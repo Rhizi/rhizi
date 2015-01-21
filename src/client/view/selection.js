@@ -116,12 +116,12 @@ var link_selected = function(link) {
     return node_selected(link.__src) && node_selected(link.__dst);
 }
 
-var selected_class__node = function(node) {
-    return selected_nodes.length > 0 ? (node_selected(node) ? "selected" : "notselected") : "";
+var selected_class__node = function(node, temporary) {
+    return !temporary && selected_nodes.length > 0 ? (node_selected(node) ? "selected" : "notselected") : "";
 }
 
-var selected_class__link = function(link) {
-    return selected_nodes.length > 0 ? (link_selected(link) ? "selected" : "notselected") : "";
+var selected_class__link = function(link, temporary) {
+    return !temporary && selected_nodes.length > 0 ? (link_selected(link) ? "selected" : "notselected") : "";
 }
 
 var clear = function() {
