@@ -20,6 +20,13 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     def __init__(self, *args, **kw):
         super(WebSocket_Graph_NS, self).__init__(*args, **kw)
 
+    def __context__common(self):
+        """
+        build a common rquest context to pass along with a kernel diff commit
+        """
+        # FIXME: impl
+        pass
+
     def multicast_msg(self, msg_name, *args):
         self.socket.server.log_multicast(msg_name)
         try:
@@ -45,8 +52,9 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         topo_diff = Topo_Diff.from_json_dict(json_dict)
         log.info('ws: rx: topo diff: ' + str(topo_diff))
 
+        ctx = self.__context__common()
         kernel = self.request.kernel
-        topo_diff, commit_ret = kernel.diff_commit__topo(topo_diff)
+        topo_diff, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
 
         # handle serialization
         topo_diff_dict = topo_diff.to_json_dict()
@@ -60,8 +68,9 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         attr_diff = Attr_Diff.from_json_dict(json_dict)
         log.info('ws: rx: attr diff: ' + str(attr_diff))
 
+        ctx = self.__context__common()
         kernel = self.request.kernel
-        attr_diff, commit_ret = kernel.diff_commit__attr(attr_diff)
+        attr_diff, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
 
         # [!] note: here we actually send the attr_diff twice, but in the future
         # commit_ret may not be the same
