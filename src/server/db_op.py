@@ -224,6 +224,17 @@ class DBO_block_chain__commit(DB_op):
         self.n_name_value = name_value
         self.l_id = l_id
 
+        # create commit-[:__Authored-by]->__User link if possible
+        if None == ctx or None == ctx.get('user_name'):
+            return
+
+        q_arr = ['merge (n:__USER {user_name: \'%s\'})' % ctx.get('user_name'),
+                 'with n',
+                 'match (m:__HEAD)',  # FIXME: specify commit-label index
+                 'create m-[r:`__Authored-by`]->(n)',
+                 ]
+        self.add_statement(q_arr)
+
     def process_result_set(self):
         """
         @return: a Topo_Diff object consisting of the commit node and parent link
