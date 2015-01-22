@@ -172,10 +172,11 @@ class DB_composed_op(DB_op):
 
 class DBO_block_chain__commit(DB_op):
     """
-    Labels in use:
-       - HEAD: HEAD commit, unique
-       - Parent: parent commit relationship
-       - Commit: node type
+    Label legend:
+       - __HEAD: HEAD commit, unique
+       - __Parent: parent commit relationship
+       - __Commit: node type
+       - __Authored-by: commit author
     """
 
     @staticmethod
