@@ -30,6 +30,18 @@ log = logging.getLogger('rhizi')
 
 db_ctl = None  # injected: DB controller
 
+def __context__common():
+    """
+    build a common rquest context to pass along with a kernel diff commit:
+       - set user_name
+    """
+
+    ret = {}
+    if session.has_key('username'):
+        ret['user_name'] = session['username']
+
+    return ret
+
 def diff_commit__topo():
     """
     REST API wrapper around diff_commit__topo():
@@ -48,9 +60,10 @@ def diff_commit__topo():
     except Exception as e:
         return common_resp_handle(error='malformed input')
 
+    ctx = __context__common()
     try:
         kernel = flask.current_app.kernel
-        _, commit_ret = kernel.diff_commit__topo(topo_diff)
+        _, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
         return common_resp_handle(data=commit_ret)
     except Exception as e:
         log.error(e.message)
@@ -72,9 +85,10 @@ def diff_commit__attr():
         # handle DB ERRORS, eg. name attr change error
         return common_resp_handle(error='error occurred')
 
+    ctx = __context__common()
     try:
         attr_diff = sanitize_input(request)
-        validate_obj__attr_diff(attr_diff)
+        validate_obj__attr_diff(attr_diff, ctx)
     except Exception as e:
         return common_resp_handle(error='malformed input')
 
