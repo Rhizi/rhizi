@@ -146,7 +146,7 @@ function Graph(spec) {
 
         existing_node = find_node__by_id(node.id);
         if (existing_node) {
-            console.log('__addNode: id collision: existing-node.id: \'' + existing_node.id);
+            console.warn('__addNode: id collision: existing-node.id: \'' + existing_node.id);
             return existing_node;
         }
 
