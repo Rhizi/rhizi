@@ -1,9 +1,11 @@
 from copy import deepcopy
 from geventwebsocket.websocket import WebSocket
+import gzip
 import hashlib
 import json
 import re
 
+import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
@@ -189,14 +191,16 @@ class DBO_block_chain__commit(DB_op):
         ret = sha1.hexdigest()
         return ret
 
-    def __init__(self, blob_obj, commit_obj=None, ctx=None):
+    def __init__(self, commit_obj=None, ctx=None):
         """
         @param blob_obj: serializable blob
         @return: old_head, new_head, new_head.hash_value
         """
         super(DBO_block_chain__commit, self).__init__()
 
-        hash_value = DBO_block_chain__commit.calc_blob_hash(blob_obj)
+        blob = self._convert_to_blob(commit_obj)
+        hash_value = self.calc_blob_hash(blob)
+
         name_value = hash_value[:8] + '...' if commit_obj == None else str(commit_obj)
         l_id = generate_random_id__uuid()
 
@@ -209,7 +213,7 @@ class DBO_block_chain__commit(DB_op):
                  ]
 
         q_param_set = {'commit_attr': {
-                                       'blob': blob_obj,
+                                       'blob': blob,
                                        'hash': hash_value,
                                        'id': hash_value,
                                        'name': name_value},
@@ -219,7 +223,6 @@ class DBO_block_chain__commit(DB_op):
         self.add_statement(q_arr, q_param_set)
 
         # cache values necessary to generate op result
-        self.blob_obj = blob_obj
         self.commit_obj = commit_obj
         self.n_id = hash_value
         self.n_name_value = name_value
@@ -235,6 +238,23 @@ class DBO_block_chain__commit(DB_op):
                  'create m-[r:`__Authored-by`]->(n)',
                  ]
         self.add_statement(q_arr)
+
+    def _convert_to_blob(self, obj):
+        """
+        @return: blob = json.dumps(obj)
+        """
+        obj_str = json.dumps(obj)
+        # blob_gzip = self._gzip_compress_string(obj_str)
+
+        return obj_str
+
+    def _gzip_compress_string(self, input_string):
+        out = sio.StringIO()
+        with gzip.GzipFile(fileobj=out, mode='wb') as f:
+            f.write(input_string)
+
+        ret = out.getvalue()
+        return ret
 
     def process_result_set(self):
         """

@@ -19,11 +19,9 @@ class RZ_Kernel(object):
 
         # FIXME: clean
         if isinstance(diff_obj, Topo_Diff):
-            blob = json.dumps(diff_obj.to_json_dict())
-        else:
-            blob = json.dumps(diff_obj)
+            commit_obj = diff_obj.to_json_dict()
 
-        chain_commit_op = DBO_block_chain__commit(blob, commit_obj=diff_obj, ctx=ctx)
+        chain_commit_op = DBO_block_chain__commit(commit_obj, ctx)
         self.db_ctl.exec_op(chain_commit_op)
 
     def diff_commit__topo(self, topo_diff, ctx=None):
