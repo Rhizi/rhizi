@@ -20,6 +20,8 @@ class RZ_Kernel(object):
         # FIXME: clean
         if isinstance(diff_obj, Topo_Diff):
             commit_obj = diff_obj.to_json_dict()
+        else:
+            commit_obj = diff_obj
 
         chain_commit_op = DBO_block_chain__commit(commit_obj, ctx)
         self.db_ctl.exec_op(chain_commit_op)
