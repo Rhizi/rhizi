@@ -39,7 +39,7 @@ def sanitize_input__topo_diff(topo_diff):
 def sanitize_input__attr_diff(attr_diff):
     pass  # TODO: impl
 
-def validate_obj__attr_diff(ad):
+def validate_obj__attr_diff(ad, ctx):
     # check for name attr changes, which are currently forbidden
     for n_id, node_attr_diff_set in ad['__type_node'].items():
         for attr_name in node_attr_diff_set['__attr_write'].keys():
