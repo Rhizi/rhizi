@@ -58,6 +58,9 @@ define(['util'], function(util) {
      * fill-in missing spec fields
      */
     function create_node_from_spec(node_spec) {
+
+        util.assert(undefined != node_spec.name, 'create_node_from_spec: name missing');
+
         var ret = new Node();
 
         if (undefined != node_spec.id) {
@@ -65,37 +68,22 @@ define(['util'], function(util) {
             __set_obj_id(ret, node_spec.id);
         }
 
-        util.assert(undefined != node_spec.name, 'create_node_from_spec: name missing');
-
-        ret.name = node_spec.name;
-        delete node_spec.name;
-
         // type
         if (undefined == node_spec.type) {
             console.debug('create_node_from_spec: undefined type, falling back to \'perm\'');
             node_spec.type = 'perm';
         }
-        delete node_spec.state;
-        ret.type = node_spec.type;
-        delete node_spec.type
 
-        // status
-        ret.status = node_spec.status || 'unknown';
-        delete node_spec.status;
-
-        // visual
-        ret.x = node_spec.x;
-        ret.y = node_spec.y;
-        delete node_spec.x;
-        delete node_spec.y;
-
-        // other
-        for (var property in node_spec) {
-            if (property === 'id') {
+        // copy spec
+        for (var k in node_spec) {
+            if (k === 'id') {
                 continue;
             }
-            ret[property] = node_spec[property];
+            ret[k] = node_spec[k];
         }
+
+        // default values
+        ret.status = ret.status || 'unknown';
 
         return ret;
     }
