@@ -95,11 +95,19 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             try:
                 # TODO: avoid stack inspection if possible
                 stack = inspect.stack()
-                caller_class = stack[1][0].f_locals["self"].__class__
-                if WebSocket_Graph_NS == caller_class:
+                stack_frame = stack[1][0]
+
+                obj_instance = stack_frame.f_locals.get('self')
+                if None != obj_instance:
                     # [!] no need emit broadcast if call originated from a websocket as
                     # WebSocket_Graph_NS#on_diff_commit__xxx emit their own self-excluding multicast
+                    # we still asser call class == WebSocket_Graph_NS
+
+                    caller_class = obj_instance.__class__
+                    assert WebSocket_Graph_NS == caller_class, 'decorator__ws_multicast: unknown callpath: not from WebSocket_Graph_NS'
+
                     return f_ret
+
             except Exception as e:
                 log.exception('decorator__ws_multicast: failed to differentiate REST vs Websocket call path based on stack state', e)
 
