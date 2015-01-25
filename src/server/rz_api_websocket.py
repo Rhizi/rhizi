@@ -43,9 +43,11 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
 
     def recv_connect(self):
         self._log_conn('conn open')
+        super(WebSocket_Graph_NS, self).recv_connect()  # super called despite being empty
 
     def recv_disconnect(self):
         self._log_conn('conn close')
+        super(WebSocket_Graph_NS, self).recv_disconnect()
 
     def on_diff_commit__topo(self, json_data):
         json_dict = json.loads(json_data)
