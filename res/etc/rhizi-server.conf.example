@@ -6,6 +6,7 @@ development_mode = True
 neo4j_url = http://127.0.0.1:7474
 log_path = rhizi-server.log
 access_control = False
+user_db_path = ./user_db.db
 
 SERVER_NAME = rhizi.local:8080
 DEBUG = True

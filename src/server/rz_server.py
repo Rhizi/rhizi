@@ -1,12 +1,6 @@
 #!/usr/bin/python
 
-from functools import wraps
 import argparse
-import logging
-import os
-import re
-import signal
-
 from flask import Flask
 from flask import Response
 from flask import redirect
@@ -14,6 +8,11 @@ from flask import request
 from flask import send_from_directory
 from flask import session
 import flask
+from functools import wraps
+import logging
+import os
+import re
+import signal
 
 import db_controller as dbc
 import rz_api
@@ -21,6 +20,8 @@ import rz_api_rest
 import rz_feedback
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
+from rz_user_db import User_DB
+
 
 class Config(object):
     """
@@ -51,6 +52,7 @@ class Config(object):
         cfg['root_path'] = os.getcwd()
         cfg['static_url_path'] = '/static'
         cfg['htpasswd_path'] = os.path.join(cfg['config_dir'], 'htpasswd')
+        cfg['user_db_path'] = os.path.join(cfg['config_dir'], 'user_db.db')
 
         # Mail settings
         cfg['mail_hostname'] = 'localhost'
@@ -257,6 +259,13 @@ def init_config(cfg_dir):
     cfg = Config.init_from_file(cfg_path)
     return cfg
 
+def init_user_db():
+    global user_db
+
+    user_db = User_DB(db_path=cfg.user_db_path)
+    user_db.init(mode='c')  # dev default: create DB
+
+    log.info('user DB initialized: path: %s' % (cfg.user_db_path))
 
 def init_signal_handlers():
 
@@ -265,6 +274,9 @@ def init_signal_handlers():
         exit(0)
 
     signal.signal(signal.SIGINT, signal_handler__exit)
+
+def shutdown():
+    user_db.shutdown()
 
 if __name__ == "__main__":
 
@@ -281,6 +293,7 @@ if __name__ == "__main__":
         log.warn('access control disabled, all-granted access set on all URLs')
 
     init_signal_handlers()
+    init_user_db()
 
     kernel = RZ_Kernel()
     webapp = init_webapp(cfg, kernel)
@@ -290,3 +303,5 @@ if __name__ == "__main__":
         ws_srv.serve_forever()
     except Exception as e:
         log.exception(e)
+
+    shutdown()
