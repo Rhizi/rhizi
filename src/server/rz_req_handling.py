@@ -1,12 +1,21 @@
 from flask import jsonify
 from flask import make_response
+import json
 
-def make_json_response(status=200, data='{}'):
+def make_json_response(status=200, data={}):
     """
     Construct a json response with proper content-type header
+
+    @param data: must be serializable via json.dumps
     """
-    resp = make_response(data)
+    data_str = json.dumps(data)
+    resp = make_response(data_str)
     resp.headers['Content-Type'] = "application/json"
+    resp.status = str(status)
+    return resp
+
+def make_http_response(status=200):
+    resp = make_response()
     resp.status = str(status)
     return resp
 
