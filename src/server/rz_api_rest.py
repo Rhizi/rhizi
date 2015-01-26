@@ -85,16 +85,16 @@ def diff_commit__attr():
         # handle DB ERRORS, eg. name attr change error
         return common_resp_handle(error='error occurred')
 
-    ctx = __context__common()
     try:
         attr_diff = sanitize_input(request)
-        validate_obj__attr_diff(attr_diff, ctx)
+        validate_obj__attr_diff(attr_diff)
     except Exception as e:
         return common_resp_handle(error='malformed input')
 
+    ctx = __context__common()
     try:
         kernel = flask.current_app.kernel
-        _, commit_ret = kernel.diff_commit__attr(attr_diff)
+        _, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
         return common_resp_handle(data=commit_ret)
     except Exception as e:
         log.error(e.message)
