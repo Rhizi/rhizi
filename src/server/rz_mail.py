@@ -11,7 +11,7 @@ import smtplib
 
 log = logging.getLogger('rhizi')
 
-def send_message(recipients, subject, attachments, body):
+def send_email_message(recipients, subject, body, attachments=[]):
 
     send_from = current_app.rz_config.mail_default_sender
     smtp_hostname = current_app.rz_config.mail_hostname

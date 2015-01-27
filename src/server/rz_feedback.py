@@ -5,7 +5,7 @@ from flask import request
 from flask import session
 import logging
 
-from rz_mail import send_message
+from rz_mail import send_email_message
 from rz_req_handling import make_json_response
 
 
@@ -67,12 +67,12 @@ def send_user_feedback__email():
     msg_body = '\n'.join(msg_body)
 
     try:
-        send_message(recipients=[current_app.rz_config.feedback_recipient],
-                     subject="User Feedback",
-                     body=msg_body,
-                     attachments=[('feedback_screenshot.png', 'image/png', u_feedback.img),
-                                  ('feedback_page.html', 'text/html', u_feedback.html),
-                                  ])
+        send_email_message(recipients=[current_app.rz_config.feedback_recipient],
+                           subject="User Feedback",
+                           body=msg_body,
+                           attachments=[('feedback_screenshot.png', 'image/png', u_feedback.img),
+                                        ('feedback_page.html', 'text/html', u_feedback.html),
+                                        ])
         return json.dumps({})  # expects json encoded, contents discarded
 
     except Exception:
