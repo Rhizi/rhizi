@@ -8,3 +8,4 @@ deploy-local/
 res/etc/htpasswd
 res/etc/htpasswd-init-file
 rhizi-server.log
+res/etc/rhizi-server.conf
