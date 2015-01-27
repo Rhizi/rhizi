@@ -1,12 +1,13 @@
 "use strict"
 
-define(['jquery'],
-function($) {
+define(['jquery', 'Bacon'],
+function($, Bacon) {
 
 function Tab(dict) {
     var k,
         selector = {},
-        name = [];
+        name = [],
+        openessBus = new Bacon.Bus();
 
     for (k in dict) {
         if (dict.hasOwnProperty(k) == false) {
@@ -17,6 +18,8 @@ function Tab(dict) {
     }
     this._selector = selector;
     this._name = name;
+    this._openessBus = openessBus;
+    this.isOpenProperty = openessBus.toProperty(false)
 }
 
 Tab.prototype.show = function(shown_name) {
@@ -33,6 +36,7 @@ Tab.prototype.show = function(shown_name) {
             element.hide();
         }
     }
+    this._openessBus.push(true);
 }
 
 Tab.prototype.hide = function() {
@@ -41,6 +45,7 @@ Tab.prototype.hide = function() {
     for (i = 0 ; i < this._name.length ; ++i) {
         $(this._selector[this._name[i]]).fadeOut(300);
     }
+    this._openessBus.push(false);
 }
 
 Tab.prototype.get = function(name, sel) {

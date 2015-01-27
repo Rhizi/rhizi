@@ -147,12 +147,11 @@ function GraphView(spec) {
     });
 
     function showNodeInfo(node) {
-        var closed = false;
+        var diffBusUnsubscribe;
 
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
 
         view.node_info.on_save(function(e, form_data) {
-            closed = true;
             graph.update_node(node, form_data, function() {
                 var old_type = node.type,
                     new_type = form_data.type;
@@ -162,12 +161,25 @@ function GraphView(spec) {
             return false;
         });
 
-        graph.diffBus.onValue(function (diff) {
-            if (closed || !model_diff.is_attr_diff(diff)) {
-                return Bacon.noMore;
+        diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
+            if (!model_diff.is_attr_diff(diff)) {
+                console.log('node_edit listener for ' + node.id + ': ignoring diff');
+                return;
             }
             view.node_info.show(node);
         });
+        view.node_info.isOpenProperty.skip(1).onValue(function (open) {
+            var ISaidNoMore = false;
+            if (ISaidNoMore) {
+                console.log('MAYDAY MAYDAY why am I here??');
+            }
+            if (!open) {
+                console.log('node_edit listener for ' + node.id + ': shutting down');
+                diffBusUnsubscribe();
+                ISaidNoMore = true;
+                return Bacon.noMore;
+            }
+        })
 
         view.node_info.on_delete(function() {
             var topo_diff = model_diff.new_topo_diff({

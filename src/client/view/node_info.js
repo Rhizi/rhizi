@@ -98,6 +98,7 @@ function on_keyup(f) {
 return {
     show: show,
     hide: hide,
+    isOpenProperty: internal.edit_tab.isOpenProperty,
     on_save: on_save,
     on_delete: on_delete,
     on_keyup: on_keyup,
