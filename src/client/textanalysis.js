@@ -101,6 +101,8 @@ function tokenize(text, node_token, quote)
         prev_whitespace = prev === null || prev === ' ' || prev === '\t';
     }
     next();
+    // Remove whitespace around tokens. Can be done with lookahead but less code this way
+    tokens.forEach(function (obj) { obj.token = obj.token.trim(); });
     return tokens;
 }
 
