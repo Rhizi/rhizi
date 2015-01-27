@@ -440,6 +440,7 @@ function GraphView(spec) {
             .text(nodeText);
         node.select('g.node a')
             .attr("xlink:href", function (d) { return d.url; })
+            .attr("xlink:title", function (d) { return d.url; })
             .attr("visibility", function(d) { return urlValid(d) ? "visible" : "hidden"; })
             .attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
         node.select('g.node text')
