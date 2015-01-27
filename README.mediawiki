@@ -86,3 +86,39 @@ or by creating a launch configuration in your IDE of choice.
 Note: server test-cases do not yet support pre-run DB state validation and are
 likely to leave DB side-effects.
 
+== Installing on windows (WIP) ==
+mingw doesn't have python support, so using mingw (I want a unix native python)
+# www.cygwin.com setup-x86_64.exe
+# use correct mirror (i.e. mirror.isoc.org.il)
+# defaults (c:\cygwin64)
+# python + gvim + vim + python-six + git + git-completion + tig + ruby + ruby-sass + make + gcc-core + autoconf + automake
+# start cygwin shell
+# cd to directory of install
+# git clone (using alon's local right now, to clone from github you need to first create a public private key pair and add your public key to your account)
+# cd rhizi
+# install neo4j from neo4j.com community eddition (neo4j-community_windows_2_1_6.exe)
+# install python prerequisites:
+# download get-pip.py from http://pip.pypa.io/en/latest/installing.html
+# $ python get-pip.py
+# install JDK: java SE development Kit 8 jdk-8u31-windows-x64.exe
+# install ant: winant.googlecode.com/files/winant-install-v7.exe
+## specify JDK install directory, i.e. C:\Program Files\Java\jdk1.8.0_31
+# Current ant bug: /usr/bin/rhizi is translated by ant to \usr\bin\rhizi and so it fails to find rhizi.
+## solution 1: replace /usr/bin/rhizi with rhizi, it will find rhizi in PATH
+## solution 2: ?
+# pip install flask
+# pip install gevent-websocket
+## pip install gevent never completes setup.py stage
+### solution 1: pip install cython git+git://github.com/surfly/gevent.git#egg=gevent
+### didn't complete.
+
+
+Unused notes on mingw:
+# Install github for windows
+# Alternative: download Mingw
+# choose mingw-developer-toolkit
+# choose python
+# pip
+# git
+# ssh
+
