@@ -444,6 +444,7 @@ class DBO_diff_commit__attr(DB_op):
 
             # Labels on relationships are different, we use a label for the name property
             if 'name' in w_attr_set:
+                w_attr_set = deepcopy(w_attr_set) # do not change caller's attr_diff, but wait until now
                 self.add_link_rename_statements(id_attr, w_attr_set['name'])
                 del w_attr_set['name']
 
