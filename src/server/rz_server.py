@@ -228,7 +228,7 @@ def init_rest_interface(cfg, flask_webapp):
         if request.path == '/':
             # oops, 500 is the correct thing here - we cannot redirect to '/', will loop
             # instead use what we know is a correct URL - possibly taking the user to another
-            # site (depends on how it routes SERVER_NAME
+            # site (depends on how it routes SERVER_NAME)
             return redirect(request.url.split('://', 1)[0] + "://" + cfg.SERVER_NAME + '/')
         else:
             return redirect('/')
