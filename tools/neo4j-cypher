@@ -1,0 +1,68 @@
+#!/bin/env python
+
+import os
+import subprocess
+import re
+import json
+import sys
+import time
+import argparse
+
+help = """Welcome to neo4j-cypher, a tool to submit cypher queries to neo4j
+This tool follows the neo4j REST API and allows submitting queries from command
+line or standard in without using neo4j-shell since that doesn't work on all machines.
+It relies on curl right now although this could be replaced with straight python.
+"""
+
+verbose = False
+BASE="http://rhizi.local:7474/db/data"
+
+def c(cmd, incoming=None):
+    if verbose:
+        print("executing %r" % cmd)
+        print(incoming)
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if incoming:
+        p.stdin.write(incoming)
+    if p.stdin:
+        p.stdin.close()
+    p.wait()
+    ret = p.stdout.read()
+    return ret
+
+def curl(path, incoming):
+    return c(["curl", "-H", 'Accept: application/json', "-H", 'Content-Type: application/json', '-XPOST', '-d@-', path],
+             incoming=incoming)
+
+def transact(datum):
+    transaction_output = curl(BASE + "/transaction/", '{"statements": [  ] }')
+    commit = re.search("http://.*commit", transaction_output).group()
+    ret = curl(commit, json.dumps(datum))
+    obj = json.loads(ret)
+    return obj
+
+def main(statements):
+    one_at_a_time = False
+    if len(statements) == 0:
+        statements = [l.strip() for l in sys.stdin.readlines() if l.strip()[:2] != '//' and l.strip() != ""]
+        one_at_a_time = True
+    print("----------------------------------------------------------------------")
+    print "\n".join(statements)
+    print("----------------------------------------------------------------------")
+    def single_request_data(statements):
+        return {'statements': [{'statement': s} for s in statements]}
+    if one_at_a_time:
+        data = [single_request_data([statement]) for statement in statements]
+    else:
+        data = [single_request_data(statements)]
+    for datum in data:
+        result = transact(datum)
+        json.dump(result, sys.stdout, sort_keys=True, indent=4, separators=(',', ': '))
+        print()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=help, add_help=True)
+    parser.add_argument('--verbose', action='store_true', default=False)
+    args, statements = parser.parse_known_args(sys.argv[1:])
+    verbose = args.verbose
+    main(statements)
