@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<head>
-    <title>Rhizi Prototype </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="/static/css/feedback.css" rel="stylesheet" type="text/css">
-    <link href="/static/css/style.css" rel="stylesheet" type="text/css">
-    <link rel="shortcut icon" href="/static/img/favicon2.ico" />
-
-    <script src="/static/local_config.js"></script>
-    <script data-main='/static/app.js' src="/static/lib/require.js"></script>
-
-</head>
-
+{% extends "base.html" %}
+{% block title %}Rhizi Prototype{% endblock %}
+{% block head %}
+{{ super() }}
+<link href="/static/css/feedback.css" rel="stylesheet" type="text/css">
+<script data-main='/static/app.js' src="/static/lib/require.js"></script>
+<script src="/static/local_config.js"></script>
+{% endblock %}
+{% block content %}
 <body>
   <script type="text/javascript">
   var logged_username = "{{ username }}";
@@ -128,6 +124,4 @@
     <img src="/static/img/rhizi-logo.png"/></a>
   </div>
   </div>
-
-</body>
-</html>
+{% endblock %}
