@@ -34,7 +34,7 @@ from rz_api_common import __sanitize_input
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_rest import common_resp_handle
 from rz_kernel import RZ_Kernel
-from rz_req_handling import make_json_response
+from rz_req_handling import make_response__json
 
 
 log = logging.getLogger('rhizi')
@@ -181,18 +181,18 @@ def login():
             u, p = sanitize_input(request)
         except:
             log.warn('failed to sanitize inputs. request: %s' % request)
-            return make_json_response(status=401)  # return empty response
+            return make_response__json(status=401)  # return empty response
         try:
             crypt_util.validate_login(flask.current_app.rz_config, u, p)
         except Exception as e:
             # login failed
             log.warn('login: unauthorized: user: %s' % (u))
-            return make_json_response(status=401)  # return empty response
+            return make_response__json(status=401)  # return empty response
 
         # login successful
         session['username'] = u
         log.debug('login: success: user: %s' % (u))
-        return make_json_response(status=200)  # return empty response
+        return make_response__json(status=200)  # return empty response
 
     if request.method == 'GET':
         return render_template('login.html')

@@ -2,7 +2,7 @@ from flask import jsonify
 from flask import make_response
 import json
 
-def make_json_response(status=200, data={}):
+def make_response__json(status=200, data={}):
     """
     Construct a json response with proper content-type header
 
@@ -14,10 +14,26 @@ def make_json_response(status=200, data={}):
     resp.status = str(status)
     return resp
 
-def make_http_response(status=200):
+def make_response__http__empty(status=200):
+    """
+    Construct an empty HTTP response
+    """
     resp = make_response()
     resp.status = str(status)
     return resp
+
+def make_response__json__html(status=200, html_str=''):
+    """
+    Construct a json response with HTML payload
+    """
+    return make_response__json(data={'response__html': html_str })
+
+def make_response__json__redirect(redirect_url, status=303, html_str=''):
+    """
+    Construct a json response with redirect payload
+    """
+    return make_response__json(data={'response__html': html_str,
+                                    'redirect_url': redirect_url })
 
 def common_resp_handle(data=None, error=None):
     """

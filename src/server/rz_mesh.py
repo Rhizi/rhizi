@@ -12,6 +12,7 @@ from socketio.server import SocketIOServer
 from model.graph import Attr_Diff, Topo_Diff
 from rz_api_websocket import WebSocket_Graph_NS
 from rz_kernel import RZ_Kernel
+from rz_req_handling import make_response__http__empty
 
 
 log = logging.getLogger('rhizi')
@@ -69,7 +70,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_env)
         except:
             flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
-        return Response()
+        return make_response__http__empty(101)  # 'switching protocols' HTTP status code
 
     def ws_broadcast_to_all(pkt):
         for sessid, socket in ws_srv.sockets.iteritems():

@@ -10,7 +10,7 @@ import logging
 import uuid
 
 from rz_mail import send_email_message
-from rz_req_handling import make_json_response, make_response__ajax__html
+from rz_req_handling import make_response__json, make_response__json__html
 
 
 log = logging.getLogger('rhizi')
@@ -138,7 +138,7 @@ def rest__user_signup():
             us_req = sanitize_input(request)
         except Exception as e:
             log.exception(e)
-            return make_response__ajax__html(status=400, html_str=html_err__tech_difficulty)
+            return make_response__json__html(status=400, html_str=html_err__tech_difficulty)
 
         # FIXME: implement form validation
 
@@ -146,7 +146,7 @@ def rest__user_signup():
         if None != existing_req:
             # already pending
             log.warning('user signup: request already pending: %s' % (existing_req))
-            return make_response__ajax__html(status=200, html_str=html_ok__already_pending)
+            return make_response__json__html(status=200, html_str=html_ok__already_pending)
 
         us_req['submission_date'] = datetime.now()
         us_req['validation_key'] = generate_email_confirmation_key()
@@ -155,10 +155,10 @@ def rest__user_signup():
         try:
             send_user_activation_link__email(us_req)
             add_user_signup_req(us_req_map, us_req)
-            return make_response__ajax__html(html_str=html_ok__submitted)
+            return make_response__json__html(html_str=html_ok__submitted)
         except Exception as e:
             log.exception('user sign-up: failed to send validation email', e)
-            return make_response__ajax__html(status=500, html_str=html_err__tech_difficulty)
+            return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
 
     if request.method == 'GET':
 
@@ -220,4 +220,4 @@ def send_user_activation_link__email(us_req):
 
     except Exception:
         log.exception('send_user_feedback__email: exception while sending email')
-        return make_json_response(status=500)
+        return make_response__json(status=500)

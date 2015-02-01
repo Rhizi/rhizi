@@ -6,7 +6,7 @@ from flask import session
 import logging
 
 from rz_mail import send_email_message
-from rz_req_handling import make_json_response
+from rz_req_handling import make_response__json
 
 
 log = logging.getLogger('rhizi')
@@ -51,7 +51,7 @@ def send_user_feedback__email():
         u_feedback = sanitize_input(request)
     except:
         log.warn('failed to sanitize inputs. request: %s' % request)
-        return make_json_response(status=400)  # bad Request
+        return make_response__json(status=400)  # bad Request
 
     # FIXME: should be async via celery (or another method)
     session_user = session.get('username')
@@ -77,4 +77,4 @@ def send_user_feedback__email():
 
     except Exception:
         log.exception('send_user_feedback__email: exception while sending email')
-        return make_json_response(status=500)
+        return make_response__json(status=500)
