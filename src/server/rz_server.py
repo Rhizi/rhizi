@@ -20,6 +20,7 @@ import rz_api_rest
 import rz_feedback
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
+import rz_user
 from rz_user_db import User_DB
 
 
@@ -272,6 +273,7 @@ def init_user_db():
     user_db.init(mode='c')  # dev default: create DB
 
     log.info('user DB initialized: path: %s' % (cfg.user_db_path))
+    return user_db
 
 def init_signal_handlers():
 
@@ -304,6 +306,8 @@ if __name__ == "__main__":
     kernel = RZ_Kernel()
     webapp = init_webapp(cfg, kernel)
     ws_srv = init_ws_interface(cfg, kernel, webapp)
+
+    webapp.user_db = user_db
 
     try:
         ws_srv.serve_forever()
