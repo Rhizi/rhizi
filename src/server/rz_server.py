@@ -188,8 +188,7 @@ def init_rest_interface(cfg, flask_webapp):
         return wrapped_function
 
     rest_entry_set = [
-                      redirect_entry('/', '/index', {'methods': ['GET']}),
-                      redirect_entry('/index.html', '/index', {'methods': ['GET']}),
+                      rest_entry('/feedback', rz_feedback.send_user_feedback__email),
                       rest_entry('/graph/clone', rz_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
                       rest_entry('/graph/diff-commit-topo', rz_api_rest.diff_commit__topo),
@@ -203,7 +202,9 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
-                      rest_entry('/feedback', rz_feedback.send_user_feedback__email),
+
+                      redirect_entry('/', '/index', {'methods': ['GET']}),
+                      redirect_entry('/index.html', '/index', {'methods': ['GET']}),
                   ]
 
     # FIXME: but should be rate limited (everything should be, regardless of login)
