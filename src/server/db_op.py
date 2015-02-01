@@ -436,9 +436,9 @@ class DBO_diff_commit__attr(DB_op):
 
             self.add_statement(q_arr, q_param_set)
 
-        for id_attr, n_attr_diff in attr_diff.type__link.items():
-            r_attr_set = n_attr_diff['__attr_remove']
-            w_attr_set = n_attr_diff['__attr_write']
+        for id_attr, l_attr_diff in attr_diff.type__link.items():
+            r_attr_set = l_attr_diff['__attr_remove']
+            w_attr_set = l_attr_diff['__attr_write']
 
             assert len(r_attr_set) > 0 or len(w_attr_set) > 0
 
