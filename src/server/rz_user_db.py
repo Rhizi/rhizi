@@ -1,6 +1,22 @@
+import copy
 import logging
 import shelve
 import sys
+
+
+class User_Account(object):
+
+    def __init__(self, first_name,
+                       last_name,
+                       rz_username,
+                       email_address,
+                       role_set=[]):
+
+        self.first_name = first_name
+        self.last_name = last_name
+        self.rz_username = rz_username
+        self.email_address = email_address
+        self.role_set = role_set
 
 class User_DB(object):
     """
@@ -44,8 +60,8 @@ class User_DB(object):
            - sanitize sensitive data
         """
 
-        u_ret = u.copy()
-        del u_ret['hpasswd']
+        u_ret = copy.copy(u)
+        del u_ret.pw_hash
         return uid, u_ret
 
     def lookup_user__by_uid(self, uid):
@@ -61,26 +77,26 @@ class User_DB(object):
 
     def lookup_user__by_email_address(self, email_address):
         for uid, u in self.persistent_data_store.items():
-            if u['email_address'] == email_address:
+            if u.email_address == email_address:
                 return self.__process_return_value(uid, u)
 
         raise Exception('no user found with email_address=%s' % (email_address))
 
-    def user_add(self, user_name, email_address):
+    def user_add(self, first_name, last_name, rz_username, email_address):
         """
         @return: the string uid of the newly added user
         """
         # apply unique email constraint
         for uid, u in self.persistent_data_store.items():
-            if u['email_address'] == email_address:
+            if u.email_address == email_address:
                 raise Exception('existing user with identical email address: uid: %s ' % (uid))
 
         uid = str(len(self.persistent_data_store) + 1)
-        u = {'user_name': user_name,
-             'email_address': email_address,
-             'hpasswd': None,
-             'role_set': []
-             }
+        u = User_Account(first_name=first_name,
+                         last_name=last_name,
+                         rz_username=rz_username,
+                         email_address=email_address,
+                         role_set=[])
 
         self.persistent_data_store[uid] = u
         return uid
@@ -90,7 +106,7 @@ class User_DB(object):
 
     def user_add_role(self, uid, role):
         u = self.persistent_data_store[uid]
-        u['role_set'].append(role)
+        u.role_set.append(role)
         self.persistent_data_store[uid] = u
 
     def user_has_role(self, uid, role):
@@ -99,7 +115,7 @@ class User_DB(object):
         """
 
         u = self.persistent_data_store[uid]
-        return role in u['role_set']
+        return role in u.role_set
 
     def shutdown(self):
         self.persistent_data_store.close()
