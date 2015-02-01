@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<head>
-<meta charset="UTF-8">
-<title>Welcome to Rhizi</title>
-<link href="/static/css/style.css" rel="stylesheet" type="text/css">
-<link rel="shortcut icon" href="res/img/favicon2.ico" />
-
+{% extends "base.html" %}
+{% block title %}Welcome to Rhizi{% endblock %}
+{% block head %}
+{{ super() }}
 <script src="/static/lib/jquery.js" type="text/javascript"></script>
 <script type="text/javascript">
     function submit_login_form() {
@@ -32,9 +29,9 @@
         });
     }
 </script>
-</head>
-
-<body class="login-background">
+{% endblock %}
+{% block content %}
+<div class="login-background">
 	<div class="welcome-box">
 		<img src="/static/img/logo-red.png" class="login-rhizi-logo">
 		<h1 class="login-header"> Welcome to Rhizi!</h1>
@@ -58,7 +55,6 @@
 		</div>
 		<div class="contact-us-div"><span class="contact-us-icon"></span></div>
 		<p class="login-text contact-us-text"><a class="contact-us-link" href="mailto:feedback_CRI@rhizi.net?subject=Rhizi%20User%20Feedback">Send us an Email</a> about your experience,<br>we would love to hear your suggestions!</p>
-
 	</div>
-</body>
-</html>
+</div>
+{% endblock %}
