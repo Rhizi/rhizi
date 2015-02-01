@@ -287,6 +287,7 @@ def init_signal_handlers():
 
 def shutdown():
     user_db.shutdown()
+    log.info('rz_server: shutting down')
 
 if __name__ == "__main__":
 
