@@ -416,53 +416,53 @@ class DBO_diff_commit__attr(DB_op):
 
         for id_attr, n_attr_diff in attr_diff.type__node.items():
             # TODO parameterize multiple attr removal
-            r_attr_set = n_attr_diff['__attr_remove']
-            w_attr_set = n_attr_diff['__attr_write']
+            attr_set_rm = n_attr_diff['__attr_remove']
+            attr_set_wrt = n_attr_diff['__attr_write']
 
-            assert len(r_attr_set) > 0 or len(w_attr_set) > 0
+            assert len(attr_set_rm) > 0 or len(attr_set_wrt) > 0
 
             q_arr = ["match (n {id: {id}}) ",
                      "return n.id, n"]  # currently unused
             q_param_set = {'id': id_attr}
 
-            if len(r_attr_set) > 0:
-                stmt_attr_rm = "remove " + ', '.join(['n.' + attr for attr in r_attr_set])
+            if len(attr_set_rm) > 0:
+                stmt_attr_rm = "remove " + ', '.join(['n.' + attr for attr in attr_set_rm])
                 q_arr.insert(1, stmt_attr_rm)
 
-            if len(w_attr_set) > 0:
+            if len(attr_set_wrt) > 0:
                 stmt_attr_set = "set n += {attr_set}"
                 q_arr.insert(1, stmt_attr_set)
-                q_param_set['attr_set'] = w_attr_set
+                q_param_set['attr_set'] = attr_set_wrt
 
             self.add_statement(q_arr, q_param_set)
 
         for id_attr, l_attr_diff in attr_diff.type__link.items():
-            r_attr_set = l_attr_diff['__attr_remove']
-            w_attr_set = l_attr_diff['__attr_write']
+            attr_set_rm = l_attr_diff['__attr_remove']
+            attr_set_wrt = l_attr_diff['__attr_write']
 
-            assert len(r_attr_set) > 0 or len(w_attr_set) > 0
+            assert len(attr_set_rm) > 0 or len(attr_set_wrt) > 0
 
             # Labels on relationships are different, we use a label for the name property
-            if 'name' in w_attr_set:
-                w_attr_set = deepcopy(w_attr_set) # do not change caller's attr_diff, but wait until now
-                self.add_link_rename_statements(id_attr, w_attr_set['name'])
-                del w_attr_set['name']
+            if 'name' in attr_set_wrt:
+                attr_set_wrt = deepcopy(attr_set_wrt)  # do not change caller's attr_diff, but wait until now
+                self.add_link_rename_statements(id_attr, attr_set_wrt['name'])
+                del attr_set_wrt['name']
 
-            if len(w_attr_set) == 0 and len(r_attr_set) == 0:
+            if len(attr_set_wrt) == 0 and len(attr_set_rm) == 0:
                 continue
 
             q_arr = ["match ()-[l {id: {id}}]-()",
                      "return l.id, l"]  # currently unused
             q_param_set = {'id': id_attr}
 
-            if len(r_attr_set) > 0:
-                stmt_attr_rm = "remove " + ', '.join(['l.' + attr for attr in r_attr_set])
+            if len(attr_set_rm) > 0:
+                stmt_attr_rm = "remove " + ', '.join(['l.' + attr for attr in attr_set_rm])
                 q_arr.insert(1, stmt_attr_rm)
 
-            if len(w_attr_set) > 0:
+            if len(attr_set_wrt) > 0:
                 stmt_attr_set = "set l += {attr_set}"
                 q_arr.insert(1, stmt_attr_set)
-                q_param_set['attr_set'] = w_attr_set
+                q_param_set['attr_set'] = attr_set_wrt
 
             self.add_statement(q_arr, q_param_set)
 
