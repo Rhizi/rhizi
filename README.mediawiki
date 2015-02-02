@@ -41,7 +41,7 @@ All of the following are already bundled but noted here for reference:
 == Running Rhizi Locally ==
 To run Rhizi locally:
 For testing locally run neo4j locally on the default 7474 port and then launch run-local.sh:<br><code>./run-local.sh</code>
-
+When on OsX, add <code>127.0.0.1 rhizi.local </code> to your hosts file
 Or perform the following tasks by hand:
 # Update css files from scss sources using <code>make</code>
 # Invoke the local deployment Ant target:<br><code>$ cd ./rhizi && ant -f build.ant deploy-local</code>
