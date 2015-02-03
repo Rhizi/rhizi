@@ -256,6 +256,7 @@ def send_user_activation_link__email(us_req):
     Send user feedback by email along with screen capture attachments
     
     @return: activation_link
+    @raise exception: on send error
     """
 
     # FIXME: use HTTPS
@@ -276,11 +277,7 @@ def send_user_activation_link__email(us_req):
                 ]
     msg_body = '\n'.join(msg_body)
 
-    try:
-        send_email_message(recipients=[us_req['email_address']],
-                           subject="Rhizi sign up request",
-                           body=msg_body)
-        return activation_link
-
-    except Exception:
-        log.exception('send_user_feedback__email: exception while sending email')
+    send_email_message(recipients=[us_req['email_address']],
+                       subject="Rhizi sign up request",
+                       body=msg_body)
+    return activation_link
