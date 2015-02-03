@@ -2,15 +2,15 @@ from db_op import DB_op
 
 class DBO_random_data_generation__domain__CRI(DB_op):
 
-    def __init__(self, lim_n=128,
-                       lim_r=128 * 16,
-                       prob_link_create=0.25):
+    def __init__(self, lim_n=50,
+                       lim_r=10000,
+                       prob_link_create=0.01):
         """
         generate random data: CRI domain: Person x Skill
         """
         super(DBO_random_data_generation__domain__CRI, self).__init__()
 
-        n_attr_set__skill = ['Cryptocurrency',
+        n_attr_set__skill_raw = ['Cryptocurrency',
                              'Database architecture',
                              'Web-development',
                              'HTML',
@@ -18,6 +18,12 @@ class DBO_random_data_generation__domain__CRI(DB_op):
                              'Machine learning',
                              'Guitar Playing',
                              'Image processing']
+
+        n_attr_set__skill = []
+        for s in n_attr_set__skill_raw:
+            n_attr_set__skill.append(s)
+            n_attr_set__skill.append(s + '_a')
+            n_attr_set__skill.append(s + '_b')
 
         n_attr_set__name = ['Yael',
                             'Nofar',

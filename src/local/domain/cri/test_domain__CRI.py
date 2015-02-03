@@ -5,7 +5,7 @@ import unittest
 
 import db_controller as dbc
 from db_op import DBO_cypher_query
-from domain.cri.domain_cri import DBO_random_data_generation__domain__CRI
+from domain_cri import DBO_random_data_generation__domain__CRI
 from rz_server import Config
 
 
