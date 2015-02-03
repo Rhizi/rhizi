@@ -45,18 +45,6 @@ def filter_expired_requests(us_req_map):
             log.info('user sign-up request expired: %s' % (su_req))
             del us_req_map[su_req_email]
 
-def get_or_init_usreq_map():
-    """
-    lazy user signup request map getter
-    """
-
-    if not hasattr(current_app, 'usreq_email_to_req_map'):
-        setattr(current_app, 'usreq_email_to_req_map', {})
-    us_req_map = current_app.usreq_email_to_req_map
-
-    return us_req_map
-
-
 def activate_user_account(us_req):
 
     user_db = current_app.user_db
@@ -160,6 +148,17 @@ def rest__user_signup():
         generate a random UUID based string ID
         """
         return str(uuid.uuid4()).replace('-', '')
+
+    def get_or_init_usreq_map():
+        """
+        lazy user signup request map getter
+        """
+
+        if not hasattr(current_app, 'usreq_email_to_req_map'):
+            setattr(current_app, 'usreq_email_to_req_map', {})
+        us_req_map = current_app.usreq_email_to_req_map
+
+        return us_req_map
 
     html_ok__submitted = '<p>Your request has been successfully submitted.<br>Please check your email to activate your account.</p>'
     html_ok__already_pending = '<p>Your request has already been submitted.<br>please check your email to activate your account.</p>'
