@@ -14,6 +14,7 @@ import uuid
 
 from crypt_util import hash_pw
 import crypt_util
+from rz_mail import send_email_message
 from rz_req_handling import make_response__json, make_response__json__html
 from rz_user_db import User_Account
 
@@ -215,11 +216,14 @@ def rest__user_signup():
 
         # send activation email
         try:
-            send_user_activation_link__email(us_req)
+            activation_link = send_user_activation_link__email(us_req)
+
+            log.info('user sign-up: req received, activation link sent via email: link: %s' % (activation_link))
+
             add_user_signup_req(us_req_map, us_req)
             return make_response__json__html(html_str=html_ok__submitted)
         except Exception as e:
-            log.exception('user sign-up: failed to send validation email', e)
+            log.exception('user sign-up: failed to send validation email')  # exception derived from stack
             return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
 
     if request.method == 'GET':
