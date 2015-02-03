@@ -29,9 +29,9 @@ def decode_base64_uri(base64_encoded_data_uri):
     encoded = base64_encoded_data_uri[start:]
     return base64.decodestring(encoded)
 
-def send_user_feedback__email():
+def rest__send_user_feedback__email():
     """
-    Send user feedback by email along with screen capture attachments
+    REST API endpoint: send user feedback by email along with screen capture attachments
     """
 
     def sanitize_input(req):

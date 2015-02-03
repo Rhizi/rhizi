@@ -188,7 +188,7 @@ def init_rest_interface(cfg, flask_webapp):
         return wrapped_function
 
     rest_entry_set = [
-                      rest_entry('/feedback', rz_feedback.send_user_feedback__email),
+                      rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
                       rest_entry('/graph/clone', rz_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
                       rest_entry('/graph/diff-commit-topo', rz_api_rest.diff_commit__topo),
@@ -197,8 +197,8 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/index', rz_api.index, {'methods': ['GET']}),
                       rest_entry('/load/node-set-by-id', rz_api.load_node_set_by_id_attr),
                       rest_entry('/load/link-set/by_link_ptr_set', rz_api.load_link_set_by_link_ptr_set),
-                      rest_entry('/login', rz_api.login, {'methods': ['GET', 'POST']}),
-                      rest_entry('/logout', rz_api.logout, {'methods': ['GET', 'POST']}),
+                      rest_entry('/login', rz_user.rest__login, {'methods': ['GET', 'POST']}),
+                      rest_entry('/logout', rz_user.rest__logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),

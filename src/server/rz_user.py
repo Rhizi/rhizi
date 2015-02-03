@@ -81,7 +81,7 @@ def activate_user_account(us_req):
 
 def rest__user_signup():
     """
-    REST API user sign up endpoint
+    REST API endpoint: user sign up
     """
     def add_user_signup_req(us_req_map, us_req):
         key = us_req['email_address']
