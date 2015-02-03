@@ -134,27 +134,35 @@ def rest__user_signup():
         key = us_req['email_address']
         del us_req_map[key]
 
-    def sanitize_input(req):
+    def sanitize_and_validate_input(req):
         req_json = request.get_json()
+
+        # TODO: sanitize
+        field_to_regex_map = {'first_name': r'\w{3,16}',
+                              'last_name': r'\w{3,16}',
+                              'rz_username': r'\w{3,16}',
+                              'email_address': r'[^@]+@[^@]+\.[^@]+',
+                              'pw_plaintxt': r'[A-Za-z0-9]{8,32}',  # avoid symbols
+                              }
+
+        for f_name, regex in field_to_regex_map.items():
+            f_val = req_json.get(f_name)
+            if None == f_val:
+                raise Exception('malformed signup request: missing field: %s' % (f_name))
+            if None == re.match(regex, f_val):
+                raise Exception('malformed signup request: regex match failure: regex: %s, input: %s' % (regex, f_val))
+
         first_name = req_json['first_name']
         last_name = req_json['last_name']
-        rz_username = req_json['rhizi_username']
+        rz_username = req_json['rz_username']
         email_address = req_json['email_address']
+        pw_plaintxt = req_json['pw_plaintxt']
 
-        ret = User_Signup_Request(rz_username=rz_username,
-                                  email_address=email_address,
+        ret = User_Signup_Request(email_address=email_address,
+                                  first_name=first_name,
                                   last_name=last_name,
-                                  first_name=first_name)
-
-        # TODO: augment
-        for k, v in ret.items():
-            if k in  ['submission_date', 'validation_key']:
-                continue
-
-            if len(v) > 32:
-                raise Exception('malformed signup request: len(%s) > 32' % (k))
-            if len(v) < 3:
-                raise Exception('malformed signup request: len(%s) < 4' % (k))
+                                  pw_plaintxt=pw_plaintxt,
+                                  rz_username=rz_username)
 
         return ret
 
@@ -189,7 +197,7 @@ def rest__user_signup():
         # if req_json['captcha_solution'] = ...
 
         try:
-            us_req = sanitize_input(request)
+            us_req = sanitize_and_validate_input(request)
         except Exception as e:
             log.exception(e)
             return make_response__json__html(status=400, html_str=html_err__tech_difficulty)
