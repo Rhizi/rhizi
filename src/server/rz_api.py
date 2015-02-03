@@ -168,38 +168,3 @@ def index():
     profileinitials = username_initials(username)
     return render_template('index.html', username=username, profileinitials=profileinitials)
 
-def login():
-
-    def sanitize_input(req):
-        req_json = request.get_json()
-        u = req_json['username']
-        p = req_json['password']
-        return u, p
-
-    if request.method == 'POST':
-        try:
-            u, p = sanitize_input(request)
-        except:
-            log.warn('failed to sanitize inputs. request: %s' % request)
-            return make_response__json(status=401)  # return empty response
-        try:
-            crypt_util.validate_login(flask.current_app.rz_config, u, p)
-        except Exception as e:
-            # login failed
-            log.warn('login: unauthorized: user: %s' % (u))
-            return make_response__json(status=401)  # return empty response
-
-        # login successful
-        session['username'] = u
-        log.debug('login: success: user: %s' % (u))
-        return make_response__json(status=200)  # return empty response
-
-    if request.method == 'GET':
-        return render_template('login.html')
-
-def logout():
-    # remove the username from the session if it's there
-    u = session.pop('username', None)
-    log.debug('logout: success: user: %s' % (u))
-    return redirect(url_for('login'))
-

@@ -79,6 +79,46 @@ def activate_user_account(us_req):
 
     log.info('user account activated: email: %s, rz_username: %s' % (us_req['email_address'], us_req['rz_username']))
 
+def rest__login():
+
+    def sanitize_input(req):
+        req_json = request.get_json()
+        u = req_json['username']
+        p = req_json['password']
+        return u, p
+
+    if request.method == 'POST':
+        try:
+            u, p = sanitize_input(request)
+        except:
+            log.warn('failed to sanitize inputs. request: %s' % request)
+            return make_response__json(status=401)  # return empty response
+        try:
+            salt = current_app.rz_config.secret_key
+            pw_hash = hash_pw(p, salt)
+            current_app.user_db.validate_login(u, pw_hash)
+        except Exception as e:
+            # login failed
+            log.warn('login: unauthorized: user: %s' % (u))
+            return make_response__json(status=401)  # return empty response
+
+        # login successful
+        session['username'] = u
+        log.debug('login: success: user: %s' % (u))
+        return make_response__json(status=200)  # return empty response
+
+    if request.method == 'GET':
+        return render_template('login.html')
+
+def rest__logout():
+    """
+    REST API endpoint: logout
+    """
+    # remove the username from the session if it's there
+    u = session.pop('username', None)
+    log.debug('logout: success: user: %s' % (u))
+    return redirect(url_for('login'))
+
 def rest__user_signup():
     """
     REST API endpoint: user sign up
