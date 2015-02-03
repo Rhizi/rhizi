@@ -66,16 +66,17 @@ class DBO_random_data_generation__domain__CRI(DB_op):
         min_id *= 2
 
         # create links
-        q_arr = ['match (n:%s),(m:%s)' % ('Person', 'Skill'),
-                 'with n, m, {l_attr_set__level} as l_attr_set__level',
-                 'limit %d' % (lim_r - 1),
-                 'where rand() < %.2f' % (prob_link_create),
-                 'create (n)-[r:%s' % ('Knows'),
-                 '{id: \'test-id_\' + toString(%d + toInt(%d * rand())),' % (min_id, lim_r * 100000),  # aim for low id collision probability,
-                 'proficiency: l_attr_set__level[toInt(%d * rand())]}' % (len(l_attr_set__level)),
-                 ']->(m)',
-                 'return collect(r.id)',
-                 ]
+        for skill_level in l_attr_set__level:
+            q_arr = ['match (n:%s),(m:%s)' % ('Person', 'Skill'),
+                     'with n, m',
+                     'limit %d' % (lim_r - 1),
+                     'where rand() < %.2f' % (prob_link_create),
+                     'create (n)-[r:%s' % (skill_level),
+                     '{id: \'test-id_\' + toString(%d + toInt(%d * rand())),' % (min_id, lim_r * 100000),  # aim for low id collision probability,
+                     'proficiency: \'%s\'}' % (skill_level),
+                     ']->(m)',
+                     'return collect(r.id)',
+                     ]
 
         q_param = {'l_attr_set__level': l_attr_set__level}
         self.add_statement(q_arr, q_param)
