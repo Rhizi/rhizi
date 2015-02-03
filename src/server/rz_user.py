@@ -1,31 +1,39 @@
 from datetime import datetime
 from datetime import timedelta
 from flask import current_app
+from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
+from flask import url_for
 import flask
 import json
 import logging
+import re
 import uuid
 
-from rz_mail import send_email_message
+from crypt_util import hash_pw
+import crypt_util
 from rz_req_handling import make_response__json, make_response__json__html
+from rz_user_db import User_Account
 
 
 log = logging.getLogger('rhizi')
 
 class User_Signup_Request(dict):
 
-    def __init__(self, rz_username,
-                       email_address,
+    def __init__(self, email_address,
+                       first_name,
                        last_name,
-                       first_name):
+                       pw_plaintxt,
+                       rz_username):
 
         self['rz_username'] = rz_username
         self['email_address'] = email_address
         self['last_name'] = last_name
         self['first_name'] = first_name
+        self['pw_plaintxt'] = pw_plaintxt
+
         self['submission_date'] = None
         self['validation_key'] = None
 
@@ -58,12 +66,19 @@ def activate_user_account(us_req):
     if None != existing_account:
         raise Exception('account activation code reused: existing-account: %s' % (existing_account))
 
-    user_db.user_add(first_name=us_req['first_name'],
-                     last_name=us_req['last_name'],
-                     rz_username=us_req['rz_username'],
-                     email_address=us_req['email_address'])
+    # calc pw hash
+    pw_plaintxt = us_req['pw_plaintxt']
+    salt = current_app.rz_config.secret_key
+    pw_hash = hash_pw(str(pw_plaintxt), salt)
 
-    # FIXME: process pw
+    u_account = User_Account(first_name=us_req['first_name'],
+                              last_name=us_req['last_name'],
+                              rz_username=us_req['rz_username'],
+                              email_address=us_req['email_address'],
+                              pw_hash=pw_hash,
+                              role_set=['user'])
+
+    user_db.user_add(u_account)
 
     log.info('user account activated: email: %s, rz_username: %s' % (us_req['email_address'], us_req['rz_username']))
 
