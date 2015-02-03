@@ -254,10 +254,12 @@ def rest__user_signup():
 def send_user_activation_link__email(us_req):
     """
     Send user feedback by email along with screen capture attachments
+    
+    @return: activation_link
     """
 
     # FIXME: use HTTPS
-    confirmation_link = 'http://%s/signup?v_tok=%s' % (current_app.rz_config.SERVER_NAME,
+    activation_link = 'http://%s/signup?v_tok=%s' % (current_app.rz_config.SERVER_NAME,
                                                        us_req['validation_key'])
 
     msg_body = ['Hello %s %s,' % (us_req['first_name'],
@@ -267,7 +269,7 @@ def send_user_activation_link__email(us_req):
                 '',
                 'Below is a sign up confirmation link - open it in your browser to activate your account:',
                 '',
-                confirmation_link,
+                activation_link,
                 '',
                 'Happy knowledge editing!',
                 'The Rhizi team.'
@@ -278,8 +280,7 @@ def send_user_activation_link__email(us_req):
         send_email_message(recipients=[us_req['email_address']],
                            subject="Rhizi sign up request",
                            body=msg_body)
-        return json.dumps({})  # expects json encoded, contents discarded
+        return activation_link
 
     except Exception:
         log.exception('send_user_feedback__email: exception while sending email')
-        return make_response__json(status=500)
