@@ -114,16 +114,6 @@ def rest__login():
     if request.method == 'GET':
         return render_template('login.html')
 
-def rest__list_users():
-    ret_body = []
-    for uid, u_account in current_app.user_db:
-        ret_line = []
-        ret_line.append('uid: %s' % (uid).ljust(16))
-        for f_str in str(u_account).split(','):
-            ret_line.append(f_str.ljust(16))
-        ret_body.append(' '.join(ret_line))
-    return ('<pre>' + '\n'.join(ret_body) + '</pre>')
-
 def rest__logout():
     """
     REST API endpoint: logout

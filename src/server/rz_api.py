@@ -139,17 +139,6 @@ def diff_commit__set():
     op = DBO_diff_commit__topo(topo_diff)
     return __common_exec(op)
 
-def monitor__server_info():
-    """
-    server monitor stub
-    """
-    dt = datetime.now()
-    resp_arr = ["<html><body>",
-                "<h1>Rhizi Server v0.1</h1><p>",
-                "date: " + dt.strftime("%Y-%m-%d") + "<br>",
-                "time: " + dt.strftime("%H:%M:%S") + "<br>",
-                "</p></body></html>"]
-    return (''.join(resp_arr), 200)
 def username_initials(username):
     """
     return two letter (always) initials of username.
