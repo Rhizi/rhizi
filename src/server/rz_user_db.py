@@ -64,8 +64,19 @@ class User_DB(object):
         del u_ret.pw_hash
         return uid, u_ret
 
-    def lookup_user__by_uid(self, uid):
+    def __lookup_user__by_email_address(self, email_address):
 
+        # FIXME: avoid linear search
+        for uid, u in self.persistent_data_store.items():
+            if u.email_address == email_address:
+                return uid, u
+
+        raise Exception('no user found with email_address=%s' % (email_address))
+
+    def lookup_user__by_uid(self, uid):
+        """
+        @return: user record with pw entry removed
+        """
         assert str == type(uid)
 
         u = self.persistent_data_store.get(uid)
@@ -76,11 +87,11 @@ class User_DB(object):
         return self.__process_return_value(uid, u)
 
     def lookup_user__by_email_address(self, email_address):
-        for uid, u in self.persistent_data_store.items():
-            if u.email_address == email_address:
-                return self.__process_return_value(uid, u)
-
-        raise Exception('no user found with email_address=%s' % (email_address))
+        """
+        @return: user record with pw entry removed
+        """
+        uid, u = self.__lookup_user__by_email_address(email_address)
+        return self.__process_return_value(uid, u)
 
     def user_add(self, first_name, last_name, rz_username, email_address):
         """
