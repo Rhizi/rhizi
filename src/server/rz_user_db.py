@@ -20,6 +20,13 @@ class User_Account(object):
         self.pw_hash = pw_hash
         self.role_set = role_set
 
+    def __str__(self, *args, **kwargs):
+        ret_arr = ['rz_username: %s' % (self.rz_username),
+                   'email_address: %s' % (self.email_address),
+                   'role-set: %s' % (self.role_set),
+                   ]
+        return ','.join(ret_arr)
+
 class User_DB(object):
     """
     Simple user database:
