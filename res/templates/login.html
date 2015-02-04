@@ -3,32 +3,7 @@
 {% block head %}
 {{ super() }}
 <script src="/static/lib/jquery.js" type="text/javascript"></script>
-<script type="text/javascript">
-    function submit_login_form() {
-        var data = {
-            username : $('#login_username').val(),
-            password : $('#login_password').val()
-        };
-
-        // TODO: validate
-
-        $.ajax({
-            type : "POST",
-            url: '/login',
-            async : false,
-            cache : false,
-            data : JSON.stringify(data),
-            dataType : 'json',
-            contentType : "application/json; charset=utf-8",
-            success : function () {
-                document.location = "/index";
-            },
-            error : function (xhr, status, err_thrown) {
-                $('#failed-login').show();
-            }
-        });
-    }
-</script>
+<script src="/static/user_login.js" type="text/javascript"></script>
 {% endblock %}
 {% block content %}
 <div class="login-background">
