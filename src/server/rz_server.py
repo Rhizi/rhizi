@@ -20,6 +20,7 @@ import rz_api_rest
 import rz_feedback
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
+from rz_req_handling import make_response__http__empty
 import rz_user
 from rz_user_db import User_DB
 
@@ -177,12 +178,29 @@ def init_rest_interface(cfg, flask_webapp):
 
     def login_decorator(f):
         """
-        [!] security boundary: asserd logged-in user before executing REST api call
+        security boundary: assert logged-in user before executing REST api call
         """
         @wraps(f)
         def wrapped_function(*args, **kw):
             if not 'username' in session:
                 return redirect('/login')
+            return f(*args, **kw)
+
+        return wrapped_function
+
+
+    def localhost_access_decorator__ipv4(f):
+        """
+        security boundary: assert request originated from localhost 
+        """
+
+        @wraps(f)
+        def wrapped_function(*args, **kw):
+
+            if '127.0.0.1' != request.remote_addr:
+                log.warning('unauthorized attempt to access localhost restricted path: %s' % (request.path))
+                return make_response__http__empty(stauts=403)
+
             return f(*args, **kw)
 
         return wrapped_function
@@ -200,9 +218,12 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/login', rz_user.rest__login, {'methods': ['GET', 'POST']}),
                       rest_entry('/logout', rz_user.rest__logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
-                      rest_entry('/monitor/server-info', rz_api.monitor__server_info),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
 
+                      # server administration
+                      rest_entry('/monitor/server-info', rz_api.monitor__server_info, {'methods': ['GET']}),
+
+                      # redirects
                       redirect_entry('/', '/index', {'methods': ['GET']}),
                       redirect_entry('/index.html', '/index', {'methods': ['GET']}),
                   ]
@@ -216,6 +237,10 @@ def init_rest_interface(cfg, flask_webapp):
         if cfg.access_control and rest_path not in no_login_paths:
             # currently require login on all but /login paths
             f = login_decorator(f)
+
+        # apply local host access restriction
+        if rest_path.startswith('/monitor'):
+            f = localhost_access_decorator__ipv4(f)
 
         # [!] order seems important - apply route decorator last
         route_dec = flask_webapp.route(rest_path, **flask_args)
