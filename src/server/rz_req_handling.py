@@ -22,6 +22,17 @@ def make_response__http__empty(status=200):
     resp.status = str(status)
     return resp
 
+def make_response__http__pre_tag_wrapped(html_str, status=200):
+    """
+    Construct a '<pre>' tag wrapped HTTP response
+    """
+    resp_arr = ['<!DOCTYPE html>',
+                '<html><body><pre>',
+                html_str,
+                '</pre></body></html>'
+                ]
+    return (''.join(resp_arr), 200)
+
 def make_response__json__html(status=200, html_str=''):
     """
     Construct a json response with HTML payload
