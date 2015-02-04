@@ -110,7 +110,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
                     return f_ret
 
             except Exception as e:
-                log.exception('decorator__ws_multicast: failed to differentiate REST vs Websocket call path based on stack state', e)
+                log.exception('decorator__ws_multicast: failed to detect REST/Websocket call via stack inspection')  # exception derived from stack
 
             assert type(f_ret) in [list, tuple]
 

@@ -76,5 +76,5 @@ def rest__send_user_feedback__email():
         return make_response__json()  # return empty json response
 
     except Exception:
-        log.exception('send_user_feedback__email: exception while sending email')
+        log.exception('send_user_feedback__email: exception while sending email')  # exception derived from stack
         return make_response__json(status=500)
