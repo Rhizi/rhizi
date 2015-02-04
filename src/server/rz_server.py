@@ -222,6 +222,7 @@ def init_rest_interface(cfg, flask_webapp):
 
                       # server administration
                       rest_entry('/monitor/server-info', rz_api.monitor__server_info, {'methods': ['GET']}),
+                      rest_entry('/monitor/user/list', rz_user.rest__list_users, {'methods': ['GET']}),
 
                       # redirects
                       redirect_entry('/', '/index', {'methods': ['GET']}),
