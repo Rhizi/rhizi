@@ -73,7 +73,7 @@ def rest__send_user_feedback__email():
                            attachments=[('feedback_screenshot.png', 'image/png', u_feedback.img),
                                         ('feedback_page.html', 'text/html', u_feedback.html),
                                         ])
-        return json.dumps({})  # expects json encoded, contents discarded
+        return make_response__json()  # return empty json response
 
     except Exception:
         log.exception('send_user_feedback__email: exception while sending email')
