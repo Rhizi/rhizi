@@ -21,6 +21,7 @@ import rz_feedback
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
 from rz_req_handling import make_response__http__empty
+import rz_server_ctrl
 import rz_user
 from rz_user_db import User_DB
 
@@ -221,8 +222,8 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
 
                       # server administration
-                      rest_entry('/monitor/server-info', rz_api.monitor__server_info, {'methods': ['GET']}),
-                      rest_entry('/monitor/user/list', rz_user.rest__list_users, {'methods': ['GET']}),
+                      rest_entry('/monitor/server-info', rz_server_ctrl.monitor__server_info, {'methods': ['GET']}),
+                      rest_entry('/monitor/user/list', rz_server_ctrl.rest__list_users, {'methods': ['GET']}),
 
                       # redirects
                       redirect_entry('/', '/index', {'methods': ['GET']}),
