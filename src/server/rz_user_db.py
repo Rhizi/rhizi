@@ -39,6 +39,10 @@ class User_DB(object):
     def __init__(self, db_path):
         self.user_db_path = db_path
 
+    def __iter__(self):
+        for uid in self.persistent_data_store.keys():
+            yield self.lookup_user__by_uid(uid)  # return sanitized account
+
     def dump_to_file__str(self, output_file_path=None):
         """
         Dump record string representation to file
