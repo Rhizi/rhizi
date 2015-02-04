@@ -638,6 +638,23 @@ function Graph(spec) {
         return ret;
     }
 
+    /**
+     * @param id unique id of link
+     * @return Link with given id
+     */
+    var find_link__by_id = function(id, recursive) {
+        // default to recursion
+        recursive = recursive === undefined ? true : recursive;
+        if (recursive && base) {
+            var base_link = base.find_link__by_id(id, recursive);
+            if (base_link) {
+                return base_link;
+            }
+        }
+        return id_to_link_map[id] || null;
+    }
+    this.find_link__by_id = find_link__by_id;
+
     var find_node__by_name = function(name, recursive) {
         // default to recursion
         recursive = recursive === undefined ? true : recursive;
