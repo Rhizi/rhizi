@@ -127,5 +127,14 @@ class User_DB(object):
         u = self.persistent_data_store[uid]
         return role in u.role_set
 
+    def validate_login(self, email_address, pw_hash):
+        _, u = self.__lookup_user__by_email_address(email_address)
+        existing_pw_hash = u.pw_hash
+
+        assert None != existing_pw_hash, 'missing pw_hash for existing user'
+
+        if pw_hash != existing_pw_hash:
+            raise Exception('Not authorized')
+
     def shutdown(self):
         self.persistent_data_store.close()
