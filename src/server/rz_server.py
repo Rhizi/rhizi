@@ -281,6 +281,7 @@ def init_signal_handlers():
 
     def signal_handler__exit(signum, frame):
         log.info('received exit signal: SIGINT')
+        shutdown()
         exit(0)
 
     signal.signal(signal.SIGINT, signal_handler__exit)
