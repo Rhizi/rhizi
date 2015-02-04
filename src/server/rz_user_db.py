@@ -10,12 +10,14 @@ class User_Account(object):
                        last_name,
                        rz_username,
                        email_address,
+                       pw_hash,
                        role_set=[]):
 
         self.first_name = first_name
         self.last_name = last_name
         self.rz_username = rz_username
         self.email_address = email_address
+        self.pw_hash = pw_hash
         self.role_set = role_set
 
 class User_DB(object):
@@ -24,6 +26,7 @@ class User_DB(object):
        - caller is responsible for calling init() & shutdown()
        - users identified by string uid
        - unique user email_address constraint enforced
+       - handle user password authentication
     """
 
     def __init__(self, db_path):
@@ -93,23 +96,19 @@ class User_DB(object):
         uid, u = self.__lookup_user__by_email_address(email_address)
         return self.__process_return_value(uid, u)
 
-    def user_add(self, first_name, last_name, rz_username, email_address):
+    def user_add(self, u_account):
         """
         @return: the string uid of the newly added user
         """
         # apply unique email constraint
         for uid, u in self.persistent_data_store.items():
-            if u.email_address == email_address:
+            if u.email_address == u_account.email_address:
                 raise Exception('existing user with identical email address: uid: %s ' % (uid))
 
-        uid = str(len(self.persistent_data_store) + 1)
-        u = User_Account(first_name=first_name,
-                         last_name=last_name,
-                         rz_username=rz_username,
-                         email_address=email_address,
-                         role_set=[])
+        assert None != u_account.pw_hash, 'missing pw_hash for new user'
 
-        self.persistent_data_store[uid] = u
+        uid = str(len(self.persistent_data_store) + 1)
+        self.persistent_data_store[uid] = u_account
         return uid
 
     def user_rm(self, uid):
