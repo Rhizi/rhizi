@@ -3,26 +3,13 @@ Rhizi web API
 
 @deprecated: destined to split into rz_api_rest & rz_api_websocket
 """
-from datetime import datetime
-from flask import Flask
 from flask import escape
-from flask import jsonify
-from flask import make_response
-from flask import redirect
 from flask import render_template
 from flask import request
-from flask import send_from_directory
 from flask import session
-from flask import url_for
-import flask
-import json
 import logging
-import os
 import traceback
 
-import crypt_util
-import db_controller as dbc
-from db_op import DBO_add_node_set
 from db_op import DBO_diff_commit__topo
 from db_op import DBO_load_link_set
 from db_op import DBO_match_node_id_set
@@ -33,8 +20,6 @@ from model.model import Link
 from rz_api_common import __sanitize_input
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_rest import common_resp_handle
-from rz_kernel import RZ_Kernel
-from rz_req_handling import make_response__json
 
 
 log = logging.getLogger('rhizi')
