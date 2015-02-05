@@ -221,7 +221,7 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
 
-                      # server administration - by default restricted to localhost
+                      # server administration: access restricted to localhost
                       rest_entry('/monitor/server-info', rz_server_ctrl.monitor__server_info, {'methods': ['GET']}),
                       rest_entry('/monitor/user/list', rz_server_ctrl.rest__list_users, {'methods': ['GET']}),
 
