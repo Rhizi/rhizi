@@ -67,6 +67,8 @@ function GraphView(spec) {
                     start: 0,
                 },
             },
+            zoom_obj: spec.zoom_obj,
+            parent_graph_zoom_obj: spec.parent_graph_zoom_obj,
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
@@ -333,15 +335,15 @@ function GraphView(spec) {
 
         var nodeEnter = node.enter()
             .append("g")
-            .each(function (d) {
-                d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
-             })
             .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
             .attr('visibility', 'hidden') // made visible on first tick
             .call(drag);
 
         node.attr('class', function(d) {
                 return ['node', selection.selected_class__node(d, temporary)].join(' ');
+            })
+            .each(function (d) {
+                d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
             });
         // reorder nodes so selected are last, and so rendered last, and so on top.
         // FIXME: with b-ubble removed this is probably broken. actually also before. links are not correctly ordered.
@@ -674,7 +676,7 @@ function GraphView(spec) {
         node.attr("transform", transform);
 
         function same_zoom(d) {
-            if (d.zoom_obj === null) {
+            if (d.zoom_obj === null || parent_graph_zoom_obj === null) {
                 return [d.bx, d.by];
             } else {
                 return apply_node_zoom_obj(d);
