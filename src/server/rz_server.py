@@ -307,11 +307,12 @@ def init_user_db():
 def init_signal_handlers():
 
     def signal_handler__exit(signum, frame):
-        log.info('received exit signal: SIGINT')
+        log.info('received exit signal: SIGINT/SIGTERM')
         shutdown()
         exit(0)
 
     signal.signal(signal.SIGINT, signal_handler__exit)
+    signal.signal(signal.SIGTERM, signal_handler__exit)
 
 def shutdown():
     user_db.shutdown()
