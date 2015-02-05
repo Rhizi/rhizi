@@ -77,6 +77,8 @@ function GraphView(spec) {
         node_text_dx = spec.node_text_dx,
         node_text_dy = spec.node_text_dy,
         svgInput = spec.svgInput,
+        zoom_obj = spec.zoom_obj,
+        parent_graph_zoom_obj = spec.parent_graph_zoom_obj,
 
         zoomInProgress = false,
         force,
@@ -93,6 +95,7 @@ function GraphView(spec) {
                 graph !== undefined && zoom_property !== undefined &&
                 temporary !== undefined && force_enabled !== undefined &&
                 node_text_dx !== undefined && node_text_dy !== undefined &&
+                zoom_obj !== undefined && parent_graph_zoom_obj !== undefined &&
                 (temporary || svgInput !== undefined),
                 "missing spec variable");
     
