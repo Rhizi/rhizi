@@ -307,7 +307,7 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
             assert 1 == len(meta_attr_list), 'only single-type mapping currently supported by neo4j for links'
 
         v_type = v[meta_attr][0]
-        if None == ret.get(v_type):  # init type list if necessary
+        if None == ret.get(v_type):  # initialize type list if necessary
             ret[v_type] = []
 
         v_no_meta = v.copy()
