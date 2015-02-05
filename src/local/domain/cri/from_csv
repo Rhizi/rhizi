@@ -46,6 +46,7 @@ def commit(topo_diff):
 # Rhizi constants - FIXME use API
 PERSON_LABEL = 'Person'
 INTEREST_LABEL = 'Interest'
+INTERNSHIP_LABEL = "Third-internship-proposal"
 LABEL_SET = '__label_set'
 
 # CSV file columns
@@ -112,6 +113,10 @@ class CSV(object):
 
 class StudentCSV(CSV):
 
+    def __init__(self, filename):
+        super(StudentCSV, self).__init__(filename)
+        self.email_to_id = {}
+
     def interests(self, d):
         return d[self.interestsField]
 
@@ -122,6 +127,7 @@ class StudentCSV(CSV):
             person_node = node_dict(the_id=person_id,
                                 **{'name':' '.join([d[self.firstNameField], d[self.lastNameField]]),
                                 LABEL_SET:[PERSON_LABEL]})
+            self.email_to_id[d[self.personalEmailField].lower()] = person_id
             self.append_id_node(person_id, person_node)
             for interest in self.interests(d):
                 interest_id = next_id()
@@ -136,7 +142,62 @@ class StudentCSV(CSV):
         self.personalEmailField = headers[2]
         self.interestsField = headers[3]
 
-assert(len(sys.argv) == 2)
-clazz = StudentCSV
-filename = sys.argv[-1]
-clazz(filename).run()
+descriptionTemplate = """Nature: %s
+--------
+Abstract:
+%s"""
+
+class StudentInternshipsCSV(CSV):
+
+    def __init__(self, studentCSV, filename):
+        super(StudentInternshipsCSV, self).__init__(filename)
+        self.studentCSV = studentCSV
+        self.email_to_id = studentCSV.email_to_id
+
+    def parse_headers(self, headers):
+        it = iter(headers)
+        self.firstNameField = it.next()
+        self.lastNameField = it.next()
+        self.emailField = it.next()
+        self.internshipTitleField = it.next()
+        self.internshipNatureField = it.next()
+        self.abstractField = it.next()
+        self.dateStartField = it.next()
+        self.dateEndField = it.next()
+        self.supervisorFirstNameField = it.next()
+        self.supervisorLastNameField = it.next()
+        self.supervisorTitleField = it.next()
+        self.supervisorEmailField = it.next()
+        self.laboratoryNameField = it.next()
+        self.laboratoryAffiliationField = it.next()
+        self.unitCodeField = it.next() # CNRS  / INSERM unit code
+        self.streetField = it.next() # Street
+        self.streetSecondPartField = it.next() # Street (continued)
+        self.cityField = it.next() # City
+        self.countryField = it.next() # Country
+
+    def generate_nodes_and_links(self):
+        for d in self.row_dicts:
+            internship_id = next_id()
+            # FIXME should be title. fix requires client change. need
+            # configurable fields, or a list of names and types for display per
+            # node (using a type node in the db, which could be cached
+            input_dict = {LABEL_SET:[INTERNSHIP_LABEL],
+                         'name': d[self.internshipTitleField], 
+                         'description': descriptionTemplate % (d[self.internshipNatureField], d[self.abstractField]),
+                         'startdate': d[self.dateStartField],
+                         'enddate': d[self.dateEndField]}
+            internship_node = node_dict(the_id=internship_id, **input_dict)
+            self.append_id_node(internship_id, internship_node)
+            person_email = d[self.emailField].lower().strip()
+            person_id = self.email_to_id.get(person_email, None)
+            if None == person_id:
+                print("ERROR: missing %s" % person_email)
+            else:
+                self.append_link(source_id=person_id, target_id=internship_id, label='Did this internship')
+
+
+assert(len(sys.argv) == 3)
+studentCSV = StudentCSV(sys.argv[-2])
+studentCSV.run()
+StudentInternshipsCSV(studentCSV, sys.argv[-1]).run()
