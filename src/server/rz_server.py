@@ -231,7 +231,7 @@ def init_rest_interface(cfg, flask_webapp):
                   ]
 
     # FIXME: but should be rate limited (everything should be, regardless of login)
-    no_login_paths = ['/login', '/feedback']
+    no_login_paths = ['/login', '/feedback', '/signup']
 
     for re_entry in rest_entry_set:
         rest_path, f, flask_args = re_entry
