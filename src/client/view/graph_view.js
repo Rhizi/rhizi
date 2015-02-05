@@ -691,13 +691,25 @@ function GraphView(spec) {
              .on("drag", dragged)
              .on("dragend", dragended);
 
+    var redrawBus = new Bacon.Bus();
+    redrawBus.onValue(tick);
+    var pushRedraw = function() { redrawBus.push(null); };
+
+    if (spec.parent_graph_zoom_obj) {
+        var existing_zoom_cb = spec.parent_graph_zoom_obj.on('zoom');
+        spec.parent_graph_zoom_obj.on('zoom', function () {
+            existing_zoom_cb.apply(null, arguments);
+            pushRedraw(null);
+        })
+    }
+
     function init_force_layout() {
         force = d3.layout.force()
                   .distance(120)
                   .gravity(0.12)
                   .charge(-1800)
                   .size([w, h])
-                  .on("tick", tick)
+                  .on("tick", pushRedraw)
                   .start();
     }
 
