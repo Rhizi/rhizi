@@ -26,6 +26,7 @@
    <property name="pkg_version" value="0.1.0" />
    <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
    <property name="targetDeploymentDir" value="deploy-local" />
+   <property name="targetDomain" value="rhizi.net" />
 
    <tstamp>
       <format property="versionQualifier" pattern="yyyyMMddHHmm" />
@@ -104,10 +105,10 @@
       <parallel>
          <!-- apply production patches -->
          <rsync extraopts="--delete"
-                src="res/production-patch-set/rhizi-server.production.conf"
+                src="res/production-patch-set/${targetDomain}/rhizi-server.production.conf"
                 dst="rsync://${dstServer}/${rsync_module}/etc/rhizi-server.conf" />
          <rsync extraopts="--delete"
-                src="res/production-patch-set/rz_config.js"
+                src="res/production-patch-set/${targetDomain}/rz_config.js"
                 dst="rsync://${dstServer}/${rsync_module}/static/" />
       </parallel>
    </target>
