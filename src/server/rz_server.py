@@ -32,7 +32,6 @@ class Config(object):
 
     TODO: config option documentation
     
-        htpasswd_path
         listen_address
         listen_port
         neo4j_url
@@ -54,7 +53,6 @@ class Config(object):
         cfg['listen_port'] = 8080
         cfg['root_path'] = os.getcwd()
         cfg['static_url_path'] = '/static'
-        cfg['htpasswd_path'] = os.path.join(cfg['config_dir'], 'htpasswd')
         cfg['user_db_path'] = os.path.join(cfg['config_dir'], 'user_db.db')
 
         # Mail settings
