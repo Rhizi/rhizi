@@ -4,6 +4,27 @@ import json
 import sys
 import time
 import argparse
+import os
+import logging
+
+root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(root, 'src/server'))
+import db_controller as dbc
+from db_op import DBO_cypher_query
+from rz_server import Config
+
+rhizi_server_conf_filename = os.path.join(root, 'res', 'etc', 'rhizi-server.conf')
+
+class Server(object):
+    def __init__(self):
+        cfg = Config.init_from_file(rhizi_server_conf_filename)
+        self.db_ctl = dbc.DB_Controller(cfg)
+        self.log = logging.getLogger('rhizi')
+        self.log.addHandler(logging.StreamHandler())
+
+    def run(self, statements):
+        for statement in statements:
+            print(repr(list(DBO_cypher_query([statement]))))
 
 help = """Welcome to neo4j-cypher, a tool to submit cypher queries to neo4j
 This tool follows the neo4j REST API and allows submitting queries from command
@@ -11,20 +32,15 @@ line or standard in without using neo4j-shell since that doesn't work on all mac
 It relies on curl right now although this could be replaced with straight python.
 """
 
-import rhizi_tools_neo4j
 
 def main(statements):
-    one_at_a_time = False
+    server = Server()
     if len(statements) == 0:
         statements = [l.strip() for l in sys.stdin.readlines() if l.strip()[:2] != '//' and l.strip() != ""]
-        one_at_a_time = True
     print("----------------------------------------------------------------------")
     print "\n".join(statements)
     print("----------------------------------------------------------------------")
-    results = rhizi_tools_neo4j.run(statements=statements, one_at_a_time=one_at_a_time)
-    for result in results:
-        json.dump(result, sys.stdout, sort_keys=True, indent=4, separators=(',', ': '))
-        print()
+    results = server.run(statements)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=help, add_help=True)
