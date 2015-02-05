@@ -333,6 +333,9 @@ function GraphView(spec) {
 
         var nodeEnter = node.enter()
             .append("g")
+            .each(function (d) {
+                d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
+             })
             .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
             .attr('visibility', 'hidden') // made visible on first tick
             .call(drag);
@@ -612,6 +615,20 @@ function GraphView(spec) {
         });
     }
 
+    /**
+     * Transform according to the parent transform
+     * @param d = {x:x, y:y}
+     * @return {x:new_x, y:new_y}
+     */
+    function apply_node_zoom_obj(d) {
+        var zoom_translate = d.zoom_obj.translate(),
+            zx = zoom_translate[0],
+            zy = zoom_translate[1],
+            s = d.zoom_obj.scale();
+
+        return [d.bx * s + zx, d.by * s + zy];
+    }
+
     function bubble_transform(d, bubble_radius) {
         if (bubble_radius == 0) {
             return d;
@@ -656,6 +673,14 @@ function GraphView(spec) {
         // transform nodes first to record bubble x & y (bx & by)
         node.attr("transform", transform);
 
+        function same_zoom(d) {
+            if (d.zoom_obj === null) {
+                return [d.bx, d.by];
+            } else {
+                return apply_node_zoom_obj(d);
+            }
+        }
+
         link.attr("d", function(d, i) {
             var d_val,
                 ghost;
@@ -663,9 +688,9 @@ function GraphView(spec) {
             util.assert(d.__src && d.__dst && d.__src.x && d.__src.y &&
                         d.__dst.x && d.__dst.y, "missing src and dst points");
 
-            var src = d.__src,
-                dst = d.__dst;
-            d_val = "M" + src.bx + "," + src.by + "L" + dst.bx + "," + dst.by;
+            var src = same_zoom(d.__src),
+                dst = same_zoom(d.__dst);
+            d_val = "M" + src[0] + "," + src[1] + "L" + dst[0] + "," + dst[1];
             // update ghostlink position
             ghost = $(this.nextElementSibling);
             ghost.attr("d", d_val);
@@ -673,7 +698,9 @@ function GraphView(spec) {
         });
 
         linktext.attr("transform", function(d) {
-            return "translate(" + (d.__src.bx + d.__dst.bx) / 2 + "," + (d.__src.by + d.__dst.by) / 2 + ")";
+            var src = same_zoom(d.__src),
+                dst = same_zoom(d.__dst);
+            return "translate(" + (src[0] + dst[0]) / 2 + "," + (src[1] + dst[1]) / 2 + ")";
         });
 
         // After initial placement we can make the nodes visible.
