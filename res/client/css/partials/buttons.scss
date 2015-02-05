@@ -22,3 +22,13 @@
 .btn-regular-outline {
 	border: 1px solid $blue;
 }
+
+#btn-logout {
+	margin-left: 15px;
+	font-size: 0.8em;
+}
+
+#btn-logout:hover {
+	opacity: 0.7;
+	cursor: pointer;
+}
