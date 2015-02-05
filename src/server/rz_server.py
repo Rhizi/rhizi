@@ -323,16 +323,21 @@ if __name__ == "__main__":
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     args = p.parse_args()
 
-    cfg = init_config(args.config_dir)
-    log = init_log(cfg)
+    try:
+        cfg = init_config(args.config_dir)
+        log = init_log(cfg)
 
-    cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
-    log.debug('loaded configuration:\n%s' % cfg_indent_str)  # print indented
-    if False == cfg.access_control:
-        log.warn('access control disabled, all-granted access set on all URLs')
+        cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
+        log.debug('loaded configuration:\n%s' % cfg_indent_str)  # print indented
+        if False == cfg.access_control:
+            log.warn('[!] access control disabled, all-granted access set on all URLs')
 
-    init_signal_handlers()
-    init_user_db()
+        init_signal_handlers()
+        init_user_db()
+    except Exception as e:
+        log.exception('failed to initialize server')
+        log.info('failed initialization, aborting')
+        exit(-1)
 
     kernel = RZ_Kernel()
     webapp = init_webapp(cfg, kernel)
