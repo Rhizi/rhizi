@@ -3,6 +3,7 @@ Rhizi web API
 
 @deprecated: destined to split into rz_api_rest & rz_api_websocket
 """
+from flask import current_app
 from flask import escape
 from flask import render_template
 from flask import request
@@ -124,21 +125,11 @@ def diff_commit__set():
     op = DBO_diff_commit__topo(topo_diff)
     return __common_exec(op)
 
-def username_initials(username):
-    """
-    return two letter (always) initials of username.
-    we do it here rather then on the client side to avoid rendering twice, once
-    'annonymous' and later the real name, because of loading delays
-    """
-    words = username.split(' ')
-    first_initial = words[0][0] if len(words) >= 1 and len(words[0]) >= 1 else ' '
-    second_initial = (words[1][0] if len(words) >= 2 and len(words[1]) >= 1 else
-        (words[0][1] if len(words) >= 1 and len(words[0]) > 1 else '_'))
-    return (first_initial + second_initial).upper()
-
 def index():
-    session_username = session.get('username')
-    username = escape(session_username if session_username != None else "Anonymous Stranger")
-    profileinitials = username_initials(username)
-    return render_template('index.html', username=username, profileinitials=profileinitials)
+    email_address = session.get('username')
+    rz_username = "Anonymous Stranger"
+    if None != email_address:
+        uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
+        rz_username = escape(u_account.rz_username)
 
+    return render_template('index.html', rz_username=rz_username)
