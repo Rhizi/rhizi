@@ -87,28 +87,32 @@ def rest__login():
 
     def sanitize_input(req):
         req_json = request.get_json()
-        u = req_json['username']
+        email_address = req_json['email_address']
         p = req_json['password']
-        return u, p
+        return email_address, p
 
     if request.method == 'POST':
+
+        u_account = None
+
         try:
-            u, p = sanitize_input(request)
+            email_address, p = sanitize_input(request)
+            u_account = current_app.user_db.lookup_user__by_email_address(email_address)
         except:
             log.warn('failed to sanitize inputs. request: %s' % request)
             return make_response__json(status=401)  # return empty response
         try:
             salt = current_app.rz_config.secret_key
             pw_hash = hash_pw(p, salt)
-            current_app.user_db.validate_login(u, pw_hash)
+            current_app.user_db.validate_login(email_address=email_address, pw_hash=pw_hash)
         except Exception as e:
             # login failed
-            log.warn('login: unauthorized: user: %s' % (u))
+            log.warn('login: unauthorized: user: %s' % (email_address))
             return make_response__json(status=401)  # return empty response
 
         # login successful
-        session['username'] = u
-        log.debug('login: success: user: %s' % (u))
+        session['username'] = email_address
+        log.debug('login: success: user: %s' % (email_address))
         return make_response__json(status=200)  # return empty response
 
     if request.method == 'GET':

@@ -2,7 +2,7 @@
 
 function submit_login_form() {
     var data = {
-        username : $('#login_username').val(),
+        email_address : $('#login_email_address').val(),
         password : $('#login_password').val()
     };
 
