@@ -35,7 +35,7 @@ class Test_Domain_CRI(unittest.TestCase):
                  'match (n)-[r:Knows]->(m:Skill)',
                  'return n.name, collect({skill_name: m.name, skill_level: r.proficiency})'
                  ]
-        op = DBO_cypher_query(q_arr);
+        op = DBO_cypher_query(q_arr)
 
         cur_f_name = inspect.stack()[0][3]
         def q_process_result_set():
