@@ -135,7 +135,7 @@ function GraphView(spec) {
 
     function node__is_shown(d) {
         var type = d.type;
-        return filter_states[d.type];
+        return temporary || filter_states[d.type];
     }
 
     function link__is_shown(d) {
@@ -559,8 +559,10 @@ function GraphView(spec) {
         }
 
         if (force_enabled) {
-            force.nodes(graph.nodes().filter(node__is_shown))
-                 .links(graph.links().filter(link__is_shown));
+            if (!temporary) {
+                force.nodes(graph.nodes().filter(node__is_shown))
+                     .links(graph.links().filter(link__is_shown));
+            }
 
             if (relayout) {
                 force.alpha(0.1).start();
@@ -755,10 +757,10 @@ function GraphView(spec) {
 
         // After initial placement we can make the nodes visible.
         node.attr('visibility', function (d, i) {
-                 return !temporary && node__is_shown(d) ? 'visible' : 'hidden';
+                 return node__is_shown(d) ? 'visible' : 'hidden';
              });
         link.attr('visibility', function (d, i) {
-                 return !temporary && link__is_shown(d) ? 'visible' : 'hidden';
+                 return link__is_shown(d) ? 'visible' : 'hidden';
              });
     }
 
