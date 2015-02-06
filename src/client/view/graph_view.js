@@ -120,15 +120,17 @@ function GraphView(spec) {
 
     function redraw__set_on_checkbox_change()
     {
-        var checkboxes = $('.dropdown-item label input').asEventStream('click').onValue(function (_) {
-            read_checkboxes();
-            console.log(filter_states);
-            update_view(true);
+        $(function () {
+            var checkboxes = $('.dropdown-item label input').asEventStream('click').onValue(function (_) {
+                read_checkboxes();
+                console.log(filter_states);
+                update_view(true);
+            });
+            $('.dropdown-item.dropdown-menu-heading').asEventStream('click').onValue(function (_) {
+                var hidden = $('.dropdown-item.dropdown-item-type[style="display:none"]').length > 0;
+                $('.dropdown-item.dropdown-item-type').attr('style', 'display:' + (hidden ? '' : 'none'));
+            })
         });
-        $('.dropdown-item.dropdown-menu-heading').asEventStream('click').onValue(function (_) {
-            var hidden = $('.dropdown-item.dropdown-item-type[style="display:none"]').length > 0;
-            $('.dropdown-item.dropdown-item-type').attr('style', 'display:' + (hidden ? '' : 'none'));
-        })
     }
 
     function node__is_shown(d) {
