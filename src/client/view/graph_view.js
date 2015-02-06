@@ -118,7 +118,7 @@ function GraphView(spec) {
         }
     }
 
-    function redrawFromCheckboxChange()
+    function redraw__set_on_checkbox_change()
     {
         var checkboxes = $('.dropdown-item label input').asEventStream('click').onValue(function (_) {
                 read_checkboxes();
@@ -128,6 +128,16 @@ function GraphView(spec) {
         );
     }
 
+    function node__is_shown(d) {
+        var type = d.type;
+        return filter_states[d.type];
+    }
+
+    function link__is_shown(d) {
+        return node__is_shown(d.__src) && node__is_shown(d.__dst);
+    }
+
+
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
     });
@@ -135,7 +145,7 @@ function GraphView(spec) {
     // Filter. FIXME: move away from here. separate element, connected via bacon property
     if (!temporary) {
         read_checkboxes();
-        redrawFromCheckboxChange();
+        redraw__set_on_checkbox_change();
     }
 
     function range(start, end, number) {
@@ -544,8 +554,8 @@ function GraphView(spec) {
         }
 
         if (force_enabled) {
-            force.nodes(graph.nodes())
-                 .links(graph.links());
+            force.nodes(graph.nodes().filter(node__is_shown))
+                 .links(graph.links().filter(link__is_shown));
 
             if (relayout) {
                 force.alpha(0.1).start();
@@ -681,15 +691,6 @@ function GraphView(spec) {
         //console.log(e);
         //$(".debug").html(force.alpha());
         // just hide them for now, and remove them from force layout afterwards, do not delete nodes/links themselves.
-        function node__is_shown(d) {
-            var type = d.type;
-            return filter_states[d.type];
-        }
-
-        function link__is_shown(d) {
-            return node__is_shown(d.__src) && node__is_shown(d.__dst);
-        }
-
         var node = vis.selectAll(".node")
             .data(graph.nodes(), function(d) {
                 return d.id;
