@@ -91,7 +91,10 @@ function GraphView(spec) {
         w = $(document.body).innerWidth(),
         h = $(document.body).innerHeight(),
         cx = w / 2,
-        cy = h / 2;
+        cy = h / 2,
+        // FIXME take filter names from index.html or both from graph db
+        filter_states = {'interest':null, 'skill':null, 'club':null, 'person':null, 'third-internship-proposal':null},
+        filter_state_names = ['interest', 'skill', 'club', 'person', 'third-internship-proposal'];
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
@@ -101,9 +104,39 @@ function GraphView(spec) {
                 (temporary || svgInput !== undefined),
                 "missing spec variable");
     
+    function read_checkboxes() {
+        var checkboxes = $('.dropdown-item label input').map(
+        function (i, checkbox){
+                return checkbox.checked;
+            }
+        );
+        for (var i in checkboxes) {
+            if (filter_state_names[i] === undefined) {
+                continue;
+            }
+            filter_states[filter_state_names[i]] = checkboxes[i];
+        }
+    }
+
+    function redrawFromCheckboxChange()
+    {
+        var checkboxes = $('.dropdown-item label input').asEventStream('click').onValue(function (_) {
+                read_checkboxes();
+                console.log(filter_states);
+                update_view(true);
+            }
+        );
+    }
+
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
     });
+
+    // Filter. FIXME: move away from here. separate element, connected via bacon property
+    if (!temporary) {
+        read_checkboxes();
+        redrawFromCheckboxChange();
+    }
 
     function range(start, end, number) {
         var ret = [],
@@ -225,7 +258,6 @@ function GraphView(spec) {
             }
         }
     }
-
 
     function update_view(relayout) {
         var node,
@@ -648,6 +680,16 @@ function GraphView(spec) {
     function tick(e) {
         //console.log(e);
         //$(".debug").html(force.alpha());
+        // just hide them for now, and remove them from force layout afterwards, do not delete nodes/links themselves.
+        function node__is_shown(d) {
+            var type = d.type;
+            return filter_states[d.type];
+        }
+
+        function link__is_shown(d) {
+            return node__is_shown(d.__src) && node__is_shown(d.__dst);
+        }
+
         var node = vis.selectAll(".node")
             .data(graph.nodes(), function(d) {
                 return d.id;
@@ -706,8 +748,12 @@ function GraphView(spec) {
         });
 
         // After initial placement we can make the nodes visible.
-        //links.attr('visibility', 'visible');
-        node.attr('visibility', 'visible');
+        node.attr('visibility', function (d, i) {
+                 return !temporary && node__is_shown(d) ? 'visible' : 'hidden';
+             });
+        link.attr('visibility', function (d, i) {
+                 return !temporary && link__is_shown(d) ? 'visible' : 'hidden';
+             });
     }
 
     // SVG rendering order is last rendered on top, so to make sure
