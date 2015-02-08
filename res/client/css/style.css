@@ -791,15 +791,6 @@ body.debug .debug-ui-right {
   min-height: 36px;
   background-color: #363636; }
 
-.doc-title {
-  float: left;
-  font-family: "Source_Semibold", sans-serif;
-  color: #f5f5fa;
-  margin-left: 40px;
-  font-size: 18px;
-  padding: 10px;
-  }
-
 .user-area {
   float: right;
   margin: 3px 70px 3px 70px; }
@@ -831,6 +822,12 @@ body.debug .debug-ui-right {
   left: -20px;
   top: -10px; }
 
+#doc-title {
+  font-family: "Source_Semibold", sans-serif;
+  color: #f5f5fa;
+  margin-left: 40px;
+  padding: 10px;
+  font-size: 18px; }
 #org-logo__CRI {
   position: fixed;
   bottom: 10px;
