@@ -829,12 +829,12 @@ body.debug .debug-ui-right {
   left: -20px;
   top: -10px; }
 
-.organization-logo {
-  display: inline-block;
-  margin-left: 12px;
-  background: url(../img/CRI-logo.png);
-  min-height: 30px;
-  min-width: 30px; }
+#org-logo__CRI {
+  position: fixed;
+  bottom: 10px;
+  right: 80px;
+  height: 30px;
+}
 
 /* Headings */
 h1 {
