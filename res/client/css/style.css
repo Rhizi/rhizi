@@ -795,8 +795,10 @@ body.debug .debug-ui-right {
   float: left;
   font-family: "Source_Semibold", sans-serif;
   color: #f5f5fa;
-  margin: 10px 70px 10px 70px;
-  font-size: 18px; }
+  margin-left: 40px;
+  font-size: 18px;
+  padding: 10px;
+  }
 
 .user-area {
   float: right;

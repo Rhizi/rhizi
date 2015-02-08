@@ -8,10 +8,10 @@
 }
 
 .doc-title{
-  float: left;
   font-family: $semibold-font-family;
   color: $light-grey;
-  margin: 10px $doc-margin 10px $doc-margin;
+  margin-left: 40px;
+  padding: 10px;
   font-size: $h3-size;
 }
 
