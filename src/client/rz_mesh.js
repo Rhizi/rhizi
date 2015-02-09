@@ -3,7 +3,7 @@
 /**
  * Manage backend websocket connection
  */
-define([ 'rz_config', 'util', 'model/diff', 'model/util', 'socketio'], function(rz_config, util, model_diff, model_util, io) {
+define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_diff, model_util, io) {
 
     var ws_server_url = 'http://%h:%p/graph'; // socketio namespace
     ws_server_url = ws_server_url.replace('%h',  rz_config.rz_server_host);

@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_config', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input'],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   view,        rz_observer,   selection,        rz_config,   rz_mesh,   model_diff,   graph_view,       svg_input) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/view', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   view,        rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input) {
 
 var addednodes = [],
     vis,

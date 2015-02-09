@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'rz_config', 'textanalysis', 'view/completer', 'util'],
-function($,        Bacon,   consts,   rz_bus,   rz_core,   rz_config,   textanalysis,        completer,   util) {
+define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'view/completer', 'util'],
+function($,        Bacon,   consts,   rz_bus,   rz_core,   textanalysis,        completer,   util) {
 
 var text = "", // Last text of sentence
     element_name = '#textanalyser',

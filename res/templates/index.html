@@ -3,6 +3,16 @@
 {% block head %}
 {{ super() }}
 <link href="/static/css/feedback.css" rel="stylesheet" type="text/css">
+<script>
+var rz_config = {
+    'rand_id_generator' : 'hash',
+    'rz_server_host': '{{ hostname }}',
+    'rz_server_port': '{{ port }}',
+    'backend_enabled': true,
+    'backend__maintain_ws_connection': true,
+    'feedback_url': '/feedback',
+};
+</script>
 <script data-main='/static/app.js' src="/static/lib/require.js"></script>
 <script src="/static/local_config.js"></script>
 {% endblock %}

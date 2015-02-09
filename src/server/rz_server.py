@@ -205,7 +205,6 @@ def init_rest_interface(cfg, flask_webapp):
         return wrapped_function
 
     rest_entry_set = [
-                      rest_entry('/rz_config.js', rz_api.rz_config, {'methods': ['GET']}),
                       rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
                       rest_entry('/graph/clone', rz_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),

@@ -5,7 +5,6 @@
             'socketio': { exports: 'io' },
         },
         paths: {
-            rz_config: '/rz_config',
             autocomplete: lib_path + 'autocomplete',
             caret: lib_path + 'caret',
             Bacon: lib_path + 'Bacon',

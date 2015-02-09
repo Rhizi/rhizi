@@ -3,7 +3,7 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define([ 'rz_config' ], function(rz_config) {
+define([], function() {
 
     function RZ_API_Backend() {
 
