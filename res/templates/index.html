@@ -45,12 +45,20 @@
     </div>
   </div>
   <div class="graph-view">
-    <div class="input-container">
-      <form>
-        <input class="input-bar" id="textanalyser" placeholder="Add nodes and relationships"/>
-        <button class="add-button"></button>
-      </form>
-      <div id="input-suggestion" class="suggestion" style="display: none">
+    <div id="input-box-set-container">
+      <div class="input-container" id="input-container__search">
+        <form>
+          <input class="input-bar" id="search" placeholder="Search for nodes or links"/>
+          <button id="btn_search"></button>
+        </form>
+        <div id="search-suggestion" class="suggestion" style="display: none"></div>
+      </div>
+      <div class="input-container" id="input-container__graph-input">
+        <form>
+          <input class="input-bar" id="textanalyser" placeholder="Add nodes or links"/>
+          <button id="btn_add"></button>
+        </form>
+        <div id="input-suggestion" class="suggestion" style="display: none"></div>
       </div>
     </div>
     <div class="info-container">
