@@ -23,6 +23,13 @@
 	border: 1px solid $blue;
 }
 
+#btn-search {
+	background: url('/static/img/search-icon.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: lightgreen;
+}
+
 #btn-logout {
 	margin-left: 15px;
 	font-size: 0.8em;
