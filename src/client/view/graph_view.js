@@ -73,7 +73,7 @@ function GraphView(spec) {
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
         parent_element = spec.parent_element,
-        graph_name = spec.graph_name, 
+        graph_name = spec.graph_name,
         graph = spec.graph,
         zoom_property = spec.zoom_property,
         node_text_dx = spec.node_text_dx,
@@ -103,7 +103,7 @@ function GraphView(spec) {
                 zoom_obj !== undefined && parent_graph_zoom_obj !== undefined &&
                 (temporary || svgInput !== undefined),
                 "missing spec variable");
-    
+
     function read_checkboxes() {
         var checkboxes = $('#menu__type-filter label input').map(
         function (i, checkbox){
