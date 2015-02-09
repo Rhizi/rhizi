@@ -1,15 +1,14 @@
 .top-bar{
-  position:relative;
-  top:0;
-  left:0;
-  width:100%;
-  min-height:$three-baselines;
-  background-color:$dark-grey;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-height: $three-baselines;
+  background-color: $dark-grey;
 }
 
 .user-area {
+  display: inline;
   float: right;
-  margin: 3px $doc-margin 3px $doc-margin;
+  margin-right: 40px;
 }
 
 .username {
@@ -22,7 +21,7 @@
   width: 30px;
   height: 30px;
   background: $cyan;
-  display: inline-block;
+  display: none;
 }
 
 .profile-initials {
@@ -35,12 +34,7 @@
 }
 
 .profile-username {
-  display: inline-block;
-  top:12px;
   color: $light-grey;
-  position: relative;
-  left: -20px;
-  top: -10px;
 }
 
 #doc-title{
