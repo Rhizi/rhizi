@@ -1,33 +1,8 @@
 @import '../modules/mixins'; // For box-shadow
 
-.search-bar{
-  position: relative;
-  width:100%;
-  height:$four-baselines;
-  background: white;
-  @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
-  z-index: 100;
-}
-
-.search-input{
-  width: 70%;
-  height:$icon-height;
-  float: left;
-  margin: 8px 12px 12px $doc-margin;
-}
-
-.search-input:before {
-  content: "";
-  background: url(../img/search-icon.png);
-  padding: 0px 10px 0px 10px;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 #search {
   font-family: $base-font-family;
   font-size: $h3-size;
-  width: 80%;
 }
 
 #search-suggestion {
@@ -43,24 +18,4 @@
 
 #search-suggestion .suggestion-item.selected, #search-suggestion .suggestion-item:hover {
   padding: $one-baseline 0px $one-baseline 22px;
-}
-
-
-
-.export {
-  cursor: pointer;
-  text-align: right;
-  width: 60px;
-  float: right;
-  color: $dark-grey;
-  font-size: $h5-size;
-  margin: 14px $doc-margin 12px 12px ;
-}
-
-.export:before {
-  content: "";
-  background: url(../img/export.png);
-  padding: 0px 9px 0px 9px;
-  background-position: center;
-  background-repeat: no-repeat;
 }

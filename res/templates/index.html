@@ -18,33 +18,6 @@
       </div>
     </div>
   </div>
-  <div class="search-bar">
-      <div class="search-input">
-        <input id="search" placeholder="Search for nodes and relationships"/>
-      </div>
-      <div id="search-suggestion" class="suggestion" style="display: none">
-      </div>
-      <div style="right: 200px; position: absolute;">
-		<ul class="dropdown-menu">
-			<li class="dropdown-item dropdown-menu-heading">Filter by node type</li>
-			<li class="dropdown-item dropdown-item-type dropdown-item-type-person" style="display:none">
-				<label><input type="checkbox" checked="checked" name="interest">Interest</label>
-			</li>
-			<li class="dropdown-item dropdown-item-type dropdown-item-type dropdown-item-type-Skill" style="display:none">
-				<label><input type="checkbox" checked="checked" name="skill">Skill</label>
-			</li>
-			<li class="dropdown-item dropdown-item-type dropdown-item-type-Club" style="display:none">
-				<label><input type="checkbox" checked="checked" name="club">Club</label>
-			</li>
-			<li class="dropdown-item dropdown-item-type dropdown-item-type-person" style="display:none">
-				<label><input type="checkbox" checked="checked" name="person">Person</label>
-			</li>
-			<li class="dropdown-item dropdown-item-type dropdown-item-type-Internship-proposal" style="display:none">
-				<label><input type="checkbox" checked="checked" name="internship-proposal">Intership Proposal</label>
-			</li>
-		</ul>
-       </div>
-  </div>
   <div id="intro-task" class="task-alert" style="display:none">
     <h3 class="task-desc">Connect between <span>yourself</span> and the  <span> clubs,</span><span> internship proposals,</span><span> skills,</span><span> and</span><span> scientific interests</span></span> you have:
     </h3>
@@ -52,6 +25,26 @@
   </div>
   <div id="tool-bar">
     <div class="tool_bar_btn" id="btn_export" title="Export"></div>
+    <div class="tool_bar_btn" id="btn_filter" title="Filter">
+         <ul class="dropdown-menu" id="menu__type-filter" style="display:none">
+           <li class="dropdown-item dropdown-menu-heading">Filter by node type</li>
+           <li class="dropdown-item dropdown-item-type dropdown-item-type-person">
+             <label><input type="checkbox" checked="checked" name="interest">Interest</label>
+           </li>
+           <li class="dropdown-item dropdown-item-type dropdown-item-type dropdown-item-type-Skill">
+             <label><input type="checkbox" checked="checked" name="skill">Skill</label>
+           </li>
+           <li class="dropdown-item dropdown-item-type dropdown-item-type-Club">
+             <label><input type="checkbox" checked="checked" name="club">Club</label>
+           </li>
+           <li class="dropdown-item dropdown-item-type dropdown-item-type-person">
+             <label><input type="checkbox" checked="checked" name="person">Person</label>
+           </li>
+           <li class="dropdown-item dropdown-item-type dropdown-item-type-Internship-proposal">
+             <label><input type="checkbox" checked="checked" name="internship-proposal">Internship Proposal</label>
+           </li>
+         </ul>
+    </div>
   </div>
   <div class="graph-view">
     <div class="input-container">
