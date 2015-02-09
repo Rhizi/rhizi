@@ -11,10 +11,10 @@
 
 .task-desc{
   display: inline-block;
-  width:70%;
-  text-align: center;
   font-size: $h3-size;
-  margin: 12px $doc-margin 12px $doc-margin;
+  padding: 15px 10px;
+  text-align: center;
+  width:70%;
 }
 
 .task-close-button {

@@ -757,10 +757,10 @@ body.debug .debug-ui-right {
 
 .task-desc {
   display: inline-block;
-  width: 70%;
-  text-align: center;
   font-size: 18px;
-  margin: 12px 70px 12px 70px; }
+  padding: 15px 10px;
+  text-align: center;
+  width: 70%; }
 
 .task-close-button {
   cursor: pointer;
