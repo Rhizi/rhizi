@@ -7,7 +7,7 @@ var text = "", // Last text of sentence
     element_name = '#textanalyser',
     element = $(element_name),
     element_raw = element[0],
-    plus_button = $('.add-button'),
+    plus_button = $('#btn_add'),
     description = consts.description;
 
 var typeselection = function TypeSelectionDialog() {
