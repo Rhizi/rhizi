@@ -122,6 +122,7 @@ function GraphView(spec) {
     {
         $(function () {
             var checkboxes = $('#menu__type-filter li').on('click', function (e) {
+                e.stopPropagation();
                 read_checkboxes();
                 console.log(filter_states);
                 update_view(true);
