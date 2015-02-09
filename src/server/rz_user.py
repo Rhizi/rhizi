@@ -191,7 +191,6 @@ def rest__user_signup():
     html_ok__submitted = '<p>Your request has been successfully submitted.<br>Please check your email to activate your account.</p>'
     html_ok__already_pending = '<p>Your request has already been submitted.<br>please check your email to activate your account.</p>'
     html_err__tech_difficulty = '<p>We are experiencing technical difficulty processing your request,<br>please try again later.</p>'
-    html_err__activation_failure = '<p>Activation failure,<br>please try again later.</p>'
 
     # use incoming request as house keeping trigger
     us_req_map = get_or_init_usreq_map()
@@ -241,12 +240,12 @@ def rest__user_signup():
                 if other_req_v_tok == v_tok:
 
                     if us_req.has_expired():  # check again whether request has expired
-                        return render_template('user_signup.html', state='activation_failure', html_str__err=html_err__activation_failure)
+                        return render_template('user_signup.html', state='activation_failure')
 
                     try:
                         activate_user_account(us_req)
                     except Exception as e:
-                        return render_template('user_signup.html', state='activation_failure', html_str__err=html_err__activation_failure)
+                        return render_template('user_signup.html', state='activation_failure')
 
                     # activation success
                     rm_user_signup_req(us_req_map, us_req)
@@ -254,7 +253,7 @@ def rest__user_signup():
 
             # request expired & already removed OR bad token
             log.warning('user sign-up: request not found or bad token: remote-address: %s' % (request.remote_addr))
-            return render_template('user_signup.html', state='activation_failure', html_str__err=html_err__activation_failure)
+            return render_template('user_signup.html', state='activation_failure')
 
         else:  # no validation token: new user
             return render_template('user_signup.html')
