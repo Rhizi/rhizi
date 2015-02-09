@@ -7,8 +7,7 @@
 
 #search-suggestion {
   position: absolute;
-  width: 70%;
-  margin-left: $doc-margin;
+  width: 100%; /* span the width of containing 'input-container' */
   top: $three-baselines + 6px;
 }
 
