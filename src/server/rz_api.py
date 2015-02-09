@@ -8,6 +8,7 @@ from flask import escape
 from flask import render_template
 from flask import request
 from flask import session
+from flask import Response
 import logging
 import traceback
 
@@ -133,3 +134,14 @@ def index():
         rz_username = escape(u_account.rz_username)
 
     return render_template('index.html', rz_username=rz_username)
+
+def rz_config():
+    server_name = current_app.rz_config.SERVER_NAME
+    if ':' in server_name:
+        hostname, port = server_name.split(':')
+    else:
+        hostname, port = server_name, 80
+    body = render_template('rz_config.js', hostname=hostname, port=port)
+    response = Response(body, status=200, mimetype='application/json')
+
+    return response
