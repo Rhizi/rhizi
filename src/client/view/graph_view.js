@@ -105,7 +105,7 @@ function GraphView(spec) {
                 "missing spec variable");
     
     function read_checkboxes() {
-        var checkboxes = $('.dropdown-item label input').map(
+        var checkboxes = $('#menu__type-filter label input').map(
         function (i, checkbox){
                 return checkbox.checked;
             }
@@ -121,14 +121,13 @@ function GraphView(spec) {
     function redraw__set_on_checkbox_change()
     {
         $(function () {
-            var checkboxes = $('.dropdown-item label input').on('click', function (_) {
+            var checkboxes = $('#menu__type-filter li').on('click', function (e) {
                 read_checkboxes();
                 console.log(filter_states);
                 update_view(true);
             });
-            $('.dropdown-item.dropdown-menu-heading').on('click', function (_) {
-                var hidden = $('.dropdown-item.dropdown-item-type[style="display:none"]').length > 0;
-                $('.dropdown-item.dropdown-item-type').attr('style', 'display:' + (hidden ? '' : 'none'));
+            $('#btn_filter').on('click', function (e) {
+                $('#menu__type-filter').toggle();
             });
         });
     }
