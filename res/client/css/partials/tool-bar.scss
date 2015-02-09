@@ -1,0 +1,25 @@
+.tool_bar_btn {
+  border: 1px solid #919095;
+  cursor: pointer;
+  text-align: right;
+  float: right;
+  font-size: $h5-size;
+  height: 36px;
+  margin-right: 15px;
+  margin-top: 40px;
+  padding: 5px;
+  width: 50px;
+}
+
+
+#btn_filter {
+  background: url(../img/toolbar_icon__filter.png);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#btn_export {
+  background: url(../img/toolbar_icon__export.png);
+  background-position: center;
+  background-repeat: no-repeat;
+}
