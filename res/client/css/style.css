@@ -159,7 +159,8 @@ table {
   padding-bottom: 36px;
   margin-bottom: 400px;
   width: 470px;
-  background: white; }
+  background: white;
+  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
 
 .login-rhizi-logo {
   margin-left: auto;
