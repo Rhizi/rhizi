@@ -67,7 +67,7 @@ $('.local-storage-load a').click(function(){
   rz_core.load_from_json(json_blob);
 });
 
-var logout_button = $('#logout-button');
+var logout_button = $('#btn-logout');
 logout_button.click(function() {
     $.ajax({
         type: "POST",
