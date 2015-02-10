@@ -142,6 +142,6 @@ def index():
     hostname = current_app.rz_config.SERVER_NAME
     port = current_app.rz_config.listen_port
     if ':' in hostname:
-        hostname = hostname.split(':')[0]
+        hostname = hostname.split(':')[0]  # split off port
 
     return render_template('index.html', rz_username=rz_username, hostname=hostname, port=port)
