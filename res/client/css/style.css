@@ -895,7 +895,10 @@ p {
   margin-left: auto;
   margin-right: auto;
   display: block;
-  margin-top: 20%; }
+  padding: 20px 30px;
+  margin-top: 80px;
+  background: white;
+  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
 
 #signup_form___submit_button {
   background-color: #ee3654;
