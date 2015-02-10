@@ -4,32 +4,43 @@
 {{ super() }}
 <script src="/static/lib/jquery.js" type="text/javascript"></script>
 <script src="/static/user_login.js" type="text/javascript"></script>
+
+<style type="text/css">
+html {
+  background: url(/static/img/login-background.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+body {
+  background-color: transparent;
+}
+</style>
 {% endblock %}
 {% block content %}
-<div class="login-background">
-	<div class="welcome-box">
-		<img src="/static/img/logo-red.png" class="login-rhizi-logo">
-		<h1 class="login-header"> Welcome to Rhizi!</h1>
-		<p class="login-text">Rhizi is a collaborative knowledge editor.</p>
-		<p class="login-text">Upload your internship proposals for review.</p>
-		<p class="login-text">Share the skills, interests and project you participate in.</p>
-		<br>
-		<p class="login-text">The resulting interactome allows the entire CRI to better collaborate with AIV students</p>
-		<div id="login_form_panel" class="login-form">
-			<fieldset>
-				<form action="javascript:void(0);" method="get" onsubmit="submit_login_form();" id="login_form">
-					<input class="login-input" type="email" id="login_email_address" placeholder="Email">
-					<input class="login-input" type="password" id="login_password" placeholder="Password">
-					<input class="login-input" type="submit" value="Sign in">
-					<a class="forgot-password">Forgot your password?</a>
-				</form>
-			</fieldset>
-			<div id="failed-login" style="display: none">
-				<b>Login Failed</b>
-			</div>
+<div class="welcome-box">
+	<img src="/static/img/logo-red.png" class="login-rhizi-logo">
+	<h1 class="login-header"> Welcome to Rhizi!</h1>
+	<p class="login-text">Rhizi is a collaborative knowledge editor.</p>
+	<p class="login-text">Upload your internship proposals for review.</p>
+	<p class="login-text">Share the skills, interests and project you participate in.</p>
+	<br>
+	<p class="login-text">The resulting interactome allows the entire CRI to better collaborate with AIV students</p>
+	<div id="login_form_panel" class="login-form">
+		<fieldset>
+			<form action="javascript:void(0);" method="get" onsubmit="submit_login_form();" id="login_form">
+				<input class="login-input" type="email" id="login_email_address" placeholder="Email">
+				<input class="login-input" type="password" id="login_password" placeholder="Password">
+				<input class="login-input" type="submit" value="Sign in">
+				<a class="forgot-password">Forgot your password?</a>
+			</form>
+		</fieldset>
+		<div id="failed-login" style="display: none">
+			<b>Login Failed</b>
 		</div>
-		<div class="contact-us-div"><span class="contact-us-icon"></span></div>
-		<p class="login-text contact-us-text"><a class="contact-us-link" href="mailto:feedback_CRI@rhizi.net?subject=Rhizi%20User%20Feedback">Email us</a> with your feedback,<br>we would love to hear your suggestions!</p>
 	</div>
+	<div class="contact-us-div"><span class="contact-us-icon"></span></div>
+	<p class="login-text contact-us-text"><a class="contact-us-link" href="mailto:feedback_CRI@rhizi.net?subject=Rhizi%20User%20Feedback">Email us</a> with your feedback,<br>we would love to hear your suggestions!</p>
 </div>
 {% endblock %}
