@@ -126,15 +126,22 @@ def diff_commit__set():
     return __common_exec(op)
 
 def index():
+
+    # fetch rz_username for welcome message
     email_address = session.get('username')
     rz_username = "Anonymous Stranger"
-    # check for stale cookies
-    if None != email_address and current_app.user_db.has_email(email_address):
-        uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
-        rz_username = escape(u_account.rz_username)
-    server_name = current_app.rz_config.SERVER_NAME
-    if ':' in server_name:
-        hostname, port = server_name.split(':')
-    else:
-        hostname, port = server_name, 80
+    if None != email_address:  # session cookie passed & contains uid (email_address)
+        try:
+            uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
+            rz_username = escape(u_account.rz_username)
+        except Exception as e:
+            # may occur on user_db reset or malicious cookie != stale cookie,
+            # for which the user would at least be known to the user_db
+            log.exception(e)
+
+    hostname = current_app.rz_config.SERVER_NAME
+    port = current_app.rz_config.listen_port
+    if ':' in hostname:
+        hostname = hostname.split(':')[0]
+
     return render_template('index.html', rz_username=rz_username, hostname=hostname, port=port)
