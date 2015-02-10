@@ -79,9 +79,6 @@
 
          <copy file="res/etc/rhizi-server.conf"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
-         <copy file="res/etc/htpasswd"
-               tofile="${targetDeploymentDir}/etc/htpasswd"
-               failonerror="false" quiet="true"/>
          <rsync src="res/templates/" dst="${targetDeploymentDir}/templates" />
       </parallel>
 
@@ -113,10 +110,6 @@
       </parallel>
    </target>
 
-   <target name="deploy-remote.htpasswd.db" description="manual invocation">
-      <rsync src="${src_server}/res/production-patch-set/htpasswd.db"
-             dst="root@rz-0.unige.ch:/srv/www/rhizi/auth/" />
-   </target>
 
    <target name="pkg-deb" depends="clean" description="package as .deb">
       <mkdir dir="dist" />
