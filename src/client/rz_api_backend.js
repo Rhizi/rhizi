@@ -7,8 +7,9 @@ define([], function() {
 
     function RZ_API_Backend() {
 
-        var rz_server_url = 'http://' + rz_config.rz_server_host + ':'
-                + rz_config.rz_server_port;
+        var rz_server_url = 'http://%h:%p';
+        rz_server_url = rz_server_url.replace('%h', rz_config.rz_server_host);
+        rz_server_url = rz_server_url.replace('%p', rz_config.rz_server_port);
 
         /**
          * issue rhizi server ajax call
