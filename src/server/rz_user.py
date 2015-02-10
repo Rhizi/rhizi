@@ -62,10 +62,10 @@ def activate_user_account(us_req):
     try:
         existing_account = user_db.lookup_user__by_email_address(us_req['email_address'])
     except Exception as _:
-        pass  # thrown if user was not found
+        pass  # thrown if user was not found, expected
 
     if None != existing_account:
-        raise Exception('account activation code reused: existing-account: %s' % (existing_account))
+        raise Exception('account activation code reused: existing-account: %s' % (existing_account.email_address))
 
     # calc pw hash
     pw_plaintxt = us_req['pw_plaintxt']
@@ -240,11 +240,13 @@ def rest__user_signup():
                 if other_req_v_tok == v_tok:
 
                     if us_req.has_expired():  # check again whether request has expired
+                        log.warning('user signup: attempt to activate expired signup request: email: %s' % (us_req['email_address']))
                         return render_template('user_signup.html', state='activation_failure')
 
                     try:
                         activate_user_account(us_req)
                     except Exception as e:
+                        log.exception(e)
                         return render_template('user_signup.html', state='activation_failure')
 
                     # activation success
