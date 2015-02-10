@@ -128,7 +128,8 @@ def diff_commit__set():
 def index():
     email_address = session.get('username')
     rz_username = "Anonymous Stranger"
-    if None != email_address:
+    # check for stale cookies
+    if None != email_address and current_app.user_db.has_email(email_address):
         uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
         rz_username = escape(u_account.rz_username)
     server_name = current_app.rz_config.SERVER_NAME

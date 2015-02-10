@@ -107,6 +107,17 @@ class User_DB(object):
         uid, u = self.__lookup_user__by_email_address(email_address)
         return self.__process_return_value(uid, u)
 
+    def has_email(self, email_address):
+        """
+        Does not throw exceptions, returns True if email is in the database,
+        False otherwise
+        """
+        # FIXME: avoid linear search
+        for uid, u in self.persistent_data_store.items():
+            if u.email_address == email_address:
+                return True
+        return False
+
     def user_add(self, u_account):
         """
         @return: the string uid of the newly added user
