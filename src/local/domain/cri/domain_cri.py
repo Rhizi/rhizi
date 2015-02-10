@@ -4,7 +4,7 @@ class DBO_random_data_generation__domain__CRI(DB_op):
 
     def __init__(self, lim_n=50,
                        lim_r=10000,
-                       prob_link_create=0.01):
+                       prob_link_create=0.05):
         """
         generate random data: CRI domain: Person x Skill
         """
@@ -13,26 +13,84 @@ class DBO_random_data_generation__domain__CRI(DB_op):
         n_attr_set__skill_raw = ['Cryptocurrency',
                              'Database architecture',
                              'Web-development',
-                             'HTML',
                              'Mobile-development',
                              'Machine learning',
                              'Guitar Playing',
-                             'Image processing']
+                             'Image processing',
+                             'Algebra',
+                             'Calculus',
+                             'Molecular-Biology',
+                             'Graphic design',
+                             'Geo-location services',
+                             'Drone-building',
+                             'Artificial-intelligence',
+                             'Distributed information systems',
+                             'Wordpress',
+                             'Woodworking',
+                             'Quality-control',
+                             'Video-editing',
+                             'Soldering',
+                             'Network engineering',
+                             'GIT',
+                             'Electronic music',
+                             'Network administration']
 
         n_attr_set__skill = []
         for s in n_attr_set__skill_raw:
             n_attr_set__skill.append(s)
-            n_attr_set__skill.append(s + '_a')
-            n_attr_set__skill.append(s + '_b')
 
-        n_attr_set__name = ['Yael',
-                            'Nofar',
-                            'Ela',
-                            'Tali',
-                            'Nimrod',
-                            'Lior',
-                            'Ehud',
-                            'Yaron']
+        n_attr_set__name = ['John',
+                            'William',
+                            'James',
+                            'Charles',
+                            'George',
+                            'Frank',
+                            'Joseph',
+                            'Thomas',
+                            'Henry',
+                            'Robert',
+                            'Edward',
+                            'Harry',
+                            'Walter',
+                            'Arthur',
+                            'Fred',
+                            'Albert',
+                            'Samuel',
+                            'David',
+                            'Louis',
+                            'Joe',
+                            'Charlie',
+                            'Clarence',
+                            'Richard',
+                            'Andrew',
+                            'Daniel',
+                            'Ernest',
+                            'Mary',
+                            'Anna',
+                            'Emma',
+                            'Elizabeth',
+                            'Minnie',
+                            'Margaret',
+                            'Ida',
+                            'Alice',
+                            'Bertha',
+                            'Sarah',
+                            'Annie',
+                            'Clara',
+                            'Ella',
+                            'Florence',
+                            'Cora',
+                            'Martha',
+                            'Laura',
+                            'Nellie',
+                            'Grace',
+                            'Carrie',
+                            'Maude',
+                            'Mabel',
+                            'Bessie',
+                            'Jennie',
+                            'Gertrude',
+                            'Julia']
 
         l_attr_set__level = ['Novice', 'Intermediate', 'Expert']
 
@@ -45,7 +103,7 @@ class DBO_random_data_generation__domain__CRI(DB_op):
                  '|',
                  'create (n:%s' % ('Person'),
                  '{id: \'test-id_\' + toString(%d + idx),' % (min_id),
-                  'name: n_attr_set[idx %% %d] + \'_\' + toString(idx)}' % (len(n_attr_set__name)),
+                  'name: n_attr_set[idx %% %d]}' % (len(n_attr_set__name)),
                  '))',
                 ]
         q_param = {'n_attr_set__name': n_attr_set__name}
@@ -73,7 +131,7 @@ class DBO_random_data_generation__domain__CRI(DB_op):
                      'where rand() < %.2f' % (prob_link_create),
                      'create (n)-[r:%s' % (skill_level),
                      '{id: \'test-id_\' + toString(%d + toInt(%d * rand())),' % (min_id, lim_r * 100000),  # aim for low id collision probability,
-                     'proficiency: \'%s\'}' % (skill_level),
+                     'proficiency: \'%s\'}' % (len(skill_level) - 1),
                      ']->(m)',
                      'return collect(r.id)',
                      ]
