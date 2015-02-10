@@ -103,10 +103,7 @@
          <!-- apply production patches -->
          <rsync extraopts="--delete"
                 src="res/production-patch-set/${targetDomain}/rhizi-server.production.conf"
-                dst="rsync://${dstServer}/${rsync_module}/etc/rhizi-server.conf" />
-         <rsync extraopts="--delete"
-                src="res/production-patch-set/${targetDomain}/rz_config.js"
-                dst="rsync://${dstServer}/${rsync_module}/static/" />
+                dst="rsync://${remoteDeployServer}/${rsync_module}/etc/rhizi-server.conf" />
       </parallel>
    </target>
 
