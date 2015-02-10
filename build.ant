@@ -26,6 +26,7 @@
    <property name="pkg_version" value="0.1.0" />
    <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
    <property name="targetDeploymentDir" value="deploy-local" />
+   <property name="remoteDeployServer" value="rhizi.net" />
    <property name="targetDomain" value="rhizi.net" />
 
    <tstamp>
@@ -87,9 +88,7 @@
    <target name="deploy-remote" depends="deploy-local">
       <!-- [!] trailing '/' on rsync src targets critical -->
 
-      <local name="dstServer" />
       <local name="rsync_module" />
-      <property name="dstServer" value="rz-0.unige.ch" />
       <property name="rsync_module" value="rhizi.net" />
       <property name="filter_list_str"
                 value="-f '- __pycache__/' -f '- *.pyc'" />
@@ -97,7 +96,7 @@
       <!-- -l: traverse bin/ -> ../src-py link -->
       <rsync src="${targetDeploymentDir}/"
              extraopts="-lL --delete ${filter_list_str}"
-             dst="rsync://${dstServer}/${rsync_module}/" />
+             dst="rsync://${remoteDeployServer}/${rsync_module}/" />
 
       <parallel>
          <!-- apply production patches -->
