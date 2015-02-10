@@ -49,6 +49,9 @@ a:hover {
 a:active {
   color: #919095; }
 
+button {
+  border: none; }
+
 input {
   background-color: white;
   color: #363636;
@@ -138,17 +141,12 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-* {
-  box-sizing: border-box; }
-  *:before, *:after {
-    box-sizing: border-box; }
-
 .welcome-box {
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 36px;
+  padding: 20px 30px;
   margin-top: 80px;
-  width: 470px;
+  width: 420px;
   background: white;
   box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
 
@@ -172,15 +170,10 @@ table {
   padding-left: 30px;
   text-align: center; }
 
-.login-form {
+.login-view-section {
+  width: 100%;
   margin-top: 10px;
-  margin-bottom: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  padding: 20px;
-  width: 300px;
-  position: relative; }
+  margin-bottom: 10px; }
 
 .clearfix {
   *zoom: 1; }
@@ -194,29 +187,18 @@ table {
   border: none;
   font-family: inherit;
   font-size: inherit;
+  left: -10px;
   margin: 0;
+  position: relative;
+  width: 80%;
   -webkit-appearance: none; }
   .login-input:focus {
     outline: none; }
-  .login-input[type="submit"] {
-    width: 100%;
-    cursor: pointer;
-    background: #ee3654;
-    border-radius: 3px;
-    color: #fff;
-    float: right;
-    font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 15px;
-    padding: 12px 20px; }
-    .login-input[type="submit"]:hover {
-      background: #d10a40; }
   .login-input[type="email"] {
     background: url(../img/mail-icon.png) no-repeat scroll 20px 15px;
     background-color: #f5f5fa;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
-    width: 100%;
     border-radius: 3px 3px 0 0;
     padding-left: 60px; }
   .login-input[type="password"] {
@@ -224,7 +206,6 @@ table {
     background-color: #f5f5fa;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
-    width: 100%;
     border-top: none;
     border-radius: 0px 0px 3px 3px;
     padding-left: 60px; }
@@ -235,9 +216,12 @@ table {
   .forgot-password:hover {
     color: #363636; }
 
-.contact-us-div {
+.login-view-section {
   text-align: center; }
-  .contact-us-div:before {
+
+.login-view-section-div {
+  color: #ee3654; }
+  .login-view-section-div:before {
     content: "";
     width: 112px;
     margin-top: 10px;
@@ -245,7 +229,7 @@ table {
     height: 0;
     margin-left: -118px;
     border-top: 1px solid #ee3654; }
-  .contact-us-div:after {
+  .login-view-section-div:after {
     content: "";
     width: 112px;
     margin-top: 10px;
@@ -271,6 +255,37 @@ table {
 .contact-us-link {
   color: #ee3654;
   text-decoration: underline; }
+
+.login-form_button {
+  cursor: pointer;
+  background: #ee3654;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 15px;
+  padding: 12px 20px; }
+  .login-form_button:hover {
+    background: #de1334; }
+
+#login-form {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px; }
+
+#login-view-section_intro-text {
+  margin-bottom: 40px; }
+
+#login-page_create-account-button {
+  display: inline-block;
+  background-color: #4478FF;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 5px; }
+  #login-page_create-account-button:hover {
+    background: #1153ff; }
 
 .btn-regular {
   cursor: pointer;
@@ -424,7 +439,7 @@ body.debug .debug-ui-right {
   fill: #8b3ab0; }
 
 .circle.project {
-  fill: #40c200; }
+  fill: #40C200; }
 
 .circle.third-internship-proposal {
   fill: #33c2e0; }
@@ -665,7 +680,7 @@ body.debug .debug-ui-right {
   border-top: 6px solid #363636; }
 
 .info.type-project {
-  border-top: 6px solid #40c200; }
+  border-top: 6px solid #40C200; }
 
 .info .info-card-attr {
   display: block;
@@ -745,8 +760,8 @@ body.debug .debug-ui-right {
   width: 100%;
   min-height: 48px;
   text-align: center;
-  background-color: #d3f2f8;
-  color: #1d6e7f;
+  background-color: #D3F2F8;
+  color: #1D6E7F;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf; }
 
@@ -968,3 +983,5 @@ p {
 
 svg text::selection {
   background: none; }
+
+/*# sourceMappingURL=style.css.map */

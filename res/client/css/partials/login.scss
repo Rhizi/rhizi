@@ -1,19 +1,9 @@
-* {
-    box-sizing: border-box;
-
-    &:before,
-    &:after {
-      box-sizing: border-box;
-    }
-
-  }
-
 .welcome-box {
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: $three-baselines;
+  padding: 20px 30px;
   margin-top: 80px;
-  width: 470px;
+  width: 420px;
   background: white;
   box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
 }
@@ -41,17 +31,11 @@
   text-align: center;
 }
 
-.login-form {
+.login-view-section {
+  width: 100%;
   margin-top: 10px;
-  margin-bottom: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  padding: 20px;
-  width: 300px;
-  position: relative;
+  margin-bottom: 10px;
 }
-
 
 .clearfix {
   *zoom: 1;
@@ -72,32 +56,22 @@
   border: none;
   font-family: inherit;
   font-size: inherit;
+  left: -10px;
   margin: 0;
+  position: relative;
+  width: 80%;
+
   -webkit-appearance: none;
+
   &:focus {
     outline: none;
   }
-  &[type="submit"] {
-    width: 100%;
-    cursor: pointer;
-    background: #ee3654;
-    border-radius: 3px;
-    color: #fff;
-    float: right;
-    font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 15px;
-    padding: 12px 20px;
-    &:hover {
-      background: $dark-magenta;
-    }
-  }
+
   &[type="email"] {
     background: url(../img/mail-icon.png) no-repeat scroll 20px 15px;
     background-color:$light-grey;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
-    width: 100%;
     border-radius: 3px 3px 0 0;
     padding-left:60px;
   }
@@ -107,7 +81,6 @@
     background-color:$light-grey;
     border: 1px solid #dcdcdc;
     padding: 12px 10px;
-    width: 100%;
     border-top: none;
     border-radius: 0px 0px 3px 3px;
     padding-left:60px;
@@ -122,8 +95,13 @@
   }
 }
 
-.contact-us-div {
+.login-view-section {
   text-align: center;
+}
+
+.login-view-section-div {
+  color: #ee3654;
+
   &:before {
     content: "";
     width: 112px;
@@ -133,6 +111,7 @@
     margin-left: -118px;
     border-top: 1px solid $magenta;
   }
+
   &:after {
     content: "";
     width: 112px;
@@ -163,4 +142,43 @@
 .contact-us-link {
   color: $magenta;
   text-decoration: underline;
+}
+
+.login-form_button {
+    cursor: pointer;
+    background: #ee3654;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 15px;
+    padding: 12px 20px;
+
+    &:hover {
+      background: darken( #ee3654, 10% );
+    }
+}
+
+#login-form {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+}
+
+#login-view-section_intro-text {
+  margin-bottom: 40px;
+}
+
+#login-page_create-account-button {
+  display: inline-block;
+  background-color: #4478FF;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 5px;
+  
+  &:hover {
+      background: darken( #4478FF, 10% );
+  }
 }
