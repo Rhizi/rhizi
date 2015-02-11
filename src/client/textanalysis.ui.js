@@ -113,7 +113,7 @@ function textSelect(inp, s, e) {
         r.moveEnd('character', e);
         r.moveStart('character', s);
         r.select();
-    }else if(inp.setSelectionRange) {
+    } else if (inp.setSelectionRange) {
         inp.focus();
         inp.setSelectionRange(s, e);
     }
