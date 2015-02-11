@@ -126,7 +126,8 @@ class DBO_random_data_generation__domain__CRI(DB_op):
         # create links
         for skill_level in l_attr_set__level:
             q_arr = ['match (n:%s),(m:%s)' % ('Person', 'Skill'),
-                     'with n, m',
+                     'with n, m, rand() as rand',
+                     'order by rand',
                      'limit %d' % (lim_r - 1),
                      'where rand() < %.2f' % (prob_link_create),
                      'create (n)-[r:%s' % (skill_level),
@@ -136,5 +137,4 @@ class DBO_random_data_generation__domain__CRI(DB_op):
                      'return collect(r.id)',
                      ]
 
-        q_param = {'l_attr_set__level': l_attr_set__level}
-        self.add_statement(q_arr, q_param)
+            self.add_statement(q_arr, q_param)
