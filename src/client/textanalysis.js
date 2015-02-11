@@ -28,6 +28,17 @@ function selectedType()
     return nodetypes[typeindex];
 }
 
+/*
+ * Place to do general cleanup of the text. Right now just replacing all quotation types
+ * with a single type, separately for double quotes and single quotes.
+ */
+function cleanup(text)
+{
+    return text
+        .replace(/[״”“„‟″‶]/, '"')   // Convert typographic double quotes
+        .replace(/[`׳’‘‚‛′‵]/, "'"); // Convert typographic single quotes
+}
+
 /**
  * Tokenizer for input.
  *
@@ -251,7 +262,7 @@ var textAnalyser = function (spec) {
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
-    tokens = tokenize(newtext, '#', '"');
+    tokens = tokenize(cleanup(newtext), '#', '"');
     sentence = tokens.map(function (d) { return d.token; });
 
     // build new node,link arrays in order of appearance
