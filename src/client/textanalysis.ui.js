@@ -176,8 +176,10 @@ return {
             document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
             return ret;
         });
-        element.bind('input selectionchange click', function() {
+        element.bind('input selectionchange click', function(e) {
             analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
+            e.stopPropagation();
+            e.preventDefault();
         });
 
         function submitNewSentence() {
