@@ -10,6 +10,13 @@ var text = "", // Last text of sentence
     plus_button = $('#btn_add'),
     description = consts.description;
 
+function get_svg__body_position(node_id)
+{
+    var item = document.getElementById(node_id),
+        matrix = item.getScreenCTM();
+    return {x: matrix.e, y: matrix.f};
+}
+
 var typeselection = function TypeSelectionDialog() {
     var e = $('.typeselection'),
         e_intro = e.find('#intro'),
