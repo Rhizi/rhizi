@@ -25,14 +25,25 @@ var typeselection = function TypeSelectionDialog() {
         e_desc = e.find('#chosentypedesc'),
         typeselection = {};
 
-    typeselection.analysisNodeStart = function() {
-        typeselection.show();
+    typeselection.analysisNodeStart = function(node_id) {
+        typeselection.show(node_id);
     }
-    typeselection.show = function() {
+    function set_position(node_id)
+    {
+        var x,
+            y,
+            node_location;
+
+        node_location = get_svg__body_position(node_id);
+        x = node_location.x;
+        y = node_location.y + 10;
         e.css({
-            top: window.innerHeight / 2 - 115,
-            left: window.innerWidth / 2 - 325
-            });
+            left: x,
+            top: y,
+        });
+    }
+    typeselection.show = function(node_id) {
+        set_position(node_id);
         e_label.hide();
         e_desc.hide();
         e_intro.show();
@@ -41,9 +52,10 @@ var typeselection = function TypeSelectionDialog() {
     typeselection.hide = function() {
         e.hide();
     }
-    typeselection.showChosenType = function(nodetype) {
+    typeselection.showChosenType = function(node_id, nodetype) {
         var desc = description[nodetype];
 
+        set_position(node_id);
         e_intro.hide();
         e_label.show();
         e_name.html(nodetype);
@@ -67,22 +79,26 @@ function analyzeSentence(spec)
 
     var sentence = spec.sentence,
         finalize = spec.finalize,
-        ret = textanalysis.textAnalyser(spec);
-
-    switch (ret.state) {
-    case textanalysis.ANALYSIS_NODE_START:
-        typeselection.analysisNodeStart();
-        break;
-    case textanalysis.ANALYSIS_LINK:
-        typeselection.hide();
-        break;
-    }
+        ret = textanalysis.textAnalyser(spec),
+        lastnode;
 
     ret.applyToGraph({
         main_graph: rz_core.main_graph,
         edit_graph: rz_core.edit_graph,
         backend_commit: rz_config.backend_enabled,
     });
+
+    switch (ret.state) {
+    case textanalysis.ANALYSIS_NODE_START:
+        lastnode = textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart);
+        if (lastnode !== null) {
+            typeselection.analysisNodeStart(lastnode.id);
+        }
+        break;
+    case textanalysis.ANALYSIS_LINK:
+        typeselection.hide();
+        break;
+    }
 
     if (finalize || sentence.length == 0) {
         typeselection.hide();
@@ -118,7 +134,7 @@ function changeType(arg) {
     nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
     rz_core.edit_graph.editType(id, nodetype);
-    typeselection.showChosenType(nodetype);
+    typeselection.showChosenType(id, nodetype);
     textanalysis.set_type(name, nodetype);
 }
 
