@@ -8,7 +8,9 @@ var typeindex = 0,
     node_name_to_type = {};
 
 var _get_lastnode,
-    get_lastnode = function (editgraph, cursor) { return _get_lastnode(editgraph, cursor); };
+    get_lastnode = function (editgraph, cursor) {
+        return undefined !== _get_lastnode ? _get_lastnode(editgraph, cursor) : null;
+    };
 
 var sugg_name = {},
     id_to_name_map = {},
