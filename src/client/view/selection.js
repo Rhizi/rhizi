@@ -19,13 +19,13 @@ var root_nodes = [], // these are the nodes that are requested via update
 function listen_on_diff_bus(diffBus)
 {
     diffBus
-        .filter(".node_id_set_rm")
         .onValue(function (diff) {
-            var node_node_cmp = (function (a, b) { return a.id > b.id; }),
-                node_id_cmp = (function (a, b) { return a.id === b ? 0 : (a.id > b ? 1 : -1); });
-
-            updateSelectedNodesBus(sortedArrayDiff(selected_nodes.sort(node_node_cmp),
-                                             diff.node_id_set_rm.sort(), node_id_cmp));
+            // update due to potentially removed nodes first
+            root_nodes = root_nodes.filter(function (n) {
+                return get_main_graph().find_node__by_id(n.id) !== null;
+            });
+            // reselect based on current graph
+            inner_update(root_nodes);
         });
 }
 
@@ -142,12 +142,18 @@ function arr_compare(a1, a2)
     return true;
 }
 
+var inner_update = function(nodes)
+{
+    clear();
+    root_nodes = nodes;
+    connectedComponent(nodes);
+}
+
 var update = function(nodes) {
     var set = !arr_compare(nodes, root_nodes);
-    clear();
+
     if (set) {
-        root_nodes = nodes;
-        connectedComponent(nodes);
+        inner_update(nodes);
     }
 }
 
