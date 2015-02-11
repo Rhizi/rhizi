@@ -1,6 +1,6 @@
 define(
-['jquery', 'Bacon'],
-function($, Bacon) {
+['jquery', 'Bacon', 'util'],
+function($, Bacon,   util) {
 
 function unquoted(name)
 {
@@ -27,6 +27,7 @@ function setCaret(e, num)
 var completer = (function (input_element, dropdown, base_config) {
     var config = get_config(base_config),
         dropdown_raw = dropdown[0],
+        dropdown_visible = false,
         options_bus = new Bacon.Bus(),
         options = [],
         selected_index = -1,
@@ -34,6 +35,9 @@ var completer = (function (input_element, dropdown, base_config) {
         completion_start = 0,
         completion_end = 0,
         minimum_length = 1;
+
+    // we need an identifier to remove callbacks without affecting other completers
+    util.assert(input_element_raw.id !== '');
 
     // turn off the browser's autocomplete
     input_element.attr('autocomplete', 'off');
@@ -98,14 +102,24 @@ var completer = (function (input_element, dropdown, base_config) {
         return ret;
     }
 
+    var click_event = 'click.completer.' + input_element_raw.id;
+    function hide_on_click(e) {
+        console.log('good night');
+        hide();
+    }
+
     function show() {
-        if (dropdown.children().length > 0) {
+        if (dropdown.children().length > 0 && !dropdown_visible) {
+            dropdown_visible = true;
             dropdown.show();
+            $(document).on(click_event, "body", hide_on_click);
         }
     }
     function hide()
     {
         dropdown.hide();
+        dropdown_visible = false;
+        $(document).off(click_event, "body", hide_on_click);
     }
 
     /***
