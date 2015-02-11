@@ -18,10 +18,15 @@ function _get_form_data() {
     };
 }
 
-function textarea_resize(text)
+function textarea_resize(text, max)
 {
+    var height;
     text.style.height = 'auto';
-    text.style.height = text.scrollHeight + 'px';
+    height = text.scrollHeight;
+    if (max) {
+        height = Math.min(max, height);
+    }
+    text.style.height = height + 'px';
 }
 
 $('#edit-node-dialog__delete').click(function(e) {
@@ -64,7 +69,7 @@ function show(d) {
 
     var name_textarea = $('.info').find('#editformname');
     name_textarea.val(d.name);
-    textarea_resize(name_textarea[0]);
+    textarea_resize(name_textarea[0], 150);
 
     $("#editenddate").datepicker({
       inline: true,
@@ -77,7 +82,9 @@ function show(d) {
       dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     });
 
-    $('#editdescription').val(d.description);
+    var description = $('#editdescription');
+    description.val(d.description);
+    textarea_resize(description[0], 150);
     $('#edittype').val(d.type);
     $('#editurl').val(d.url);
     $('#editstatus').val(d.status);
