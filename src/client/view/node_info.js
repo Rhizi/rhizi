@@ -18,6 +18,12 @@ function _get_form_data() {
     };
 }
 
+function textarea_resize(text)
+{
+    text.style.height = 'auto';
+    text.style.height = text.scrollHeight + 'px';
+}
+
 $('#edit-node-dialog__delete').click(function(e) {
     e.preventDefault();
     return delete_callback(e, _get_form_data());
@@ -56,7 +62,10 @@ function show(d) {
     $('.info').attr('class', 'info');
     $('.info').addClass('type-' + d.type); // Add a class to distinguish types for css
 
-    $('.info').find('#editformname').val(d.name);
+    var name_textarea = $('.info').find('#editformname');
+    name_textarea.val(d.name);
+    textarea_resize(name_textarea[0]);
+
     $("#editenddate").datepicker({
       inline: true,
       showOtherMonths: true,
