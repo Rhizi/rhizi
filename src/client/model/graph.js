@@ -535,15 +535,6 @@ function Graph(spec) {
         return true;
     }
 
-    this.findCoordinates = function(id) {
-        var n = find_node__by_id(id);
-
-        if (n !== undefined) {
-            $('.typeselection').css('top', n.y - 90);
-            $('.typeselection').css('left', n.x - 230);
-        }
-    }
-
     this.links_rm = function(links) {
         var ids = links.map(function (link) {
             util.assert(link.id !== undefined, 'bug: link without an id');

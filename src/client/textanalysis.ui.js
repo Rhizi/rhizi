@@ -112,7 +112,6 @@ function changeType(arg) {
 
     rz_core.edit_graph.editType(id, nodetype);
     typeselection.showChosenType(nodetype);
-    rz_core.edit_graph.findCoordinates(id);
     textanalysis.set_type(name, nodetype);
 }
 
