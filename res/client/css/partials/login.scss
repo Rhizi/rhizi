@@ -1,18 +1,29 @@
+@import '../modules/mixins'; // For box-sizing
+
 .welcome-box {
   margin-left: auto;
   margin-right: auto;
-  padding: 20px 30px;
-  margin-top: 80px;
+  padding: $three-baselines;
+  margin-top: $three-baselines;
   width: 420px;
   background: white;
-  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
+}
+
+.login-view-section {
+  width: 100%;
+  margin-top: $two-baselines;
+  margin-bottom: $one-baseline;
+  text-align: center;
 }
 
 .login-rhizi-logo {
+  background: url('/static/img/logo-red.png');
+  background-repeat: no-repeat;
   margin-left: auto;
-  display: block;
   margin-right: auto;
-  padding-top: 25px;
+  display: block;
+  width: 54px;
+  height: 30px;
 }
 
 .login-header {
@@ -23,18 +34,15 @@
 }
 
 .login-text {
-  font-size: 16px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-right: 30px;
-  padding-left: 30px;
+  font-size: $h3-size;
+  line-height: 22px;
   text-align: center;
-}
+  margin-bottom: $one-baseline;
 
-.login-view-section {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  em {
+    font-family: $bold-font-family;
+    font-style:normal;
+  }
 }
 
 .clearfix {
@@ -52,38 +60,39 @@
 
 }
 
+.login-form {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .login-input {
+  width: 75%;
   border: none;
   font-family: inherit;
   font-size: inherit;
-  left: -10px;
-  margin: 0;
-  position: relative;
-  width: 80%;
-
+  background-color: $light-grey;
+  border: 1px solid $mid-light-grey;
   -webkit-appearance: none;
+  padding: $one-baseline $one-baseline $one-baseline 20%;
+  background-repeat: no-repeat;
+  background-position: 18px 14px;
 
   &:focus {
     outline: none;
+    background-color: $light-grey;
+    border: 1px solid $mid-light-grey;
+    @include rz-inset-box-shadow(0px, 0px, 6px, rgba(0,0,0,0.3) )
   }
 
   &[type="email"] {
-    background: url(../img/mail-icon.png) no-repeat scroll 20px 15px;
-    background-color:$light-grey;
-    border: 1px solid #dcdcdc;
-    padding: 12px 10px;
-    border-radius: 3px 3px 0 0;
-    padding-left:60px;
+    background-image: url(../img/mail-icon.png);
   }
 
   &[type="password"] {
-    background: url(../img/password-icon.png) no-repeat scroll 20px 15px;
-    background-color:$light-grey;
-    border: 1px solid #dcdcdc;
-    padding: 12px 10px;
+    background-image: url(../img/password-icon.png);
+    background-position-x: 22px;
     border-top: none;
-    border-radius: 0px 0px 3px 3px;
-    padding-left:60px;
   }
 }
 
@@ -95,31 +104,28 @@
   }
 }
 
-.login-view-section {
-  text-align: center;
-}
 
-.login-view-section-div {
-  color: #ee3654;
+.section-divider {
+  color: $mid-grey;
 
   &:before {
     content: "";
     width: 112px;
-    margin-top: 10px;
+    margin-top: $one-baseline;
     position: absolute;
     height: 0;
     margin-left: -118px;
-    border-top: 1px solid $magenta;
+    border-top: 1px solid $mid-grey;
   }
 
   &:after {
     content: "";
     width: 112px;
-    margin-top: 10px;
+    margin-top: $one-baseline;
     position: absolute;
     margin-left: 4px;
     height: 0;
-    border-top: 1px solid $magenta;
+    border-top: 1px solid $mid-grey;
   }
 }
 
@@ -144,41 +150,40 @@
   text-decoration: underline;
 }
 
+.magenta-divider {
+
+  &:before {
+    border-top: 1px solid $magenta;
+  }
+
+  &:after {
+    border-top: 1px solid $magenta;
+  }
+
+}
+
 .login-form_button {
     cursor: pointer;
-    background: #ee3654;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    margin: 15px;
-    padding: 12px 20px;
+    background-color: $magenta;
+    color: $white;
+    font-size: $h3-size;
+    margin-top: $two-baselines;
+    padding: $one-baseline;
+    width: 100%;
 
     &:hover {
-      background: darken( #ee3654, 10% );
+      background-color: $dark-magenta;
     }
 }
 
-#login-form {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px;
-}
-
-#login-view-section_intro-text {
-  margin-bottom: 40px;
-}
-
-#login-page_create-account-button {
-  display: inline-block;
-  background-color: #4478FF;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-  top: 5px;
+.create-account-button {
+  color: $mid-grey;
+  background: none;
+  margin: $one-baseline auto $one-baseline auto;
+  width: 70%;
   
   &:hover {
-      background: darken( #4478FF, 10% );
+      color: $dark-grey;
+      background: none;
   }
 }

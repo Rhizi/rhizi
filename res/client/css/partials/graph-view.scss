@@ -146,6 +146,7 @@
 
 .notselected {
   opacity: 0.2;
+  -webkit-filter: blur(10px);
 }
 
 .graph.link.temp_and {

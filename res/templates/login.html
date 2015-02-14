@@ -20,14 +20,18 @@ body {
 {% endblock %}
 {% block content %}
 <div class="welcome-box">
-	<img src="/static/img/logo-red.png" class="login-rhizi-logo">
-	<h1 class="login-header">Welcome to Rhizi!</h1>
+	<div class="login-view-section">
+		<div class="login-rhizi-logo"></div>
+	</div>
+	<div class="login-view-section">
+		<h1 class="login-header">Welcome to Rhizi</h1>
+	</div>
 	<div class="login-view-section" id="login-view-section_intro-text">
-			<p class="login-text">Rhizi is a collaborative knowledge editor.</p>
+			<p class="login-text"><em>Rhizi is a collaborative knowledge editor.</em></p>
 			<p class="login-text">Upload your internship proposals for review. Share the skills, interests and project you participate in.</p>
 			<p class="login-text">The resulting interactome allows the entire CRI to better collaborate with AIV students</p>
 	</div>
-	<div class="login-view-section">
+	<div class="login-view-section login-form">
 		<div id="login-form">
 			<form action="javascript:void(0);" method="get" onsubmit="submit_login_form();" id="login_form">
 				<input class="login-input" type="email" id="login_email_address" placeholder="Email">
@@ -41,14 +45,14 @@ body {
 	</div>
 	<div class="login-view-section">
 	<div id="create-account-section">
-		<div class="login-view-section-div">or</div>
+		<div class="login-view-section section-divider">or</div>
 		<a href="/signup">
-		<span class="login-form_button" id="login-page_create-account-button" title="Create Account">Create Account</span>
+		<div class="login-form_button create-account-button" id="login-page_create-account-button" title="Create Account">Create Account</div>
 		</a>
 		</div>
 	</div>
 	<div class="login-view-section">
-		<div class="login-view-section-div"><span class="contact-us-icon"></span></div>
+		<div class="login-view-section section-divider magenta-divider"><span class="contact-us-icon"></span></div>
 		<p class="login-text contact-us-text"><a class="contact-us-link" href="mailto:feedback_CRI@rhizi.net?subject=Rhizi%20User%20Feedback">Email us</a> with your feedback,<br>we would love to hear your suggestions!</p>
 	</div>
 </div>

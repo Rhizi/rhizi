@@ -141,17 +141,25 @@ table {
 .welcome-box {
   margin-left: auto;
   margin-right: auto;
-  padding: 20px 30px;
-  margin-top: 80px;
+  padding: 36px;
+  margin-top: 36px;
   width: 420px;
-  background: white;
-  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
+  background: white; }
+
+.login-view-section {
+  width: 100%;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  text-align: center; }
 
 .login-rhizi-logo {
+  background: url("/static/img/logo-red.png");
+  background-repeat: no-repeat;
   margin-left: auto;
-  display: block;
   margin-right: auto;
-  padding-top: 25px; }
+  display: block;
+  width: 54px;
+  height: 30px; }
 
 .login-header {
   margin-top: 35px;
@@ -160,17 +168,13 @@ table {
   color: #ee3654; }
 
 .login-text {
-  font-size: 16px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-right: 30px;
-  padding-left: 30px;
-  text-align: center; }
-
-.login-view-section {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px; }
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  margin-bottom: 12px; }
+  .login-text em {
+    font-family: "Source_Bold", sans-serif;
+    font-style: normal; }
 
 .clearfix {
   *zoom: 1; }
@@ -180,32 +184,35 @@ table {
   .clearfix:after {
     clear: both; }
 
+.login-form {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto; }
+
 .login-input {
+  width: 75%;
   border: none;
   font-family: inherit;
   font-size: inherit;
-  left: -10px;
-  margin: 0;
-  position: relative;
-  width: 80%;
-  -webkit-appearance: none; }
+  background-color: #f5f5fa;
+  border: 1px solid #d4d4d9;
+  -webkit-appearance: none;
+  padding: 12px 12px 12px 20%;
+  background-repeat: no-repeat;
+  background-position: 18px 14px; }
   .login-input:focus {
-    outline: none; }
+    outline: none;
+    background-color: #f5f5fa;
+    border: 1px solid #d4d4d9;
+    -webkit-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3); }
   .login-input[type="email"] {
-    background: url(../img/mail-icon.png) no-repeat scroll 20px 15px;
-    background-color: #f5f5fa;
-    border: 1px solid #dcdcdc;
-    padding: 12px 10px;
-    border-radius: 3px 3px 0 0;
-    padding-left: 60px; }
+    background-image: url(../img/mail-icon.png); }
   .login-input[type="password"] {
-    background: url(../img/password-icon.png) no-repeat scroll 20px 15px;
-    background-color: #f5f5fa;
-    border: 1px solid #dcdcdc;
-    padding: 12px 10px;
-    border-top: none;
-    border-radius: 0px 0px 3px 3px;
-    padding-left: 60px; }
+    background-image: url(../img/password-icon.png);
+    background-position-x: 22px;
+    border-top: none; }
 
 .forgot-password {
   color: #919095;
@@ -213,27 +220,24 @@ table {
   .forgot-password:hover {
     color: #363636; }
 
-.login-view-section {
-  text-align: center; }
-
-.login-view-section-div {
-  color: #ee3654; }
-  .login-view-section-div:before {
+.section-divider {
+  color: #919095; }
+  .section-divider:before {
     content: "";
     width: 112px;
-    margin-top: 10px;
+    margin-top: 12px;
     position: absolute;
     height: 0;
     margin-left: -118px;
-    border-top: 1px solid #ee3654; }
-  .login-view-section-div:after {
+    border-top: 1px solid #919095; }
+  .section-divider:after {
     content: "";
     width: 112px;
-    margin-top: 10px;
+    margin-top: 12px;
     position: absolute;
     margin-left: 4px;
     height: 0;
-    border-top: 1px solid #ee3654; }
+    border-top: 1px solid #919095; }
 
 .contact-us-icon {
   text-align: center;
@@ -253,36 +257,30 @@ table {
   color: #ee3654;
   text-decoration: underline; }
 
+.magenta-divider:before {
+  border-top: 1px solid #ee3654; }
+.magenta-divider:after {
+  border-top: 1px solid #ee3654; }
+
 .login-form_button {
   cursor: pointer;
-  background: #ee3654;
-  border-radius: 3px;
-  color: #fff;
+  background-color: #ee3654;
+  color: white;
   font-size: 18px;
-  font-weight: bold;
-  margin: 15px;
-  padding: 12px 20px; }
+  margin-top: 24px;
+  padding: 12px;
+  width: 100%; }
   .login-form_button:hover {
-    background: #de1334; }
+    background-color: #d10a40; }
 
-#login-form {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px; }
-
-#login-view-section_intro-text {
-  margin-bottom: 40px; }
-
-#login-page_create-account-button {
-  display: inline-block;
-  background-color: #4478FF;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-  top: 5px; }
-  #login-page_create-account-button:hover {
-    background: #1153ff; }
+.create-account-button {
+  color: #919095;
+  background: none;
+  margin: 12px auto 12px auto;
+  width: 70%; }
+  .create-account-button:hover {
+    color: #363636;
+    background: none; }
 
 .btn-regular {
   cursor: pointer;
@@ -452,7 +450,8 @@ body.debug .debug-ui-right {
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
-  opacity: 0.2; }
+  opacity: 0.2;
+  -webkit-filter: blur(10px); }
 
 .graph.link.temp_and {
   stroke-dasharray: 3,3; }

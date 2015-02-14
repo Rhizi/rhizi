@@ -4,6 +4,12 @@
 	        box-shadow: $offset-x $offset-y $blur $spread $color;	
 }
 
+@mixin rz-inset-box-shadow($offset-x, $offset-y, $blur, $color) {
+	-webkit-box-shadow: inset $offset-x $offset-y $blur $color;
+	   -moz-box-shadow: inset $offset-x $offset-y $blur $color;
+	        box-shadow: inset $offset-x $offset-y $blur $color;	
+}
+
 @mixin rz-box-sizing-border() {
 	-webkit-box-sizing: border-box;
 	   -moz-box-sizing: border-box;
