@@ -885,62 +885,73 @@ p {
   top: -5px;
   width: 200px; }
 
-#user_signup_form_panel {
-  width: 550px;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  padding: 20px 30px;
-  margin-top: 80px;
-  background: white;
-  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
-
-#signup_form___submit_button {
-  background-color: #ee3654;
-  border-radius: 3px;
-  color: #fff;
-  cursor: pointer;
-  float: right;
-  font-weight: bold;
-  margin: 20px;
-  padding: 12px 20px;
-  text-align: center;
-  width: 140px; }
-
+/* #user_signup_form_panel {
+	width: 550px;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	padding: 20px 30px;
+	margin-top: 80px;
+	background: white;
+	box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
+} */
+/* #signup_form___submit_button {
+	background-color: #ee3654;
+	border-radius: 3px;
+	color: #fff;
+	cursor: pointer;
+	float: right;
+	font-weight: bold;s
+	margin: 20px;
+	padding: 12px 20px;
+	text-align: center;
+	width: 140px;
+} */
 .signup_form__row {
-  overflow: auto;
   width: 100%; }
 
-.signup_form__field {
-  border-radius: 3px;
-  border: 1px solid #4B7CBD;
-  float: left;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  margin: 5px; }
+/* .signup_form__field {
+	border-radius: 3px;
+	border: 1px solid #4B7CBD;
+	float: left;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin: 5px;
+}
 
 .signup_form__row_sharing_field {
-  display: inline-block; }
+	display: inline-block;
+}
 
 .signup_form__field input {
-  background-color: inherit;
-  border: none; }
+	background-color: inherit;
+	border: none;
+}
 
 .signup_form__field input:focus {
-  outline: none; }
+	outline: none;
+}
 
 #signup_form__title {
-  color: #ee3654;
-  margin-bottom: 30px;
-  background: url(../img/logo-red.png);
-  background-repeat: no-repeat;
-  background-position: 140px 2px; }
+	color: #ee3654;
+	margin-bottom: 30px;
+	background: url(../img/logo-red.png);
+	background-repeat: no-repeat;
+	background-position: 140px 2px;
+}
 
 #signup_form___submit_button_row {
-  overflow: auto; }
+	overflow: auto;
+}  */
+.input-username {
+  background-image: url(../img/user-icon.png);
+  background-position-x: 21px; }
+
+.signup-button {
+  width: 92%; }
 
 #signup_form___submit_button:hover {
   alpha: 1.0; }

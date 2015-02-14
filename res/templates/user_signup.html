@@ -16,8 +16,13 @@ body {
 }
 </style>
 {% endblock %} {% block content %}
-<div id="user_signup_form_panel">
-    <h1 id="signup_form__title">Sign up</h1>
+<div id="user_signup_form_panel" class="welcome-box">
+    <div class="login-view-section">
+        <div class="login-rhizi-logo"></div>
+    </div>
+    <div class="login-view-section">
+        <h1 class="login-header">Sign up</h1>
+    </div>
     {% if 'activation_success' == state %}
     <div>
         <p>
@@ -31,58 +36,66 @@ body {
         <p>Activation failure,<br>please try again later.</p>
     </div>
     {% else %}
-    <div
-        class="signup_form__row"
-        id="err_msg_row"></div>
-    <div class="signup_form__row">
-        <div class="signup_form__field signup_form__row_sharing_field">
-            <input
-                id="signup_form___first_name"
-                placeholder="First name">
-        </div>
-        <div class="signup_form__field signup_form__row_sharing_field">
-            <input
-                id="signup_form___last_name"
-                placeholder="Last name">
-        </div>
-    </div>
-    <div class="signup_form__row">
-        <div class="signup_form__field">
-            <input
-                id="signup_form___rz_username"
-                placeholder="Rhizi username">
-        </div>
-    </div>
-    <div class="signup_form__row">
-        <div class="signup_form__field">
-            <input
-                id="signup_form___email_address"
-                type="email"
-                placeholder="Email">
-        </div>
-    </div>
-    <div class="signup_form__row">
-        <div class="signup_form__field">
-            <input
-                id="signup_form___password_first"
-                type="password"
-                placeholder="password">
-        </div>
-    </div>
-    <div class="signup_form__row">
-        <div class="signup_form__field">
-            <input
-                id="signup_form___password_second"
-                type="password"
-                placeholder="password repeat">
-        </div>
-    </div>
-    <div id="signup_form___submit_button_row">
+    <div class="login-view-section login-form">
         <div
-            id="signup_form___submit_button"
-            onclick="signup_form___submit();">Submit</div>
+            class="signup_form__row"
+            id="err_msg_row"></div>
+        <div class="signup_form__row">
+            <div class="signup_form__field signup_form__row_sharing_field">
+                <input
+                    id="signup_form___first_name"
+                    placeholder="First name"
+                    class="login-input input-username">
+            </div>
+            <div class="signup_form__field signup_form__row_sharing_field">
+                <input
+                    id="signup_form___last_name"
+                    placeholder="Last name"
+                    class="login-input input-username">
+            </div>
+        </div>
+        <div class="signup_form__row">
+            <div class="signup_form__field">
+                <input
+                    id="signup_form___rz_username"
+                    placeholder="Rhizi username"
+                    class="login-input input-username">
+            </div>
+        </div>
+        <div class="signup_form__row">
+            <div class="signup_form__field">
+                <input
+                    id="signup_form___email_address"
+                    type="email"
+                    placeholder="Email"
+                    class="login-input">
+            </div>
+        </div>
+        <div class="signup_form__row">
+            <div class="signup_form__field">
+                <input
+                    id="signup_form___password_first"
+                    type="password"
+                    placeholder="password"
+                    class="login-input">
+            </div>
+        </div>
+        <div class="signup_form__row">
+            <div class="signup_form__field">
+                <input
+                    id="signup_form___password_second"
+                    type="password"
+                    placeholder="Re-type password"
+                    class="login-input">
+            </div>
+        </div>
+        <div id="signup_form___submit_button_row">
+            <div
+                id="signup_form___submit_button" class="login-form_button signup-button"
+                onclick="signup_form___submit();">Sign Up</div>
+        </div>
+        <div id="signup_form__ajax_response"></div>
+        {% endif %}
     </div>
-    <div id="signup_form__ajax_response"></div>
-    {% endif %}
 </div>
 {% endblock %}

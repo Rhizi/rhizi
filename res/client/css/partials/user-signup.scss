@@ -1,4 +1,4 @@
-#user_signup_form_panel {
+/* #user_signup_form_panel {
 	width: 550px;
 	text-align: center;
 	margin-left: auto;
@@ -8,27 +8,26 @@
 	margin-top: 80px;
 	background: white;
 	box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
-}
+} */
 
-#signup_form___submit_button {
+/* #signup_form___submit_button {
 	background-color: #ee3654;
 	border-radius: 3px;
 	color: #fff;
 	cursor: pointer;
 	float: right;
-	font-weight: bold;
+	font-weight: bold;s
 	margin: 20px;
 	padding: 12px 20px;
 	text-align: center;
 	width: 140px;
-}
+} */
 
 .signup_form__row {
-	overflow: auto;
 	width: 100%;
 }
 
-.signup_form__field {
+/* .signup_form__field {
 	border-radius: 3px;
 	border: 1px solid #4B7CBD;
 	float: left;
@@ -62,6 +61,15 @@
 
 #signup_form___submit_button_row {
 	overflow: auto;
+}  */
+
+.input-username {
+	background-image: url(../img/user-icon.png);
+	background-position-x: 21px;
+}
+
+.signup-button {
+	width: 92%;
 }
 
 #signup_form___submit_button:hover {
