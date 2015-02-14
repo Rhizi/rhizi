@@ -81,12 +81,14 @@
 	margin: 10px;
 }
 
-#err_msg_row {
-	border-radius: 3px;
-	background-color: #413B38;
-	color: #fff;
-	display: none;
-	margin: 10px;
-	padding: 5px;
-	vertical-align: middle;
+#err_msg_row p{
+	margin-top: $one-baseline;
+	width: 92%;
+	padding: $one-baseline;
+	font-size: $h4-size;
+	line-hight: 18px;
+	text-align: center;
+	color: $dark-magenta;
+	background-color: lighten( $magenta, 40% );
+	border: 1px solid $dark-magenta;
 }

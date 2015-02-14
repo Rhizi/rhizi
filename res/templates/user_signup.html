@@ -37,9 +37,6 @@ body {
     </div>
     {% else %}
     <div class="login-view-section login-form">
-        <div
-            class="signup_form__row"
-            id="err_msg_row"></div>
         <div class="signup_form__row">
             <div class="signup_form__field signup_form__row_sharing_field">
                 <input
@@ -88,6 +85,11 @@ body {
                     placeholder="Re-type password"
                     class="login-input">
             </div>
+        </div>
+        <div
+            class="signup_form__row"
+            id="err_msg_row"
+            class="alert alert-error">
         </div>
         <div id="signup_form___submit_button_row">
             <div

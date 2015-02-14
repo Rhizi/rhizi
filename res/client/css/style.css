@@ -960,14 +960,16 @@ p {
   margin-top: 30px;
   margin: 10px; }
 
-#err_msg_row {
-  border-radius: 3px;
-  background-color: #413B38;
-  color: #fff;
-  display: none;
-  margin: 10px;
-  padding: 5px;
-  vertical-align: middle; }
+#err_msg_row p {
+  margin-top: 12px;
+  width: 92%;
+  padding: 12px;
+  font-size: 14px;
+  line-hight: 18px;
+  text-align: center;
+  color: #d10a40;
+  background-color: #fef2f4;
+  border: 1px solid #d10a40; }
 
 .tool_bar_btn {
   border: 1px solid #919095;
