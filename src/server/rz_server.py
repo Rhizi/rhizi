@@ -169,12 +169,6 @@ def init_rest_interface(cfg, flask_webapp):
     def rest_entry(path, f, flask_args={'methods': ['POST']}):
         return (path, f, flask_args)
 
-    def redirect_entry(path, path_to, flask_args):
-        def redirector():
-            return redirect(path_to, code=302)
-        redirector.func_name = 'redirector_%s' % path.replace('/', '_')
-        return (path, redirector, flask_args)
-
     def login_decorator(f):
         """
         security boundary: assert logged-in user before executing REST api call
@@ -205,6 +199,7 @@ def init_rest_interface(cfg, flask_webapp):
         return wrapped_function
 
     rest_entry_set = [
+                      # REST endpoints
                       rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
                       rest_entry('/graph/clone', rz_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
@@ -223,9 +218,7 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/monitor/server-info', rz_server_ctrl.monitor__server_info, {'methods': ['GET']}),
                       rest_entry('/monitor/user/list', rz_server_ctrl.rest__list_users, {'methods': ['GET']}),
 
-                      # redirects
-                      redirect_entry('/', '/index', {'methods': ['GET']}),
-                      redirect_entry('/index.html', '/index', {'methods': ['GET']}),
+                      # redirects - currently handled by reverse proxy
                   ]
 
     # FIXME: but should be rate limited (everything should be, regardless of login)
@@ -247,20 +240,6 @@ def init_rest_interface(cfg, flask_webapp):
         f = route_dec(f)
 
         flask_webapp.f = f  # assign decorated function
-
-    # install 404 handler to redirect to root - which redirects further to login (index if access disabled)
-    @flask_webapp.errorhandler(404)
-    def page_not_found(e):
-        # FIXME: template for 404 which redirects (html, not http)
-        log.debug("failed redirection: request = %s" % request)
-        if request.path == '/':
-            # oops, 500 is the correct thing here - we cannot redirect to '/', will loop
-            # instead use what we know is a correct URL - possibly taking the user to another
-            # site (depends on how it routes SERVER_NAME)
-            return redirect(request.url.split('://', 1)[0] + "://" + cfg.SERVER_NAME + '/')
-        else:
-            return redirect('/')
-
 
 def init_webapp(cfg, kernel, db_ctl=None):
     """
