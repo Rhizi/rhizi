@@ -140,12 +140,15 @@ def index():
             log.exception(e)
 
     # establish rz_config template values
-    flask_server_name = current_app.rz_config.SERVER_NAME
-    hostname = flask_server_name
+    client_POV_server_name = request.headers.get('X-Forwarded-Host')  # first probe for reverse proxy headers
+    if None == client_POV_server_name:
+        client_POV_server_name = current_app.rz_config.SERVER_NAME  # [!] actually 'server_name:server_port'
+
+    hostname = client_POV_server_name
     port = 80
-    if ':' in flask_server_name:
-        hostname = flask_server_name.split(':')[0]
-        port = flask_server_name.split(':')[1]
+    if ':' in client_POV_server_name:
+        hostname = client_POV_server_name.split(':')[0]
+        port = client_POV_server_name.split(':')[1]
 
     return render_template('index.html',
                            rz_username=rz_username,
