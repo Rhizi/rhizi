@@ -200,51 +200,8 @@ function GraphView(spec) {
     });
 
     function showNodeInfo(node) {
-        var diffBusUnsubscribe;
-
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
-
-        view.node_info.on_save(function(e, form_data) {
-            graph.update_node(node, form_data, function() {
-                var old_type = node.type,
-                    new_type = form_data.type;
-
-            });
-            view.node_info.hide();
-            return false;
-        });
-
-        diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
-            if (!model_diff.is_attr_diff(diff)) {
-                console.log('node_edit listener for ' + node.id + ': ignoring diff');
-                return;
-            }
-            view.node_info.show(node);
-        });
-        view.node_info.isOpenProperty.skip(1).onValue(function (open) {
-            var ISaidNoMore = false;
-            if (ISaidNoMore) {
-                console.log('MAYDAY MAYDAY why am I here??');
-            }
-            if (!open) {
-                console.log('node_edit listener for ' + node.id + ': shutting down');
-                diffBusUnsubscribe();
-                ISaidNoMore = true;
-                return Bacon.noMore;
-            }
-        })
-
-        view.node_info.on_delete(function() {
-            var topo_diff = model_diff.new_topo_diff({
-                    node_id_set_rm: [node.id]
-                });
-            console.log("closing node info");
-            closed = true;
-            view.node_info.hide();
-            graph.commit_and_tx_diff__topo(topo_diff);
-        });
-
-        view.node_info.show(node);
+        view.node_info.show(graph, node)
     }
 
     function dragstarted(d) {

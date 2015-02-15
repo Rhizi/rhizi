@@ -1,10 +1,11 @@
-define(['jquery', 'jquery-ui', 'view/helpers', 'view/internal'],
-function($, _unused_jquery_ui,  view_helpers, internal) {
+define(['jquery', 'jquery-ui', 'util', 'view/helpers', 'view/internal', 'model/diff'],
+function($, _unused_jquery_ui,  util,   view_helpers, internal,          model_diff) {
 
 var d = null,
-    save_callback = function() {},
-    delete_callback = function() {},
-    keyup_callback = function() {};
+    msg_node = $('.info-card-message'),
+    node,
+    setup_done = false;
+
 
 function clean_url(candidate_url)
 {
@@ -40,20 +41,45 @@ function textarea_resize(text, max)
     text.style.height = height + 'px';
 }
 
-$('#edit-node-dialog__delete').click(function(e) {
-    e.preventDefault();
-    return delete_callback(e, _get_form_data());
-});
+function setup_click_handlers(graph)
+{
+    if (setup_done) {
+        return;
+    }
+    setup_done = true;
+    $('#edit-node-dialog__delete').on('click', function (e) {
+        e.preventDefault();
+        hide();
+        var topo_diff = model_diff.new_topo_diff({
+                node_id_set_rm: [node.id]
+            });
+        graph.commit_and_tx_diff__topo(topo_diff);
+        });
+    $('#edit-node-dialog__save').on('click', function (e) {
+        e.preventDefault();
+        hide();
+        graph.update_node(node, _get_form_data());
+    });
+    // re-open dialog on node updates while it is open
+    diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
+        if (model_diff.is_topo_diff(diff) && _.contains(diff.node_id_set_rm, node.id)) {
+            warning('node has been deleted');
+            return;
+        }
+        if (!model_diff.is_attr_diff(diff) || _.contains(_.keys(mode_diff.id_to_node_map), node.id)) {
+            warning('node has been changed');
+            return;
+        }
+        show(graph, node);
+    });
+}
 
-$('#edit-node-dialog__save').click(function(e) {
-    e.preventDefault();
-    return save_callback(e, _get_form_data());
-});
-$('.info').keyup(function(e) {
-    return keyup_callback(e, _get_form_data());
-});
+function warning(string)
+{
+    msg_node.val(string);
+}
 
-function show(d) {
+function show(graph, d) {
     var info = $('.info'),
         f = false,
         t = true,
@@ -67,6 +93,11 @@ function show(d) {
         fields = ["#status", "#startdate", "#enddate", "#description", "#url"],
         flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
         i;
+
+    util.assert(graph.find_node__by_id(d.id) != null);
+    node = d;
+
+    setup_click_handlers(graph);
 
     internal.edit_tab.show('node');
 
@@ -107,28 +138,14 @@ function show(d) {
 }
 
 function hide() {
+    node_id = null;
     internal.edit_tab.hide();
-}
-
-function on_save(f) {
-    save_callback = f;
-}
-
-function on_delete(f) {
-    delete_callback = f;
-}
-
-function on_keyup(f) {
-    keyup_callback = f;
 }
 
 return {
     show: show,
     hide: hide,
     isOpenProperty: internal.edit_tab.isOpenProperty,
-    on_save: on_save,
-    on_delete: on_delete,
-    on_keyup: on_keyup,
 };
 
 });
