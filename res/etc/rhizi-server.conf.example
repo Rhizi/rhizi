@@ -1,18 +1,53 @@
-# Copy this to rhizi-server.conf
-# This file is in the repository and not suitable for changes (i.e. keeping SECRET_KEY)
+# -----------------------------------------------------------------------------
+# Sample Rhizi configuration - copy this to rhizi-server.conf
+#
+
+# -----------------------------------------------------------------------------
+# General
+#
+development_mode = True
+root_path = ./deploy-local
+static_url_path = /static
+
+# -----------------------------------------------------------------------------
+# Network
+#
 listen_address = 127.0.0.1
 listen_port = 8080
-development_mode = True
+
+# -----------------------------------------------------------------------------
+# Data
+#
 neo4j_url = http://127.0.0.1:7474
+
+# -----------------------------------------------------------------------------
+# Logging
+#
 log_path = rhizi-server.log
-access_control = False
-user_db_path = ./user_db.db
 
+# -----------------------------------------------------------------------------
+# Flask Configuration
+#    - SERVER_NAME: if adding ':port', this should match listen_port
+#
 SERVER_NAME = rhizi.local:8080
-DEBUG = True
+SECRET_KEY = notverysecretbutpeppyyaya
 
-# Mail settings
+# use with HTTPS: SESSION_COOKIE_SECURE = True
+
+# -----------------------------------------------------------------------------
+# Mail
+#
+mail_hostname = 127.0.0.1
 mail_default_sender = rhizi@localhost
 feedback_recipient = feedback@localhost
 
-SECRET_KEY = notverysecretbutpeppyyaya
+# -----------------------------------------------------------------------------
+# Security
+#
+access_control = False
+user_db_path = ./deploy-local/etc/user_db.db
+
+# -----------------------------------------------------------------------------
+# Other
+#
+DEBUG = True
