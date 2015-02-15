@@ -139,9 +139,15 @@ def index():
             # for which the user would at least be known to the user_db
             log.exception(e)
 
-    hostname = current_app.rz_config.SERVER_NAME
-    port = current_app.rz_config.listen_port
-    if ':' in hostname:
-        hostname = hostname.split(':')[0]  # split off port
+    # establish rz_config template values
+    flask_server_name = current_app.rz_config.SERVER_NAME
+    hostname = flask_server_name
+    port = 80
+    if ':' in flask_server_name:
+        hostname = flask_server_name.split(':')[0]
+        port = flask_server_name.split(':')[1]
 
-    return render_template('index.html', rz_username=rz_username, hostname=hostname, port=port)
+    return render_template('index.html',
+                           rz_username=rz_username,
+                           rz_config__hostname=hostname,
+                           rz_config__port=port)
