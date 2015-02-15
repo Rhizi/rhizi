@@ -139,8 +139,8 @@ class User_DB(object):
         return role in u.role_set
 
     def validate_login(self, email_address, pw_hash):
-        _, u = self.__lookup_user__by_email_address(email_address)
-        existing_pw_hash = u.pw_hash
+        _, u_account = self.__lookup_user__by_email_address(email_address)
+        existing_pw_hash = u_account.pw_hash
 
         assert None != existing_pw_hash, 'missing pw_hash for existing user'
 
