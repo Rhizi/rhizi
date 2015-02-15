@@ -142,7 +142,8 @@ def index():
     # establish rz_config template values
     client_POV_server_name = request.headers.get('X-Forwarded-Host')  # first probe for reverse proxy headers
     if None == client_POV_server_name:
-        client_POV_server_name = current_app.rz_config.SERVER_NAME  # [!] actually 'server_name:server_port'
+        client_POV_server_name = request.headers.get('Host')  # otherwise use Host: header
+    assert None != client_POV_server_name, 'failed to establish hostname, unable to construct rz_config'
 
     hostname = client_POV_server_name
     port = 80
