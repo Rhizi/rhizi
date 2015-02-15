@@ -59,8 +59,8 @@
 }
 
 .ui-datepicker {
-    background-color: rgb(17,17,17);
-	background-color: rgba(17,17,17,0.9);
+    background-color: rgb(255,255,255);
+	background-color: rgba(255,255,255,0.9);
     width: 217px;
     height: auto;
     margin: 5px auto 0;
