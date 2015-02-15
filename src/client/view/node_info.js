@@ -101,8 +101,8 @@ function show(d) {
     $('#editstatus').val(d.status);
 
     if (d.type === "third-internship-proposal") {
-      $('#editstartdate').val(d.start);
-      $('#editenddate').val(d.end);
+      $('#editstartdate').val(d.startdate);
+      $('#editenddate').val(d.enddate);
     }
 }
 
