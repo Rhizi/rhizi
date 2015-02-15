@@ -34,6 +34,7 @@ class Config(object):
     
         listen_address
         listen_port
+        log_level: upper/lower case log level as specified by the logging module
         neo4j_url
         root_path
     """
@@ -51,6 +52,7 @@ class Config(object):
         cfg['development_mode'] = False
         cfg['listen_address'] = '127.0.0.1'
         cfg['listen_port'] = 8080
+        cfg['log_level'] = 'INFO'
         cfg['root_path'] = os.getcwd()
         cfg['static_url_path'] = '/static'
         cfg['user_db_path'] = os.path.join(cfg['config_dir'], 'user_db.db')
@@ -153,7 +155,11 @@ def init_log(cfg):
     init log file, location derived from configuration
     """
     log = logging.getLogger('rhizi')
-    log.setLevel(logging.DEBUG)
+
+    log_level = logging._levelNames.get(cfg.log_level.upper())
+    assert None != log_level, 'failed to determine log level'
+
+    log.setLevel(log_level)
     log_handler_c = logging.StreamHandler()
     log_handler_f = logging.FileHandler(cfg.log_path)
 
