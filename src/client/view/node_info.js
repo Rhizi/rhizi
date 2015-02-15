@@ -3,6 +3,7 @@ function($, _unused_jquery_ui,  util,   view_helpers, internal,          model_d
 
 var d = null,
     msg_node = $('.info-card-message'),
+    graph,
     node,
     setup_done = false;
 
@@ -28,6 +29,11 @@ function _get_form_data() {
         enddate: $("#editenddate").val(),
         description: $("#editdescription").val(),
     };
+}
+
+function commit()
+{
+    graph.update_node(node, _get_form_data());
 }
 
 function textarea_resize(text, max)
@@ -58,7 +64,7 @@ function setup_click_handlers(graph)
     $('#edit-node-dialog__save').on('click', function (e) {
         e.preventDefault();
         hide();
-        graph.update_node(node, _get_form_data());
+        commit();
     });
     // re-open dialog on node updates while it is open
     diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
@@ -76,7 +82,7 @@ function setup_click_handlers(graph)
 
 function warning(string)
 {
-    msg_node.val(string);
+    msg_node.text(string);
 }
 
 function show(graph, d) {
@@ -96,6 +102,7 @@ function show(graph, d) {
 
     util.assert(graph.find_node__by_id(d.id) != null);
     node = d;
+    graph = graph;
 
     setup_click_handlers(graph);
 
