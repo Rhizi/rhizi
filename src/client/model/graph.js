@@ -552,20 +552,26 @@ function Graph(spec) {
         var merge_node = find_node__by_id(merge_node_id);
         var topo_diff;
         util.assert(merge_node != null);
-        var links = _.flatten(_.map(merged, function (node_id) {
-            var src_links = find_link__by_src_id(node_id).map(function (src_link) {
+        var added_links = _.flatten(_.map(merged, function (node_id) {
+            var src_links = find_link__by_src_id(node_id)
+                .filter(function (src_link) { return src_link.__dst.id !== merge_node_id; })
+                .map(function (src_link) {
                 return model_core.create_link__set_random_id(merge_node, src_link.__dst, {
                     name: src_link.name,
                 });
             });
-            var dst_links = find_link__by_dst_id(node_id).map(function (dst_link) {
+            var dst_links = find_link__by_dst_id(node_id)
+                .filter(function (dst_link) { return dst_link.__src.id !== merge_node_id; })
+                .map(function (dst_link) {
                 return model_core.create_link__set_random_id(dst_link.__src, merge_node, {
                     name: dst_link.name,
                 });
             });
             return _.union(src_links, dst_links);
         }));
-        topo_diff = model_diff.new_topo_diff({link_set_add: links, node_id_set_rm: merged});
+        topo_diff = model_diff.new_topo_diff({
+            link_set_add: added_links,
+            node_id_set_rm: merged});
         this.commit_and_tx_diff__topo(topo_diff);
     }
 
