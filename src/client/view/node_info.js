@@ -58,10 +58,10 @@ function setup_change_handlers()
     disable_change_handlers();
     // auto save style handlers
     var streams = _.map(_.values(form), function (field) {
-        return field.asEventStream('change');
+        return field.asEventStream('change keyup');
     });
     var single = _.reduce(streams, function (stream_a, stream_b) { return stream_a.merge(stream_b); });
-    change_handlers = [single.debounce(100).onValue(function () {
+    change_handlers = [single.debounce(500).onValue(function () {
         commit();
     })];
 }
