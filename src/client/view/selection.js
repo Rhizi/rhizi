@@ -80,8 +80,7 @@ function updateSelectedNodesBus(new_selected_nodes)
 function byVisitors(node_selector, link_selector) {
     var new_selected_nodes = get_main_graph().find__by_visitors(node_selector, link_selector);
 
-    clear();
-    connectedComponent(new_selected_nodes);
+    inner_update(new_selected_nodes);
 }
 
 function connectedComponent(nodes) {
