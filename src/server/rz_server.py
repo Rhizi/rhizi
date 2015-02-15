@@ -253,6 +253,7 @@ def init_webapp(cfg, kernel, db_ctl=None):
        - call init_rest_interface()
     """
     root_path = cfg.root_path
+    assert os.path.exists(root_path), "root path doesn't exist: %s" % root_path
 
     webapp = FlaskExt(__name__,
                       static_folder='static',
