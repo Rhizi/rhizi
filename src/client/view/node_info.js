@@ -15,7 +15,8 @@ var d = null,
         startdate: info.find("#editstartdate"),
         enddate: info.find("#editenddate"),
         description: info.find("#editdescription"),
-    };
+    },
+    change_handlers = [];
 
 
 function clean_url(candidate_url)
@@ -52,8 +53,28 @@ function textarea_resize(text, max)
     text.style.height = height + 'px';
 }
 
-function setup_click_handlers(graph)
+function setup_change_handlers()
 {
+    disable_change_handlers();
+    // auto save style handlers
+    var streams = _.map(_.values(form), function (field) {
+        return field.asEventStream('change');
+    });
+    var single = _.reduce(streams, function (stream_a, stream_b) { return stream_a.merge(stream_b); });
+    change_handlers = [single.debounce(100).onValue(function () {
+        commit();
+    })];
+}
+
+function disable_change_handlers()
+{
+    _.each(change_handlers, function (unsub) { unsub(); });
+    change_handlers = [];
+}
+
+function setup_click_handlers()
+{
+    setup_change_handlers();
     if (setup_done) {
         return;
     }
@@ -83,9 +104,6 @@ function setup_click_handlers(graph)
         }
         show(graph, node);
     });
-
-    // auto save style handlers
-    //info.
 }
 
 function warning(string)
@@ -111,7 +129,7 @@ function show(_graph, d) {
     node = d;
     util.assert(graph.find_node__by_id(d.id) != null);
 
-    setup_click_handlers(graph);
+    setup_click_handlers();
 
     internal.edit_tab.show('node');
 
