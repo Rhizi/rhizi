@@ -281,8 +281,12 @@ def init_config(cfg_dir):
 def init_user_db():
     global user_db
 
-    user_db = User_DB(db_path=cfg.user_db_path)
-    user_db.init(mode='c')  # dev default: create DB
+    try:
+        user_db = User_DB(db_path=cfg.user_db_path)
+        user_db.init(mode='c')  # dev default: create DB
+    except Exception as e:
+        log.exception('failed to init user_db, configured user_db path: %s' % (cfg.user_db_path))
+        raise e
 
     log.info('user DB initialized: path: %s' % (cfg.user_db_path))
     return user_db
