@@ -73,7 +73,7 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
 
         console.log('ws: rx: ws_diff_merge__topo, committing wire-adapted topo_diff:', topo_diff);
 
-        rz_mesh_graph_ref.commit_diff__topo(topo_diff_spec);
+        rz_mesh_graph_ref.commit_diff__topo(model_diff.new_topo_diff(topo_diff_spec));
     }
 
     /**
