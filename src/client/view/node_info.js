@@ -8,6 +8,9 @@ var d = null,
 
 function clean_url(candidate_url)
 {
+    if (candidate_url.length == 0) {
+        return '';
+    }
     if (candidate_url.search('://') != -1) {
         return candidate_url;
     }
