@@ -6,11 +6,19 @@ var d = null,
     delete_callback = function() {},
     keyup_callback = function() {};
 
+function clean_url(candidate_url)
+{
+    if (candidate_url.search('://') != -1) {
+        return candidate_url;
+    }
+    return 'https://' + candidate_url;
+}
+
 function _get_form_data() {
     return {
         name: $('.info #editformname').val(),
         type: $('.info #edittype').val(),
-        url: $('.info #editurl').val(),
+        url: clean_url($('.info #editurl').val()),
         status: $('.info #editstatus').val(),
         startdate: $("#editstartdate").val(),
         enddate: $("#editenddate").val(),
