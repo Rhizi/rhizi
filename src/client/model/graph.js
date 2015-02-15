@@ -410,7 +410,7 @@ function Graph(spec) {
         rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     }
 
-    this.update_node = function(node, new_node_spec, on_success, on_error) {
+    this.update_node = function(node, new_node_spec) {
         util.assert(node instanceof model_core.Node);
 
         // TODO - fake api for client only (debug, demo, ui work)
@@ -422,10 +422,7 @@ function Graph(spec) {
              */
             var n_eq_name = find_node__by_name(new_node_spec.name);
             if (null !== n_eq_name && n_eq_name !== node) {
-                // delete colliding node on rename
-                console.warn('update_node: name collision blocked due to node rename');
-                undefined != on_error && on_error();
-                return;
+                return nodes__merge([n_eq_name.id, node.id]);
             }
 
             node['name'] = new_node_spec['name']; // [!] may still fail due to server NAK
@@ -451,10 +448,6 @@ function Graph(spec) {
                 delete node[key];
             }
 
-            // TODO: handle NAK: add problem emblem to node
-            if (on_success !== undefined) {
-                on_success();
-            }
             diffBus.push(attr_diff);
         };
 
@@ -545,7 +538,7 @@ function Graph(spec) {
         this.commit_and_tx_diff__topo(topo_diff);
     }
 
-    this.nodes__merge = function(node_ids) {
+    var nodes__merge = function(node_ids) {
         util.assert(node_ids.length > 1); // strictly speaking we can also treat 1 as correct usage
         var merged = _.rest(node_ids);
         var merge_node_id = node_ids[0];
@@ -572,8 +565,9 @@ function Graph(spec) {
         topo_diff = model_diff.new_topo_diff({
             link_set_add: added_links,
             node_id_set_rm: merged});
-        this.commit_and_tx_diff__topo(topo_diff);
+        commit_and_tx_diff__topo(topo_diff);
     }
+    this.nodes__merge = nodes__merge;
 
     var _remove_link_set = function(link_id_set) {
         link_id_set.forEach(function (id) {
