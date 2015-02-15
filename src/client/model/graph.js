@@ -1,7 +1,7 @@
 "use strict"
 
-define(['Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history'],
-function (Bacon, consts, util, model_core, model_util, model_diff, rz_api_backend, rz_api_mesh, history) {
+define(['underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history'],
+function (_,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history) {
 
 var debug = false;
 
@@ -545,6 +545,30 @@ function Graph(spec) {
         this.commit_and_tx_diff__topo(topo_diff);
     }
 
+    this.nodes__merge = function(node_ids) {
+        util.assert(node_ids.length > 1); // strictly speaking we can also treat 1 as correct usage
+        var merged = _.rest(node_ids);
+        var merge_node_id = node_ids[0];
+        var merge_node = find_node__by_id(merge_node_id);
+        var topo_diff;
+        util.assert(merge_node != null);
+        var links = _.flatten(_.map(merged, function (node_id) {
+            var src_links = find_link__by_src_id(node_id).map(function (src_link) {
+                return model_core.create_link__set_random_id(merge_node, src_link.__dst, {
+                    name: src_link.name,
+                });
+            });
+            var dst_links = find_link__by_dst_id(node_id).map(function (dst_link) {
+                return model_core.create_link__set_random_id(dst_link.__src, merge_node, {
+                    name: dst_link.name,
+                });
+            });
+            return _.union(src_links, dst_links);
+        }));
+        topo_diff = model_diff.new_topo_diff({link_set_add: links, node_id_set_rm: merged});
+        this.commit_and_tx_diff__topo(topo_diff);
+    }
+
     var _remove_link_set = function(link_id_set) {
         link_id_set.forEach(function (id) {
             var link = id_to_link_map[id];
@@ -645,6 +669,27 @@ function Graph(spec) {
         return id_to_link_map[id] || null;
     }
     this.find_link__by_id = find_link__by_id;
+
+    /**
+     * @param id of source node
+     * @return array of links whose source node is id
+     * FIXME: none O(E) implementation (used by merge)
+     */
+    var find_link__by_src_id = function(src_id) {
+        return _.filter(get_links(), function (link) { return link.__src.id == src_id; });
+    }
+    this.find_link__by_src_id = find_link__by_src_id;
+
+    /**
+     * @param id of destination node
+     * @return array of links whose destination node is id
+     * FIXME: none O(E) implementation (used by merge)
+     */
+    var find_link__by_dst_id = function(dst_id) {
+        return _.filter(get_links(), function (link) { return link.__dst.id == dst_id; });
+    }
+    this.find_link__by_dst_id = find_link__by_dst_id;
+
 
     var find_node__by_name = function(name, recursive) {
         // default to recursion

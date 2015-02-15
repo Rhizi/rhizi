@@ -173,8 +173,11 @@ var update = function(nodes, append)
 
 var setup_merge_button = function(main_graph)
 {
+    var merge_root_selection = function() {
+        main_graph.nodes__merge(_.pluck(root_nodes, 'id'));
+    }
     var merge_btn = $('#btn_merge');
-    merge_btn.asEventStream('click').onValue(main_graph.mergeNodes);
+    merge_btn.asEventStream('click').onValue(merge_root_selection);
     selectionChangedBus.map(function (selection) { return selection.root_nodes.length > 1; })
         .onValue(function (visible) {
             if (visible) {
