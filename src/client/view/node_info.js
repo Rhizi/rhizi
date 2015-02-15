@@ -5,7 +5,17 @@ var d = null,
     msg_node = $('.info-card-message'),
     graph,
     node,
-    setup_done = false;
+    setup_done = false,
+    info = $('.info'),
+    form = {
+        name: info.find('#editformname'),
+        type: info.find('#edittype'),
+        url: info.find('#editurl'),
+        status: info.find('#editstatus'),
+        startdate: info.find("#editstartdate"),
+        enddate: info.find("#editenddate"),
+        description: info.find("#editdescription"),
+    };
 
 
 function clean_url(candidate_url)
@@ -20,15 +30,10 @@ function clean_url(candidate_url)
 }
 
 function _get_form_data() {
-    return {
-        name: $('.info #editformname').val(),
-        type: $('.info #edittype').val(),
-        url: clean_url($('.info #editurl').val()),
-        status: $('.info #editstatus').val(),
-        startdate: $("#editstartdate").val(),
-        enddate: $("#editenddate").val(),
-        description: $("#editdescription").val(),
-    };
+    var ret = _.object(_.keys(form),_.values(form).map(function (x) { return x.val(); }));
+
+    ret.url = clean_url(ret.url);
+    return ret;
 }
 
 function commit()
@@ -72,12 +77,15 @@ function setup_click_handlers(graph)
             warning('node has been deleted');
             return;
         }
-        if (!model_diff.is_attr_diff(diff) || _.contains(_.keys(mode_diff.id_to_node_map), node.id)) {
+        if (!model_diff.is_attr_diff(diff) || _.contains(_.keys(model_diff.id_to_node_map), node.id)) {
             warning('node has been changed');
             return;
         }
         show(graph, node);
     });
+
+    // auto save style handlers
+    //info.
 }
 
 function warning(string)
@@ -85,9 +93,8 @@ function warning(string)
     msg_node.text(string);
 }
 
-function show(graph, d) {
-    var info = $('.info'),
-        f = false,
+function show(_graph, d) {
+    var f = false,
         t = true,
         visible = {
           "third-internship-proposal":  [t, t, t, t, f],
@@ -100,9 +107,9 @@ function show(graph, d) {
         flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
         i;
 
-    util.assert(graph.find_node__by_id(d.id) != null);
+    graph = _graph;
     node = d;
-    graph = graph;
+    util.assert(graph.find_node__by_id(d.id) != null);
 
     setup_click_handlers(graph);
 
