@@ -60,7 +60,7 @@ def activate_user_account(us_req):
 
     existing_account = None
     try:
-        existing_account = user_db.lookup_user__by_email_address(us_req['email_address'])
+        _, existing_account = user_db.lookup_user__by_email_address(us_req['email_address'])
     except Exception as _:
         pass  # thrown if user was not found, expected
 
