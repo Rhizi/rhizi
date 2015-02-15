@@ -312,7 +312,7 @@ if __name__ == "__main__":
         log = init_log(cfg)
 
         cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
-        log.debug('loaded configuration:\n%s' % cfg_indent_str)  # print indented
+        log.info('loaded configuration:\n%s' % cfg_indent_str)  # print indented
         if False == cfg.access_control:
             log.warn('[!] access control disabled, all-granted access set on all URLs')
 
