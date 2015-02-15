@@ -6,8 +6,8 @@
 <script>
 var rz_config = { // set as a global variable
     'rand_id_generator' : 'hash',
-    'rz_server_host': '{{ hostname }}',
-    'rz_server_port': '{{ port }}',
+    'rz_server_host': '{{ rz_config__hostname }}',
+    'rz_server_port': '{{ rz_config__port }}',
     'backend_enabled': true,
     'backend__maintain_ws_connection': true,
     'feedback_url': '/feedback',
