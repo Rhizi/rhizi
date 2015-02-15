@@ -320,7 +320,7 @@ function GraphView(spec) {
                     graph.links_rm([that.link]);
                 });
                 view.edge_info.show(d);
-                selection.update([src, dst]);
+                selection.update([src, dst], d3.event.ctrlKey);
             });
 
         link.attr("class", function(d, i){
@@ -453,7 +453,7 @@ function GraphView(spec) {
                 }
                 if (!temporary) {
                     svgInput.enable(this, d, nodeTextX(d));
-                    selection.update([d]);
+                    selection.update([d], d3.event.ctrlKey);
                     showNodeInfo(graph.find_node__by_id(this.parentNode.id));
                 }
                 d3.event.stopPropagation();
@@ -516,7 +516,7 @@ function GraphView(spec) {
                     return;
                 }
                 d3.event.stopPropagation();
-                selection.update([d]);
+                selection.update([d], d3.event.ctrlKey);
                 if(!temporary) {
                     showNodeInfo(d);
                 }

@@ -1,5 +1,5 @@
-define(['rz_core', 'Bacon'],
-function(rz_core,   Bacon) {
+define(['rz_core', 'Bacon', 'underscore'],
+function(rz_core,   Bacon, _) {
 
 function get_main_graph()
 {
@@ -149,11 +149,12 @@ var inner_update = function(nodes)
     connectedComponent(nodes);
 }
 
-var update = function(nodes) {
-    var set = !arr_compare(nodes, root_nodes);
+var update = function(nodes, append) {
+    var new_nodes = append ? _.union(root_nodes, nodes) : nodes;
+    var not_same = !arr_compare(new_nodes, root_nodes);
 
-    if (set) {
-        inner_update(nodes);
+    if (not_same) {
+        inner_update(new_nodes);
     }
 }
 
