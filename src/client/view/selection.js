@@ -1,5 +1,5 @@
-define(['rz_core', 'Bacon', 'underscore'],
-function(rz_core,   Bacon, _) {
+define(['rz_core', 'Bacon', 'jquery', 'underscore'],
+function(rz_core,   Bacon,   $,        _) {
 
 function Selection() {
 }
