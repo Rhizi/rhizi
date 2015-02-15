@@ -535,6 +535,11 @@ body.debug .debug-ui-right {
   #input-container__graph-input:focus {
     width: 80%; }
 
+#merge-tool {
+  position: absolute;
+  top: 160px;
+  left: 24px; }
+
 #textanalyser.ui-autocomplete-input {
   font-family: "Source_Regular", sans-serif;
   color: #919095; }

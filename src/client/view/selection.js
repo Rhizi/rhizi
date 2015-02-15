@@ -1,6 +1,18 @@
 define(['rz_core', 'Bacon', 'underscore'],
 function(rz_core,   Bacon, _) {
 
+function Selection() {
+}
+
+function new_selection(nodes, root_nodes)
+{
+    var ret = new Selection();
+
+    ret.nodes = nodes;
+    ret.root_nodes = root_nodes;
+    return ret;
+}
+
 function get_main_graph()
 {
     // circular dependency on rz_core, so require.js cannot solve it.
@@ -62,7 +74,7 @@ function updateSelectedNodesBus(new_selected_nodes)
             d[v.id] = v;
             return d;
         }, {});
-    selectionChangedBus.push(selected_nodes);
+    selectionChangedBus.push(new_selection(selected_nodes, root_nodes));
 }
 
 function byVisitors(node_selector, link_selector) {
@@ -149,13 +161,28 @@ var inner_update = function(nodes)
     connectedComponent(nodes);
 }
 
-var update = function(nodes, append) {
+var update = function(nodes, append)
+{
     var new_nodes = append ? _.union(root_nodes, nodes) : nodes;
     var not_same = !arr_compare(new_nodes, root_nodes);
 
     if (not_same) {
         inner_update(new_nodes);
     }
+}
+
+var setup_merge_button = function(main_graph)
+{
+    var merge_btn = $('#btn_merge');
+    merge_btn.asEventStream('click').onValue(main_graph.mergeNodes);
+    selectionChangedBus.map(function (selection) { return selection.root_nodes.length > 1; })
+        .onValue(function (visible) {
+            if (visible) {
+                merge_btn.show();
+            } else {
+                merge_btn.hide();
+            }
+        });
 }
 
 return {
@@ -168,6 +195,8 @@ return {
     node_selected: node_selected,
     link_selected: link_selected,
     selectionChangedBus: selectionChangedBus,
+    setup_merge_button: setup_merge_button,
+
     __get_root_nodes: function() { return root_nodes; },
     __get_selected_nodes: function() { return selected_nodes; },
 };
