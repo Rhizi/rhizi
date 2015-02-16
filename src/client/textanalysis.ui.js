@@ -8,7 +8,8 @@ var text = "", // Last text of sentence
     element = $(element_name),
     element_raw = element[0],
     plus_button = $('#btn_add'),
-    description = consts.description;
+    description = consts.description,
+    input = new Bacon.Bus();
 
 function get_svg__body_position(node_id)
 {
@@ -138,96 +139,107 @@ function changeType(arg) {
     textanalysis.set_type(name, nodetype);
 }
 
-return {
-    analyzeSentence: analyzeSentence,
-    main:function () {
-        if (element.length != 1) {
-            return;
-        }
+var main = function ()
+{
+    if (element.length != 1) {
+        return;
+    }
 
-        analysisCompleter.options.plug(textanalysis.suggestions_options);
+    analysisCompleter.options.plug(textanalysis.suggestions_options);
 
-        var document_keydown = new Bacon.Bus();
-        rz_bus.ui_key.plug(document_keydown);
+    var document_keydown = new Bacon.Bus();
+    rz_bus.ui_key.plug(document_keydown);
 
-        element.keydown(function(e) {
-            var ret = undefined;
+    element.keydown(function(e) {
+        var ret = undefined;
 
-            switch (e.keyCode) {
-            case 13:
-                if (!analysisCompleter.handleEnter()) {
-                    submitNewSentence();
-                } else {
-                    analyzeSentence({
-                        sentence: element.val(),
-                        finalize: false,
-                    });
-                }
-                ret = false;
-                break;
-            case 9: //TAB
-                if (textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart)) {
-                    e.preventDefault();
-                    changeType(e.shiftKey ? "up" : "down");
-                    ret = false;
-                }
-                break;
-            }
-            document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
-            return ret;
-        });
-        element.bind('input selectionchange click', function(e) {
-            analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
-        function submitNewSentence() {
-            text = element.val();
-            element.val("");
-            analyzeSentence({
-                sentence: text,
-                finalize: true,
-                });
-            text = "";
-        }
-
-        // Click is required to prevent the default action - this is a form so that's a post,
-        // and away we go.
-        // The mousedown is required because CSS3 transitions eat some events sometimes. This is
-        // the closest I've come to an explanation:
-        //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
-        plus_button.bind("click mousedown", function(e) {
-            console.dir(e);
-            submitNewSentence();
-            e.preventDefault();
-        });
-
-        var input = new Bacon.Bus();
-        rz_bus.ui_input.plug(input);
-        if ('oninput' in document.documentElement) {
-            element.on('input', function(e) {
-                text = element.val();
+        switch (e.keyCode) {
+        case 13:
+            if (!analysisCompleter.handleEnter()) {
+                submitNewSentence();
+            } else {
                 analyzeSentence({
-                    sentence: text,
+                    sentence: element.val(),
                     finalize: false,
                 });
-                input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
-            });
-        } else {
-            console.log('textanalysis.ui: fallback to polling');
-            window.setInterval(function() {
-                if (element.val() != text) {
-                    if (text.length * 8 > 500) {
-                        element.css('width', text.length * 8 + 20);
-                    }
-                    // text changed
-                    text = element.val();
-                    analyzeSentence(text, false);
-                    suggestionChange = false;
-                }
-            }, 50);
+            }
+            ret = false;
+            break;
+        case 9: //TAB
+            if (textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart)) {
+                e.preventDefault();
+                changeType(e.shiftKey ? "up" : "down");
+                ret = false;
+            }
+            break;
         }
+        document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
+        return ret;
+    });
+    element.bind('input selectionchange click', function(e) {
+        analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    function submitNewSentence() {
+        text = element.val();
+        element.val("");
+        analyzeSentence({
+            sentence: text,
+            finalize: true,
+            });
+        text = "";
+    }
+
+    // Click is required to prevent the default action - this is a form so that's a post,
+    // and away we go.
+    // The mousedown is required because CSS3 transitions eat some events sometimes. This is
+    // the closest I've come to an explanation:
+    //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
+    plus_button.bind("click mousedown", function(e) {
+        console.dir(e);
+        submitNewSentence();
+        e.preventDefault();
+    });
+
+    rz_bus.ui_input.plug(input);
+    if ('oninput' in document.documentElement) {
+        element.on('input', function(e) {
+            analyze_element_text();
+        });
+    } else {
+        console.log('textanalysis.ui: fallback to polling');
+        window.setInterval(function() {
+            analyze_element_text();
+        }, 50);
     }
 };
+
+var analyze_element_text = function()
+{
+    if (element.val() == text) {
+        return;
+    }
+    text = element.val();
+    analyzeSentence({
+        sentence: text,
+        finalize: false,
+    });
+    input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
+    //stretch_input_to_text_size();
+}
+
+function stretch_input_to_text_size()
+{
+    console.log('text.length = ' + text.length);
+    if (text.length * 8 > 500) {
+        element.css('width', text.length * 8 + 20);
+    }
+}
+
+return {
+        analyzeSentence: analyzeSentence,
+        main: main
+       };
 }); // define
