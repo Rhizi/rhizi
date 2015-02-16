@@ -64,6 +64,13 @@ To update the css files you need [sass](http://sass-lang.com/). To rebuild the c
 
  For dev mode(debbuging, manual file load) use `?debug=1` at end of URL: e.g. `file://rhizifolder/html.index?debug=1`
 
+## CSS / SCSS Coding Conventions
+- assume use of modern browsers
+- indent files using 4 space characters
+- use a combination of CSS classes / IDs to draw common/unique styling, eg. <code>class=form-Foo\_input-field id=email-field</code>
+- minimize use of CSS directives, remove directives which have no effect
+- avoid using browser-specific CSS directives when hand-writing CSS code
+
 ## Neo4J DB management
 - to reset the DB:
  $ neo4j-shell -file res/neo4j/reset-db__clean.cypher
