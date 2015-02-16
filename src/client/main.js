@@ -32,8 +32,9 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         }
 
         document.body.onkeyup = function(e) {
-            var key = (e.key || (e.charCode && String.fromCharCode(e.charCode))
-                             || (e.which && String.fromCharCode(e.which))).toLowerCase();
+            var key = ((e.key && String(e.key))
+                       || (e.charCode && String.fromCharCode(e.charCode))
+                       || (e.which && String.fromCharCode(e.which))).toLowerCase();
 
             if (e.altKey && e.ctrlKey && key == 'i') {
                 $('#textanalyser').focus();
