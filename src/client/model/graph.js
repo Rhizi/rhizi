@@ -422,7 +422,11 @@ function Graph(spec) {
              */
             var n_eq_name = find_node__by_name(new_node_spec.name);
             if (null !== n_eq_name && n_eq_name !== node) {
-                return nodes__merge([n_eq_name.id, node.id]);
+                if (window.confirm('really merge ' + node.name + ' into ' + n_eq_name.name + '?')) {
+                    return nodes__merge([n_eq_name.id, node.id]);
+                } else {
+                    return; // do nothing
+                }
             }
 
             node['name'] = new_node_spec['name']; // [!] may still fail due to server NAK
