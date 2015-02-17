@@ -38,7 +38,7 @@
    <property name="targetDeploymentDir" value="deploy-local" />
    <property name="remoteDeployServer" value="rhizi.net" />
    <property name="targetDomain" value="rhizi.net" />
-   <property name="do-client-optimize" value="false" />
+   <property name="doClientOptimize" value="false" />
 
    <tstamp>
       <format property="versionQualifier" pattern="yyyyMMddHHmm" />
@@ -80,7 +80,7 @@
       <copy file="res/etc/rhizi-server.conf.example"
             tofile="res/etc/rhizi-server.conf" />
 
-      <client-optimize if:true="${do-client-optimize}" root="src/client/" build="build.js" />
+      <client-optimize if:true="${doClientOptimize}" root="src/client/" build="build.js" />
 
       <parallel>
          <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
@@ -106,7 +106,7 @@
       <property name="filter_list_str"
                 value="-f '- __pycache__/' -f '- *.pyc'" />
 
-      <client-optimize if:true="${do-client-optimize}" root="src/client/" build="build.js" />
+      <client-optimize if:true="${doClientOptimize}" root="src/client/" build="build.js" />
 
       <!-- -l: traverse bin/ -> ../src-py link -->
       <rsync src="${targetDeploymentDir}/"
