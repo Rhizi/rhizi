@@ -61,7 +61,7 @@
 }
 
 .login-form {
-  width: 70%;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -163,27 +163,33 @@
 }
 
 .login-form_button {
-    cursor: pointer;
-    background-color: $magenta;
-    color: $white;
-    font-size: $h3-size;
-    margin-top: $two-baselines;
-    padding: $one-baseline;
-    width: 100%;
+  cursor: pointer;
+  background-color: $magenta;
+  color: $white;
+  font-size: $h3-size;
+  margin-top: $two-baselines;
+  padding: $one-baseline;
+  width: 100%;
 
-    &:hover {
-      background-color: $dark-magenta;
-    }
+  &:hover {
+    background-color: $dark-magenta;
+  }
+
+  &:focus {
+    background-color: $dark-magenta; 
+  }
 }
 
-.create-account-button {
-  color: $mid-grey;
-  background: none;
-  margin: $one-baseline auto $one-baseline auto;
-  width: 70%;
-  
+#login-page_forgot-password-button {
+  margin-top: $one-baseline;
+}
+
+#login-page_create-account-button {
+  color: $light-grey;
+  background-color: $mid-grey;
+  padding: $one-baseline 0;
+
   &:hover {
-      color: $dark-grey;
-      background: none;
+      background-color: $dark-grey;
   }
 }

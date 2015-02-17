@@ -185,7 +185,7 @@ table {
     clear: both; }
 
 .login-form {
-  width: 70%;
+  width: 80%;
   margin-left: auto;
   margin-right: auto; }
 
@@ -272,15 +272,18 @@ table {
   width: 100%; }
   .login-form_button:hover {
     background-color: #d10a40; }
+  .login-form_button:focus {
+    background-color: #d10a40; }
 
-.create-account-button {
-  color: #919095;
-  background: none;
-  margin: 12px auto 12px auto;
-  width: 70%; }
-  .create-account-button:hover {
-    color: #363636;
-    background: none; }
+#login-page_forgot-password-button {
+  margin-top: 12px; }
+
+#login-page_create-account-button {
+  color: #f5f5fa;
+  background-color: #919095;
+  padding: 12px 0; }
+  #login-page_create-account-button:hover {
+    background-color: #363636; }
 
 .btn-regular {
   cursor: pointer;
