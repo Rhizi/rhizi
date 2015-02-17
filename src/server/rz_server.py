@@ -309,15 +309,28 @@ def shutdown():
     user_db.shutdown()
     log.info('rz_server: shutting down')
 
+class MinimalLog(object):
+    """
+    Minimal logger implementation to serve until init_log completes, which
+    means init_config succeeded as well.
+    """
+    def exception(self, e):
+        print(e)
+    def info(self, msg):
+        print(msg)
+
+log = MinimalLog()
+
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser(description='rhizi-server')
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     args = p.parse_args()
 
-    cfg = init_config(args.config_dir)
-    log = init_log(cfg)
     try:
+        cfg = init_config(args.config_dir)
+        raise Exception("my test")
+        log = init_log(cfg)
         cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
         log.info('loaded configuration:\n%s' % cfg_indent_str)  # print indented
         if False == cfg.access_control:
