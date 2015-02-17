@@ -9,3 +9,5 @@ res/etc/htpasswd
 res/etc/htpasswd-init-file
 rhizi-server.log
 res/etc/rhizi-server.conf
+src/client/main-built.js
+src/client/main-built.js.map

@@ -57,6 +57,9 @@ class Config(object):
         cfg['static_url_path'] = '/static'
         cfg['user_db_path'] = os.path.join(cfg['config_dir'], 'user_db.db')
 
+        # client configuration
+        cfg['optimized_main'] = False
+
         # Mail settings
         cfg['mail_hostname'] = 'localhost'
         cfg['mail_port'] = 25

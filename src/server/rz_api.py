@@ -154,4 +154,5 @@ def index():
     return render_template('index.html',
                            rz_username=rz_username,
                            rz_config__hostname=hostname,
-                           rz_config__port=port)
+                           rz_config__port=port,
+                           rz_config__optimized_main='true' if current_app.rz_config.optimized_main else 'false')

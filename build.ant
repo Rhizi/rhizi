@@ -3,7 +3,7 @@
  Rhizi build targets
 
 -->
-<project name="rhizi-server" default="pkg-deb">
+<project name="rhizi-server" default="pkg-deb" xmlns:if="ant:if">
 
    <macrodef name="rsync">
       <attribute name="src" />
@@ -22,12 +22,23 @@
       </sequential>
    </macrodef>
 
+   <macrodef name="client-optimize">
+      <attribute name="root" />
+      <attribute name="build" />
+      <sequential>
+        <exec dir="@{root}" executable="/usr/bin/r.js" failonerror="true">
+            <arg line="-o @{build}" />
+        </exec>
+      </sequential>
+   </macrodef>
+
    <property name="pkg_name" value="rhizi-server" />
    <property name="pkg_version" value="0.1.0" />
    <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
    <property name="targetDeploymentDir" value="deploy-local" />
    <property name="remoteDeployServer" value="rhizi.net" />
    <property name="targetDomain" value="rhizi.net" />
+   <property name="do-client-optimize" value="false" />
 
    <tstamp>
       <format property="versionQualifier" pattern="yyyyMMddHHmm" />
@@ -69,6 +80,8 @@
       <copy file="res/etc/rhizi-server.conf.example"
             tofile="res/etc/rhizi-server.conf" />
 
+      <client-optimize if:true="${do-client-optimize}" root="src/client/" build="build.js" />
+
       <parallel>
          <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
          <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
@@ -92,6 +105,8 @@
       <property name="rsync_module" value="rhizi.net" />
       <property name="filter_list_str"
                 value="-f '- __pycache__/' -f '- *.pyc'" />
+
+      <client-optimize if:true="${do-client-optimize}" root="src/client/" build="build.js" />
 
       <!-- -l: traverse bin/ -> ../src-py link -->
       <rsync src="${targetDeploymentDir}/"
