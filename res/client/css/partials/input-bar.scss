@@ -17,9 +17,6 @@
   border: 1px solid $mid-grey;
   @include rz-box-sizing-border;
   background: white;
-  transition-property: width;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in;
   width: 100%;
   &:focus {
     border: 1px solid $mid-grey;

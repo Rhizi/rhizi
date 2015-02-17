@@ -516,9 +516,6 @@ body.debug .debug-ui-right {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   background: white;
-  transition-property: width;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in;
   width: 100%; }
   .input-bar:focus {
     border: 1px solid #919095;

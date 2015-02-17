@@ -9,7 +9,9 @@ var text = "", // Last text of sentence
     element_raw = element[0],
     plus_button = $('#btn_add'),
     description = consts.description,
-    input = new Bacon.Bus();
+    input = new Bacon.Bus(),
+    initial_width = element.width(),
+    plus_button_initial_offset = plus_button.offset();
 
 function get_svg__body_position(node_id)
 {
@@ -227,15 +229,15 @@ var analyze_element_text = function()
         finalize: false,
     });
     input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
-    //stretch_input_to_text_size();
+    stretch_input_to_text_size();
 }
 
 function stretch_input_to_text_size()
 {
-    console.log('text.length = ' + text.length);
-    if (text.length * 8 > 500) {
-        element.css('width', text.length * 8 + 20);
-    }
+    var new_width = Math.min(Math.max(initial_width, text.length * 9 + 20), $(window).width() * 0.8);
+
+    element.width(new_width);
+    plus_button.offset({'left': element.offset().left + element.width() - 18});
 }
 
 return {
