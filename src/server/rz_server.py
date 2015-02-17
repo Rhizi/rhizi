@@ -329,7 +329,6 @@ if __name__ == "__main__":
 
     try:
         cfg = init_config(args.config_dir)
-        raise Exception("my test")
         log = init_log(cfg)
         cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
         log.info('loaded configuration:\n%s' % cfg_indent_str)  # print indented
