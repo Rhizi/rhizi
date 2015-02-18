@@ -54,6 +54,12 @@ def filter_expired_requests(us_req_map):
             log.info('user sign-up request expired: %s' % (su_req))
             del us_req_map[su_req_email]
 
+def generate_security_token():
+    """
+    generate a random UUID based string ID
+    """
+    return str(uuid.uuid4()).replace('-', '')
+
 def activate_user_account(us_req):
 
     user_db = current_app.user_db
@@ -171,12 +177,6 @@ def rest__user_signup():
 
         return ret
 
-    def generate_email_confirmation_key():
-        """
-        generate a random UUID based string ID
-        """
-        return str(uuid.uuid4()).replace('-', '')
-
     def get_or_init_usreq_map():
         """
         lazy user signup request map getter
@@ -215,7 +215,7 @@ def rest__user_signup():
             return make_response__json__html(status=200, html_str=html_ok__already_pending)
 
         us_req['submission_date'] = datetime.now()
-        us_req['validation_key'] = generate_email_confirmation_key()
+        us_req['validation_key'] = generate_security_token()
 
         # send activation email
         try:
