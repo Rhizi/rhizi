@@ -11,7 +11,11 @@ var focus = function() {
 function init() {
     search = $('#search');
     search_completer = completer(search, $('#search-suggestion'),
-                                 {triggerStart:' ', triggerEnd:' '});
+                                 {
+                                    triggerStart:' |',
+                                    triggerEnd:' |',
+                                    matchStartOfString: true,
+                                 });
 
     search_completer.options.plug(textanalysis.suggestions_options);
     search.on('input', search_on_submit);
@@ -21,7 +25,7 @@ function init() {
             search_on_submit(e);
             return false;
         }
-        return undefined;
+        return true;
     });
 
     function search_on_submit() {
