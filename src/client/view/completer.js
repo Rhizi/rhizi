@@ -234,7 +234,7 @@ var completer = (function (input_element, dropdown, base_config) {
     }
     function _applySuggestion(str) {
         var cur = input_element.val(),
-            start = cur.slice(0, completion_start) + str + config.appendSpaceOnEnter ? ' ' : '';
+            start = cur.slice(0, completion_start) + str + (config.appendSpaceOnEnter ? ' ' : '');
         input_element.val(start + cur.slice(completion_end));
         setCaret(input_element, start.length);
         oninput('', 0);
