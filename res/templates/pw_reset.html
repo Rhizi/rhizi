@@ -1,0 +1,106 @@
+{% extends "base.html" %} {% block title %}Rhizi - Password Reset{% endblock %}
+{% block head %} {{ super() }}
+<script src="/static/lib/jquery.js" type="text/javascript"></script>
+<script src="/static/lib/require.js" type="text/javascript"></script>
+<script>
+var lib_path = '/static/lib/';
+var config = {
+        baseUrl: '/static/',
+        paths: {
+            jquery: lib_path + 'jquery',
+            pw_reset__common: '/static/pw_reset',
+            pw_reset__submit_new_pw: '/static/pw_reset',
+            pw_reset__submit_rst_req: '/static/pw_reset'
+        }
+    }
+require.config(config);
+{% if 'step_0__reset_request_submission' == pw_rst_step %}
+require(['pw_reset__submit_rst_req'], function(pw_reset) {});
+{% endif %}
+{% if 'step_1__collect_new_password' == pw_rst_step %}
+require(['pw_reset__submit_new_pw'], function(pw_reset) {});
+{% endif %}
+</script>
+
+<style type="text/css">
+html {
+  background: url(/static/img/login-background.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+body {
+  background-color: transparent;
+}
+</style>
+{% endblock %} {% block content %}
+<div class="cmn-form">
+    <div class="cmn-form-section">
+        <div class="cmn-form-logo"></div>
+        <div class="cmn-form-title">Password Reset</div>
+    </div>
+    {% if 'step_0__reset_request_submission' == pw_rst_step %}
+    <div class="cmn-form-section">
+        <div class="cmn-form-row" id="cmn-form-row--instruction-line" >
+            <p>To have a password renewal link sent to you,<br>please insert the email addressed associated with your Rhizi account.</p>
+        </div>
+        <div class="cmn-form-row">
+            <input
+                id="pw_reset_form__email_address"
+                type="email"
+                placeholder="Email"
+                class="cmn-form-input">
+        </div>
+        <div class="cmn-form-row"
+             id="msg_row">
+        </div>
+    </div>
+    <div class="cmn-form-section">
+        <div class="cmn-form__submit-btn"
+             id="pw_reset_form__submit_button"
+             onclick="pw_reset_form__submit();">Submit</div>
+    </div>
+    {% elif 'step_1__collect_new_password' == pw_rst_step %}
+    <div class="cmn-form-section">
+        <div class="cmn-form-row" id="cmn-form-row--instruction-line" >
+            <p>Please set a new account password:</p>
+        </div>
+        <div class="cmn-form-row">
+            <input
+                id="pw_reset_form__password_first"
+                type="password"
+                placeholder="Password"
+                class="cmn-form-input">
+        </div>
+        <div class="cmn-form-row">
+            <input
+                id="pw_reset_form__password_second"
+                type="password"
+                placeholder="Re-type password"
+                class="cmn-form-input">
+        </div>
+        <div
+            class="cmn-form-row"
+            id="msg_row">
+        </div>
+        <div id="pw_reset_form__submit_button_row">
+            <div class="cmn-form__submit-btn"
+                 id="pw_reset_form__submit_button"
+                 onclick="pw_reset_form__submit();">Submit</div>
+        </div>
+    </div>
+    {% elif 'general_error' == pw_rst_step %}
+    <div class="cmn-form-section">
+        <div class="cmn-form-row">
+            <p>An error has occurred, please try again later.</p>
+        </div>
+    </div>
+    {% endif %}
+    <div class="cmn-form-section">
+        <div class="cmn-form-row cmn-form__ajax-response">
+            <div id="pw_reset_form__ajax_response"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
