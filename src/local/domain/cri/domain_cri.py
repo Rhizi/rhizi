@@ -4,7 +4,7 @@ class DBO_random_data_generation__domain__CRI(DB_op):
 
     def __init__(self, lim_n=50,
                        lim_r=10000,
-                       prob_link_create=0.05):
+                       prob_link_create=0.03):
         """
         generate random data: CRI domain: Person x Skill
         """
