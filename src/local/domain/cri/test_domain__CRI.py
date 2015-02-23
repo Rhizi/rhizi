@@ -32,7 +32,7 @@ class Test_Domain_CRI(unittest.TestCase):
 
         q_arr = ['match (n: Person)',
                  'with n',
-                 'match (n)-[r:Knows]->(m:Skill)',
+                 'match (n)-[r:Novice|Intermediate|Expert]->(m:Skill)',  # [!] expect link type to be proficiency level
                  'return n.name, collect({skill_name: m.name, skill_level: r.proficiency})'
                  ]
         op = DBO_cypher_query(q_arr)

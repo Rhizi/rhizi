@@ -132,7 +132,7 @@ class DBO_random_data_generation__domain__CRI(DB_op):
                      'where rand() < %.2f' % (prob_link_create),
                      'create (n)-[r:%s' % (skill_level),
                      '{id: \'test-id_\' + toString(%d + toInt(%d * rand())),' % (min_id, lim_r * 100000),  # aim for low id collision probability,
-                     'proficiency: \'%s\'}' % (len(skill_level) - 1),
+                     'proficiency: \'%s\'}' % (skill_level),
                      ']->(m)',
                      'return collect(r.id)',
                      ]
