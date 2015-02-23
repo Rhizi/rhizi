@@ -397,12 +397,12 @@ var textAnalyser = function (spec) {
     //EXTERNAL AND CONNECTION CHECKING
     function and_connect(node) {
         var verb;
-        for(var x=0;x<link_names.length;x++){
-            if(link_names[x])if(link_names[x].replace(/ /g,"")!=="and"){
+        for (var x = 0 ; x < link_names.length ; x++) {
+            if (link_names[x] && link_names[x].replace(/ /g,"") !== "and") {
                 verb = link_names[x];
-                for(var y=0; y<x ;y++){
+                for(var y = 0 ; y < x ; y++) {
                     __addLink(node_names[y], node, verb);
-                    for(var z=x; z<node_names.length ;z++){
+                    for(var z = x ; z < node_names.length ; z++) {
                         __addLink(node_names[y],
                                   node_names[z], verb);
                     }
