@@ -74,6 +74,15 @@ define(['jquery'], function($) {
         });
     }
 
+    function input_validation__password(password_first, password_second) {
+        if (password_first != password_second) {
+            throw { message: 'passwords do not match' }
+        }
+        if (password_first.length < 8) {
+            throw { message: 'password too short - must be at least 8 charachters long' }
+        }
+    }
+
     return {
         assert: assert,
         set_from_array: set_from_array,
@@ -82,5 +91,6 @@ define(['jquery'], function($) {
         array_diff: array_diff,
         getParameterByName: getParameterByName,
         form_common__rest_post: form_common__rest_post,
+        input_validation__password: input_validation__password,
     };
 });
