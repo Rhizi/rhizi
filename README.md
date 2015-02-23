@@ -67,6 +67,7 @@ To update the css files you need [sass](http://sass-lang.com/). To rebuild the c
 ## CSS / SCSS Coding Conventions
 - assume use of modern browsers
 - indent files using 4 space characters
+- apply alphabetical ordering whenever possible: selectors, directives, etc.
 - use a combination of CSS classes / IDs to draw common/unique styling, eg. <code>class=form-Foo\_input-field id=email-field</code>
 - minimize use of CSS directives, remove directives which have no effect
 - avoid using browser-specific CSS directives when hand-writing CSS code
