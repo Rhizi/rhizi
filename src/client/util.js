@@ -1,6 +1,6 @@
 "use strict"
 
-define(function() {
+define(['jquery'], function($) {
 
     function assert(condition, message) {
         if (false == condition) {
@@ -61,6 +61,19 @@ define(function() {
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    function form_common__rest_post(rest_path, data, success, error) {
+        $.ajax({ type : "POST",
+                 url : rest_path,
+                 async : false,
+                 cache : false,
+                 data : JSON.stringify(data),
+                 dataType : 'json',
+                 contentType : "application/json; charset=utf-8",
+                 success : success,
+                 error: error
+        });
+    }
+
     return {
         assert: assert,
         set_from_array: set_from_array,
@@ -68,5 +81,6 @@ define(function() {
         set_diff: set_diff,
         array_diff: array_diff,
         getParameterByName: getParameterByName,
+        form_common__rest_post: form_common__rest_post,
     };
 });
