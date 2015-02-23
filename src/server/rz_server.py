@@ -221,6 +221,7 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/login', rz_user.rest__login, {'methods': ['GET', 'POST']}),
                       rest_entry('/logout', rz_user.rest__logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
+                      rest_entry('/pw-reset', rz_user.rest__pw_reset, {'methods': ['GET', 'POST']}),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
 
                       # server administration: access restricted to localhost
