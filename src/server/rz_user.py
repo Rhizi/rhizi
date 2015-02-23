@@ -47,13 +47,26 @@ class User_Signup_Request(dict):
         dt = self['submission_date'] - date_now
         return dt > dt_6h
 
+class User_Pw_Reset_Request(object):  # extend from object as these won't be serialized
 def filter_expired_requests(us_req_map):
 
+    def __init__(self, u_account, pw_reset_token):
+        self.u_account = u_account
+        self.submission_date = None
+        self.pw_reset_tok = pw_reset_token
     for su_req_email, su_req in us_req_map.items():
         if su_req.has_expired():
             log.info('user sign-up request expired: %s' % (su_req))
             del us_req_map[su_req_email]
 
+    def __str__(self):
+        return 'email_address: %s' % (self.email_address)
+
+    def has_expired(self):
+        date_now = datetime.now()
+        dt_6h = timedelta(hours=6)
+        dt = self.submission_date - date_now
+        return dt > dt_6h
 def generate_security_token():
     """
     generate a random UUID based string ID
