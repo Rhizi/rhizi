@@ -48,16 +48,11 @@ class User_Signup_Request(dict):
         return dt > dt_6h
 
 class User_Pw_Reset_Request(object):  # extend from object as these won't be serialized
-def filter_expired_requests(us_req_map):
 
     def __init__(self, u_account, pw_reset_token):
         self.u_account = u_account
         self.submission_date = None
         self.pw_reset_tok = pw_reset_token
-    for su_req_email, su_req in us_req_map.items():
-        if su_req.has_expired():
-            log.info('user sign-up request expired: %s' % (su_req))
-            del us_req_map[su_req_email]
 
     def __str__(self):
         return 'email_address: %s' % (self.email_address)
@@ -67,11 +62,6 @@ def filter_expired_requests(us_req_map):
         dt_6h = timedelta(hours=6)
         dt = self.submission_date - date_now
         return dt > dt_6h
-def generate_security_token():
-    """
-    generate a random UUID based string ID
-    """
-    return str(uuid.uuid4()).replace('-', '')
 
 def activate_user_account(us_req):
 
@@ -86,10 +76,8 @@ def activate_user_account(us_req):
     if None != existing_account:
         raise Exception('account activation code reused: existing-account: %s' % (existing_account.email_address))
 
-    # calc pw hash
     pw_plaintxt = us_req['pw_plaintxt']
-    salt = current_app.rz_config.secret_key
-    pw_hash = hash_pw(str(pw_plaintxt), salt)
+    pw_hash = calc_user_pw_hash(pw_plaintxt)
 
     u_account = User_Account(first_name=us_req['first_name'],
                               last_name=us_req['last_name'],
@@ -101,6 +89,34 @@ def activate_user_account(us_req):
     user_db.user_add(u_account)
 
     log.info('user account activated: email: %s, rz_username: %s' % (us_req['email_address'], us_req['rz_username']))
+
+def calc_user_pw_hash(plaintxt_pw):
+    """
+    calc password hash
+    """
+    salt = current_app.rz_config.secret_key
+    pw_hash = hash_pw(str(plaintxt_pw), salt)
+    return pw_hash
+
+def filter_expired__singup_requests(us_req_map):
+
+    for su_req_email, su_req in us_req_map.items():
+        if su_req.has_expired():
+            log.info('user sign-up request expired: %s' % (su_req))
+            del us_req_map[su_req_email]
+
+def filter_expired__pw_rst_requests(pw_rst_req_map):
+
+    for pw_rst_tok, pw_rst_req in pw_rst_req_map.items():
+        if pw_rst_req.has_expired():
+            log.info('user pw reset request expired: %s' % (pw_rst_req))
+            del pw_rst_req_map[pw_rst_tok]
+
+def generate_security_token():
+    """
+    generate a random UUID based string ID
+    """
+    return str(uuid.uuid4()).replace('-', '')
 
 def rest__login():
 
@@ -211,7 +227,7 @@ def rest__user_signup():
 
     # use incoming request as house keeping trigger
     us_req_map = get_or_init_usreq_map()
-    filter_expired_requests(us_req_map)
+    filter_expired__singup_requests(us_req_map)
 
     if request.method == 'POST':
         # FIXME: add captcha
