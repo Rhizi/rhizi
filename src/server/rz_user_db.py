@@ -3,6 +3,7 @@ import logging
 import shelve
 import sys
 
+import rz_user
 
 class User_Account(object):
 
@@ -121,6 +122,13 @@ class User_DB(object):
         uid = str(len(self.persistent_data_store) + 1)
         self.persistent_data_store[uid] = u_account
         return uid
+
+    def update_user_password(self, uid, new_plaintxt_pw):
+        u_account = self.persistent_data_store[uid]
+        old_pw_hash = u_account.pw_hash
+        u_account.pw_hash = rz_user.calc_user_pw_hash(new_plaintxt_pw)
+        self.persistent_data_store[uid] = u_account  # write new record
+        return old_pw_hash
 
     def user_rm(self, uid):
         del self.persistent_data_store[uid]
