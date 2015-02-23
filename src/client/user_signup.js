@@ -1,20 +1,12 @@
 "use strict"
 
-function signup_form___submit() {
+function signup_form__submit() {
 
     function validate_data(data) {
         var err_msg_row = $('#err_msg_row'); // reset
         err_msg_row.children().remove();
-        if (data.password_first != data.password_second) {
-            err_msg_row.append($('<p>passwords do not match</p>'));
-            err_msg_row.css('display', 'block');
-            return false;
-        }
-        if (data.password_first.length < 8) {
-            err_msg_row.append($('<p>password too short - must be at least 8 charachters long</p>'));
-            err_msg_row.css('display', 'block');
-            return false;
-        }
+
+        // FIXME call util.validate...
 
         // TODO validate email
 
@@ -23,12 +15,12 @@ function signup_form___submit() {
     }
 
     var form_data = {
-        first_name : $('#signup_form___first_name').val(),
-        last_name : $('#signup_form___last_name').val(),
-        rz_username : $('#signup_form___rz_username').val(),
-        email_address : $('#signup_form___email_address').val(),
-        password_first : $('#signup_form___password_first').val(),
-        password_second : $('#signup_form___password_second').val(),
+        first_name : $('#signup_form__first_name').val(),
+        last_name : $('#signup_form__last_name').val(),
+        rz_username : $('#signup_form__rz_username').val(),
+        email_address : $('#signup_form__email_address').val(),
+        password_first : $('#signup_form__password_first').val(),
+        password_second : $('#signup_form__password_second').val(),
     };
 
     if (false == validate_data(form_data)) {
