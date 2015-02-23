@@ -1,0 +1,85 @@
+//
+// Styling for full-page type forms: signup, login, pw-reset, etc.
+//
+
+.cmn-form {
+    width: 420px;
+    background-color: white;
+    padding-top: $two-baselines;
+    padding-bottom: $two-baselines;
+    padding-left: $two-baselines;
+    padding-right: $two-baselines;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: $three-baselines;
+}
+
+.cmn-form-input {
+    border: 1px solid $mid-light-grey;
+    background-color: $light-grey;
+    background-repeat: no-repeat;
+    background-position: 18px 14px;
+    padding-top: $one-baseline;
+    padding-bottom: $one-baseline;
+    padding-left: 15%; /* provide room for background image */
+    width: 85%;
+
+    &:focus {
+      outline: none;
+      background-color: $light-grey;
+      border: 1px solid $mid-light-grey;
+      @include rz-inset-box-shadow(0px, 0px, 6px, rgba(0,0,0,0.3) )
+    }
+
+    &[type="email"] {
+      background-image: url(../img/mail-icon.png);
+    }
+
+    &[type="password"] {
+      background-image: url(../img/password-icon.png);
+    }
+}
+
+.cmn-form-logo {
+    background: url("/static/img/logo-red.png");
+    background-repeat: no-repeat;
+    margin-bottom: $two-baselines;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: $two-baselines;
+    width: 54px;
+    height: 30px;
+}
+
+.cmn-form-row {
+    width: 100%;
+}
+
+.cmn-form-title {
+    color: $magenta;
+    display: block;
+    font-size: $h1-size;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.cmn-form-section {
+    margin-top: $one-baseline;
+    margin-bottom: $one-baseline;
+}
+
+.cmn-form__ajax-response {
+    text-align: center;
+}
+
+.cmn-form__submit-btn {
+    background-color: $magenta;
+    border-radius: 3px;
+    cursor: pointer;
+    color: white;
+    font-size: $h3-size;
+    margin-top: $two-baselines;
+    padding: $one-baseline;
+    text-align: center;
+}
