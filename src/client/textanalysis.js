@@ -193,8 +193,8 @@ var textAnalyser = function (spec) {
 
         tokens,
         sentence,
-        token_set_new_node_names = [], // token set representing new node names
-        token_set_new_link_names = [], // token set representing new link names
+        node_names = [], // token set representing new node names
+        link_names = [], // token set representing new link names
         linkindex = 0,
         nodeindex = 0,
         orderStack = [],
@@ -283,42 +283,42 @@ var textAnalyser = function (spec) {
         default:
             if (orderStack[orderStack.length - 1] === START) {
                 orderStack.push(NODE);
-                token_set_new_node_names.push(sentence[m]);
+                node_names.push(sentence[m]);
                 linkindex++;
             } else if (orderStack[orderStack.length - 1] === NODE) {
                 orderStack.push(LINK);
-                if (!token_set_new_link_names[linkindex]) {
-                    token_set_new_link_names[linkindex] = sentence[m];
+                if (!link_names[linkindex]) {
+                    link_names[linkindex] = sentence[m];
                 } else {
-                    token_set_new_link_names[linkindex] += " " + sentence[m];
+                    link_names[linkindex] += " " + sentence[m];
                 }
             } else {
-                if (!token_set_new_link_names[linkindex]) {
-                    token_set_new_link_names[linkindex] = sentence[m];
+                if (!link_names[linkindex]) {
+                    link_names[linkindex] = sentence[m];
                 } else {
-                    token_set_new_link_names[linkindex] += " " + sentence[m];
+                    link_names[linkindex] += " " + sentence[m];
                 }
             }
-            if (token_set_new_node_names.length === 0) {
+            if (node_names.length === 0) {
                 prefix += (prefix.length > 0 ? ' ' : '') + sentence[m];
             }
             break;
         }
     }
 
-    starGraph = (token_set_new_link_names.length - and_count) >= 3  ||
-        ((token_set_new_link_names.length - and_count >= 1) &&
-         token_set_new_link_names.length > 2 &&
+    starGraph = (link_names.length - and_count) >= 3  ||
+        ((link_names.length - and_count >= 1) &&
+         link_names.length > 2 &&
          orderStack.length > 1 &&
          orderStack[orderStack.length - 1] != NODE);
 
     //PREFIX not null case - put complete sentence in first link.
     if (prefix && !starGraph) {
-        token_set_new_link_names[1] = prefix + " " + token_set_new_node_names[0] +
-        (token_set_new_link_names[1] !== undefined || token_set_new_node_names[1] !== undefined ?
+        link_names[1] = prefix + " " + node_names[0] +
+        (link_names[1] !== undefined || node_names[1] !== undefined ?
         " " : "")
-        + (token_set_new_link_names[1] !== undefined ? token_set_new_link_names[1] : "")
-        + (token_set_new_node_names[1] !== undefined ? token_set_new_node_names[1] : "");
+        + (link_names[1] !== undefined ? link_names[1] : "")
+        + (node_names[1] !== undefined ? node_names[1] : "");
     }
 
     //WRITE COMPLETE SENTENCE
@@ -328,12 +328,12 @@ var textAnalyser = function (spec) {
     completeSentenceParts = prefix.length > 0 ? [String(prefix)] : [];
     for (m = 0; m < orderStack.length; m++) {
         if (orderStack[m] === NODE) {
-            word += " (" + token_set_new_node_names[nodeindex] + ") ";
-            completeSentenceParts.push(token_set_new_node_names[nodeindex]);
+            word += " (" + node_names[nodeindex] + ") ";
+            completeSentenceParts.push(node_names[nodeindex]);
             nodeindex++;
         } else if (orderStack[m] === LINK) {
-            word += " -->" + token_set_new_link_names[nodeindex] + " --> ";
-            completeSentenceParts.push(token_set_new_link_names[nodeindex]);
+            word += " -->" + link_names[nodeindex] + " --> ";
+            completeSentenceParts.push(link_names[nodeindex]);
         }
     }
     completeSentence = completeSentenceParts.join(" ").trim();
@@ -348,11 +348,11 @@ var textAnalyser = function (spec) {
             case START:
                 break;
             case NODE:
-                __addNode(token_set_new_node_names[nodeindex]);
-                if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
-                    __addLink(token_set_new_node_names[nodeindex - 1],
-                              token_set_new_node_names[nodeindex],
-                              token_set_new_link_names[linkindex]);
+                __addNode(node_names[nodeindex]);
+                if (!starGraph && nodeindex > 0 && link_names[linkindex] !== undefined) {
+                    __addLink(node_names[nodeindex - 1],
+                              node_names[nodeindex],
+                              link_names[linkindex]);
                 }
                 nodeindex++;
                 break;
@@ -367,19 +367,19 @@ var textAnalyser = function (spec) {
         case START:
             __addNode(NEW_NODE_NAME);
             if (!starGraph && nodeindex > 0) {
-                __addLink(token_set_new_node_names[nodeindex - 1], NEW_NODE_NAME,
-                          token_set_new_link_names[linkindex], "temp");
+                __addLink(node_names[nodeindex - 1], NEW_NODE_NAME,
+                          link_names[linkindex], "temp");
                 and_connect(NEW_NODE_NAME);
             }
             ret.state = ANALYSIS_NODE_START;
             break;
         case NODE:
-            __addNode(token_set_new_node_names[nodeindex]);
-            if (!starGraph && nodeindex > 0 && token_set_new_link_names[linkindex] !== undefined) {
-                __addLink(token_set_new_node_names[nodeindex - 1],
-                          token_set_new_node_names[nodeindex],
-                          token_set_new_link_names[linkindex]);
-                and_connect(token_set_new_node_names[nodeindex]);
+            __addNode(node_names[nodeindex]);
+            if (!starGraph && nodeindex > 0 && link_names[linkindex] !== undefined) {
+                __addLink(node_names[nodeindex - 1],
+                          node_names[nodeindex],
+                          link_names[linkindex]);
+                and_connect(node_names[nodeindex]);
             }
             ret.state = ANALYSIS_NODE_START;
             break;
@@ -387,7 +387,7 @@ var textAnalyser = function (spec) {
             linkindex++;
             __addNode(NEW_NODE_NAME, selectedType(), "temp");
             if (!starGraph) {
-                __addLink(token_set_new_node_names[nodeindex - 1], NEW_NODE_NAME, token_set_new_link_names[linkindex], "temp");
+                __addLink(node_names[nodeindex - 1], NEW_NODE_NAME, link_names[linkindex], "temp");
                 and_connect(NEW_NODE_NAME);
             }
             ret.state = ANALYSIS_LINK;
@@ -397,14 +397,14 @@ var textAnalyser = function (spec) {
     //EXTERNAL AND CONNECTION CHECKING
     function and_connect(node) {
         var verb;
-        for(var x=0;x<token_set_new_link_names.length;x++){
-            if(token_set_new_link_names[x])if(token_set_new_link_names[x].replace(/ /g,"")!=="and"){
-                verb = token_set_new_link_names[x];
+        for(var x=0;x<link_names.length;x++){
+            if(link_names[x])if(link_names[x].replace(/ /g,"")!=="and"){
+                verb = link_names[x];
                 for(var y=0; y<x ;y++){
-                    __addLink(token_set_new_node_names[y], node, verb);
-                    for(var z=x; z<token_set_new_node_names.length ;z++){
-                        __addLink(token_set_new_node_names[y],
-                                  token_set_new_node_names[z], verb);
+                    __addLink(node_names[y], node, verb);
+                    for(var z=x; z<node_names.length ;z++){
+                        __addLink(node_names[y],
+                                  node_names[z], verb);
                     }
                 }
             }
@@ -414,8 +414,8 @@ var textAnalyser = function (spec) {
     //STAR CASE
     if (starGraph) {
         __addNode(completeSentence, "chainlink");
-        for (n = 0; n < token_set_new_node_names.length; n++) {
-            __addLink(token_set_new_node_names[n], completeSentence, "chained");
+        for (n = 0; n < node_names.length; n++) {
+            __addLink(node_names[n], completeSentence, "chained");
         }
     }
 
@@ -474,7 +474,7 @@ var textAnalyser = function (spec) {
         edit_graph.clear(finalize);
 
         if (!finalize) {
-            main_graph.markRelated(token_set_new_node_names);
+            main_graph.markRelated(node_names);
         } else {
             main_graph.removeRelated();
         }
