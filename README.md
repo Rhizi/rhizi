@@ -13,7 +13,7 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 # Requirements
 ## Server
 ### Neo4j
-Install [neo4j](http://neo4j.com/download/)
+Install [neo4j](http://neo4j.com/download/) >= 2.1.5 (2.0 explicitly not supported, we use += in our queries)
 
 ### python libs
 Install all of:
