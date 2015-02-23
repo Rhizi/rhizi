@@ -98,19 +98,23 @@ def rest__login():
         return email_address, p
 
     if request.method == 'POST':
-
-        u_account = None
-
         try:
             email_address, p = sanitize_input(request)
-            u_account = current_app.user_db.lookup_user__by_email_address(email_address)
         except:
             log.warn('failed to sanitize inputs. request: %s' % request)
             return make_response__json(status=401)  # return empty response
+
+        u_account = None
+        try:
+            _uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
+        except:
+            log.warn('login: login attemt to unknown account. request: %s' % request)
+            return make_response__json(status=401)  # return empty response
+
         try:
             salt = current_app.rz_config.secret_key
             pw_hash = hash_pw(p, salt)
-            current_app.user_db.validate_login(email_address=email_address, pw_hash=pw_hash)
+            current_app.user_db.validate_login(email_address=u_account.email_address, pw_hash=pw_hash)
         except Exception as e:
             # login failed
             log.warn('login: unauthorized: user: %s' % (email_address))
