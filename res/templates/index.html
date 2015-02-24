@@ -21,11 +21,16 @@ var rz_config = { // set as a global variable
   <span id="measure-node" class="graph nodetext" style="position: absolute; display: inline; top: -300px; left: 0px;">suicide squade, attack!</span>
   <span id="measure-link" class="graph linklabel" style="position: absolute; display: inline; top: -300px; left: 0px;">those who are about to cry, we kaput you.</span>
   <div class="top-bar">
-    <span id="doc-title">Rhizi Prototype</span>
-    <div class="user-area">
-         <span id="profile-circle"></span>
-         <span class="profile-username">Welcome&nbsp;<span id="user_id">{{ rz_username }}</span>!<span id="btn-logout" class="button">Logout</span></span>
-    </div>
+    <span id="top-bar__float-left">
+      <span id="doc-title">Rhizi Prototype</span>
+    </span>
+    <span id="top-bar__float-right">
+      <span class="top-bar__user-area">
+           <span id="profile-circle"></span>
+           <span class="profile-username">Welcome&nbsp;<span id="user_id">{{ rz_username }}</span>!<span id="btn-logout" class="button">Logout</span></span>
+      </span>
+      <span class="logo-3rd-party"><a href="http://cri-paris.org/"><img id="logo-3rd-party__CRI" src="/static/img/CRI-logo.png"></a></span>
+    </span>
   </div>
   <div id="intro-task" class="task-alert" style="display:none">
     <h3 class="task-desc">Connect yourself to the clubs, internship proposals, skills &amp; scientific interests you have.</h3>
@@ -138,13 +143,8 @@ var rz_config = { // set as a global variable
         Import <input type="file" class="file-import" />
     </div>
     </div>
-
   </div>
-
   <div class="rhizi-logo"><a href="http://www.rhizi.org">
     <img src="/static/img/rhizi-logo.png"/></a>
-  </div>
-  <div class="3rd-party-logo">
-    <a href="http://cri-paris.org/"><img id="org-logo__CRI" src="/static/img/CRI-logo.png"></a>
   </div>
 {% endblock %}

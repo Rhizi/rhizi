@@ -1,13 +1,11 @@
 .top-bar{
-    padding-top: 10px;
-    padding-bottom: 10px;
+    line-height: $four-baselines;
     background-color: $dark-grey;
 }
 
-.user-area {
-    display: inline;
-    float: right;
-    margin-right: 40px;
+.top-bar__user-area {
+    margin-right: 20px;
+    vertical-align: middle;
 }
 
 .username {
@@ -41,4 +39,17 @@
     color: $light-grey;
     margin-left: 40px;
     font-size: $h3-size;
+}
+
+#top-bar__float-right {
+    float: right;
+    margin-right: 20px;
+}
+
+#logo-3rd-party__CRI {
+    background-color: white;
+    border-radius: 3px;
+    height: 25px;
+    padding: 2px;
+    vertical-align: middle;
 }

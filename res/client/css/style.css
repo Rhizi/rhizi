@@ -556,12 +556,12 @@ body.debug .debug-ui-right {
   background-repeat: no-repeat; }
 
 .top-bar {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  line-height: 48px;
   background-color: #363636; }
 
-.user-area {
-  margin-right: 20px; }
+.top-bar__user-area {
+  margin-right: 20px;
+  vertical-align: middle; }
 
 .username {
   display: inline-block;
@@ -594,6 +594,13 @@ body.debug .debug-ui-right {
 #top-bar__float-right {
   float: right;
   margin-right: 20px; }
+
+#logo-3rd-party__CRI {
+  background-color: white;
+  border-radius: 3px;
+  height: 25px;
+  padding: 2px;
+  vertical-align: middle; }
 
 /* Headings */
 h1 {
