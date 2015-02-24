@@ -437,9 +437,9 @@ var textAnalyser = function (spec) {
             token.token = "and";
         }
     });
-    groups = tokens_to_graph_elements(tokens); // [prefix, node, edge, node, edge, ..]
+    groups = tokens_to_graph_elements(tokens); // [prefix, node, verb, node, verb, ..]
     prefix = groups[0].map(obj_take('token')).join(' ');
-    thirds = groups_to_thirds(groups.slice(1)); // [node, edge, node, edge, ..]
+    thirds = groups_to_thirds(groups.slice(1)); // [node, verb, node, verb, ..]
     sentence = thirds.map(obj_take('token'));
     var sentence_ends_with_link = (thirds.length > 0 && thirds.length % 2 === 0);
 
