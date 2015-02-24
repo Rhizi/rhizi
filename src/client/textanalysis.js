@@ -3,8 +3,8 @@ function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 "use strict";
 
 // Constants
-var node_edge_separator = true;
-var separator_symbol = '  '; //'#'; //'  ';
+var node_edge_separator = rz_config.node_edge_separator;
+var separator_string = rz_config.separator_string;
 
 var typeindex = 0,
     nodetypes = consts.nodetypes,
@@ -151,7 +151,7 @@ function obj_field_not_equal(field, value) {
  */
 function tokens_to_graph_elements_with_separator(tokens) {
     return reduce(tokens, [[] /* no prefix */, []], function (data, token) {
-        if (token.token === separator_symbol) {
+        if (token.token === separator_string) {
             data.push([]);
         } else {
             data[data.length - 1].push(token);
@@ -163,7 +163,7 @@ function tokens_to_graph_elements_with_separator(tokens) {
 function tokens_to_graph_elements_with_node_sign(tokens) {
     var ret = [[]]; // prefix is the first element
     for (var i = 0 ; i < tokens.length;) {
-        if (tokens[i].token === separator_symbol) {
+        if (tokens[i].token === separator_string) {
             if (tokens.length == i + 1) {
                 tokens.push({end: tokens[i].end + 1 + NEW_NODE_NAME.length,
                              token: NEW_NODE_NAME});
@@ -425,7 +425,7 @@ var textAnalyser = function (spec) {
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
-    tokens = tokenize(cleanup(newtext), separator_symbol, '"');
+    tokens = tokenize(cleanup(newtext), separator_string, '"');
     tokens.forEach(function (token) {
         switch (token.token) {
         case "and":
