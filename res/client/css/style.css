@@ -645,12 +645,12 @@ p {
   box-sizing: border-box; }
 
 .dropdown-menu-heading {
-  font-family: "Source_Bold", sans-serif;
   background-color: lightgrey;
-  border-bottom: 1px solid #d4d4d9; }
+  border-bottom: 1px solid #d4d4d9;
+  font-family: "Source_Bold", sans-serif;
+  padding: 6px 0px 6px 18px; }
 
 .dropdown-menu-heading:hover {
-  padding: 6px 0px 6px 18px;
   cursor: default; }
 
 #menu__type-filter {

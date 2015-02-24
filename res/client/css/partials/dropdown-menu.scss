@@ -21,13 +21,13 @@
 }
 
 .dropdown-menu-heading {
-    font-family: $bold-font-family;
     background-color: lightgrey;
     border-bottom: 1px solid $mid-light-grey;
+    font-family: $bold-font-family;
+    padding: 6px 0px 6px 18px;
 }
 
 .dropdown-menu-heading:hover {
-    padding: 6px 0px 6px 18px;
     cursor: default;
 }
 
