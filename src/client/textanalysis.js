@@ -33,6 +33,162 @@ function selectedType()
     return nodetypes[typeindex];
 }
 
+function mod_2_second(mod)
+{
+    return function(_, i) { return i % 2 === mod; };
+}
+
+function even_second(_, i)
+{
+    return i % 2 === 0;
+}
+
+function list_first_pred(list, default_, pred)
+{
+    for (var i = 0 ; i < list.length ; ++i) {
+        if (pred(list[i])) {
+            return list[i];
+        }
+    }
+    return default_;
+}
+
+function list_product(l1, l2)
+{
+    var ret = [],
+        i, j;
+    for (i = 0 ; i < l1.length ; ++i) {
+        for (j = 0; j < l2.length ; ++j) {
+            ret.push([l1[i], l2[j]]);
+        }
+    }
+    return ret;
+}
+
+function subsets(N, jump, list)
+{
+    var ret = [],
+        i;
+    for (i = 0 ; i < list.length ; i += jump) {
+        ret.push(list.slice(i, i + N));
+    }
+    return ret;
+}
+
+function subsets_strict(N, jump, list)
+{
+    return subsets(N, jump, list).filter(function (data) { return data.length === N; });
+}
+
+function group(list, predicate)
+{
+    if (list.length === 0) {
+        return [];
+    }
+    var ret = [[list[0]]],
+        i,
+        last = predicate(list[0], 0),
+        new_pred;
+
+    for (i = 1 ; i < list.length ; ++i) {
+        new_pred = predicate(list[i], i);
+        if (new_pred === last) {
+            ret[ret.length - 1].push(list[i]);
+        } else {
+            ret.push([list[i]]);
+            last = new_pred;
+        }
+    }
+    return ret;
+}
+
+function reduce(list, initial, func)
+{
+    var ret = initial;
+
+    for (var i = 0 ; i < list.length; ++i) {
+        ret = func(ret, list[i]);
+    }
+    return ret;
+}
+
+function list_get(list, index, def)
+{
+    var item = list[index];
+
+    if (item === undefined) {
+        return def;
+    }
+    return item;
+}
+
+function obj_take(name) {
+    return function(obj) {
+        return obj[name];
+    };
+}
+
+/**
+ *
+ * tokens_to_graph_elements_*
+ *
+ * @param tokens: [token]
+ * @ret [prefix, node, edge, node, edge, ..]
+ * where
+ *  node, edge = {start: int, end: int, tokens: [token]}
+ */
+function tokens_to_graph_elements_with_separator(tokens) {
+    return reduce(tokens, [[] /* no prefix */, []], function (data, token) {
+        if (token.token === separator_symbol) {
+            data.push([]);
+        } else {
+            data[data.length - 1].push(token);
+        }
+        return data;
+    });
+}
+
+function tokens_to_graph_elements_with_node_sign(tokens) {
+    var ret = [[]]; // prefix is the first element
+    for (var i = 0 ; i < tokens.length;) {
+        if (tokens[i].token === separator_symbol) {
+            if (tokens.length == i + 1) {
+                tokens.push({end: tokens[i].end + 1 + NEW_NODE_NAME.length,
+                             token: NEW_NODE_NAME});
+            }
+            tokens[i + 1].start = tokens[i].start; // used later for finding node from cursor position
+            ret.push([tokens[i + 1]]);
+            ret.push([]);
+            i += 2;
+        } else {
+            ret[ret.length - 1].push(tokens[i]);
+            i += 1;
+        }
+    }
+    // remove last empty element if not just prefix - can only be a non empty link or a non empty node
+    return ret.length > 1 && ret[ret.length - 1].length === 0 ? ret.slice(0, ret.length - 1) : ret;
+}
+
+var tokens_to_graph_elements;
+
+if (node_edge_separator) {
+    tokens_to_graph_elements = tokens_to_graph_elements_with_separator;
+} else {
+    tokens_to_graph_elements = tokens_to_graph_elements_with_node_sign;
+}
+
+function groups_to_thirds(groups) {
+    return groups.map(function(tokens) {
+        var start = tokens[0].start,
+            end = tokens[tokens.length - 1].end;
+        return {
+            start: start,
+            end: end,
+            token: tokens.map(obj_take('token')).join(' ')
+        };
+    });
+}
+
 /*
  * Place to do general cleanup of the text. Right now just replacing all quotation types
  * with a single type, separately for double quotes and single quotes.
@@ -187,25 +343,20 @@ var textAnalyser = function (spec) {
         finalize = spec.finalize,
 
         tokens,
+        groups,
+        thirds,
+        node_thirds,
         sentence,
-        node_names = [], // token set representing new node names
-        link_names = [], // token set representing new link names
+        node_names, // token set representing new node names
+        link_names, // token set representing new link names
         linkindex = 0,
         nodeindex = 0,
-        orderStack = [],
         and_count = 0,
-        prefix = "",
-        m,
-        word,
+        prefix,
         completeSentence,
-        completeSentenceParts,
         starGraph,
-        n,
         link_hash = {},
         yell_bug = false, // TODO: fix both issues
-        NODE = "NODE",
-        LINK = "LINK",
-        START = "START",
         node_by_name = lowerCaseHash(),
         nodes = [],
         links = [],
@@ -259,159 +410,96 @@ var textAnalyser = function (spec) {
 
     //Sentence Sequencing
     //Build the words and cuts the main elements
-    tokens = tokenize(cleanup(newtext), '#', '"');
-    sentence = tokens.map(function (d) { return d.token; });
-
-    // build new node,link arrays in order of appearance
-    for (m = 0; m < sentence.length; m++) {
-        switch (sentence[m]) {
-        case "#":
-            orderStack.push(START);
-            break;
+    tokens = tokenize(cleanup(newtext), separator_symbol, '"');
+    tokens.forEach(function (token) {
+        switch (token.token) {
         case "and":
         case "+":
         case ",":
         case "&":
-            sentence[m] = "and";
             and_count++;
-            //orderStack.push("AND");
-        default:
-            if (orderStack[orderStack.length - 1] === START) {
-                orderStack.push(NODE);
-                node_names.push(sentence[m]);
-                linkindex++;
-            } else if (orderStack[orderStack.length - 1] === NODE) {
-                orderStack.push(LINK);
-                if (!link_names[linkindex]) {
-                    link_names[linkindex] = sentence[m];
-                } else {
-                    link_names[linkindex] += " " + sentence[m];
-                }
-            } else {
-                if (!link_names[linkindex]) {
-                    link_names[linkindex] = sentence[m];
-                } else {
-                    link_names[linkindex] += " " + sentence[m];
-                }
-            }
-            if (node_names.length === 0) {
-                prefix += (prefix.length > 0 ? ' ' : '') + sentence[m];
-            }
-            break;
+            token.token = "and";
         }
+    });
+    groups = tokens_to_graph_elements(tokens); // [prefix, node, edge, node, edge, ..]
+    prefix = groups[0].map(obj_take('token')).join(' ');
+    thirds = groups_to_thirds(groups.slice(1)); // [node, edge, node, edge, ..]
+    sentence = thirds.map(obj_take('token'));
+    var sentence_ends_with_link = (thirds.length > 0 && thirds.length % 2 === 0);
+
+    // build new node,link arrays in order of appearance
+    var mod_2 = function (mod) {
+        return thirds.filter(mod_2_second(mod)).map(obj_take('token'));
+    };
+    node_names = mod_2(0);
+    if (node_names[node_names.length - 1] === '') {
+        node_names[node_names.length - 1] = NEW_NODE_NAME;
     }
+    link_names = mod_2(1);
 
     starGraph = (link_names.length - and_count) >= 3  ||
         ((link_names.length - and_count >= 1) &&
          link_names.length > 2 &&
-         orderStack.length > 1 &&
-         orderStack[orderStack.length - 1] != NODE);
-
-    //PREFIX not null case - put complete sentence in first link.
-    if (prefix && !starGraph) {
-        link_names[1] = prefix + " " + node_names[0] +
-        (link_names[1] !== undefined || node_names[1] !== undefined ?
-        " " : "")
-        + (link_names[1] !== undefined ? link_names[1] : "")
-        + (node_names[1] !== undefined ? node_names[1] : "");
-    }
+         sentence_ends_with_link);
 
     //WRITE COMPLETE SENTENCE
     linkindex = 0;
     nodeindex = 0;
-    word = "";
-    completeSentenceParts = prefix.length > 0 ? [String(prefix)] : [];
-    for (m = 0; m < orderStack.length; m++) {
-        if (orderStack[m] === NODE) {
-            word += " (" + node_names[nodeindex] + ") ";
-            completeSentenceParts.push(node_names[nodeindex]);
-            nodeindex++;
-        } else if (orderStack[m] === LINK) {
-            word += " -->" + link_names[nodeindex] + " --> ";
-            completeSentenceParts.push(link_names[nodeindex]);
-        }
+    completeSentence = (prefix.length > 0 ? [String(prefix)] : []).concat(thirds.map(obj_take('token')))
+        .join(" ").trim();
+
+    //PREFIX not null case - put complete sentence in first link.
+    if (prefix.length > 0 && !starGraph && link_names.length > 0) {
+        link_names[0] = completeSentence;
     }
-    completeSentence = completeSentenceParts.join(" ").trim();
 
     //REBUILD GRAPH
-    linkindex = 0;
-    nodeindex = 0;
-
-    //0-N ORDER STACK
-    for (m = 0; m < orderStack.length - 1; m++) {
-        switch (orderStack[m]) {
-            case START:
-                break;
-            case NODE:
-                __addNode(node_names[nodeindex]);
-                if (!starGraph && nodeindex > 0 && link_names[linkindex] !== undefined) {
-                    __addLink(node_names[nodeindex - 1],
-                              node_names[nodeindex],
-                              link_names[linkindex]);
-                }
-                nodeindex++;
-                break;
-            case LINK:
-                linkindex++;
-                break;
+    if (sentence_ends_with_link) {
+        __addNode(NEW_NODE_NAME);
+    }
+    node_names.forEach(function (node_name, nodeindex) {
+        var link_name = link_names[nodeindex],
+            next_node_name = list_get(node_names, nodeindex + 1, NEW_NODE_NAME);
+        __addNode(node_name);
+        if (!starGraph && link_name !== undefined) {
+            __addLink(node_name,
+                      next_node_name,
+                      link_name);
         }
+    });
+
+    ret.state = sentence_ends_with_link ? ANALYSIS_LINK : ANALYSIS_NODE_START;
+    // A and B verb C => link_with_verb_to([A, B], C)
+    // A and B verb C and D verb2 E =>
+    //  [A, B] verb [C, D]
+    //  [C, D] verb2 E
+    //  A, and, B, verb, C, and, D, verb2, E
+    //  [A, and, B], [verb], [C, and, D], [verb2], [E]
+    //  # ==> "new node"
+    var node_or_and = function (obj, i) { return i % 2 === 0 || obj.token === 'and'; };
+    function and_connect() {
+        subsets_strict(3, 2, group(thirds, node_or_and))
+            .forEach(function (data) {
+                var and_source = data[0].filter(even_second).map(obj_take('token')),
+                    and_target = data[2].filter(even_second).map(obj_take('token')),
+                    verb = data[1][0].token;
+                util.assert(data[1].length == 1);
+                list_product(and_source, and_target).forEach(function (pair) {
+                    __addLink(pair[0], pair[1], verb);
+                });
+            });
     }
 
-    //FINAL N ORDER
-    switch (orderStack[orderStack.length - 1]) {
-        case START:
-            __addNode(NEW_NODE_NAME);
-            if (!starGraph && nodeindex > 0) {
-                __addLink(node_names[nodeindex - 1], NEW_NODE_NAME,
-                          link_names[linkindex], "temp");
-                and_connect(NEW_NODE_NAME);
-            }
-            ret.state = ANALYSIS_NODE_START;
-            break;
-        case NODE:
-            __addNode(node_names[nodeindex]);
-            if (!starGraph && nodeindex > 0 && link_names[linkindex] !== undefined) {
-                __addLink(node_names[nodeindex - 1],
-                          node_names[nodeindex],
-                          link_names[linkindex]);
-                and_connect(node_names[nodeindex]);
-            }
-            ret.state = ANALYSIS_NODE_START;
-            break;
-        case LINK:
-            linkindex++;
-            __addNode(NEW_NODE_NAME, selectedType(), "temp");
-            if (!starGraph) {
-                __addLink(node_names[nodeindex - 1], NEW_NODE_NAME, link_names[linkindex], "temp");
-                and_connect(NEW_NODE_NAME);
-            }
-            ret.state = ANALYSIS_LINK;
-            break;
-    }
-
-    //EXTERNAL AND CONNECTION CHECKING
-    function and_connect(node) {
-        var verb;
-        for (var x = 0 ; x < link_names.length ; x++) {
-            if (link_names[x] && link_names[x].replace(/ /g,"") !== "and") {
-                verb = link_names[x];
-                for(var y = 0 ; y < x ; y++) {
-                    __addLink(node_names[y], node, verb);
-                    for(var z = x ; z < node_names.length ; z++) {
-                        __addLink(node_names[y],
-                                  node_names[z], verb);
-                    }
-                }
-            }
-        }
+    if (!starGraph) {
+        and_connect();
     }
 
     //STAR CASE
     if (starGraph) {
         __addNode(completeSentence, "chainlink");
-        for (n = 0; n < node_names.length; n++) {
-            __addLink(node_names[n], completeSentence, "chained");
-        }
+        node_names.forEach(function (node_name) {
+            __addLink(node_name, completeSentence, "chained");
+        });
     }
 
     ret.drop_conjugator_links = true; // leaving since we might change behavior again
@@ -481,8 +569,14 @@ var textAnalyser = function (spec) {
         }
     };
 
+    node_thirds = subsets(3, 2, thirds).map(function (list) {
+        var first = list[0],
+            end = list.length > 2 ? list[list.length - 1].start - 1 : list[list.length - 1].end;
+        return {start: first.start, end: end, token: first.token};
+    });
+
     function lookup_node_in_bounds(edit_graph, cursor) {
-        var i, d, d_next, j, name, node;
+        var d, name, node;
 
         if (nodes.length <= 0) {
             return null;
@@ -490,20 +584,10 @@ var textAnalyser = function (spec) {
         if (nodes.length === 1) {
             return edit_graph.find_node__by_name(nodes[0].name);
         }
-        // go forward to find cursor location in tokens
-        for (i = 0 ; i < tokens.length; ++i) {
-            d = tokens[i];
-            d_next = tokens[i + 1];
-            if (cursor >= d.start && (d_next === undefined || cursor < d_next.end)) {
-                break;
-            }
-        }
-        i = Math.min(tokens.length - 1, i);
-        // go forward if on a token
-        for (; tokens[i] !== undefined && tokens[i].token === '#'; ++i) {}
-        // go back to find token
-        for (j = i; j >= 0 && tokens[j] === undefined || tokens[j].token !== '#'; --j) {}
-        name = tokens[j + 1] ? tokens[j + 1].token : NEW_NODE_NAME;
+        d = list_first_pred(node_thirds, thirds[thirds.length - 1], function (d) {
+            return cursor >= d.start && cursor < d.end;
+        });
+        name = d.token;
         node = edit_graph.find_node__by_name(name);
         util.assert(node !== undefined, "can't find node");
         return node;
