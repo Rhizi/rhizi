@@ -473,6 +473,6 @@ def send_user_pw_reset__email(u_account, pw_reset_token):
     msg_body = '\n'.join(msg_body)
 
     send_email_message(recipients=[u_account.email_address],
-                       subject="Rhizi sign up request",
+                       subject="Rhizi password reset request",
                        body=msg_body)
     return pw_reset_link
