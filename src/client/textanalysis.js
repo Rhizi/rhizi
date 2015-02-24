@@ -503,6 +503,9 @@ var textAnalyser = function (spec) {
 
     ret.drop_conjugator_links = true; // leaving since we might change behavior again
 
+    // textanalysis.ui uses this. should make this more explicit
+    ret.thirds = thirds;
+
     ret.applyToGraph = function(spec) {
         var edit_graph = spec.edit_graph,
             backend_commit = spec.backend_commit,

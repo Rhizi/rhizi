@@ -542,6 +542,21 @@ function Graph(spec) {
         this.commit_and_tx_diff__topo(topo_diff);
     }
 
+    /**
+     * links the first node in the list to the rest of the list.
+     */
+    var nodes__link_fan = function(node_ids) {
+        util.assert(node_ids.length > 1); // strictly speaking we can also treat 1 as correct usage
+        var src_id = node_ids[0],
+            src_node = find_node__by_id(src_id),
+            added_links = node_ids.slice(1).map(function (tgt_id) {
+                return model_core.create_link__set_random_id(src_node, find_node__by_id(tgt_id),
+                                                             {name: 'link'});
+            });
+        commit_and_tx_diff__topo(model_diff.new_topo_diff({link_set_add: added_links}));
+    };
+    this.nodes__link_fan = nodes__link_fan;
+
     var nodes__merge = function(node_ids) {
         util.assert(node_ids.length > 1); // strictly speaking we can also treat 1 as correct usage
         var merged = _.rest(node_ids);
@@ -570,7 +585,7 @@ function Graph(spec) {
             link_set_add: added_links,
             node_id_set_rm: merged});
         commit_and_tx_diff__topo(topo_diff);
-    }
+    };
     this.nodes__merge = nodes__merge;
 
     var _remove_link_set = function(link_id_set) {

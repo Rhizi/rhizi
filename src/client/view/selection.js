@@ -1,6 +1,28 @@
 define(['rz_core', 'Bacon', 'jquery', 'underscore'],
 function(rz_core,   Bacon,   $,        _) {
 
+function list_from_list_like(list_like)
+{
+    var list = [],
+        i;
+
+    for (i = 0 ; i < list_like.length ; ++i) {
+        list.push(list_like[i]);
+    }
+    return list;
+}
+
+function list_call(list, field)
+{
+    list.forEach(function (item) {
+        item[field].apply(item, list_from_list_like(arguments).slice(2));
+    });
+}
+
+function root_nodes_ids() {
+    return _.pluck(root_nodes, 'id');
+}
+
 function Selection() {
 }
 
@@ -173,16 +195,25 @@ var update = function(nodes, append)
 var setup_merge_button = function(main_graph)
 {
     var merge_root_selection = function() {
-        main_graph.nodes__merge(_.pluck(root_nodes, 'id'));
-    }
-    var merge_btn = $('#btn_merge');
+            main_graph.nodes__merge(root_nodes_ids());
+        },
+        link_fan_root_selection = function() {
+            main_graph.nodes__link_fan(root_nodes_ids());
+        },
+        merge_btn = $('#btn_merge'),
+        link_fan_btn = $('#btn_link_fan'),
+        buttons = [merge_btn, link_fan_btn];
+
     merge_btn.asEventStream('click').onValue(merge_root_selection);
+    link_fan_btn.asEventStream('click').onValue(link_fan_root_selection);
+
     selectionChangedBus.map(function (selection) { return selection.root_nodes.length > 1; })
         .onValue(function (visible) {
             if (visible) {
-                merge_btn.show();
+                list_call(buttons, 'show');
             } else {
-                merge_btn.hide();
+                list_call(buttons, 'hide');
+                buttons.forEach(function (btn) { btn.hide(); });
             }
         });
 }

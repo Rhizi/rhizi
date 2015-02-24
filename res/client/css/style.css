@@ -49,9 +49,6 @@ a:hover {
 a:active {
   color: #919095; }
 
-button {
-  border: none; }
-
 input {
   background-color: white;
   color: #363636;
@@ -229,9 +226,9 @@ body.debug .debug-ui-right {
   #input-container__graph-input:focus {
     width: 80%; }
 
-#merge-tool {
+#selection-tools {
   position: absolute;
-  top: 160px;
+  top: 180px;
   left: 24px; }
 
 #textanalyser.ui-autocomplete-input {
@@ -375,7 +372,7 @@ body.debug .debug-ui-right {
   border-top: 6px solid #363636; }
 
 .info.type-project {
-  border-top: 6px solid #40C200; }
+  border-top: 6px solid #40c200; }
 
 .info .info-card-attr {
   display: block;
@@ -526,8 +523,8 @@ body.debug .debug-ui-right {
   width: 100%;
   min-height: 48px;
   text-align: center;
-  background-color: #D3F2F8;
-  color: #1D6E7F;
+  background-color: #d3f2f8;
+  color: #1d6e7f;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf; }
 
@@ -784,7 +781,7 @@ p {
   fill: #8b3ab0; }
 
 .circle.project {
-  fill: #40C200; }
+  fill: #40c200; }
 
 .circle.third-internship-proposal {
   fill: #33c2e0; }
@@ -1089,5 +1086,3 @@ p {
 
 svg text::selection {
   background: none; }
-
-/*# sourceMappingURL=style.css.map */
