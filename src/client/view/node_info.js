@@ -7,6 +7,8 @@ var d = null,
     node,
     setup_done = false,
     info = $('.info'),
+    form_element = $('#editbox'),
+    delete_button = $('#edit-node-dialog__delete'),
     form = {
         name: info.find('#editformname'),
         type: info.find('#edittype'),
@@ -79,7 +81,12 @@ function setup_click_handlers()
         return;
     }
     setup_done = true;
-    $('#edit-node-dialog__delete').on('click', function (e) {
+    form_element.on('keydown', function (e) {
+        if (e.which == 13 && e.target !== delete_button[0]) {
+            e.preventDefault();
+        }
+    });
+    delete_button.on('click', function (e) {
         e.preventDefault();
         hide();
         var topo_diff = model_diff.new_topo_diff({
