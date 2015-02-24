@@ -1,7 +1,7 @@
-"use strict";
-
 define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
 function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
+"use strict";
+
 
 var typeindex = 0,
     nodetypes = consts.nodetypes,
