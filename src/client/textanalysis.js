@@ -135,18 +135,6 @@ function auto_suggest__update_name(name, id)
     suggestions_bus.push(sugg_name);
 }
 
-function auto_suggest_remove_name(name, id)
-{
-    if (name !== undefined) {
-        delete sugg_name[name];
-    }
-    if (id !== undefined) {
-        delete sugg_name[id_to_name_map[id]];
-        delete id_to_name_map[id];
-    }
-    suggestions_bus.push(sugg_name);
-}
-
 function auto_suggest__update_from_graph()
 {
     sugg_name = {};
