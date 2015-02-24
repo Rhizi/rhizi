@@ -93,6 +93,7 @@ var completer = (function (input_element, dropdown, base_config) {
             hideOnTab: base && base.hasOwnProperty('hideOnTab') ? base.hideOnTab : true,
             matchStartOfString: (base && base.matchStartOfString) || false,
             appendSpaceOnEnter: (base && base.appendSpaceOnEnter) || false,
+            quoteSpaceContaining: (base && base.quoteSpaceContaining) || false,
         };
     }
 
@@ -215,8 +216,8 @@ var completer = (function (input_element, dropdown, base_config) {
         }
         var e = dropdown.children()[index],
             s = e.innerText || e.textContent;
-        if (s.indexOf(' ') != -1) {
-            return '"' + s + '"';
+        if (s.indexOf(' ') != -1 && config.quoteSpaceContaining) {
+            return quoted(s);
         }
         return s;
     }
