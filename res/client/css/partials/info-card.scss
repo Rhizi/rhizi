@@ -6,7 +6,7 @@
     top: 130px;
 }
 
-.subtitle{
+.subtitle {
     font-style:italic;
     color: #bbb;
     font-size: 12px;
@@ -19,7 +19,7 @@
     @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
     position: relative;
     width:250px;
-    padding: 24px;
+    padding: 12px 15px;
     @include rz-box-sizing-border;
     border-top: 6px solid $dark-grey;
 }
@@ -119,12 +119,8 @@
     border: 1px solid $dark-grey;
 }
 
-.info hr {
-    width: 250px;
-    position: relative;
-    left: -24px;
-    border: none;
-    background-color: $mid-light-grey;
-    height: 2px;
-    margin: $two-baselines 0px $two-baselines 0px;
+#info-container__bottom-btn-bar {
+    border-top: 2px solid $mid-light-grey;
+    margin-top: 10px;
+    padding-top: 10px;
 }
