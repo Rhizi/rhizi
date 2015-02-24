@@ -370,7 +370,6 @@ var textAnalyser = function (spec) {
         and_count = 0,
         prefix,
         completeSentence,
-        starGraph,
         link_hash = {},
         yell_bug = false, // TODO: fix both issues
         node_by_name = lowerCaseHash(),
@@ -453,11 +452,6 @@ var textAnalyser = function (spec) {
     }
     link_names = mod_2(1);
 
-    starGraph = (link_names.length - and_count) >= 3  ||
-        ((link_names.length - and_count >= 1) &&
-         link_names.length > 2 &&
-         sentence_ends_with_link);
-
     //WRITE COMPLETE SENTENCE
     linkindex = 0;
     nodeindex = 0;
@@ -465,7 +459,7 @@ var textAnalyser = function (spec) {
         .join(" ").trim();
 
     //PREFIX not null case - put complete sentence in first link.
-    if (prefix.length > 0 && !starGraph && link_names.length > 0) {
+    if (prefix.length > 0 && link_names.length > 0) {
         link_names[0] = completeSentence;
     }
 
@@ -477,7 +471,7 @@ var textAnalyser = function (spec) {
         var link_name = link_names[nodeindex],
             next_node_name = list_get(node_names, nodeindex + 1, NEW_NODE_NAME);
         __addNode(node_name);
-        if (!starGraph && link_name !== undefined) {
+        if (link_name !== undefined) {
             __addLink(node_name,
                       next_node_name,
                       link_name);
@@ -505,18 +499,7 @@ var textAnalyser = function (spec) {
                 });
             });
     }
-
-    if (!starGraph) {
-        and_connect();
-    }
-
-    //STAR CASE
-    if (starGraph) {
-        __addNode(completeSentence, "chainlink");
-        node_names.forEach(function (node_name) {
-            __addLink(node_name, completeSentence, "chained");
-        });
-    }
+    and_connect();
 
     ret.drop_conjugator_links = true; // leaving since we might change behavior again
 
