@@ -1,130 +1,130 @@
 @import '../modules/mixins'; // For box-shadow and box-sizing
 
 .info-container {
-  position: absolute;
-  right: $graph-margin-right;
-  top: 130px;
+    position: absolute;
+    right: $graph-margin-right;
+    top: 130px;
 }
 
 .subtitle{
-  font-style:italic;
-  color: #bbb;
-  font-size: 12px;
-  float:right;
+    font-style:italic;
+    color: #bbb;
+    font-size: 12px;
+    float:right;
 }
 
 .edge_info, .info {
-  color: $dark-grey;
-  background-color: white;
-  @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
-  position: relative;
-  width:250px;
-  padding: 24px;
-  @include rz-box-sizing-border;
-  border-top: 6px solid $dark-grey;
+    color: $dark-grey;
+    background-color: white;
+    @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
+    position: relative;
+    width:250px;
+    padding: 24px;
+    @include rz-box-sizing-border;
+    border-top: 6px solid $dark-grey;
 }
 
 // change card top border color by node type
 .info.type-person {
-  border-top: 6px solid $blue;
+    border-top: 6px solid $blue;
 }
 
 .info.type-club {
-  border-top: 6px solid $magenta;
+    border-top: 6px solid $magenta;
 }
 
 .info.type-skill {
-  border-top: 6px solid $yellow;
+    border-top: 6px solid $yellow;
 }
 
 .info.type-third-internship-proposal {
-  border-top: 6px solid $cyan;
+    border-top: 6px solid $cyan;
 }
 
 .info.type-internship {
-  border-top: 6px solid $orange;
+    border-top: 6px solid $orange;
 }
 
 .info.type-interest {
-  border-top: 6px solid $purple;
+    border-top: 6px solid $purple;
 }
 
 .info.type-empty {
-  border-top: 6px solid $mid-grey;
+    border-top: 6px solid $mid-grey;
 }
 
 .info.type-chainlink {
-  border-top: 6px solid $dark-grey;
+    border-top: 6px solid $dark-grey;
 }
 
 .info.type-project {
-  border-top: 6px solid $green;
+    border-top: 6px solid $green;
 }
 
 // card elements styles
 
 .info .info-card-attr {
-  display: block;
-  text-transform: capitalize;
-  font-size: $h4-size;
-  font-family: $bold-font-family;
+    display: block;
+    text-transform: capitalize;
+    font-size: $h4-size;
+    font-family: $bold-font-family;
 }
 
 .info .info-card-attr-val {
-  display: block;
-  text-transform: capitalize;
-  font-size: $h2-size;
-  margin: 12px 0px 24px 0px;
+    display: block;
+    text-transform: capitalize;
+    font-size: $h2-size;
+    margin: 12px 0px 24px 0px;
 }
 
 .info-card-attr-val input{
-  width: 100%;
-  font-size: $h2-size;
+    width: 100%;
+    font-size: $h2-size;
 }
 
 .info-card-url input{
-    font-size: $h4-size;
-    margin-left: 20px;
+      font-size: $h4-size;
+      margin-left: 20px;
 }
 
 .info-card-url:before { //url icon before the url line
-  position: absolute;
-  margin-top: 7px;
-  content: "";
-  background: url(../img/url-icon.png);
-  min-width: 14px;
-  min-height: 14px;
-  background-position: center;
-  background-repeat: no-repeat;
+    position: absolute;
+    margin-top: 7px;
+    content: "";
+    background: url(../img/url-icon.png);
+    min-width: 14px;
+    min-height: 14px;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .select-dropdown {
-  border: none;
-  font-family: $base-font-family;
-  background-color: white;
-  font-size: $h3-size;
-  color: $dark-grey;
-  width: 100%;
-  padding: 0;
-  margin: 12px 0px 24px 0px;
+    border: none;
+    font-family: $base-font-family;
+    background-color: white;
+    font-size: $h3-size;
+    color: $dark-grey;
+    width: 100%;
+    padding: 0;
+    margin: 12px 0px 24px 0px;
 }
 
 .select-dropdown:focus {
-  outline: none;
+    outline: none;
 }
 
 .select-dropdown option{
-  font-size: $h3-size;
-  color: $dark-grey;
-  border: 1px solid $dark-grey;
+    font-size: $h3-size;
+    color: $dark-grey;
+    border: 1px solid $dark-grey;
 }
 
 .info hr {
-  width: 250px;
-  position: relative;
-  left: -24px;
-  border: none;
-  background-color: $mid-light-grey;
-  height: 2px;
-  margin: $two-baselines 0px $two-baselines 0px;
+    width: 250px;
+    position: relative;
+    left: -24px;
+    border: none;
+    background-color: $mid-light-grey;
+    height: 2px;
+    margin: $two-baselines 0px $two-baselines 0px;
 }
