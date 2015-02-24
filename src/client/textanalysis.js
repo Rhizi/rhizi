@@ -20,7 +20,7 @@ var sugg_name = {},
 suggestions_bus.push([]);
 
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
-var ANALYSIS_NODE = 'ANALYSIS_NODE'
+var ANALYSIS_NODE = 'ANALYSIS_NODE';
 var ANALYSIS_LINK = 'ANALYSIS_LINK';
 
 var NEW_NODE_NAME = consts.NEW_NODE_NAME;
@@ -161,10 +161,10 @@ function lowerCaseHash() {
     var hash = {};
     hash.set = function (name, value) {
         hash[name.toLowerCase()] = value;
-    }
+    };
     hash.get = function (name) {
         return hash[name.toLowerCase()];
-    }
+    };
     return hash;
 }
 
@@ -222,8 +222,8 @@ var textAnalyser = function (spec) {
 
     function __addNode(name) {
         var type;
-        if (name == NEW_NODE_NAME) {
-            type = selectedType()
+        if (name === NEW_NODE_NAME) {
+            type = selectedType();
         } else {
             type = node_name_to_type[name] || nodetypes[0];
         }
@@ -492,7 +492,7 @@ var textAnalyser = function (spec) {
         if (nodes.length <= 0) {
             return null;
         }
-        if (nodes.length == 1) {
+        if (nodes.length === 1) {
             return edit_graph.find_node__by_name(nodes[0].name);
         }
         // go forward to find cursor location in tokens
@@ -514,7 +514,7 @@ var textAnalyser = function (spec) {
         return node;
     }
 
-    _get_lastnode = finalize || tokens.length == 0 ? function () { return null }
+    _get_lastnode = finalize || tokens.length === 0 ? function () { return null; }
                                                   : lookup_node_in_bounds;
 
     return ret;
