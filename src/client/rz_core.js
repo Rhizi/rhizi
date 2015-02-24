@@ -78,7 +78,7 @@ var initDrawingArea = function () {
     }
 
     var el = document.body;
-    vis = d3.select(el).append("svg:svg")
+    vis = d3.select('#graph-view__canvas').append("svg:svg")
         .attr('id', 'canvas_d3')
         .attr("width", '100%')
         .attr("height", '100%')
