@@ -49,6 +49,9 @@ a:hover {
 a:active {
   color: #919095; }
 
+button {
+  border: none; }
+
 input {
   background-color: white;
   color: #363636;
@@ -216,7 +219,7 @@ body.debug .debug-ui-right {
 
 #input-container__search {
   left: 24px;
-  margin-top: 30px;
+  margin-top: 24px;
   position: absolute; }
 
 #input-container__graph-input {
@@ -341,7 +344,7 @@ body.debug .debug-ui-right {
   box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
   position: relative;
   width: 250px;
-  padding: 24px;
+  padding: 12px 15px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -372,7 +375,7 @@ body.debug .debug-ui-right {
   border-top: 6px solid #363636; }
 
 .info.type-project {
-  border-top: 6px solid #40c200; }
+  border-top: 6px solid #40C200; }
 
 .info .info-card-attr {
   display: block;
@@ -422,14 +425,10 @@ body.debug .debug-ui-right {
   color: #363636;
   border: 1px solid #363636; }
 
-.info hr {
-  width: 250px;
-  position: relative;
-  left: -24px;
-  border: none;
-  background-color: #d4d4d9;
-  height: 2px;
-  margin: 24px 0px 24px 0px; }
+#info-container__bottom-btn-bar {
+  border-top: 2px solid #d4d4d9;
+  margin-top: 10px;
+  padding-top: 10px; }
 
 .cmn-form {
   width: 420px;
@@ -523,8 +522,8 @@ body.debug .debug-ui-right {
   width: 100%;
   min-height: 48px;
   text-align: center;
-  background-color: #d3f2f8;
-  color: #1d6e7f;
+  background-color: #D3F2F8;
+  color: #1D6E7F;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf; }
 
@@ -669,7 +668,7 @@ p {
   width: 50px; }
 
 #tool-bar {
-  margin-top: 30px;
+  margin-top: 24px;
   position: absolute;
   right: 20px;
   z-index: 1; }
@@ -781,7 +780,7 @@ p {
   fill: #8b3ab0; }
 
 .circle.project {
-  fill: #40c200; }
+  fill: #40C200; }
 
 .circle.third-internship-proposal {
   fill: #33c2e0; }
@@ -1086,3 +1085,5 @@ p {
 
 svg text::selection {
   background: none; }
+
+/*# sourceMappingURL=style.css.map */
