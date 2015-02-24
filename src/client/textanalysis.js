@@ -2,6 +2,9 @@ define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
 function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 "use strict";
 
+// Constants
+var node_edge_separator = false;
+var separator_symbol = '#'; //'  ';
 
 var typeindex = 0,
     nodetypes = consts.nodetypes,
@@ -44,6 +47,8 @@ function cleanup(text)
 /**
  * Tokenizer for input.
  *
+ * Assumes the whole input string is available, used for lookahead via slice.
+ *
  * node_token is it's own token, represented by itself.
  *
  * accepts a quotation char which allows whitespace in between.
@@ -76,6 +81,7 @@ function tokenize(text, node_token, quote)
         prev = null,
         prev_whitespace = true,
         start = 0,
+        is_node_token,
         next = function() {
             if (token.length > 0) {
                 tokens.push({start: start, end: i, token: token.join('')});
@@ -85,7 +91,8 @@ function tokenize(text, node_token, quote)
         };
     for (i = 0 ; i < text.length; ++i) {
         c = text[i];
-        if (prev == '\\') {
+        is_node_token = text.slice(i, i + node_token.length) === node_token;
+        if (prev === '\\') {
             token.push(c);
             prev = null;
             continue;
@@ -103,9 +110,9 @@ function tokenize(text, node_token, quote)
             inquote = !inquote;
             break;
         default:
-            if (c == node_token && prev_whitespace) {
-                tokens.push({start: i, end: i + 1, token: node_token});
-                start = i + 1;
+            if (is_node_token && (node_token.length > 1 || prev_whitespace)) {
+                tokens.push({start: i, end: i + node_token.length, token: node_token});
+                start = i + node_token.length;
             } else {
                 token.push(c);
             }
