@@ -22,13 +22,13 @@
 html, body {
   height: 100%;
   font-family: "Source_Regular", sans-serif;
-  overflow-y: hidden; }
+  overflow: hidden;
+  /* hide horizontal & vertical scrollbars */ }
 
 body {
   overflow-y: hidden;
   overflow-x: auto;
   margin: 0;
-  min-width: 980px;
   padding: 0;
   font-size: 12px;
   background-color: #f5f5fa; }
@@ -48,6 +48,9 @@ a:hover {
 
 a:active {
   color: #919095; }
+
+button {
+  border: none; }
 
 input {
   background-color: white;
@@ -84,11 +87,11 @@ input {
   right: 10px;
   vertical-align: middle; }
 
-#org-logo__CRI {
-  position: fixed;
-  bottom: 10px;
-  right: 80px;
+.logo-3rd-party {
   height: 30px; }
+
+#content {
+  height: 100%; }
 
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
@@ -137,153 +140,6 @@ q:before, q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0; }
-
-.welcome-box {
-  margin-left: auto;
-  margin-right: auto;
-  padding: 36px;
-  margin-top: 36px;
-  width: 420px;
-  background: white; }
-
-.login-view-section {
-  width: 100%;
-  margin-top: 24px;
-  margin-bottom: 12px;
-  text-align: center; }
-
-.login-rhizi-logo {
-  background: url("/static/img/logo-red.png");
-  background-repeat: no-repeat;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  width: 54px;
-  height: 30px; }
-
-.login-header {
-  margin-top: 35px;
-  margin-bottom: 35px;
-  text-align: center;
-  color: #ee3654; }
-
-.login-text {
-  font-size: 18px;
-  line-height: 22px;
-  text-align: center;
-  margin-bottom: 12px; }
-  .login-text em {
-    font-family: "Source_Bold", sans-serif;
-    font-style: normal; }
-
-.clearfix {
-  *zoom: 1; }
-  .clearfix:before, .clearfix:after {
-    content: ' ';
-    display: table; }
-  .clearfix:after {
-    clear: both; }
-
-.login-form {
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto; }
-
-.login-input {
-  width: 75%;
-  border: none;
-  font-family: inherit;
-  font-size: inherit;
-  background-color: #f5f5fa;
-  border: 1px solid #d4d4d9;
-  -webkit-appearance: none;
-  padding: 12px 12px 12px 20%;
-  background-repeat: no-repeat;
-  background-position: 18px 14px; }
-  .login-input:focus {
-    outline: none;
-    background-color: #f5f5fa;
-    border: 1px solid #d4d4d9;
-    -webkit-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
-    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3); }
-  .login-input[type="email"] {
-    background-image: url(../img/mail-icon.png); }
-  .login-input[type="password"] {
-    background-image: url(../img/password-icon.png);
-    background-position-x: 22px;
-    border-top: none; }
-
-.forgot-password {
-  color: #919095;
-  text-decoration: none; }
-  .forgot-password:hover {
-    color: #363636; }
-
-.section-divider {
-  color: #919095; }
-  .section-divider:before {
-    content: "";
-    width: 112px;
-    margin-top: 12px;
-    position: absolute;
-    height: 0;
-    margin-left: -118px;
-    border-top: 1px solid #919095; }
-  .section-divider:after {
-    content: "";
-    width: 112px;
-    margin-top: 12px;
-    position: absolute;
-    margin-left: 4px;
-    height: 0;
-    border-top: 1px solid #919095; }
-
-.contact-us-icon {
-  text-align: center;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  background: url(../img/hr-email-icon.png) no-repeat;
-  margin-left: auto;
-  display: inline-block;
-  margin-right: auto;
-  height: 25px;
-  width: 25px; }
-
-.contact-us-text {
-  color: #ee3654; }
-
-.contact-us-link {
-  color: #ee3654;
-  text-decoration: underline; }
-
-.magenta-divider:before {
-  border-top: 1px solid #ee3654; }
-.magenta-divider:after {
-  border-top: 1px solid #ee3654; }
-
-.login-form_button {
-  cursor: pointer;
-  background-color: #ee3654;
-  color: white;
-  font-size: 18px;
-  margin-top: 24px;
-  padding: 12px;
-  width: 100%; }
-  .login-form_button:hover {
-    background-color: #d10a40; }
-  .login-form_button:focus {
-    background-color: #d10a40; }
-
-#login-page_forgot-password-button {
-  margin-top: 12px; }
-
-#login-page_create-account-button {
-  color: #f5f5fa;
-  background-color: #919095;
-  padding: 12px 0; }
-  #login-page_create-account-button:hover {
-    background-color: #363636; }
 
 .btn-regular {
   cursor: pointer;
@@ -339,168 +195,6 @@ body.debug .debug-ui-right {
   float: right;
   width: 50%; }
 
-.graph-view {
-  width: 100%;
-  background-color: #f5f5fa;
-  position: relative; }
-
-.node {
-  stroke-width: 1px;
-  font-size: 18px;
-  z-index: 100; }
-
-.circle {
-  z-index: 100;
-  pointer-events: all;
-  fill: #363636; }
-
-.nodetext {
-  fill: #363636;
-  font-size: 18px;
-  z-index: 3; }
-
-.svg-input-fo-node {
-  fill: #363636;
-  z-index: 3; }
-
-.svg-input-fo-node input {
-  font-size: 18px;
-  background-color: transparent; }
-
-.linklabel {
-  stroke: #363636;
-  font-size: 14px;
-  background-color: transparent; }
-
-.svg-input-fo-link {
-  stroke: #363636; }
-
-.svg-input-fo-link input {
-  font-size: 14px;
-  background-color: transparent; }
-
-.link {
-  fill: none;
-  stroke: #919095;
-  stroke-width: 1px;
-  stroke-opacity: 0.5;
-  z-index: 1; }
-
-.ghostlink {
-  opacity: 0.0;
-  fill: none;
-  stroke-width: 15px;
-  z-index: 2;
-  /* higher than link, lower than node */ }
-
-.circle.chosen {
-  stroke: #33c2e0;
-  stroke-opacity: 0.5; }
-
-.circle.enter {
-  stroke: #33c2e0;
-  stroke-opacity: 0.5; }
-
-.circle.bubble {
-  fill: rgba(255, 255, 255, 0.4);
-  pointer-events: none; }
-
-.circle.exit {
-  stroke: #33c2e0;
-  stroke-opacity: 0.5; }
-
-.circle.chainlink {
-  stroke: #AAA; }
-
-.circle.temp {
-  box-shadow: 0 0 40px #FFFF8F; }
-
-.circle.temp, .circle.chosen {
-  stroke-width: 3px; }
-
-.circle.temp.empty {
-  stroke-width: 1.5px; }
-
-/* Per node and edge type (type is a property of nodes and links) styling
- * note that this should be automatically generated somehow for user settings.
- */
-.circle.person {
-  fill: #004681; }
-
-.circle.club {
-  fill: #ee3654; }
-
-.circle.skill {
-  fill: #fad900; }
-
-.circle.interest {
-  fill: #8b3ab0; }
-
-.circle.project {
-  fill: #40c200; }
-
-.circle.third-internship-proposal {
-  fill: #33c2e0; }
-
-.circle.internship {
-  fill: #ff8b11; }
-
-.circle.empty {
-  fill: #919095; }
-
-.circle.chainlink {
-  fill: #363636; }
-
-/* Selected parts of the graph, right now by clicking, later with search. */
-.notselected {
-  opacity: 0.2;
-  -webkit-filter: blur(10px); }
-
-.graph.link.temp_and {
-  stroke-dasharray: 3,3; }
-
-.highlightlink {
-  fill: none;
-  stroke: #33c2e0;
-  stroke-opacity: 0.5;
-  stroke-width: 2px;
-  z-index: 1; }
-
-.link.enter, .link.exit, .link.selected {
-  fill: none;
-  stroke: #33c2e0;
-  stroke-opacity: 0.5;
-  stroke-width: 2px;
-  z-index: 1; }
-
-#editbox input {
-  width: 130px; }
-
-.overlay {
-  fill: none;
-  pointer-events: all;
-  z-index: 0; }
-
-.editinfo {
-  position: fixed;
-  top: -40px;
-  z-index: 5; }
-
-.editlinkinfo {
-  position: fixed;
-  top: -40px;
-  z-index: 5; }
-
-#editlinkname {
-  width: inherit;
-  height: inherit;
-  font-size: 18px; }
-
-#editname {
-  width: inherit;
-  height: inherit;
-  font-size: 18px; }
-
 .input-container {
   width: 35%; }
   .input-container form {
@@ -525,12 +219,12 @@ body.debug .debug-ui-right {
 
 #input-container__search {
   position: absolute;
-  top: 40px;
+  top: 70px;
   left: 24px; }
 
 #input-container__graph-input {
   position: absolute;
-  top: 100px;
+  top: 130px;
   left: 24px; }
   #input-container__graph-input:focus {
     width: 80%; }
@@ -681,7 +375,7 @@ body.debug .debug-ui-right {
   border-top: 6px solid #363636; }
 
 .info.type-project {
-  border-top: 6px solid #40c200; }
+  border-top: 6px solid #40C200; }
 
 .info .info-card-attr {
   display: block;
@@ -740,6 +434,77 @@ body.debug .debug-ui-right {
   height: 2px;
   margin: 24px 0px 24px 0px; }
 
+.cmn-form {
+  width: 420px;
+  background-color: white;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 36px; }
+
+.cmn-form-input {
+  border: 1px solid #d4d4d9;
+  background-color: #f5f5fa;
+  background-repeat: no-repeat;
+  background-position: 18px 14px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 15%;
+  /* provide room for background image */
+  width: 85%; }
+  .cmn-form-input:focus {
+    outline: none;
+    background-color: #f5f5fa;
+    border: 1px solid #d4d4d9;
+    -webkit-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3); }
+  .cmn-form-input[type="email"] {
+    background-image: url(../img/mail-icon.png); }
+  .cmn-form-input[type="password"] {
+    background-image: url(../img/password-icon.png); }
+
+.cmn-form-logo {
+  background: url("/static/img/logo-red.png");
+  background-repeat: no-repeat;
+  margin-bottom: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 24px;
+  width: 54px;
+  height: 30px; }
+
+.cmn-form-row {
+  width: 100%; }
+
+.cmn-form-title {
+  color: #ee3654;
+  display: block;
+  font-size: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center; }
+
+.cmn-form-section {
+  margin-top: 12px;
+  margin-bottom: 12px; }
+
+.cmn-form__ajax-response {
+  text-align: center; }
+
+.cmn-form__submit-btn {
+  background-color: #ee3654;
+  border-radius: 3px;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+  margin-top: 24px;
+  padding: 12px;
+  text-align: center; }
+
 #search {
   font-family: "Source_Regular", sans-serif;
   font-size: 18px; }
@@ -761,8 +526,8 @@ body.debug .debug-ui-right {
   width: 100%;
   min-height: 48px;
   text-align: center;
-  background-color: #d3f2f8;
-  color: #1d6e7f;
+  background-color: #D3F2F8;
+  color: #1D6E7F;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf; }
 
@@ -793,13 +558,10 @@ body.debug .debug-ui-right {
 .top-bar {
   padding-top: 10px;
   padding-bottom: 10px;
-  min-height: 36px;
   background-color: #363636; }
 
 .user-area {
-  display: inline;
-  float: right;
-  margin-right: 40px; }
+  margin-right: 20px; }
 
 .username {
   display: inline-block;
@@ -828,6 +590,10 @@ body.debug .debug-ui-right {
   color: #f5f5fa;
   margin-left: 40px;
   font-size: 18px; }
+
+#top-bar__float-right {
+  float: right;
+  margin-right: 20px; }
 
 /* Headings */
 h1 {
@@ -890,6 +656,344 @@ p {
   top: -5px;
   width: 200px; }
 
+.tool_bar_btn {
+  border: 1px solid #919095;
+  cursor: pointer;
+  float: right;
+  height: 36px;
+  margin-right: 15px;
+  width: 50px; }
+
+#tool-bar {
+  margin-top: 30px;
+  position: absolute;
+  right: 0px;
+  z-index: 1; }
+
+#btn_filter {
+  background: url(../img/toolbar_icon__filter.png);
+  background-repeat: no-repeat;
+  background-position: center; }
+
+#btn_export {
+  background: url(../img/toolbar_icon__export.png);
+  background-position: center;
+  background-repeat: no-repeat; }
+
+.graph-view {
+  background-color: #f5f5fa;
+  height: 100%; }
+
+.node {
+  stroke-width: 1px;
+  font-size: 18px;
+  z-index: 100; }
+
+.circle {
+  z-index: 100;
+  pointer-events: all;
+  fill: #363636; }
+
+.nodetext {
+  fill: #363636;
+  font-size: 18px;
+  z-index: 3; }
+
+.svg-input-fo-node {
+  fill: #363636;
+  z-index: 3; }
+
+.svg-input-fo-node input {
+  font-size: 18px;
+  background-color: transparent; }
+
+.linklabel {
+  stroke: #363636;
+  font-size: 14px;
+  background-color: transparent; }
+
+.svg-input-fo-link {
+  stroke: #363636; }
+
+.svg-input-fo-link input {
+  font-size: 14px;
+  background-color: transparent; }
+
+.link {
+  fill: none;
+  stroke: #919095;
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
+  z-index: 1; }
+
+.ghostlink {
+  opacity: 0.0;
+  fill: none;
+  stroke-width: 15px;
+  z-index: 2;
+  /* higher than link, lower than node */ }
+
+.circle.chosen {
+  stroke: #33c2e0;
+  stroke-opacity: 0.5; }
+
+.circle.enter {
+  stroke: #33c2e0;
+  stroke-opacity: 0.5; }
+
+.circle.bubble {
+  fill: rgba(255, 255, 255, 0.4);
+  pointer-events: none; }
+
+.circle.exit {
+  stroke: #33c2e0;
+  stroke-opacity: 0.5; }
+
+.circle.chainlink {
+  stroke: #AAA; }
+
+.circle.temp {
+  box-shadow: 0 0 40px #FFFF8F; }
+
+.circle.temp, .circle.chosen {
+  stroke-width: 3px; }
+
+.circle.temp.empty {
+  stroke-width: 1.5px; }
+
+/* Per node and edge type (type is a property of nodes and links) styling
+ * note that this should be automatically generated somehow for user settings.
+ */
+.circle.person {
+  fill: #004681; }
+
+.circle.club {
+  fill: #ee3654; }
+
+.circle.skill {
+  fill: #fad900; }
+
+.circle.interest {
+  fill: #8b3ab0; }
+
+.circle.project {
+  fill: #40C200; }
+
+.circle.third-internship-proposal {
+  fill: #33c2e0; }
+
+.circle.internship {
+  fill: #ff8b11; }
+
+.circle.empty {
+  fill: #919095; }
+
+.circle.chainlink {
+  fill: #363636; }
+
+/* Selected parts of the graph, right now by clicking, later with search. */
+.notselected {
+  opacity: 0.2;
+  -webkit-filter: blur(10px); }
+
+.graph.link.temp_and {
+  stroke-dasharray: 3,3; }
+
+.highlightlink {
+  fill: none;
+  stroke: #33c2e0;
+  stroke-opacity: 0.5;
+  stroke-width: 2px;
+  z-index: 1; }
+
+.link.enter, .link.exit, .link.selected {
+  fill: none;
+  stroke: #33c2e0;
+  stroke-opacity: 0.5;
+  stroke-width: 2px;
+  z-index: 1; }
+
+#editbox input {
+  width: 130px; }
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+  z-index: 0; }
+
+.editinfo {
+  position: fixed;
+  top: -40px;
+  z-index: 5; }
+
+.editlinkinfo {
+  position: fixed;
+  top: -40px;
+  z-index: 5; }
+
+#editlinkname {
+  width: inherit;
+  height: inherit;
+  font-size: 18px; }
+
+#editname {
+  width: inherit;
+  height: inherit;
+  font-size: 18px; }
+
+#graph-view__canvas {
+  height: inherit; }
+
+.welcome-box {
+  margin-left: auto;
+  margin-right: auto;
+  padding: 36px;
+  margin-top: 36px;
+  width: 420px;
+  background: white; }
+
+.login-view-section {
+  width: 100%;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  text-align: center; }
+
+.login-rhizi-logo {
+  background: url("/static/img/logo-red.png");
+  background-repeat: no-repeat;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 54px;
+  height: 30px; }
+
+.login-header {
+  margin-top: 35px;
+  margin-bottom: 35px;
+  text-align: center;
+  color: #ee3654; }
+
+.login-text {
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  margin-bottom: 12px; }
+  .login-text em {
+    font-family: "Source_Bold", sans-serif;
+    font-style: normal; }
+
+.clearfix {
+  *zoom: 1; }
+  .clearfix:before, .clearfix:after {
+    content: ' ';
+    display: table; }
+  .clearfix:after {
+    clear: both; }
+
+.login-form {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto; }
+
+.login-input {
+  width: 75%;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  background-color: #f5f5fa;
+  border: 1px solid #d4d4d9;
+  -webkit-appearance: none;
+  padding: 12px 12px 12px 20%;
+  background-repeat: no-repeat;
+  background-position: 18px 14px; }
+  .login-input:focus {
+    outline: none;
+    background-color: #f5f5fa;
+    border: 1px solid #d4d4d9;
+    -webkit-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3); }
+  .login-input[type="email"] {
+    background-image: url(../img/mail-icon.png); }
+  .login-input[type="password"] {
+    background-image: url(../img/password-icon.png);
+    background-position-x: 22px;
+    border-top: none; }
+
+.forgot-password {
+  color: #919095;
+  text-decoration: none; }
+  .forgot-password:hover {
+    color: #363636; }
+
+.section-divider {
+  color: #919095; }
+  .section-divider:before {
+    content: "";
+    width: 112px;
+    margin-top: 12px;
+    position: absolute;
+    height: 0;
+    margin-left: -118px;
+    border-top: 1px solid #919095; }
+  .section-divider:after {
+    content: "";
+    width: 112px;
+    margin-top: 12px;
+    position: absolute;
+    margin-left: 4px;
+    height: 0;
+    border-top: 1px solid #919095; }
+
+.contact-us-icon {
+  text-align: center;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url(../img/hr-email-icon.png) no-repeat;
+  margin-left: auto;
+  display: inline-block;
+  margin-right: auto;
+  height: 25px;
+  width: 25px; }
+
+.contact-us-text {
+  color: #ee3654; }
+
+.contact-us-link {
+  color: #ee3654;
+  text-decoration: underline; }
+
+.magenta-divider:before {
+  border-top: 1px solid #ee3654; }
+.magenta-divider:after {
+  border-top: 1px solid #ee3654; }
+
+.login-form_button {
+  cursor: pointer;
+  background-color: #ee3654;
+  color: white;
+  font-size: 18px;
+  margin-top: 24px;
+  padding: 12px;
+  width: 100%; }
+  .login-form_button:hover {
+    background-color: #d10a40; }
+  .login-form_button:focus {
+    background-color: #d10a40; }
+
+#login-page_forgot-password-button {
+  margin-top: 12px; }
+
+#login-page_create-account-button {
+  color: #f5f5fa;
+  background-color: #919095;
+  padding: 12px 0; }
+  #login-page_create-account-button:hover {
+    background-color: #363636; }
+
+#cmn-form-row--instruction-line {
+  margin-bottom: 12px; }
+
 /* #user_signup_form_panel {
 	width: 550px;
 	text-align: center;
@@ -901,7 +1005,7 @@ p {
 	background: white;
 	box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
 } */
-/* #signup_form___submit_button {
+/* #signup_form__submit_button {
 	background-color: #ee3654;
 	border-radius: 3px;
 	color: #fff;
@@ -948,7 +1052,7 @@ p {
 	background-position: 140px 2px;
 }
 
-#signup_form___submit_button_row {
+#signup_form__submit_button_row {
 	overflow: auto;
 }  */
 .input-username {
@@ -958,7 +1062,7 @@ p {
 .signup-button {
   width: 92%; }
 
-#signup_form___submit_button:hover {
+#signup_form__submit_button:hover {
   alpha: 1.0; }
 
 #signup_form__ajax_response {
@@ -976,27 +1080,7 @@ p {
   background-color: #fef2f4;
   border: 1px solid #d10a40; }
 
-.tool_bar_btn {
-  border: 1px solid #919095;
-  cursor: pointer;
-  text-align: right;
-  float: right;
-  font-size: 12px;
-  height: 36px;
-  margin-right: 15px;
-  margin-top: 40px;
-  padding: 5px;
-  width: 50px; }
-
-#btn_filter {
-  background: url(../img/toolbar_icon__filter.png);
-  background-repeat: no-repeat;
-  background-position: center; }
-
-#btn_export {
-  background: url(../img/toolbar_icon__export.png);
-  background-position: center;
-  background-repeat: no-repeat; }
-
 svg text::selection {
   background: none; }
+
+/*# sourceMappingURL=style.css.map */
