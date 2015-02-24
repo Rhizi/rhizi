@@ -324,8 +324,8 @@ body.debug .debug-ui-right {
 
 .info-container {
   position: absolute;
-  right: 70px;
-  top: 24px; }
+  right: 20px;
+  top: 130px; }
 
 .subtitle {
   font-style: italic;
@@ -665,13 +665,13 @@ p {
   cursor: pointer;
   float: right;
   height: 36px;
-  margin-right: 15px;
+  margin-left: 10px;
   width: 50px; }
 
 #tool-bar {
   margin-top: 30px;
   position: absolute;
-  right: 0px;
+  right: 20px;
   z-index: 1; }
 
 #btn_filter {

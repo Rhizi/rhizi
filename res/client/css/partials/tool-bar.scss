@@ -3,14 +3,14 @@
     cursor: pointer;
     float: right;
     height: $three-baselines;
-    margin-right: 15px;
+    margin-left: 10px;
     width: 50px;
 }
 
 #tool-bar {
-    margin-top: 30px;
+    margin-top: $two-baselines;
     position: absolute;
-    right: 0px;
+    right: $graph-margin-right;
     z-index: 1;
 }
 
