@@ -218,9 +218,9 @@ body.debug .debug-ui-right {
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3); }
 
 #input-container__search {
-  position: absolute;
-  top: 70px;
-  left: 24px; }
+  left: 24px;
+  margin-top: 30px;
+  position: absolute; }
 
 #input-container__graph-input {
   position: absolute;
