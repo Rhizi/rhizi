@@ -4,7 +4,7 @@ function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 
 // Constants
 var node_edge_separator = false;
-var separator_symbol = '#'; //'  ';
+var separator_symbol = '#'; //'#'; //'  ';
 
 var typeindex = 0,
     nodetypes = consts.nodetypes,
@@ -134,6 +134,12 @@ function list_length_larger(n) {
     }
 }
 
+function obj_field_not_equal(field, value) {
+    return function(obj) {
+        return obj[field] != value;
+    }
+}
+
 /**
  *
  * tokens_to_graph_elements_*
@@ -251,7 +257,7 @@ function tokenize(text, node_token, quote)
                 start = i;
             }
         };
-    for (i = 0 ; i < text.length; ++i) {
+    for (i = 0 ; i < text.length;) {
         c = text[i];
         is_node_token = text.slice(i, i + node_token.length) === node_token;
         if (prev === '\\') {
@@ -259,32 +265,36 @@ function tokenize(text, node_token, quote)
             prev = null;
             continue;
         }
-        switch (c) {
-        case ' ':
-        case '\t':
-            if (inquote) {
+        if (is_node_token && (node_token.length > 1 || prev_whitespace)) {
+            next();
+            tokens.push({start: i, end: i + node_token.length, token: node_token});
+            start = i + node_token.length;
+            i += node_token.length;
+        } else {
+            switch (c) {
+            case ' ':
+            case '\t':
+                if (inquote) {
+                    token.push(c);
+                } else {
+                    next();
+                }
+                break;
+            case quote:
+                inquote = !inquote;
+                break;
+            default:
                 token.push(c);
-            } else {
-                next();
             }
-            break;
-        case quote:
-            inquote = !inquote;
-            break;
-        default:
-            if (is_node_token && (node_token.length > 1 || prev_whitespace)) {
-                tokens.push({start: i, end: i + node_token.length, token: node_token});
-                start = i + node_token.length;
-            } else {
-                token.push(c);
-            }
+            i += 1;
         }
         prev = c;
         prev_whitespace = prev === null || prev === ' ' || prev === '\t';
     }
     next();
     // Remove whitespace around tokens. Can be done with lookahead but less code this way
-    tokens.forEach(function (obj) { obj.token = obj.token.trim(); });
+    tokens.filter(obj_field_not_equal('token', node_token))
+          .forEach(function (obj) { obj.token = obj.token.trim(); });
     return tokens;
 }
 
