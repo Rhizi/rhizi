@@ -1,6 +1,6 @@
 .graph-view {
-  width:100%;
-  background-color: #f5f5fa; //$light-grey
+    background-color: $light-grey;
+    height: 100%;
   position: relative;
 }
 
@@ -206,3 +206,6 @@
 
 }
 
+#graph-view__canvas {
+    height: inherit; // inherit from container which should be set to 100%
+}
