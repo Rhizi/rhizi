@@ -15,7 +15,7 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 ### Neo4j
 Install [neo4j](http://neo4j.com/download/) >= 2.1.5 (2.0 explicitly not supported, we use += in our queries)
 
-### python libs
+### Python libs
 Install all of:
 # [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/)
 # [flask](http://flask.pocoo.org/)
@@ -52,7 +52,7 @@ Or perform the following by hand:
 Command line use documentation can be view with:
 :$ python rz_server.py -h
 
-# Configuration
+## Configuration
 Rhizi configuration is currently documented in code, see <code>src/server/rz_server.py#Config</code>
 
 # Development
