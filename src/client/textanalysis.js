@@ -3,8 +3,8 @@ function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 "use strict";
 
 // Constants
-var node_edge_separator = false;
-var separator_symbol = '#'; //'#'; //'  ';
+var node_edge_separator = true;
+var separator_symbol = '  '; //'#'; //'  ';
 
 var typeindex = 0,
     nodetypes = consts.nodetypes,
