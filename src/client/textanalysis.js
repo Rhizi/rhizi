@@ -128,6 +128,12 @@ function obj_take(name) {
     };
 }
 
+function list_length_larger(n) {
+    return function(list) {
+        return list.length > n;
+    }
+}
+
 /**
  *
  * tokens_to_graph_elements_*
@@ -178,7 +184,7 @@ if (node_edge_separator) {
 }
 
 function groups_to_thirds(groups) {
-    return groups.map(function(tokens) {
+    return groups.filter(list_length_larger(0)).map(function(tokens) {
         var start = tokens[0].start,
             end = tokens[tokens.length - 1].end;
         return {
