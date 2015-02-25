@@ -3,7 +3,9 @@
     cursor: pointer;
     float: right;
     height: $three-baselines;
+    line-height: $three-baselines;
     margin-left: 10px;
+    text-align: center;
     width: 50px;
 }
 
@@ -22,6 +24,16 @@
 
 #btn_export {
     background: url(../img/toolbar_icon__export.png);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#btn_merge {
+    width: 80px;
+}
+
+#btn_link_fan {
+    background: url(../img/url-icon.png);
     background-position: center;
     background-repeat: no-repeat;
 }

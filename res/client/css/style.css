@@ -229,11 +229,6 @@ body.debug .debug-ui-right {
   #input-container__graph-input:focus {
     width: 80%; }
 
-#selection-tools {
-  position: absolute;
-  top: 180px;
-  left: 24px; }
-
 #textanalyser.ui-autocomplete-input {
   font-family: "Source_Regular", sans-serif;
   color: #919095; }
@@ -664,7 +659,9 @@ p {
   cursor: pointer;
   float: right;
   height: 36px;
+  line-height: 36px;
   margin-left: 10px;
+  text-align: center;
   width: 50px; }
 
 #tool-bar {
@@ -680,6 +677,14 @@ p {
 
 #btn_export {
   background: url(../img/toolbar_icon__export.png);
+  background-position: center;
+  background-repeat: no-repeat; }
+
+#btn_merge {
+  width: 80px; }
+
+#btn_link_fan {
+  background: url(../img/url-icon.png);
   background-position: center;
   background-repeat: no-repeat; }
 
