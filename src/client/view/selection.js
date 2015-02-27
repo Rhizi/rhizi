@@ -48,6 +48,7 @@ function get_main_graph()
 var root_nodes = [], // these are the nodes that are requested via update
     selected_nodes = [],      // these are the nodes that are highlighted, generally the neighbours of selection_request
     selected_nodes__by_id = {},
+    root_nodes__by_id = {},
     selectionChangedBus = new Bacon.Bus();
 
 function listen_on_diff_bus(diffBus)
@@ -88,14 +89,19 @@ function sortedArrayDiff(a, b, a_cmp_b)
     return ret;
 }
 
+function nodes_to_id_dict(nodes)
+{
+    return nodes.reduce(
+            function(d, v) {
+                d[v.id] = v;
+                return d;
+            }, {});
+}
+
 function updateSelectedNodesBus(new_selected_nodes)
 {
     selected_nodes = new_selected_nodes;
-    selected_nodes__by_id = selected_nodes.reduce(
-        function(d, v) {
-            d[v.id] = v;
-            return d;
-        }, {});
+    selected_nodes__by_id = nodes_to_id_dict(selected_nodes);
     selectionChangedBus.push(new_selection(selected_nodes, root_nodes));
 }
 
@@ -145,12 +151,23 @@ var node_selected = function(node) {
     return selected_nodes__by_id[node.id] !== undefined;
 }
 
+var node_root_selected = function(node) {
+    return root_nodes__by_id[node.id] !== undefined;
+}
+
+var node_first_selected = function(node) {
+    return node.id === root_nodes[0].id;
+}
+
 var link_selected = function(link) {
     return node_selected(link.__src) && node_selected(link.__dst);
 }
 
 var selected_class__node = function(node, temporary) {
-    return !temporary && selected_nodes.length > 0 ? (node_selected(node) ? "selected" : "notselected") : "";
+    return !temporary && selected_nodes.length > 0 ?
+        (node_first_selected(node) ? 'first-selected' :
+            (node_root_selected(node) ? 'root-selected' :
+                (node_selected(node) ? "selected" : "notselected"))) : "";
 }
 
 var selected_class__link = function(link, temporary) {
@@ -159,6 +176,7 @@ var selected_class__link = function(link, temporary) {
 
 var clear = function() {
     root_nodes = [];
+    root_nodes__by_id = {};
     updateSelectedNodesBus([]);
 }
 
@@ -179,6 +197,7 @@ var inner_update = function(nodes)
 {
     clear();
     root_nodes = nodes;
+    root_nodes__by_id = nodes_to_id_dict(nodes);
     connectedComponent(nodes);
 }
 

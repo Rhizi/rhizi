@@ -148,6 +148,20 @@
   -webkit-filter: blur(10px);
 }
 
+.node.first-selected .circle {
+    stroke: $yellow;
+    stroke-opacity: 1;
+    stroke-width: 3px;
+    z-index: 1;
+}
+
+.node.root-selected .circle {
+    stroke: $cyan;
+    stroke-opacity: 1;
+    stroke-width: 2px;
+    z-index: 1;
+}
+
 .graph.link.temp_and {
   stroke-dasharray: 3,3;
 }
@@ -157,7 +171,7 @@
   stroke: $cyan;
   stroke-opacity: 0.5;
   stroke-width: 2px;
-  z-index:1;
+  z-index: 1;
 }
 
 .link.enter, .link.exit, .link.selected {
@@ -165,7 +179,7 @@
   stroke: $cyan;
   stroke-opacity: 0.5;
   stroke-width: 2px;
-  z-index:1;
+  z-index: 1;
 }
 
 #editbox input{
