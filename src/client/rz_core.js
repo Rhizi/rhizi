@@ -24,9 +24,15 @@ var zoomBus = new Bacon.Bus();
 var zoom_property = zoomBus.toProperty(zoomProgress);
 var svgInput;
 
+function updateZoomProgress(val)
+{
+    zoomProgress = val;
+    zoomBus.push(val);
+}
+
 function svg_click_handler(e) {
     if (zoomProgress) {
-        zoomProgress = false;
+        updateZoomProgress(false);
         return;
     }
     if (e.originalEvent.target.nodeName != 'svg') {
@@ -48,9 +54,9 @@ edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
 var initDrawingArea = function () {
 
     function zoom() {
-        zoomProgress = true;
         zoom_g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         d3.event.sourceEvent.stopPropagation();
+        updateZoomProgress(true);
     }
 
     // TODO: we are listening both on graph.diffBus and selection.selectionChangedBus,

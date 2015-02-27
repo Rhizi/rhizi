@@ -154,10 +154,6 @@ function GraphView(spec) {
     }
 
 
-    zoom_property.onValue(function (val) {
-        zoomInProgress = val;
-    });
-
     // Filter. FIXME: move away from here. separate element, connected via bacon property
     if (!temporary) {
         read_checkboxes();
@@ -640,26 +636,44 @@ function GraphView(spec) {
      * @return {x:new_x, y:new_y}
      */
     function apply_node_zoom_obj(d) {
-        var zoom_translate = d.zoom_obj.translate(),
+        return apply_zoom_obj(d.bx, d.by, d.zoom_obj);
+    }
+
+    function apply_zoom_obj(x, y, zoom_obj) {
+        var zoom_translate = zoom_obj.translate(),
             zx = zoom_translate[0],
             zy = zoom_translate[1],
-            s = d.zoom_obj.scale();
+            s = zoom_obj.scale();
 
-        return [d.bx * s + zx, d.by * s + zy];
+        return [x * s + zx, y * s + zy];
+    }
+
+    function apply_reverse_zoom_obj(x, y, zoom_obj) {
+        var zoom_translate = zoom_obj.translate(),
+            zx = zoom_translate[0],
+            zy = zoom_translate[1],
+            s = zoom_obj.scale();
+
+        return [(x - zx) / s, (y - zy) / s];
     }
 
     function bubble_transform(d, bubble_radius) {
         if (bubble_radius == 0) {
             return d;
         }
-        var dx = d.x - cx,
-            dy = d.y - cy,
+        var zoom_center_point = apply_reverse_zoom_obj(cx, cy, zoom_obj),
+            zcx = zoom_center_point[0],
+            zcy = zoom_center_point[1],
+            dx = d.x - zcx,
+            dy = d.y - zcy,
             r = Math.sqrt(dx * dx + dy * dy),
             a = Math.atan2(dy, dx),
-            new_r = r > bubble_radius * 2 ? r : r / 2 + bubble_radius;
+            scale = zoom_obj.scale(),
+            scaled_bubble_radius = bubble_radius / scale;
+            new_r = r > scaled_bubble_radius * 2 ? r : r / 2 + scaled_bubble_radius;
         // FIXME: r == 0 (or close enough)
-        return {x: cx + new_r * Math.cos(a),
-                y: cy + new_r * Math.sin(a)};
+        return {x: zcx + new_r * Math.cos(a),
+                y: zcy + new_r * Math.sin(a)};
     }
 
     function tick(e) {
@@ -770,6 +784,11 @@ function GraphView(spec) {
     if (force_enabled) {
         init_force_layout();
     }
+
+    zoom_property.onValue(function (val) {
+        zoomInProgress = val;
+        tick();
+    });
     return gv;
 }
 
