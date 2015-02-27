@@ -91,7 +91,7 @@ var completer = (function (input_element, dropdown, base_config) {
             triggerStart: anyof_re(base && base.triggerStart || rz_config.separator_string),
             triggerEnd: anyof_re(base && base.triggerEnd || ' '),
             hideOnTab: base && base.hasOwnProperty('hideOnTab') ? base.hideOnTab : true,
-            matchStartOfString: (base && base.matchStartOfString) || false,
+            matchStartOfString: (base && base.matchStartOfString) || rz_config.node_edge_separator,
             appendSpaceOnEnter: (base && base.appendSpaceOnEnter) || false,
             quoteSpaceContaining: (base && base.quoteSpaceContaining) || false,
         };
