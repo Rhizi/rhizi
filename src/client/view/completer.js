@@ -88,7 +88,7 @@ var completer = (function (input_element, dropdown, base_config) {
 
     function get_config(base) {
         return {
-            triggerStart: anyof_re(base && base.triggerStart || '#'),
+            triggerStart: anyof_re(base && base.triggerStart || rz_config.separator_string),
             triggerEnd: anyof_re(base && base.triggerEnd || ' '),
             hideOnTab: base && base.hasOwnProperty('hideOnTab') ? base.hideOnTab : true,
             matchStartOfString: (base && base.matchStartOfString) || false,
