@@ -17,10 +17,12 @@ function Bubble(raw_parent, radius) {
     circle.className.baseVal = 'circle bubble';
     circle.id = 'bubble';
 
-    radius.onValue(function (r) {
-        setTransformToCenter(g);
-        circle.setAttribute("r", r);
-    })
+    // reset bubble on radius change and window resize
+    Bacon.combineWith(function (r, _) { return r; }, radius, $(window).asEventStream('resize')).onValue(
+        function (r) {
+            setTransformToCenter(g);
+            circle.setAttribute("r", r);
+        });
 }
 return {
     Bubble:Bubble

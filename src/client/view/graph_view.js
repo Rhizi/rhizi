@@ -88,10 +88,10 @@ function GraphView(spec) {
         vis,
         deliverables,
         // FIXME - want to use parent_element
-        w = $(document.body).innerWidth(),
-        h = $(document.body).innerHeight(),
-        cx = w / 2,
-        cy = h / 2,
+        w,
+        h,
+        cx,
+        cy,
         // FIXME take filter names from index.html or both from graph db
         filter_states = {'interest':null, 'skill':null, 'club':null, 'person':null, 'third-internship-proposal':null},
         filter_state_names = ['interest', 'skill', 'club', 'person', 'third-internship-proposal'];
@@ -103,6 +103,17 @@ function GraphView(spec) {
                 zoom_obj !== undefined && parent_graph_zoom_obj !== undefined &&
                 (temporary || svgInput !== undefined),
                 "missing spec variable");
+
+    function update_window_size() {
+        w = $(document.body).innerWidth();
+        h = $(document.body).innerHeight();
+        cx = w / 2;
+        cy = h / 2;
+    }
+
+    // update view whenever screen is resized
+    $(window).asEventStream('resize').map(update_window_size).onValue(function () { update_view(false); });
+    update_window_size();
 
     function read_checkboxes() {
         var checkboxes = $('#menu__type-filter label input').map(
