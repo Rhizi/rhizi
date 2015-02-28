@@ -611,7 +611,7 @@ function GraphView(spec) {
             y_translate !== current_translate[1]) {
             zoom_obj.translate([x_translate, y_translate]);
             zoom_obj.scale(min_scale);
-            zoom_obj.event(zoom_obj_element);
+            zoom_obj.event(zoom_obj_element.transition().duration(200));
         }
     }
 
