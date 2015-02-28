@@ -83,14 +83,21 @@ define(['jquery'], function($) {
         }
     }
 
+    function obj_take(name) {
+        return function(obj) {
+            return obj[name];
+        };
+    }
+
     return {
-        assert: assert,
-        set_from_array: set_from_array,
-        set_from_object: set_from_object,
-        set_diff: set_diff,
         array_diff: array_diff,
+        assert: assert,
         getParameterByName: getParameterByName,
         form_common__rest_post: form_common__rest_post,
         input_validation__password: input_validation__password,
+        obj_take: obj_take,
+        set_from_array: set_from_array,
+        set_from_object: set_from_object,
+        set_diff: set_diff,
     };
 });

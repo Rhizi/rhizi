@@ -122,11 +122,7 @@ function list_get(list, index, def)
     return item;
 }
 
-function obj_take(name) {
-    return function(obj) {
-        return obj[name];
-    };
-}
+var obj_take = util.obj_take;
 
 function list_length_larger(n) {
     return function(list) {

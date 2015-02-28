@@ -28,6 +28,8 @@
 define(['d3', 'Bacon', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble'],
 function(d3 ,  Bacon ,  util ,  selection      ,  view_helpers,  model_diff  ,  view, view_bubble) {
 
+var obj_take = util.obj_take;
+
 /* debugging helper */
 function enableDebugViewOfDiffs(graph)
 {
