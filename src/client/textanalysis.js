@@ -502,6 +502,11 @@ var textAnalyser = function (spec) {
     // textanalysis.ui uses this. should make this more explicit
     ret.thirds = thirds;
 
+    ret.existing_nodes = function (main_graph) {
+        function not_null(x) { return x !== null; };
+        return nodes.map(obj_take('name')).map(main_graph.find_node__by_name).filter(not_null);
+    }
+
     ret.applyToGraph = function(spec) {
         var edit_graph = spec.edit_graph,
             backend_commit = spec.backend_commit,
