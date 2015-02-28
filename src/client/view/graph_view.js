@@ -697,7 +697,7 @@ function GraphView(spec) {
                  d.y = cy;
             } else {
                 r = 60 + newnodes * 20;
-                a = -Math.PI + Math.PI * 2 * (tempcounter-1) / newnodes + 0.3;
+                a = -Math.PI + Math.PI * 2 * (tempcounter - 1) / newnodes + 0.3;
                 d.x = cx + r * Math.cos(a);
                 d.y = cy + r * Math.sin(a);
             }
@@ -752,10 +752,11 @@ function GraphView(spec) {
                 y: zcy + new_r * Math.sin(a)};
     }
 
+    /**
+     * Recomputes all link and node locations according to force layout and
+     * bubble animation.
+     */
     function tick(e) {
-        //console.log(e);
-        //$(".debug").html(force.alpha());
-        // just hide them for now, and remove them from force layout afterwards, do not delete nodes/links themselves.
         var node = vis.selectAll(".node")
             .data(graph.nodes(), function(d) {
                 return d.id;
