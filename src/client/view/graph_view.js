@@ -565,18 +565,23 @@ function GraphView(spec) {
     function scale_and_move(screen_low, screen_high, rect_low, rect_high, percent,
                             current_scale, current_translate)
     {
-        var scaled_low = (rect_low + current_translate) * current_scale,
-            scaled_high = (rect_high + current_translate) * current_scale;
+        function forward(x) { return x * current_scale + current_translate; };
+        var scaled_low = forward(rect_low),
+            scaled_high = forward(rect_high),
+            new_scale;
 
         if (segment_in_segment(scaled_low, scaled_high, screen_low, screen_high)) {
             return [current_scale, current_translate];
         }
+        new_scale = (rect_high == rect_low ?
+            current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent);
+        new_scale = Math.min(3, Math.max(0.1, new_scale));
         return [
             // scale to percent of screen
-            rect_high == rect_low ? current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent
+            new_scale
             ,
-            // translate missle to middle
-            (screen_low + screen_high) / 2 - (rect_high + rect_low) / 2
+            // translate middle to middle
+            ((screen_low + screen_high) / 2 - (rect_high + rect_low) / 2 * new_scale)
             ];
     }
 
@@ -598,20 +603,15 @@ function GraphView(spec) {
                                           current_scale, current_translate[0]),
             y_scale_move = scale_and_move(0, screen_height, y_min, y_max, 0.8,
                                           current_scale, current_translate[1]),
-            max_scale = Math.max(x_scale_move[0], y_scale_move[0]),
+            min_scale = Math.min(x_scale_move[0], y_scale_move[0]),
             x_translate = x_scale_move[1],
             y_translate = y_scale_move[1];
 
-        console.log('x = [' + x_min + ', ' + x_max + ']');
-        console.log('y = [' + y_min + ', ' + y_max + ']');
-        console.log('[scale, x_translate, y_translate] = [' +
-                        max_scale + ', ' + x_translate + ', ' + y_translate + ']');
-        if (/*max_scale !== current_scale ||*/ x_translate !== current_translate[0] ||
+        if (min_scale !== current_scale || x_translate !== current_translate[0] ||
             y_translate !== current_translate[1]) {
             zoom_obj.translate([x_translate, y_translate]);
-            zoom_obj.scale(current_scale /*max_scale*/);
+            zoom_obj.scale(min_scale);
             zoom_obj.event(zoom_obj_element);
-            //update_view(false); // XXX should not need to update_view, just tick
         }
     }
 
