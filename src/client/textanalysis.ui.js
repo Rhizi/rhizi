@@ -105,6 +105,8 @@ function analyzeSentence(spec)
 
     if (finalize || sentence.length == 0) {
         typeselection.hide();
+    } else {
+        rz_core.main_graph_view.nodes__user_visible(ret.existing_nodes(rz_core.main_graph));
     }
 }
 
