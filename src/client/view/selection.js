@@ -35,14 +35,24 @@ function new_selection(nodes, root_nodes)
     return ret;
 }
 
-function get_main_graph()
+function get_rz_core()
 {
     // circular dependency on rz_core, so require.js cannot solve it.
     if (rz_core === undefined) {
         rz_core = require('rz_core');
         listen_on_diff_bus(rz_core.main_graph.diffBus);
     }
-    return rz_core.main_graph;
+    return rz_core;
+}
+
+function get_main_graph()
+{
+    return get_rz_core().main_graph;
+}
+
+function get_main_graph_view()
+{
+    return get_rz_core().main_graph_view;
 }
 
 var root_nodes = [], // these are the nodes that are requested via update
@@ -198,6 +208,7 @@ var inner_update = function(nodes)
     clear();
     root_nodes = nodes;
     root_nodes__by_id = nodes_to_id_dict(nodes);
+    get_main_graph_view().nodes__user_visible(nodes);
     connectedComponent(nodes);
 }
 
