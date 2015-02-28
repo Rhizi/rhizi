@@ -55,7 +55,7 @@ var initDrawingArea = function () {
 
     function zoom() {
         zoom_g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        d3.event.sourceEvent.stopPropagation();
+        d3.event.sourceEvent != null && d3.event.sourceEvent.stopPropagation();
         updateZoomProgress(true);
     }
 
