@@ -82,6 +82,7 @@ function GraphView(spec) {
         node_text_dy = spec.node_text_dy,
         svgInput = spec.svgInput,
         zoom_obj = spec.zoom_obj,
+        zoom_obj_element = spec.zoom_obj_element,
         parent_graph_zoom_obj = spec.parent_graph_zoom_obj,
 
         zoomInProgress = false,
@@ -103,6 +104,7 @@ function GraphView(spec) {
                 temporary !== undefined && force_enabled !== undefined &&
                 node_text_dx !== undefined && node_text_dy !== undefined &&
                 zoom_obj !== undefined && parent_graph_zoom_obj !== undefined &&
+                zoom_obj_element !== undefined &&
                 (temporary || svgInput !== undefined),
                 "missing spec variable");
 
@@ -541,6 +543,78 @@ function GraphView(spec) {
             start_layout_animation();
         }
     }
+
+    function segment_in_segment(inner_low, inner_high, outer_low, outer_high)
+    {
+        return (inner_low > outer_low && inner_low < outer_high &&
+                inner_high > outer_low && inner_high < outer_high);
+    }
+
+    /**
+     * For a single dimention return [scale, translate]
+     *
+     * If screen_low < rect_low, rect_high < screen_high
+     *  returns [1, 0]
+     * else returns scale and translation that will put rect in percent of screen.
+     *
+     * currently moves the selection to the center of the screen. The bubble effect
+     * will take care it won't overlap the new (temp) nodes.
+     *
+     * XXX: move the minimal amount in the direction from which it is coming?
+     */
+    function scale_and_move(screen_low, screen_high, rect_low, rect_high, percent,
+                            current_scale, current_translate)
+    {
+        var scaled_low = (rect_low + current_translate) * current_scale,
+            scaled_high = (rect_high + current_translate) * current_scale;
+
+        if (segment_in_segment(scaled_low, scaled_high, screen_low, screen_high)) {
+            return [current_scale, current_translate];
+        }
+        return [
+            // scale to percent of screen
+            rect_high == rect_low ? current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent
+            ,
+            // translate missle to middle
+            (screen_low + screen_high) / 2 - (rect_high + rect_low) / 2
+            ];
+    }
+
+    gv.nodes__user_visible = function(nodes) {
+        if (nodes.length == 0) {
+            return;
+        }
+        var xs = nodes.map(obj_take('x')),
+            ys = nodes.map(obj_take('y')),
+            x_min = Math.min.apply(null, xs),
+            x_max = Math.max.apply(null, xs),
+            y_min = Math.min.apply(null, ys),
+            y_max = Math.max.apply(null, ys),
+            current_scale = zoom_obj.scale(),
+            current_translate = zoom_obj.translate(),
+            screen_width = $(document.body).innerWidth(),
+            screen_height = $(document.body).innerHeight(),
+            x_scale_move = scale_and_move(0, screen_width, x_min, x_max, 0.8,
+                                          current_scale, current_translate[0]),
+            y_scale_move = scale_and_move(0, screen_height, y_min, y_max, 0.8,
+                                          current_scale, current_translate[1]),
+            max_scale = Math.max(x_scale_move[0], y_scale_move[0]),
+            x_translate = x_scale_move[1],
+            y_translate = y_scale_move[1];
+
+        console.log('x = [' + x_min + ', ' + x_max + ']');
+        console.log('y = [' + y_min + ', ' + y_max + ']');
+        console.log('[scale, x_translate, y_translate] = [' +
+                        max_scale + ', ' + x_translate + ', ' + y_translate + ']');
+        if (/*max_scale !== current_scale ||*/ x_translate !== current_translate[0] ||
+            y_translate !== current_translate[1]) {
+            zoom_obj.translate([x_translate, y_translate]);
+            zoom_obj.scale(current_scale /*max_scale*/);
+            zoom_obj.event(zoom_obj_element);
+            //update_view(false); // XXX should not need to update_view, just tick
+        }
+    }
+
     gv.update_view = update_view;
     function start_layout_animation() {
             on_interval = function() {
