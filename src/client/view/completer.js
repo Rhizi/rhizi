@@ -2,8 +2,11 @@ define(
 ['jquery', 'Bacon', 'util'],
 function($, Bacon,   util) {
 
-function unquoted(name)
-{
+function quoted__double(string) { // quote string using double quotes
+    return '"' + string + '"';
+}
+
+function unquoted(name) {
     var start = 0,
         end = name.length;
 
@@ -217,7 +220,7 @@ var completer = (function (input_element, dropdown, base_config) {
         var e = dropdown.children()[index],
             s = e.innerText || e.textContent;
         if (s.indexOf(' ') != -1 && config.quoteSpaceContaining) {
-            return quoted(s);
+            return quoted__double(s);
         }
         return s;
     }
