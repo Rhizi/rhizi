@@ -1,15 +1,22 @@
-.typeselection{
-	color: $dark-grey;
-	font-size: $h2-size;
-  position:fixed;
-  left:0;
-  top:-300px;
-  pointer-events:none;
+.type_selection {
+    color: $dark-grey;
+    font-size: $h3-size;
+    position: fixed; // no need for positioning, set via code
+    pointer-events: none;
 }
 
-.typeselection td{
+.type_selection__row {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+#type_selection__chosen_type_name {
+    background-color: #D3D3D3;
+    border-radius: 3px;
+    padding: 0 7px;
+    margin-left: 3px;
 }
 
 #keys{
-  opacity: 0.5;
+    opacity: 0.5;
 }

@@ -105,14 +105,11 @@ var rz_config = { // set as a global variable
       </div>
     </div>
     <div id="graph-view__canvas"></div>
-    <div class="typeselection" style="display:none">
-      <table>
-        <tr id="intro"><td>Use [Tab] to change node type</td></tr>
-        <tr id="chosentypelabel"><td>Chosen Type: <span id="chosentypename"/></td></tr>
-        <tr id="chosentypedesc"><td></td></tr>
-      </table>
+    <div class="type_selection" style="display:none">
+      <div class="type_selection__row" id="type_selection__intro">Change node type with <span class="kbd-button">Tab</span></div>
+      <div class="type_selection__row" id="type_selection__chosen_type_label">Chosen Type: <span id="type_selection__chosen_type_name"/></div>
+      <div class="type_selection__row" id="type_selection__chosen_type_desc"></div>
     </div>
-
     <div class="debug-ui">
     <div class="debug-ui-row">
         <div class="debug-ui-left">
