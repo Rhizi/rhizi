@@ -91,9 +91,14 @@ var rz_config = { // set as a global variable
                 <option value="person">Person</option><option value="club">Club</option><option value="skill">Skill</option><option value="interest">Interest</option><option value="third-internship-proposal">Third-internship-proposal</option><option value="internship">Internship</option>
             </select><br/>
             <div id="status">
-            <label class="info-card-attr">Status</label><select id="editstatus">
-                <option value="waiting">Waiting</option><option value="approved">Approved</option><option value="notapproved">Not Approved</option>
-            </select><br/>
+                <label class="info-card-attr">Status</label>
+                <select id="editstatus" style="display:none">
+                    <option value="waiting">Waiting</option>
+                    <option value="approved">Approved</option>
+                    <option value="notapproved">Not Approved</option>
+                </select>
+                <span class="info-card-attr" id="displaystatus"></span>
+                <br/>
             </div>
             <div id="startdate"><label class="info-card-attr">Start date</label><input id="editstartdate"/></br></div>
             <div id="enddate"><label class="info-card-attr">End date:</label><input id="editenddate"/></div>

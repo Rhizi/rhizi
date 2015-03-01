@@ -18,7 +18,9 @@ var d = null,
         enddate: info.find("#editenddate"),
         description: info.find("#editdescription"),
     },
-    change_handlers = [];
+    change_handlers = [],
+    status_display = info.find('#displaystatus'),
+    status = form.status;
 
 
 function clean_url(candidate_url)
@@ -168,7 +170,15 @@ function show(_graph, d) {
     textarea_resize(description[0], 150);
     $('#edittype').val(d.type);
     $('#editurl').val(d.url);
-    $('#editstatus').val(d.status);
+    if (_.contains(rz_config.role_set, 'admin')) {
+        status.val(d.status);
+        status.show();
+        status_display.hide();
+    } else {
+        status_display.text(d.status);
+        status.hide();
+        status_display.show();
+    }
 
     if (d.type === "third-internship-proposal") {
       $('#editstartdate').val(d.startdate);
