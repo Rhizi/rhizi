@@ -94,6 +94,7 @@
          <copy file="res/etc/rhizi-server.conf"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
          <rsync src="res/templates/" dst="${targetDeploymentDir}/templates" />
+         <copy file="res/user_db.db" tofile="${targetDeploymentDir}/user_db.db" quiet="true" />
       </parallel>
 
    </target>
