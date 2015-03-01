@@ -55,6 +55,13 @@ Command line use documentation can be view with:
 ## Configuration
 Rhizi configuration is currently documented in code, see <code>src/server/rz_server.py#Config</code>
 
+## User addition
+Through the sign up page you can add users.
+
+## Changing users roles
+This is possible through the src/local/rz_cli_tool as follows:
+./src/local/rz_cli_tool.py --config-dir res/etc --user-db-path res/user_db.db --email alon@rhizi.local --role-add admin
+
 # Development
 Build currently uses Apache Ant(http://ant.apache.org/) and [make](https://www.gnu.org/software/make/)
 
