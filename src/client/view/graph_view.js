@@ -571,7 +571,7 @@ function GraphView(spec) {
             new_scale;
 
         if (segment_in_segment(scaled_low, scaled_high, screen_low, screen_high)) {
-            return [current_scale, current_translate];
+            return [current_scale, function () { return current_translate; }];
         }
         new_scale = (rect_high == rect_low ?
             current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent);
@@ -580,8 +580,8 @@ function GraphView(spec) {
             // scale to percent of screen
             new_scale
             ,
-            // translate middle to middle
-            ((screen_low + screen_high) / 2 - (rect_high + rect_low) / 2 * new_scale)
+            // translate middle to middle - function because scale not determined yet
+            function (scale) { return ((screen_low + screen_high) / 2 - (rect_high + rect_low) / 2 * scale); }
             ];
     }
 
@@ -604,16 +604,21 @@ function GraphView(spec) {
             y_scale_move = scale_and_move(0, screen_height, y_min, y_max, 0.8,
                                           current_scale, current_translate[1]),
             min_scale = Math.min(x_scale_move[0], y_scale_move[0]),
-            x_translate = x_scale_move[1],
-            y_translate = y_scale_move[1];
+            x_translate = x_scale_move[1](min_scale),
+            y_translate = y_scale_move[1](min_scale);
 
         if (min_scale !== current_scale || x_translate !== current_translate[0] ||
             y_translate !== current_translate[1]) {
-            zoom_obj.translate([x_translate, y_translate]);
-            zoom_obj.scale(min_scale);
-            zoom_obj.event(zoom_obj_element.transition().duration(200));
+            set_scale_translate(min_scale, [x_translate, y_translate]);
         }
     }
+
+    var set_scale_translate = function(scale, translate) {
+        zoom_obj.translate([translate[0], translate[1]]);
+        zoom_obj.scale(scale);
+        zoom_obj.event(zoom_obj_element.transition().duration(200));
+    }
+    gv.set_scale_translate = set_scale_translate;
 
     gv.update_view = update_view;
     function start_layout_animation() {
