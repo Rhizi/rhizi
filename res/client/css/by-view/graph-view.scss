@@ -225,6 +225,9 @@
 
 .insideforeign {
     display: inline;
+    &:focus {
+      outline: none;
+    }
 }
 
 // TODO: right to left language

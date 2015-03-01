@@ -885,6 +885,8 @@ p {
 
 .insideforeign {
   display: inline; }
+  .insideforeign:focus {
+    outline: none; }
 
 .foreign {
   text-align: left; }
