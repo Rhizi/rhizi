@@ -134,8 +134,18 @@ class User_DB(object):
         del self.persistent_data_store[uid]
 
     def user_add_role(self, uid, role):
+        if not self.valid_role(uid, role):
+            raise Exception("invalid role %s for user %s" % (role, uid))
         u = self.persistent_data_store[uid]
         u.role_set.append(role)
+        self.persistent_data_store[uid] = u
+
+    def user_rm_role(self, uid, role):
+        u = self.persistent_data_store[uid]
+        i = u.role_set.index(role)
+        if -1 == i:
+            return
+        del u.role_set[i]
         self.persistent_data_store[uid] = u
 
     def user_has_role(self, uid, role):
@@ -145,6 +155,12 @@ class User_DB(object):
 
         u = self.persistent_data_store[uid]
         return role in u.role_set
+
+    def valid_role(self, uid, role):
+        """
+        @return: True if role is appropriate for uid. Currently ignores uid
+        """
+        return role in ['admin', 'user']
 
     def validate_login(self, email_address, pw_hash):
         _, u_account = self.__lookup_user__by_email_address(email_address)
