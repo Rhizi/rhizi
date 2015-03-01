@@ -130,9 +130,11 @@ def index():
     # fetch rz_username for welcome message
     email_address = session.get('username')
     rz_username = "Anonymous Stranger"
+    role_set = []
     if None != email_address:  # session cookie passed & contains uid (email_address)
         try:
             uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
+            role_set = u_account.role_set
             rz_username = escape(u_account.rz_username)
         except Exception as e:
             # may occur on user_db reset or malicious cookie != stale cookie,
@@ -156,4 +158,4 @@ def index():
                            rz_config__hostname=hostname,
                            rz_config__port=port,
                            rz_config__optimized_main='true' if current_app.rz_config.optimized_main else 'false',
-                           rz_config__role_set=['admin'])
+                           rz_config__role_set=role_set)
