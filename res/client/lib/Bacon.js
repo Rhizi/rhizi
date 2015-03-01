@@ -75,6 +75,8 @@
 
   if ((_ref = typeof jQuery !== "undefined" && jQuery !== null ? jQuery : typeof Zepto !== "undefined" && Zepto !== null ? Zepto : void 0) != null) {
     _ref.fn.asEventStream = Bacon.$.asEventStream;
+  } else {
+    console.log('Bacon loading before jQuery');
   }
 
   Bacon.fromEventTarget = function(target, eventName, eventTransformer) {
