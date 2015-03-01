@@ -1,0 +1,17 @@
+//
+// Keyboard related styling
+//
+.kbd-button {
+    background-color: #f7f7f7;
+    box-shadow: 0 1px 0px rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+    border-radius: 3px;
+    border: 1px solid #lightgray;
+    display: inline-block;
+    font-size: 11px;
+    text-shadow: 0 1px 0 #fff;
+    line-height: 1.4;
+    margin: 0 0.2em;
+    padding: 0.1em 0.6em;
+    vertical-align: middle;
+    white-space: nowrap;
+}
