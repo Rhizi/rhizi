@@ -546,8 +546,8 @@ function GraphView(spec) {
 
     function segment_in_segment(inner_low, inner_high, outer_low, outer_high)
     {
-        return (inner_low > outer_low && inner_low < outer_high &&
-                inner_high > outer_low && inner_high < outer_high);
+        return (inner_low  >= outer_low && inner_low  < outer_high &&
+                inner_high >= outer_low && inner_high < outer_high);
     }
 
     /**
@@ -568,12 +568,15 @@ function GraphView(spec) {
         function forward(x) { return x * current_scale + current_translate; };
         var scaled_low = forward(rect_low),
             scaled_high = forward(rect_high),
+            in_view = segment_in_segment(scaled_low, scaled_high, screen_low, screen_high),
             new_scale;
 
-        new_scale = ((rect_high === rect_low || segment_in_segment(scaled_low, scaled_high, screen_low, screen_high)) ?
+        new_scale = ((rect_high === rect_low || in_view) ?
             current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent);
         new_scale = Math.min(3, Math.max(0.1, new_scale));
         return [
+            in_view
+            ,
             // scale to percent of screen
             new_scale
             ,
@@ -596,21 +599,34 @@ function GraphView(spec) {
             current_translate = zoom_obj.translate(),
             screen_width = $(document.body).innerWidth(),
             screen_height = $(document.body).innerHeight(),
-            x_scale_move = scale_and_move(0, screen_width, x_min, x_max, 0.8,
+            x_data = scale_and_move(0, screen_width, x_min, x_max, 0.8,
                                           current_scale, current_translate[0]),
-            y_scale_move = scale_and_move(0, screen_height, y_min, y_max, 0.8,
+            x_in_view = x_data[0],
+            x_scale = x_data[1],
+            x_translate_fn = x_data[2],
+            y_data = scale_and_move(0, screen_height, y_min, y_max, 0.8,
                                           current_scale, current_translate[1]),
-            min_scale = Math.min(x_scale_move[0], y_scale_move[0]),
-            x_translate = x_scale_move[1](min_scale),
-            y_translate = y_scale_move[1](min_scale);
+            y_in_view = y_data[0],
+            y_scale = y_data[1],
+            y_translate_fn = y_data[2],
+            min_scale = Math.min(x_scale, y_scale),
+            x_translate = x_translate_fn(min_scale),
+            y_translate = y_translate_fn(min_scale);
 
-        if (min_scale !== current_scale || x_translate !== current_translate[0] ||
-            y_translate !== current_translate[1]) {
+        if (!x_in_view || !y_in_view) {
             set_scale_translate(min_scale, [x_translate, y_translate]);
         }
     }
 
     var set_scale_translate = function(scale, translate) {
+        var current_scale = zoom_obj.scale(),
+            current_translate = zoom_obj.translate();
+
+        if (scale === current_scale &&
+            translate[0] === current_translate[0] &&
+            translate[0] === current_translate[1]) {
+            return;
+        }
         zoom_obj.translate([translate[0], translate[1]]);
         zoom_obj.scale(scale);
         zoom_obj.event(zoom_obj_element.transition().duration(200));
