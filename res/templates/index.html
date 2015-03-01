@@ -13,7 +13,8 @@ var rz_config = { // set as a global variable
     'feedback_url': '/feedback',
     'optimized_main': {{ rz_config__optimized_main }},
     'node_edge_separator': true,
-    'separator_string': '  '
+    'separator_string': '  ',
+    'role_set': {{ rz_config__role_set|safe }},
 };
 </script>
 <script data-main='/static/app.js' src="/static/lib/require.js"></script>
