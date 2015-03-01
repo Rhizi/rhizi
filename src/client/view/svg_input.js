@@ -11,9 +11,7 @@ var svg_input_fo_node_y = '-.70em',
  * edit_link(@sibling, @link)
  */
 var svgInput = function(vis, graph) {
-    var measure_node = $('#measure-node')[0],
-        measure_link = $('#measure-link')[0],
-        original_element,
+    var original_element,
         is_link,
         graphEditBus = new Bacon.Bus(),
         currentIdBus = new Bacon.Bus(),
@@ -31,40 +29,35 @@ var svgInput = function(vis, graph) {
         .map(function (val) { return graph.find_node__by_id(val[1]).name; })
         .onValue(function (name) {
             var svg_input = createOrGetSvgInput();
-            svg_input.val(name);
+            svg_input.text(name);
         });
 
     function appendForeignElementInputWithID(base, elemid, width, height)
     {
-        var input = document.createElement('input'),
-            body = document.createElement('body'),
+        var textnode = document.createTextNode(''),
+            div = document.createElement('div'),
             fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
 
-        body.appendChild(input);
-
-        fo.setAttribute('height', height || svg_input_fo_height);
+        div.setAttribute('contentEditable', 'true');
+        div.setAttribute('width', 'auto');
+        div.appendChild(textnode);
+        div.style.pointerEvents = 'all';
+        div.classList.add('insideforeign');
+        div.setAttribute('id', elemid);
+        fo.setAttribute('width', '100%');
+        fo.setAttribute('height', '100%');
         fo.style.pointerEvents = 'none';
-        input.style.pointerEvents = 'all';
-        fo.appendChild(body);
+        fo.classList.add('foreign');
+        fo.appendChild(div);
         base.appendChild(fo);
-        input.setAttribute('id', elemid);
-        return input;
-    }
-
-    function measure(text)
-    {
-        var span;
-
-        span = is_link ? measure_link : measure_node;
-        span.innerHTML = text;
-        return span.getBoundingClientRect().width; // $().width() works too
+        return div;
     }
 
     function onkeydown(e) {
         var ret = undefined,
             jelement = createOrGetSvgInput(),
             element = jelement[0],
-            newname = jelement.val(),
+            newname = jelement.text(),
             fo = createOrGetSvgInputFO(),
             d;
 
@@ -90,18 +83,6 @@ var svgInput = function(vis, graph) {
         return ret;
     };
 
-    function resize_measure(e) {
-        resize(measure($(e.target).val()) + 30);
-    }
-
-    function resize(new_width) {
-        var svg_input = createOrGetSvgInput(),
-            fo = createOrGetSvgInputFO();
-
-        svg_input.css('width', new_width);
-        fo.attr('width', new_width);
-    }
-
     // FIXME: element being deleted. Some delete is legit - removal of related element. Some isn't (a click).
     // Instead of investigating (time constraint) reparenting as sibling, and introducing
     // this function. Cost of creation of element is negligble, it's just ugly..
@@ -115,14 +96,13 @@ var svgInput = function(vis, graph) {
             console.log('creating new svg-input');
             svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
             svg_input.on('keydown', onkeydown);
-            svg_input.bind('change keypress', resize_measure);
         }
         return svg_input;
     }
 
     function createOrGetSvgInputFO()
     {
-        return createOrGetSvgInput().parent().parent();
+        return createOrGetSvgInput().parent();
     }
 
     /*
@@ -151,9 +131,8 @@ var svgInput = function(vis, graph) {
             fo.attr('class', 'svg-input-fo-node');
         }
         // Set width correctly
-        resize(measure(oldname) + 30);
         fo.show();
-        svg_input.val(oldname);
+        svg_input.text(oldname);
         svg_input.data().d = n;
         svg_input.focus();
         if (original_element) {

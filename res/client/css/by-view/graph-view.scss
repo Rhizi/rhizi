@@ -222,3 +222,12 @@
 #graph-view__canvas {
     height: inherit; // inherit from container which should be set to 100%
 }
+
+.insideforeign {
+    display: inline;
+}
+
+// TODO: right to left language
+.foreign {
+    text-align: left;
+}

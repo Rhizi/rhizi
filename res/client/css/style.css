@@ -861,6 +861,12 @@ p {
 #graph-view__canvas {
   height: inherit; }
 
+.insideforeign {
+  display: inline; }
+
+.foreign {
+  text-align: left; }
+
 .welcome-box {
   margin-left: auto;
   margin-right: auto;
