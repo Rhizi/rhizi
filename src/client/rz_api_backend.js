@@ -5,6 +5,13 @@
  */
 define([], function() {
 
+    function shorten(str, max_length) {
+        if (str.length < max_length) {
+            return str;
+        }
+        return str.substr(0, max_length - 3) + '...';
+    }
+
     function RZ_API_Backend() {
 
         var rz_server_url = 'http://%h:%p';
@@ -34,7 +41,7 @@ define([], function() {
                         on_error(ret_error);
                     }
                 } else {
-                    console.log('ajax success: ' + JSON.stringify(ret_data));
+                    console.log('ajax success: ' + shorten(JSON.stringify(ret_data), 50));
                     if (on_success) {
                         on_success(ret_data);
                     }
