@@ -1,4 +1,6 @@
-define(["jquery", "Bacon"], function ($, Bacon) {
+define(["jquery", "Bacon_wrapper"],
+function ($,       Bacon)
+{
 function Bubble(raw_parent, radius) {
     var xmlns = "http://www.w3.org/2000/svg";
     var g = document.createElementNS(xmlns, 'g');

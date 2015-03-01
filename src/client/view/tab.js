@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'Bacon'],
-function($, Bacon) {
+define(['jquery', 'Bacon_wrapper'],
+function($,        Bacon) {
 
 function Tab(dict) {
     var k,

@@ -1,7 +1,7 @@
 "use strict"
 
-define(['underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history'],
-function (_,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history) {
+define(['underscore', 'Bacon_wrapper', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history'],
+function (_,           Bacon,           consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history) {
 
 var debug = false;
 

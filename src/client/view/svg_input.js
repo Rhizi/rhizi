@@ -1,5 +1,5 @@
-define(['jquery', 'Bacon', 'model/diff', 'rz_bus', 'consts'],
-function($,        Bacon,   model_diff,   rz_bus,   consts)
+define(['jquery', 'Bacon_wrapper', 'model/diff', 'rz_bus', 'consts'],
+function($,        Bacon,           model_diff,   rz_bus,   consts)
 {
 var svg_input_fo_node_y = '-.70em',
     svg_input_fo_height = '30px';
