@@ -570,10 +570,7 @@ function GraphView(spec) {
             scaled_high = forward(rect_high),
             new_scale;
 
-        if (segment_in_segment(scaled_low, scaled_high, screen_low, screen_high)) {
-            return [current_scale, function () { return current_translate; }];
-        }
-        new_scale = (rect_high == rect_low ?
+        new_scale = ((rect_high === rect_low || segment_in_segment(scaled_low, scaled_high, screen_low, screen_high)) ?
             current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent);
         new_scale = Math.min(3, Math.max(0.1, new_scale));
         return [
