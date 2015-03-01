@@ -21,11 +21,11 @@ function get_svg__body_position(node_id)
 }
 
 var typeselection = function TypeSelectionDialog() {
-    var e = $('.typeselection'),
-        e_intro = e.find('#intro'),
-        e_label = e.find('#chosentypelabel'),
-        e_name = e.find('#chosentypename'),
-        e_desc = e.find('#chosentypedesc'),
+    var e = $('.type_selection'),
+        e_intro = e.find('#type_selection__intro'),
+        e_label = e.find('#type_selection__chosen_type_label'),
+        e_name = e.find('#type_selection__chosen_type_name'),
+        e_desc = e.find('#type_selection__chosen_type_desc'),
         typeselection = {};
 
     typeselection.analysisNodeStart = function(node_id) {
@@ -38,12 +38,11 @@ var typeselection = function TypeSelectionDialog() {
             node_location;
 
         node_location = get_svg__body_position(node_id);
-        x = node_location.x;
-        y = node_location.y + 10;
-        e.css({
-            left: x,
-            top: y,
-        });
+        x = node_location.x - 20; // subtract average node size
+        y = node_location.y + 25;
+        e.css({ left: x,
+                top: y,
+              });
     }
     typeselection.show = function(node_id) {
         set_position(node_id);
