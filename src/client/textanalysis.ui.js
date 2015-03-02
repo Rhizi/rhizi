@@ -11,7 +11,12 @@ var text = "", // Last text of sentence
     description = consts.description,
     input = new Bacon.Bus(),
     initial_width = element.width(),
-    plus_button_initial_offset = plus_button.offset();
+    plus_button_initial_offset = plus_button.offset(),
+    nbsp = String.fromCharCode(160),
+    // aliases
+    value = util.value,
+    selectionStart = util.selectionStart,
+    setSelection = util.setSelection;
 
 function get_svg__body_position(node_id)
 {
@@ -79,9 +84,9 @@ function analyzeSentence(spec)
                 spec.finalize !== undefined,
                 "bad input");
 
-    var sentence = spec.sentence,
+    var sentence = nbsp_to_spaces(spec.sentence),
         finalize = spec.finalize,
-        ret = textanalysis.textAnalyser(spec),
+        ret = textanalysis.textAnalyser({'sentence': sentence, 'finalize': finalize}),
         lastnode;
 
     ret.applyToGraph({
@@ -92,7 +97,7 @@ function analyzeSentence(spec)
 
     switch (ret.state) {
     case textanalysis.ANALYSIS_NODE_START:
-        lastnode = textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart);
+        lastnode = textanalysis.lastnode(rz_core.edit_graph, selectionStart(element_raw));
         if (lastnode !== null) {
             typeselection.analysisNodeStart(lastnode.id);
         }
@@ -124,7 +129,7 @@ function textSelect(inp, s, e) {
 }
 
 function changeType(arg) {
-    var lastnode = textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart),
+    var lastnode = textanalysis.lastnode(rz_core.edit_graph, selectionStart(element_raw)),
         nodetype,
         id,
         name;
@@ -162,14 +167,14 @@ var main = function ()
                 submitNewSentence();
             } else {
                 analyzeSentence({
-                    sentence: element.val(),
+                    sentence: value(element_raw),
                     finalize: false,
                 });
             }
             ret = false;
             break;
         case 9: //TAB
-            if (textanalysis.lastnode(rz_core.edit_graph, element_raw.selectionStart)) {
+            if (textanalysis.lastnode(rz_core.edit_graph, selectionStart(element_raw))) {
                 e.preventDefault();
                 changeType(e.shiftKey ? "up" : "down");
                 ret = false;
@@ -180,14 +185,14 @@ var main = function ()
         return ret;
     });
     element.bind('input selectionchange click', function(e) {
-        analysisCompleter.oninput(element_raw.value, element_raw.selectionStart);
+        analysisCompleter.oninput(value(element_raw), selectionStart(element_raw));
         e.stopPropagation();
         e.preventDefault();
     });
 
     function submitNewSentence() {
-        text = element.val();
-        element.val("");
+        text = value(element_raw);
+        value(element_raw, "");
         analyzeSentence({
             sentence: text,
             finalize: true,
@@ -219,14 +224,24 @@ var main = function ()
     }
 };
 
+function nbsp_to_spaces(str) {
+    return str.replace(new RegExp(nbsp, 'g'), ' ');
+}
+
 var analyze_element_text = function()
 {
-    if (element.val() == text) {
+    var current_text = value(element_raw),
+        parts,
+        base_parts,
+        selection_start,
+        spaced_text = nbsp_to_spaces(current_text);
+
+    if (current_text == text) {
         return;
     }
-    text = element.val();
+    text = current_text;
     analyzeSentence({
-        sentence: text,
+        sentence: spaced_text,
         finalize: false,
     });
     input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
