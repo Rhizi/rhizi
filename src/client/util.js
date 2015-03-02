@@ -89,6 +89,145 @@ define(['jquery'], function($) {
         };
     }
 
+    /**
+     * Mirrors the selectionStart property for input[type=text] but
+     * usable on div[contentEditable=true] elements.
+     */
+    function selectionStart(element)
+    {
+        if (undefined !== element.selectionStart) {
+            return element.selectionStart;
+        }
+        var selection = window.getSelection(),
+            anchorNode = selection.anchorNode,
+            anchorOffset = textChildOffset(element, anchorNode);
+        return anchorOffset + selection.anchorOffset;
+    }
+
+    function textChildOffset(base, element)
+    {
+        function sum(a, b) { return a + b; };
+        function up_to(list, element) {
+            return list.slice(0, list.indexOf(element));
+        }
+        return reduce(up_to(text_children(base), element).map(obj_take('length')), 0, sum);
+    }
+
+    function text_children(element)
+    {
+        var text = [];
+        walk(element, function(e) {
+            if (3 === e.nodeType) {
+                text.push(e);
+            }
+        });
+        return text;
+    }
+
+    /**
+     * Return the text child containing the text at @offset and the
+     * corresponding offset within in.
+     *
+     * @param base root element
+     * @param offset text offset within base element
+     * @return {'element': text_element, 'offset': offset_in_text_element}
+     **/
+    function textChildForOffset(base, offset)
+    {
+        var sum = 0,
+            child,
+            child_offset,
+            last = base,
+            last_length = 0;
+
+        walk(base, function(element) {
+            if (3 === element.nodeType) {
+                sum += element.length;
+                if (sum > offset) {
+                    child = element;
+                    child_offset = offset + element.length - sum;
+                    return false;
+                }
+                last = element;
+                last_length = last.length;
+            }
+            return true;
+        });
+        if (undefined !== child) {
+            return {'element': child, 'offset': child_offset};
+        }
+        return {'element': last, 'offset': last_length};
+    }
+
+    function walk(element, func)
+    {
+        var stack = [element],
+            e,
+            i;
+
+        while (stack.length > 0) {
+            e = stack.pop();
+            if (false === func(e)) {
+                return;
+            }
+            for (i = e.childNodes.length - 1; i >= 0 ; --i) {
+                stack.push(e.childNodes[i]);
+            }
+        }
+    }
+
+    function setSelection(element, start, end)
+    {
+        var selection, range,
+            start_obj, end_obj;
+
+        if (undefined !== element.selectionStart && undefined !== element.selectionEnd) {
+            element.selectionStart = start;
+            element.selectionEnd = end;
+        } else {
+            range = document.createRange();
+            start_obj = textChildForOffset(element, start);
+            end_obj = textChildForOffset(element, end);
+            range.setStart(start_obj.element, start_obj.offset);
+            range.setEnd(start_obj.element, end_obj.offset);
+            selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+
+    /**
+     * Mirros the value function on input[type=text] elements but
+     * usable on divs or any other node that can have a textContent
+     * child.
+     */
+    function value(element_raw, new_value)
+    {
+        if (undefined === new_value) {
+            if (undefined !== element_raw.value) {
+                return element_raw.value;
+            }
+            return element_raw.textContent;
+        } else {
+            if (undefined !== element_raw.value) {
+                element_raw.value = new_value;
+            } else {
+                element_raw.textContent = new_value;
+            }
+        }
+    }
+
+    // Functional programming tools
+    function reduce(list, initial, func)
+    {
+        var ret = initial;
+
+        for (var i = 0 ; i < list.length; ++i) {
+            ret = func(ret, list[i]);
+        }
+        return ret;
+    }
+
     return {
         array_diff: array_diff,
         assert: assert,
@@ -96,8 +235,12 @@ define(['jquery'], function($) {
         form_common__rest_post: form_common__rest_post,
         input_validation__password: input_validation__password,
         obj_take: obj_take,
+        reduce: reduce,
+        value: value,
         set_from_array: set_from_array,
         set_from_object: set_from_object,
         set_diff: set_diff,
+        setSelection: setSelection,
+        selectionStart: selectionStart,
     };
 });

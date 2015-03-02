@@ -2,6 +2,9 @@ define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
 function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
 "use strict";
 
+// Aliases
+var reduce = util.reduce;
+
 // Constants
 var node_edge_separator = rz_config.node_edge_separator;
 var separator_string = rz_config.separator_string;
@@ -98,16 +101,6 @@ function group(list, predicate)
             ret.push([list[i]]);
             last = new_pred;
         }
-    }
-    return ret;
-}
-
-function reduce(list, initial, func)
-{
-    var ret = initial;
-
-    for (var i = 0 ; i < list.length; ++i) {
-        ret = func(ret, list[i]);
     }
     return ret;
 }
