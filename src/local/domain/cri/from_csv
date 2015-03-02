@@ -13,7 +13,8 @@ import argparse
 import string
 import csv
 
-root = os.path.join(os.path.dirname(__file__), '..', '..')
+root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+print("root = %s" % root)
 sys.path.append(os.path.join(root, 'src', 'server'))
 
 from rz_api_common import sanitize_input__topo_diff
@@ -75,7 +76,7 @@ def link_dict(source_id, target_id, label, the_id):
 
 class CSV(object):
     def __init__(self, filename):
-        rows = list(csv.reader(open(filename), 'excel-tab'))
+        rows = list(csv.reader(open(filename), 'excel'))
         headers = rows[0]
         self.parse_headers(headers)
         #import pdb; pdb.set_trace()
