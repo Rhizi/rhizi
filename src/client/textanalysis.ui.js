@@ -245,6 +245,21 @@ var analyze_element_text = function()
         finalize: false,
     });
     input.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: text});
+    selection_start = selectionStart(element_raw);
+    value(element_raw, ''); // this removes span elements as well
+    // here we stop treating the element as an input, this only works on a div/other "normal" element
+    base_parts = spaced_text.split(/  /)
+    parts = base_parts.slice(0, base_parts.length - 1).map(function (l) { return l + '  '; });
+    if (base_parts[base_parts.length - 1].length != 0) {
+        parts.push(base_parts[base_parts.length - 1]);
+    }
+    function span(text, color) {
+        return $('<span style="color: ' + color + '">' + text.replace(/ /g, nbsp) + '</span>');
+    }
+    parts.map(function (part, index) {
+        element.append(span(part, index % 2 == 0 ? 'blue' : 'red'));
+    });
+    setSelection(element_raw, selection_start, selection_start);
     stretch_input_to_text_size();
 }
 
