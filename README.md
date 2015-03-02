@@ -10,21 +10,33 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 * python-gevent-websocket
 * python-socketio
 
-# Requirements
-## Server
-### Neo4j
-Install [neo4j](http://neo4j.com/download/) >= 2.1.5 (2.0 explicitly not supported, we use += in our queries)
+# Installation
 
-### Python libs
-Install all of:
-# [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/)
-# [flask](http://flask.pocoo.org/)
-# [flask-mail](https://github.com/mattupstate/flask-mail)
+## Ubuntu 14.04
 
-Or install it all via pip:
+apt-get install python-flask python-socketio ant python-gevent python-six python-pip ruby-sass
+pip install flask-mail
+
+## Generic
+use pip to install all requirements
+
  $ pip install gevent-socketio
  $ pip install flask
  $ pip install flask-mail
+
+# Requirements
+## Build system
+ant >= 1.9.0
+
+## Server
+### Neo4j
+[neo4j](http://neo4j.com/download/) >= 2.1.5 (2.0 explicitly not supported, we use += in our queries)
+
+### Python libs
+# [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/)
+# [flask](http://flask.pocoo.org/)
+# [flask-mail](https://github.com/mattupstate/flask-mail)
+# [six](https://pypi.python.org/pypi/six/1.9.0)
 
 ## Client
 All of the following are already bundled but noted here for reference:
