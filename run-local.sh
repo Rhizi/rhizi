@@ -14,4 +14,4 @@ fi
 make # building css relies on Makefile
 ant -f build.ant deploy-local
 cd deploy-local
-python bin/rz_server.py --config-dir etc
+python2.7 bin/rz_server.py --config-dir etc
