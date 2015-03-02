@@ -34,6 +34,7 @@
   position: absolute;
   top: 130px;
   left: 24px;
+  height: 36px;
   &:focus {
     width: 80%;
   }
@@ -42,6 +43,10 @@
 #textanalyser.ui-autocomplete-input {
   font-family: $base-font-family;
   color: $mid-grey;
+}
+
+#textanalyser {
+    height: 36px;
 }
 
 #btn_add {
@@ -78,6 +83,10 @@
 
 .add-button:focus {
   outline: none;
+}
+
+#input-suggestion {
+    width: 100%;
 }
 
 .suggestion{
