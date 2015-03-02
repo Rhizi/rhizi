@@ -2,6 +2,9 @@ define(
 ['jquery', 'Bacon', 'util'],
 function($, Bacon,   util) {
 
+var value = util.value,
+    selectionStart = util.selectionStart;
+
 function quoted__double(string) { // quote string using double quotes
     return '"' + string + '"';
 }
@@ -22,9 +25,9 @@ function unquoted(name) {
     return name;
 }
 
-function setCaret(e, num)
+function setCaret(e_raw, num)
 {
-    e.selectionStart = e.selectionEnd = num;
+    util.setSelection(e_raw, num, num);
 }
 
 var completer = (function (input_element, dropdown, base_config) {
@@ -67,7 +70,7 @@ var completer = (function (input_element, dropdown, base_config) {
         default:
             // This catches cursor move due to keyboard events. no event for cursor movement itself
             // below we catch cursor moves due to mouse click
-            oninput(input_element_raw.value, input_element_raw.selectionStart);
+            oninput(value(input_element_raw), selectionStart(input_element_raw));
         }
         return ret;
     });
@@ -239,8 +242,8 @@ var completer = (function (input_element, dropdown, base_config) {
     function _applySuggestion(str) {
         var cur = input_element.val(),
             start = cur.slice(0, completion_start) + str + (config.appendSpaceOnEnter ? ' ' : '');
-        input_element.val(start + cur.slice(completion_end));
-        setCaret(input_element, start.length);
+        value(input_element_raw, start + cur.slice(completion_end));
+        setCaret(input_element_raw, start.length);
         oninput('', 0);
     }
     function handleEnter() {
