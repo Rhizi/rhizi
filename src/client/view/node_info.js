@@ -76,6 +76,15 @@ function disable_change_handlers()
     change_handlers = [];
 }
 
+/**
+ * XXX
+ * need to update fields if and only if there have been no new input events associated with them since commit.
+ * do not look at contents because that will exist in the past too.
+ *
+ * see Bacon.awaiting.
+ *
+ * For now we just show a warning instead telling the user the dialog is not up to date.
+ */
 function setup_click_handlers()
 {
     setup_change_handlers();
@@ -104,14 +113,13 @@ function setup_click_handlers()
     // re-open dialog on node updates while it is open
     diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
         if (model_diff.is_topo_diff(diff) && _.contains(diff.node_id_set_rm, node.id)) {
-            warning('node has been deleted');
+            warning('!! node has been deleted !!');
             return;
         }
-        if (!model_diff.is_attr_diff(diff) || _.contains(_.keys(model_diff.id_to_node_map), node.id)) {
-            warning('node has been changed');
+        if (model_diff.is_attr_diff(diff) || _.contains(_.keys(diff.id_to_node_map), node.id)) {
+            warning('!! node has been changed !!');
             return;
         }
-        show(graph, node);
     });
 }
 
@@ -134,6 +142,7 @@ function show(_graph, d) {
         flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
         i;
 
+    warning(''); // reset warning
     graph = _graph;
     node = d;
     util.assert(graph.find_node__by_id(d.id) != null);
