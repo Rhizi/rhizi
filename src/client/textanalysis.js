@@ -363,6 +363,7 @@ var textAnalyser = function (spec) {
         yell_bug = false, // TODO: fix both issues
         node_by_name = lowerCaseHash(),
         nodes = [],
+        nodes_set = {},
         links = [],
         ret = model_diff.new_topo_diff();
 
@@ -381,8 +382,11 @@ var textAnalyser = function (spec) {
                     'name': name,
                     'type': type,
                    };
-        node_name_to_type[name] = type;
-        nodes.push(node);
+        if (undefined === nodes_set[name]) {
+            node_name_to_type[name] = type;
+            nodes.push(node);
+            nodes_set[name] = true;
+        }
     }
 
     function __addLink(src_name, dst_name, name) {
