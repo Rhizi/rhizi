@@ -207,7 +207,6 @@ function arr_compare(a1, a2)
 
 var inner_update = function(nodes)
 {
-    clear();
     root_nodes = nodes;
     root_nodes__by_id = nodes_to_id_dict(nodes);
     get_main_graph_view().nodes__user_visible(nodes);
