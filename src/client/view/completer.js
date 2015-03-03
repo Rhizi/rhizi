@@ -40,7 +40,19 @@ var completer = (function (input_element, dropdown, base_config) {
         input_element_raw = input_element[0],
         completion_start = 0,
         completion_end = 0,
-        minimum_length = 1;
+        minimum_length = 1,
+        optional_getter = base_config.getter,
+        optional_setter = base_config.setter,
+        optional_selectionStart = base_config.selectionStart,
+        getter = undefined !== optional_getter ? optional_getter :
+                                function () { return util.value(input_element_raw); },
+        setter = undefined !== optional_setter ? optional_setter :
+                                function (val, caret) {
+                                    util.value(input_element_raw, val);
+                                    setCaret(input_element_raw, val.length);
+                                },
+        selectionStart = undefined !== optional_selectionStart ? optional_selectionStart :
+                                function () { return util.selectionStart(input_element_raw); };
 
     // we need an identifier to remove callbacks without affecting other completers
     util.assert(input_element_raw.id !== '');
@@ -70,7 +82,7 @@ var completer = (function (input_element, dropdown, base_config) {
         default:
             // This catches cursor move due to keyboard events. no event for cursor movement itself
             // below we catch cursor moves due to mouse click
-            oninput(value(input_element_raw), selectionStart(input_element_raw));
+            oninput(getter(), selectionStart());
         }
         return ret;
     });
@@ -243,10 +255,10 @@ var completer = (function (input_element, dropdown, base_config) {
         selected_index = new_index;
     }
     function _applySuggestion(str) {
-        var cur = input_element.val(),
-            start = cur.slice(0, completion_start) + str + (config.appendSpaceOnEnter ? ' ' : '');
-        value(input_element_raw, start + cur.slice(completion_end));
-        setCaret(input_element_raw, start.length);
+        var cur = getter(),
+            start = cur.slice(0, completion_start) + str + (config.appendSpaceOnEnter ? ' ' : ''),
+            new_text = start + cur.slice(completion_end);
+        setter(new_text, new_text.length);
         oninput('', 0);
     }
     function handleEnter() {
