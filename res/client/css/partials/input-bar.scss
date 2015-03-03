@@ -137,3 +137,19 @@
 .ui-helper-hidden-accessible > div {
     color: $dark-grey;
 }
+
+.analyser-span-node {
+    color: blue;
+}
+
+.analyser-span-link {
+    color: red;
+}
+
+.analyser-span-space-node-link {
+    color: black;
+}
+
+.analyser-span-space-link-node {
+    color: black;
+}

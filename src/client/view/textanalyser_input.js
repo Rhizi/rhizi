@@ -1,5 +1,5 @@
-define(['jquery', 'Bacon_wrapper', 'util', 'view/completer', 'rz_bus', 'textanalysis', 'consts'],
-function($,        Bacon,           util,        completer,   rz_bus,   textanalysis,   consts)
+define(['jquery', 'Bacon_wrapper', 'underscore', 'util', 'view/completer', 'rz_bus', 'textanalysis', 'consts'],
+function($,        Bacon,           _,            util,        completer,   rz_bus,   textanalysis,   consts)
 {
 // Aliases
 var value = util.value;
@@ -38,20 +38,23 @@ function textanalyser_input(spec) {
     {
         var parts,
             base_parts,
+            classes = ['analyser-span-node', 'analyser-span-space-node-link',
+                       'analyser-span-link', 'analyser-span-space-link-node'],
             cursor_location = (undefined === input_cursor_location ? selectionStart() : input_cursor_location);
 
-        base_parts = current_text.split(/  /)
-        parts = base_parts.slice(0, base_parts.length - 1).map(function (l) { return l + '  '; });
+        base_parts = current_text.split(/   */)
+        parts = _.flatten(base_parts.slice(0, base_parts.length - 1).map(function (l) { return [l, '  ']; }));
         if (base_parts[base_parts.length - 1].length != 0) {
             parts.push(base_parts[base_parts.length - 1]);
         }
-        function span(text, color) {
-            return $('<span style="color: ' + color + '">' + text.replace(/ /g, nbsp) + '</span>')[0];
+        console.log(parts);
+        function span(text, clazz) {
+            return $('<span class="' + clazz + '">' + text.replace(/ /g, nbsp) + '</span>')[0];
         };
 
         element.text('');
         parts.map(function (part, index) {
-           element.append(span(part, index % 2 == 0 ? 'blue' : 'red'));
+           element.append(span(part, classes[index % classes.length]));
         });
         util.setSelection(element_raw, cursor_location, cursor_location);
         stretch_input_to_text_size(current_text);
