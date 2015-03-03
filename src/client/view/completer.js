@@ -129,6 +129,7 @@ var completer = (function (input_element, dropdown, base_config) {
                 ret.push(name);
             }
         }
+        ret.sort();
         return ret;
     }
 
