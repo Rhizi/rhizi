@@ -333,9 +333,12 @@ body.debug .debug-ui-right {
   position: absolute;
   top: 130px;
   left: 24px;
-  height: 36px; }
+  height: 36px;
+  line-height: initial; }
   #input-container__graph-input:focus {
     width: 80%; }
+  #input-container__graph-input [contentEditable=true]:empty:not(:focus):before {
+    content: attr(placeholder); }
 
 #textanalyser.ui-autocomplete-input {
   font-family: "Source_Regular", sans-serif;
@@ -492,7 +495,7 @@ body.debug .debug-ui-right {
   border-top: 6px solid #363636; }
 
 .info.type-project {
-  border-top: 6px solid #40c200; }
+  border-top: 6px solid #40C200; }
 
 .info .info-card-attr {
   display: block;
@@ -549,7 +552,7 @@ body.debug .debug-ui-right {
 
 .kbd-button {
   background-color: #f7f7f7;
-  box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px white inset;
+  box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
   border-radius: 3px;
   border: 1px solid lightgray;
   display: inline-block;
@@ -582,8 +585,8 @@ body.debug .debug-ui-right {
   width: 100%;
   min-height: 48px;
   text-align: center;
-  background-color: #d3f2f8;
-  color: #1d6e7f;
+  background-color: #D3F2F8;
+  color: #1D6E7F;
   border-top: 1px solid #8eb6bf;
   border-bottom: 1px solid #8eb6bf; }
 
@@ -811,7 +814,7 @@ p {
   fill: #8b3ab0; }
 
 .circle.project {
-  fill: #40c200; }
+  fill: #40C200; }
 
 .circle.third-internship-proposal {
   fill: #33c2e0; }
@@ -1136,3 +1139,5 @@ p {
 
 svg text::selection {
   background: none; }
+
+/*# sourceMappingURL=style.css.map */

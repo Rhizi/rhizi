@@ -35,9 +35,13 @@
   top: 130px;
   left: 24px;
   height: 36px;
+  line-height: initial;
   &:focus {
     width: 80%;
   }
+  [contentEditable=true]:empty:not(:focus):before{
+  content:attr(placeholder)
+}
 }
 
 #textanalyser.ui-autocomplete-input {
