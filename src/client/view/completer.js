@@ -125,7 +125,7 @@ var completer = (function (input_element, dropdown, base_config) {
         var ret = [];
 
         for (var name in options) {
-            if (name.toLowerCase().indexOf(text.toLowerCase()) === 0) {
+            if (name.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
                 ret.push(name);
             }
         }
