@@ -213,14 +213,19 @@ var inner_update = function(nodes)
     connectedComponent(nodes);
 }
 
-var update = function(nodes, append)
+var update = function(nodes)
 {
-    var new_nodes = append ? _.union(root_nodes, nodes) : nodes;
+    var new_nodes = nodes;
     var not_same = !arr_compare(new_nodes, root_nodes);
 
     if (not_same) {
         inner_update(new_nodes);
     }
+}
+
+var invert = function(nodes)
+{
+    update(_.union(_.difference(root_nodes, nodes), _.difference(nodes, root_nodes)));
 }
 
 var setup_toolbar = function(main_graph)
@@ -263,6 +268,7 @@ return {
     byVisitors: byVisitors,
     connectedComponent: connectedComponent,
     clear: clear,
+    invert: invert,
     update: update,
     selected_class__node: selected_class__node,
     selected_class__link: selected_class__link,
