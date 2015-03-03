@@ -239,6 +239,7 @@ var setup_merge_button = function(main_graph)
     link_fan_btn.asEventStream('click').onValue(link_fan_root_selection);
 
     selectionChangedBus.map(function (selection) { return selection.root_nodes.length > 1; })
+        .skipDuplicates()
         .onValue(function (visible) {
             if (visible) {
                 list_call(buttons, 'show');
