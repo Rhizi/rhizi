@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_core,        selection,   util,   search, feedback) {
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback', 'keyshortcuts'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_core,        selection,   util,   search,        feedback,   keyshortcuts) {
 
     function expand(obj){
         if (!obj.savesize) {
@@ -31,21 +31,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
             drag_n_drop.prevent_default_drop_behavior();
         }
 
-        document.body.onkeyup = function(e) {
-            var key = ((e.key && String(e.key))
-                       || (e.charCode && String.fromCharCode(e.charCode))
-                       || (e.which && String.fromCharCode(e.which))).toLowerCase();
-
-            if (e.altKey && e.ctrlKey && key == 'i') {
-                $('#textanalyser').focus();
-            }
-            if (e.altKey && e.ctrlKey && key == 'o') {
-                search.focus();
-            }
-            if (e.ctrlKey && key == 'z' && e.target.nodeName !== 'INPUT') {
-                // TODO: rz_core.main_graph.undo();
-            }
-        };
+        keyshortcuts.install();
 
         var intro_task_elem = $('#intro-task');
         // TODO: messages (why tasks?) - this one is special but we want them to be handled in their own file.
