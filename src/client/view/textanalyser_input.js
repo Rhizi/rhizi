@@ -8,28 +8,9 @@ var value = util.value;
 var nbsp = String.fromCharCode(160);
 
 function textanalyser_input(spec) {
-    var element_name = spec.element_name,
-        ta = {
-            spec: spec,
-            on_analysis: new Bacon.Bus(),
-            on_resize: new Bacon.Bus(),
-            element: $(element_name),
-        },
-        element = ta.element,
-        element_raw = element[0],
-        initial_width = element.width(),
-        analysisCompleter = completer(element, $(spec.completer_name), {hideOnTab: false}),
-        document_keydown = new Bacon.Bus(),
-        input_bus = new Bacon.Bus();
-
-    analysisCompleter.options.plug(textanalysis.suggestions_options);
-
-    util.assert(1 === element.length);
-
     var selectionStart = function () {
         return util.selectionStart(element_raw);
     }
-    ta.selectionStart = selectionStart;
 
     function key(val) {
         return function (e) {
@@ -40,7 +21,6 @@ function textanalyser_input(spec) {
     function current_value() {
         return nbsp_to_spaces(value(element_raw));
     }
-    ta.value = current_value;
 
     function nbsp_to_spaces(str) {
         return str.replace(new RegExp(nbsp, 'g'), ' ');
@@ -54,30 +34,55 @@ function textanalyser_input(spec) {
         ta.on_resize.push();
     }
 
-    function update_element(current_text)
+    function update_element(current_text, input_cursor_location)
     {
         var parts,
             base_parts,
-            selection_start;
+            cursor_location = (undefined === input_cursor_location ? selectionStart() : input_cursor_location);
 
-        selection_start = selectionStart();
-        value(element_raw, ''); // this removes span elements as well
-        // here we stop treating the element as an input, this only works on a div/other "normal" element
         base_parts = current_text.split(/  /)
         parts = base_parts.slice(0, base_parts.length - 1).map(function (l) { return l + '  '; });
         if (base_parts[base_parts.length - 1].length != 0) {
             parts.push(base_parts[base_parts.length - 1]);
         }
         function span(text, color) {
-            return $('<span style="color: ' + color + '">' + text.replace(/ /g, nbsp) + '</span>');
-        }
+            return $('<span style="color: ' + color + '">' + text.replace(/ /g, nbsp) + '</span>')[0];
+        };
+
+        element.text('');
         parts.map(function (part, index) {
-            element.append(span(part, index % 2 == 0 ? 'blue' : 'red'));
+           element.append(span(part, index % 2 == 0 ? 'blue' : 'red'));
         });
-        util.setSelection(element_raw, selection_start, selection_start);
+        util.setSelection(element_raw, cursor_location, cursor_location);
         stretch_input_to_text_size(current_text);
         return current_text;
     }
+
+    var element_name = spec.element_name,
+        ta = {
+            spec: spec,
+            on_analysis: new Bacon.Bus(),
+            on_resize: new Bacon.Bus(),
+            element: $(element_name),
+            selectionStart: selectionStart,
+            value: current_value,
+        },
+        element = ta.element,
+        element_raw = element[0],
+        initial_width = element.width(),
+        completer_spec = {
+            hideOnTab: false,
+            getter: current_value,
+            setter: function (text, cursor) { update_element(text, cursor); },
+            selectionStart: selectionStart,
+        },
+        analysisCompleter = completer(element, $(spec.completer_name), completer_spec),
+        document_keydown = new Bacon.Bus(),
+        input_bus = new Bacon.Bus();
+
+    analysisCompleter.options.plug(textanalysis.suggestions_options);
+
+    util.assert(1 === element.length);
 
     var enters = element.asEventStream('keydown').filter(key(13))
         .map(function (e) {
@@ -97,16 +102,20 @@ function textanalyser_input(spec) {
     ta.on_sentence = enters.filter(function (v) { return v !== false; });
     ta.on_analysis.plug(enters.filter(function (v) { return v === false; }).map(current_value));
     ta.on_tab = element.asEventStream('keydown').filter(key(9));
+
     element.asEventStream('keydown').onValue(function (e) {
         document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
     });
+
     element.asEventStream('input selectionchange click').onValue(function (e) {
         analysisCompleter.oninput(current_value(), selectionStart(element_raw));
         e.stopPropagation();
         e.preventDefault();
     });
 
-    ta.on_analysis.plug(element.asEventStream('input').map(current_value).map(update_element));
+    ta.on_analysis.plug(element.asEventStream('input').map(current_value).map(function (val) {
+        return update_element(val);
+    }));
 
     return ta;
 };
