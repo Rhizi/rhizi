@@ -1,5 +1,7 @@
-define(['rz_core', 'Bacon_wrapper', 'jquery', 'underscore'],
-function(rz_core,   Bacon,           $,        _) {
+define(['Bacon_wrapper', 'jquery', 'underscore'],
+function(Bacon,           $,        _) {
+
+var rz_core; // circular dependency, see get_rz_core
 
 function list_from_list_like(list_like)
 {
