@@ -162,20 +162,20 @@ var completer = (function (input_element, dropdown, base_config) {
      *             ^
      */
     function oninput(text, cursor) {
-        var hash = lastRegexpIndex(text.slice(0, cursor), config.triggerStart);
+        var trigger_start_index = lastRegexpIndex(text.slice(0, cursor), config.triggerStart);
         // TODO check if current completion has been invalidated
         _invalidateSelection();
         hide();
         dropdown_raw.innerHTML = ""; // remove all elements
-        if (hash == -1 && !config.matchStartOfString) {
+        if (trigger_start_index == -1 && !config.matchStartOfString) {
             return;
         }
-        var space = text.slice(hash + 1).search(config.triggerEnd);
+        var space = text.slice(trigger_start_index + 1).search(config.triggerEnd);
         space = space == -1 ? text.length : space;
         if (space < cursor) {
             return;
         }
-        completion_start = hash + 1;
+        completion_start = trigger_start_index + 1;
         completion_end = space;
         var string = unquoted(text.slice(completion_start, completion_end));
         if (string.length < minimum_length) {
