@@ -93,9 +93,12 @@ var completer = (function (input_element, dropdown, base_config) {
     }
 
     function get_config(base) {
+        var trigger_start = base && base.triggerStart || rz_config.separator_string,
+            trigger_is_separator = (undefined === base || undefined === base.triggerStart);
         return {
-            triggerStart: anyof_re(base && base.triggerStart || rz_config.separator_string),
-            triggerEnd: anyof_re(base && base.triggerEnd || ' '),
+            triggerStart: (trigger_is_separator && rz_config.separator_string.length > 1 ?
+                new RegExp(rz_config.separator_string) : anyof_re(trigger_start)),
+            triggerEnd: new RegExp(base && base.triggerEnd || ' '),
             hideOnTab: base && base.hasOwnProperty('hideOnTab') ? base.hideOnTab : true,
             matchStartOfString: (base && base.matchStartOfString) || rz_config.node_edge_separator,
             appendSpaceOnEnter: (base && base.appendSpaceOnEnter) || false,
