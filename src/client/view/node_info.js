@@ -100,11 +100,10 @@ function setup_click_handlers()
     delete_button.on('click', function (e) {
         e.preventDefault();
         hide();
-        var topo_diff = model_diff.new_topo_diff({
-                node_id_set_rm: [node.id]
-            });
-        graph.commit_and_tx_diff__topo(topo_diff);
-        });
+        if (confirm('delete node?')) {
+            graph.nodes__delete([node.id]);
+        }
+    });
     $('#edit-node-dialog__save').on('click', function (e) {
         e.preventDefault();
         hide();
