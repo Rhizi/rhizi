@@ -228,14 +228,19 @@ var setup_merge_button = function(main_graph)
     var merge_root_selection = function() {
             main_graph.nodes__merge(root_nodes_ids());
         },
+        delete_root_selection = function() {
+            main_graph.nodes__delete(root_nodes_ids());
+        },
         link_fan_root_selection = function() {
             main_graph.nodes__link_fan(root_nodes_ids());
         },
         merge_btn = $('#btn_merge'),
+        delete_btn = $('#btn_delete'),
         link_fan_btn = $('#btn_link_fan'),
-        buttons = [merge_btn, link_fan_btn];
+        buttons = [merge_btn, delete_btn, link_fan_btn];
 
     merge_btn.asEventStream('click').onValue(merge_root_selection);
+    delete_btn.asEventStream('click').onValue(delete_root_selection);
     link_fan_btn.asEventStream('click').onValue(link_fan_root_selection);
 
     selectionChangedBus.map(function (selection) { return selection.root_nodes.length > 1; })
