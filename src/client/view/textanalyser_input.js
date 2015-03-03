@@ -87,6 +87,8 @@ function textanalyser_input(spec) {
     var enters = element.asEventStream('keydown').filter(key(13))
         .map(function (e) {
             var text;
+            e.preventDefault();
+            e.stopPropagation();
 
             if (!analysisCompleter.handleEnter()) {
                 text = current_value();
