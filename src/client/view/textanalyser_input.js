@@ -47,7 +47,6 @@ function textanalyser_input(spec) {
         if (base_parts[base_parts.length - 1].length != 0) {
             parts.push(base_parts[base_parts.length - 1]);
         }
-        console.log(parts);
         function span(text, clazz) {
             return $('<span class="' + clazz + '">' + text.replace(/ /g, nbsp) + '</span>')[0];
         };
