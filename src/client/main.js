@@ -47,7 +47,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         model_core.init(rz_config);
         textanalysis.init(rz_core.main_graph);
         search.init();
-        selection.setup_merge_button(rz_core.main_graph);
+        selection.setup_toolbar(rz_core.main_graph);
         $.feedback({ajaxURL: rz_config.feedback_url});
     }
 

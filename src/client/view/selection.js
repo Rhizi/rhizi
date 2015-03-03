@@ -223,7 +223,7 @@ var update = function(nodes, append)
     }
 }
 
-var setup_merge_button = function(main_graph)
+var setup_toolbar = function(main_graph)
 {
     var merge_root_selection = function() {
             main_graph.nodes__merge(root_nodes_ids());
@@ -269,7 +269,7 @@ return {
     node_selected: node_selected,
     link_selected: link_selected,
     selectionChangedBus: selectionChangedBus,
-    setup_merge_button: setup_merge_button,
+    setup_toolbar: setup_toolbar,
 
     __get_root_nodes: function() { return root_nodes; },
     __get_selected_nodes: function() { return selected_nodes; },
