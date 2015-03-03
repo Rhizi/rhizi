@@ -229,7 +229,11 @@ var setup_merge_button = function(main_graph)
             main_graph.nodes__merge(root_nodes_ids());
         },
         delete_root_selection = function() {
-            main_graph.nodes__delete(root_nodes_ids());
+            var ids = root_nodes_ids();
+
+            if (confirm('you are deleting ' + ids.length + ' nodes, are you sure?')) {
+                main_graph.nodes__delete(ids);
+            }
         },
         link_fan_root_selection = function() {
             main_graph.nodes__link_fan(root_nodes_ids());
