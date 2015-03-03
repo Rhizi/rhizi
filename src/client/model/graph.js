@@ -532,13 +532,13 @@ function Graph(spec) {
         return true;
     }
 
-    this.links_rm = function(links) {
-        var ids = links.map(function (link) {
-            util.assert(link.id !== undefined, 'bug: link without an id');
-            return link.id;
-        });
+    this.links__delete = function(link_ids) {
+        var topo_diff = model_diff.new_topo_diff({link_id_set_rm: link_ids});
+        this.commit_and_tx_diff__topo(topo_diff);
+    }
 
-        var topo_diff = model_diff.new_topo_diff({link_id_set_rm: ids});
+    this.nodes__delete = function(node_ids) {
+        var topo_diff = model_diff.new_topo_diff({node_id_set_rm: node_ids});
         this.commit_and_tx_diff__topo(topo_diff);
     }
 

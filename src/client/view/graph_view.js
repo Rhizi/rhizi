@@ -285,7 +285,7 @@ function GraphView(spec) {
 
                 view.edge_info.on_delete(function () {
                     view.edge_info.hide();
-                    graph.links_rm([that.link]);
+                    graph.links__delete([that.link.id]);
                 });
                 view.edge_info.show(d);
                 selection.update([src, dst], d3.event.shiftKey);
