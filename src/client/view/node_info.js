@@ -1,5 +1,5 @@
-define(['jquery', 'jquery-ui', 'util', 'view/helpers', 'view/internal', 'model/diff'],
-function($, _unused_jquery_ui,  util,   view_helpers, internal,          model_diff) {
+define(['jquery', 'jquery-ui', 'util', 'view/helpers', 'view/internal', 'model/diff', 'model/types'],
+function($, _unused_jquery_ui,  util,   view_helpers, internal,          model_diff,   model_types) {
 
 var d = null,
     msg_node = $('.info-card-message'),
@@ -9,18 +9,15 @@ var d = null,
     info = $('.info'),
     form_element = $('#editbox'),
     delete_button = $('#edit-node-dialog__delete'),
-    form = {
-        name: info.find('#editformname'),
-        type: info.find('#edittype'),
-        url: info.find('#editurl'),
-        status: info.find('#editstatus'),
-        startdate: info.find("#editstartdate"),
-        enddate: info.find("#editenddate"),
-        description: info.find("#editdescription"),
-    },
+    form = _.object(model_types.all_attributes.map(function (attr) {
+            var element = edit_element_for_attribute(attr);
+
+            util.assert(element !== undefined);
+            return [attr, element];
+        })),
     change_handlers = [],
     status_display = info.find('#displaystatus'),
-    status = form.status;
+    status = info.find('#editstatus');
 
 
 function clean_url(candidate_url)
@@ -61,8 +58,8 @@ function setup_change_handlers()
 {
     disable_change_handlers();
     // auto save style handlers
-    var streams = _.map(_.values(form), function (field) {
-        return field.asEventStream('change input keyup');
+    var streams = _.map(_.values(form), function (element) {
+        return element.asEventStream('change input keyup');
     });
     var single = _.reduce(streams, function (stream_a, stream_b) { return stream_a.merge(stream_b); });
     change_handlers = [single.debounce(500).onValue(function () {
@@ -127,20 +124,30 @@ function warning(string)
     msg_node.text(string);
 }
 
-function show(_graph, d) {
-    var f = false,
-        t = true,
-        visible = {
-          "third-internship-proposal":  [t, t, t, t, f],
-          "chainlink":                  [f, f, f, t, f],
-          "skill":                      [f, f, f, t, t],
-          "interest":                   [f, f, f, t, t],
-          "_defaults":                  [f, f, f, t, t],
-        },
-        fields = ["#status", "#startdate", "#enddate", "#description", "#url"],
-        flags = visible.hasOwnProperty(d.type) ? visible[d.type] : visible._defaults,
-        i;
+function base_element_for_attribute(attr)
+{
+    return info.find('#' + attr);
+}
 
+function edit_element_for_attribute(attr)
+{
+    return info.find('#edit' + attr);
+}
+
+function update_textarea(textarea, value)
+{
+    textarea.val(value);
+    textarea_resize(textarea[0], 150);
+}
+
+function show(_graph, d) {
+    var visible_attributes = model_types.type_attributes(d.type).slice(0),
+        hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
+        visible_elements,
+        hidden_elements;
+
+    visible_elements = visible_attributes.map(base_element_for_attribute);
+    hidden_elements = hidden_attributes.map(base_element_for_attribute);
     warning(''); // reset warning
     graph = _graph;
     node = d;
@@ -150,48 +157,46 @@ function show(_graph, d) {
 
     internal.edit_tab.show('node');
 
-    for (i = 0 ; i < flags.length; ++i) {
-        var elem = info.find(fields[i]);
-        elem[flags[i] ? 'show' : 'hide']();
-    }
+    _.each(hidden_elements, function (element) { element.hide(); });
+    _.each(visible_elements, function (element) { element.show(); });
 
     $('.info').attr('class', 'info');
     $('.info').addClass('type-' + d.type); // Add a class to distinguish types for css
 
-    var name_textarea = $('.info').find('#editformname');
-    name_textarea.val(d.name);
-    textarea_resize(name_textarea[0], 150);
+    _.each(visible_attributes, function (attr) {
+        var element = edit_element_for_attribute(attr);
+            value = d[attr];
 
-    $("#editenddate").datepicker({
-      inline: true,
-      showOtherMonths: true,
-      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        switch (attr) {
+        case 'editenddate':
+        case 'editstartdate':
+            element.datepicker({
+              inline: true,
+              showOtherMonths: true,
+              dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            });
+            break;
+        case 'name':
+        case 'description':
+            update_textarea(element, value);
+            break;
+        case 'status':
+            if (_.contains(rz_config.role_set, 'admin')) {
+                status.val(d.status);
+                status.show();
+                status_display.hide();
+            } else {
+                status_display.text(d.status);
+                status.hide();
+                status_display.show();
+            }
+            break;
+        }
+        if (element.val !== undefined) {
+            element.val(value);
+        }
     });
-    $("#editstartdate").datepicker({
-      inline: true,
-      showOtherMonths: true,
-      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    });
 
-    var description = $('#editdescription');
-    description.val(d.description);
-    textarea_resize(description[0], 150);
-    $('#edittype').val(d.type);
-    $('#editurl').val(d.url);
-    if (_.contains(rz_config.role_set, 'admin')) {
-        status.val(d.status);
-        status.show();
-        status_display.hide();
-    } else {
-        status_display.text(d.status);
-        status.hide();
-        status_display.show();
-    }
-
-    if (d.type === "third-internship-proposal") {
-      $('#editstartdate').val(d.startdate);
-      $('#editenddate').val(d.enddate);
-    }
 }
 
 function hide() {
