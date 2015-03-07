@@ -211,18 +211,11 @@
   font-size: $h3-size;
 }
 
-#editname {
+#editbox textarea {
   width: 100%;
   height:inherit;
   font-size: $h3-size;
 }
-
-#editdescription {
-  width: 100%;
-  height:inherit;
-  font-size: $h3-size;
-}
-
 
 #graph-view__canvas {
     height: inherit; // inherit from container which should be set to 100%

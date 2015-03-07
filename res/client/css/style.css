@@ -897,12 +897,7 @@ p {
   height: inherit;
   font-size: 18px; }
 
-#editname {
-  width: 100%;
-  height: inherit;
-  font-size: 18px; }
-
-#editdescription {
+#editbox textarea {
   width: 100%;
   height: inherit;
   font-size: 18px; }
