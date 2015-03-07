@@ -136,10 +136,9 @@ var main = function ()
                 finalize: false,
             });
         });
-    input.on_tab.onValue(function (e) {
+    input.on_type.onValue(function (up) {
             if (textanalysis.lastnode(rz_core.edit_graph, input.selectionStart())) {
-                e.preventDefault();
-                changeType(e.shiftKey ? "up" : "down");
+                changeType(up ? "up" : "down");
                 ret = false;
             }
         });

@@ -5,7 +5,9 @@ function($,        Bacon,           _,            util,        completer,   rz_b
 var value = util.value;
 
 // Constants
-var nbsp = String.fromCharCode(160);
+var nbsp = String.fromCharCode(160),
+    VK_UP = 38,
+    VK_DOWN = 40;
 
 function textanalyser_input(spec) {
     var selectionStart = function () {
@@ -14,9 +16,15 @@ function textanalyser_input(spec) {
 
     function key(val) {
         return function (e) {
-            return e.keyCode == val;
+            return e.keyCode === val;
         };
     };
+
+    function shift_key(val) {
+        return function(e) {
+            return e.keyCode === val && e.shiftKey;
+        }
+    }
 
     function current_value() {
         return nbsp_to_spaces(value(element_raw));
@@ -103,9 +111,18 @@ function textanalyser_input(spec) {
 
     rz_bus.ui_key.plug(document_keydown);
 
+    function prevent_default_and_stop_propagation(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return e;
+    }
+    function stream_shift_key(key) {
+        return element.asEventStream('keydown').filter(shift_key(key)).map(prevent_default_and_stop_propagation)
+    }
+
     ta.on_sentence = enters.filter(function (v) { return v !== false; });
     ta.on_analysis.plug(enters.filter(function (v) { return v === false; }).map(current_value));
-    ta.on_tab = element.asEventStream('keydown').filter(key(9));
+    ta.on_type = stream_shift_key(VK_UP).map(true).merge(stream_shift_key(VK_DOWN).map(false));
 
     element.asEventStream('keydown').onValue(function (e) {
         document_keydown.push({where: consts.KEYSTROKE_WHERE_TEXTANALYSIS, keys: [e.keyCode]});
