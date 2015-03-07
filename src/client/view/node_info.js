@@ -7,6 +7,7 @@ var d = null,
     node,
     setup_done = false,
     info = $('.info'),
+    info_container = $('.info-container'),
     form_element = $('#editbox'),
     delete_button = $('#edit-node-dialog__delete'),
     form = _.object(model_types.all_attributes.map(function (attr) {
@@ -185,7 +186,7 @@ function show(_graph, d) {
 
     // hack - should be able to set max-height via css percentage, no?
     max_height = $(document.body).innerHeight() - $('.info')[0].getBoundingClientRect().top * 2;
-    info[0].style['max-height'] = String(max_height) + 'px';
+    info_container[0].style['max-height'] = String(max_height) + 'px';
 
     _.each(visible_attributes, function (attr) {
         var element = edit_element_for_attribute(attr);
