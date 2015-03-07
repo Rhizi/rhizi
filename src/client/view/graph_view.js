@@ -25,8 +25,8 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3', 'Bacon_wrapper', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble'],
-function(d3 ,  Bacon         ,  util ,  selection      ,  view_helpers,  model_diff  ,  view, view_bubble) {
+define(['d3', 'Bacon_wrapper', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
+function(d3 ,  Bacon         ,  util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types) {
 
 var obj_take = util.obj_take;
 
@@ -96,8 +96,8 @@ function GraphView(spec) {
         cx,
         cy,
         // FIXME take filter names from index.html or both from graph db
-        filter_states = {'interest':null, 'skill':null, 'club':null, 'person':null, 'third-internship-proposal':null},
-        filter_state_names = ['interest', 'skill', 'club', 'person', 'third-internship-proposal'];
+        filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; })),
+        filter_state_names = model_types.nodetypes;
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&

@@ -2,8 +2,6 @@
 
 define(function() {
 
-    var nodetypes = ["person", "club", "skill", "interest", "third-internship-proposal", "internship"];
-
     var description = {
         person: 'A person in CRI - student or teacher',
         club: 'A shared club or project within the CRI',
@@ -19,7 +17,6 @@ define(function() {
         KEYSTROKE_WHERE_DOCUMENT: 'keystroke_where_document',
         KEYSTROKE_WHERE_TEXTANALYSIS: 'keystroke_where_textanalysis',
         INPUT_WHERE_TEXTANALYSIS: 'input_where_textanalysis',
-        nodetypes: nodetypes,
         description: description,
         NEW_NODE_NAME: 'new node',
     };

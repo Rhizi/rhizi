@@ -1,5 +1,5 @@
-define(['rz_core', 'model/core', 'model/util', 'model/diff', 'consts', 'util'],
-function(rz_core,   model_core,   model_util,   model_diff,   consts,   util) {
+define(['rz_core', 'model/core', 'model/util', 'model/diff', 'model/types', 'consts', 'util'],
+function(rz_core,   model_core,   model_util,   model_diff,   model_types,   consts,   util) {
 "use strict";
 
 // Aliases
@@ -10,7 +10,7 @@ var node_edge_separator = rz_config.node_edge_separator;
 var separator_string = rz_config.separator_string;
 
 var typeindex = 0,
-    nodetypes = consts.nodetypes,
+    nodetypes = model_types.nodetypes,
     node_name_to_type = {};
 
 var _get_lastnode,
