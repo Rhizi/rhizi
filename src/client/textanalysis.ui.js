@@ -108,7 +108,8 @@ function analyzeSentence(spec)
     input_bus.push({where: consts.INPUT_WHERE_TEXTANALYSIS, input: sentence});
 }
 
-function changeType(arg) {
+function changeType(up)
+{
     var lastnode = textanalysis.lastnode(rz_core.edit_graph, input.selectionStart()),
         nodetype,
         id,
@@ -120,7 +121,7 @@ function changeType(arg) {
         id = lastnode.id;
         name = lastnode.name;
     }
-    nodetype = (arg === 'up'? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
+    nodetype = (up ? textanalysis.selected_type_next() : textanalysis.selected_type_prev());
 
     rz_core.edit_graph.editType(id, nodetype);
     typeselection.showChosenType(id, nodetype);
@@ -138,7 +139,7 @@ var main = function ()
         });
     input.on_type.onValue(function (up) {
             if (textanalysis.lastnode(rz_core.edit_graph, input.selectionStart())) {
-                changeType(up ? "up" : "down");
+                changeType(up);
                 ret = false;
             }
         });

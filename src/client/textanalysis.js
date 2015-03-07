@@ -11,6 +11,7 @@ var separator_string = rz_config.separator_string;
 
 var typeindex = 0,
     nodetypes = model_types.nodetypes,
+    nodetypes_count = nodetypes.length,
     default_nodetype = 'person',
     node_name_to_type = {};
 
@@ -623,11 +624,11 @@ return {
     },
 
     selected_type_next: function() {
-        typeindex = (typeindex + 1) % 5;
+        typeindex = (typeindex + 1) % nodetypes_count;
         return selectedType();
     },
     selected_type_prev: function() {
-        typeindex = (typeindex + 4) % 5;
+        typeindex = (typeindex + nodetypes_count - 1) % nodetypes_count;
         return selectedType();
     }
 };
