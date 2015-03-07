@@ -503,9 +503,6 @@ body.debug .debug-ui-right {
 .info.type-empty {
   border-top: 6px solid #919095; }
 
-.info.type-chainlink {
-  border-top: 6px solid #363636; }
-
 .info.type-project {
   border-top: 6px solid #40c200; }
 
@@ -901,7 +898,12 @@ p {
   font-size: 18px; }
 
 #editname {
-  width: inherit;
+  width: 100%;
+  height: inherit;
+  font-size: 18px; }
+
+#editdescription {
+  width: 100%;
   height: inherit;
   font-size: 18px; }
 
