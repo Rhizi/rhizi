@@ -12,13 +12,32 @@ var d = null,
     form = _.object(model_types.all_attributes.map(function (attr) {
             var element = edit_element_for_attribute(attr);
 
-            util.assert(element !== undefined);
+            if (element.length == 0) {
+                form_add_element(attr, 'textarea');
+            }
             return [attr, element];
         })),
     change_handlers = [],
     status_display = info.find('#displaystatus'),
     status = info.find('#editstatus');
 
+
+function form_add_element(attr, value_element_type)
+{
+    var div = $('<div></div>'),
+        label = $('<label></label>'),
+        value = $('<' + value_element_type + '></' + value_element_type + '>'),
+        delete_button = form_element.find('#info-container__bottom-btn-bar');
+
+    div.attr('id', attr);
+    label.addClass('info-card-attr');
+    label.text(model_types.attribute_titles[attr] + ':');
+    value.addClass('info-card-attr-val');
+    value.attr('id', 'edit' + attr);
+    div.append(label);
+    div.append(value);
+    div.insertBefore(delete_button);
+}
 
 function clean_url(candidate_url)
 {
