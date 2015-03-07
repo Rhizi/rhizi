@@ -7,7 +7,6 @@ define(function() {
         club: 'A shared club or project within the CRI',
         skill: 'Ability or expertise you possess',
         interest: 'Scientific skill or domain expertise you wish you had',
-        'third-internship-proposal': 'Create this to submit your third internship proposal',
         internship: "Title of first or second internship you've done"
     };
 

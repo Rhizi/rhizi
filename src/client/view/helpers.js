@@ -13,9 +13,6 @@ function customColor(type) {
         case "skill":
             color = '#fad900'; //yellow
             break;
-        case "third-internship-proposal":
-            color = '#33c2e0'; //cyan
-            break;
         case "internship":
             color = '#ff8b11'; //orange
             break;
@@ -49,9 +46,6 @@ function customSize(type) {
             size = 12;
             break;
         case "skill":
-            size = 12;
-            break;
-        case "third-internship-proposal":
             size = 12;
             break;
         case "internship":

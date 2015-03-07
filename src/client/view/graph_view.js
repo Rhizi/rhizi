@@ -516,7 +516,7 @@ function GraphView(spec) {
         var nodes = graph.nodes();
         for (var i = 0; i < nodes.length; i++) {
             var current = nodes[i];
-            if (current.type === "third-internship-proposal") {
+            if (current.type === "internship") {
                 deliverables.push({
                     "id": nodes[i].id,
                     "startdate": nodes[i].start,
