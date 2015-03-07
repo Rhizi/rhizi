@@ -168,8 +168,8 @@ function show(_graph, d) {
             value = d[attr];
 
         switch (attr) {
-        case 'editenddate':
-        case 'editstartdate':
+        case 'enddate':
+        case 'startdate':
             element.datepicker({
               inline: true,
               showOtherMonths: true,
