@@ -11,7 +11,10 @@ var separator_string = rz_config.separator_string;
 
 var typeindex = 0,
     nodetypes = model_types.nodetypes,
+    default_nodetype = 'person',
     node_name_to_type = {};
+
+util.assert(nodetypes.indexOf(default_nodetype) !== -1);
 
 var _get_lastnode,
     get_lastnode = function (editgraph, cursor) {
@@ -376,7 +379,7 @@ var textAnalyser = function (spec) {
         if (name === NEW_NODE_NAME) {
             type = selectedType();
         } else {
-            type = node_name_to_type[name] || nodetypes[0];
+            type = node_name_to_type[name] || default_nodetype;
         }
         var node = {
                     'name': name,
