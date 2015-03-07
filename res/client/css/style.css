@@ -460,7 +460,8 @@ body.debug .debug-ui-right {
 .info-container {
   position: absolute;
   right: 20px;
-  top: 130px; }
+  top: 130px;
+  overflow-y: auto; }
 
 .subtitle {
   font-style: italic;

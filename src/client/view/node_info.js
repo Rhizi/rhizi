@@ -163,7 +163,8 @@ function show(_graph, d) {
     var visible_attributes = model_types.type_attributes(d.type).slice(0),
         hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
         visible_elements,
-        hidden_elements;
+        hidden_elements,
+        max_height;
 
     visible_elements = visible_attributes.map(base_element_for_attribute);
     hidden_elements = hidden_attributes.map(base_element_for_attribute);
@@ -179,8 +180,12 @@ function show(_graph, d) {
     _.each(hidden_elements, function (element) { element.hide(); });
     _.each(visible_elements, function (element) { element.show(); });
 
-    $('.info').attr('class', 'info');
-    $('.info').addClass('type-' + d.type); // Add a class to distinguish types for css
+    info.attr('class', 'info');
+    info.addClass('type-' + d.type); // Add a class to distinguish types for css
+
+    // hack - should be able to set max-height via css percentage, no?
+    max_height = $(document.body).innerHeight() - $('.info')[0].getBoundingClientRect().top * 2;
+    info[0].style['max-height'] = String(max_height) + 'px';
 
     _.each(visible_attributes, function (attr) {
         var element = edit_element_for_attribute(attr);
