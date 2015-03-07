@@ -14,7 +14,7 @@ var d = null,
             var element = edit_element_for_attribute(attr);
 
             if (element.length == 0) {
-                form_add_element(attr, 'textarea');
+                element = form_add_element(attr, 'textarea');
             }
             return [attr, element];
         })),
@@ -22,7 +22,9 @@ var d = null,
     status_display = info.find('#displaystatus'),
     status = info.find('#editstatus');
 
-
+/**
+ *  Adds the div with the label, return the edit child
+ */
 function form_add_element(attr, value_element_type)
 {
     var div = $('<div></div>'),
@@ -38,6 +40,7 @@ function form_add_element(attr, value_element_type)
     div.append(label);
     div.append(value);
     div.insertBefore(delete_button);
+    return value;
 }
 
 function clean_url(candidate_url)
