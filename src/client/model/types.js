@@ -28,7 +28,11 @@ var nodetypes,
         'person': {
             'title': 'Person',
             'attributes': ['description', 'url'],
-            }
+            },
+        'club': {
+            'title': 'Club',
+            'attributes': ['description', 'url'],
+        }
     },
     all_attributes,
     attribute_titles = {
