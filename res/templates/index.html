@@ -30,7 +30,7 @@ var rz_config = { // set as a global variable
            <span id="profile-circle"></span>
            <span class="profile-username">Welcome&nbsp;<span id="user_id">{{ rz_username }}</span>!<span id="btn-logout" class="button">Logout</span></span>
       </span>
-      <span class="logo-3rd-party"><a href="http://cri-paris.org/"><img id="logo-3rd-party__CRI" src="/static/img/CRI-logo.png"></a></span>
+      <span class="logo-3rd-party"><a tabindex="-1" href="http://cri-paris.org/"><img id="logo-3rd-party__CRI" src="/static/img/CRI-logo.png"></a></span>
     </span>
   </div>
   <div id="intro-task" class="task-alert" style="display:none">
@@ -69,12 +69,12 @@ var rz_config = { // set as a global variable
     <div id="input-box-set-container">
       <div class="input-container" id="input-container__search">
           <input class="input-bar" id="search" placeholder="Search for nodes or links"/>
-          <button id="btn_search"></button>
+          <button tabindex="-1" id="btn_search"></button>
         <div id="search-suggestion" class="suggestion" style="display: none"></div>
       </div>
       <div class="input-container" id="input-container__graph-input">
           <div contentEditable="true" class="input input-bar" id="textanalyser" placeholder="Add nodes or links" autofocus ></div>
-          <button id="btn_add"></button>
+          <button tabindex="-1" id="btn_add"></button>
         <div id="input-suggestion" class="suggestion" style="display: none"></div>
       </div>
     </div>
@@ -155,7 +155,7 @@ var rz_config = { // set as a global variable
     </div>
     </div>
   </div>
-  <div class="rhizi-logo"><a href="http://www.rhizi.org">
+  <div class="rhizi-logo"><a tabindex="-1" href="http://www.rhizi.org">
     <img src="/static/img/rhizi-logo.png"/></a>
   </div>
 {% endblock %}
