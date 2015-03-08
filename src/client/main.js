@@ -1,6 +1,10 @@
 define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback', 'keyshortcuts'],
 function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_core,        selection,   util,   search,        feedback,   keyshortcuts) {
 
+    function fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit() {
+        $('.feedback-btn').attr('tabindex', -1);
+    }
+
     function expand(obj){
         if (!obj.savesize) {
             obj.savesize = obj.size;
@@ -49,6 +53,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         search.init();
         selection.setup_toolbar(rz_core.main_graph);
         $.feedback({ajaxURL: rz_config.feedback_url});
+        fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit();
     }
 
     return {
