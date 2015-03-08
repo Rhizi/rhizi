@@ -20,6 +20,10 @@ util.assert(nodetypes.indexOf(default_nodetype) !== -1);
 var _get_lastnode,
     get_lastnode = function (editgraph, cursor) {
         return undefined !== _get_lastnode ? _get_lastnode(editgraph, cursor) : null;
+    },
+    _element_at_position__is_link,
+    element_at_position__is_link = function(cursor) {
+        return undefined !== _element_at_position__is_link ? _element_at_position__is_link(cursor) : false;
     };
 
 var sugg_name = {},
@@ -52,12 +56,21 @@ function even_second(_, i)
 
 function list_first_pred(list, default_, pred)
 {
+    var index = list_first_pred__index(list, pred);
+
+    if (undefined === index) {
+        return default_;
+    }
+    return list[index];
+}
+
+function list_first_pred__index(list, pred)
+{
     for (var i = 0 ; i < list.length ; ++i) {
         if (pred(list[i])) {
-            return list[i];
+            return i;
         }
     }
-    return default_;
 }
 
 function list_product(l1, l2)
@@ -597,9 +610,20 @@ var textAnalyser = function (spec) {
         return node;
     }
 
+    function __element_at_position__is_link(cursor) {
+        var index = list_first_pred__index(thirds, function (d) {
+            return cursor >= d.start && cursor < d.end;
+        });
+        index = undefined === index ? thirds.length - 1 : index;
+        return index % 2 == 1;
+    }
+
+    // FIXME: ugh.
+
     _get_lastnode = finalize || tokens.length === 0 ? function () { return null; }
                                                   : lookup_node_in_bounds;
 
+    _element_at_position__is_link = __element_at_position__is_link;
     return ret;
 };
 
@@ -616,6 +640,8 @@ return {
     ANALYSIS_NODE_START:ANALYSIS_NODE_START,
     ANALYSIS_NODE: ANALYSIS_NODE,
     ANALYSIS_LINK:ANALYSIS_LINK,
+
+    element_at_position__is_link: element_at_position__is_link,
 
     //for the external arrow-type changer
     lastnode: get_lastnode,
