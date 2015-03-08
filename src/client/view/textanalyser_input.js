@@ -71,7 +71,8 @@ function textanalyser_input(spec) {
     var element_name = spec.element_name,
         ta = {
             spec: spec,
-            on_analysis: new Bacon.Bus(),
+            on_analysis__input: new Bacon.Bus(),
+            on_analysis__output: new Bacon.Bus(),
             on_resize: new Bacon.Bus(),
             element: $(element_name),
             selectionStart: selectionStart,
@@ -121,7 +122,7 @@ function textanalyser_input(spec) {
     }
 
     ta.on_sentence = enters.filter(function (v) { return v !== false; });
-    ta.on_analysis.plug(enters.filter(function (v) { return v === false; }).map(current_value));
+    ta.on_analysis__input.plug(enters.filter(function (v) { return v === false; }).map(current_value));
     ta.on_type = stream_shift_key(VK_UP).map(true).merge(stream_shift_key(VK_DOWN).map(false));
 
     element.asEventStream('keydown').onValue(function (e) {
@@ -134,7 +135,7 @@ function textanalyser_input(spec) {
         e.preventDefault();
     });
 
-    ta.on_analysis.plug(element.asEventStream('input').map(current_value).map(function (val) {
+    ta.on_analysis__input.plug(element.asEventStream('input').map(current_value).map(function (val) {
         return update_element(val);
     }));
 

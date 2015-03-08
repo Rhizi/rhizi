@@ -131,11 +131,11 @@ function changeType(up)
 var main = function ()
 {
     input.on_sentence.onValue(submitNewSentence);
-    input.on_analysis.onValue(function (sentence) {
-            analyzeSentence({
+    input.on_analysis__input.onValue(function (sentence) {
+            input.on_analysis__output.push(analyzeSentence({
                 sentence: sentence,
                 finalize: false,
-            });
+            }));
         });
     input.on_type.onValue(function (up) {
             if (textanalysis.lastnode(rz_core.edit_graph, input.selectionStart())) {
