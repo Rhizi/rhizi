@@ -89,9 +89,20 @@ function textanalyser_input(spec) {
         },
         analysisCompleter = completer(element, $(spec.completer_name), completer_spec),
         document_keydown = new Bacon.Bus(),
-        input_bus = new Bacon.Bus();
+        input_bus = new Bacon.Bus(),
+        selectionBus = element.asEventStream('selectstart input keyup').map(selectionStart).skipDuplicates();
 
-    analysisCompleter.options.plug(textanalysis.suggestions_options);
+    analysisCompleter.options.plug(
+        textanalysis.suggestions_options
+        .combine(selectionBus, function (options, cursor) { return [options, cursor]; })
+        .combine(ta.on_analysis__output, function (both, output) { return both; })
+        .map(
+        function (both) {
+            var options = both[0],
+                cursor = both[1],
+                is_link = textanalysis.element_at_position__is_link(cursor);
+            return options[is_link ? 'links' : 'nodes'];
+        }));
 
     util.assert(1 === element.length);
 

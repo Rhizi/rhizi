@@ -17,7 +17,7 @@ function init() {
                                     matchStartOfString: true,
                                  });
 
-    search_completer.options.plug(textanalysis.suggestions_options);
+    search_completer.options.plug(textanalysis.suggestions_options.map('.nodes'));
     search.on('input', search_on_submit);
     search.on('keydown', function(e) {
         if (e.which == 13 && !search_completer.handleEnter()) {

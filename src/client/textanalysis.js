@@ -27,11 +27,10 @@ var _get_lastnode,
     };
 
 var sugg_name = {},
-    id_to_name_map = {},
     suggestions_bus = new Bacon.Bus(),
     suggestions_options = suggestions_bus.toProperty();
 
-suggestions_bus.push([]);
+suggestions_bus.push({nodes:{}, links:{}});
 
 var ANALYSIS_NODE_START = 'ANALYSIS_NODE_START';
 var ANALYSIS_NODE = 'ANALYSIS_NODE';
@@ -305,27 +304,14 @@ function tokenize(text, node_token, quote)
 }
 
 
-/*
- * id - undefined | node id 
- *
- */
-function auto_suggest__update_name(name, id)
-{
-    if (id !== undefined && id_to_name_map[id] !== undefined) {
-        delete sugg_name[id_to_name_map[id]];
-        id_to_name_map[id] = name;
-    }
-    /* note that name can contain spaces - this is ok. We might want to limit this though? */
-    sugg_name[name] = 1;
-    suggestions_bus.push(sugg_name);
-}
-
 function auto_suggest__update_from_graph()
 {
-    sugg_name = {};
-    id_to_name_map = {};
+    sugg_name = {nodes:{}, links:{}};
     rz_core.main_graph.nodes().forEach(function (node) {
-        auto_suggest__update_name(node.name, node.id);
+        sugg_name.nodes[node.name]  = node.id;
+    });
+    rz_core.main_graph.links().forEach(function (link) {
+        sugg_name.links[link.name] = link.id;
     });
     suggestions_bus.push(sugg_name);
 }
