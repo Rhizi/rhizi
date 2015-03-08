@@ -92,15 +92,16 @@ function textanalyser_input(spec) {
         input_bus = new Bacon.Bus(),
         selectionBus = element.asEventStream('selectstart input keyup').map(selectionStart).skipDuplicates();
 
+    function first_argument(one, two) { return one; };
+
     analysisCompleter.options.plug(
         textanalysis.suggestions_options
-        .combine(selectionBus, function (options, cursor) { return [options, cursor]; })
-        .combine(ta.on_analysis__output, function (both, output) { return both; })
+        .combine(selectionBus, first_argument)
+        .combine(ta.on_analysis__output, first_argument)
         .map(
-        function (both) {
-            var options = both[0],
-                cursor = both[1],
-                is_link = textanalysis.element_at_position__is_link(cursor);
+        function (options) {
+            var is_link = textanalysis.element_at_position__is_link(selectionStart());
+
             return options[is_link ? 'links' : 'nodes'];
         }));
 
