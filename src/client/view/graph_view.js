@@ -96,8 +96,7 @@ function GraphView(spec) {
         cx,
         cy,
         // FIXME take filter names from index.html or both from graph db
-        filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; })),
-        filter_state_names = model_types.nodetypes;
+        filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
@@ -120,16 +119,21 @@ function GraphView(spec) {
     update_window_size();
 
     function read_checkboxes() {
-        var checkboxes = $('#menu__type-filter label input').map(
-        function (i, checkbox){
-                return checkbox.checked;
-            }
-        );
+        var name,
+            value,
+            // jquery map does flattens, and we don't want that
+            checkboxes = _.map($('#menu__type-filter label input'),
+                function (checkbox){
+                        return [checkbox.name, checkbox.checked];
+                    }
+                );
         for (var i in checkboxes) {
-            if (filter_state_names[i] === undefined) {
+            name = checkboxes[i][0];
+            value = checkboxes[i][1];
+            if (undefined === filter_states[name]) {
                 continue;
             }
-            filter_states[filter_state_names[i]] = checkboxes[i];
+            filter_states[name] = value;
         }
     }
 
