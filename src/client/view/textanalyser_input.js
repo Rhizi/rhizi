@@ -6,8 +6,8 @@ var value = util.value;
 
 // Constants
 var nbsp = String.fromCharCode(160),
-    VK_UP = 38,
-    VK_DOWN = 40;
+    VK_UP = consts.VK_UP,
+    VK_DOWN = consts.VK_DOWN;
 
 function textanalyser_input(spec) {
     var selectionStart = function () {

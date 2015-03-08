@@ -1,9 +1,14 @@
 define(
-['jquery', 'Bacon', 'util'],
-function($, Bacon,   util) {
+['jquery', 'Bacon', 'util', 'consts'],
+function($, Bacon,   util,   consts) {
 
 var value = util.value,
     selectionStart = util.selectionStart;
+
+// constants
+var VK_UP = consts.VK_UP,
+    VK_DOWN = consts.VK_DOWN,
+    VK_ESCAPE = consts.VK_ESCAPE;
 
 function quoted__double(string) { // quote string using double quotes
     return '"' + string + '"';
@@ -66,16 +71,19 @@ var completer = (function (input_element, dropdown, base_config) {
 
     input_element.keyup(function(e) {
         var ret = undefined;
+        if (e.shiftKey) {
+            return ret;
+        }
         switch (e.keyCode) {
-        case 38: //UP
+        case VK_UP: //UP
             prev_option();
             ret = false;
             break;
-        case 40: //DOWN
+        case VK_DOWN: //DOWN
             next_option();
             ret = false;
             break;
-        case 27: // Escape
+        case VK_ESCAPE: // Escape
             hide();
             ret = false;
             break;

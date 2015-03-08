@@ -18,5 +18,10 @@ define(function() {
         INPUT_WHERE_TEXTANALYSIS: 'input_where_textanalysis',
         description: description,
         NEW_NODE_NAME: 'new node',
+
+        // Keycodes (should just use jquery)
+        VK_UP: 38,
+        VK_DOWN: 40,
+        VK_ESCAPE: 27,
     };
 });
