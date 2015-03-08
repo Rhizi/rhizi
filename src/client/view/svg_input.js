@@ -106,8 +106,12 @@ var svgInput = function(vis, graph) {
     }
 
     /*
+     * Makes the input element visible at the position of @e with text
+     * from @n. Uses @x as x offset.
+     *
      * @param e visual node element
      * @param n node model object
+     * @param x offset on x dimension from e
      */
     function enable(e, n, x) {
         var oldname = n.name,
