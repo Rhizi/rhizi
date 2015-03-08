@@ -19,9 +19,11 @@ define(function() {
         description: description,
         NEW_NODE_NAME: 'new node',
 
-        // Keycodes (should just use jquery)
+        // Virtual Keycodes i.e. event.keyCode / event.key
+        // https://dvcs.w3.org/hg/dom3events/raw-file/tip/html/DOM3-Events.html#keys-keyvalues
         VK_UP: 38,
         VK_DOWN: 40,
         VK_ESCAPE: 27,
+        VK_TAB: 9,
     };
 });

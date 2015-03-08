@@ -8,7 +8,8 @@ var value = util.value,
 // constants
 var VK_UP = consts.VK_UP,
     VK_DOWN = consts.VK_DOWN,
-    VK_ESCAPE = consts.VK_ESCAPE;
+    VK_ESCAPE = consts.VK_ESCAPE,
+    VK_TAB = consts.VK_TAB;
 
 function quoted__double(string) { // quote string using double quotes
     return '"' + string + '"';
@@ -96,10 +97,10 @@ var completer = (function (input_element, dropdown, base_config) {
     });
     input_element.keydown(function(e) {
         switch (e.keyCode) {
-        case 38:
-        case 40:
+        case VK_UP:
+        case VK_DOWN:
             return false;
-        case 9: // Tab
+        case VK_TAB: // Tab
             if (config.hideOnTab) {
                 hide();
             }
