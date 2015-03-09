@@ -356,6 +356,7 @@ function GraphView(spec) {
             .append("g")
             .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
             .attr('visibility', 'hidden') // made visible on first tick
+            .attr('tabindex', 0)
             .call(drag);
 
         node.attr('class', function(d) {
