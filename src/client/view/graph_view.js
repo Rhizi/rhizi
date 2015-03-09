@@ -434,15 +434,11 @@ function GraphView(spec) {
         noderef = nodeEnter.insert('a')
             .attr("class", "nodeurl graph")
             .attr("transform", "translate(10,-7)")
+            .attr("dy", node_text_dy);
         noderef.insert("image")
             .attr("width", "14")
             .attr("height", "14")
             .attr("xlink:href", "/static/img/url-icon.png");
-
-        noderef_a = noderef.insert("a")
-        noderef_a.insert("text")
-            .attr("class", "nodetext graph")
-            .attr("dy", node_text_dy);
 
         var urlValid = function(d) {
             return d.url !== undefined && d.url !== null && d.url.length > 0;
