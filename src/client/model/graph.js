@@ -1091,25 +1091,16 @@ function Graph(spec) {
     this.find__by_visitors = function(node_visitor, link_visitor) {
         var nodes = get_nodes(),
             links = get_links(),
-            n_length = nodes.length,
-            l_length = links.length,
-            selected = [],
-            i,
-            node,
-            link,
-            state;
+            selected_nodes,
+            selected_links;
 
-        if (!node_visitor) {
+        if (!node_visitor && !link_visitor) {
             return;
         }
 
-        for (i = 0 ; i < n_length; ++i) {
-            node = nodes[i];
-            if (node_visitor(node)) {
-                selected.push(node);
-            }
-        }
-        return selected;
+        selected_nodes = node_visitor ? nodes.filter(node_visitor) : [];
+        selected_links = link_visitor ? links.filter(link_visitor) : [];
+        return {nodes: selected_nodes, links: selected_links};
     }
 
     function markRelated(names) {

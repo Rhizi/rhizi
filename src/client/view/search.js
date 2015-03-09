@@ -28,9 +28,24 @@ function init() {
         return true;
     });
 
+    function attribute_match(obj, regexp) {
+        var v, k;
+
+        for (k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                v = obj[k];
+                if ("string" === typeof(v) && v.match(regexp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     function search_on_submit() {
         var text = search[0].value.trim(),
-            r;
+            r,
+            selector = function (obj) { return attribute_match(obj, r); };
 
         try {
             r = new RegExp(text.replace(/ /, '|'), 'i');
@@ -38,7 +53,7 @@ function init() {
             return; // don't clear selection either
         }
         if (text.length > 0) {
-            selection.byVisitors(function (n) { return n.name.match(r); });
+            selection.byVisitors(selector, selector);
         } else {
             selection.clear();
         }

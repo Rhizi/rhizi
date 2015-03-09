@@ -117,10 +117,29 @@ function updateSelectedNodesBus(new_selected_nodes)
     selectionChangedBus.push(new_selection(selected_nodes, root_nodes));
 }
 
-function byVisitors(node_selector, link_selector) {
-    var new_selected_nodes = get_main_graph().find__by_visitors(node_selector, link_selector);
+/* add nodes in nodes_b to a copy of nodes_a in order, skipping duplicates */
+function sum_nodes(nodes_a, nodes_b)
+{
+    var set_a_id = _.object(nodes_a.map(function (n) { return [n.id, 1]; })),
+        ret = nodes_a.slice(0);
 
-    inner_update(new_selected_nodes);
+    for (var k in nodes_b) {
+        if (set_a_id[nodes_b[k].id] === undefined) {
+            ret.push(nodes_b[k]);
+        }
+    }
+    return ret;
+}
+
+function links_to_nodes(links)
+{
+    return _.flatten(_.map(links, function (link) { return [link.__src, link.__dst]; }));
+}
+
+function byVisitors(node_selector, link_selector) {
+    var new_selection = get_main_graph().find__by_visitors(node_selector, link_selector);
+
+    inner_update(sum_nodes(new_selection.nodes, links_to_nodes(new_selection.links)));
 }
 
 function connectedComponent(nodes) {
