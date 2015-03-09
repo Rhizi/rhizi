@@ -27,6 +27,9 @@ function init() {
             }
             return true;
         }))
+        .map(function () { return search[0].value.trim(); })
+        .skipDuplicates()
+        .debounce(300)
         .onValue(search_on_submit);
 
     function attribute_match(obj, regexp) {
@@ -43,9 +46,8 @@ function init() {
         return false;
     }
 
-    function search_on_submit() {
-        var text = search[0].value.trim(),
-            r,
+    function search_on_submit(text) {
+        var r,
             selector = function (obj) { return attribute_match(obj, r); };
 
         try {
