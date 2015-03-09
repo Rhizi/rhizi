@@ -18,15 +18,16 @@ function init() {
                                  });
 
     search_completer.options.plug(textanalysis.suggestions_options.map('.nodes'));
-    search.on('input', search_on_submit);
-    search.on('keydown', function(e) {
-        if (e.which == 13 && !search_completer.handleEnter()) {
-            e.preventDefault();
-            search_on_submit(e);
-            return false;
-        }
-        return true;
-    });
+    search.asEventStream('input')
+        .merge(search.asEventStream('keydown').filter(
+            function(e) {
+            if (e.which == 13 && !search_completer.handleEnter()) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }))
+        .onValue(search_on_submit);
 
     function attribute_match(obj, regexp) {
         var v, k;
