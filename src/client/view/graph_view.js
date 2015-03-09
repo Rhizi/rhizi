@@ -435,10 +435,7 @@ function GraphView(spec) {
             .attr("class", "nodeurl graph")
             .attr("transform", "translate(10,-7)")
             .attr("dy", node_text_dy);
-        noderef.insert("image")
-            .attr("width", "14")
-            .attr("height", "14")
-            .attr("xlink:href", "/static/img/url-icon.png");
+        noderef.insert("image");
 
         var urlValid = function(d) {
             return d.url !== undefined && d.url !== null && d.url.length > 0;
@@ -470,7 +467,10 @@ function GraphView(spec) {
             .attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
         node.select('g.node text')
             .attr("dx", nodeTextX);
-
+        node.select('g.node a image')
+            .attr("width", "14")
+            .attr("height", "14")
+            .attr("xlink:href", "/static/img/url-icon.png");
         circle = nodeEnter.insert("circle");
         node.select('g.node circle')
             .attr("class", function(d) {
