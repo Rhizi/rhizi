@@ -479,12 +479,14 @@ function GraphView(spec) {
             .attr("dx", nodeTextX);
         node.select('g.node a image')
             .each(function (d, i) {
-                if (urlImage(d)) {
-                    console.log('an image!');
+                var element = this,
+                    image = new Image();
+                image.onload = function () {
+                    element.setAttribute("width", this.width);
+                    element.setAttribute("height", this.height);
+                    element.setAttributeNS("http://www.w3.org/1999/xlink", "href", this.src);
                 }
-                this.setAttribute("width", "14");
-                this.setAttribute("height", "14");
-                this.setAttributeNS("http://www.w3.org/1999/xlink", "href", "/static/img/url-icon.png");
+                image.src = urlImage(d) ? d.url : "/static/img/url-icon.png";
             });
         circle = nodeEnter.insert("circle");
         node.select('g.node circle')
