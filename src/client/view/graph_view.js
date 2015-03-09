@@ -482,8 +482,11 @@ function GraphView(spec) {
                 var element = this,
                     image = new Image();
                 image.onload = function () {
-                    element.setAttribute("width", this.width);
-                    element.setAttribute("height", this.height);
+                    var aspect = this.height / this.width,
+                        width = Math.min(100, this.width);
+
+                    element.setAttribute("width", width);
+                    element.setAttribute("height", Math.min(width * aspect, this.height));
                     element.setAttributeNS("http://www.w3.org/1999/xlink", "href", this.src);
                 }
                 image.src = urlImage(d) ? d.url : "/static/img/url-icon.png";
