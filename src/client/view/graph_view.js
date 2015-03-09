@@ -246,6 +246,16 @@ function GraphView(spec) {
         }
     }
 
+    var urlValid = function(d) {
+        return d.url !== undefined && d.url !== null && d.url.length > 0;
+    };
+
+    var image_endings = {'jpg':1, 'gif':1, 'png':1, 'bmp':1, 'svg':1};
+
+    var urlImage = function(d) {
+        return urlValid(d) && image_endings[d.url.slice(d.url.lastIndexOf('.') + 1)] !== undefined;
+    };
+
     function update_view(relayout) {
         var node,
             link,
@@ -468,9 +478,14 @@ function GraphView(spec) {
         node.select('g.node text')
             .attr("dx", nodeTextX);
         node.select('g.node a image')
-            .attr("width", "14")
-            .attr("height", "14")
-            .attr("xlink:href", "/static/img/url-icon.png");
+            .each(function (d, i) {
+                if (urlImage(d)) {
+                    console.log('an image!');
+                }
+                this.setAttribute("width", "14");
+                this.setAttribute("height", "14");
+                this.setAttributeNS("http://www.w3.org/1999/xlink", "href", "/static/img/url-icon.png");
+            });
         circle = nodeEnter.insert("circle");
         node.select('g.node circle')
             .attr("class", function(d) {
