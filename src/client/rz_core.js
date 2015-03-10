@@ -13,7 +13,8 @@ var addednodes = [],
     main_graph,
     edit_graph,
     main_graph_view,
-    edit_graph_view;
+    edit_graph_view,
+    root_element_id_to_graph_view;
 
 // "CSS" for SVG elements. Reused for editing elements.
 var node_text_dx = 15,
@@ -222,9 +223,14 @@ function update_view__graph(relayout)
     edit_graph_view.update_view(relayout);
 }
 
+root_element_id_to_graph_view = {};
+root_element_id_to_graph_view[main_graph_view.root_element.id] =  main_graph_view;
+root_element_id_to_graph_view[edit_graph_view.root_element.id] = edit_graph_view;
+
 return {
     main_graph: main_graph,
     edit_graph: edit_graph,
+    root_element_id_to_graph_view: root_element_id_to_graph_view,
     main_graph_view: main_graph_view,
     edit_graph_view: edit_graph_view,
     load_from_json: function(result) {

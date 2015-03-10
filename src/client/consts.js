@@ -25,5 +25,7 @@ define(function() {
         VK_DOWN: 40,
         VK_ESCAPE: 27,
         VK_TAB: 9,
+        VK_SPACE: 32,
+        VK_ENTER: 13,
     };
 });

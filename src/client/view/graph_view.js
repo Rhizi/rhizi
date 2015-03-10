@@ -25,9 +25,10 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3', 'Bacon_wrapper', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
-function(d3 ,  Bacon         ,  util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types) {
+define(['d3', 'Bacon_wrapper', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
+function(d3 ,  Bacon         ,  consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types) {
 
+// aliases
 var obj_take = util.obj_take;
 
 /* debugging helper */
@@ -791,6 +792,32 @@ function GraphView(spec) {
                 y: zcy + new_r * Math.sin(a)};
     }
 
+    function handle_space(e, node) {
+        (e.shiftKey? selection.invert : selection.update)([node]);
+    }
+
+    function handle_enter(e, node) {
+        showNodeInfo(node);
+    }
+
+    var keyboard_handlers = _.object([
+        [consts.VK_SPACE, handle_space],
+        [consts.VK_ENTER, handle_enter],
+    ]);
+
+    function keyboard_handler(e) {
+        var target_node = graph.find_node__by_id(e.target.id);
+
+        if (null === target_node ||
+            undefined === keyboard_handlers[e.keyCode]) {
+            return;
+        }
+        keyboard_handlers[e.keyCode](e, target_node);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    gv.keyboard_handler = keyboard_handler;
+
     /**
      * Recomputes all link and node locations according to force layout and
      * bubble animation.
@@ -875,6 +902,7 @@ function GraphView(spec) {
     vis.attr("id", graph_name);
     vis.append("g").attr("id", "link-group");
     vis.append("g").attr("id", "selected-link-group");
+    gv.root_element = vis[0][0];
 
     drag = d3.behavior.drag()
              .origin(function(d) { return d; })
