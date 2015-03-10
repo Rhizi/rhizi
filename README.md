@@ -19,11 +19,16 @@ All of the following are already bundled but noted here for reference:
 - FileSaver
 
 # Installation
-
-## Ubuntu 14.04
-
-apt-get install python-flask python-socketio ant python-gevent python-six python-pip ruby-sass
-pip install flask-mail
+## Apt based systems: Debian / Ubuntu
+<code># apt-get install \
+ant \
+python-flask \
+python-socketio \
+python-gevent \
+python-six \
+python-pip \
+ruby-sass
+</code>
 
 ## Generic
 use pip to install all requirements
@@ -35,7 +40,6 @@ use pip to install all requirements
 # Use
 ## Running Rhizi Locally
 To run Rhizi locally:
-
 - Run neo4j locally on the default 7474 port
 - Add <code>127.0.0.1 rhizi.local</code> to your hosts file
 - Launch run-local.sh:<br>
