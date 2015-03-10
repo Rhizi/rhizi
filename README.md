@@ -2,13 +2,21 @@
 A collaborative editor for organizing, communicating, and analyzing data in graph form.
 
 # Requirements
-* Neo4J DB server
-* Python 2.7
-* Flask
-* Apache Ant
-* python-gevent
-* python-gevent-websocket
-* python-socketio
+- Neo4J DB server >= 2.1.5 - http://neo4j.com/download/
+- Flask - http://flask.pocoo.org/
+- Apache Ant >= 1.9.0
+- Python 2.7
+- python-gevent
+- python-gevent-websocket
+- python-six
+- python-socketio
+
+## Client
+All of the following are already bundled but noted here for reference:
+# [feedback](https://github.com/ivoviz/feedback) (it also bundles [html2canvas](http://html2canvas.hertzen.com/))
+# jquery
+# d3
+# FileSaver
 
 # Installation
 
@@ -23,20 +31,6 @@ use pip to install all requirements
  $ pip install gevent-socketio
  $ pip install flask
  $ pip install flask-mail
-
-# Requirements
-## Build system
-ant >= 1.9.0
-
-## Server
-### Neo4j
-[neo4j](http://neo4j.com/download/) >= 2.1.5 (2.0 explicitly not supported, we use += in our queries)
-
-### Python libs
-# [gevent-socketio](https://pypi.python.org/pypi/gevent-socketio/)
-# [flask](http://flask.pocoo.org/)
-# [flask-mail](https://github.com/mattupstate/flask-mail)
-# [six](https://pypi.python.org/pypi/six/1.9.0)
 
 ## Client
 All of the following are already bundled but noted here for reference:
