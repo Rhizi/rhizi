@@ -366,7 +366,6 @@ function GraphView(spec) {
             .append("g")
             .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
             .attr('visibility', 'hidden') // made visible on first tick
-            .attr('tabindex', 0)
             .call(drag);
 
         node.attr('class', function(d) {
@@ -375,6 +374,7 @@ function GraphView(spec) {
             .each(function (d) {
                 d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
             });
+
         // reorder nodes so selected are last, and so rendered last, and so on top.
         // FIXME: with b-ubble removed this is probably broken. actually also before. links are not correctly ordered.
         (function () {
@@ -852,6 +852,13 @@ function GraphView(spec) {
                 dst = same_zoom(d.__dst);
             return "translate(" + (src[0] + dst[0]) / 2 + "," + (src[1] + dst[1]) / 2 + ")";
         });
+
+        // tabindex affects focus change on tab key.
+        // Sort top to bottom left to right
+        node.sort(function (a, b) {
+                return b.py == a.py ? (b.px == a.px ? 0 : (b.px > a.px ? -1 : 1)) : (b.py > a.py ? -1 : 1);
+            })
+            .attr('tabindex', function(d, i) { return i + 100; });
 
         // After initial placement we can make the nodes visible.
         node.attr('visibility', function (d, i) {
