@@ -13,10 +13,10 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 
 ## Client
 All of the following are already bundled but noted here for reference:
-# [feedback](https://github.com/ivoviz/feedback) (it also bundles [html2canvas](http://html2canvas.hertzen.com/))
-# jquery
-# d3
-# FileSaver
+- feedback - https://github.com/ivoviz/feedback (it also bundles html2canvas)
+- jquery
+- d3
+- FileSaver
 
 # Installation
 
@@ -31,13 +31,6 @@ use pip to install all requirements
  $ pip install gevent-socketio
  $ pip install flask
  $ pip install flask-mail
-
-## Client
-All of the following are already bundled but noted here for reference:
-# [feedback](https://github.com/ivoviz/feedback) (it also bundles [html2canvas](http://html2canvas.hertzen.com/))
-# jquery
-# d3
-# FileSaver
 
 # Use
 ## Running Rhizi Locally
