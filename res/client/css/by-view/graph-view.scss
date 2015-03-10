@@ -193,6 +193,13 @@
 
 }
 
+g:focus circle {
+    stroke: #ff0000;
+    stroke-opacity: 1;
+    stroke-width: 3px;
+    z-index: 1;
+}
+
 .editinfo{
   position: fixed;
   top:-40px;
