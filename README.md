@@ -125,12 +125,11 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
     - solution 1: pip install cython git+git://github.com/surfly/gevent.git#egg=gevent
     - didn't complete.
 
-Unused notes on mingw:
-# Install github for windows
-# Alternative: download Mingw
-# choose mingw-developer-toolkit
-# choose python
-# pip
-# git
-# ssh
-
+# Deployment
+- obtain a server configuration by either adjusting res/etc/rhizi-server.conf.example or reusing an already active one.
+- the following configuration keys will likely need changing: DEBUG, SECRET_KEY, root_path, access_control, etc. configuration keys
+- rename configuration as 'rhizi-server.production.conf'
+- use the build.ant deploy-remote target:
+  - adjust targetDomain path: should point at the configuration's file dir
+  - adjust remoteDeployServer to point at the target server
+- use res/debian/rhizi.init to run rhizi as a system process: rz_server.py will need chmod'ing to +x
