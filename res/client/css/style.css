@@ -515,7 +515,6 @@ body.debug .debug-ui-right {
 
 .info .info-card-attr-val {
   display: block;
-  text-transform: capitalize;
   font-size: 24px;
   margin: 12px 0px 24px 0px; }
 
