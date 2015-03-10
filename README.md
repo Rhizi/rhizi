@@ -127,7 +127,7 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
 
 # Deployment
 - obtain a server configuration by either adjusting res/etc/rhizi-server.conf.example or reusing an already active one.
-- the following configuration keys will likely need changing: DEBUG, SECRET_KEY, root_path, access_control, etc. configuration keys
+- the following configuration keys will likely need changing: DEBUG, SECRET_KEY, root_path, access_control, etc.
 - rename configuration as 'rhizi-server.production.conf'
 - use the build.ant deploy-remote target:
   - adjust targetDomain path: should point at the configuration's file dir
