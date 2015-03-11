@@ -12,6 +12,7 @@ import logging
 from rz_server import Config, init_log
 import re
 from neo4j_cypher import Cypher_Parser
+import neo4j_cypher
 
 class Test_DB_Op(unittest.TestCase):
 
@@ -54,10 +55,20 @@ class Test_DB_Op(unittest.TestCase):
         def attempt_parse(parser, clause):
             try:
                 pt = parser.parse_expression(clause)
-                print('input: %s\n%s' % (clause, pt.to_tree_str()))
+                self.log.debug('\n'.join(['input string: %s' % (clause),
+                                          'output query: %s' % (pt.str__cypher_query()),
+                                          'struct: \n%s' % (pt.str__struct_tree()),
+                                          ]))
+                for kw, clause_set in pt.kw_to_clause_set_map.items():
+                    self.log.debug('keyword: %s, clause-set: %s' % (kw, clause_set))
+                    for p_clause in clause_set:
+                        self.log.debug('   %s' % (p_clause))
             except Exception as e:
                 self.log.exception('parse: fail: input: %s' % (clause))
                 self.fail()
+
+
+        self.log.debug('\n')
 
         #
         # parse expression set
@@ -65,8 +76,10 @@ class Test_DB_Op(unittest.TestCase):
         parser = Cypher_Parser()
         exp_set = [
                    'match ()',
+                   'match (n:`F oo`:A {a: \'ba r\', b: 0}), (m {c: 0})',
+                   'create (n:A)-[r:B]->(m:C:D), ({a: 0, b: \'b\'})',
+                   'match (n), ()-[r]-()',
                    'match ()-[:A]->()',
-                   'create (n:A)-[r:B]->(m:C:D), ({a: 0, b: \'foo\'})',
                    'match (n:`T_nMu7ktxW` {node_attr})',
                    'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)'
                    ]
@@ -77,15 +90,21 @@ class Test_DB_Op(unittest.TestCase):
         # parse all db ops
         #
         test_label = neo4j_test_util.rand_label()
-        op_set = self.gen_full_db_op_set(test_label)
+        op_set = []
+        #op_set = self.gen_full_db_op_set(test_label)
+
         for op in op_set:
             for _idx, db_q, _db_q_result in op:
-                for _keyword, clause_set in db_q:
+                for keyword, clause_set in db_q:
+                    if keyword in neo4j_cypher.tok_set__kw__unsupported:
+                        self.log.exception('skipping clause with unsupported kw: \'%s\'' % (keyword))
+                        continue
+
                     for clause in clause_set:
                         attempt_parse(parser, clause)
 
 def main():
-    unittest.main()
+    unittest.main(defaultTest='Test_DB_Op.test_cypher_exp_parsing', verbosity=2)
 
 if __name__ == "__main__":
     main()
