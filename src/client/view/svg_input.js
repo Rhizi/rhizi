@@ -1,5 +1,5 @@
-define(['jquery', 'Bacon_wrapper', 'model/diff', 'rz_bus', 'consts'],
-function($,        Bacon,           model_diff,   rz_bus,   consts)
+define(['jquery', 'Bacon_wrapper', 'consts', 'model/diff', 'rz_bus', 'consts'],
+function($,        Bacon,           consts,   model_diff,   rz_bus,   consts)
 {
 var svg_input_fo_node_y = '-.70em',
     svg_input_fo_height = '30px';
@@ -65,10 +65,10 @@ var svgInput = function(vis, graph) {
             console.log('unexpected editname_on_keypress this should be the svg-input element');
         }
 
-        if (e.which == 13 || e.which == 27) {
+        if (e.which == consts.VK_ENTER || e.which == consts.VK_ESCAPE) {
             ret = false;
             d = jelement.data().d;
-            if (e.which == 13 && newname != d.name) {
+            if (e.which == consts.VK_ENTER && newname != d.name) {
                 if (d.hasOwnProperty('__src')) {
                     graph.update_link(d, {name: newname});
                 } else {

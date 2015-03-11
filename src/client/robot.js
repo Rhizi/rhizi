@@ -1,4 +1,5 @@
-define(['jquery'], function($) {
+define(['jquery', 'consts'],
+function($,        consts) {
 
 var sentence="";
 /*sentence+=" #Rhizibot is showing you a #tutorial|";
@@ -47,8 +48,8 @@ var robot = function (element, sentence) {
                 }
             } else {
                 var e = jQuery.Event("keypress");
-                e.which = 13;
-                e.keyCode = 13;
+                e.which = consts.VK_ENTER;
+                e.keyCode = consts.VK_ENTER;
                 $("#textanalyser").trigger(e);
                 window.setTimeout( r.next_event, 650/r.speed );
             }

@@ -7,7 +7,8 @@ var value = util.value;
 // Constants
 var nbsp = String.fromCharCode(160),
     VK_UP = consts.VK_UP,
-    VK_DOWN = consts.VK_DOWN;
+    VK_DOWN = consts.VK_DOWN,
+    VK_ENTER = consts.VK_ENTER;
 
 function textanalyser_input(spec) {
     var selectionStart = function () {
@@ -107,7 +108,7 @@ function textanalyser_input(spec) {
 
     util.assert(1 === element.length);
 
-    var enters = element.asEventStream('keydown').filter(key(13))
+    var enters = element.asEventStream('keydown').filter(key(VK_ENTER))
         .map(function (e) {
             var text;
             e.preventDefault();

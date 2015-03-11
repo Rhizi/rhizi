@@ -1,5 +1,5 @@
-define(['jquery', 'jquery-ui', 'util', 'view/helpers', 'view/internal', 'model/diff', 'model/types'],
-function($, _unused_jquery_ui,  util,   view_helpers, internal,          model_diff,   model_types) {
+define(['jquery', 'jquery-ui', 'util', 'consts', 'view/helpers', 'view/internal', 'model/diff', 'model/types'],
+function($, _unused_jquery_ui,  util,   consts,   view_helpers, internal,          model_diff,   model_types) {
 
 var d = null,
     msg_node = $('.info-card-message'),
@@ -113,7 +113,7 @@ function setup_click_handlers()
     }
     setup_done = true;
     form_element.on('keydown', function (e) {
-        if (e.which == 13 && e.target !== delete_button[0]) {
+        if (e.which == consts.VK_ENTER && e.target !== delete_button[0]) {
             e.preventDefault();
         }
     });

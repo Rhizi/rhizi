@@ -1,5 +1,5 @@
-define(['view/completer', 'textanalysis', 'rz_core', 'view/selection'],
-function(     completer,   textanalysis,   rz_core,        selection)
+define(['consts', 'view/completer', 'textanalysis', 'rz_core', 'view/selection'],
+function(consts,        completer,   textanalysis,   rz_core,        selection)
 {
 var search,
     search_completer;
@@ -21,7 +21,7 @@ function init() {
     search.asEventStream('input')
         .merge(search.asEventStream('keydown').filter(
             function(e) {
-            if (e.which == 13 && !search_completer.handleEnter()) {
+            if (e.which == consts.VK_ENTER && !search_completer.handleEnter()) {
                 e.preventDefault();
                 return false;
             }
