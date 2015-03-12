@@ -42,7 +42,7 @@ def commit(topo_diff):
 # Rhizi constants - FIXME use API
 PERSON_LABEL = 'Person'
 INTEREST_LABEL = 'Interest'
-INTERNSHIP_LABEL = "Third-internship-proposal"
+INTERNSHIP_LABEL = "Internship"
 LABEL_SET = '__label_set'
 
 # CSV file columns
@@ -69,9 +69,18 @@ def link_dict(source_id, target_id, label, the_id):
                u'id': the_id
            })
 
+def read_csv(filename):
+    for dialect in ['excel', 'excel-tab']:
+        lines = list(csv.reader(open(filename), dialect=dialect))
+        lens = map(len, lines)
+        if max(lens) == min(lens) and max(lens) > 2:
+            return lines
+    raise Exception("no dialect found")
+
 class CSV(object):
     def __init__(self, filename):
-        rows = list(csv.reader(open(filename), 'excel'))
+        self.filename = filename
+        rows = read_csv(filename)
         headers = rows[0]
         self.parse_headers(headers)
         #import pdb; pdb.set_trace()
@@ -79,6 +88,7 @@ class CSV(object):
         self.row_dicts = map(lambda fields: dict(zip(headers, fields)), self.rows)
 
     def run(self):
+        print("    ****************************    run on data from %r     ****************" % self.filename)
         self.nodes_dict = {}
         self.node_set_add = []
         self.link_set_add = []
@@ -90,6 +100,8 @@ class CSV(object):
         commit(topo_diff_json(link_set_add=self.link_set_add))
 
     def append_id_node(self, the_id, node):
+        if the_id in self.nodes_dict:
+            return
         print(repr(node))
         self.nodes_dict[the_id] = node
         self.node_set_add.append(node)
@@ -107,11 +119,48 @@ class CSV(object):
         print(repr(link))
         return the_id
 
+class Persons(object):
+    def __init__(self):
+        self.by_name = {}
+        self.by_email = {}
+
+    def id_from_something(self, first_name, last_name, email):
+        return self.by_name.get(self.name_from_first_and_last(first_name, last_name), self.by_email.get(email, (None, None)))[0]
+
+    def name_from_first_and_last(self, first_name, last_name):
+        return first_name + ' ' + last_name
+
+    def addPersonNode(self, first_name, last_name, email):
+        ret = ret2 = None
+        name = self.name_from_first_and_last(first_name, last_name)
+        if name in self.by_name:
+            ret = self.by_name[name]
+        if email in self.by_email:
+            ret2 = self.by_email[email]
+        if ret != ret2:
+            print("person node similar but not same for: %r, %r, %r" % (first_name, last_name, email))
+            print(ret2)
+        if ret2 and not ret:
+            ret = ret2
+        if ret:
+            return ret
+        node_id = next_id()
+        node = node_dict(the_id=node_id, name=name, description=email, **{LABEL_SET: [PERSON_LABEL]})
+        ret = (node_id, node)
+        self.by_name[name] = ret
+        self.by_email[email] = ret
+        return ret
+
+persons = Persons()
+addPersonNode = persons.addPersonNode
+
+def cleanEmailField(unclean):
+    return unclean.lower().strip()
+
 class StudentCSV(CSV):
 
-    def __init__(self, filename):
-        super(StudentCSV, self).__init__(filename)
-        self.email_to_id = {}
+    def __init__(self, filename, **kw):
+        super(StudentCSV, self).__init__(filename=filename, **kw)
 
     def interests(self, d):
         return d[self.interestsField]
@@ -120,10 +169,8 @@ class StudentCSV(CSV):
         for d in self.row_dicts:
             d[self.interestsField] = map(string.strip, d[self.interestsField].split(','))
             person_id = next_id()
-            person_node = node_dict(the_id=person_id,
-                                **{'name':' '.join([d[self.firstNameField], d[self.lastNameField]]),
-                                LABEL_SET:[PERSON_LABEL]})
-            self.email_to_id[d[self.personalEmailField].lower()] = person_id
+            person_email = cleanEmailField(d[self.personalEmailField])
+            person_id, person_node = addPersonNode(first_name=d[self.firstNameField], last_name=d[self.lastNameField], email=person_email)
             self.append_id_node(person_id, person_node)
             for interest in self.interests(d):
                 interest_id = next_id()
@@ -145,10 +192,8 @@ Abstract:
 
 class StudentInternshipsCSV(CSV):
 
-    def __init__(self, studentCSV, filename):
-        super(StudentInternshipsCSV, self).__init__(filename)
-        self.studentCSV = studentCSV
-        self.email_to_id = studentCSV.email_to_id
+    def __init__(self, filename, **kw):
+        super(StudentInternshipsCSV, self).__init__(filename=filename, **kw)
 
     def parse_headers(self, headers):
         it = iter(headers)
@@ -178,33 +223,40 @@ class StudentInternshipsCSV(CSV):
             # FIXME should be title. fix requires client change. need
             # configurable fields, or a list of names and types for display per
             # node (using a type node in the db, which could be cached
+            title = d[self.internshipTitleField].strip()
+            if len(title) == 0:
+                print("skipping empty internship field")
+                continue
             input_dict = {LABEL_SET:[INTERNSHIP_LABEL],
-                         'name': d[self.internshipTitleField], 
+                         'name': title,
                          'description': descriptionTemplate % (d[self.internshipNatureField], d[self.abstractField]),
                          'startdate': d[self.dateStartField],
                          'enddate': d[self.dateEndField]}
             internship_node = node_dict(the_id=internship_id, **input_dict)
             self.append_id_node(internship_id, internship_node)
-            person_email = d[self.emailField].lower().strip()
-            person_id = self.email_to_id.get(person_email, None)
+            person_email = cleanEmailField(d[self.emailField])
+            first_name = d[self.firstNameField]
+            last_name = d[self.lastNameField]
+            person_id = persons.id_from_something(first_name, last_name, person_email)
             if None == person_id:
-                print("ERROR: missing %s" % person_email)
-            else:
-                self.append_link(source_id=person_id, target_id=internship_id, label='Did this internship')
+                print("ERROR: missing %r (%r %r), creating person node with no interests" % (person_email, first_name, last_name))
+                person_id, person_node = addPersonNode(first_name=first_name, last_name=last_name, email=person_email)
+                self.append_id_node(person_id, person_node)
+            self.append_link(source_id=person_id, target_id=internship_id, label='Did this internship')
 
-def main(args):
+def main(args, internships):
     cfg = Config.init_from_file(args.config)
     kernel = RZ_Kernel()
     kernel.db_ctl = dbc.DB_Controller(cfg) # yes, that. FIXME
-    ctx = {} # FIXME not logged it - fix later (also, don't do this here, put constructor in kernel)
-    studentCSV = StudentCSV(args.student)
-    studentCSV.run()
-    StudentInternshipsCSV(studentCSV, args.internship).run()
+    globals()['kernel'] = kernel
+    globals()['ctx'] = {} # FIXME not logged it - fix later (also, don't do this here, put constructor in kernel)
+    StudentCSV(filename=args.student).run()
+    for internship in internships:
+        StudentInternshipsCSV(filename=internship).run()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--student', required=True)
-    parser.add_argument('--internship', required=True)
     parser.add_argument('--config', default=os.path.join(root, 'res', 'etc', 'rhizi-server.conf'))
-    args = parser.parse_args(sys.argv[1:])
-    main(args)
+    args, internships = parser.parse_known_args(sys.argv[1:])
+    main(args, internships)
