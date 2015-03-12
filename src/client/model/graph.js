@@ -1,7 +1,10 @@
 "use strict"
 
-define(['underscore', 'Bacon_wrapper', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history'],
-function (_,           Bacon,           consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history) {
+define(['underscore', 'Bacon_wrapper', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'model/types'],
+function (_,           Bacon,           consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history,   model_types) {
+
+// aliases
+var all_attributes = model_types.all_attributes;
 
 var debug = false;
 
@@ -952,14 +955,14 @@ function Graph(spec) {
                 var node_spec = {
                        name: ext_spec.name ? ext_spec.name : ext_spec.id,
                        type: ext_spec.type,
-                       state: "perm",
-                       status: ext_spec.status,
-                       url: ext_spec.url,
                        x: ext_spec.x,
                        y: ext_spec.y,
                     },
                     node;
 
+                all_attributes.forEach(function (attr) {
+                    node_spec[attr] = ext_spec[attr];
+                });
                 if (ext_spec.start) {
                     node_spec.start = new Date(ext_spec.start);
                 }
@@ -1002,28 +1005,22 @@ function Graph(spec) {
             nodes = get_nodes(),
             links = get_links();
 
-        for(var i = 0 ; i < nodes.length ; i++){
-          var node = nodes[i];
-          d['nodes'].push({
-            "id": node.id,
-            "name": node.name,
-            "type":node.type,
-            "state":"perm",
-            "start":node.start,
-            "end":node.end,
-            "status": node.status,
-            "url": node.url,
-            "x": node.x,
-            "y": node.y,
-          });
+        for (var i = 0 ; i < nodes.length ; i++) {
+            var node = nodes[i],
+                node_dict = {id: node.id, x: node.x, y: node.y};
+
+            all_attributes.forEach(function (attr) {
+                  node_dict[attr] = node[attr];
+            });
+            d['nodes'].push(node_dict);
         }
-        for(var j=0 ; j < links.length ; j++){
-          var link = links[j];
-          d['links'].push({
-            "__src":link.__src.id,
-            "__dst":link.__dst.id,
-            "name":link.name
-          });
+        for (var j = 0 ; j < links.length ; j++) {
+            var link = links[j];
+            d['links'].push({
+              "__src":link.__src.id,
+              "__dst":link.__dst.id,
+              "name":link.name
+            });
         }
         return JSON.stringify(d);
     }
