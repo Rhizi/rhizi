@@ -36,11 +36,6 @@ def topo_diff_json(node_set_add=[], link_set_add=[]):
     sanitize_input__topo_diff(topo_diff)
     return topo_diff;
 
-cfg = Config.init_from_file(os.path.join(root, 'res', 'etc', 'rhizi-server.conf'))
-kernel = RZ_Kernel()
-kernel.db_ctl = dbc.DB_Controller(cfg) # yes, that. FIXME
-ctx = {} # FIXME not logged it - fix later (also, don't do this here, put constructor in kernel)
-
 def commit(topo_diff):
     _, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
 
@@ -197,8 +192,19 @@ class StudentInternshipsCSV(CSV):
             else:
                 self.append_link(source_id=person_id, target_id=internship_id, label='Did this internship')
 
+def main(args):
+    cfg = Config.init_from_file(args.config)
+    kernel = RZ_Kernel()
+    kernel.db_ctl = dbc.DB_Controller(cfg) # yes, that. FIXME
+    ctx = {} # FIXME not logged it - fix later (also, don't do this here, put constructor in kernel)
+    studentCSV = StudentCSV(args.student)
+    studentCSV.run()
+    StudentInternshipsCSV(studentCSV, args.internship).run()
 
-assert(len(sys.argv) == 3)
-studentCSV = StudentCSV(sys.argv[-2])
-studentCSV.run()
-StudentInternshipsCSV(studentCSV, sys.argv[-1]).run()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--student', required=True)
+    parser.add_argument('--internship', required=True)
+    parser.add_argument('--config', default=os.path.join(root, 'res', 'etc', 'rhizi-server.conf'))
+    args = parser.parse_args(sys.argv[1:])
+    main(args)
