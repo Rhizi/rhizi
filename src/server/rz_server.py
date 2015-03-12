@@ -23,6 +23,7 @@ from rz_mesh import init_ws_interface
 from rz_req_handling import make_response__http__empty
 import rz_server_ctrl
 import rz_user
+import rz_blob
 from rz_user_db import User_DB
 
 
@@ -224,6 +225,11 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
                       rest_entry('/pw-reset', rz_user.rest__pw_reset, {'methods': ['GET', 'POST']}),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
+
+                      # upload endpoints - this might change to external later, keep minimal and separate
+                      rest_entry('/blob/upload', rz_blob.upload, {'methods': ['POST']}),
+                      # [!] this is for development only. served from frontend web server in production
+                      rest_entry('/blob/uploads/<path:path>', rz_blob.retreive, {'methods': ['GET', 'DELETE']}),
 
                       # server administration: access restricted to localhost
                       rest_entry('/monitor/server-info', rz_server_ctrl.monitor__server_info, {'methods': ['GET']}),
