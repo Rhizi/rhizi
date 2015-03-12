@@ -227,11 +227,20 @@ class StudentInternshipsCSV(CSV):
             if len(title) == 0:
                 print("skipping empty internship field")
                 continue
-            input_dict = {LABEL_SET:[INTERNSHIP_LABEL],
+            input_dict = {
+                         LABEL_SET:[INTERNSHIP_LABEL],
                          'name': title,
                          'description': descriptionTemplate % (d[self.internshipNatureField], d[self.abstractField]),
                          'startdate': d[self.dateStartField],
-                         'enddate': d[self.dateEndField]}
+                         'enddate': d[self.dateEndField],
+                         'internship-type': d[self.internshipNatureField],
+                         'cnrs-inserm-unit-code': d[self.unitCodeField],
+                         'city': d[self.cityField],
+                         'country': d[self.countryField],
+                         'street-address': d[self.streetField] + d[self.streetSecondPartField],
+                         'facility': d[self.laboratoryNameField],
+                         'facility-affiliation': d[self.laboratoryAffiliationField],
+                         }
             internship_node = node_dict(the_id=internship_id, **input_dict)
             self.append_id_node(internship_id, internship_node)
             person_email = cleanEmailField(d[self.emailField])
