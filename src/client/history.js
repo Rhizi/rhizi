@@ -64,9 +64,16 @@ function svg_extract_translate_and_scale(e)
 {
     // See: http://stackoverflow.com/questions/10349811/how-to-manipulate-translate-transforms-on-a-svg-element-with-javascript-in-chrom
     // Using the regexp option right now, did only firefox testing 36
-    var str = e.attributes['transform'].value;
-    var parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(str);
-    var scale = /scale\(\s*([^\s)]+)\)/.exec(str);
+    var transform = e.attributes['transform'];
+
+    if (undefined === transform) {
+        return;
+    }
+
+    var str = transform.value,
+        parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(str),
+        scale = /scale\(\s*([^\s)]+)\)/.exec(str);
+
     if (scale) {
         var x = parts[1], y = parts[2];
         return {scale:+scale[1], translate: [+x, +y]};
@@ -84,7 +91,8 @@ History.prototype.record_zoom = function(d)
     var transform = svg_extract_translate_and_scale(this.transform_element);
 
     if (transform === undefined) {
-        console.log('record_zoom: bug: transform_element has no transform attribute');
+        //console.log('record_zoom: bug: transform_element has no transform attribute');
+        //FIXME: broken for now, don't spam console
         return;
     }
     this.record(ACTION_ZOOM, {transform: transform});
