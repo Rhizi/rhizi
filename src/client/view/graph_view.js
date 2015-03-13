@@ -924,7 +924,7 @@ function GraphView(spec) {
 
     function init_force_layout() {
         force = d3.layout.force()
-                  .distance(120)
+                  .distance(240)
                   .gravity(0.12)
                   .charge(-1800)
                   .size([w, h])
