@@ -125,8 +125,18 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
 # Deployment
 - obtain a server configuration by either adjusting res/etc/rhizi-server.conf.example or reusing an already active one.
 - the following configuration keys will likely need changing: DEBUG, SECRET_KEY, root_path, access_control, etc.
-- rename configuration as 'rhizi-server.production.conf'
+- let targetDomain be the target domain (i.e. rhizi.example.com)
+- place configuration at res/production-patch-set/${targetDomain}/rhizi-server.production.conf
 - use the build.ant deploy-remote target:
   - adjust targetDomain path: should point at the configuration's file dir
   - adjust remoteDeployServer to point at the target server
 - use res/debian/rhizi.init to run rhizi as a system process: rz_server.py will need chmod'ing to +x
+
+- Deploying:
+ $ ant -v -f build.ant -DremoteDeployServer=rhizi.example.com -Drsync_module=/srv/www/rhizi.example.com deploy-remote
+
+## getting the current config file from the server:
+
+ $ targetDomain="cri.rhizi.net"
+ $ mkdir res/production-patch-set/${targetDomain}
+ $ scp rz-1:/etc/rhizi/rhizi-server.conf res/production-patch-set/${targetDomain}/rhizi-server.production.conf
