@@ -657,7 +657,7 @@ function GraphView(spec) {
         zoom_obj.scale(scale);
         zoom_obj.event(zoom_obj_element.transition().duration(200));
     }
-    gv.set_scale_translate = set_scale_translate;
+    gv.__set_scale_translate = set_scale_translate;
 
     gv.update_view = update_view;
     function start_layout_animation() {
