@@ -210,6 +210,13 @@ function GraphView(spec) {
         }
     }
 
+    // HACK to load positions stored locally: on the first diff, which is the result of the
+    // initial clone, load positions from stored last settled position (see record_position_to_local_storage
+    // and restore_position_from_local_storage)
+    // this is before we have proper layout recording in the database, loaded together with the nodes
+    // and links.
+    graph.diffBus.take(1).onValue(restore_position_from_local_storage);
+
     graph.diffBus.onValue(function (diff) {
         var relayout = !temporary && (false == model_diff.is_attr_diff(diff));
         update_view(relayout);
@@ -926,6 +933,47 @@ function GraphView(spec) {
         })
     }
 
+    var local_storage_key__positions = "positions";
+
+    function record_position_to_local_storage() {
+        localStorage.setItem(local_storage_key__positions,
+            JSON.stringify(_.object(graph.nodes().map(
+                function (n) {
+                    return [n.id, {x: n.x, y: n.y}];
+                }))));
+    }
+
+    function restore_position_from_local_storage() {
+        var positions,
+            nodes,
+            success = 0;
+        try {
+            positions = JSON.parse(localStorage.getItem(local_storage_key__positions));
+        } catch (e) {
+            localStorage.removeItem(local_storage_key__positions);
+            return;
+        }
+
+        if (null === positions) {
+            return;
+        }
+        nodes = graph.nodes();
+        nodes.forEach(function (n) {
+            var n_pos = positions[n.id];
+
+            if (n_pos !== undefined) {
+                n.x = n_pos.x;
+                n.y = n_pos.y;
+                success += 1;
+            }
+        });
+        if (success > 0) {
+            force__load_graph();
+        }
+        console.log('restored ' + success + ' / ' + _.keys(positions).length + ' positions to ' +
+                    nodes.length + ' nodes');
+    }
+
     function init_force_layout() {
         force = d3.layout.force()
                   .distance(240)
@@ -933,6 +981,7 @@ function GraphView(spec) {
                   .charge(-1800)
                   .size([w, h])
                   .on("tick", pushRedraw)
+                  .on("end", record_position_to_local_storage)
                   .start();
     }
 
