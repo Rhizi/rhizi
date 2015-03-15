@@ -795,8 +795,14 @@ function Graph(spec) {
         link_spec.__src = find_node__by_id(src_id);
         link_spec.__dst = find_node__by_id(dst_id);
 
-        util.assert(undefined !== link_spec.__src, "src_id not found");
-        util.assert(undefined !== link_spec.__dst, "dst_id not found");
+        if (null === link_spec.__src) {
+            console.log("src_id not found: " + src_id);
+            return null;
+        }
+        if (null === link_spec.__dst) {
+            console.log("dst_id not found: " + dst_id);
+            return null;
+        }
 
         return link_spec;
     }
@@ -804,7 +810,9 @@ function Graph(spec) {
     function __commit_diff_ajax__clone(clone) {
         var node_specs = clone.node_set_add.map(on_backend__node_add),
             nodes = _add_node_set(node_specs),
-            link_specs = clone.link_set_add.map(on_backend__link_add),
+            link_specs = clone.link_set_add.map(on_backend__link_add).filter(function (link_spec) {
+                return link_spec !== null;
+            }),
             links = _add_link_set(link_specs);
         diffBus.push({node_set_add: nodes, link_set_add: links});
     }
@@ -835,10 +843,12 @@ function Graph(spec) {
     function _add_link_set(link_specs) {
         return link_specs.map(function (link_spec) {
             // resolve link ptr
-            var src = (link_spec.__src && (find_node__by_id(link_spec.__src.id) || link_spec.__src))
-                        || find_node__by_id(link_spec.__src_id),
-                dst = (link_spec.__dst && (find_node__by_id(link_spec.__dst.id) || link_spec.__dst))
-                        || find_node__by_id(link_spec.__dst_id),
+            var src = (undefined !== link_spec.__src && null !== link_spec.__src &&
+                       (find_node__by_id(link_spec.__src.id) || link_spec.__src)) ||
+                        find_node__by_id(link_spec.__src_id),
+                dst = (undefined !== link_spec.__dst && null !== link_spec.__dst &&
+                       (find_node__by_id(link_spec.__dst.id) || link_spec.__dst)) ||
+                        find_node__by_id(link_spec.__dst_id),
                 link = model_core.create_link_from_spec(src, dst, link_spec);
 
             __addLink(link);
