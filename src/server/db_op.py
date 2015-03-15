@@ -651,7 +651,7 @@ class DBO_rm_link_set(DB_op):
         self.add_statement(q_arr, q_params)
 
 class DBO_rz_clone(DB_op):
-    def __init__(self, filter_label=None, limit=128):
+    def __init__(self, filter_label=None, limit=16384):
         """
         clone rhizi
 
