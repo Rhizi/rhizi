@@ -168,6 +168,10 @@ def init_log(cfg):
     log_handler_c = logging.StreamHandler()
     log_handler_f = logging.FileHandler(cfg.log_path)
 
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    log_handler_c.setFormatter(formatter)
+    log_handler_f.setFormatter(formatter)
+
     log.addHandler(log_handler_c)
     log.addHandler(log_handler_f)
     return log
