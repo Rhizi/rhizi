@@ -68,6 +68,8 @@ class DB_Driver_REST(DB_Driver_Base):
 
             self.log_committed_queries(statement_set)
         except Neo4JException as e:
+            log.error('REST statement: %r' % statement_set)
+            log.exception(e)
             raise e
         except Exception as e:
             raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
