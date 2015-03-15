@@ -6,7 +6,7 @@ Cypher language parser
 import re
 from collections import defaultdict
 import logging
-import Queue
+from enum import Enum
 
 #
 # Tokens
@@ -23,29 +23,54 @@ tok_set__kw__write = [
                       'foreach'
                       ]
 
-tok_set__kw__supported = [
+tok_set__kw__supported = [  # order critical
                           'create',
-                          'match',
                           'optional match',
-                          'return',
+                          'match',
                           ]
 
-tok_set__kw__unsupported = [
+tok_set__kw__unsupported = [  # these are treated as generic clauses, capturing until the next keyword
                             'delete',
                             'foreach',
                             'limit',
                             'merge',
-                            'order',
+                            'order by',
+                            'return',
                             'remove',
                             'set',
                             'skip',
                             'start',
                             'union',
-                            'with',
                             'where',
+                            'with',
                             ]
 
+tok_set__kw__all = tok_set__kw__supported + tok_set__kw__unsupported
+
 log = logging.getLogger('rhizi')
+
+class Query_Struct_Type(Enum):
+    unkown = 1
+    r = 2
+    w = 3
+    rw = 4
+
+    def __add__(self, other):
+        if self == other or self == pt_root.Query_Struct_Type.rw:
+            return self
+        if self == Query_Struct_Type.unkown:
+            return other
+        if self == Query_Struct_Type.r and other != Query_Struct_Type.r:
+            return Query_Struct_Type.rw
+        if self == Query_Struct_Type.w and other != Query_Struct_Type.w:
+            return Query_Struct_Type.rw
+
+    def __str__(self):
+        if self == Query_Struct_Type.unkown: return 'unkown'
+        if self == Query_Struct_Type.r: return 'r'
+        if self == Query_Struct_Type.w: return 'w'
+        if self == Query_Struct_Type.rw: return 'rw'
+        assert False
 
 #
 # Parse Tree
@@ -58,8 +83,7 @@ class pt_abs_node(object):
         self.value = None
         self.parent = None
 
-    def __iter__(self):
-        return iter([])
+    def __iter__(self): return iter([])  # enable tree walking over pt_abs_node leaf nodes
 
     def collapse(self, n_type):
         return self.__collapse_common([n_type])
@@ -83,8 +107,18 @@ class pt_abs_node(object):
 
         return ret
 
-    def str__body(self):
-        return self.value if self.value else ''
+    def rotate__pin_under_new_parent(self, n_type):  # pin current node under a new parent node
+        n_parent = self.parent
+        n_set = n_type()
+        n_set.parent = n_parent
+        n_set.sub_exp_set.append(self)
+        for i in range(0, len(n_parent.sub_exp_set)):
+            if self != self.parent.sub_exp_set[i]: # lookup self in parent child set 
+                continue
+            self.parent.sub_exp_set[i] = n_set
+        return n_set
+
+    def str__body(self): return self.value if self.value else ''
 
     def str__tok_open(self): return ''
 
@@ -105,37 +139,21 @@ class pt_abs_composite_node(pt_abs_node):
         """
         return self.__str__cypher_query()
 
-    def str__tok_sibling_delim(self): return ''
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ''
 
     def __str__cypher_query(self):
 
-        def f_pre(n, ctx):
-            ctx[0] += n.str__tok_open()
+        def f_pre(n, ctx): ctx[0] += n.str__tok_open()
+        def f_visit(n, ctx): ctx[0] += n.str__body()
+        def f_post(n, ctx): ctx[0] += n.str__tok_close()
+        def f_cascade(n, ctx): return True
 
-        def f(n, ctx):
-            ctx[0] += n.str__body()
-
-        def f_post(n, ctx):
-            ctx[0] += n.str__tok_close()
-
-        def f_cascade(n, ctx):
-            return True
-        
         def f_inter(parent, n, n_next, ctx):
-            ctx[0] += parent.str__tok_sibling_delim()
+            ctx[0] += parent.str__tok_sibling_delim(n, n_next)
 
         ctx = ['']
-        self.tree_walk__pre(f_pre, f, f_post, f_cascade, f_inter, ctx)
+        self.tree_walk__pre(f_pre, f_visit, f_post, f_cascade, f_inter, ctx)
         return ''.join(ctx)
-
-    def __str__cypher_query__sub_node_set(self):
-        return ''.join([self.__str__cypher_query__sub_node_single(e) for e in self])
-
-    def __str__cypher_query__sub_node_single(self, e):
-        if isinstance(e, pt_abs_composite_node):  # leaf node
-            return e.__str__cypher_query()
-        else:
-            return '%s%s%s' % (e.str__tok_open(), e.str__body(), e.str__tok_close())
 
     def __struct_as_arr__type(self, depth=0, depth_delim=''):
 
@@ -152,25 +170,12 @@ class pt_abs_composite_node(pt_abs_node):
 
         return ret
 
-    def __iter__(self):
-        """
-        iterate over sub nodes
-        """
+    def __iter__(self): # iterate over sub nodes
         for exp in self.sub_exp_set:
             yield exp
 
     def assert_child_spawn_type(self, n_type):  # provide hook for child spawning assertions
         pass
-
-    def rotate__pin_under_set_node(self):
-        n_parent = self.parent
-        n_set = e_set()
-        n_set.parent = n_parent
-        n_set.sub_exp_set.append(self)
-        for i in range(0, len(n_parent.sub_exp_set)):
-            if self != self.parent.sub_exp_set[i]: continue
-            self.parent.sub_exp_set[i] = n_set
-        return n_set
 
     def spawn_child(self, n_type, *args, **kwargs):
         """
@@ -188,9 +193,8 @@ class pt_abs_composite_node(pt_abs_node):
         return child_node
 
     def spawn_sibling(self, n_type=None, *args, **kwargs):
-
-        if not n_type: n_type = self.__class__
-
+        if not n_type: # by default spawn siblig of the same type as self
+            n_type = self.__class__
         return self.parent.spawn_child(n_type, *args, **kwargs)
 
     def child_node_by_type(self, node_type):
@@ -201,11 +205,11 @@ class pt_abs_composite_node(pt_abs_node):
             ret += [exp]
         return ret
 
-    def tree_walk__pre(self, f_pre, f, f_post, f_cascade, f_inter, ctx=None):
+    def tree_walk__pre(self, f_pre, f_visit, f_post, f_cascade, f_inter, ctx=None): # tree walk, preorder
 
         def walk__pre_rec(n):
             f_pre(n, ctx)
-            f(n, ctx)
+            f_visit(n, ctx)
 
             if f_cascade(n, ctx):
                 sub_n_set = [e for e in n]
@@ -213,24 +217,14 @@ class pt_abs_composite_node(pt_abs_node):
                 for i in range(0, sub_exp_set_len):
                     e = sub_n_set[i]
                     walk__pre_rec(e)
-                    if i + 1 < sub_exp_set_len:
+                    if i + 1 < sub_exp_set_len: # call f_inter in between siblings
                         e_first = e
-                        e_next = sub_n_set[i+1]
+                        e_next = sub_n_set[i + 1]
                         f_inter(n, e_first, e_next, ctx)
 
             f_post(n, ctx)
 
         walk__pre_rec(self)
-
-    def list_interleave(self, l, f):
-        l_len = len(l)
-        ret = []
-        for i in range(0,l_len):
-            if i + 1 >= l_len: continue
-            e_first = l[i]
-            e_second = l[i+1]
-            ret += [e_first] + f(e_first, e_second)
-        return ret
 
 class e_keyword(pt_abs_node):
 
@@ -250,19 +244,19 @@ class e_value(pt_abs_node):
 
     @classmethod
     def rgx__unquoted(self, g_name='value'):
-        return '(?P<%s>[\w\d]+)' % (g_name)
+        return '(?P<%s>[\w\d_]+)' % (g_name)
 
     @classmethod
     def rgx__quoted(self, g_name='value', quote_tok='\''):
-        return '%s(?P<%s>[\w\d\s]+)%s' % (quote_tok, g_name, quote_tok)
+        return '%s(?P<%s>[\w\d_\-\s]+)%s' % (quote_tok, g_name, quote_tok)
 
     def str__tok_open(self):
-        if not self.quoted: return ''
-        return self.quote_tok
+        if self.quoted: return self.quote_tok
+        return ''
 
     def str__tok_close(self):
-        if not self.quoted: return ''
-        return self.quote_tok
+        if self.quoted: return self.quote_tok
+        return ''
 
 class e_ident(pt_abs_node):  # identifier
 
@@ -271,6 +265,14 @@ class e_ident(pt_abs_node):  # identifier
     @classmethod
     def rgx(self, g_name='ident'):
         return '(?P<%s>[\w_]+)' % (g_name)
+
+class e_param(e_ident):  # identifier
+
+    def __init__(self): super(e_param, self).__init__()
+
+    def str__tok_open(self): return '{'
+
+    def str__tok_close(self): return '}'
 
 class e_function(pt_abs_node):  # identifier
 
@@ -284,7 +286,11 @@ class e_set(pt_abs_composite_node):  # identifier
 
     def __init__(self): super(e_set, self).__init__()
 
-    def str__tok_sibling_delim(self): return ', '
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ', '
+
+class op_dot(pt_abs_composite_node):
+
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return '.'
 
 #
 # Cypher patterns
@@ -299,12 +305,6 @@ class pt_root(pt_abs_composite_node):
         super(pt_root, self).__init__()
         self.kw_to_clause_set_map = defaultdict(list)
 
-    def spawn_child(self, lex_token_type, keyword):  # pt_root: map by keyword on spawn_child()
-        ret = super(pt_root, self).spawn_child(lex_token_type)
-        self.kw_to_clause_set_map[keyword].append(ret)  # update kw clause map
-
-        return ret
-
     def assert_child_spawn_type(self, n_type):
         assert issubclass(n_type, e_clause)
 
@@ -314,6 +314,22 @@ class pt_root(pt_abs_composite_node):
         """
         return self.kw_to_clause_set_map[keyword]
 
+    @property
+    def query_struct_type(self):
+        """
+        calc query_structure_type: read|write|read-write
+        """
+        ret = Query_Struct_Type.unkown
+        for kw, _clause_set in self:
+            if kw in self.q_tree.tok_set__kw__write:
+                ret += self.q_tree.Query_Struct_Type.w
+            if kw == 'match':
+                ret += self.q_tree.Query_Struct_Type.r
+
+        return ret
+
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ' '
+
 class e_clause(pt_abs_composite_node):
 
     def __init__(self):
@@ -321,66 +337,69 @@ class e_clause(pt_abs_composite_node):
 
 class e_clause__match(e_clause):
 
-    def __init__(self): super(e_clause, self).__init__()
+    def __init__(self):
+        super(e_clause__match, self).__init__()
+        self.is_optional = False
 
     def assert_child_spawn_type(self, n_type):
-        assert n_type in [e_keyword, p__node, p__path], n_type
+        assert n_type in [e_keyword, p_node, p_path], n_type
 
 class e_clause__create(e_clause):
 
-    def __init__(self): super(e_clause, self).__init__()
+    def __init__(self): super(e_clause__create, self).__init__()
 
     def assert_child_spawn_type(self, n_type):
-        assert n_type in [e_keyword, p__node, p__path]
+        assert n_type in [e_keyword, p_node, p_path]
 
-class e__attr_set(e_set):  # attr-set pattern: {k:v, ...}
+class e_clause__where(e_clause):
 
-    def __init__(self): super(e__attr_set, self).__init__()
+    def __init__(self): super(e_clause__where, self).__init__()
 
-    def __str__cypher_query__sub_node_set(self):
-        return ', '.join([e.__str__cypher_query__sub_node_single() for e in self])
+class e_attr_set(e_set):  # attr-set pattern: {k:v, ...}
+
+    def __init__(self): super(e_attr_set, self).__init__()
 
     def str__tok_open(self): return '{'
 
     def str__tok_close(self): return '}'
-    
-    def str__tok_sibling_delim(self): return ', '
+
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ', '
 
     def assert_child_spawn_type(self, n_type):
-        assert n_type in [e_ident, e__kv_pair]
+        assert n_type in [e_ident, e_kv_pair]
 
 class e_label_set(e_set):
 
     def __init__(self): super(e_label_set, self).__init__()
 
-    def str__tok_open(self): return ':'
+    def str__tok_open(self): return ':'  # required when no identifier is present, eg. '()-[:A]-()'
 
-    def str__tok_close(self): return ' '
-
-    def str__tok_sibling_delim(self): return ':'
-
-    def __str__cypher_query__sub_node_set(self):
-        return ':'.join([e.__str__cypher_query__sub_node_single() for e in self])
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ':'
 
     def assert_child_spawn_type(self, n_type):
         assert n_type in [e_value]
 
-class e__kv_pair(pt_abs_composite_node):  # key value pair
+class e_kv_pair(pt_abs_composite_node):  # key value pair
 
-    def __init__(self): super(e__kv_pair, self).__init__()
+    def __init__(self): super(e_kv_pair, self).__init__()
 
     def assert_child_spawn_type(self, n_type):
-        assert n_type in [e_value, e_ident]
+        assert n_type in [e_value, e_ident, e_param]
 
-    def str__tok_sibling_delim(self): return ': '
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ': '
 
-class p__node(pt_abs_composite_node):  # node pattern: '(...)'
+class p_node(pt_abs_composite_node):  # node pattern: '(...)'
     """
     node pattern
     """
 
     def __init__(self):
-        super(p__node, self).__init__()
+        super(p_node, self).__init__()
+
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None):
+        if isinstance(sib_a, e_ident) and isinstance(sib_b, e_label_set):
+            return ''  # handled by label_set
+        return ' '
 
     def str__tok_open(self): return '('
 
@@ -393,23 +412,30 @@ class p__node(pt_abs_composite_node):  # node pattern: '(...)'
     @classmethod
     def rgx(self, g_name): return '\((?P<%s>[^\(\)]*?)\)' % (g_name)
 
-class p__rel(pt_abs_composite_node):  # rel pattern: '[...]'
+class p_rel(pt_abs_composite_node):  # rel pattern: '[...]'
     """
     relationship pattern
     """
 
-    def __init__(self): super(p__rel, self).__init__()
+    def __init__(self):
+        super(p_rel, self).__init__()
+        self.is_directional = False
 
-    def __str__(self):
-        return '%s%s' % (self.id if self.id else '',
-                        ':' + self.type if self.type else '')
+    def str__tok_sibling_delim(self, sib_a=None, sib_b=None):
+        if isinstance(sib_a, e_ident) and isinstance(sib_b, e_label_set):
+            return ''  # handled by label_set
+        return ' '
 
     def str__tok_open(self): return '-['
 
-    def str__tok_close(self): return ']-'
+    def str__tok_close(self):
+        if self.is_directional == True:
+            return ']->'
+        else:
+            return ']-'
 
     @property
-    def type(self):
+    def type(self): # the single element equivalent of node label sets
         val_sub_n_set = self.child_node_by_type(e_value)
 
         assert len(val_sub_n_set) >= 1
@@ -421,20 +447,24 @@ class p__rel(pt_abs_composite_node):  # rel pattern: '[...]'
     @classmethod
     def rgx(self, g_name): return '-\[(?P<%s>[^\[\]]*?)\]->?' % (g_name)
 
-class p__path(pt_abs_composite_node):  # path pattern: '()-[]-()'
+class p_path(pt_abs_composite_node):  # path pattern: '()-[]-()'
     """
     path pattern
     """
-    def __init__(self): super(p__path, self).__init__()
-
+    def __init__(self): super(p_path, self).__init__()
 
 class Cypher_Parser(object):
     """
-    Neo4J Cypher language parser
+    Neo4J Cypher language parser - conventions:
+       - read_xxx functions: should adjust argument node without modifying parse tree
+       - parse_xxx functions:
+          - caller should spawn correct current node 
+          - should handle current node closing
+          - default parse case should recurse up via parent node 
     """
 
     def __init__(self):
-        pass
+        self.rgx__suffix = '(?P<suffix>.*)$'  # suffix regular expression, '$' terminated
 
     def parse_expression(self, input):
         """
@@ -458,7 +488,7 @@ class Cypher_Parser(object):
 
     def first_sibling_root(self, n):
         ret = n
-        while not ret.__class__ in [e__attr_set,
+        while not ret.__class__ in [e_attr_set,
                                     e_clause]:
             ret = ret.parent
 
@@ -468,205 +498,253 @@ class Cypher_Parser(object):
         if isinstance(n, e_label_set):
             pass
 
-    def __parse(self, input, n_cur):
+    def read__e_ident(self, input, n_ident):
+        rgx_ident = r'^%s%s' % (e_ident.rgx(), self.rgx__suffix)
+        m = self.__match(rgx_ident, input)
+        n_ident.value = m.group('ident')
+        return m.group('suffix')
 
-        rgx__suffix = '(?P<suffix>.*)$'  # suffix regular expression, '$' terminated
+    def read__e_value(self, input, n_value):
+        if input[0] in tok_set__quote:  # quoted value
+            quote_tok = input[0]
+            rgx_value = r'^%s%s' % (e_value.rgx__quoted(quote_tok=quote_tok),
+                                    self.rgx__suffix)
+            n_value.quoted = True
+            n_value.quote_tok = quote_tok
+        else:  # non quoted value
+            rgx_value = r'^%s%s' % (e_value.rgx__unquoted(), self.rgx__suffix)
 
-        def parse__node(input, n_cur):
-            n_cur = n_cur.spawn_child(p__node)
+        m = self.__match(rgx_value, input)
+        n_value.value = m.group('value')
+        return m.group('suffix')
+
+    def parse__e_attr_set(self, input, n_cur):
+        if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+
+        if '{' == input[0]:  # open param
+            n_cur = n_cur.spawn_child(e_param)
             return self.__parse(input[1:], n_cur)
 
-        def parse__node_or_path(input, n_cur):
-            # path pattern
-            rgx_path = r'^%s%s%s' % (p__node.rgx('src'),
-                                     p__rel.rgx('rel'),
-                                     p__node.rgx('dst'))
-            m = re.match(rgx_path, input)
-            if m:
-                n_cur = n_cur.spawn_child(p__path)
-                n_cur = n_cur.spawn_child(p__node)
-                return self.__parse(input[1:], n_cur)
+        if '}' == input[0]:  # close attr-set
+            n_cur = n_cur.collapse(e_attr_set).parent
+            return self.__parse(input[1:], n_cur)
 
-            # node pattern
-            rgx_path = r'^%s' % (p__node.rgx('src'))
-            m = re.match(rgx_path, input)
-            if m:
-                return parse__node(input, n_cur)
+        rgx_attr_set_or_param = r'^((%s:)|(%s))' % (e_ident.rgx('kv_pair__key'),
+                                                    e_ident.rgx('ident'))
+        m = self.__match(rgx_attr_set_or_param, input)
+        if m.group('ident'):
+            n_cur = n_cur.spawn_child(e_ident)
+            return self.__parse(input, n_cur)
+        if m.group('kv_pair__key'):
+            n_cur = n_cur.spawn_child(e_kv_pair)
+            return self.__parse(input, n_cur)
 
-            assert False, 'failed parsing attr_set or identifier, input: "%s"' % (input)
+        n_cur = n_cur.parent
+        return self.__parse(input, n_cur)
 
-        def parse__rel_close(input, n_cur):
-            n_cur = n_cur.collapse(p__rel).parent
+    def parse__e_clause_create_or_match(self, input, n_cur):
+        if ' ' == input[0]: return self.parse__e_clause_create_or_match(input[1:], n_cur)  # consume
+
+        if '(' == input[0]: return self.parse__node_or_rel(input, n_cur)  # open node or path
+
+        if ',' == input[0]:  # open sibling
+            assert len(n_cur.sub_exp_set) >= 2 and e_keyword == n_cur.sub_exp_set[0].__class__
+
+            last_child = n_cur.sub_exp_set[-1]
+            assert last_child.__class__ in [p_path, p_node]
+
+            n_cur = last_child.rotate__pin_under_new_parent(e_set)
+            return self.__parse(input[1:], n_cur)
+
+        n_cur = n_cur.parent
+        return self.__parse(input, n_cur)
+
+    def parse__e_clause__common(self, input, n_cur):
+        assert len(n_cur.sub_exp_set) == 2
+        assert n_cur.sub_exp_set[1].__class__ == e_value
+
+        n_val = n_cur.sub_exp_set[1]
+        for kw in tok_set__kw__all:
+            if input.startswith(kw + ' '):
+                n_val.value = n_val.value.strip()  # trim before handling new kw
+                n_cur = n_cur.parent
+                return self.__parse(input, n_cur)
+
+        n_val.value += input[0]
+        if len(input) == 1:  # trim on EOI
+            n_val.value = n_val.value.strip()
+        return self.__parse(input[1:], n_cur)
+
+    def parse__e_ident(self, input, n_cur):
+        suffix = self.read__e_ident(input, n_cur)
+        n_cur = n_cur.parent
+        return self.__parse(suffix, n_cur)
+
+    def parse__e_kv_pair(self, input, n_cur):
+        if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+
+        if ',' == input[0]:  # open sibling
+            n_cur = n_cur.spawn_sibling()
+            return self.__parse(input[1:], n_cur)
+
+        if ':' == input[0]:  # open sibling
+            return self.parse__e_val_or_param(input[1:], n_cur)
+
+        if not n_cur.child_node_by_type(e_ident):  # kv_pair key yet to be set
+            n_cur = n_cur.spawn_child(e_ident)
+            return self.__parse(input, n_cur)
+
+        if len(n_cur.sub_exp_set) == 2: return self.__parse(input, n_cur.parent)  # collapse
+
+    def parse__e_val_or_param(self, input, n_cur):
+        if ' ' == input[0]: return self.parse__e_val_or_param(input[1:], n_cur)  # consume
+
+        if '{' == input[0]:
+            n_cur = n_cur.spawn_child(e_param)
+            return self.parse__e_param(input[1:], n_cur)
+
+        n_cur = n_cur.spawn_child(e_value)
+        return self.__parse(input, n_cur)
+
+    def parse__e_label_set(self, input, n_cur):
+        if ' ' == input[0]:  # close label set
+            return self.__parse(input[1:], n_cur.collapse_set([p_rel, p_node]))
+        if ':' == input[0]:  # append to label set
+            n_cur = n_cur.spawn_child(e_value)
+            return self.__parse(input[1:], n_cur)
+        if input[0] in [')', ']']:
+            n_cur = n_cur.parent
+            return self.__parse(input, n_cur)
+        assert False
+
+    def parse__e_param(self, input, n_cur):
+        if input.startswith('}.'):
+            n_cur = n_cur.rotate__pin_under_new_parent(op_dot)
+            return self.__parse(input[2:], n_cur)
+
+        if '}' == input[0]:  # close node/path
+            n_cur = n_cur.parent
+            return self.__parse(input[1:], n_cur)
+
+        suffix = self.read__e_ident(input, n_cur)
+        return self.__parse(suffix, n_cur)
+
+    def parse__e_set(self, input, n_cur):
+        if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+
+        if '(' == input[0]:  # open node or path
+            return self.parse__node_or_rel(input, n_cur)
+
+        n_cur = n_cur.parent
+        return self.__parse(input, n_cur)
+
+    def parse__e_value(self, input, n_cur):
+        if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+
+        suffix = self.read__e_value(input, n_cur)
+        n_cur = n_cur.parent
+        return self.__parse(suffix, n_cur)
+
+    def parse__node_or_rel(self, input, n_cur):
+        if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+
+        if ':' == input[0]:  # open label set
+            n_cur = n_cur.spawn_child(e_label_set)
+            n_cur = n_cur.spawn_child(e_value)
+            return self.__parse(input[1:], n_cur)
+
+        if '(' == input[0]:  # open node
+            n_cur = n_cur.spawn_child(p_node)
+            return self.parse__node_or_rel(input[1:], n_cur)
+
+        if ')' == input[0]:  # close node/path
+            if input.startswith(')-'):  # open path
+                n_cur = n_cur.rotate__pin_under_new_parent(p_path)
+                return self.parse__node_or_rel(input[1:], n_cur)
+
+            n_cur = n_cur.parent
+            if n_cur.__class__ == p_path:
+                n_cur = n_cur.parent
+            return self.__parse(input[1:], n_cur)
+
+        if input.startswith('-['):  # open rel
+            n_cur = n_cur.spawn_child(p_rel)
+            return self.parse__node_or_rel(input[2:], n_cur)
+
+        if input.startswith(']-'):  # close directional-rel
             if input.startswith(']->'):  # close directional-rel
-                return self.__parse(input[3:], n_cur)
-            if input.startswith(']-'):  # close directional-rel
-                return self.__parse(input[2:], n_cur)
+                n_cur.is_directional = True
+                n_cur = n_cur.parent
+                return self.parse__node_or_rel(input[3:], n_cur)
 
-            assert False, 'failed parsing rel termination'
+            n_cur = n_cur.parent
+            return self.parse__node_or_rel(input[2:], n_cur)
+
+        if '{' == input[0]:  # open attr-set
+            n_cur = n_cur.spawn_child(e_attr_set)
+            return self.__parse(input[1:], n_cur)
+
+        rgx_opt_id = r'^%s' % (e_ident.rgx('ident'))
+        m = re.match(rgx_opt_id, input)
+        if m:
+            n_cur = n_cur.spawn_child(e_ident)
+            return self.__parse(input, n_cur)
+
+        assert False
+
+    def parse__op_dot(self, input, op_dot):
+        n_ident = op_dot.spawn_child(e_ident)
+        input_suffix = self.read__e_ident(input, n_ident)
+        n_cur = op_dot.parent  # collapse
+        return self.__parse(input_suffix, n_cur)
+
+    def parse__pt_root(self, input, n_root):
+        #
+        # keywords
+        #
+        for kw in tok_set__kw__all:  # handle keywords
+            if input.startswith(kw):
+                clause_type = globals().get('e_clause__' + kw)
+                if 'optional match' == kw:
+                    clause_type = e_clause__match
+                if not clause_type:
+                    clause_type = e_clause
+
+                n_cur = n_root.spawn_child(clause_type)
+                n_root.kw_to_clause_set_map[kw].append(n_root)  # update kw clause map
+                if 'optional match' == kw:
+                    n_cur.is_optional = True
+
+                n_cur.spawn_child(e_keyword, kw)
+
+                if kw in tok_set__kw__unsupported:  # generic e_clause case
+                    n_value = n_cur.spawn_child(e_value)
+                    n_value.value = ''
+
+                return self.__parse(input[len(kw):], n_cur)
+
+    def __parse(self, input, n_cur):
 
         if None == input or 0 == len(input):  # end of input or opt regex group not found
             return
 
-        if isinstance(n_cur, pt_root):
-            #
-            # keywords
-            #
-            for kw in tok_set__kw__supported:  # handle keywords
-                if input.startswith(kw):
-                    kw_clause_type = globals().get('e_clause__' + kw)
-                    clause_type = kw_clause_type if kw_clause_type else e_clause
-                    n_cur = n_cur.spawn_child(clause_type, kw)
-                    n_cur.spawn_child(e_keyword, kw)
-                    return self.__parse(input[len(kw):], n_cur)
-
-            for kw in tok_set__kw__unsupported:  # currently unsupported keywords
-                if input.startswith(kw):
-                    assert False, 'cypher parse: unsupported keyword: \'%s\', input: "%s"' % (kw, input)
-
-            assert False
-
-        if isinstance(n_cur, e_clause):
-            if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
-
-            if '(' == input[0]: return parse__node_or_path(input, n_cur) # open node or path
-
-            if ',' == input[0]:  # open sibling
-
-                assert len(n_cur.sub_exp_set) >= 2 and e_keyword == n_cur.sub_exp_set[0].__class__
-
-                last_child = n_cur.sub_exp_set[-1]
-                assert last_child.__class__ in [p__path, p__node]
-
-                n_cur = last_child.rotate__pin_under_set_node()
-                return self.__parse(input[1:], n_cur)
-
-        if isinstance(n_cur, e_ident):
-            rgx_ident = r'^%s%s' % (e_ident.rgx(), rgx__suffix)
-            m = self.__match(rgx_ident, input)
-
-            n_cur.value = m.group('ident')
-            return self.__parse(m.group('suffix'), n_cur.parent)
-
         #
-        # e_set & subclasses - ordered by specificity
+        # order sensitive to specificity:
+        #    - e_clause_match, e_clause_create > e_clause
+        #    - e_param > e_ident
+        #    - e_label_set, e_attr_set > e_set
         #
-        if isinstance(n_cur, e_label_set):
-            if ' ' == input[0]:  # close label set
-                return self.__parse(input[1:], n_cur.collapse_set([p__rel, p__node]))
-            if ':' == input[0]:  # append to label set
-                n_cur = n_cur.spawn_child(e_value)
-                return self.__parse(input[1:], n_cur)
-            if ')' == input[0]:  # close node/path
-                n_cur = n_cur.collapse(p__node).parent
-                return self.__parse(input[1:], n_cur)
-            if ']' == input[0]: return parse__rel_close(input, n_cur) # close rel
-            assert False
+        if isinstance(n_cur, e_clause__create): return self.parse__e_clause_create_or_match(input, n_cur)
+        if isinstance(n_cur, e_clause__match): return self.parse__e_clause_create_or_match(input, n_cur)
+        if isinstance(n_cur, e_clause__where): return self.parse__e_clause__common(input, n_cur)
+        if isinstance(n_cur, e_clause): return self.parse__e_clause__common(input, n_cur)
 
-        if isinstance(n_cur, e__attr_set):
-            if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+        if isinstance(n_cur, p_rel): return self.parse__node_or_rel(input, n_cur)
+        if isinstance(n_cur, p_node): return self.parse__node_or_rel(input, n_cur)
 
-            if '}' == input[0]:  # close attr-set
-                n_cur = n_cur.collapse(e__attr_set).parent
-                return self.__parse(input[1:], n_cur)
+        if isinstance(n_cur, e_label_set): return self.parse__e_label_set(input, n_cur)
+        if isinstance(n_cur, e_attr_set): return self.parse__e_attr_set(input, n_cur)
+        if isinstance(n_cur, e_set): return self.parse__e_set(input, n_cur)
 
-            if ')' == input[0]: return parse__node(input[1:], n_cur.parent) # collapse
-
-            rgx_attr_set_or_param = r'^((%s:)|(%s))' % (e_ident.rgx('kv_pair__key'),
-                                                        e_ident.rgx('ident'))
-            m = self.__match(rgx_attr_set_or_param, input)
-            if m.group('ident'):
-                n_cur = n_cur.spawn_child(e_ident)
-                return self.__parse(input, n_cur)
-            if m.group('kv_pair__key'):
-                n_cur = n_cur.spawn_child(e__kv_pair)
-                return self.__parse(input, n_cur)
-
-            assert False, 'failed parsing attr_set or identifier, input: "%s"' % (input)
-
-        if isinstance(n_cur, e_set):
-            if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
-
-            if '(' == input[0]:  # open node or path
-                return parse__node_or_path(input, n_cur)
-        #
-        # end of e_set & subclasses
-        #
-
-        if isinstance(n_cur, e_value):
-            if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
-
-            if input[0] in tok_set__quote:  # quoted value
-                quote_tok = input[0]
-                rgx_value = r'^%s%s' % (e_value.rgx__quoted(quote_tok=quote_tok),
-                                        rgx__suffix)
-                n_cur.quoted = True
-                n_cur.quote_tok = quote_tok
-            else:  # non quoted value
-                rgx_value = r'^%s%s' % (e_value.rgx__unquoted(), rgx__suffix)
-
-            m = self.__match(rgx_value, input)
-            n_cur.value = m.group('value')
-
-            return self.__parse(m.group('suffix'), n_cur.parent)
-
-        if isinstance(n_cur, e__kv_pair):
-            if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
-
-            if ',' == input[0]:  # open sibling
-                n_cur = n_cur.spawn_sibling()
-                return self.__parse(input[1:], n_cur)
-
-            if ':' == input[0]:  # open sibling
-                n_cur = n_cur.spawn_child(e_value)
-                return self.__parse(input[1:], n_cur)
-
-            if '{' == input[0]:  # open param
-                assert False, 'params not supported yet'
-
-            if not n_cur.child_node_by_type(e_ident):  # kv_pair key yet to be set
-                n_cur = n_cur.spawn_child(e_ident)
-                return self.__parse(input, n_cur)
-
-            if len(n_cur.sub_exp_set) == 2: return self.__parse(input, n_cur.parent) # collapse
-
-            assert False
-
-        if n_cur.__class__ in [p__rel, p__node]:  # node or rel
-            if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
-
-            if ':' == input[0]: # open label set
-                n_cur = n_cur.spawn_child(e_label_set)
-                n_cur = n_cur.spawn_child(e_value)
-                return self.__parse(input[1:], n_cur)
-
-            if '{' == input[0]:  # open attr-set
-                n_cur = n_cur.spawn_child(e__attr_set)
-                return self.__parse(input[1:], n_cur)
-
-            if ')' == input[0]:  # close node/path
-                n_cur = n_cur.collapse(p__node).parent
-                return self.__parse(input[1:], n_cur)
-
-            if ']' == input[0]: return parse__rel_close(input, n_cur) # close rel
-
-            rgx_opt_id = r'^%s' % (e_ident.rgx('ident'))
-            m = re.match(rgx_opt_id, input)
-            if m:
-                n_cur = n_cur.spawn_child(e_ident)
-                return self.__parse(input, n_cur)
-
-            return self.__parse(input, n_cur)
-
-        if isinstance(n_cur, p__path):
-
-            if len(n_cur.sub_exp_set) == 3: return self.__parse(input, n_cur.parent) # collapse
-
-            if '(' == input[0]: return parse__node(input, n_cur) # open node or path
-
-            if input.startswith('-['):  # open rel
-                n_cur = n_cur.spawn_child(p__rel)
-                return self.__parse(input[2:], n_cur)
-
-            if ']' == input[0]: return parse__rel_close(input, n_cur) # close rel
-
-            assert False
+        f_parse = getattr(self, 'parse__' + n_cur.__class__.__name__)
+        return f_parse(input, n_cur)
