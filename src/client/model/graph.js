@@ -796,11 +796,11 @@ function Graph(spec) {
         link_spec.__dst = find_node__by_id(dst_id);
 
         if (null === link_spec.__src) {
-            console.log("src_id not found: " + src_id);
+            util.log_error("src_id not found: " + src_id);
             return null;
         }
         if (null === link_spec.__dst) {
-            console.log("dst_id not found: " + dst_id);
+            util.log_error("dst_id not found: " + dst_id);
             return null;
         }
 

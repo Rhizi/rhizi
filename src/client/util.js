@@ -228,6 +228,11 @@ define(['jquery'], function($) {
         return ret;
     }
 
+    // logging helpers
+    function log_error(msg) {
+        console.log('error: ' + msg);
+    }
+
     return {
         array_diff: array_diff,
         assert: assert,
@@ -242,5 +247,7 @@ define(['jquery'], function($) {
         set_diff: set_diff,
         setSelection: setSelection,
         selectionStart: selectionStart,
+
+        log_error: log_error,
     };
 });
