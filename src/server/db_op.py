@@ -423,9 +423,9 @@ class DBO_diff_commit__attr(DB_op):
 
             assert len(attr_set_rm) > 0 or len(attr_set_wrt) > 0
 
-            q_arr = ["match (n {id: {id}}) ",
+            q_arr = ["match (n {match_attr_set})",
                      "return n.id, n"]  # currently unused
-            q_param_set = {'id': id_attr}
+            q_param_set = {'match_attr_set': {'id': id_attr}}
 
             if len(attr_set_rm) > 0:
                 stmt_attr_rm = "remove " + ', '.join(['n.' + attr for attr in attr_set_rm])
