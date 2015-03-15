@@ -13,7 +13,9 @@ from neo4j_util import DB_Query, generate_random_id__uuid
 from neo4j_util import DB_result_set
 from neo4j_util import cfmt
 import neo4j_util as db_util
+import logging
 
+log = logging.getLogger('rhizi')
 
 class DB_op(object):
     """
@@ -701,6 +703,9 @@ class DBO_rz_clone(DB_op):
                     l['__type'] = [l_tuple[2]]
 
                     ret_l_set.append(l)
+
+        if len(ret_n_set) >= self.limit: # TODO: generalize logic, mv to DB_Driver
+            log.warning('DB op result set larger than query limit: size: %d, limit: %d' % (len(ret_n_set), self.limit))
 
         topo_diff = Topo_Diff(node_set_add=ret_n_set,
                               link_set_add=ret_l_set)
