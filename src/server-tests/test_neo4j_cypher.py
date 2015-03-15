@@ -2,7 +2,7 @@ import unittest
 
 from db_op import DBO_rz_clone, DBO_add_node_set, DBO_add_link_set, \
     DBO_block_chain__commit, DBO_diff_commit__attr, DBO_diff_commit__topo, \
-    DBO_rm_node_set
+    DBO_rm_node_set, DB_composed_op
 import test_util
 from model.graph import Attr_Diff, Topo_Diff
 from test_util import generate_random_node_dict, generate_random_link_dict
@@ -52,56 +52,53 @@ class Test_DB_Op(unittest.TestCase):
 
     def test_cypher_exp_parsing(self):
 
-        def attempt_parse(parser, clause):
-            try:
-                pt = parser.parse_expression(clause)
-                self.log.debug('\n'.join(['input string: %s' % (clause),
-                                          'output query: %s' % (pt.str__cypher_query()),
-                                          'struct: \n%s' % (pt.str__struct_tree()),
-                                          ]))
-                for kw, clause_set in pt.kw_to_clause_set_map.items():
-                    self.log.debug('keyword: %s, clause-set: %s' % (kw, clause_set))
-                    for p_clause in clause_set:
-                        self.log.debug('   %s' % (p_clause))
-            except Exception as e:
-                self.log.exception('parse: fail: input: %s' % (clause))
+        def validate_parse_tree(pt, q_str):
+            self.log.debug('\n'.join(['input string: %s' % (q_str),
+                                      'output query: %s' % (pt.str__cypher_query()),
+                                      'struct: \n%s' % (pt.str__struct_tree()),
+                                      ]))
+
+            if pt.str__cypher_query() != q_str: # test for precise query string match
                 self.fail()
 
-
-        self.log.debug('\n')
-
+        valid_exp_set = []
         #
         # parse expression set
         #
         parser = Cypher_Parser()
         exp_set = [
+                   'match (n) with n order by n.id skip 0 limit 2 optional match (n)-[r]->(m) return n,labels(n),collect([m.id, r, type(r)])',
+                   'create (n:A)-[r:B]->(m:C:D), ({a: 0, b: \'b\'})',
+                   'match (src {id: {src}.id}), (dst {id: {dst}.id})',
+                   'match (n {id: {id_foo}})',
                    'match ()',
                    'match (n:`F oo`:A {a: \'ba r\', b: 0}), (m {c: 0})',
-                   'create (n:A)-[r:B]->(m:C:D), ({a: 0, b: \'b\'})',
                    'match (n), ()-[r]-()',
                    'match ()-[:A]->()',
                    'match (n:`T_nMu7ktxW` {node_attr})',
                    'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)'
                    ]
+
         for clause in exp_set:
-            attempt_parse(parser, clause)
+            pt = parser.parse_expression(clause)
+            validate_parse_tree(pt, clause)
+            valid_exp_set += [clause]
 
         #
         # parse all db ops
         #
         test_label = neo4j_test_util.rand_label()
-        op_set = []
-        #op_set = self.gen_full_db_op_set(test_label)
+        op_set = self.gen_full_db_op_set(test_label)
 
         for op in op_set:
+            if isinstance(op, DB_composed_op): continue
             for _idx, db_q, _db_q_result in op:
-                for keyword, clause_set in db_q:
-                    if keyword in neo4j_cypher.tok_set__kw__unsupported:
-                        self.log.exception('skipping clause with unsupported kw: \'%s\'' % (keyword))
-                        continue
+                q_str = db_q.q_str
+                validate_parse_tree(db_q.q_tree, q_str)
+                valid_exp_set += [q_str]
 
-                    for clause in clause_set:
-                        attempt_parse(parser, clause)
+        self.log.debug('-' * 80 + '\npassed expression count: %d:\n\n%s' % (len(valid_exp_set),
+                                                                          '\n'.join(valid_exp_set)))
 
 def main():
     unittest.main(defaultTest='Test_DB_Op.test_cypher_exp_parsing', verbosity=2)
