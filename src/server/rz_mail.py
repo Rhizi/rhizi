@@ -31,12 +31,12 @@ def send_message_helper(smtp_hostname, send_from, recipients, subject, attachmen
     """
     assert isinstance(recipients, list)
 
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('utf-8')
     msg['From'] = send_from
     msg['To'] = COMMASPACE.join(recipients)
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
-    msg.attach(MIMEText(body))
+    msg.attach(MIMEText(body, _charset='utf-8'))
 
     for filename, mimetype, data in attachments:
         maintype, subtype = mimetype.split('/')
