@@ -82,7 +82,7 @@ logout_button.click(function() {
     }); // server should redirect back to /login
 });
 
-$('a.save-history').click(function() {
+$('a.save-history').click(function () {
     if (rz_core.main_graph.history === undefined) {
         throw "History is undefined";
     }
