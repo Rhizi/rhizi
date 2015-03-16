@@ -380,7 +380,7 @@ function Graph(spec) {
         if (!rz_config.backend_enabled) return;
 
         var attr_diff = model_diff.new_attr_diff();
-        for (var key in new_link_spec){
+        for (var key in new_link_spec) {
             attr_diff.add_link_attr_write(link.id, key, new_link_spec[key]);
         }
 
@@ -554,7 +554,7 @@ function Graph(spec) {
             src_node = find_node__by_id(src_id),
             added_links = node_ids.slice(1).map(function (tgt_id) {
                 return model_core.create_link__set_random_id(src_node, find_node__by_id(tgt_id),
-                                                             {name: 'link'});
+                                                             {name: consts.EMPTY_LINK_NAME});
             });
         commit_and_tx_diff__topo(model_diff.new_topo_diff({link_set_add: added_links}));
     };

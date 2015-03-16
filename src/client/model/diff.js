@@ -3,8 +3,8 @@
 /**
  * Diff module
  */
-define([],
-       function() {
+define(['consts'],
+       function(consts) {
 
             /**
              * A set of diff objects
@@ -114,6 +114,9 @@ define([],
             Attr_Diff.prototype.add_link_attr_write = function(l_id, attr_name,
                     attr_val) {
 
+                if ('name' === attr_name && String(attr_val).length === 0) {
+                    attr_val = consts.EMPTY_LINK_NAME;
+                }
                 if (undefined == this.__type_link[l_id]) {
                     this.init_attr_diff_link(l_id);
                 }
