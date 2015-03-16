@@ -35,8 +35,21 @@ define(['consts'],
                 this.node_id_set_rm = obj_spec.node_id_set_rm;
                 this.node_set_add = obj_spec.node_set_add;
                 this.link_set_add = obj_spec.link_set_add;
+                this._link_set_add__fix_empty_links();
 
             }
+
+            Topo_Diff.prototype._link_set_add__fix_empty_links = function() {
+
+                function set_empty_link(link) {
+                    if (link.name === '') {
+                        link.name = consts.EMPTY_LINK_NAME;
+                    }
+                }
+                this.link_set_add.forEach(set_empty_link);
+
+            }
+
             Topo_Diff.prototype.for_each_node_add = function(callback, this_arg) {
                 this.node_set_add.forEach(callback, this_arg);
             }
@@ -47,6 +60,7 @@ define(['consts'],
 
             Topo_Diff.prototype.for_each_link_add = function(callback, this_arg) {
                 this.link_set_add.forEach(callback, this_arg);
+                this._link_set_add__fix_empty_links();
             }
 
             Topo_Diff.prototype.for_each_link_rm = function(callback, this_arg) {
