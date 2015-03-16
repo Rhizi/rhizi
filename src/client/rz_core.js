@@ -20,10 +20,10 @@ var addednodes = [],
 var node_text_dx = 15,
     node_text_dy = '.30em';
 
-var zoomProgress = false;
-var zoomBus = new Bacon.Bus();
-var zoom_property = zoomBus.toProperty(zoomProgress);
-var svgInput;
+var zoomProgress = false,
+    zoomBus = new Bacon.Bus(),
+    zoom_property = zoomBus.toProperty(zoomProgress),
+    svgInput;
 
 function updateZoomProgress(val)
 {
@@ -238,6 +238,7 @@ return {
         recenterZoom();
         update_view__graph(true);
     },
-    update_view__graph : update_view__graph,
-}
+    update_view__graph: update_view__graph,
+};
+
 }); /* close define call */
