@@ -666,6 +666,12 @@ function GraphView(spec) {
     }
     gv.__set_scale_translate = set_scale_translate;
 
+    var scale__absolute = function (scale) {
+        set_scale_translate(scale, zoom_obj.translate());
+    }
+
+    gv.scale__absolute = scale__absolute;
+
     gv.update_view = update_view;
     function start_layout_animation() {
             on_interval = function() {

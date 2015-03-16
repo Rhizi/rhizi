@@ -88,5 +88,38 @@ $('a.save-history').click(function () {
     }
     rz_core.main_graph.history.save_to_file();
 });
+
+function log_scale(max_in, min_out, max_out) {
+    var t = (min_out * max_out - 1) / (min_out + max_out - 2),
+        k = 1 / max_in * Math.log((max_out - t) / (1 - t));
+
+    return function (x) { return (1 - t) * Math.exp(x * k) + t; };
+}
+
+function exp_scale(max_in, min_out, max_out) {
+    var t = (min_out * max_out - 1) / (min_out + max_out - 2),
+        k = 1 / max_in * Math.log((max_out - t) / (1 - t));
+
+    return function (y) { return (1 / k) * Math.log((y - t) / (1 - t)); };
+}
+
+function clip(min, max, v) {
+    return Math.max(min, Math.min(max, v));
+}
+
+var zoom_range = 10,
+    zoom_min = 0.1,
+    zoom_max = 3,
+    zoom_exp_to_linear = exp_scale(zoom_range, zoom_min, zoom_max);
+
+$('#btn_zoom_in').asEventStream('click')
+    .map(1)
+    .merge($('#btn_zoom_out').asEventStream('click').map(-1))
+    .map(function (change) {
+        return clip(-zoom_range, zoom_range, zoom_exp_to_linear(rz_core.main_graph_view.zoom_obj.scale()) + change);
+    })
+    .map(log_scale(zoom_range, zoom_min, zoom_max))
+    .onValue(rz_core.main_graph_view.scale__absolute);
+
 return {'buttons': 'nothing here'};
 }); // define
