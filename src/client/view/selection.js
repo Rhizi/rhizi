@@ -14,13 +14,6 @@ function list_from_list_like(list_like)
     return list;
 }
 
-function list_call(list, field)
-{
-    list.forEach(function (item) {
-        item[field].apply(item, list_from_list_like(arguments).slice(2));
-    });
-}
-
 function root_nodes_ids() {
     return _.pluck(root_nodes, 'id');
 }
@@ -265,7 +258,7 @@ var setup_toolbar = function(main_graph)
         merge_btn = $('#btn_merge'),
         delete_btn = $('#btn_delete'),
         link_fan_btn = $('#btn_link_fan'),
-        buttons = [merge_btn, delete_btn, link_fan_btn];
+        multiple_node_operations = $('#tool-bar-multiple-node-operations');
 
     merge_btn.asEventStream('click').onValue(merge_root_selection);
     delete_btn.asEventStream('click').onValue(delete_root_selection);
@@ -275,10 +268,9 @@ var setup_toolbar = function(main_graph)
         .skipDuplicates()
         .onValue(function (visible) {
             if (visible) {
-                list_call(buttons, 'show');
+                multiple_node_operations.show();
             } else {
-                list_call(buttons, 'hide');
-                buttons.forEach(function (btn) { btn.hide(); });
+                multiple_node_operations.hide();
             }
         });
 }
