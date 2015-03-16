@@ -16,6 +16,16 @@
     z-index: 1;
 }
 
+#tool-bar-top-bar {
+    float: right;
+    padding-bottom: 10px;
+}
+
+#tool-bar-multiple-node-operations {
+    float: right;
+    width: 100%;
+}
+
 #btn_filter {
     background: url(../img/toolbar_icon__filter.png);
     background-repeat: no-repeat;
@@ -40,4 +50,18 @@
     background: url(../img/url-icon.png);
     background-position: center;
     background-repeat: no-repeat;
+}
+
+#btn_zoom_in {
+    background: url(../img/plus.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 0px;
+}
+
+#btn_zoom_out {
+    background: url(../img/minus.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 0px;
 }
