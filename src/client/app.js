@@ -3,6 +3,10 @@
     var config = {
         shim: {
             'socketio': { exports: 'io' },
+            'Bacon': {
+                deps: ['jquery'],
+                exports: 'Bacon',
+            }
         },
         paths: {
             autocomplete: lib_path + 'autocomplete',

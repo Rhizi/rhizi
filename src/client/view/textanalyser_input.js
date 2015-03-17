@@ -1,4 +1,4 @@
-define(['jquery', 'Bacon_wrapper', 'underscore', 'util', 'view/completer', 'rz_bus', 'textanalysis', 'consts'],
+define(['jquery', 'Bacon', 'underscore', 'util', 'view/completer', 'rz_bus', 'textanalysis', 'consts'],
 function($,        Bacon,           _,            util,        completer,   rz_bus,   textanalysis,   consts)
 {
 // Aliases

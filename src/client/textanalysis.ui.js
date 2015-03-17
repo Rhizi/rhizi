@@ -1,6 +1,6 @@
 "use strict"
 
-define(['jquery', 'Bacon_wrapper', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input'],
+define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input'],
 function($,        Bacon         ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,        textanalyser_input) {
 
 var element_name = '#textanalyser',

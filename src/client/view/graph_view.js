@@ -25,7 +25,7 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3', 'Bacon_wrapper', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
+define(['d3', 'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
 function(d3 ,  Bacon         ,  consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types) {
 
 // aliases

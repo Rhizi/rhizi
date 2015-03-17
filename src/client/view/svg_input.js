@@ -1,4 +1,4 @@
-define(['jquery', 'Bacon_wrapper', 'consts', 'model/diff', 'rz_bus', 'consts'],
+define(['jquery', 'Bacon', 'consts', 'model/diff', 'rz_bus', 'consts'],
 function($,        Bacon,           consts,   model_diff,   rz_bus,   consts)
 {
 var svg_input_fo_node_y = '-.70em',

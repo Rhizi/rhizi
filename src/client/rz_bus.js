@@ -1,6 +1,6 @@
 "use strict"
 
-define(['consts', 'Bacon_wrapper'],
+define(['consts', 'Bacon'],
 function(consts,   Bacon)
 {
     var ui_key_bus = new Bacon.Bus(),

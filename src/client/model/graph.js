@@ -1,6 +1,6 @@
 "use strict"
 
-define(['underscore', 'Bacon_wrapper', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'model/types'],
+define(['underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'model/types'],
 function (_,           Bacon,           consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history,   model_types) {
 
 // aliases

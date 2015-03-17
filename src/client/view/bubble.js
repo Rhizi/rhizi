@@ -1,4 +1,4 @@
-define(["jquery", "Bacon_wrapper"],
+define(["jquery", "Bacon"],
 function ($,       Bacon)
 {
 function Bubble(raw_parent, radius) {

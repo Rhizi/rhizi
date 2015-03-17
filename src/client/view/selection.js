@@ -1,4 +1,4 @@
-define(['Bacon_wrapper', 'jquery', 'underscore'],
+define(['Bacon', 'jquery', 'underscore'],
 function(Bacon,           $,        _) {
 
 var rz_core; // circular dependency, see get_rz_core
