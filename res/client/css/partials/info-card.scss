@@ -19,7 +19,7 @@
     background-color: white;
     @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
     position: relative;
-    width:250px;
+    width: 100%;
     padding: 12px 15px;
     @include rz-box-sizing-border;
     border-top: 6px solid $dark-grey;
