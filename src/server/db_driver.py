@@ -10,7 +10,7 @@ class DB_Driver_Base():
     def log_committed_queries(self, statement_set):
         for sp_dict in statement_set['statements']:
             if None != sp_dict['parameters']:
-                msg = '\tq: {0}\n\tp: {1}'.format(sp_dict['statement'],
+                msg = '\tq: {0}\n\tp: {1}'.format(sp_dict['statement'].encode('utf-8'),
                                                   sp_dict['parameters'])
             else:
                 msg = '\tq: {0}'.format(sp_dict['statement'])
