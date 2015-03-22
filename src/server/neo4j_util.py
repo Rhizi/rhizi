@@ -196,6 +196,9 @@ def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     filter_str = "where {0}".format(' and '.join(filter_arr))
     return filter_str
 
+def valid_label(label):
+    return len(label) > 0 and (label[0].isupper() or label[0] == '_')
+
 def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of node create queries
@@ -211,7 +214,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     ret = []
     for label, n_set in node_map.items():
 
-        assert len(label) > 0 and label[0].isupper(), 'malformed label: ' + label
+        assert valid_label(label), 'malformed label: ' + label
 
         q_arr = ['create (n:%s {node_attr})' % (quote__backtick(label)),
                  'with n',
@@ -244,7 +247,7 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     ret = []
     for l_type, l_set in link_map.items():
 
-        assert len(l_type) > 0 and l_type[0].isupper(), 'malformed label: ' + l_type
+        assert valid_label(l_type), 'malformed label: ' + l_type
 
         q_arr = ['match (src {id: {src}.id}),(dst {id: {dst}.id})',
                  'create (src)-[r:%(__type)s {link_attr}]->(dst)' % {'__type': quote__backtick(l_type)},
