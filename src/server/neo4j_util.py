@@ -197,7 +197,7 @@ def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     return filter_str
 
 def valid_label(label):
-    return len(label) > 0 and (label[0].isupper() or label[0] == '_')
+    return len(label) > 0
 
 def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
     """
