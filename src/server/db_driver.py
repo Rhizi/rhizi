@@ -74,6 +74,8 @@ class DB_Driver_REST(DB_Driver_Base):
             log.exception(e)
             raise e
         except Exception as e:
+            log.error('REST statement: %r' % statement_set)
+            log.exception(e)
             raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
 
     def commit_tx(self, op):
