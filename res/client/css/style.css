@@ -49,6 +49,9 @@ a:hover {
 a:active {
   color: #919095; }
 
+button {
+  border: none; }
+
 input, .input {
   background-color: white;
   color: #363636;
@@ -172,6 +175,20 @@ table {
 #btn-logout:hover {
   opacity: 0.7;
   cursor: pointer; }
+
+#btn_rzdoc__new {
+  background: url("../img/rzdoc-new.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  width: 32px; }
+
+#btn_rzdoc__open {
+  background: url("../img/rzdoc-open.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  width: 32px; }
 
 .cmn-form {
   width: 420px;
@@ -623,8 +640,11 @@ body.debug .debug-ui-right {
   background-repeat: no-repeat; }
 
 .top-bar {
-  line-height: 48px;
-  background-color: #363636; }
+  line-height: 40px;
+  background-color: #363636;
+  overflow-y: auto;
+  padding-top: 5px;
+  padding-bottom: 5px; }
 
 .top-bar__user-area {
   margin-right: 20px;
@@ -652,15 +672,25 @@ body.debug .debug-ui-right {
 .profile-username {
   color: #f5f5fa; }
 
-#doc-title {
-  font-family: "Source_Semibold", sans-serif;
-  color: #f5f5fa;
-  margin-left: 40px;
-  font-size: 18px; }
+#top-bar_float-left {
+  float: left;
+  margin-left: 40px; }
 
-#top-bar__float-right {
+#top-bar_float-right {
   float: right;
   margin-right: 20px; }
+
+#rzdoc-bar {
+  color: #f5f5fa;
+  position: relative;
+  overflow-x: auto;
+  margin-right: 20px;
+  min-width: 250px; }
+
+#rzdoc-bar_doc-label {
+  font-family: "Source_Semibold", sans-serif;
+  font-size: 18px;
+  font-weight: bold; }
 
 #logo-3rd-party__CRI {
   background-color: white;
@@ -736,30 +766,80 @@ p {
   background-position: center;
   background-repeat: no-repeat; }
 
-#zoom-bar {
-  position: absolute;
-  bottom: 50px;
-  right: 10px;
-  background: white;
-  border-width: 1px;
-  border-style: solid;
-  border-color: grey;
-  padding: 5px 4px 0px 4px;
-  height: 40px; }
-
 #btn_zoom_in {
   background: url(../img/plus.svg);
   background-position: center;
   background-repeat: no-repeat;
-  width: 16px;
-  height: 16px; }
+  border: 0px; }
 
 #btn_zoom_out {
   background: url(../img/minus.svg);
   background-position: center;
   background-repeat: no-repeat;
-  width: 16px;
-  height: 25px; }
+  border: 0px; }
+
+#zoom-bar {
+  position: absolute;
+  bottom: 50px;
+  right: 10px; }
+
+.cmd-bar {
+  background-color: #85B375;
+  width: 100%; }
+
+.cmd-bar_close_bar {
+  background-color: lightgray;
+  text-align: center;
+  font-size: 10px;
+  height: 10px;
+  width: 100%; }
+
+.cmd-bar_body {
+  padding: 8px 20px; }
+
+.cmd-bar_btn {
+  cursor: pointer;
+  color: white;
+  padding: 2px 8px;
+  margin-left: 10px;
+  vertical-align: middle; }
+
+#cmd_bar__rzdoc_new__input {
+  padding: 2px 8px;
+  margin-left: 10px;
+  vertical-align: middle;
+  width: 200px; }
+
+#cmd_bar__rzdoc_new__label {
+  color: white;
+  margin-left: 40px;
+  vertical-align: middle; }
+
+#cmd_bar__rzdoc_new__submit {
+  background-color: yellowgreen; }
+
+#cmd_bar__rzdoc_open__rzdoc_list {
+  overflow: auto; }
+
+#cmd_bar__rzdoc_close {
+  border-bottom-left-radius: 6px;
+  background-color: dimgray;
+  font-family: fantasy;
+  font-size: 12px;
+  position: absolute;
+  right: 0px; }
+
+.cmd_bar__rzdoc_open__item {
+  border-radius: 2px;
+  background-color: white;
+  float: left;
+  font-size: 14px;
+  margin: 3px 5px;
+  padding: 3px 5px;
+  white-space: nowrap; }
+  .cmd_bar__rzdoc_open__item:hover {
+    background-color: #b9b9b9;
+    cursor: pointer; }
 
 .graph-view {
   background-color: #f5f5fa;
@@ -823,7 +903,8 @@ p {
   stroke-opacity: 0.5; }
 
 .circle.bubble {
-  fill: rgba(255, 255, 255, 0.4);
+  fill: rgba(87, 154, 202, 0.17);
+  stroke: rgba(87, 154, 202, 0.17);
   pointer-events: none; }
 
 .circle.exit {
@@ -875,11 +956,7 @@ p {
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
   opacity: 0.2;
-  pointer-events: none;
   -webkit-filter: blur(10px); }
-
-.linklabel.notselected {
-  display: none; }
 
 .node.first-selected .circle {
   stroke: #fad900;
@@ -1038,8 +1115,7 @@ g:focus circle {
     color: #363636; }
 
 .section-divider {
-  color: #919095;
-  position: relative; }
+  color: #919095; }
   .section-divider:before {
     content: "";
     width: 112px;

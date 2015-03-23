@@ -1,6 +1,9 @@
 .top-bar{
-    line-height: $four-baselines;
+    line-height: 40px;
     background-color: $dark-grey;
+    overflow-y: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .top-bar__user-area {
@@ -34,15 +37,24 @@
     color: $light-grey;
 }
 
-#doc-title{
-    font-family: $semibold-font-family;
-    color: $light-grey;
+#top-bar_float-left {
+    float: left;
     margin-left: 40px;
-    font-size: $h3-size;
 }
 
-#top-bar__float-right {
+#top-bar_float-right {
     float: right;
+    margin-right: 20px;
+}
+
+#toolbar__doc {
+    color: $light-grey;
+    font-family: $semibold-font-family;
+    font-size: $h3-size;
+    font-weight: bold;
+}
+
+#toolbar__doc_doc-title {
     margin-right: 20px;
 }
 
