@@ -126,20 +126,48 @@ class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
 
             # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 
+class DB_Query(object):
 
+    def __init__(self, q_arr, param_set={}):
         """
+        @param q_str_or_array: cypher query to add - if passed as an array ' '.join(q_str_or_array)
+        is used to convert it to string type
         """
+        assert type(q_arr) is list
+
+        # establish query type
+        self.q_str = ' '.join(q_arr)  # FIXME: rm
+        self.pt_root = Cypher_Parser().parse_expression(self.q_str)
+        self.param_set = param_set
+
+    def __str__(self):
+        return self.pt_root.str__cypher_query()
 
 
 
+    def t__add_node_filter__meta_label(self):
 
+        if Query_Struct_Type.w == self.query_struct_type:
+            return
 
+        meta_label_cond = '0 = length(filter(_lbl in labels(n) where _lbl in {meta_label_set}))'  # filter nodes with meta labels
 
+        c_set__where = self.pt_root.clause_set_by_kw('where')
 
+        if not c_set__where:
+            c_set__match = self.pt_root.clause_set_by_kw('match')
 
+            first_match_clause = c_set__match.pop()
+            wc = first_match_clause.spawn_sibling__adjacent(e_clause__where)
+            wc.spawn_child(e_keyword, 'where')
+            wc.spawn_child(e_value).value = meta_label_cond
+        else:  # where clause present
+            assert len(c_set__where) == 1, 't__add_node_filter__meta_label: no support for multi-where clauses query transformation'
+            wc = c_set__where[0]
+            wc_cond = wc.condition_value
+            wc.set_condition(meta_label_cond + ' and ' + wc_cond)
 
-
-
+        self.param_set['meta_label_set'] = meta_label_set
 
     @property
     def query_struct_type(self):
@@ -149,12 +177,28 @@ class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
             if kw == 'match':
 
 
+    def str__cypher_query(self):
+        return self.pt_root.str__cypher_query()
+
+class DB_row(object):
+    def __init__(self, data):
+        self.data = data
+
+
+    def items(self):
+        return [x for x in self]
+
+    def __str__(self):
+        return str(self.items())
+
+    def __repr__(self):
+        return repr(self.items())
+
+class DB_result_set(object):
+    def __init__(self, data):
+        self.data = data
 
 
 
-
-
-
-
-
-
+    def items(self):
+        return [x for x in self]
