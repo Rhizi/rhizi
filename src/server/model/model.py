@@ -35,3 +35,9 @@ class Link():
         init from src_id or dst_id attributes - at least one must be provided
         """
         return Link.Link_Ptr(src_id, dst_id)
+
+class RZDoc():
+
+    def __init__(self):
+        self.id = None
+        self.name = None
