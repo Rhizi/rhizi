@@ -3,7 +3,7 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define([], function() {
+define(['model/core'], function(model_core) {
 
     function shorten(str, max_length) {
         if (str.length < max_length) {
@@ -17,6 +17,12 @@ define([], function() {
         var rz_server_url = 'http://%h:%p';
         rz_server_url = rz_server_url.replace('%h', rz_config.rz_server_host);
         rz_server_url = rz_server_url.replace('%p', rz_config.rz_server_port);
+
+
+        var common_req_ctx = function() {
+            var common_ctx = { rzdoc_name: model_core.rz_state.cur_rzdoc_name };
+            return common_ctx
+        }
 
         /**
          * issue rhizi server ajax call
@@ -67,13 +73,12 @@ define([], function() {
          */
         this.commit_diff__attr = function(attr_diff, on_success, on_error) {
 
-            var post_dict = {
-                'attr_diff' : attr_diff
-            }
+            var req_data = common_req_ctx();
+            req_data['attr_diff'] = attr_diff;
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(post_dict),
+                data : JSON.stringify(req_data),
             };
 
             return ajax_rs('/graph/diff-commit-attr', req_opts, on_success,
@@ -85,13 +90,12 @@ define([], function() {
          */
         this.commit_diff__topo = function(topo_diff, on_success, on_error) {
 
-            var post_dict = {
-                'topo_diff' : topo_diff
-            }
+            var req_data = common_req_ctx();
+            req_data['topo_diff'] = topo_diff;
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(post_dict),
+                data : JSON.stringify(req_data),
             };
 
             return ajax_rs('/graph/diff-commit-topo', req_opts, on_success,
@@ -102,13 +106,13 @@ define([], function() {
          * commit vis_diff
          */
         this.commit_diff__vis = function(vis_diff, on_success, on_error) {
-            var post_dict = {
-                'vis_diff' : vis_diff
-            }
+
+            var req_data = common_req_ctx();
+            req_data['vis_diff'] = vis_diff;
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(post_dict),
+                data : JSON.stringify(req_data),
             };
 
             return ajax_rs('/graph/diff-commit-vis', req_opts, on_success,
@@ -120,13 +124,12 @@ define([], function() {
          */
         this.commit_diff__set = function(diff_set, on_success, on_error) {
 
-            var post_dict = {
-                'diff_set' : diff_set
-            }
+            var req_data = common_req_ctx();
+            req_data['diff_set'] = diff_set;
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(post_dict),
+                data : JSON.stringify(req_data),
             };
 
             return ajax_rs('/graph/diff-commit-set', req_opts, on_success,
@@ -138,9 +141,12 @@ define([], function() {
          */
         this.clone = function(depth, on_success, on_error) {
 
+            var req_data = common_req_ctx();
+
             // prep request
             var req_opts = {
                 type : 'POST',
+                data : JSON.stringify(req_data)
             };
 
             ajax_rs('/graph/clone', req_opts, on_success, on_error);
@@ -157,15 +163,13 @@ define([], function() {
          */
         this.load_node_set = function(id_set, on_success, on_error) {
 
-            // prep request data
-            var post_dict = {
-                'id_set' : id_set
-            }
+            var req_data = common_req_ctx();
+            req_data['id_set'] = id_set;
 
             // prep request
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(post_dict),
+                data : JSON.stringify(req_data),
             };
 
             return ajax_rs('/load/node-set-by-id', req_opts, on_success,
@@ -177,15 +181,13 @@ define([], function() {
          */
         this.load_link_set = function(link_ptr_set, on_success, on_error) {
 
-            // prep request data
-            var post_dict = {
-                'link_ptr_set' : link_ptr_set
-            }
+            var req_data = common_req_ctx();
+            req_data['link_ptr_set'] = link_ptr_set;
 
             // prep request
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(post_dict),
+                data : JSON.stringify(req_data),
             };
 
             return ajax_rs('/load/link-set/by_link_ptr_set', req_opts,
