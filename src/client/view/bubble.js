@@ -21,6 +21,9 @@ function Bubble(raw_parent, radius) {
     circle.className.baseVal = 'circle bubble';
     circle.id = 'bubble';
 
+    d3.select('#bubble').attr('stroke-width', 10)
+                        .attr('filter', 'url(#f_blur__creation-circle)')
+
     // reset bubble on radius change and window resize
     Bacon.combineWith(function (r, _) { return r; }, radius, $(window).asEventStream('resize').toProperty(0)).onValue(
         function (r) {
