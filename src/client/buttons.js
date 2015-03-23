@@ -89,37 +89,28 @@ $('a.save-history').click(function () {
     rz_core.main_graph.history.save_to_file();
 });
 
-function log_scale(max_in, min_out, max_out) {
-    var t = (min_out * max_out - 1) / (min_out + max_out - 2),
-        k = 1 / max_in * Math.log((max_out - t) / (1 - t));
+$('#btn_rzdoc__new').click(function() {
+    var cmd_bar = $('<div class="cmd-bar cmd_bar__rzdoc_new">');
+    cmd_bar.append('<label for="cmd_bar__rzdoc_new__input" id="cmd_bar__rzdoc_new__label">Create Rhizi with title:');
+    cmd_bar.append('<input id="cmd_bar__rzdoc_new__input">');
 
-    return function (x) { return (1 - t) * Math.exp(x * k) + t; };
-}
+    var submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
+    submit_btn.on('click', function() {
+        console.log('a');
+    });
+    submit_btn.appendTo(cmd_bar);
+ 
+    var close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
+    close_btn.on('click', function() {
+        cmd_bar.remove();
+    });
+    close_btn.appendTo(cmd_bar);
+    
+    cmd_bar.insertAfter('.top-bar');
+});
 
-function exp_scale(max_in, min_out, max_out) {
-    var t = (min_out * max_out - 1) / (min_out + max_out - 2),
-        k = 1 / max_in * Math.log((max_out - t) / (1 - t));
-
-    return function (y) { return (1 / k) * Math.log((y - t) / (1 - t)); };
-}
-
-function clip(min, max, v) {
-    return Math.max(min, Math.min(max, v));
-}
-
-var zoom_range = 10,
-    zoom_min = 0.1,
-    zoom_max = 3,
-    zoom_exp_to_linear = exp_scale(zoom_range, zoom_min, zoom_max);
-
-$('#btn_zoom_in').asEventStream('click')
-    .map(1)
-    .merge($('#btn_zoom_out').asEventStream('click').map(-1))
-    .map(function (change) {
-        return clip(-zoom_range, zoom_range, zoom_exp_to_linear(rz_core.main_graph_view.zoom_obj.scale()) + change);
-    })
-    .map(log_scale(zoom_range, zoom_min, zoom_max))
-    .onValue(rz_core.main_graph_view.scale__absolute);
+$('#btn_rzdoc__open').click(function() {
+});
 
 return {'buttons': 'nothing here'};
 }); // define
