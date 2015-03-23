@@ -39,3 +39,19 @@
 	opacity: 0.7;
 	cursor: pointer;
 }
+
+#btn_rzdoc__new {
+    background: url('../img/rzdoc-new.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: $icon-height;
+    width: 32px;
+}
+
+#btn_rzdoc__open {
+    background: url('../img/rzdoc-open.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: $icon-height;
+    width: 32px;
+}
