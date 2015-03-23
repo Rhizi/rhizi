@@ -22,10 +22,14 @@ var rz_config = { // set as a global variable
 {% endblock %}
 {% block content %}
   <div class="top-bar">
-    <span id="top-bar__float-left">
-      <span id="doc-title">Rhizi Prototype</span>
+    <span id="top-bar_float-left">
+      <div id="toolbar__doc">
+        <span id="toolbar__doc_doc-title">Welcome Rhizi</span>
+        <div class="tool_bar_btn" id="btn_rzdoc__new" title="New"></div>
+        <div class="tool_bar_btn" id="btn_rzdoc__open" title="Open"></div>
+      </div>
     </span>
-    <span id="top-bar__float-right">
+    <span id="top-bar_float-right">
       <span class="top-bar__user-area">
            <span id="profile-circle"></span>
            <span class="profile-username">Welcome&nbsp;<span id="user_id">{{ rz_username }}</span>!<span id="btn-logout" class="button">Logout</span></span>
