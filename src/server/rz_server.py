@@ -72,6 +72,8 @@ class Config(object):
         # Flask keys
         cfg['SECRET_KEY'] = ''
 
+        cfg['rzdoc_name__welcome_doc'] = 'Rz Mainpage'
+
         with open(file_path, 'r') as f:
             for line in f:
                 if re.match('(^#)|(\s+$)', line):
