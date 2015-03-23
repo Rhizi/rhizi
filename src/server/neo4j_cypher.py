@@ -9,43 +9,7 @@ import logging
 from enum import Enum
 
 #
-# Tokens
 #
-tok_set__quote = ['`', '\'']
-
-tok_set__paren = ['(', ')', '[', ']', '{', '}']
-
-tok_set__kw__write = [
-                      'create',
-                      'set',
-                      'delete',
-                      'remove',
-                      'foreach'
-                      ]
-
-tok_set__kw__supported = [  # order critical
-                          'create',
-                          'optional match',
-                          'match',
-                          ]
-
-tok_set__kw__unsupported = [  # these are treated as generic clauses, capturing until the next keyword
-                            'delete',
-                            'foreach',
-                            'limit',
-                            'merge',
-                            'order by',
-                            'return',
-                            'remove',
-                            'set',
-                            'skip',
-                            'start',
-                            'union',
-                            'where',
-                            'with',
-                            ]
-
-tok_set__kw__all = tok_set__kw__supported + tok_set__kw__unsupported
 
 log = logging.getLogger('rhizi')
 
