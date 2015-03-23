@@ -135,6 +135,11 @@ class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
 
             # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 
+class QT_Node_Filter__meta_label_set(Query_Transformation):
+    # TODO: impl
+    # 'where 0 = length(filter(_lbl in labels(n) where _lbl =~ \'^__.*$\'))',  # filter nodes with meta labels
+    pass
+
 class DB_Query(object):
 
     def __init__(self, q_arr, param_set={}):

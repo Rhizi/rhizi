@@ -688,7 +688,6 @@ class DBO_rz_clone(DB_op):
         self.skip = 0
 
         q_arr = ['match (n)' if not filter_label else 'match (n:%s)' % (filter_label),
-                 'where 0 = length(filter(_lbl in labels(n) where _lbl =~ \'^__.*$\'))',  # filter nodes with meta labels
                  'with n',
                  'order by n.id',
                  'skip %d' % (self.skip),
