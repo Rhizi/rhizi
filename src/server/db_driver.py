@@ -28,8 +28,7 @@ class DB_Driver_Embedded(DB_Driver_Base):
         pass
 
     def exec_statement_set(self, op):
-        s_set = op.statement_set
-        self.edb.executeCypherQury()
+        pass
 
     def commit_tx(self, op):
         pass
