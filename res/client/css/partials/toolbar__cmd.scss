@@ -1,0 +1,38 @@
+.cmd-bar {
+    background-color: rgb(105, 145, 91);
+    height: $two-baselines;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 100%;
+}
+
+.cmd-bar_btn {
+    cursor: pointer;
+    color: white;
+    padding: 2px 8px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+#cmd_bar__rzdoc_new__input {
+    padding: 2px 8px;
+    margin-left: 10px;
+    vertical-align: middle;
+    width: 200px;
+}
+
+#cmd_bar__rzdoc_new__label {
+    color: white;
+    margin-left: 40px;
+    vertical-align: middle;
+}
+
+#cmd_bar__rzdoc_new__submit {
+    background-color: yellowgreen;
+}
+
+#cmd_bar__rzdoc_close {
+    font-family: fantasy;
+    float: right;
+    margin-right: 10px;
+}
