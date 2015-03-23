@@ -9,11 +9,12 @@ import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
-from neo4j_util import DB_Query, generate_random_id__uuid
-from neo4j_util import DB_result_set
+from neo4j_util import generate_random_id__uuid
 from neo4j_util import cfmt
 import neo4j_util as db_util
 import logging
+from neo4j_cypher import DB_Query, DB_result_set
+import neo4j_cypher
 
 log = logging.getLogger('rhizi')
 
@@ -117,6 +118,7 @@ class DBO_add_node_set(DB_op):
         return n_id_set
 
 class DBO_add_link_set(DB_op):
+
     def __init__(self, link_map):
         """
         @param link_map: is a link-type to link-set map - see model.link
@@ -430,8 +432,8 @@ class DBO_diff_commit__attr(DB_op):
 
             assert len(attr_set_rm) > 0 or len(attr_set_wrt) > 0
 
-            q_arr = ["match (n {match_attr_set})",
-                     "return n.id, n"]  # currently unused
+            q_arr = ["match (n {id: {match_attr_set}.id})", # [!] with match (n {match_attr_set}) neo4j returns: 'Parameter maps cannot be used in MATCH patterns (use a literal map instead'
+                     "return n.id, n"]
             q_param_set = {'match_attr_set': {'id': id_attr}}
 
             if len(attr_set_rm) > 0:
@@ -473,7 +475,6 @@ class DBO_diff_commit__attr(DB_op):
                 q_param_set['attr_set'] = attr_set_wrt
 
             self.add_statement(q_arr, q_param_set)
-
 
     def add_link_rename_statements(self, id_attr, new_label):
         # TODO - where do we sanitize the label name? any better way of doing this?
@@ -546,6 +547,7 @@ class DBO_match_node_id_set(DB_op):
         self.add_statement(q, q_params)
 
 class DBO_match_node_set_by_id_attribute(DBO_match_node_id_set):
+
     def __init__(self, id_set):
         """
         convenience op: load a set of nodes by their 'id' attribute != DB node id
@@ -556,6 +558,7 @@ class DBO_match_node_set_by_id_attribute(DBO_match_node_id_set):
 
 
 class DBO_load_link_set(DB_op):
+
     def __init__(self, link_ptr_set):
         """
         match a set of sets of links by source/target node id attributes
@@ -595,6 +598,7 @@ class DBO_load_link_set(DB_op):
         return DBO_load_link_set(l_ptr_set)
 
 class DBO_match_link_id_set(DB_op):
+
     def __init__(self, filter_label=None, filter_attr_map={}):
         """
         load an id-set of links
@@ -617,6 +621,7 @@ class DBO_match_link_id_set(DB_op):
         self.add_statement(q, q_params)
 
 class DBO_rm_node_set(DB_op):
+
     def __init__(self, id_set, rm_links=False):
         """
         remove node set
@@ -646,6 +651,7 @@ class DBO_rm_node_set(DB_op):
         self.add_statement(q_arr, q_params)
 
 class DBO_rm_link_set(DB_op):
+
     def __init__(self, id_set):
         """
         remove link set
@@ -668,6 +674,7 @@ class DBO_rm_link_set(DB_op):
         self.add_statement(q_arr, q_params)
 
 class DBO_rz_clone(DB_op):
+
     def __init__(self, filter_label=None, limit=16384):
         """
         clone rhizi
