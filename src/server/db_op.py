@@ -49,7 +49,7 @@ class DB_op(object):
         db_q = DB_Query(q_str_or_array, query_params)
         return self.add_db_query(db_q)
 
-    def __iter__(self):
+    def iter__r_set(self):
         """
         iterate over (DB_Query index, DB_Query, result | error)
         where result & error are mutually exclusive
@@ -61,18 +61,20 @@ class DB_op(object):
         r_set_len = len(self.result_set)
 
         #
-        # i: statement index
+        # q_idx: statement index
         # dbq: db query
         # row-set: query result
         #
-        for i, dbq in enumerate(self.statement_set):
+        for q_idx, dbq in enumerate(self.query_set):
             r_set = None
-            if i < r_set_len:  # support partial result recovery
-                r_set = DB_result_set(self.result_set[i])
-            yield (i, dbq, r_set)
+            if q_idx < r_set_len:  # support partial result recovery
+                r_set = DB_result_set(self.result_set[q_idx])
+            yield (q_idx, dbq, r_set)
 
-    def parse_multi_statement_response_data(self, data):
-        pass
+    def __iter__(self):
+        for dbq in self.query_set:
+            yield dbq
+
 
     @property
     def name(self):
@@ -84,8 +86,8 @@ class DB_op(object):
         assists in parsing response data from a single query.
         """
         ret = []
-        for _, _, row_set in self:
-            for row in row_set:
+        for _, _, r_set in self.iter__r_set():
+            for row in r_set:
                 for col in row:
                     ret.append(col)
         return ret
@@ -104,8 +106,8 @@ class DBO_add_node_set(DB_op):
 
     def process_result_set(self):
         n_id_set = []
-        for _, _, row_set in self:
-            for row in row_set:
+        for _, _, r_set in self.iter__r_set():
+            for row in r_set:
                 for ret_dict in row:
                     n_id_set.append(ret_dict['id'])
 
@@ -123,7 +125,7 @@ class DBO_add_link_set(DB_op):
 
     def process_result_set(self):
         l_id_set = []
-        for _, _, r_set in self:
+        for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
                     l_id_set.append(ret_dict['id'])
@@ -151,6 +153,15 @@ class DB_composed_op(DB_op):
     def add_sub_op(self, op):
         self.sub_op_set.append(op)
 
+    def __iter__(self):
+        for s_op in self.sub_op_set:
+            for dbq in s_op:
+                yield dbq
+
+    def iter__sub_op(self):
+        for s_op in self.sub_op_set:
+            yield s_op
+
     def __getattribute__(self, attr):
         """
         intercept 'statement_set' attr get
@@ -160,16 +171,9 @@ class DB_composed_op(DB_op):
 
         return object.__getattribute__(self, attr)
 
-    def __iter__(self):
-        """
-        iterate over sub_op_set
-        """
-        for s_op in self.sub_op_set:
-            yield s_op
-
     def process_result_set(self):
         ret = []
-        for s_op in self:
+        for s_op in self.sub_op_set:
             s_result_set = s_op.process_result_set()
             ret.append(s_result_set)
         return ret
@@ -266,7 +270,7 @@ class DBO_block_chain__commit(DB_op):
 
         hash_parent = None
         hash_child = None
-        for _, _, r_set in self:
+        for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
 
@@ -313,7 +317,7 @@ class DBO_block_chain__list(DB_op):
 
     def process_result_set(self):
         # optimize for single statement
-        for _, _, r_set in self:
+        for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for col in row:
                     return col
@@ -370,29 +374,29 @@ class DBO_diff_commit__topo(DB_composed_op):
         ret_lid_set_add = []
         ret_nid_set_rm = []
         ret_lid_set_rm = []
-        it = iter(self)
+        it = self.iter__sub_op()
 
         if self.n_add_map:
-            for _, _, r_set in it.next():  # iterate over result sets
+            for _, _, r_set in it.next().iter__r_set():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
                         n_id = ret_dict['id']  # see query return statement
                         ret_nid_set_add.append(n_id)
 
         if self.l_add_map:
-            for _, _, r_set in it.next():  # iterate over result sets
+            for _, _, r_set in it.next().iter__r_set():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
                         l_id = ret_dict['id']  # see query return statement
                         ret_lid_set_add.append(l_id)
 
         if self.l_rm_set:
-            for _, _, row_set in it.next():
+            for _, _, row_set in it.next().iter__r_set():
                 for l_id in row_set:
                     ret_lid_set_rm.extend(l_id)
 
         if self.n_rm_set:
-            for _, _, row_set in it.next():
+            for _, _, row_set in it.next().iter__r_set():
                 for n_id in row_set:
                     ret_nid_set_rm.extend(n_id)
 
@@ -495,7 +499,7 @@ class DBO_diff_commit__attr(DB_op):
         # back to the client
 
         # ret = {}
-        # for _, _, r_set in self:
+        # for _, _, r_set in self.iter__r_set():
         #     for row in r_set:
         #         n_id, n = [v for v in row]  # we expect a [n_id, n] array
         #         ret[n_id] = n
@@ -679,8 +683,8 @@ class DBO_rz_clone(DB_op):
     def process_result_set(self):
         ret_n_set = []
         ret_l_set = []
-        for _, _, row_set in self:
-            for row in row_set:
+        for _, _, r_set in self.iter__r_set():
+            for row in r_set:
                 n, n_lbl_set, l_set = row.items()  # see query return statement
 
                 # reconstruct nodes

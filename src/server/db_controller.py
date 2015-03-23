@@ -29,7 +29,7 @@ class DB_Controller:
         """
         if isinstance(op, DB_composed_op):  # composed DB op
             log.debug('exec_composed-op:' + op.name)
-            for sub_op in op:
+            for sub_op in op.iter__sub_op():
                 sub_op_ret = self.exec_op(sub_op)  # recursive call
 
             op_ret = op.process_result_set()

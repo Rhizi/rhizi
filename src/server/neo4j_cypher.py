@@ -148,6 +148,9 @@ class DB_Query(object):
                                           self.param_set,
                                           self.pt_root.str__struct_tree())
 
+    def __iter__(self):
+        for keyword, clause_set in self.pt_root.index__kw_to_clause_set().items():
+            yield keyword, clause_set
 
     def t__add_node_filter__meta_label(self):
 
@@ -188,6 +191,9 @@ class DB_row(object):
     def __init__(self, data):
         self.data = data
 
+    def __iter__(self):
+        for column_val in self.data:
+            yield column_val
 
     def items(self):
         return [x for x in self]
@@ -202,7 +208,12 @@ class DB_result_set(object):
     def __init__(self, data):
         self.data = data
 
+    def __iter__(self):
+        for db_row_dict in self.data['data']:
+            # example: dict: {u'row': [{u'title': u'foo'}]}
+            assert None != db_row_dict['row']
 
+            yield DB_row(db_row_dict['row'])
 
     def items(self):
         return [x for x in self]
