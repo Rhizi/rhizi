@@ -1,12 +1,14 @@
 """
-Cypher language parser
-   - clear logical separation between lexing/parsing still missing
-   - e_XXX class object should be considered internal
+Neo4j DB object
 """
-import re
-from collections import defaultdict
-import logging
+
 from enum import Enum
+from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword, \
+    e_value, e_label_set, p_node, p_path, e_ident, p_rel
+import re
+import logging
+import neo4j_cypher_parser
+from decorator import __call__
 
 #
 # meta label schema
@@ -89,14 +91,14 @@ class Query_Transformation(object):
 
 class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
 
-    def __init__(self, doc_id):
-        self.doc_id = doc_id
+    def __init__(self, rzdoc_id):
+        self.rzdoc_id = rzdoc_id
 
     def apply_to_single_query(self, dbq):
 
-        doc_id_label = META_LABEL__RZ_DOC_PREFIX + self.doc_id
+        rzdoc_id_label = META_LABEL__RZ_DOC_PREFIX + self.rzdoc_id
         rgx__doc_label = re.compile(r'%s[\w\d_]+' % (META_LABEL__RZ_DOC_PREFIX))
-        assert None != rgx__doc_label.match(doc_id_label), 'Illegal doc ID label: %s' % (doc_id_label)  # validate doc label
+        assert None != rgx__doc_label.match(rzdoc_id_label), 'Illegal doc ID label: %s' % (rzdoc_id_label)  # validate doc label
 
         q_type = dbq.query_struct_type
         c_set = []  # clause set
@@ -120,7 +122,7 @@ class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
                     if isinstance(n, e_ident) and n.parent.__class__ in [p_node]:
                         lbl_set = n.spawn_sibling__adjacent(e_label_set)
                         lbl = lbl_set.spawn_child(e_value)
-                        lbl.value = doc_id_label
+                        lbl.value = rzdoc_id_label
 
                 for p_exp in p_node_or_path_set:
                     p_exp.tree_walk__pre(f_visit=f_visit)
@@ -129,7 +131,7 @@ class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
                 for lbl_set in set_of_lbl_set:
                     if isinstance(lbl_set.parent, p_node):
                         lbl = lbl_set.spawn_child(e_value)
-                        lbl.value = doc_id_label
+                        lbl.value = rzdoc_id_label
 
             # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 

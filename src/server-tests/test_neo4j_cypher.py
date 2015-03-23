@@ -114,7 +114,7 @@ class Test_DB_Op(unittest.TestCase):
 
         self.test_T__common(dbq_set, DB_Query.t__add_node_filter__meta_label)
 
-    def test_T__add_node_filter__doc_id_label(self):
+    def test_T__add_node_filter__rzdoc_id_label(self):
         test_label = neo4j_test_util.rand_label()
 
         dbq_set = []

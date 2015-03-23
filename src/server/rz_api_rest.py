@@ -30,7 +30,7 @@ log = logging.getLogger('rhizi')
 
 db_ctl = None  # injected: DB controller
 
-def __context__common():
+def __context__common(rzdoc_id=None):
     """
     build a common rquest context to pass along with a kernel diff commit:
        - set user_name
@@ -40,6 +40,7 @@ def __context__common():
     if session.has_key('username'):
         ret['user_name'] = session['username']
 
+    ret['rzdoc_id'] = rzdoc_id
     return ret
 
 def rzdoc__new():
@@ -66,18 +67,20 @@ def diff_commit__topo():
        - handle success/error outcomes
     """
     def sanitize_input(req):
+        rzdoc_name = request.get_json().get('rzdoc_name')
         topo_diff_dict = request.get_json()['topo_diff']
         topo_diff = Topo_Diff.from_json_dict(topo_diff_dict)
 
         sanitize_input__topo_diff(topo_diff)
-        return topo_diff;
+        return rzdoc_name, topo_diff
 
     try:
-        topo_diff = sanitize_input(request)
+        rzdoc_name, topo_diff = sanitize_input(request)
     except Exception as e:
         return common_resp_handle(error='malformed input')
 
-    ctx = __context__common()
+    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
+    ctx = __context__common(rzdoc_id=rzdoc_id)
     try:
         kernel = flask.current_app.kernel
         _, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
@@ -92,23 +95,26 @@ def diff_commit__attr():
     commit a graph attribute diff
     """
     def sanitize_input(req):
+        rzdoc_name = request.get_json().get('rzdoc_name')
         attr_diff_dict = request.get_json()['attr_diff']
         attr_diff = Attr_Diff.from_json_dict(attr_diff_dict)
 
         sanitize_input__attr_diff(attr_diff)
-        return attr_diff;
+        
+        return rzdoc_name, attr_diff;
 
     def on_error(e):
         # handle DB ERRORS, eg. name attr change error
         return common_resp_handle(error='error occurred')
 
     try:
-        attr_diff = sanitize_input(request)
+        rzdoc_name, attr_diff = sanitize_input(request)
         validate_obj__attr_diff(attr_diff)
     except Exception as e:
         return common_resp_handle(error='malformed input')
 
-    ctx = __context__common()
+    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
+    ctx = __context__common(rzdoc_id=rzdoc_id)
     try:
         kernel = flask.current_app.kernel
         _, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
