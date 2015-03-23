@@ -28,27 +28,6 @@ class DB_op(object):
         self.tx_id = None
         self.tx_commit_url = None  # cached from response to tx begin
 
-    def parse_tx_id(self, tx_commit_url):
-        m = re.search('/(?P<id>\d+)/commit$', tx_commit_url)
-        id_str = m.group('id')
-        self.tx_id = int(id_str)
-
-    def add_db_query(self, db_q):
-
-        assert type(db_q) == DB_Query
-
-        self.statement_set.append(db_q)
-        return len(self.statement_set)
-
-    def add_statement(self, q_str_or_array, query_params={}):
-        """
-        add a DB query language statement
-        
-        @return: statement index (zero based)
-        """
-        db_q = DB_Query(q_str_or_array, query_params)
-        return self.add_db_query(db_q)
-
     def iter__r_set(self):
         """
         iterate over (DB_Query index, DB_Query, result | error)
@@ -75,10 +54,28 @@ class DB_op(object):
         for dbq in self.query_set:
             yield dbq
 
+    def add_db_query(self, db_q):
+
+        assert type(db_q) == DB_Query
+
+        self.query_set.append(db_q)
+        return len(self.query_set)
+
+    def add_statement(self, q_str_or_array, query_params={}):
+        """
+        add a DB query language statement
+        
+        @return: statement index (zero based)
+        """
+        db_q = DB_Query(q_str_or_array, query_params)
+        return self.add_db_query(db_q)
 
     @property
     def name(self):
         return self.__class__.__name__
+
+    def parse_multi_statement_response_data(self, data):
+        pass
 
     def process_result_set(self):
         """
@@ -92,7 +89,13 @@ class DB_op(object):
                     ret.append(col)
         return ret
 
+    def parse_tx_id(self, tx_commit_url):
+        m = re.search('/(?P<id>\d+)/commit$', tx_commit_url)
+        id_str = m.group('id')
+        self.tx_id = int(id_str)
+
 class DBO_add_node_set(DB_op):
+
     def __init__(self, node_map):
         """
         DB op: add node set
