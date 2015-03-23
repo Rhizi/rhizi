@@ -49,6 +49,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
 
         // TODO: interaction between the hack above and this
         model_core.init(rz_config);
+        rz_core.init();
         textanalysis.init(rz_core.main_graph);
         search.init();
         selection.setup_toolbar(rz_core.main_graph);

@@ -10,8 +10,8 @@ var addednodes = [],
     deliverables = [],
     circle, // <-- should not be module globals.
     scrollValue = 0,
-    main_graph,
     edit_graph,
+    main_graph,
     main_graph_view,
     edit_graph_view,
     root_element_id_to_graph_view;
@@ -49,9 +49,6 @@ function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
 }
 
-main_graph = new model_graph.Graph({temporary: false, base: null});
-edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
-
 var initDrawingArea = function () {
 
     function zoom() {
@@ -59,6 +56,9 @@ var initDrawingArea = function () {
         d3.event.sourceEvent != null && d3.event.sourceEvent.stopPropagation();
         updateZoomProgress(true);
     }
+
+    main_graph = new model_graph.Graph({temporary: false, base: null});
+    edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
 
     // TODO: we are listening both on graph.diffBus and selection.selectionChangedBus,
     //  but the relation is actually:
@@ -139,7 +139,7 @@ var initDrawingArea = function () {
             svgInput: svgInput,
             // FIXME: good place to animate bubble radius
             bubble_property: bubble_property,
-        });
+    });
     edit_graph_view = graph_view.GraphView({
             parent_element: nozoom_g,
             graph_name: "edit",
@@ -152,12 +152,23 @@ var initDrawingArea = function () {
             node_text_dx: node_text_dx,
             node_text_dy: node_text_dy,
             bubble_property: bubble_property,
-        });
+    });
 
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
     if (rz_config.backend_enabled) {
         main_graph.load_from_backend();
     }
+
+    root_element_id_to_graph_view = {};
+    root_element_id_to_graph_view[main_graph_view.root_element.id] =  main_graph_view;
+    root_element_id_to_graph_view[edit_graph_view.root_element.id] = edit_graph_view;
+
+    // publish vars
+    published_var_dict.root_element_id_to_graph_view = root_element_id_to_graph_view;
+    published_var_dict.main_graph = main_graph;
+    published_var_dict.main_graph_view = main_graph_view;
+    published_var_dict.edit_graph = edit_graph;
+    published_var_dict.edit_graph_view = edit_graph_view;
 }
 
 /**
@@ -170,8 +181,10 @@ function init_ws_connection(){
     }
 }
 
-initDrawingArea();
-init_ws_connection();
+function init() {
+    initDrawingArea();
+    init_ws_connection();
+}
 
 /**
  * find the visual element counterpart of a given model object. This relies on
@@ -217,28 +230,30 @@ function canvas_handler_dblclick(){
     });
 }
 
-function update_view__graph(relayout)
-{
+function update_view__graph(relayout) {
     main_graph_view.update_view(relayout);
     edit_graph_view.update_view(relayout);
 }
 
-root_element_id_to_graph_view = {};
-root_element_id_to_graph_view[main_graph_view.root_element.id] =  main_graph_view;
-root_element_id_to_graph_view[edit_graph_view.root_element.id] = edit_graph_view;
+function load_from_json(result) {
+    main_graph.load_from_json(result);
+    recenterZoom();
+    update_view__graph(true);
+}
 
-return {
-    main_graph: main_graph,
-    edit_graph: edit_graph,
-    root_element_id_to_graph_view: root_element_id_to_graph_view,
-    main_graph_view: main_graph_view,
-    edit_graph_view: edit_graph_view,
-    load_from_json: function(result) {
-        main_graph.load_from_json(result);
-        recenterZoom();
-        update_view__graph(true);
-    },
-    update_view__graph: update_view__graph,
-};
+var published_var_dict = {
+    // functions
+    init: init,
+    load_from_json: load_from_json,
+    update_view__graph : update_view__graph,
 
+    // vars, set by init
+    main_graph: undefined, 
+    main_graph_view: undefined,
+    edit_graph: undefined,
+    edit_graph_view: undefined,
+    root_element_id_to_graph_view: undefined,
+}
+
+return published_var_dict;
 }); /* close define call */
