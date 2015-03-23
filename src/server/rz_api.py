@@ -18,9 +18,10 @@ from db_op import DBO_match_node_set_by_id_attribute
 from db_op import DBO_rz_clone
 from model.graph import Topo_Diff
 from model.model import Link
-from rz_api_common import __sanitize_input
+from rz_api_common import __sanitize_input, map_rzdoc_name_to_rzdoc_id
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_rest import common_resp_handle
+from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
 
 
 log = logging.getLogger('rhizi')
@@ -124,7 +125,7 @@ def diff_commit__set():
     commit a diff set
     """
     def sanitize_input(req):
-        diff_set_dict = request.get_json()['diff_set']
+        diff_set_dict = req.get_json()['diff_set']
         topo_diff_dict = diff_set_dict['__diff_set_topo'][0]
         topo_diff = Topo_Diff.from_json_dict(topo_diff_dict)
 
