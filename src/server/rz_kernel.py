@@ -9,6 +9,7 @@ import db_controller
 from db_op import DBO_diff_commit__attr, DBO_block_chain__commit
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
+from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
 
 
 log = logging.getLogger('rhizi')
@@ -35,7 +36,12 @@ class RZ_Kernel(object):
            
         @return: a tuple containing the input diff and the result of it's commit
         """
+        rzdoc_id = ctx.get('rzdoc_id')
+        assert rzdoc_id, 'diff_commit__topo: missing doc id'
+
         op = DBO_diff_commit__topo(topo_diff)
+        op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
+
         try:
             op_ret = self.db_ctl.exec_op(op)
 
@@ -56,7 +62,12 @@ class RZ_Kernel(object):
            
         @return: a tuple containing the input diff and the result of it's commit
         """
+        rzdoc_id = ctx.get('rzdoc_id')
+        assert rzdoc_id, 'diff_commit__topo: missing doc id'
+
         op = DBO_diff_commit__attr(attr_diff)
+        op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
+
         try:
             op_ret = self.db_ctl.exec_op(op)
 
