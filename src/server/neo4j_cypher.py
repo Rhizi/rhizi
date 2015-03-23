@@ -143,6 +143,10 @@ class DB_Query(object):
     def __str__(self):
         return self.pt_root.str__cypher_query()
 
+    def __repr__(self):
+        return 'q: %s, params: %s\n%s' % (self.pt_root.str__cypher_query(),
+                                          self.param_set,
+                                          self.pt_root.str__struct_tree())
 
 
     def t__add_node_filter__meta_label(self):
