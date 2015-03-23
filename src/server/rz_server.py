@@ -218,6 +218,7 @@ def init_rest_interface(cfg, flask_webapp):
     rest_entry_set = [
                       # REST endpoints
                       rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
+                      rest_entry('/graph/clone', rz_api_rest.rz_clone),
                       rest_entry('/graph/clone', rz_api.rz_clone),
                       rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
                       rest_entry('/graph/diff-commit-topo', rz_api_rest.diff_commit__topo),

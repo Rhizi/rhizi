@@ -14,6 +14,8 @@ from flask import request
 from flask import send_from_directory
 from flask import session
 from flask import url_for
+from flask import current_app
+
 import flask
 import logging
 import traceback
@@ -24,6 +26,8 @@ from rz_api_common import sanitize_input__attr_diff, map_rzdoc_name_to_rzdoc_id
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_common import validate_obj__attr_diff
 from rz_req_handling import common_resp_handle
+from db_op import DBO_rz_clone
+from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
 
 
 log = logging.getLogger('rhizi')
@@ -42,6 +46,27 @@ def __context__common(rzdoc_id=None):
 
     ret['rzdoc_id'] = rzdoc_id
     return ret
+
+def rz_clone():
+
+    def sanitize_input(req):
+        rzdoc_name = req.get_json().get('rzdoc_name')
+        return rzdoc_name
+
+    def on_success(topo_diff):
+        # serialize Topo_Diff before including in response
+        topo_diff_json = topo_diff.to_json_dict()
+        return common_resp_handle(topo_diff_json)
+
+    rzdoc_name = sanitize_input(request)
+    if None == rzdoc_name: # load welcome doc by default
+        rzdoc_name = current_app.rz_config.rzdoc_name__mainpage
+
+    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
+
+    op = DBO_rz_clone()
+    op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
+    return __common_exec(op, on_success=on_success)
 
 def rzdoc__new():
     # TODO: add doc node, set doc label, associate user-doc
