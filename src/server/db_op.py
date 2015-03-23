@@ -681,7 +681,8 @@ class DBO_rz_clone(DB_op):
                  'optional match (n)-[r]->(m)',
                  'return n,labels(n),collect([m.id, r, type(r)])']
 
-        self.add_statement(q_arr)
+        db_q = DB_Query(q_arr)
+        self.add_db_query(db_q)
 
     def process_result_set(self):
         ret_n_set = []

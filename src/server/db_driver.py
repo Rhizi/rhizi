@@ -27,7 +27,7 @@ class DB_Driver_Embedded(DB_Driver_Base):
     def begin_tx(self, op):
         pass
 
-    def exec_statement_set(self, op):
+    def exec_query_set(self, op):
         pass
 
     def commit_tx(self, op):
@@ -44,7 +44,7 @@ class DB_Driver_REST(DB_Driver_Base):
             #
             # [!] neo4j seems picky about receiving an additional empty statement list
             #
-            data = db_util.statement_set_to_REST_form([])  # open TX with empty statement_set
+            data = db_util.db_query_set_to_REST_form([])  # open TX with empty query_set
             ret = db_util.post_neo4j(tx_open_url, data)
             tx_commit_url = ret['commit']
             op.parse_tx_id(tx_commit_url)
@@ -53,19 +53,19 @@ class DB_Driver_REST(DB_Driver_Base):
         except Exception as e:
             raise Exception('failed to open transaction: ' + e.message)
 
-    def exec_statement_set(self, op):
+    def exec_query_set(self, op):
 
         tx_url = "{0}/{1}".format(self.tx_base_url, op.tx_id)
-        statement_set = db_util.statement_set_to_REST_form(op.statement_set)
+        q_set = db_util.db_query_set_to_REST_form(op.query_set)
 
         try:
-            post_ret = db_util.post_neo4j(tx_url, statement_set)
+            post_ret = db_util.post_neo4j(tx_url, q_set)
             op.result_set = post_ret['results']
             op.error_set = post_ret['errors']
             if 0 != len(op.error_set):
                 raise Neo4JException(op.error_set)
 
-            self.log_committed_queries(statement_set)
+            self.log_committed_queries(q_set)
         except Neo4JException as e:
             # NOTE: python 2.7 loses the stack when reraising the exception.
             # python 3 does the right thing, but gevent doesn't support it yet.
@@ -84,7 +84,7 @@ class DB_Driver_REST(DB_Driver_Base):
             #
             # [!] neo4j seems picky about receiving an additional empty statement list
             #
-            data = db_util.statement_set_to_REST_form([])  # close TX with empty statement_set
+            data = db_util.db_query_set_to_REST_form([])  # close TX with empty query_set
             ret = db_util.post(tx_commit_url, data)
 
             log.debug('tx-commit: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))

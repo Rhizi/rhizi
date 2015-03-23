@@ -37,7 +37,7 @@ class DB_Controller:
 
         try:  # non-composed DB op
             self.db_driver.begin_tx(op)
-            self.db_driver.exec_statement_set(op)
+            self.db_driver.exec_query_set(op)
             self.db_driver.commit_tx(op)
 
             op_ret = op.process_result_set()
