@@ -33,7 +33,7 @@ class Query_Struct_Type(Enum):
     rw = 4
 
     def __add__(self, other):
-        if self == other or self == pt_root.Query_Struct_Type.rw:
+        if self == other or self == Query_Struct_Type.rw:
             return self
         if self == Query_Struct_Type.unkown:
             return other
@@ -49,6 +49,13 @@ class Query_Struct_Type(Enum):
         if self == Query_Struct_Type.rw: return 'rw'
         assert False
 
+    def __eq__(self, other):  # allow comparing against r/w/rw strings
+        if other in ['r', 'w', 'rw']:
+            if self == Query_Struct_Type.r and other == 'r': return True
+            if self == Query_Struct_Type.w and other == 'w': return True
+            if self == Query_Struct_Type.rw and other == 'rw': return True
+        if not isinstance(other, Query_Struct_Type): return False
+        return super(Query_Struct_Type, self).__eq__(other)
 
 
 class Query_Transformation(object):
@@ -181,8 +188,18 @@ class DB_Query(object):
         """
         calc query_structure_type: read|write|read-write
         """
+        r = False
+        w = False
+        for kw, _clause_set in self.pt_root.index__kw_to_clause_set().items():
+            if kw in neo4j_cypher_parser.tok_set__kw__write:
+                w = True
             if kw == 'match':
+                r = True
 
+        if r and w: return Query_Struct_Type.rw
+        if r and not w: return Query_Struct_Type.r
+        if w and not r: return Query_Struct_Type.w
+        return Query_Struct_Type.unkown
 
     def str__cypher_query(self):
         return self.pt_root.str__cypher_query()
