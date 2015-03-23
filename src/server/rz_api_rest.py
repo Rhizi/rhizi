@@ -20,7 +20,7 @@ import traceback
 
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
-from rz_api_common import sanitize_input__attr_diff
+from rz_api_common import sanitize_input__attr_diff, map_rzdoc_name_to_rzdoc_id
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_common import validate_obj__attr_diff
 from rz_req_handling import common_resp_handle
