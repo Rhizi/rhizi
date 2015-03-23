@@ -45,3 +45,6 @@ def validate_obj__attr_diff(attr_diff):
         for attr_name in node_attr_diff_set['__attr_write'].keys():
             if 'id' == attr_name:
                 raise Exception('validation error: Attr_Diff: forbidden attribute change: \'id\', n_id: ' + n_id)
+
+def map_rzdoc_name_to_rzdoc_id(rzdoc_name):
+    return rzdoc_name.lower().replace(' ', '_')

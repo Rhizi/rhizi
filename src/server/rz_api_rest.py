@@ -42,6 +42,23 @@ def __context__common():
 
     return ret
 
+def rzdoc__new():
+    # TODO: add doc node, set doc label, associate user-doc
+    
+    def sanitize_input(req):
+        return request.get_json().get('rzdoc_name')
+
+    ctx = __context__common()
+    rzdoc_name = sanitize_input(request)
+    try:
+        kernel = flask.current_app.kernel
+        rzdoc = kernel.rzdoc__new(rzdoc_name, ctx)
+        return common_resp_handle(data=rzdoc)
+    except Exception as e:
+        log.error(e.message)
+        log.error(traceback.print_exc())
+        return common_resp_handle(error=e)
+
 def diff_commit__topo():
     """
     REST API wrapper around diff_commit__topo():

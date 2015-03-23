@@ -733,3 +733,37 @@ class DBO_rz_clone(DB_op):
         topo_diff = Topo_Diff(node_set_add=ret_n_set,
                               link_set_add=ret_l_set)
         return topo_diff
+
+class DBO_rzdoc__new(DB_op):
+
+    def __init__(self, rzdoc):
+        """
+        create a new rhizi doc
+        """
+        super(DBO_rzdoc__new, self).__init__()
+
+        q_arr = ['merge (n:%s {attr_dict})' % (neo4j_cypher.META_LABEL__RZ_DOC),
+                 'return n']
+
+        rzdoc_id = rzdoc.id
+        rzdoc_name = rzdoc.name
+        param_set = {'attr_dict': {'id': rzdoc_id, 'name': rzdoc_name}}
+
+        db_q = DB_Query(q_arr, param_set)
+        self.add_db_query(db_q)
+
+class DBO_rzdoc__lookup_by_name(DB_op):
+
+    def __init__(self, name):
+        """
+        create a new rhizi doc
+        """
+        super(DBO_rzdoc__new, self).__init__()
+
+        q_arr = ['match (n:%s {name: {name}})' % (neo4j_cypher.META_LABEL__RZ_DOC),
+                 'return n']
+
+        param_set = {'name': name}
+        db_q = DB_Query(q_arr, param_set)
+        self.add_db_query(db_q)
+
