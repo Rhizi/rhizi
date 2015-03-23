@@ -1,19 +1,9 @@
-define(['jquery', 'view/selection'],
-function($,             selection)
-{
-var rz_core; // circular dependency
-
-function get_rz_core()
-{
-    if (rz_core === undefined) {
-        rz_core = require('rz_core');
-    }
-    return rz_core;
-}
+define(['jquery', 'rz_core', 'view/selection'],
+function($, rz_core, selection) {
 
 function get_graph_view(element)
 {
-    var dict = get_rz_core().root_element_id_to_graph_view;
+    var dict = rz_core.root_element_id_to_graph_view;
 
     while (undefined !== element && null !== element && undefined === dict[element.id]) {
         element = element.parentElement;
@@ -36,7 +26,7 @@ function install() {
             search.focus();
         }
         if (e.ctrlKey && 'a' === key && e.target === document.body) {
-            selection.update(get_rz_core().main_graph.nodes(), false);
+            selection.update(rz_core.main_graph.nodes(), false);
             handled = true;
         }
         if (e.ctrlKey && 'z' === key && e.target.nodeName !== 'INPUT') {
