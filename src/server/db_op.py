@@ -22,7 +22,7 @@ class DB_op(object):
     Transaction (tx) wrapped DB operation possibly composing multiple DB queries
     """
     def __init__(self):
-        self.statement_set = []
+        self.query_set = []
         self.result_set = []
         self.error_set = None
         self.tx_id = None
@@ -167,9 +167,9 @@ class DB_composed_op(DB_op):
 
     def __getattribute__(self, attr):
         """
-        intercept 'statement_set' attr get
+        intercept 'query_set' attr get
         """
-        if attr == 'statement_set':
+        if attr == 'query_set':
             self.__assert_false_statement_access()
 
         return object.__getattribute__(self, attr)
