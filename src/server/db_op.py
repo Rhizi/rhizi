@@ -215,7 +215,7 @@ class DBO_block_chain__commit(DB_op):
 
         q_arr = ['match (old_head:__HEAD:__Commit)',
                  'create (new_head:__HEAD:__Commit {commit_attr})',
-                 'create new_head-[r:__Parent {link_attr}]->old_head',
+                 'create (new_head)-[r:__Parent {link_attr}]->(old_head)',
                  'remove old_head:__HEAD',
                  'set new_head.ts_created=timestamp()',
                  'return {head_parent_commit: old_head, head_commit: new_head}'
@@ -244,7 +244,7 @@ class DBO_block_chain__commit(DB_op):
         q_arr = ['merge (n:__USER {user_name: \'%s\'})' % ctx.get('user_name'),
                  'with n',
                  'match (m:__HEAD)',  # FIXME: specify commit-label index
-                 'create m-[r:`__Authored-by`]->(n)',
+                 'create (m)-[r:`__Authored-by`]->(n)',
                  ]
         self.add_statement(q_arr)
 
@@ -485,11 +485,11 @@ class DBO_diff_commit__attr(DB_op):
         # Not doing so to avoid roundtrip - the following doesn't require knowing
         # the replaced label.
 
-        q_create_new = ["match n-[l_old {id: {id}}]->m",
-                        "create n-[l_new:%s]->m set l_new=l_old" % db_util.quote__backtick(new_label),
+        q_create_new = ["match (n)-[l_old {id: {id}}]->(m)",
+                        "create (n)-[l_new:%s]->(m) set l_new=l_old" % db_util.quote__backtick(new_label),
                         "return l_new.id, {id: l_new.id, name: type(l_new)}",  # currently unused
                         ]
-        q_delete_old = ["match n-[l_old {id: {id}}]->m",
+        q_delete_old = ["match (n)-[l_old {id: {id}}]->(m)",
                         "where type(l_old)<>'%s' delete l_old" % new_label,
                         ]
         q_param_set = {'id': id_attr}
