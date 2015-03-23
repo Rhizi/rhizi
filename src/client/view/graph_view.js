@@ -247,6 +247,9 @@ function GraphView(spec) {
         d3.select(this).classed("fixed", true); // TODO: this is broken since we override all the classes. Need to switch to class addition/removal (i.e. use classed for everything) or set class in one location (so here just set a value on the node, not the element)
         if (d.dragstart.clientX - d3.event.sourceEvent.clientX != 0 ||
             d.dragstart.clientY - d3.event.sourceEvent.clientY != 0) {
+            d.fixed = true;
+            d.px = d.x;
+            d.py = d.y;
             tick();
             if (force_enabled) {
                 force.resume();
