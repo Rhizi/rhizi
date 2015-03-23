@@ -100,12 +100,23 @@ def load_link_set_by_link_ptr_set():
 
 def rz_clone():
 
+    def sanitize_input(req):
+        rzdoc_name = req.get_json().get('rzdoc_name')
+        return rzdoc_name
+
     def on_success(topo_diff):
         # serialize Topo_Diff before including in response
         topo_diff_json = topo_diff.to_json_dict()
         return common_resp_handle(topo_diff_json)
 
+    rzdoc_name = sanitize_input(request)
+    if None == rzdoc_name: # load welcome doc by default
+        rzdoc_name = current_app.rz_config.rzdoc_name__mainpage
+
+    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
+
     op = DBO_rz_clone()
+    op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
     return __common_exec(op, on_success=on_success)
 
 def diff_commit__set():
