@@ -11,8 +11,9 @@ from neo4j_util import meta_attr_list_to_meta_attr_map
 import logging
 from rz_server import Config, init_log
 import re
-from neo4j_cypher import Cypher_Parser
+from neo4j_cypher import Cypher_Parser, DB_Query, QT_Node_Filter__Doc_ID_Label
 import neo4j_cypher
+import sys
 
 class Test_DB_Op(unittest.TestCase):
 
@@ -53,12 +54,12 @@ class Test_DB_Op(unittest.TestCase):
     def test_cypher_exp_parsing(self):
 
         def validate_parse_tree(pt, q_str):
-            self.log.debug('\n'.join(['input string: %s' % (q_str),
-                                      'output query: %s' % (pt.str__cypher_query()),
+            self.log.debug('\n'.join([' q: %s' % (q_str),
+                                      'q\': %s' % (pt.str__cypher_query()),
                                       'struct: \n%s' % (pt.str__struct_tree()),
                                       ]))
 
-            if pt.str__cypher_query() != q_str: # test for precise query string match
+            if pt.str__cypher_query() != q_str:  # test for precise query string match
                 self.fail()
 
         valid_exp_set = []
@@ -94,11 +95,60 @@ class Test_DB_Op(unittest.TestCase):
             if isinstance(op, DB_composed_op): continue
             for _idx, db_q, _db_q_result in op:
                 q_str = db_q.q_str
-                validate_parse_tree(db_q.q_tree, q_str)
+                validate_parse_tree(db_q.pt_root, q_str)
                 valid_exp_set += [q_str]
 
         self.log.debug('-' * 80 + '\npassed expression count: %d:\n\n%s' % (len(valid_exp_set),
                                                                           '\n'.join(valid_exp_set)))
+
+
+    def test_T__add_node_filter__meta_label(self):
+        test_label = neo4j_test_util.rand_label()
+
+        dbq_set = []
+        op_set = self.gen_full_db_op_set(test_label)
+        for op in op_set:
+            if isinstance(op, DB_composed_op): continue  # sub-queries tested instead
+            for _idx, db_q, _db_q_result in op:
+                dbq_set.append(db_q)
+
+        self.test_T__common(dbq_set, DB_Query.t__add_node_filter__meta_label)
+
+    def test_T__add_node_filter__doc_id_label(self):
+        test_label = neo4j_test_util.rand_label()
+
+        dbq_set = []
+        op_set = self.gen_full_db_op_set(test_label)
+        for op in op_set:
+            if isinstance(op, DB_composed_op): continue  # sub-queries tested instead
+            for dbq in op:
+                dbq_set.append(dbq)
+
+        q_arr = ['match (n)-[l_old {id: {id}}]->(m)',
+                 'where type(l_old)<>\'is not\'',
+                 'delete l_old, params: {\'id\': u\'9fbhxwcn\'}']
+        dbq = DB_Query(q_arr)
+        dbq_set = [dbq]
+
+        #dbq_set = dbq_set[:1]
+        self.test_T__common(dbq_set, QT_Node_Filter__Doc_ID_Label, test_label)
+
+    def test_T__common(self, dbq_set, T, *args):
+        self.log.debug('\n')
+
+        for db_q in dbq_set:
+            q_str__pre = db_q.q_str
+
+            try:
+                t = T(*args) # instantiate transformation
+                t(db_q)
+                q_str__post = db_q.pt_root.str__cypher_query()
+                self.log.debug('test case:\n\t q: %s\n\tq\': %s\n' % (q_str__pre,
+                                                                      q_str__post))
+            except Exception as e:
+                self.log.debug('transformation failed:\n\tq: %s\n%r' % (q_str__pre,
+                                                                        db_q.pt_root))
+                self.log.exception(e)
 
 def main():
     unittest.main(defaultTest='Test_DB_Op.test_cypher_exp_parsing', verbosity=2)
