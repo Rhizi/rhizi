@@ -4,6 +4,7 @@ import string
 import uuid
 
 from db_op import DB_op, DBO_cypher_query
+import neo4j_cypher
 
 class DBO_flush_db(DBO_cypher_query):
     """
@@ -66,3 +67,6 @@ def rand_label(prefix='T_', length=8):
     ret = ''.join([choice(string.ascii_lowercase)] + [choice(char_set) for _ in range(length - 1)])
     ret = prefix + ret
     return ret
+
+def rand_label__doc(length=8):
+    return rand_label(prefix=neo4j_cypher.META_LABEL__RZ_DOC_PREFIX, length=length)
