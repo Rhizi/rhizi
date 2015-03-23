@@ -518,8 +518,10 @@ class DBO_load_node_set_by_DB_id(DB_op):
         @return: loaded node set or an empty set if no match was found
         """
         super(DBO_load_node_set_by_DB_id, self).__init__()
-        q = "start n=node({id_set}) return n"
-        self.add_statement(q, { 'id_set': id_set})
+        q_arr = ['start n=node({id_set})',
+                 'return n'
+                 ]
+        self.add_statement(q_arr, { 'id_set': id_set})
 
 class DBO_match_node_id_set(DB_op):
 
@@ -567,16 +569,22 @@ class DBO_load_link_set(DB_op):
 
         for l_ptr in link_ptr_set:
             if not l_ptr.src_id:
-                q = "match ()-[r]->({id: {dst_id}}) return r"
+                q_arr = ['match ()-[r]->({id: {dst_id}})',
+                         'return r'
+                        ]
                 q_params = {'dst_id': l_ptr.dst_id}
             elif not l_ptr.dst_id:
-                q = "match ({id: {src_id}})-[r]->() return r"
+                q_arr = ['match ({id: {src_id}})-[r]->()',
+                         'return r'
+                         ]
                 q_params = {'src_id': l_ptr.src_id}
             else:
-                q = "match ({id: {src_id}})-[r]->({id: {dst_id}}) return r"
+                q_arr = ['match ({id: {src_id}})-[r]->({id: {dst_id}})',
+                         'return r'
+                         ]
                 q_params = {'src_id': l_ptr.src_id, 'dst_id': l_ptr.dst_id}
 
-            self.add_statement(q, q_params)
+            self.add_statement(q_arr, q_params)
 
     @staticmethod
     def init_from_link_ptr(l_ptr):
