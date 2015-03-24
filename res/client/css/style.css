@@ -867,7 +867,11 @@ p {
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
   opacity: 0.2;
+  pointer-events: none;
   -webkit-filter: blur(10px); }
+
+.linklabel.notselected {
+  display: none; }
 
 .node.first-selected .circle {
   stroke: #fad900;
