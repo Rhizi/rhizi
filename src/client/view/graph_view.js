@@ -993,7 +993,6 @@ function GraphView(spec) {
                     var d_src = graph.degree(link.__src),
                         d_dst = graph.degree(link.__dst),
                         ret = (d_src + d_dst) * 10 + 10;
-                    console.log(d_src + ', ' + d_dst + ', ' + ret);
                     return ret;
                   })
                   .size([w, h])
