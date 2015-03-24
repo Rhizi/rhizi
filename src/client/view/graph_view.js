@@ -989,6 +989,13 @@ function GraphView(spec) {
                   .distance(240)
                   .gravity(0.12)
                   .charge(-1800)
+                  .linkDistance(function (link, i) {
+                    var d_src = graph.degree(link.__src),
+                        d_dst = graph.degree(link.__dst),
+                        ret = (d_src + d_dst) * 10 + 10;
+                    console.log(d_src + ', ' + d_dst + ', ' + ret);
+                    return ret;
+                  })
                   .size([w, h])
                   .on("tick", pushRedraw)
                   .on("end", record_position_to_local_storage)
