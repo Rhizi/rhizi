@@ -12,6 +12,7 @@ function Graph(spec) {
 
     var id_to_node_map = {},
         id_to_link_map = {},
+        id_to_link_id_set = {},
         diffBus = new Bacon.Bus(),
         cached_links,
         invalidate_links,
@@ -41,6 +42,15 @@ function Graph(spec) {
             f(id_to_node_map[node_key]);
         }
     }
+
+    function key_count(obj) {
+        return _.keys(obj).length;
+    }
+
+    var degree = function (node) {
+        return key_count(id_to_link_id_set[node.id]);
+    }
+    this.degree = degree;
 
     /**
      * add node if no previous node is present whose id equals that of the node being added
@@ -166,25 +176,38 @@ function Graph(spec) {
     var _node_remove_helper = function (node_id) {
         util.assert(node_id, "missing node id");
         delete id_to_node_map[node_id];
+        delete id_to_link_id_set[node_id];
         invalidate_nodes = true;
     }
 
     var _node_add_helper = function (node) {
         util.assert(node.id, "missing node id");
         id_to_node_map[node.id] = node;
+        id_to_link_id_set[node.id] = [];
         invalidate_nodes = true;
     }
 
     var _link_remove_helper = function (link_id) {
+        var link = id_to_link_map[link_id],
+            src_id = link.__src.id,
+            dst_id = link.__dst.id;
+
         util.assert(link_id, "missing link id");
+        util.assert(link, "non existent link");
+        delete id_to_link_id_set[src_id][dst_id];
+        delete id_to_link_id_set[dst_id][src_id];
         delete id_to_link_map[link_id];
         util.assert(id_to_link_map[link_id] === undefined, "delete failed?!");
         invalidate_links = true;
     }
 
     var _link_add_helper = function (link) {
+        var src_id = link.__src.id,
+            dst_id = link.__dst.id;
         util.assert(link.id, "missing link id");
         id_to_link_map[link.id] = link;
+        id_to_link_id_set[src_id][dst_id] = 1;
+        id_to_link_id_set[dst_id][src_id] = 1;
         invalidate_links = true;
     }
 
