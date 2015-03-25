@@ -1,8 +1,9 @@
 from flask import jsonify
 from flask import make_response
+from werkzeug.wrappers import BaseResponse as Response
 import json
 
-def common_resp_handle(data=None, error=None, status=200):
+def __common_resp_handle(data, error, status):
     """
     common response handling:
        - add common response headers
@@ -24,7 +25,6 @@ def common_resp_handle(data=None, error=None, status=200):
     else:
         error_str = str(error)  # convert any Exception objects to serializable form
 
-
     ret_data = __response_wrap(data, error_str)
     resp = Response(ret_data, mimetype='application/json')
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -33,6 +33,19 @@ def common_resp_handle(data=None, error=None, status=200):
 
     # more response processing
     return resp
+
+
+def common_resp_handle__success(data=None, error=None, status=200):
+    return __common_resp_handle(data, error, status)
+
+def common_resp_handle__redirect(data=None, error=None, status=300):
+    return __common_resp_handle(data, error, status)
+
+def common_resp_handle__client_error(data=None, error=None, status=400):
+    return __common_resp_handle(data, error, status)
+
+def common_resp_handle__server_error(data=None, error=None, status=500):
+    return __common_resp_handle(data, error, status)
 
 def make_response__json(status=200, data={}):
     """
