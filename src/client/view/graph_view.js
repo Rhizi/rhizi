@@ -577,8 +577,7 @@ function GraphView(spec) {
 
     function force__load_graph() {
         force.nodes(graph.nodes().filter(node__is_shown))
-             .links(graph.links().filter(link__is_shown))
-             .start();
+             .links(graph.links().filter(link__is_shown));
     }
 
     function segment_in_segment(inner_low, inner_high, outer_low, outer_high)
