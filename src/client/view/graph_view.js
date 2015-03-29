@@ -882,8 +882,10 @@ function GraphView(spec) {
             var d_val,
                 ghost;
 
-            util.assert(d.__src && d.__dst && d.__src.x && d.__src.y &&
-                        d.__dst.x && d.__dst.y, "missing src and dst points");
+            util.assert(d.__src && d.__dst &&
+                        d.__src.x !== undefined && d.__src.y !== undefined &&
+                        d.__dst.x !== undefined && d.__dst.y !== undefined,
+                        "missing src and dst points");
 
             var src = same_zoom(d.__src),
                 dst = same_zoom(d.__dst);
