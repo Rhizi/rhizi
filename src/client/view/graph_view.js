@@ -222,6 +222,46 @@ function GraphView(spec) {
         update_view(relayout);
     });
 
+    function transformOnSelection(selection) {
+        console.log('new selection of');
+        console.log(' ' + selection.root_nodes.length + ' root nodes');
+        console.log(' ' + selection.nodes.length + ' highlighted nodes');
+        // remove existing fixed if set by us
+        graph.nodes().forEach(function (n) {
+            if (n.__fixed_by_selection) {
+                delete n.__fixed_by_selection;
+                delete n.fixed;
+            }
+        });
+        // fix position of selected nodes
+        var zx = zoom_obj.translate()[0],
+            zy = zoom_obj.translate()[1],
+            s = zoom_obj.scale(),
+            max_radius = Math.sqrt(_.max(selection.root_nodes.map(
+                function (n) { return n.x * n.x + n.y * n.y; })));
+
+        function graph_to_screen(x, y) {
+            return [(x - zx) / s, (y - zy) / s];
+        }
+        selection.root_nodes.forEach(function (n) {
+            var newp;
+            if (n.fixed === undefined || n.fixed === false) {
+                n.__fixed_by_selection = true;
+                n.fixed = true;
+            }
+            newp = ring_transform(graph_to_screen(n.x, n.y), selection_inner_radius, selection_outer_radius,
+                                  max_radius);
+            n.x = n.px = newp[0];
+            n.y = n.py = newp[1];
+        });
+    }
+    var selection_outer_radius = 240, // TODO - move to consts. together with bubble radius. Make easily tweakable. - i.e. make sure it is only used as a result of events. make sure previous sentence makes more sense.
+        selection_inner_radius = gv.bubble_radius;
+    // on every selection change that isn't null set the selected nodes to fixed
+    if (!temporary) {
+        selection.selectionChangedBus.onValue(transformOnSelection);
+    }
+
     function showNodeInfo(node) {
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
         view.node_info.show(graph, node)
@@ -239,6 +279,39 @@ function GraphView(spec) {
     function dragged(d) {
         d.x = d3.event.x;
         d.y = d3.event.y;
+        tick();
+    }
+
+    function setupInitialPositions()
+    {
+        var nodes = graph.nodes(),
+            links = graph.links(),
+            i = 0,
+            node,
+            link;
+
+        // right thing: place node opposite center of mass of existing links
+        for (i = 0 ; i < links.length ; ++i) {
+            link = links[i];
+            if ((link.__src.x === undefined || link.__src.y === undefined) &&
+                (link.__dst.x !== undefined && link.__dst.y !== undefined)) {
+                link.__src.x = link.__dst.x;
+                link.__src.y = link.__dst.y;
+            }
+            if ((link.__dst.x === undefined || link.__dst.y === undefined) &&
+                (link.__src.x !== undefined && link.__dst.y !== undefined)) {
+                link.__dst.x = link.__src.x;
+                link.__dst.y = link.__src.y;
+            }
+            // TODO: collect links that are totally disconnected. here the default d3 force
+            // placement (w/h) makes some sense.
+        }
+        // TODO: node placement by default - middle of screen?
+    }
+
+    function resumeLayout() {
+        setupInitialPositions();
+        // TODO: replace with force.alpha(something)
         tick();
     }
 
@@ -315,6 +388,8 @@ function GraphView(spec) {
                 view.edge_info.show(d);
                 (d3.event.shiftKey? selection.invert : selection.update)([src, dst]);
             });
+
+        //var selected_N = selection:
 
         link.attr("class", function(d, i){
                 var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && temporary) ? "temp_and" : "";
@@ -738,7 +813,7 @@ function GraphView(spec) {
 
     var newnodes=1;
 
-    function temporary_set_positions() {
+    function circle__set_positions() {
         //circles animation
         var tempcounter = 0,
             temptotal = graph.nodes().filter(function(d){
@@ -752,15 +827,10 @@ function GraphView(spec) {
         graph.nodes().forEach(function(d, i) {
             var r, a;
             tempcounter++;
-            if (d.type === "chainlink") {
-                 d.x = cx;
-                 d.y = cy;
-            } else {
-                r = 60 + newnodes * 20;
-                a = -Math.PI + Math.PI * 2 * (tempcounter - 1) / newnodes + 0.3;
-                d.x = cx + r * Math.cos(a);
-                d.y = cy + r * Math.sin(a);
-            }
+            r = 60 + newnodes * 20;
+            a = -Math.PI + Math.PI * 2 * (tempcounter - 1) / newnodes + 0.3;
+            d.x = cx + r * Math.cos(a);
+            d.y = cy + r * Math.sin(a);
             check_for_nan(d.x);
             check_for_nan(d.y);
         });
@@ -784,7 +854,7 @@ function GraphView(spec) {
         return [x * s + zx, y * s + zy];
     }
 
-    function apply_reverse_zoom_obj(x, y, zoom_obj) {
+    function graph_to_screen(x, y, zoom_obj) {
         var zoom_translate = zoom_obj.translate(),
             zx = zoom_translate[0],
             zy = zoom_translate[1],
@@ -793,11 +863,29 @@ function GraphView(spec) {
         return [(x - zx) / s, (y - zy) / s];
     }
 
+    function xy_to_rtheta(xy) {
+        var x = xy[0], y = xy[1];
+        return [Math.sqrt(x * x + y * y), Math.atan2(y, x)];
+    }
+    function rtheta_to_xy(rtheta) {
+        var r = rtheta[0], theta = rtheta[1];
+        return [r * Math.cos(theta), r * Math.sin(theta)];
+    }
+
+    /**
+     * angle preserving transform.
+     *
+     * TODO: split back to zoom transform and ring transform
+     *
+     * In the range axis the transform is:
+     * [0, bubble_radius * 2] => [bubble_radius, bubble_radius * 2] linearly
+     * [bubble_radius * 2, inf] => identify
+     */
     function bubble_transform(d, bubble_radius) {
         if (bubble_radius == 0) {
             return d;
         }
-        var zoom_center_point = apply_reverse_zoom_obj(cx, cy, zoom_obj),
+        var zoom_center_point = graph_to_screen(cx, cy, zoom_obj),
             zcx = zoom_center_point[0],
             zcy = zoom_center_point[1],
             dx = d.x - zcx,
@@ -810,6 +898,14 @@ function GraphView(spec) {
         // FIXME: r == 0 (or close enough)
         return {x: zcx + new_r * Math.cos(a),
                 y: zcy + new_r * Math.sin(a)};
+    }
+
+    function ring_transform(xy, inner_radius, outer_radius, max_radius) {
+        var rtheta = xy_to_rtheta(xy),
+            r = rtheta[0], theta = rtheta[1],
+            dr = outer_radius - inner_radius,
+            rout = dr * r / max_radius + inner_radius;
+        return rtheta_to_xy([rout, rtheta[1]]);
     }
 
     function handle_space(e, node) {
@@ -864,7 +960,7 @@ function GraphView(spec) {
         }
 
         if (temporary) {
-            temporary_set_positions();
+            circle__set_positions();
         }
 
         // transform nodes first to record bubble x & y (bx & by)
