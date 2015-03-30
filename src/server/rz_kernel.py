@@ -5,11 +5,13 @@ import json
 import logging
 import traceback
 
-import db_controller
-from db_op import DBO_diff_commit__attr, DBO_block_chain__commit
+from db_op import DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create, \
+    DBO_rzdoc__lookup_by_name, DBO_rz_clone, DBO_rzdoc__delete, DBO_rzdoc__list
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
-from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
+from neo4j_cypher import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
+from model.model import RZDoc
+import neo4j_util
 
 
 log = logging.getLogger('rhizi')
@@ -102,3 +104,70 @@ class RZ_Kernel(object):
             log.error(traceback.print_exc())
             raise e
 
+    def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
+        """
+        @param ctx: may be None
+
+        @return: RZDoc object or None if rzdoc was not found
+        """
+
+        op = DBO_rzdoc__lookup_by_name(rzdoc_name)
+        try:
+            rzdoc = self.db_ctl.exec_op(op)
+            if None == rzdoc: return None
+
+            return rzdoc
+        except Exception as e:
+            log.error(e.message)
+            raise e
+
+    def rzdoc__create(self, rzdoc_name, ctx=None):
+        """
+        Create & persist new RZDoc - may fail on unique name/id constraint violation
+
+        @return: RZDoc object
+        """
+
+        rzdoc_id = neo4j_util.generate_random_rzdoc_id()
+        rzdoc = RZDoc(rzdoc_id, rzdoc_name)
+
+        op = DBO_rzdoc__create(rzdoc)
+        try:
+            self.db_ctl.exec_op(op)
+            return rzdoc
+        except Exception as e:
+            log.error(e.message)
+            log.error(traceback.print_exc())
+            raise e
+
+    def rzdoc__delete(self, rzdoc, ctx=None):
+        """
+        Delete RZDoc
+
+        @return: RZDoc object
+        """
+
+        op = DBO_rzdoc__delete(rzdoc)
+        try:
+            self.db_ctl.exec_op(op)
+        except Exception as e:
+            log.error(e.message)
+            log.error(traceback.print_exc())
+            raise e
+
+        # TODO: broadcast delete event, clear cache mapping entry
+
+    def rzdoc__list(self, rzdoc, ctx=None):
+        """
+        List available RZDocs
+
+        @return: RZDoc object
+        """
+        op = DBO_rzdoc__list()
+        try:
+            op_ret = self.db_ctl.exec_op(op)
+            return op_ret;
+        except Exception as e:
+            log.error(e.message)
+            log.error(traceback.print_exc())
+            raise e
