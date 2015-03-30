@@ -17,6 +17,7 @@ class DB_Driver_Base():
             log.debug(msg)
 
 class DB_Driver_Embedded(DB_Driver_Base):
+
     def __init__(self, db_base_url):
         self.tx_base_url = db_base_url + '/db/data/transaction'
 
@@ -34,6 +35,7 @@ class DB_Driver_Embedded(DB_Driver_Base):
         pass
 
 class DB_Driver_REST(DB_Driver_Base):
+
     def __init__(self, db_base_url):
         self.tx_base_url = db_base_url + '/db/data/transaction'
 
@@ -56,24 +58,24 @@ class DB_Driver_REST(DB_Driver_Base):
     def exec_query_set(self, op):
 
         tx_url = "{0}/{1}".format(self.tx_base_url, op.tx_id)
-        q_set = db_util.db_query_set_to_REST_form(op.query_set)
+        statement_param_pair_set = db_util.db_query_set_to_REST_form(op.query_set)
 
         try:
-            post_ret = db_util.post_neo4j(tx_url, q_set)
+            post_ret = db_util.post_neo4j(tx_url, statement_param_pair_set)
             op.result_set = post_ret['results']
             op.error_set = post_ret['errors']
             if 0 != len(op.error_set):
                 raise Neo4JException(op.error_set)
 
-            self.log_committed_queries(q_set)
+            self.log_committed_queries(statement_param_pair_set)
         except Neo4JException as e:
             # NOTE: python 2.7 loses the stack when reraising the exception.
             # python 3 does the right thing, but gevent doesn't support it yet.
-            log.error('REST statement: %r' % statement_set)
+            log.error('REST statement: %r' % statement_param_pair_set)
             log.exception(e)
             raise e
         except Exception as e:
-            log.error('REST statement: %r' % statement_set)
+            log.error('REST statement: %r' % statement_param_pair_set)
             log.exception(e)
             raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
 
