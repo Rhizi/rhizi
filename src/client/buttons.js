@@ -160,6 +160,61 @@ $('#btn_rzdoc__new').click(function() {
 });
 
 $('#btn_rzdoc__open').click(function() {
+    var cmd_bar,
+        cmd_bar_body,
+        close_btn;
+
+    cmd_bar = $('#cmd_bar__rzdoc_open');
+    if (cmd_bar.length > 0) { // cmd bar present
+        cmd_bar.fadeToggle(400, function() {
+            cmd_bar.remove();
+        });
+        return;
+    }
+
+    cmd_bar = $('<div class="cmd-bar" id="cmd_bar__rzdoc_open">');
+    cmd_bar.css('display', 'none');
+
+    close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
+    close_btn.appendTo(cmd_bar);
+
+    cmd_bar_body = $('<div class="cmd-bar_body" id="cmd_bar__rzdoc_open__rzdoc_list">');
+    cmd_bar.append(cmd_bar_body);
+
+    cmd_bar.append($('<div class="cmd-bar_close_bar">Open Rhizi</div>'));
+    cmd_bar.insertAfter('.top-bar');
+
+    // close
+    close_btn.on('click', function() {
+        cmd_bar.remove();
+    });
+
+    var on_success = function (rzdoc_name_list) {
+        rzdoc_name_list.sort();
+        for (var i = 0; i < rzdoc_name_list.length; i++) {
+            var rzdoc_item = $('<div class="cmd_bar__rzdoc_open__item"><span title="Open Rhizi">' + rzdoc_name_list[i] + '</span></div>');
+            cmd_bar_body.append(rzdoc_item);
+        }
+        $('.cmd_bar__rzdoc_open__item').on('click', function(click_event) { // attach common click handler
+            var rzdoc_name = click_event.currentTarget.textContent;
+            var rzdoc_cur_name = rz_core.rzdoc__current__get_name();
+            if (rzdoc_name == rzdoc_cur_name) {
+                console.log('rzdoc__open: ignoring request to reopen currently rzdoc: name: ' + rzdoc_cur_name);
+                return;
+            }
+
+            rz_core.rzdoc__open(rzdoc_name);
+            cmd_bar.fadeToggle(200, function() {
+                cmd_bar.remove();
+            });
+        });
+    }
+    var on_error = function() {
+        // TODO: handle doc list timeout
+    }
+
+    rz_api_backend.rzdoc_list(on_success, on_error);
+    cmd_bar.fadeToggle(400);
 });
 
 return {'buttons': 'nothing here'};
