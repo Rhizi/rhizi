@@ -756,6 +756,44 @@ class DBO_rzdoc__new(DB_op):
         db_q = DB_Query(q_arr, param_set)
         self.add_db_query(db_q)
 
+class DBO_rzdoc__delete(DB_op):
+
+    def __init__(self, rzdoc):
+        """
+        delete a rhizi doc
+        """
+        super(DBO_rzdoc__delete, self).__init__()
+
+        rzdoc_label = rzdoc__ns_label(rzdoc)
+
+        # delete doc nodes & links
+        q_arr = ['match (n:%s)' % (rzdoc_label),
+                 'optional match (n:%s)-[r]-()' % (rzdoc_label),
+                 'delete r,n']
+        db_q = DB_Query(q_arr)
+        self.add_db_query(db_q)
+
+        # delete doc meta node
+        q_arr = ['match (n:%s {id: %s})' % (neo4j_schema.META_LABEL__RZDOC_TYPE,
+                                            quote__singlequote(rzdoc.id)),
+                 'optional match (n)-[r]-()',
+                 'delete r,n']
+        db_q = DB_Query(q_arr)
+        self.add_db_query(db_q)
+
+
+class DBO_rzdoc__list(DB_op):
+
+    def __init__(self):
+        """
+        list available rhizi docs (common to all users)
+        """
+        super(DBO_rzdoc__list, self).__init__()
+        q_arr = ['match (n:%s)' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+                 'return n']
+        db_q = DB_Query(q_arr)
+        self.add_db_query(db_q)
+
 class DBO_rzdoc__lookup_by_name(DB_op):
 
     def __init__(self, name):
