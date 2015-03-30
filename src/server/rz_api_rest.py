@@ -216,3 +216,17 @@ def rzdoc__create(rzdoc_name):
     kernel.rzdoc__create(s_rzdoc_name, ctx)
     return make_response__json(status=HTTP_STATUS__201_CREATED)
 
+@common_rest_req_exception_handler
+def rzdoc__delete(rzdoc_name):
+    kernel = flask.current_app.kernel
+    ctx = __context__common(rzdoc_name)
+    kernel.rzdoc__delete(ctx.rzdoc, ctx)
+    return make_response__json(status=HTTP_STATUS__204_NO_CONTENT)
+
+@common_rest_req_exception_handler
+def rzdoc__list():
+    kernel = flask.current_app.kernel
+    ctx = __context__common(rzdoc_name=None)  # avoid rzdoc cache lookup exception
+    rzdoc_set = kernel.rzdoc__list(ctx.rzdoc, ctx)
+    ret = [rzdoc_dict['name'] for rzdoc_dict in rzdoc_set]
+    return common_resp_handle__success(data=ret)
