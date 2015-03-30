@@ -25,6 +25,7 @@ import rz_server_ctrl
 import rz_user
 import rz_blob
 from rz_user_db import User_DB
+import rz_api_common
 
 
 class Config(object):
@@ -220,20 +221,24 @@ def init_rest_interface(cfg, flask_webapp):
     rest_entry_set = [
                       # REST endpoints
                       rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
-                      rest_entry('/graph/clone', rz_api_rest.rz_clone),
-                      rest_entry('/graph/clone', rz_api.rz_clone),
-                      rest_entry('/graph/diff-commit-set', rz_api.diff_commit__set),
+                      rest_entry('/graph/diff-commit-set', rz_api_rest.diff_commit__set),
                       rest_entry('/graph/diff-commit-topo', rz_api_rest.diff_commit__topo),
                       rest_entry('/graph/diff-commit-attr', rz_api_rest.diff_commit__attr),
                       rest_entry('/graph/diff-commit-vis', rz_api_rest.diff_commit__vis),
                       rest_entry('/index', rz_api.index, {'methods': ['GET']}),
-                      rest_entry('/load/node-set-by-id', rz_api.load_node_set_by_id_attr),
-                      rest_entry('/load/link-set/by_link_ptr_set', rz_api.load_link_set_by_link_ptr_set),
+                      rest_entry('/load/node-set-by-id', rz_api_rest.load_node_set_by_id_attr),
+                      rest_entry('/load/link-set/by_link_ptr_set', rz_api_rest.load_link_set_by_link_ptr_set),
                       rest_entry('/login', rz_user.rest__login, {'methods': ['GET', 'POST']}),
                       rest_entry('/logout', rz_user.rest__logout, {'methods': ['GET', 'POST']}),
-                      rest_entry('/match/node-set', rz_api.match_node_set_by_attr_filter_map),
+                      rest_entry('/match/node-set', rz_api_rest.match_node_set_by_attr_filter_map),
                       rest_entry('/pw-reset', rz_user.rest__pw_reset, {'methods': ['GET', 'POST']}),
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
+
+                      # doc endpoints
+                      rest_entry('/graph/clone', rz_api_rest.rzdoc_clone),
+                      rest_entry('/rzdoc/list', rz_api_rest.rzdoc__list),
+                      rest_entry('/rzdoc/<path:rzdoc_name>/create', rz_api_rest.rzdoc__create),
+                      rest_entry('/rzdoc/<path:rzdoc_name>/delete', rz_api_rest.rzdoc__delete, {'methods': ['DELETE']}),
 
                       # upload endpoints - this might change to external later, keep minimal and separate
                       rest_entry('/blob/upload', rz_blob.upload, {'methods': ['POST']}),
