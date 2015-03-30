@@ -46,9 +46,7 @@ class RZ_Kernel(object):
            
         @return: a tuple containing the input diff and the result of it's commit
         """
-        rzdoc_id = ctx.get('rzdoc_id')
-        assert rzdoc_id, 'diff_commit__topo: missing doc id'
-
+        rzdoc = ctx.rzdoc
         op = DBO_diff_commit__topo(topo_diff)
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
@@ -72,9 +70,7 @@ class RZ_Kernel(object):
            
         @return: a tuple containing the input diff and the result of it's commit
         """
-        rzdoc_id = ctx.get('rzdoc_id')
-        assert rzdoc_id, 'diff_commit__topo: missing doc id'
-
+        rzdoc = ctx.rzdoc
         op = DBO_diff_commit__attr(attr_diff)
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 

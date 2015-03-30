@@ -246,7 +246,7 @@ class DBO_block_chain__commit(DB_op):
         if None == ctx or None == ctx.get('user_name'):
             return
 
-        q_arr = ['merge (n:__USER {user_name: \'%s\'})' % ctx.get('user_name'),
+        q_arr = ['merge (n:__USER {user_name: \'%s\'})' % (ctx.user_name),
                  'with n',
                  'match (m:__HEAD)',  # FIXME: specify commit-label index
                  'create (m)-[r:`__Authored-by`]->(n)',

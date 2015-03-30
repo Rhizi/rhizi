@@ -35,14 +35,25 @@ log = logging.getLogger('rhizi')
 db_ctl = None  # injected: DB controller
 
 def __context__common(rzdoc_id=None):
+class Req_Context():
+    """
+    Request context:
+       - user_name
+       - rzdoc
+    """
+
+    def __init__(self):
+        self.user_name = None
+        self.rzdoc = None
+
     """
     build a common rquest context to pass along with a kernel diff commit:
        - set user_name
     """
 
-    ret = {}
+    ret = Req_Context()
     if session.has_key('username'):
-        ret['user_name'] = session['username']
+        ret.user_name = session['username']
 
     ret['rzdoc_id'] = rzdoc_id
     return ret
