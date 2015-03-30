@@ -1,6 +1,7 @@
 "use strict"
 
-define(['jquery', 'FileSaver', 'rz_core'], function ($, saveAs, rz_core) {
+define(['jquery', 'FileSaver', 'rz_core', 'rz_api_backend'],
+function ($, saveAs, rz_core, rz_api_backend) {
 $('.tutorial').click(function(){});
 
 var key="#47989379";
@@ -90,23 +91,72 @@ $('a.save-history').click(function () {
 });
 
 $('#btn_rzdoc__new').click(function() {
-    var cmd_bar = $('<div class="cmd-bar cmd_bar__rzdoc_new">');
-    cmd_bar.append('<label for="cmd_bar__rzdoc_new__input" id="cmd_bar__rzdoc_new__label">Create Rhizi with title:');
-    cmd_bar.append('<input id="cmd_bar__rzdoc_new__input">');
 
-    var submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
+    var cmd_bar,
+        cmd_bar_body,
+        submit_btn,
+        close_btn;
+
+    cmd_bar = $('#cmd_bar__rzdoc_new');
+    if (cmd_bar.length > 0) { // cmd bar present
+        cmd_bar.fadeToggle(400, function() {
+            cmd_bar.remove();
+        });
+        return;
+    }
+
+    cmd_bar = $('<div class="cmd-bar" id="cmd_bar__rzdoc_new">');
+    cmd_bar_body = $('<div class="cmd-bar_body" id="cmd_bar__rzdoc_new__body">');
+    close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
+    submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
+
+    cmd_bar.append(close_btn);
+    cmd_bar.append(cmd_bar_body);
+    cmd_bar.append($('<div class="cmd-bar_close_bar">Create new Rhizi</div>'));
+
+    cmd_bar_body.append('<label for="cmd_bar__rzdoc_new__input" id="cmd_bar__rzdoc_new__label">Rhizi Title:');
+    cmd_bar_body.append('<input id="cmd_bar__rzdoc_new__input">');
+    cmd_bar_body.append(submit_btn);
+
+    cmd_bar.css('display', 'none');
+
+    cmd_bar.insertAfter('.top-bar');
+
+    // submit
+    submit_btn.attr('tabindex', 1); // assume focus on next tab key press
     submit_btn.on('click', function() {
-        console.log('a');
+
+        var on_success = function (clone_obj) {
+
+            cmd_bar.fadeToggle(200, function() {
+                cmd_bar.remove();
+            });
+
+            rz_core.rzdoc_open(rzdoc_name);
+        };
+
+        var on_error = function() {
+            // TODO: handle doc already exists
+            // TODO: handle malformed doc name
+        };
+
+        // TODO: validate rzdoc name
+        var rzdoc_name = $('#cmd_bar__rzdoc_new__input').val();
+        rz_api_backend.rzdoc_create(rzdoc_name, on_success, on_error);
     });
-    submit_btn.appendTo(cmd_bar);
- 
-    var close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
+
+    submit_btn.keyup(function(event) { // create on Enter key pressed
+        if(event.keyCode == 13) {
+            submit_btn.click();
+        }
+    });
+
+    // close
     close_btn.on('click', function() {
         cmd_bar.remove();
     });
-    close_btn.appendTo(cmd_bar);
-    
-    cmd_bar.insertAfter('.top-bar');
+
+    cmd_bar.fadeToggle(400);
 });
 
 $('#btn_rzdoc__open').click(function() {
