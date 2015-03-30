@@ -3,14 +3,7 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define(['model/core'], function(model_core) {
-
-    function shorten(str, max_length) {
-        if (str.length < max_length) {
-            return str;
-        }
-        return str.substr(0, max_length - 3) + '...';
-    }
+define(['util', 'model/core'], function(util, model_core) {
 
     function RZ_API_Backend() {
 
@@ -20,9 +13,9 @@ define(['model/core'], function(model_core) {
 
 
         var common_req_ctx = function() {
-            var common_ctx = { rzdoc_name: model_core.rz_state.cur_rzdoc_name };
-            return common_ctx
-        }
+            var common_ctx = { rzdoc_name: rz_config.rzdoc_cur__name }; // FIXME: call rz_core.rzdoc_get_current + avoid requirejs circular dep
+            return common_ctx;
+        };
 
         /**
          * issue rhizi server ajax call
