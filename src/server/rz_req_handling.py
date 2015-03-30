@@ -20,16 +20,15 @@ def __common_resp_handle(data, error, status):
         """
         return dict(data=data, error=error)
 
-    if error is None:
-        error_str = ""
+    if not error:
+        error_str = None
     else:
         error_str = str(error)  # convert any Exception objects to serializable form
 
     ret_data = __response_wrap(data, error_str)
-    resp = Response(ret_data, mimetype='application/json')
+    resp_payload = json.dumps(ret_data)
+    resp = Response(resp_payload, mimetype='application/json', status=status)
     resp.headers['Access-Control-Allow-Origin'] = '*'
-    
-    # jsonify(ret_data)  # this will create a Flask Response object
 
     # more response processing
     return resp
