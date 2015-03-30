@@ -46,6 +46,24 @@ def common_resp_handle__client_error(data=None, error=None, status=400):
 def common_resp_handle__server_error(data=None, error=None, status=500):
     return __common_resp_handle(data, error, status)
 
+def common_rest_req_exception_handler(rest_API_endpoint):
+
+    @wraps(rest_API_endpoint)
+    def rest_API_endpoint__decorated(*args, **kwargs):
+        try:
+            return rest_API_endpoint(*args, **kwargs)
+        except API_Exception__bad_request as e:
+            log.exception(e)
+            return common_resp_handle__client_error(error=e) # currently blame client for all DNFs
+        except RZDoc_Exception__not_found as e:
+            log.exception(e)
+            return common_resp_handle__client_error(error=e) # currently blame client for all DNFs
+        except Exception as e:
+            log.exception(e)
+            return common_resp_handle__server_error(error=e)
+
+    return rest_API_endpoint__decorated
+
 def make_response__json(status=200, data={}):
     """
     Construct a json response with proper content-type header
