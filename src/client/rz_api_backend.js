@@ -132,22 +132,6 @@ define(['model/core'], function(model_core) {
         }
 
         /**
-         * clone rhizi repo
-         */
-        this.clone = function(depth, on_success, on_error) {
-
-            var req_data = common_req_ctx();
-
-            // prep request
-            var req_opts = {
-                type : 'POST',
-                data : JSON.stringify(req_data)
-            };
-
-            ajax_rs('/graph/clone', req_opts, on_success, on_error);
-        }
-
-        /**
          * load node-set by id attribute
          *
          * @param on_complete_cb
@@ -239,6 +223,23 @@ define(['model/core'], function(model_core) {
             var attr_diff = null;
             return this.attr_diff_commit(null);
         }
+
+        /**
+         * clone rhizi repo
+         */
+        this.rzdoc_clone = function(on_success, on_error) {
+
+            var req_data = common_req_ctx();
+
+            // prep request
+            var req_opts = {
+                type : 'POST',
+                data : JSON.stringify(req_data)
+            };
+
+            ajax_rs('/graph/clone', req_opts, on_success, on_error);
+        }
+
     }
 
     return new RZ_API_Backend();

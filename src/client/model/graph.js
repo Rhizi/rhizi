@@ -974,7 +974,11 @@ function Graph(spec) {
             undefined != on_success && on_success();
         }
 
-        rz_api_backend.clone(0, on_success__ajax);
+        function on_error__ajax(clone) {
+           // FIXME: update status line with 'rzdoc not found' status
+        }
+
+        rz_api_backend.rzdoc_clone(on_success__ajax, on_error__ajax);
     }
     this.load_from_backend = load_from_backend;
 
