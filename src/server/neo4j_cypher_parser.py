@@ -409,6 +409,11 @@ class e_label_set(e_set):
     def assert_child_spawn_type(self, n_type):
         assert n_type in [e_value]
 
+    def add_label(self, label):
+        lbl = self.spawn_child(e_value)
+        lbl.value = label
+        return lbl
+
 class e_kv_pair(pt_abs_composite_node):  # key value pair
 
     def __init__(self): super(e_kv_pair, self).__init__()
