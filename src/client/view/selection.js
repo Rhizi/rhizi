@@ -50,10 +50,10 @@ function get_main_graph_view()
     return get_rz_core().main_graph_view;
 }
 
-var root_nodes = [], // these are the nodes that are requested via update
-    selected_nodes = [],      // these are the nodes that are highlighted, generally the neighbours of selection_request
-    selected_nodes__by_id = {},
-    root_nodes__by_id = {},
+var root_nodes, // these are the nodes that are requested via update
+    selected_nodes,      // these are the nodes that are highlighted, generally the neighbours of selection_request
+    selected_nodes__by_id,
+    root_nodes__by_id,
     selectionChangedBus = new Bacon.Bus();
 
 function listen_on_diff_bus(diffBus)
@@ -103,8 +103,13 @@ function nodes_to_id_dict(nodes)
             }, {});
 }
 
-function updateSelectedNodesBus(new_selected_nodes)
+function updateSelectedNodesBus(nodes, new_selected_nodes)
 {
+    if (_.isEqual(root_nodes, nodes) && _.isEqual(selected_nodes, new_selected_nodes)) {
+        return;
+    }
+    root_nodes = nodes;
+    root_nodes__by_id = nodes_to_id_dict(nodes);
     selected_nodes = new_selected_nodes;
     selected_nodes__by_id = nodes_to_id_dict(selected_nodes);
     selectionChangedBus.push(new_selection(selected_nodes, root_nodes));
@@ -168,7 +173,7 @@ function connectedComponent(nodes) {
     }
     nodes.forEach(function (n) { n.state = 'chosen'; });
     selected_nodes = connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
-    updateSelectedNodesBus(selected_nodes);
+    updateSelectedNodesBus(nodes, selected_nodes);
 }
 
 var node_selected = function(node) {
@@ -198,10 +203,9 @@ var selected_class__link = function(link, temporary) {
     return !temporary && selected_nodes.length > 0 ? (link_selected(link) ? "selected" : "notselected") : "";
 }
 
-var clear = function() {
-    root_nodes = [];
-    root_nodes__by_id = {};
-    updateSelectedNodesBus([]);
+var clear = function()
+{
+    updateSelectedNodesBus([], []);
 }
 
 function arr_compare(a1, a2)
@@ -219,8 +223,6 @@ function arr_compare(a1, a2)
 
 var inner_update = function(nodes)
 {
-    root_nodes = nodes;
-    root_nodes__by_id = nodes_to_id_dict(nodes);
     get_main_graph_view().nodes__user_visible(nodes);
     connectedComponent(nodes);
 }
@@ -275,9 +277,17 @@ var setup_toolbar = function(main_graph)
         });
 }
 
+var is_empty = function() {
+    return root_nodes.length == 0;
+}
+
+// initialize
+clear();
+
 return {
     byVisitors: byVisitors,
     connectedComponent: connectedComponent,
+    is_empty: is_empty,
     clear: clear,
     invert: invert,
     update: update,
