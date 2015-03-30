@@ -210,7 +210,7 @@ function GraphView(spec) {
         }
     }
 
-    var selection_outer_radius = 300;
+    var selection_outer_radius = 200;
     // HACK to load positions stored locally: on the first diff, which is the result of the
     // initial clone, load positions from stored last settled position (see record_position_to_local_storage
     // and restore_position_from_local_storage)
@@ -241,7 +241,8 @@ function GraphView(spec) {
             }
         });
         // fix position of selected nodes
-        var zoom_center_point = graph_to_screen(cx, cy, zoom_obj),
+        var count = selection.root_nodes.length,
+            zoom_center_point = graph_to_screen(cx, cy, zoom_obj),
             zcx = zoom_center_point[0],
             zcy = zoom_center_point[1],
             s = zoom_obj.scale(),
@@ -253,7 +254,9 @@ function GraphView(spec) {
         function screen_to_graph(xy) {
             return [zcx + xy[0], zcy + xy[1]]
         }
-        selection.root_nodes.forEach(function (n) {
+        // order by angle
+        var nodes = _.pluck(selection.root_nodes.map(function (n) { return [Math.atan2(n.y, n.x), n]; }).sort(), 1);
+        nodes.forEach(function (n, i) {
             var newp;
             n.__selection = {
                 fixed: n.fixed,
@@ -262,8 +265,7 @@ function GraphView(spec) {
             };
             n.fixed = true;
             newp = screen_to_graph(
-                    ring_transform([n.x - zcx, n.y - zcy],
-                                   scaled_inner_radius, scaled_outer_radius, max_radius));
+                rtheta_to_xy([(scaled_inner_radius + scaled_outer_radius) / 2, i * Math.PI * 2 / count]));
             n.x = n.px = newp[0];
             n.y = n.py = newp[1];
         });
