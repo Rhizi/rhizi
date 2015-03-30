@@ -7,6 +7,14 @@ Common public API logic:
   - validae_object__XXX: concerned with validating the logical state of an object
 
 """
+import logging
+from flask import current_app
+from rz_kernel import RZDoc_Exception__not_found
+
+log = logging.getLogger('rhizi')
+
+class API_Exception__bad_request(Exception): pass # raised by input sanitation functions
+
 def __sanitize_input(*args, **kw_args):
     pass
 
