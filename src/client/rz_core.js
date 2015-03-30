@@ -161,7 +161,8 @@ var initDrawingArea = function () {
 
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
     if (rz_config.backend_enabled) {
-        main_graph.load_from_backend();
+        var cur_rzdoc_name = rzdoc__current__get_name();
+        rzdoc__open(cur_rzdoc_name);
     }
 
     root_element_id_to_graph_view = {};
