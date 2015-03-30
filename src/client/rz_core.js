@@ -246,10 +246,32 @@ function load_from_json(result) {
     update_view__graph(true);
 }
 
+/**
+ * open rzdoc:
+ *    - set rz_config.rzdoc_cur__name
+ *    - load rzdoc frombackend
+ *    - do nothing if name of current rzdoc equals requested rzdoc
+ */
+function rzdoc__open(rzdoc_name) {
+    rz_config.rzdoc_cur__name = rzdoc_name;
+    main_graph.clear();
+    edit_graph.clear();
+    main_graph.load_from_backend();
+
+    var rzdoc_bar = $('#rzdoc-bar_doc-label');
+    var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');
+    rzdoc_bar.fadeToggle(1000, 'swing', function() {
+        rzdoc_bar__doc_lable.text(rzdoc_name);
+        rzdoc_bar.fadeToggle(1000);
+    });
+    console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
+}
+
 var published_var_dict = {
     // functions
     init: init,
     load_from_json: load_from_json,
+    rzdoc__open: rzdoc__open,
     update_view__graph : update_view__graph,
 
     // vars, set by init
