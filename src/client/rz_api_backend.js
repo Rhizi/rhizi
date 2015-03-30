@@ -39,19 +39,14 @@ define(['model/core'], function(model_core) {
 
             function on_success_wrapper(xhr, text) {
                 // log wrap callback
-                var ret_data = xhr.data,
-                    ret_error = xhr.error;
-                if (ret_error) {
-                    console.log('ajax error: ' + JSON.stringify(ret_error));
-                    if (on_error) {
-                        on_error(ret_error);
-                    }
-                } else {
-                    console.log('ajax success: ' + shorten(JSON.stringify(ret_data), 50));
-                    if (on_success) {
-                        on_success(ret_data);
-                    }
-                }
+                var ret_data = xhr.data;
+                util.assert(undefined == xhr.error); // assert we no longer return errors along with HTTP 200 status codes
+
+                console.log('ajax success: return value:');
+                console.dir(ret_data);
+                if (on_success) {
+                    on_success(ret_data);
+                };
             }
 
             /*
