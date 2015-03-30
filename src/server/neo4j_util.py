@@ -138,9 +138,6 @@ def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     filter_str = "where {0}".format(' and '.join(filter_arr))
     return filter_str
 
-def valid_label(label):
-    return len(label) > 0
-
 def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of node create queries
@@ -314,5 +311,4 @@ def quote__singlequote(label):
     return tok__quote__singlequote + label + tok__quote__singlequote
 
 def validate_label(label):
-    assert len(label) > 0 and (label[0].isupper() or label[0] == '_'), 'malformed label: ' + label
-    pass
+    assert len(label) > 0, 'malformed label: ' + label
