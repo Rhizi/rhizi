@@ -39,6 +39,15 @@ def sanitize_input__topo_diff(topo_diff):
 def sanitize_input__attr_diff(attr_diff):
     pass  # TODO: impl
 
+def sanitize_input__rzdoc_name(rzdoc_name, cfg):
+    """
+    sanitize rzdoc name raw input
+    """
+
+    if None != rzdoc_name and len(rzdoc_name) > cfg.rzdoc__name__max_length:
+        raise API_Exception__bad_request('rzdoc: open request: doc name exceeds max doc name limit: %s' % (rzdoc_name))
+    return rzdoc_name
+
 def validate_obj__attr_diff(attr_diff):
     # check for name attr changes, which are currently forbidden
     for n_id, node_attr_diff_set in attr_diff['__type_node'].items():
