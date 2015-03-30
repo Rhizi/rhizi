@@ -210,6 +210,7 @@ function GraphView(spec) {
         }
     }
 
+    var selection_outer_radius = 300;
     // HACK to load positions stored locally: on the first diff, which is the result of the
     // initial clone, load positions from stored last settled position (see record_position_to_local_storage
     // and restore_position_from_local_storage)
@@ -222,44 +223,59 @@ function GraphView(spec) {
         update_view(relayout);
     });
 
-    function transformOnSelection(selection) {
+    function transformOnSelection(data) {
+        var selection = data[0],
+            selection_inner_radius = Math.max(30, data[1]);
+
         console.log('new selection of');
         console.log(' ' + selection.root_nodes.length + ' root nodes');
         console.log(' ' + selection.nodes.length + ' highlighted nodes');
+        console.log(' inner radius ' + selection_inner_radius);
         // remove existing fixed if set by us
         graph.nodes().forEach(function (n) {
-            if (n.__fixed_by_selection) {
-                delete n.__fixed_by_selection;
-                delete n.fixed;
+            if (n.__selection) {
+                n.x = n.px = n.__selection.x;
+                n.y = n.py = n.__selection.y;
+                n.fixed = n.__selection.fixed;
+                delete n.__selection;
             }
         });
         // fix position of selected nodes
-        var zx = zoom_obj.translate()[0],
-            zy = zoom_obj.translate()[1],
+        var zoom_center_point = graph_to_screen(cx, cy, zoom_obj),
+            zcx = zoom_center_point[0],
+            zcy = zoom_center_point[1],
             s = zoom_obj.scale(),
+            scaled_inner_radius = selection_inner_radius / s,
+            scaled_outer_radius = selection_outer_radius / s,
             max_radius = Math.sqrt(_.max(selection.root_nodes.map(
-                function (n) { return n.x * n.x + n.y * n.y; })));
+                function (n) { return n.x * n.x + n.y * n.y; }))) / s;
 
-        function graph_to_screen(x, y) {
-            return [(x - zx) / s, (y - zy) / s];
+        function screen_to_graph(xy) {
+            return [zcx + xy[0], zcy + xy[1]]
         }
         selection.root_nodes.forEach(function (n) {
             var newp;
-            if (n.fixed === undefined || n.fixed === false) {
-                n.__fixed_by_selection = true;
-                n.fixed = true;
-            }
-            newp = ring_transform(graph_to_screen(n.x, n.y), selection_inner_radius, selection_outer_radius,
-                                  max_radius);
+            n.__selection = {
+                fixed: n.fixed,
+                x: n.x,
+                y: n.y
+            };
+            n.fixed = true;
+            newp = screen_to_graph(
+                    ring_transform([n.x - zcx, n.y - zcy],
+                                   scaled_inner_radius, scaled_outer_radius, max_radius));
             n.x = n.px = newp[0];
             n.y = n.py = newp[1];
         });
+        resumeLayout();
     }
-    var selection_outer_radius = 240, // TODO - move to consts. together with bubble radius. Make easily tweakable. - i.e. make sure it is only used as a result of events. make sure previous sentence makes more sense.
-        selection_inner_radius = gv.bubble_radius;
     // on every selection change that isn't null set the selected nodes to fixed
     if (!temporary) {
-        selection.selectionChangedBus.onValue(transformOnSelection);
+        Bacon.update(
+            [{root_nodes: [], nodes: []}, gv.bubble_radius],
+            [selection.selectionChangedBus], function (data, new_selection) { return [new_selection, data[1]]; },
+            [spec.bubble_property], function (data, radius) { return [data[0], radius]; }
+        ).skip(1).onValue(transformOnSelection);
     }
 
     function showNodeInfo(node) {
@@ -311,8 +327,7 @@ function GraphView(spec) {
 
     function resumeLayout() {
         setupInitialPositions();
-        // TODO: replace with force.alpha(something)
-        tick();
+        force.alpha(0.05);
     }
 
     function dragended(d) {
@@ -904,7 +919,9 @@ function GraphView(spec) {
         var rtheta = xy_to_rtheta(xy),
             r = rtheta[0], theta = rtheta[1],
             dr = outer_radius - inner_radius,
+            //rout = Math.max(inner_radius, Math.min(outer_radius, r));
             rout = dr * r / max_radius + inner_radius;
+        //console.log([inner_radius, outer_radius, max_radius, r, rout]);
         return rtheta_to_xy([rout, rtheta[1]]);
     }
 
@@ -948,12 +965,13 @@ function GraphView(spec) {
                 return d.id;
             });
         var linktext = vis.selectAll(".linklabel").data(graph.links());
+        var bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
 
         function transform(d) {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
             }
-            var d2 = bubble_transform(d, gv.bubble_radius);
+            var d2 = d.__selection !== undefined ? d : bubble_transform(d, bubble_radius);
             d.bx = d2.x;
             d.by = d2.y;
             return "translate(" + d2.x + "," + d2.y + ")";
