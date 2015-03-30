@@ -14,6 +14,11 @@ from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
 
 log = logging.getLogger('rhizi')
 
+class RZDoc_Exception__not_found(Exception):
+
+    def __init__(self, rzdoc_name):
+        super(RZDoc_Exception__not_found, self).__init__('rzdoc not found: \'%s\'' % (rzdoc_name))
+
 class RZ_Kernel(object):
 
     def exec_chain_commit_op(self, diff_obj, ctx):
