@@ -1,14 +1,23 @@
-from flask import jsonify
 from flask import make_response
 from werkzeug.wrappers import BaseResponse as Response
 import json
+from rz_kernel import RZDoc_Exception__not_found
+import logging
+from rz_api_common import API_Exception__bad_request
+from functools import wraps
+
+
+HTTP_STATUS__201_CREATED = 201
+HTTP_STATUS__204_NO_CONTENT = 204
+
+log = logging.getLogger('rhizi')
 
 def __common_resp_handle(data, error, status):
     """
     common response handling:
        - add common response headers
        - serialize response
-    
+
     @data must be json serializable
     @error will be serialized with str()
     """
