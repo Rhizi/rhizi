@@ -271,12 +271,17 @@ function rzdoc__current__get_name() {
     return rz_config.rzdoc_cur__name;
 }
 
+function rzdoc__open_default() {
+    return rzdoc__open(rz_config.rzdoc_default__name);
+}
+
 var published_var_dict = {
     // functions
     init: init,
     load_from_json: load_from_json,
     rzdoc__open: rzdoc__open,
     rzdoc__current__get_name: rzdoc__current__get_name,
+    rzdoc__open_default: rzdoc__open_default,
     update_view__graph : update_view__graph,
 
     // vars, set by init
