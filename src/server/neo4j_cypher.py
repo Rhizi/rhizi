@@ -4,12 +4,12 @@ Neo4j DB object
 
 from enum import Enum
 from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword, \
-    e_value, e_label_set, p_node, p_path, e_ident, p_rel
+    e_value, e_label_set, p_node, e_ident, p_rel, p_path
 import re
 import logging
 import neo4j_cypher_parser
-from decorator import __call__
-
+from neo4j_util import rzdoc__ns_label, rzdoc__meta_ns_label
+import neo4j_schema
 
 log = logging.getLogger('rhizi')
 
@@ -181,7 +181,7 @@ class DB_Query(object):
             wc_cond = wc.condition_value
             wc.set_condition(meta_label_cond + ' and ' + wc_cond)
 
-        self.param_set['meta_label_set'] = meta_label_set
+        self.param_set['meta_label_set'] = neo4j_schema.meta_label_set
 
     @property
     def query_struct_type(self):
