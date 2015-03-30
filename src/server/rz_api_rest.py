@@ -68,6 +68,7 @@ class Req_Context():
     
 
 
+@common_rest_req_exception_handler
 def diff_commit__topo():
     """
     REST API wrapper around diff_commit__topo():
@@ -82,22 +83,14 @@ def diff_commit__topo():
         sanitize_input__topo_diff(topo_diff)
         return rzdoc_name, topo_diff
 
-    try:
-        rzdoc_name, topo_diff = sanitize_input(request)
-    except Exception as e:
-        return common_resp_handle(error='malformed input')
+    rzdoc_name, topo_diff = sanitize_input(request)
 
-    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
-    ctx = __context__common(rzdoc_id=rzdoc_id)
-    try:
-        kernel = flask.current_app.kernel
-        _, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
-        return common_resp_handle(data=commit_ret)
-    except Exception as e:
-        log.error(e.message)
-        log.error(traceback.print_exc())
-        return common_resp_handle(error=e)
+    ctx = __context__common(rzdoc_name)
+    kernel = flask.current_app.kernel
+    _, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
+    return common_resp_handle__success(data=commit_ret)
 
+@common_rest_req_exception_handler
 def diff_commit__attr():
     """
     commit a graph attribute diff
@@ -108,29 +101,15 @@ def diff_commit__attr():
         attr_diff = Attr_Diff.from_json_dict(attr_diff_dict)
 
         sanitize_input__attr_diff(attr_diff)
-        
+
         return rzdoc_name, attr_diff;
 
-    def on_error(e):
-        # handle DB ERRORS, eg. name attr change error
-        return common_resp_handle(error='error occurred')
-
-    try:
-        rzdoc_name, attr_diff = sanitize_input(request)
-        validate_obj__attr_diff(attr_diff)
-    except Exception as e:
-        return common_resp_handle(error='malformed input')
-
-    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
-    ctx = __context__common(rzdoc_id=rzdoc_id)
-    try:
-        kernel = flask.current_app.kernel
-        _, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
-        return common_resp_handle(data=commit_ret)
-    except Exception as e:
-        log.error(e.message)
-        log.error(traceback.print_exc())
-        return common_resp_handle(error=e)
+    rzdoc_name, attr_diff = sanitize_input(request)
+    validate_obj__attr_diff(attr_diff)
+    ctx = __context__common(rzdoc_name)
+    kernel = flask.current_app.kernel
+    _, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
+    return common_resp_handle__success(data=commit_ret)
 
 def diff_commit__vis():
     pass
