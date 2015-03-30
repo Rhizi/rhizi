@@ -89,49 +89,49 @@ class Query_Transformation(object):
     def apply_to_single_query(self, dbq):
         pass
 
-class QT_Node_Filter__Doc_ID_Label(Query_Transformation):
+class QT_RZDOC_NS_Filter__common(Query_Transformation):
+    """
+    Add RZDoc name-space filter:
+       - inject NS labels into node patterns
+       - [!] ignore nodes which are part of path patterns to avoid overriding bound references
 
-    def __init__(self, rzdoc_id):
-        self.rzdoc_id = rzdoc_id
+    
+    """
+
+    def __init__(self, ns_label):
+        self.ns_label = ns_label
 
     def apply_to_single_query(self, dbq):
 
-        rzdoc_id_label = META_LABEL__RZ_DOC_PREFIX + self.rzdoc_id
-        rgx__doc_label = re.compile(r'%s[\w\d_]+' % (META_LABEL__RZ_DOC_PREFIX))
-        assert None != rgx__doc_label.match(rzdoc_id_label), 'Illegal doc ID label: %s' % (rzdoc_id_label)  # validate doc label
+        rgx__doc_label = re.compile(r'%s[\w\d_]+' % (neo4j_schema.META_LABEL__RZDOC_NS_PREFIX))
+        assert None == rgx__doc_label.match(self.ns_label), 'Illegal doc ID label: %s' % (self.ns_label)  # validate doc label
 
         q_type = dbq.query_struct_type
-        c_set = []  # clause set
+        clause_set = []
 
         if Query_Struct_Type.w == q_type:
-            c_set += dbq.pt_root.clause_set_by_kw('create')
+            clause_set += dbq.pt_root.clause_set_by_kw('create')
         if Query_Struct_Type.r == q_type:
-            c_set += dbq.pt_root.clause_set_by_kw('match')
+            clause_set += dbq.pt_root.clause_set_by_kw('match')
         if Query_Struct_Type.rw == q_type:
-            c_set += dbq.pt_root.clause_set_by_kw('create')
-            c_set += dbq.pt_root.clause_set_by_kw('match')
+            clause_set += dbq.pt_root.clause_set_by_kw('create')
+            clause_set += dbq.pt_root.clause_set_by_kw('match')
 
-        for c in c_set:
+        for c in clause_set:
+            n_exp_set = c.sub_exp_set_by_type(p_node , recurse=True)
+            for n_exp in n_exp_set:
 
-            set_of_lbl_set = c.sub_exp_set_by_type(e_label_set, recurse=True)
+                if n_exp.parent.__class__ == p_path:
+                    continue;
 
-            if not set_of_lbl_set:  # no label set
-                p_node_or_path_set = c.sub_exp_set_by_type([p_node], recurse=True)
+                lbl_set = n_exp.label_set
+                if not lbl_set:  # add label set if necessary
+                    lbl_set = n_exp.spawn_label_set()
+                lbl_set.add_label(self.ns_label)
 
-                def f_visit(n, ctx, depth):
-                    if isinstance(n, e_ident) and n.parent.__class__ in [p_node]:
-                        lbl_set = n.spawn_sibling__adjacent(e_label_set)
-                        lbl = lbl_set.spawn_child(e_value)
-                        lbl.value = rzdoc_id_label
+            # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 
-                for p_exp in p_node_or_path_set:
-                    p_exp.tree_walk__pre(f_visit=f_visit)
 
-            else:  # append to existing label set
-                for lbl_set in set_of_lbl_set:
-                    if isinstance(lbl_set.parent, p_node):
-                        lbl = lbl_set.spawn_child(e_value)
-                        lbl.value = rzdoc_id_label
 
             # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 

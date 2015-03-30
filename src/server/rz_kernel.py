@@ -48,7 +48,7 @@ class RZ_Kernel(object):
         assert rzdoc_id, 'diff_commit__topo: missing doc id'
 
         op = DBO_diff_commit__topo(topo_diff)
-        op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
+        op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         try:
             op_ret = self.db_ctl.exec_op(op)
@@ -74,7 +74,7 @@ class RZ_Kernel(object):
         assert rzdoc_id, 'diff_commit__topo: missing doc id'
 
         op = DBO_diff_commit__attr(attr_diff)
-        op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
+        op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         try:
             op_ret = self.db_ctl.exec_op(op)
