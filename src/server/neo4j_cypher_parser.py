@@ -423,7 +423,30 @@ class e_kv_pair(pt_abs_composite_node):  # key value pair
 
     def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ': '
 
-class p_node(pt_abs_composite_node):  # node pattern: '(...)'
+class p_label_set_container():
+
+    @property
+    def label_set(self):
+        sub_exp_set = self.sub_exp_set_by_type(e_label_set)
+        if 0 == len (sub_exp_set):
+            return None
+        assert 1 == len(sub_exp_set)
+        return sub_exp_set.pop()
+
+    def spawn_label_set(self):
+        """
+        spawn label set adjacent to e_ident
+        """
+
+        id_sub_exp_set = self.sub_exp_set_by_type(e_ident)
+        assert None == self.label_set, 'label set already present'
+        assert 1 == len(id_sub_exp_set), 'label set already present'
+
+        e_id = id_sub_exp_set.pop()
+        lbl_set = e_id.spawn_sibling__adjacent(e_label_set)
+        return lbl_set
+
+class p_node(pt_abs_composite_node, p_label_set_container):  # node pattern: '(...)'
     """
     node pattern
     """
@@ -440,14 +463,10 @@ class p_node(pt_abs_composite_node):  # node pattern: '(...)'
 
     def str__tok_close(self): return ')'
 
-    @property
-    def label_set(self):
-        return self.sub_exp_set_by_type(e_label_set)
-
     @classmethod
     def rgx(self, g_name): return '\((?P<%s>[^\(\)]*?)\)' % (g_name)
 
-class p_rel(pt_abs_composite_node):  # rel pattern: '[...]'
+class p_rel(pt_abs_composite_node, p_label_set_container):  # rel pattern: '[...]'
     """
     relationship pattern
     """
