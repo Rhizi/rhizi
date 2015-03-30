@@ -796,16 +796,26 @@ class DBO_rzdoc__list(DB_op):
 
 class DBO_rzdoc__lookup_by_name(DB_op):
 
-    def __init__(self, name):
+    def __init__(self, rzdoc_name):
         """
-        create a new rhizi doc
+        @return: [rzdoc] of [] if no doc with the given name was found
         """
-        super(DBO_rzdoc__new, self).__init__()
+        super(DBO_rzdoc__lookup_by_name, self).__init__()
 
-        q_arr = ['match (n:%s {name: {name}})' % (neo4j_cypher.META_LABEL__RZ_DOC),
+        q_arr = ['match (n:%s {name: {name}})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
                  'return n']
 
-        param_set = {'name': name}
+        param_set = {'name': rzdoc_name}
         db_q = DB_Query(q_arr, param_set)
         self.add_db_query(db_q)
+
+    def process_result_set(self):
+        rzdoc_dict_set = DB_op.process_result_set(self)
+        if not rzdoc_dict_set: return None
+
+        rzdoc_dict = rzdoc_dict_set.pop()
+        rzdoc = RZDoc(rzdoc_id=rzdoc_dict['id'],
+                      rzdoc_name=rzdoc_dict['name'])
+        return rzdoc
+
 
