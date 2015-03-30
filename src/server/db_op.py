@@ -33,6 +33,9 @@ class DB_op(object):
         for dbq in self.query_set:
             yield dbq
 
+    def __repr__(self):
+        return '%s: tx-id: %d' % (self.__class__.__name__, self.tx_id)
+
     def iter__r_set(self):
         """
         iterate over (DB_Query index, DB_Query, result | error)
