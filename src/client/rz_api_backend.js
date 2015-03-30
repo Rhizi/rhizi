@@ -29,11 +29,12 @@ define(['model/core'], function(model_core) {
          */
         var ajax_rs = function(path, req_opts, on_success, on_error) {
 
-            function on_error_wrapper(xhr, err_text, err_thrown) {
+            function on_error_wrapper(xhr, text_status, err_thrown) {
                 // log wrap callback
-                console.error('error: \'' + err_text + '\'');
+                var err_msg = xhr.responseJSON && xhr.responseJSON.error;
+                console.error(text_status + ': ' + err_msg);
                 if (on_error && typeof (on_error) === "function") {
-                    on_error(err_text);
+                    on_error(err_msg);
                 }
             }
 
