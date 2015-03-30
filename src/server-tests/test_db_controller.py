@@ -2,9 +2,8 @@ import logging
 import unittest
 
 import db_controller as dbc
-from db_op import DBO_add_link_set
+from db_op import DBO_add_link_set, DBO_block_chain__commit
 from db_op import DBO_add_node_set
-from db_op import DBO_block_chain__commit
 from db_op import DBO_block_chain__list
 from db_op import DBO_diff_commit__attr
 from db_op import DBO_diff_commit__topo

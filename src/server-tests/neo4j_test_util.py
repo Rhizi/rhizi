@@ -5,6 +5,7 @@ import uuid
 
 from db_op import DB_op, DBO_cypher_query
 import neo4j_cypher
+import neo4j_schema
 
 class DBO_flush_db(DBO_cypher_query):
     """
@@ -69,4 +70,4 @@ def rand_label(prefix='T_', length=8):
     return ret
 
 def rand_label__doc(length=8):
-    return rand_label(prefix=neo4j_cypher.META_LABEL__RZ_DOC_PREFIX, length=length)
+    return rand_label(prefix=neo4j_schema.META_LABEL__RZDOC_NS_PREFIX, length=length)
