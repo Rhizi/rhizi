@@ -55,6 +55,9 @@ def __type_check_filter_attr_map(filter_attr_map):
         assert isinstance(v, list)
 
 def cfmt(fmt_str, *args, **kwargs):
+    """
+    @deprecated
+    """
     return Cypher_String_Formatter().format(fmt_str, *args, **kwargs)
 
 def db_query_set_to_REST_form(db_query_set):
