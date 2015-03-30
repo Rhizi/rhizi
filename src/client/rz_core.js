@@ -267,11 +267,16 @@ function rzdoc__open(rzdoc_name) {
     console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
 }
 
+function rzdoc__current__get_name() {
+    return rz_config.rzdoc_cur__name;
+}
+
 var published_var_dict = {
     // functions
     init: init,
     load_from_json: load_from_json,
     rzdoc__open: rzdoc__open,
+    rzdoc__current__get_name: rzdoc__current__get_name,
     update_view__graph : update_view__graph,
 
     // vars, set by init
