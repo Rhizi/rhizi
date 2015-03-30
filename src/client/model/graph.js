@@ -10,9 +10,9 @@ var debug = false;
 
 function Graph(spec) {
 
-    var id_to_node_map = {},
-        id_to_link_map = {},
-        id_to_link_id_set = {},
+    var id_to_node_map,
+        id_to_link_map,
+        id_to_link_id_set,
         diffBus = new Bacon.Bus(),
         cached_links,
         invalidate_links,
@@ -26,6 +26,8 @@ function Graph(spec) {
     this.base = base;
 
     util.assert(temporary !== undefined && base !== undefined, "missing inputs");
+
+    clear();
 
     // All operations done on the graph. When the server is used (i.e. always) this
     // bus contains the server events, not the user events (most of the time the same just with delay).
@@ -206,6 +208,13 @@ function Graph(spec) {
             dst_id = link.__dst.id;
         util.assert(link.id, "missing link id");
         id_to_link_map[link.id] = link;
+        // link's nodes may not belong to this graph, check first - we add them if required to the id_to_link_id_set only
+        if (id_to_link_id_set[src_id] === undefined) {
+            id_to_link_id_set[src_id] = [];
+        }
+        if (id_to_link_id_set[dst_id] === undefined) {
+            id_to_link_id_set[dst_id] = [];
+        }
         id_to_link_id_set[src_id][dst_id] = 1;
         id_to_link_id_set[dst_id][src_id] = 1;
         invalidate_links = true;
@@ -767,9 +776,8 @@ function Graph(spec) {
     function clear(push_diff) {
         push_diff = push_diff === undefined ? true : push_diff;
         id_to_node_map = {};
-        id_to_node_map = {}
         id_to_link_map = {};
-        id_to_link_map = {};
+        id_to_link_id_set = {};
         invalidate_links = true;
         invalidate_nodes = true;
         if (push_diff) {
