@@ -29,6 +29,10 @@ class DB_op(object):
         self.tx_id = None
         self.tx_commit_url = None  # cached from response to tx begin
 
+    def __iter__(self):
+        for dbq in self.query_set:
+            yield dbq
+
     def iter__r_set(self):
         """
         iterate over (DB_Query index, DB_Query, result | error)
@@ -50,10 +54,6 @@ class DB_op(object):
             if q_idx < r_set_len:  # support partial result recovery
                 r_set = DB_result_set(self.result_set[q_idx])
             yield (q_idx, dbq, r_set)
-
-    def __iter__(self):
-        for dbq in self.query_set:
-            yield dbq
 
     def add_db_query(self, db_q):
 
