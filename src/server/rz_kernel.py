@@ -32,7 +32,9 @@ class RZ_Kernel(object):
         else:
             commit_obj = diff_obj
 
+        rzdoc = ctx.rzdoc
         chain_commit_op = DBO_block_chain__commit(commit_obj, ctx)
+        chain_commit_op = QT_RZDOC_Meta_NS_Filter(rzdoc)(chain_commit_op)
         self.db_ctl.exec_op(chain_commit_op)
 
     def diff_commit__topo(self, topo_diff, ctx=None):
