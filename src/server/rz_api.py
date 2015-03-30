@@ -8,25 +8,13 @@ from flask import escape
 from flask import render_template
 from flask import request
 from flask import session
+from flask import redirect
 import logging
-import traceback
-
-from db_op import DBO_diff_commit__topo
-from db_op import DBO_load_link_set
-from db_op import DBO_match_node_id_set
-from db_op import DBO_match_node_set_by_id_attribute
-from db_op import DBO_rz_clone
-from model.graph import Topo_Diff
-from model.model import Link
-from rz_api_common import __sanitize_input, map_rzdoc_name_to_rzdoc_id
-from rz_api_common import sanitize_input__topo_diff
-from rz_api_rest import common_resp_handle
-from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
-
+from rz_api_common import sanitize_input__rzdoc_name
 
 log = logging.getLogger('rhizi')
 
-def index():
+def index(rzdoc_name=None):
 
     # fetch rz_username for welcome message
     email_address = session.get('username')
@@ -53,6 +41,14 @@ def index():
     if ':' in client_POV_server_name:
         hostname = client_POV_server_name.split(':')[0]
         port = client_POV_server_name.split(':')[1]
+
+    if None == rzdoc_name:
+        s_rzdoc_name = current_app.rz_config.rzdoc__mainpage_name
+    else:
+        try:
+            s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name, current_app.rz_config)
+        except Exception as e:
+            log.exception(e)
 
     return render_template('index.html',
                            rz_username=rz_username,
