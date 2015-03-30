@@ -131,9 +131,17 @@ class QT_RZDOC_NS_Filter__common(Query_Transformation):
 
             # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 
+class QT_RZDOC_NS_Filter(QT_RZDOC_NS_Filter__common):
 
+    def __init__(self, rzdoc):
+        ns_label = rzdoc__ns_label(rzdoc)
+        super(QT_RZDOC_NS_Filter, self).__init__(ns_label)
 
-            # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
+class QT_RZDOC_Meta_NS_Filter(QT_RZDOC_NS_Filter__common):
+
+    def __init__(self, rzdoc):
+        ns_label = rzdoc__meta_ns_label(rzdoc)
+        super(QT_RZDOC_Meta_NS_Filter, self).__init__(ns_label)
 
 class QT_Node_Filter__meta_label_set(Query_Transformation):
     # TODO: impl
