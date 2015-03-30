@@ -38,6 +38,6 @@ class Link():
 
 class RZDoc():
 
-    def __init__(self):
-        self.id = None
-        self.name = None
+    def __init__(self, rzdoc_id = None, rzdoc_name = None):
+        self.id = rzdoc_id
+        self.name = rzdoc_name
