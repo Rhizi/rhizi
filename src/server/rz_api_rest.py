@@ -34,7 +34,6 @@ log = logging.getLogger('rhizi')
 
 db_ctl = None  # injected: DB controller
 
-def __context__common(rzdoc_id=None):
 class Req_Context():
     """
     Request context:
@@ -46,16 +45,22 @@ class Req_Context():
         self.user_name = None
         self.rzdoc = None
 
+def __context__common(rzdoc_name=None):
     """
-    build a common rquest context to pass along with a kernel diff commit:
+    Common request context builder passed along with kernel calls:
        - set user_name
+       - set rzdoc if rzdoc_name argument was supplied
+
+    @raise RZDoc_Exception__not_found: if rzdoc_name arg was passed and document was not found
     """
 
     ret = Req_Context()
     if session.has_key('username'):
         ret.user_name = session['username']
 
-    ret['rzdoc_id'] = rzdoc_id
+    if None != rzdoc_name:
+        s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name, current_app.rz_config)
+        ret.rzdoc = cache_lookup__rzdoc(s_rzdoc_name)
     return ret
 
 def __load_node_set_by_id_attr_common(id_set):
