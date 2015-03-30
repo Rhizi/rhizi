@@ -86,15 +86,16 @@ class pt_abs_node(object):
         return ret
 
     def rotate__pin_under_new_parent(self, n_type):  # pin current node under a new parent node
-        n_parent = self.parent
-        n_set = n_type()
-        n_set.parent = n_parent
-        n_set.sub_exp_set.append(self)
-        for i in range(0, len(n_parent.sub_exp_set)):
+        parent_cur = self.parent
+        parent_new = n_type()
+        parent_new.parent = parent_cur
+        parent_new.sub_exp_set.append(self)
+        for i in range(0, len(parent_cur.sub_exp_set)):
             if self != self.parent.sub_exp_set[i]:  # lookup self in parent child set
                 continue
-            self.parent.sub_exp_set[i] = n_set
-        return n_set
+            parent_cur.sub_exp_set[i] = parent_new
+        self.parent = parent_new
+        return parent_new
 
     def spawn_sibling(self, n_type=None, *args, **kwargs):
         if not n_type:  # by default spawn siblig of the same type as self
