@@ -1,9 +1,18 @@
 .cmd-bar {
-    background-color: rgb(105, 145, 91);
-    height: $two-baselines;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    background-color: #85B375;
     width: 100%;
+}
+
+.cmd-bar_close_bar {
+    background-color: lightgray;
+    text-align: center;
+    font-size: 10px;
+    height: 10px;
+    width: 100%;
+}
+
+.cmd-bar_body {
+    padding: 8px 20px;
 }
 
 .cmd-bar_btn {
@@ -31,8 +40,33 @@
     background-color: yellowgreen;
 }
 
+#cmd_bar__rzdoc_open {
+}
+
+#cmd_bar__rzdoc_open__rzdoc_list {
+    overflow: auto;
+}
+
 #cmd_bar__rzdoc_close {
+    border-bottom-left-radius: 6px;
+    background-color: dimgray;
     font-family: fantasy;
-    float: right;
-    margin-right: 10px;
+    font-size: 12px;
+    position: absolute;
+    right: 0px;
+}
+
+.cmd_bar__rzdoc_open__item {
+    border-radius: 2px;
+    background-color: white;
+    float: left;
+    font-size: $h4-size;
+    margin: 3px 5px;
+    padding: 3px 5px;
+    white-space: nowrap;
+
+    &:hover {
+        background-color: darken(lightgray, 10%);
+        cursor: pointer;
+    }
 }
