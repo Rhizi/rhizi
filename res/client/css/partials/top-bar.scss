@@ -47,15 +47,18 @@
     margin-right: 20px;
 }
 
-#toolbar__doc {
+#rzdoc-bar {
     color: $light-grey;
+    position: relative;
+    overflow-x: auto;
+    margin-right: 20px;
+    min-width: 250px;
+}
+
+#rzdoc-bar_doc-label {
     font-family: $semibold-font-family;
     font-size: $h3-size;
     font-weight: bold;
-}
-
-#toolbar__doc_doc-title {
-    margin-right: 20px;
 }
 
 #logo-3rd-party__CRI {
