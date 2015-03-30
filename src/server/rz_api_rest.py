@@ -58,43 +58,15 @@ class Req_Context():
     ret['rzdoc_id'] = rzdoc_id
     return ret
 
-def rz_clone():
 
     def sanitize_input(req):
-        rzdoc_name = req.get_json().get('rzdoc_name')
-        return rzdoc_name
 
-    def on_success(topo_diff):
-        # serialize Topo_Diff before including in response
-        topo_diff_json = topo_diff.to_json_dict()
-        return common_resp_handle(topo_diff_json)
 
-    rzdoc_name = sanitize_input(request)
-    if None == rzdoc_name: # load welcome doc by default
-        rzdoc_name = current_app.rz_config.rzdoc_name__mainpage
 
-    rzdoc_id = map_rzdoc_name_to_rzdoc_id(rzdoc_name)
 
-    op = DBO_rz_clone()
-    op = QT_Node_Filter__Doc_ID_Label(rzdoc_id)(op)
-    return __common_exec(op, on_success=on_success)
 
-def rzdoc__new():
-    # TODO: add doc node, set doc label, associate user-doc
     
-    def sanitize_input(req):
-        return request.get_json().get('rzdoc_name')
 
-    ctx = __context__common()
-    rzdoc_name = sanitize_input(request)
-    try:
-        kernel = flask.current_app.kernel
-        rzdoc = kernel.rzdoc__new(rzdoc_name, ctx)
-        return common_resp_handle(data=rzdoc)
-    except Exception as e:
-        log.error(e.message)
-        log.error(traceback.print_exc())
-        return common_resp_handle(error=e)
 
 def diff_commit__topo():
     """
@@ -162,4 +134,32 @@ def diff_commit__attr():
 
 def diff_commit__vis():
     pass
+
+@common_rest_req_exception_handler
+def rzdoc_clone():
+
+    def sanitize_input(req):
+        rzdoc_name = req.get_json().get('rzdoc_name')
+        return rzdoc_name
+
+    rzdoc_name = sanitize_input(request)
+    if None == rzdoc_name:  # load welcome doc by default
+        rzdoc_name = current_app.rz_config.rzdoc__mainpage_name
+
+    kernel = flask.current_app.kernel
+    ctx = __context__common(rzdoc_name)
+    topo_diff = kernel.rzdoc__clone(ctx.rzdoc, ctx)
+    topo_diff_json = topo_diff.to_json_dict()  # serialize Topo_Diff before including in response
+    return common_resp_handle__success(data=topo_diff_json)
+
+@common_rest_req_exception_handler
+def rzdoc__create(rzdoc_name):
+    """
+    create RZ doc
+    """
+    s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
+    kernel = flask.current_app.kernel
+    ctx = __context__common(rzdoc_name=None)  # avoid rzdoc cache lookup exception
+    kernel.rzdoc__create(s_rzdoc_name, ctx)
+    return make_response__json(status=HTTP_STATUS__201_CREATED)
 

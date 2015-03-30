@@ -84,3 +84,21 @@ class RZ_Kernel(object):
             log.error(e.message)
             log.error(traceback.print_exc())
             raise e
+
+    def rzdoc__clone(self, rzdoc, ctx=None):
+        """
+        Clone entire rzdoc
+
+        @return Topo_Diff with node/link attributes
+        """
+        op = DBO_rz_clone()
+        op = QT_RZDOC_NS_Filter(rzdoc)(op)
+
+        try:
+            topo_diff = self.db_ctl.exec_op(op)
+            return topo_diff
+        except Exception as e:
+            log.exception(e)
+            log.error(traceback.print_exc())
+            raise e
+
