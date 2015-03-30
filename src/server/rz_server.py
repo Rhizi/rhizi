@@ -284,7 +284,6 @@ def init_webapp(cfg, kernel, db_ctl=None):
 
     if None == db_ctl:
         db_ctl = dbc.DB_Controller(cfg)
-    rz_api.db_ctl = db_ctl
     rz_api_rest.db_ctl = db_ctl
     kernel.db_ctl = db_ctl
 

@@ -26,21 +26,6 @@ from neo4j_cypher import QT_Node_Filter__Doc_ID_Label
 
 log = logging.getLogger('rhizi')
 
-db_ctl = None  # injected: DB controller
-
-def __common_exec(op, on_success=common_resp_handle, on_error=common_resp_handle):
-    """
-    @param on_success: should return a Flask Response object
-    @param on_error: should return a Flask Response object
-    """
-    try:
-        op_ret = db_ctl.exec_op(op)
-        return on_success(op_ret)
-    except Exception as e:
-        log.error(e.message)
-        log.error(traceback.print_exc())
-        return on_error(error='error occurred')
-
 def index():
 
     # fetch rz_username for welcome message
