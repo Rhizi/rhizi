@@ -738,20 +738,19 @@ class DBO_rz_clone(DB_op):
                               link_set_add=ret_l_set)
         return topo_diff
 
-class DBO_rzdoc__new(DB_op):
+class DBO_rzdoc__create(DB_op):
 
     def __init__(self, rzdoc):
         """
         create a new rhizi doc
         """
-        super(DBO_rzdoc__new, self).__init__()
+        super(DBO_rzdoc__create, self).__init__()
 
-        q_arr = ['merge (n:%s {attr_dict})' % (neo4j_cypher.META_LABEL__RZ_DOC),
-                 'return n']
+        q_arr = ['merge (n:%s {id: {id}, name: {name}})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+                 'return n.id, n.name']
 
-        rzdoc_id = rzdoc.id
-        rzdoc_name = rzdoc.name
-        param_set = {'attr_dict': {'id': rzdoc_id, 'name': rzdoc_name}}
+        param_set = {'id': rzdoc.id,
+                     'name': rzdoc.name}
 
         db_q = DB_Query(q_arr, param_set)
         self.add_db_query(db_q)
