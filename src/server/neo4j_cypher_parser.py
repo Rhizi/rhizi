@@ -124,7 +124,6 @@ class pt_abs_node(object):
         p_exp_set.insert(i + 1, child_node)
         return child_node
 
-
     def str__body(self): return self.value if self.value else ''
 
     def str__tok_open(self): return ''
@@ -201,6 +200,8 @@ class pt_abs_composite_node(pt_abs_node):
         """
         @param exp_type_or_set: type or set of types to check against using isinstance()
         @param recurse: whether to recursively search within sub expressions
+        
+        @return: set of matched sub expressions, possibly empty
         """
 
         if isinstance(exp_type_or_set, list):
@@ -349,9 +350,9 @@ class e_clause(pt_abs_composite_node):
     @property
     def keyword_str(self):
         ret = self.sub_exp_set[0]
-        
+
         assert isinstance(ret, e_keyword)
-        
+
         return ret.value
 
 class e_clause__match(e_clause):
