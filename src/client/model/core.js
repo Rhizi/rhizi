@@ -10,12 +10,6 @@ define(['util'], function(util) {
      */
     var random_id;
 
-    /**
-     * common rz_state, globally accessible via model_core.rz_state:
-     *    - cur_rzdoc_name: name ID of current document
-     */
-    var rz_state = {};
-
     var random_id__hash = function() {
         return Math.random().toString(36).substring(2, 10);
     }
@@ -41,8 +35,6 @@ define(['util'], function(util) {
         if (config['rand_id_generator'] == 'seq') {
             random_id = random_id__seq();
         }
-
-        rz_state.cur_rzdoc_name = 'welcome to rhizi'; // ask for 'welcome_doc'
     }
 
     function Node() {
@@ -187,6 +179,5 @@ define(['util'], function(util) {
         create_node__set_random_id : create_node__set_random_id,
         create_link_from_spec : create_link_from_spec,
         create_link__set_random_id : create_link__set_random_id,
-        rz_state: rz_state,
     };
 });
