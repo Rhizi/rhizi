@@ -46,5 +46,24 @@ def validate_obj__attr_diff(attr_diff):
             if 'id' == attr_name:
                 raise Exception('validation error: Attr_Diff: forbidden attribute change: \'id\', n_id: ' + n_id)
 
-def map_rzdoc_name_to_rzdoc_id(rzdoc_name):
-    return rzdoc_name.lower().replace(' ', '_')
+def cache_lookup__rzdoc(rzdoc_name):
+    """
+    lookup RZDoc by rzdoc_name, possibly triggering a DB query
+    
+    @raise RZDoc_Exception__not_found
+    """
+    # FIXME: impl cache cleansing logic
+
+    cache_doc = current_app.cache__rzdoc_name_to_rzdoc.get(rzdoc_name)
+    if None != cache_doc:
+        return cache_doc
+
+    kernel = current_app.kernel
+    rz_doc = kernel.rzdoc__lookup_by_name(rzdoc_name)
+    
+    if None == rz_doc:
+        raise RZDoc_Exception__not_found(rzdoc_name)
+
+    current_app.cache__rzdoc_name_to_rzdoc[rzdoc_name] = rz_doc
+    return rz_doc
+

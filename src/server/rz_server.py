@@ -288,7 +288,8 @@ def init_webapp(cfg, kernel, db_ctl=None):
 
     webapp.rz_config = cfg
     webapp.kernel = kernel
-
+    webapp.cache__rzdoc_name_to_rzdoc = {}
+    
     init_rest_interface(cfg, webapp)
     return webapp
 
