@@ -11,7 +11,9 @@ import logging
 #
 # Tokens
 #
-tok_set__quote = ['`', '\'']
+tok__quote__backquote = '`'  # used to quote labels
+tok__quote__singlequote = '\''  # used to quote values
+tok_set__quote = [tok__quote__backquote, tok__quote__singlequote]
 
 tok_set__paren = ['(', ')', '[', ']', '{', '}']
 
