@@ -51,7 +51,7 @@ class DB_Controller:
             # here we watch for IOExecptions, etc - not db errors
             # these are returned in the db response itself
 
-            log.exception(e)
+            log.exception('op: %r' % (op))
             raise e
 
     def create_db_op(self, f_work, f_cont):
@@ -67,5 +67,5 @@ class DB_Controller:
         try:
             db_util.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
         except Exception as e:
-            log.exception(e)
+            log.exception('q: %s' % (q))
             raise e
