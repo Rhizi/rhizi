@@ -14,7 +14,9 @@ from neo4j_util import cfmt
 import neo4j_util as db_util
 import logging
 from neo4j_cypher import DB_Query, DB_result_set
+import neo4j_schema
 import neo4j_cypher
+from neo4j_schema import META_LABEL__RZDOC_TYPE
 
 log = logging.getLogger('rhizi')
 

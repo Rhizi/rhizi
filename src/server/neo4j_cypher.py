@@ -10,21 +10,6 @@ import logging
 import neo4j_cypher_parser
 from decorator import __call__
 
-#
-# meta label schema
-#
-
-META_LABEL__RZ_DOC = '__RZDOC_'
-META_LABEL__RZ_DOC_PREFIX = '__RZ_DOC_ID_'
-
-meta_label_set = [META_LABEL__RZ_DOC,  # RZ doc node
-                  '__HEAD',
-                  '__USER',  # user node
-                  '__Commit',  # diff commit node
-                  '__Parent',  # parent commit node
-                  '__Authored-by',
-                  # __RZ_DOC_ID_xxx, # [!] considered a meta label, excluded from set to allow returning nodes with this label
-                  ]
 
 log = logging.getLogger('rhizi')
 
