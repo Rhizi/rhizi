@@ -21,6 +21,9 @@ class RZDoc_Exception__not_found(Exception):
 
 class RZ_Kernel(object):
 
+    def __init__(self):
+        self.db_ctl = None
+
     def exec_chain_commit_op(self, diff_obj, ctx):
 
         # FIXME: clean
