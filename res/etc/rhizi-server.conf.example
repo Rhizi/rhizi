@@ -56,7 +56,8 @@ optimized_main = False
 # -----------------------------------------------------------------------------
 # Rhizi
 #
-rzdoc_name__mainpage = 'Rz Mainpage'
+rzdoc__mainpage_name = Welcome Rhizi
+rzdoc__name__max_length = 256
 
 # -----------------------------------------------------------------------------
 # Other
