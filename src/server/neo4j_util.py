@@ -13,7 +13,8 @@ from six.moves.urllib import request
 import six.moves.urllib_error as urllib_error
 from util import debug_log_duration
 import re
-from neo4j_cypher import Cypher_Parser
+from neo4j_cypher_parser import tok__quote__backquote, tok__quote__singlequote
+import neo4j_schema
 
 class Neo4JException(Exception):
     def __init__(self, error_set):
@@ -21,7 +22,6 @@ class Neo4JException(Exception):
 
     def __str__(self):
         return 'neo4j error set: ' + str(self.error_set)
-
 
 class Cypher_String_Formatter(string.Formatter):
     """
@@ -223,6 +223,10 @@ def generate_random_id__uuid():
     """
     return str(uuid.uuid4())
 
+def generate_random_rzdoc_id():
+    # grab last element of uuid, eg:
+    # 'f6c2cea6-f2fc-43a8-a753-d2c73155c886' -> d2c73155c886
+    ret = generate_random_id__uuid().split('-')[-1]
     return ret
 
 def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
