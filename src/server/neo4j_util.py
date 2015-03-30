@@ -301,6 +301,18 @@ def post(url, data):
 
     return ret
 
+def quote__backtick(label):
+    """
+    quote label (possibly containing spaces) with backticks
+    """
+    return tok__quote__backquote + label + tok__quote__backquote
+
+def quote__singlequote(label):
+    """
+    quote label (possibly containing spaces) with single quotes
+    """
+    return tok__quote__singlequote + label + tok__quote__singlequote
+
 def validate_label(label):
     assert len(label) > 0 and (label[0].isupper() or label[0] == '_'), 'malformed label: ' + label
     pass
