@@ -8,14 +8,14 @@ import re
 import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
-from model.model import Link
-from neo4j_util import generate_random_id__uuid
+from model.model import Link, RZDoc
+from neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
+    quote__singlequote, rzdoc__meta_ns_label
 from neo4j_util import cfmt
 import neo4j_util as db_util
 import logging
 from neo4j_cypher import DB_Query, DB_result_set
 import neo4j_schema
-import neo4j_cypher
 from neo4j_schema import META_LABEL__RZDOC_TYPE
 
 log = logging.getLogger('rhizi')
