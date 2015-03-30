@@ -5,7 +5,7 @@ import json
 
 import db_controller as dbc
 from model.graph import Topo_Diff
-from model.model import Link
+from model.model import Link, RZDoc
 from neo4j_test_util import gen_random_name, rand_label
 from neo4j_util import generate_random_id__uuid
 import neo4j_util
@@ -56,6 +56,10 @@ def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     ret_dict['__type'] = [l_type]
     ret_dict['id'] = lid
     return ret_dict, lid
+
+def generate_random_RZDoc(test_label):
+    rzdoc_id = neo4j_util.generate_random_rzdoc_id()
+    return RZDoc(rzdoc_id, test_label)
 
 def ws_emit__topo_diff():
     import logging
