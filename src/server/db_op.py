@@ -26,7 +26,7 @@ class DB_op(object):
         self.query_set = []
         self.result_set = []
         self.error_set = None
-        self.tx_id = None
+        self.tx_id = None # int
         self.tx_commit_url = None  # cached from response to tx begin
 
     def __iter__(self):
