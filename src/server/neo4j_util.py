@@ -226,43 +226,7 @@ def generate_random_id__uuid():
     """
     return str(uuid.uuid4())
 
-def post_neo4j(url, data):
-    """
-    @return dict object from the neo4j json POST response
-    """
-    ret = post(url, data)
-    ret_data = json.load(ret)
-
-    # [!] do not raise exception if ret_data['errors'] is not empty -
-    # this allows query-sets to partially succeed
-
-    return ret_data
-
-def post(url, data):
-    assert(isinstance(data, dict))  # make sure we're not handed json strings
-
-    post_data_json = json.dumps(data)
-
-    req = request.Request(url)
-    req.add_header('User-Agent', 'rhizi-server/0.1')
-    req.add_header('Accept', 'application/json; charset=UTF-8')
-    req.add_header('Content-Type', 'application/json')
-
-    req.add_header('X-Stream', 'true')  # enable neo4j JSON streaming
-
-    try:
-        ret = request.urlopen(req, post_data_json)
-    except urllib_error.HTTPError as e:
-        raise Exception('post request failed: code: {0}, reason: {1}'.format(e.code, e.reason))
-
     return ret
-
-def quote__backtick(label):
-    """
-    quote label (possibly containing spaces) with backticks
-    """
-    return '`' + label + '`'
-
 
 def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     """
@@ -303,6 +267,37 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
         del v_no_meta[meta_attr]
 
         ret[v_type].append(v_no_meta)
+
+    return ret
+
+def post_neo4j(url, data):
+    """
+    @return dict object from the neo4j json POST response
+    """
+    ret = post(url, data)
+    ret_data = json.load(ret)
+
+    # [!] do not raise exception if ret_data['errors'] is not empty -
+    # this allows query-sets to partially succeed
+
+    return ret_data
+
+def post(url, data):
+    assert(isinstance(data, dict))  # make sure we're not handed json strings
+
+    post_data_json = json.dumps(data)
+
+    req = request.Request(url)
+    req.add_header('User-Agent', 'rhizi-server/0.1')
+    req.add_header('Accept', 'application/json; charset=UTF-8')
+    req.add_header('Content-Type', 'application/json')
+
+    req.add_header('X-Stream', 'true')  # enable neo4j JSON streaming
+
+    try:
+        ret = request.urlopen(req, post_data_json)
+    except urllib_error.HTTPError as e:
+        raise Exception('post request failed: code: {0}, reason: {1}'.format(e.code, e.reason))
 
     return ret
 
