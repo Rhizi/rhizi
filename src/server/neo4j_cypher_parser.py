@@ -213,13 +213,11 @@ class pt_abs_composite_node(pt_abs_node):
             for exp_type in exp_type_set:
                 if isinstance(n, exp_type): ctx += [n]
 
-        ctx = []
         if False == recurse:
-            f_recurse = lambda _n, _ctx, _depth: False # do not recurse
+            f_recurse = lambda _n, _ctx, depth: depth <= 1 # [!] visit child nodes only 
         if True == recurse:
             f_recurse = lambda _n, _ctx, _depth: True # recurse
-        self.tree_walk__pre(f_visit=f_visit, f_recurse=f_recurse, ctx=ctx)
-        return ctx
+        return self.tree_walk__pre(f_visit=f_visit, f_recurse=f_recurse, ctx=[])
 
     def tree_walk__pre(self, f_pre=lambda n, ctx: None,
                              f_visit=lambda n, ctx, depth: None,
@@ -246,6 +244,7 @@ class pt_abs_composite_node(pt_abs_node):
             f_post(n, ctx)
 
         walk__pre_rec(self, 0)
+        return ctx
 
 class e_keyword(pt_abs_node):
 
