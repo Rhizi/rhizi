@@ -214,8 +214,8 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
 
             src_id = link['__src_id']
             dst_id = link['__dst_id']
-            q_params = {'src': { 'id': src_id} ,
-                        'dst': { 'id': dst_id} ,
+            q_params = {'src': { 'id': src_id},
+                        'dst': { 'id': dst_id},
                         'link_attr' : input_to_DB_property_map(l_prop_set)}
 
             q_tuple = (q_arr, q_params)
