@@ -678,9 +678,10 @@ class Cypher_Parser(object):
         if '{' == input[0]:
             n_cur = n_cur.spawn_child(e_param)
             return self.parse__e_param(input[1:], n_cur)
-
-        n_cur = n_cur.spawn_child(e_value)
-        return self.__parse(input, n_cur)
+        else:
+            n_cur = n_cur.spawn_child(e_value)
+            return self.__parse(input, n_cur)
+        assert False
 
     def parse__e_label_set(self, input, n_cur):
         if ' ' == input[0]:  # close label set
