@@ -61,10 +61,16 @@ def cfmt(fmt_str, *args, **kwargs):
     return Cypher_String_Formatter().format(fmt_str, *args, **kwargs)
 
 def rzdoc__ns_label(rzdoc):
-    return quote__backtick(neo4j_schema.META_LABEL__RZDOC_NS_PREFIX + rzdoc.id)
+    """
+    [!] must be quoted when used in queries
+    """
+    return neo4j_schema.META_LABEL__RZDOC_NS_PREFIX + rzdoc.id
 
-def rzdoc__meta_ns_label(rzdoc):
-    return quote__backtick(neo4j_schema.META_LABEL__RZDOC_NS_META_PREFIX + rzdoc.id)
+def rzdoc__meta_ns_label(rzdoc): 
+    """
+    [!] must be quoted when used in queries
+    """
+    return neo4j_schema.META_LABEL__RZDOC_NS_META_PREFIX + rzdoc.id
 
 def db_query_set_to_REST_form(db_query_set):
     """

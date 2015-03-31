@@ -796,18 +796,19 @@ class DBO_rzdoc__delete(DB_op):
         """
         super(DBO_rzdoc__delete, self).__init__()
 
-        rzdoc_label = rzdoc__ns_label(rzdoc)
+        rzdoc_label_q = quote__singlequote(rzdoc__ns_label(rzdoc))
+        rzdoc_id_q = quote__singlequote(rzdoc.id)
 
         # delete doc nodes & links
-        q_arr = ['match (n:%s)' % (rzdoc_label),
-                 'optional match (n:%s)-[r]-()' % (rzdoc_label),
+        q_arr = ['match (n:%s)' % (rzdoc_label_q),
+                 'optional match (n:%s)-[r]-()' % (rzdoc_label_q),
                  'delete r,n']
         db_q = DB_Query(q_arr)
         self.add_db_query(db_q)
 
         # delete doc meta node
         q_arr = ['match (n:%s {id: %s})' % (neo4j_schema.META_LABEL__RZDOC_TYPE,
-                                            quote__singlequote(rzdoc.id)),
+                                           rzdoc_id_q),
                  'optional match (n)-[r]-()',
                  'delete r,n']
         db_q = DB_Query(q_arr)
