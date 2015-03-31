@@ -36,14 +36,25 @@ class Test_DB_Op(unittest.TestCase):
         attr_diff = Attr_Diff()
         attr_diff.add_node_attr_write(n_0_id, 'attr_0', 0)
 
+        test_rzdoc = generate_random_RZDoc(test_label)
+
         op_set = [
-                  DBO_rz_clone(),
+                  DBO_rzdoc__clone(),
                   DBO_add_node_set(meta_attr_list_to_meta_attr_map(n_set)),
                   DBO_add_link_set(meta_attr_list_to_meta_attr_map(l_set, meta_attr='__type')),
-                  DBO_block_chain__commit(),
                   DBO_diff_commit__attr(attr_diff),
                   DBO_diff_commit__topo(topo_diff),
                   DBO_rm_node_set(id_set=[n_0_id]),
+
+                  # block chain
+                  DBO_block_chain__init(test_rzdoc),
+                  DBO_block_chain__commit(commit_obj=topo_diff.to_json_dict()),
+
+                  # rzdoc
+                  DBO_rzdoc__create(test_rzdoc),
+                  DBO_rzdoc__delete(test_rzdoc),
+                  DBO_rzdoc__list(),
+                  DBO_rzdoc__lookup_by_name(test_rzdoc.name),
                   ]
         return op_set
 
