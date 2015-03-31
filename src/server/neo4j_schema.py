@@ -9,6 +9,7 @@ META_LABEL__VC_HEAD = '__HEAD'
 META_LABEL__VC_COMMIT = '__COMMIT' # diff commit node
 META_LABEL__VC_PARENT = '__PARENT' # diff commit node
 META_LABEL__VC_COMMIT_AUTHOR = '__AUTHORED-BY'
+META_LABEL__VC_EMPTY_RZDOC_HASH = 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc' # value of: echo '' | sha1sum
 
 META_LABEL__USER = '__USER' # user node
 
