@@ -703,25 +703,25 @@ class DBO_rm_link_set(DB_op):
 
 class DBO_rzdoc__clone(DB_op):
 
-    def __init__(self, filter_label=None, limit=16384):
+    def __init__(self, limit=16384):
         """
         clone rhizi
 
         @return: a Topo_Diff with the appropriate node_set_add, link_set_add
         fields filled
         """
-        super(DBO_rz_clone, self).__init__()
+        super(DBO_rzdoc__clone, self).__init__()
 
         self.limit = limit
         self.skip = 0
 
-        q_arr = ['match (n)' if not filter_label else 'match (n:%s)' % (filter_label),
+        q_arr = ['match (n)',
                  'with n',
                  'order by n.id',
                  'skip %d' % (self.skip),
                  'limit %d' % (self.limit),
                  'optional match (n)-[r]->(m)',
-                 'return n,labels(n),collect([m.id, r, type(r)])']
+                 'return n,labels(n),collect([r, type(r), m.id])']
 
         db_q = DB_Query(q_arr)
         self.add_db_query(db_q)
@@ -736,7 +736,7 @@ class DBO_rzdoc__clone(DB_op):
                 # reconstruct nodes
                 assert None != n.get('id'), "db contains nodes with no id"
 
-                n['__label_set'] = n_lbl_set
+                n['__label_set'] = self.process_q_ret__n_label_set(n_lbl_set)
 
                 ret_n_set.append(n)
 
@@ -748,9 +748,10 @@ class DBO_rzdoc__clone(DB_op):
                         # as link matching is optional, collect may yield empty sets
                         continue
 
-                    l = Link.Link_Ptr(src_id=n['id'], dst_id=l_tuple[0])
-                    l['id'] = l_tuple[1]['id']
-                    l['__type'] = [l_tuple[2]]
+                    ret_l, ret_l_type, ret_l_dst_id = l_tuple
+                    l = Link.Link_Ptr(src_id=n['id'], dst_id=ret_l_dst_id)
+                    l['id'] = ret_l['id']
+                    l['__type'] = self.process_q_ret__l_type(ret_l_type)
 
                     ret_l_set.append(l)
 
@@ -760,6 +761,12 @@ class DBO_rzdoc__clone(DB_op):
         topo_diff = Topo_Diff(node_set_add=ret_n_set,
                               link_set_add=ret_l_set)
         return topo_diff
+
+    def process_q_ret__n_label_set(self, label_set):
+        return label_set
+
+    def process_q_ret__l_type(self, l_type):
+        return [l_type]  # return as list
 
 class DBO_rzdoc__create(DB_op):
 
