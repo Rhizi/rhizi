@@ -301,6 +301,35 @@ class DBO_block_chain__commit(DB_op):
         ret.link_set_add = [l]
         return ret
 
+class DBO_block_chain__init(DB_op):
+
+    def __init__(self, rzdoc):
+        """
+        Rhizi version control - initialize meta namespace block chain
+        """
+        super(DBO_block_chain__init, self).__init__()
+
+        #
+        # setup meta rzdoc NS
+        #
+        meta_ns_label_q = quote__backtick(rzdoc__meta_ns_label(rzdoc))
+        q_arr = ['create (n:%s:%s:%s {commit_attr})' % (meta_ns_label_q,
+                                                        neo4j_schema.META_LABEL__VC_HEAD,
+                                                        neo4j_schema.META_LABEL__VC_COMMIT,
+                                                        ),
+                 'set n.ts_created=timestamp()',]
+
+        hash_value = neo4j_schema.META_LABEL__VC_EMPTY_RZDOC_HASH
+        param_set = {'commit_attr': {
+                                       'blob': '',
+                                       'hash': hash_value,
+                                       'id': hash_value,
+                                       'name': 'root-commit'},
+                       }
+
+        db_q = DB_Query(q_arr, param_set)
+        self.add_db_query(db_q)
+
 class DBO_block_chain__list(DB_op):
     """
     Return block chain hash list
