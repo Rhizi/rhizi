@@ -424,30 +424,12 @@ class e_kv_pair(pt_abs_composite_node):  # key value pair
 
     def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ': '
 
-class p_label_set_container():
 
-    @property
-    def label_set(self):
-        sub_exp_set = self.sub_exp_set_by_type(e_label_set)
-        if 0 == len (sub_exp_set):
-            return None
-        assert 1 == len(sub_exp_set)
-        return sub_exp_set.pop()
 
-    def spawn_label_set(self):
-        """
-        spawn label set adjacent to e_ident
-        """
 
-        id_sub_exp_set = self.sub_exp_set_by_type(e_ident)
-        assert None == self.label_set, 'label set already present'
-        assert 1 == len(id_sub_exp_set), 'label set already present'
 
-        e_id = id_sub_exp_set.pop()
-        lbl_set = e_id.spawn_sibling__adjacent(e_label_set)
-        return lbl_set
 
-class p_node(pt_abs_composite_node, p_label_set_container):  # node pattern: '(...)'
+class p_node(pt_abs_composite_node):  # node pattern: '(...)'
     """
     node pattern
     """
@@ -467,7 +449,28 @@ class p_node(pt_abs_composite_node, p_label_set_container):  # node pattern: '(.
     @classmethod
     def rgx(self, g_name): return '\((?P<%s>[^\(\)]*?)\)' % (g_name)
 
-class p_rel(pt_abs_composite_node, p_label_set_container):  # rel pattern: '[...]'
+    @property
+    def label_set(self):
+        sub_exp_set = self.sub_exp_set_by_type(e_label_set)
+        if 0 == len (sub_exp_set):
+            return None
+        assert 1 == len(sub_exp_set)
+        return sub_exp_set.pop()
+
+    def spawn_label_set(self):
+        """
+        spawn label set adjacent to e_ident
+        """
+
+        assert not self.label_set, 'label set already present'
+        assert len(self.sub_exp_set) > 0
+        assert e_ident == self.sub_exp_set[0].__class__
+
+        e_id = self.sub_exp_set[0]
+        lbl_set = e_id.spawn_sibling__adjacent(e_label_set)
+        return lbl_set
+
+class p_rel(pt_abs_composite_node):  # rel pattern: '[...]'
     """
     relationship pattern
     """
@@ -490,7 +493,10 @@ class p_rel(pt_abs_composite_node, p_label_set_container):  # rel pattern: '[...
             return ']-'
 
     @property
-    def type(self):  # the single element equivalent of node label sets
+    def type(self):
+        """
+        The single element equivalent of node label sets
+        """
         val_sub_n_set = self.sub_exp_set_by_type(e_value)
 
         assert len(val_sub_n_set) >= 1
