@@ -201,7 +201,7 @@ class pt_abs_composite_node(pt_abs_node):
         @param exp_type_or_set: type or set of types to check against using isinstance()
         @param recurse: whether to recursively search within sub expressions
         
-        @return: set of matched sub expressions, possibly empty
+        @return: set of matched sub expressions who match the given type set, possibly empty
         """
 
         if isinstance(exp_type_or_set, list):
@@ -214,11 +214,11 @@ class pt_abs_composite_node(pt_abs_node):
                 if isinstance(n, exp_type): ctx += [n]
 
         ctx = []
-        if not recurse:
-            f_cascade = lambda n, ctx, depth: True
-            self.tree_walk__pre(f_visit=f_visit, f_cascade=f_cascade, ctx=ctx)
-        else:
-            self.tree_walk__pre(f_visit=f_visit, ctx=ctx)
+        if False == recurse:
+            f_recurse = lambda _n, _ctx, _depth: False # do not recurse
+        if True == recurse:
+            f_recurse = lambda _n, _ctx, _depth: True # recurse
+        self.tree_walk__pre(f_visit=f_visit, f_recurse=f_recurse, ctx=ctx)
         return ctx
 
     def tree_walk__pre(self, f_pre=lambda n, ctx: None,
