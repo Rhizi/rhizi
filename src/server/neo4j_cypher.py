@@ -4,7 +4,7 @@ Neo4j DB object
 
 from enum import Enum
 from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword, \
-    e_value, e_label_set, p_node, e_ident, p_rel, p_path
+    e_value, p_node, p_path
 import re
 import logging
 import neo4j_cypher_parser
@@ -103,7 +103,7 @@ class QT_RZDOC_NS_Filter__common(Query_Transformation):
             clause_set += dbq.pt_root.clause_set_by_kw('match')
 
         for c in clause_set:
-            n_exp_set = c.sub_exp_set_by_type(p_node , recurse=True)
+            n_exp_set = c.sub_exp_set_by_type(p_node, recurse=True)
             for n_exp in n_exp_set:
 
                 if n_exp.parent.__class__ == p_path:

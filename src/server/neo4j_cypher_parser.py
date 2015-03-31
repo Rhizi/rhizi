@@ -549,7 +549,7 @@ class Cypher_Parser(object):
             self.__parse(input, root_node)
         except Exception as e:
             log.exception(e)
-            log.debug('parse tree:\n%s' % (root_node.str__struct_tree()))
+            log.debug('parse tree:\n%s\nq: %s' % (root_node.str__struct_tree(), input))
             raise e
 
         return root_node
@@ -699,7 +699,7 @@ class Cypher_Parser(object):
             n_cur = n_cur.rotate__pin_under_new_parent(op_dot)
             return self.__parse(input[2:], n_cur)
 
-        if '}' == input[0]:  # close node/path
+        if '}' == input[0]:  # close param
             n_cur = n_cur.parent
             return self.__parse(input[1:], n_cur)
 
