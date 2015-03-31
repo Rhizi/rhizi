@@ -57,6 +57,23 @@ def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     ret_dict['id'] = lid
     return ret_dict, lid
 
+def generate_random_diff__topo__minimal(test_label):
+    """
+    @return: a ~minimal Topo_Diff containing three nodes and two links
+    """
+    n_0, n_0_id = generate_random_node_dict(test_label)
+    n_1, n_1_id = generate_random_node_dict(test_label)
+    n_2, n_2_id = generate_random_node_dict(test_label)
+
+    l_0, l_0_id = generate_random_link_dict(test_label, n_0_id, n_1_id)
+    l_1, l_1_id = generate_random_link_dict(test_label, n_0_id, n_2_id)
+
+    n_set = [n_0, n_1, n_2]
+    l_set = [l_0, l_1]
+    topo_diff = Topo_Diff(node_set_add=n_set,
+                          link_set_add=l_set)
+    return topo_diff
+
 def generate_random_RZDoc(test_label):
     rzdoc = RZDoc(test_label)
     rzdoc.id = neo4j_util.generate_random_rzdoc_id()
