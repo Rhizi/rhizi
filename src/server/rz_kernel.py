@@ -6,7 +6,8 @@ import logging
 import traceback
 
 from db_op import DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create, \
-    DBO_rzdoc__lookup_by_name, DBO_rz_clone, DBO_rzdoc__delete, DBO_rzdoc__list
+    DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list,\
+    DBO_block_chain__init
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
 from model.model import RZDoc
@@ -35,9 +36,9 @@ class RZ_Kernel(object):
             commit_obj = diff_obj
 
         rzdoc = ctx.rzdoc
-        chain_commit_op = DBO_block_chain__commit(commit_obj, ctx)
-        chain_commit_op = QT_RZDOC_Meta_NS_Filter(rzdoc)(chain_commit_op)
-        self.db_ctl.exec_op(chain_commit_op)
+        op = DBO_block_chain__commit(commit_obj, ctx)
+        op = QT_RZDOC_Meta_NS_Filter(rzdoc)(op)
+        self.db_ctl.exec_op(op)
 
     def diff_commit__topo(self, topo_diff, ctx=None):
         """
@@ -141,6 +142,7 @@ class RZ_Kernel(object):
             log.error(e.message)
             log.error(traceback.print_exc())
             raise e
+
 
     def rzdoc__delete(self, rzdoc, ctx=None):
         """
