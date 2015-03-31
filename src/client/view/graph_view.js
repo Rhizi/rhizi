@@ -212,7 +212,7 @@ function GraphView(spec) {
         }
     }
 
-    var selection_outer_radius = 200;
+    var selection_outer_radius = 0; //200;
     // HACK to load positions stored locally: on the first diff, which is the result of the
     // initial clone, load positions from stored last settled position (see record_position_to_local_storage
     // and restore_position_from_local_storage)
@@ -274,7 +274,7 @@ function GraphView(spec) {
         resumeLayout();
     }
     // on every selection change that isn't null set the selected nodes to fixed
-    if (!temporary) {
+    if (selection_outer_radius > 0 && !temporary) {
         Bacon.update(
             [{root_nodes: [], nodes: []}, gv.bubble_radius],
             [selection.selectionChangedBus], function (data, new_selection) { return [new_selection, data[1]]; },
