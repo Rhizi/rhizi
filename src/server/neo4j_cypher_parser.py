@@ -144,11 +144,11 @@ class pt_abs_composite_node(pt_abs_node):
         def f_pre(n, ctx): ctx[0] += n.str__tok_open()
         def f_visit(n, ctx, _depth): ctx[0] += n.str__body()
         def f_post(n, ctx): ctx[0] += n.str__tok_close()
-        def f_cascade(n, ctx, depth): return True
+        def f_recurse(n, ctx, depth): return True
         def f_inter(parent, n, n_next, ctx): ctx[0] += parent.str__tok_sibling_delim(n, n_next)
 
         ctx = ['']
-        self.tree_walk__pre(f_pre, f_visit, f_post, f_cascade, f_inter, ctx)
+        self.tree_walk__pre(f_pre, f_visit, f_post, f_recurse, f_inter, ctx)
         return ''.join(ctx)
 
     def __str__struct_tree(self, depth_delim=''):
@@ -224,7 +224,7 @@ class pt_abs_composite_node(pt_abs_node):
     def tree_walk__pre(self, f_pre=lambda n, ctx: None,
                              f_visit=lambda n, ctx, depth: None,
                              f_post=lambda n, ctx: None,
-                             f_cascade=lambda n, ctx, depth: True,
+                             f_recurse=lambda n, ctx, depth: True,
                              f_inter=lambda n, e_first, e_next, ctx: None,  # called between each sibling pair
                              ctx=None):  # tree walk, preorder
 
@@ -232,7 +232,7 @@ class pt_abs_composite_node(pt_abs_node):
             f_pre(n, ctx)
             f_visit(n, ctx, depth)
 
-            if f_cascade(n, ctx, depth):
+            if f_recurse(n, ctx, depth):
                 sub_n_set = [e for e in n]
                 sub_exp_set_len = len(sub_n_set)
                 for i in range(0, sub_exp_set_len):
