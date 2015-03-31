@@ -38,9 +38,9 @@ class Req_Context():
        - rzdoc
     """
 
-    def __init__(self):
-        self.user_name = None
-        self.rzdoc = None
+    def __init__(self, user_name=None, rzdoc=None):
+        self.user_name = user_name
+        self.rzdoc = rzdoc
 
 def __context__common(rzdoc_name=None):
     """
@@ -77,7 +77,6 @@ def diff_commit__set():
     """
     commit a diff set
     """
-
     def sanitize_input(req):
         diff_set_dict = req.get_json()['diff_set']
         topo_diff_dict = diff_set_dict['__diff_set_topo'][0]
