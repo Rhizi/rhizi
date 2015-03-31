@@ -1198,7 +1198,7 @@ function GraphView(spec) {
 
     function layout__concentric() {
         return layout__sync(function () {
-            var bytype = _.groupBy(this._nodes, 'type'),
+            var bytype = _.sortBy(_.groupBy(this._nodes, 'type'), "length"),
                 types = _.keys(bytype),
                 i,
                 r,
