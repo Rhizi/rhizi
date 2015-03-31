@@ -1142,7 +1142,7 @@ function GraphView(spec) {
         return ret;
     }
 
-    function layout__concentric() {
+    function layout__sync(layer) {
         var layout = {
                 _nodes: undefined,
                 _links: undefined,
@@ -1151,10 +1151,11 @@ function GraphView(spec) {
                 },
                 _end: function () {
                     console.log('end not set');
-                }
+                },
+                wh: [1, 1] // width + height
             },
-            wh; // width + height
-
+            bound_layer = layer.bind(layout);
+        
         layout.resume = function () {
             layout.start();
             return layout;
@@ -1163,34 +1164,11 @@ function GraphView(spec) {
             return layout;
         };
         layout.start = function () {
-            var bytype = _.groupBy(layout._nodes, 'type'),
-                types = _.keys(bytype),
-                i,
-                r,
-                nodes,
-                count,
-                j,
-                node,
-                angle,
-                ring_radius = Math.max(50, (Math.min.apply(null, wh) - 50) / (types.length + 1));
-
-            for (i = 0; i < types.length ; ++i) {
-                r = (i + 1) * ring_radius;
-                nodes = bytype[types[i]];
-                count = nodes.length;
-
-                for (j = 0 ; j < count; ++j) {
-                    node = nodes[j];
-                    angle = j * Math.PI * 2 / count;
-
-                    node.x = node.px = cx + r * Math.cos(angle);
-                    node.y = node.py = cy + r * Math.sin(angle);
-                }
-            }
+            bound_layer();
             layout._tick();
             layout._end();
             return layout;
-        };
+        }
         layout.alpha = layout.start;
         layout.nodes = function (_nodes) {
             layout._nodes = _nodes;
@@ -1212,19 +1190,108 @@ function GraphView(spec) {
             return layout;
         }
         layout.size = function (_wh) {
-            wh = _wh;
+            layout.wh = _wh;
             return layout;
         }
         return layout;
     }
 
-    //layout = force_enabled ?  layout__cola() : layout__empty();
-    layout = temporary ? layout__empty() : layout__concentric();
-    layout.size([w, h])
+    function layout__concentric() {
+        return layout__sync(function () {
+            var bytype = _.groupBy(this._nodes, 'type'),
+                types = _.keys(bytype),
+                i,
+                r,
+                nodes,
+                count,
+                j,
+                node,
+                angle,
+                ring_radius = Math.max(50, (Math.min.apply(null, this.wh) - 50) / (types.length + 1));
+
+            for (i = 0; i < types.length ; ++i) {
+                r = (i + 1) * ring_radius;
+                nodes = bytype[types[i]];
+                count = nodes.length;
+
+                for (j = 0 ; j < count; ++j) {
+                    node = nodes[j];
+                    angle = j * Math.PI * 2 / count;
+
+                    node.x = node.px = cx + r * Math.cos(angle);
+                    node.y = node.py = cy + r * Math.sin(angle);
+                }
+            }
+        });
+    };
+
+    function layout__grid() {
+        return layout__sync(function () {
+            var nodes = this._nodes,
+                count = nodes.length,
+                line = Math.floor(Math.sqrt(count)) + 1,
+                rows = Math.ceil(count / line),
+                wspace = layout.wh[0] / (line + 2),
+                hspace = layout.wh[1] / (rows + 1);
+
+            for (var i = 0 ; i < nodes.length ; ++i) {
+                var node = nodes[i];
+                node.x = node.px = ((i % line) + 1) * wspace;
+                node.y = node.py = (Math.floor(i / line) + 1) * hspace;
+            }
+        });
+    };
+
+    var layouts = [
+        {
+            name: 'force',
+            create: layout__d3_force,
+            clazz: 'btn_layout_d3_force'
+        },
+        {
+            name: 'concentric',
+            create: layout__concentric,
+            clazz: 'btn_layout_concentric'
+        },
+        {
+            name: 'grid',
+            create: layout__grid,
+            clazz: 'btn_layout_grid'
+        },
+        ];
+
+    function set_layout_toolbar(selector) {
+        var root = $(selector);
+
+        layouts.forEach(function (layout_data) {
+            var button = $('<div></div>');
+            button.html(layout_data.name);
+            button.addClass(layout_data.clazz);
+            button.addClass('btn_layout');
+            button.on('click', function () {
+                set_layout(layout_data.create);
+            });
+            root.append(button);
+        });
+    }
+
+    function set_layout(layout_creator) {
+        if (layout !== undefined) {
+            layout.stop();
+        }
+        layout = layout_creator().size([w, h])
           .on("tick", pushRedraw)
           .on("end", record_position_to_local_storage)
+          .nodes(graph.nodes())
+          .links(graph.links())
           .start();
+    }
 
+    if (!temporary) {
+        set_layout_toolbar('#layout-bar');
+    }
+    //layout = force_enabled ?  layout__cola() : layout__empty();
+    set_layout(temporary ? layout__empty : layouts[0].create);
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
         tick();
