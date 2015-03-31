@@ -20,6 +20,7 @@
             html2canvas: lib_path + 'html2canvas',
             underscore: lib_path + 'underscore',
             feedback: lib_path + 'feedback',
+            cola: lib_path + 'cola',
         }
     }
 

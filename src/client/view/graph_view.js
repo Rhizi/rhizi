@@ -25,8 +25,10 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3', 'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
-function(d3 ,  Bacon         ,  consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types) {
+define(['d3', 'cola', 'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types'],
+function(d3 ,  cola_returns_undefined,   Bacon         ,  consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types) {
+
+"use strict"
 
 // aliases
 var obj_take = util.obj_take;
@@ -87,7 +89,7 @@ function GraphView(spec) {
         parent_graph_zoom_obj = spec.parent_graph_zoom_obj,
 
         zoomInProgress = false,
-        force,
+        layout,
         drag,
         vis,
         deliverables,
@@ -289,15 +291,14 @@ function GraphView(spec) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
         d.dragstart = {clientX:d3.event.sourceEvent.clientX, clientY:d3.event.sourceEvent.clientY};
-        if (force_enabled) {
-            force.stop();
-        }
+        layout.stop();
     }
 
     function dragged(d) {
-        d.x = d3.event.x;
-        d.y = d3.event.y;
-        tick();
+        d.px = d3.event.x;
+        d.py = d3.event.y;
+        //tick();
+        resumeLayout();
     }
 
     function setupInitialPositions()
@@ -329,7 +330,7 @@ function GraphView(spec) {
 
     function resumeLayout() {
         setupInitialPositions();
-        force.alpha(0.05);
+        layout.alpha(0.05);
     }
 
     function dragended(d) {
@@ -341,9 +342,7 @@ function GraphView(spec) {
             d.px = d.x;
             d.py = d.y;
             tick();
-            if (force_enabled) {
-                force.resume();
-            }
+            layout.resume();
         }
     }
 
@@ -476,6 +475,8 @@ function GraphView(spec) {
             })
             .each(function (d) {
                 d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
+                d.width = 900;
+                d.height = 900;
             });
 
         // reorder nodes so selected are last, and so rendered last, and so on top.
@@ -544,7 +545,7 @@ function GraphView(spec) {
                 }
                 d3.event.stopPropagation();
             });
-        noderef = nodeEnter.insert('a')
+        var noderef = nodeEnter.insert('a')
             .attr("class", "nodeurl graph")
             .attr("transform", "translate(10,-7)")
             .attr("dy", node_text_dy);
@@ -656,7 +657,7 @@ function GraphView(spec) {
             }
 
             if (relayout) {
-                force.alpha(0.1).start();
+                layout.alpha(0.1).start();
             } else {
                 // XXX If we are stopped we need to update the text of the links at least,
                 // and this is the simplest way
@@ -668,7 +669,7 @@ function GraphView(spec) {
     }
 
     function force__load_graph() {
-        force.nodes(graph.nodes().filter(node__is_shown))
+        layout.nodes(graph.nodes().filter(node__is_shown))
              .links(graph.links().filter(link__is_shown));
     }
 
@@ -769,37 +770,37 @@ function GraphView(spec) {
 
     gv.update_view = update_view;
     function start_layout_animation() {
-            on_interval = function() {
-                var now = (new Date()).getTime(),
-                    end_now = gv.layout_animation.endtime - now,
-                    b_dict = gv.layout_animation.bubble_radius,
-                    end_start = gv.layout_animation.endtime - gv.layout_animation.starttime,
-                    now_start = now - gv.layout_animation.starttime,
-                    d_current = gv.layout_animation.target - gv.layout_animation.current,
-                    d_bubble_radius = b_dict.target - gv.bubble_radius,
-                    step_msec = gv.layout_animation.step_msec;
+        var on_interval = function() {
+            var now = (new Date()).getTime(),
+                end_now = gv.layout_animation.endtime - now,
+                b_dict = gv.layout_animation.bubble_radius,
+                end_start = gv.layout_animation.endtime - gv.layout_animation.starttime,
+                now_start = now - gv.layout_animation.starttime,
+                d_current = gv.layout_animation.target - gv.layout_animation.current,
+                d_bubble_radius = b_dict.target - gv.bubble_radius,
+                step_msec = gv.layout_animation.step_msec;
 
-                util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
-                // we loop some just to settle the temporary graph animation
-                if (d_current == 0 && d_bubble_radius == 0) {
-                    clearInterval(gv.layout_animation.interval);
-                    gv.layout_animation.interval = null;
-                } else {
-                    if (d_current > 0) {
-                        gv.layout_animation.current += 1;
-                    }
-                    if (d_bubble_radius != 0) {
-                        if (end_now <= 0) {
-                            gv.bubble_radius = b_dict.target;
-                        } else {
-                            gv.bubble_radius = b_dict.start +
-                                (b_dict.target - b_dict.start) * (now_start / end_start);
-                        }
+            util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
+            // we loop some just to settle the temporary graph animation
+            if (d_current == 0 && d_bubble_radius == 0) {
+                clearInterval(gv.layout_animation.interval);
+                gv.layout_animation.interval = null;
+            } else {
+                if (d_current > 0) {
+                    gv.layout_animation.current += 1;
+                }
+                if (d_bubble_radius != 0) {
+                    if (end_now <= 0) {
+                        gv.bubble_radius = b_dict.target;
+                    } else {
+                        gv.bubble_radius = b_dict.start +
+                            (b_dict.target - b_dict.start) * (now_start / end_start);
                     }
                 }
-                util.assert(gv.bubble_radius !== undefined, "bug");
-                tick();
-            };
+            }
+            util.assert(gv.bubble_radius !== undefined, "bug");
+            tick();
+        };
         if (gv.layout_animation.interval == null) {
             gv.layout_animation.interval = setInterval(on_interval, gv.layout_animation.step_msec);
         }
@@ -821,9 +822,7 @@ function GraphView(spec) {
     function check_for_nan(x) {
         if (Number.isNaN(x)) {
             console.log('nan problem');
-            if (force_enabled) {
-                force.stop();
-            }
+            layout.stop();
         }
         return Number.isNaN(x);
     }
@@ -910,7 +909,7 @@ function GraphView(spec) {
             r = Math.sqrt(dx * dx + dy * dy),
             a = Math.atan2(dy, dx),
             scale = zoom_obj.scale(),
-            scaled_bubble_radius = bubble_radius / scale;
+            scaled_bubble_radius = bubble_radius / scale,
             new_r = r > scaled_bubble_radius * 2 ? r : r / 2 + scaled_bubble_radius;
         // FIXME: r == 0 (or close enough)
         return {x: zcx + new_r * Math.cos(a),
@@ -1101,8 +1100,8 @@ function GraphView(spec) {
                     nodes.length + ' nodes');
     }
 
-    function init_force_layout() {
-        force = d3.layout.force()
+    function layout__d3_force() {
+        return d3.layout.force()
                   .distance(240)
                   .gravity(0.12)
                   .charge(-1800)
@@ -1111,16 +1110,120 @@ function GraphView(spec) {
                         d_dst = graph.degree(link.__dst),
                         ret = (d_src + d_dst) * 10 + 10;
                     return ret;
-                  })
-                  .size([w, h])
-                  .on("tick", pushRedraw)
-                  .on("end", record_position_to_local_storage)
-                  .start();
+                  });
     }
 
-    if (force_enabled) {
-        init_force_layout();
+    function layout__cola() {
+        return cola.d3adaptor()
+                  //.linkDistance(120)
+                  .avoidOverlaps(true);
+        /*
+                  .linkDistance(function (link, i) {
+                    var d_src = graph.degree(link.__src),
+                        d_dst = graph.degree(link.__dst),
+                        ret = (d_src + d_dst) * 10 + 10;
+                    return ret;
+                  })
+                  */
     }
+
+    function layout__empty() {
+        var donothing = function () { return ret; },
+            ret = {
+                resume: donothing,
+                stop: donothing,
+                nodes: donothing,
+                links: donothing,
+                alpha: donothing,
+                start: donothing,
+                size: donothing,
+                on: donothing,
+            };
+        return ret;
+    }
+
+    function layout__concentric() {
+        var layout = {
+                _nodes: undefined,
+                _links: undefined,
+                _tick: function () {
+                    console.log('tick not set');
+                },
+                _end: function () {
+                    console.log('end not set');
+                }
+            },
+            wh; // width + height
+
+        layout.resume = function () {
+            layout.start();
+            return layout;
+        };
+        layout.stop = function () {
+            return layout;
+        };
+        layout.start = function () {
+            var bytype = _.groupBy(layout._nodes, 'type'),
+                types = _.keys(bytype),
+                i,
+                r,
+                nodes,
+                count,
+                j,
+                node,
+                angle,
+                ring_radius = Math.max(50, (Math.min.apply(null, wh) - 50) / (types.length + 1));
+
+            for (i = 0; i < types.length ; ++i) {
+                r = (i + 1) * ring_radius;
+                nodes = bytype[types[i]];
+                count = nodes.length;
+
+                for (j = 0 ; j < count; ++j) {
+                    node = nodes[j];
+                    angle = j * Math.PI * 2 / count;
+
+                    node.x = node.px = cx + r * Math.cos(angle);
+                    node.y = node.py = cy + r * Math.sin(angle);
+                }
+            }
+            layout._tick();
+            layout._end();
+            return layout;
+        };
+        layout.alpha = layout.start;
+        layout.nodes = function (_nodes) {
+            layout._nodes = _nodes;
+            return layout;
+        }
+        layout.links = function (_links) {
+            layout._links = _links;
+            return layout;
+        }
+        layout.on = function (on_type, func) {
+            switch (on_type) {
+                case 'tick':
+                    layout._tick = func;
+                    break;
+                case 'end':
+                    layout._end = func;
+                    break;
+            };
+            return layout;
+        }
+        layout.size = function (_wh) {
+            wh = _wh;
+            return layout;
+        }
+        return layout;
+    }
+
+    //layout = force_enabled ?  layout__cola() : layout__empty();
+    layout = temporary ? layout__empty() : layout__concentric();
+    layout.size([w, h])
+          .on("tick", pushRedraw)
+          .on("end", record_position_to_local_storage)
+          .start();
 
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
