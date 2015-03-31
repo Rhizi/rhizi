@@ -93,7 +93,7 @@ class RZ_Kernel(object):
 
         @return Topo_Diff with node/link attributes
         """
-        op = DBO_rz_clone()
+        op = DBO_rzdoc__clone()
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         try:

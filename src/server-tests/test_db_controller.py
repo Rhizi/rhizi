@@ -349,7 +349,7 @@ class TestDBController(unittest.TestCase):
         l_label = op.link_set_label
         self.db_ctl.exec_op(op)  # commit random data
 
-        op = DBO_rz_clone(filter_label=n_label, limit=32)
+        op = DBO_rzdoc__clone(filter_label=n_label, limit=32)
         topo_diff = self.db_ctl.exec_op(op)
         n_set = topo_diff.node_set_add
         l_set = topo_diff.link_set_add
