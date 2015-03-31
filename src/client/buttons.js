@@ -132,7 +132,7 @@ $('#btn_rzdoc__new').click(function() {
                 cmd_bar.remove();
             });
 
-            rz_core.rzdoc_open(rzdoc_name);
+            rz_core.rzdoc__open(rzdoc_name);
         };
 
         var on_error = function() {
