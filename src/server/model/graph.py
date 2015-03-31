@@ -151,12 +151,30 @@ class Topo_Diff(object):
     def __str__(self):
         return __name__ + ': ' + ', '.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
 
+    def len__n_add(self):
+        return len(self.node_set_add)
+
+    def len__n_id_rm(self):
+        return len(self.node_id_set_rm)
+
+    def len__l_add(self):
+        return len(self.link_set_add)
+
+    def len__l_id_rm(self):
+        return len(self.link_id_set_rm)
+
     def to_json_dict(self):
         ret = {k: getattr(self, k) for k in ['link_id_set_rm',
                                              'node_id_set_rm',
                                              'node_set_add',
                                              'link_set_add'] }
         return ret
+
+    def to_str__commit_name(self):
+        return 'TD: +n:%d l:%d -n:%d -l:%d' % (len(self.node_set_add),
+                                               len(self.link_set_add),
+                                               len(self.node_id_set_rm),
+                                               len(self.link_id_set_rm))
 
     def check_validity(self, topo_diff_dict):
         """
