@@ -16,7 +16,6 @@ import neo4j_util as db_util
 import logging
 from neo4j_cypher import DB_Query, DB_result_set
 import neo4j_schema
-from neo4j_schema import META_LABEL__RZDOC_TYPE
 
 log = logging.getLogger('rhizi')
 
@@ -220,10 +219,12 @@ class DBO_block_chain__commit(DB_op):
         name_value = hash_value[:8] + '...' if commit_obj == None else str(commit_obj)
         l_id = generate_random_id__uuid()
 
-        q_arr = ['match (old_head:__HEAD:__Commit)',
-                 'create (new_head:__HEAD:__Commit {commit_attr})',
-                 'create (new_head)-[r:__Parent {link_attr}]->(old_head)',
-                 'remove old_head:__HEAD',
+        q_arr = ['match (old_head:%s:%s)' % (neo4j_schema.META_LABEL__VC_HEAD,
+                                             neo4j_schema.META_LABEL__VC_COMMIT),
+                 'create (new_head:%s:%s {commit_attr})' % (neo4j_schema.META_LABEL__VC_HEAD,
+                                                            neo4j_schema.META_LABEL__VC_COMMIT),
+                 'create (new_head)-[r:%s {link_attr}]->(old_head)' % (neo4j_schema.META_LABEL__VC_PARENT),
+                 'remove old_head:%s'  % (neo4j_schema.META_LABEL__VC_HEAD),
                  'set new_head.ts_created=timestamp()',
                  'return {head_parent_commit: old_head, head_commit: new_head}'
                  ]
@@ -248,10 +249,10 @@ class DBO_block_chain__commit(DB_op):
         if None == ctx or None == ctx.user_name:
             return
 
-        q_arr = ['merge (n:__USER {user_name: \'%s\'})' % (ctx.user_name),
+        q_arr = ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, ctx.user_name),
                  'with n',
-                 'match (m:__HEAD)',  # FIXME: specify commit-label index
-                 'create (m)-[r:`__Authored-by`]->(n)',
+                 'match (m:%s)'  % (neo4j_schema.META_LABEL__VC_HEAD),  # FIXME: specify commit-label index
+                 'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
                  ]
         self.add_statement(q_arr)
 
