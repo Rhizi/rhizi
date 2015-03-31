@@ -287,7 +287,12 @@ class e_ident(pt_abs_node):  # identifier
     def rgx(self, g_name='ident'):
         return '(?P<%s>[\w_]+)' % (g_name)
 
-class e_param(e_ident):  # identifier
+class e_param(e_ident):
+    """
+    Cypher parameter
+
+    @TODO: implement as bound e_ident
+    """
 
     def __init__(self): super(e_param, self).__init__()
 
