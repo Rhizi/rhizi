@@ -245,7 +245,7 @@ class DBO_block_chain__commit(DB_op):
         self.l_id = l_id
 
         # create commit-[:__Authored-by]->__User link if possible
-        if None == ctx or None == ctx.get('user_name'):
+        if None == ctx or None == ctx.user_name:
             return
 
         q_arr = ['merge (n:__USER {user_name: \'%s\'})' % (ctx.user_name),
