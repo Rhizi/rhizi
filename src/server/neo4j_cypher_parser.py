@@ -422,12 +422,20 @@ class e_kv_pair(pt_abs_composite_node):  # key value pair
     def assert_child_spawn_type(self, n_type):
         assert n_type in [e_value, e_ident, e_param]
 
+    def spawn_child(self, n_type, *args, **kwargs):
+        ret = pt_abs_composite_node.spawn_child(self, n_type, *args, **kwargs)
+
+        assert len(self.sub_exp_set) <= 2
+
+        return ret
+
     def str__tok_sibling_delim(self, sib_a=None, sib_b=None): return ': '
 
+    def is_set__key(self):
+        return len(self.sub_exp_set) > 0 and self.sub_exp_set[0].__class__ == e_ident
 
-
-
-
+    def is_set__value(self):
+        return len(self.sub_exp_set) == 2
 
 class p_node(pt_abs_composite_node):  # node pattern: '(...)'
     """
@@ -651,11 +659,13 @@ class Cypher_Parser(object):
         if ':' == input[0]:  # open sibling
             return self.parse__e_val_or_param(input[1:], n_cur)
 
-        if not n_cur.sub_exp_set_by_type(e_ident):  # kv_pair key yet to be set
+        if not n_cur.is_set__value(): # kv_pair key yet to be set
             n_cur = n_cur.spawn_child(e_ident)
             return self.__parse(input, n_cur)
 
-        if len(n_cur.sub_exp_set) == 2: return self.__parse(input, n_cur.parent)  # collapse
+        if n_cur.is_set__value() and n_cur.is_set__key():
+            n_cur = n_cur.parent
+            return self.__parse(input, n_cur)  # collapse
 
     def parse__e_val_or_param(self, input, n_cur):
         if ' ' == input[0]: return self.parse__e_val_or_param(input[1:], n_cur)  # consume
