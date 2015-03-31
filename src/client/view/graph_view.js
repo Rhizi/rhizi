@@ -1244,17 +1244,17 @@ function GraphView(spec) {
 
     var layouts = [
         {
-            name: 'force',
+            name: 'Force',
             create: layout__d3_force,
             clazz: 'btn_layout_d3_force'
         },
         {
-            name: 'concentric',
+            name: 'Ring',
             create: layout__concentric,
             clazz: 'btn_layout_concentric'
         },
         {
-            name: 'grid',
+            name: 'Grid',
             create: layout__grid,
             clazz: 'btn_layout_grid'
         },
