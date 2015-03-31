@@ -1231,8 +1231,8 @@ function GraphView(spec) {
                 count = nodes.length,
                 line = Math.floor(Math.sqrt(count)) + 1,
                 rows = Math.ceil(count / line),
-                wspace = layout.wh[0] / (line + 2),
-                hspace = layout.wh[1] / (rows + 1);
+                wspace = this.wh[0] / (line + 2),
+                hspace = this.wh[1] / (rows + 1);
 
             for (var i = 0 ; i < nodes.length ; ++i) {
                 var node = nodes[i];
@@ -1279,12 +1279,13 @@ function GraphView(spec) {
         if (layout !== undefined) {
             layout.stop();
         }
-        layout = layout_creator().size([w, h])
-          .on("tick", pushRedraw)
-          .on("end", record_position_to_local_storage)
-          .nodes(graph.nodes())
-          .links(graph.links())
-          .start();
+        layout = layout_creator()
+            .size([w, h])
+            .on("tick", pushRedraw)
+            .on("end", record_position_to_local_storage)
+            .nodes(graph.nodes())
+            .links(graph.links())
+            .start();
     }
 
     if (!temporary) {
