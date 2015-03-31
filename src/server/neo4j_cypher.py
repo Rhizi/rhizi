@@ -3,12 +3,10 @@ Neo4j DB object
 """
 
 from enum import Enum
-from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword, \
-    e_value, p_node, p_path
-import re
+from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword,\
+    e_value
 import logging
 import neo4j_cypher_parser
-from neo4j_util import rzdoc__ns_label, rzdoc__meta_ns_label
 import neo4j_schema
 
 log = logging.getLogger('rhizi')
@@ -45,93 +43,6 @@ class Query_Struct_Type(Enum):
         return super(Query_Struct_Type, self).__eq__(other)
 
 
-class Query_Transformation(object):
-    """
-    A query transformation, which may be applied to either a DB_op or a DB_Query
-    """
-
-    def __call__(self, value):
-
-        q_set = []
-
-        if isinstance(value, DB_Query):
-            q_set.append(value)
-        else:  # assume iterable
-            assert hasattr(value, '__iter__')
-
-            for dbq in value:
-                assert isinstance(dbq, DB_Query)
-
-                q_set.append(dbq)
-
-        for dbq in q_set:
-            log.debug('%r' % (dbq))
-            self.apply_to_single_query(dbq)
-            log.debug('%r' % (dbq))
-
-        return value
-
-    def apply_to_single_query(self, dbq):
-        pass
-
-class QT_RZDOC_NS_Filter__common(Query_Transformation):
-    """
-    Add RZDoc name-space filter:
-       - inject NS labels into node patterns
-       - [!] ignore nodes which are part of path patterns to avoid overriding bound references
-
-    
-    """
-
-    def __init__(self, ns_label):
-        self.ns_label = ns_label
-
-    def apply_to_single_query(self, dbq):
-
-        rgx__doc_label = re.compile(r'%s[\w\d_]+' % (neo4j_schema.META_LABEL__RZDOC_NS_PREFIX))
-        assert None == rgx__doc_label.match(self.ns_label), 'Illegal doc ID label: %s' % (self.ns_label)  # validate doc label
-
-        q_type = dbq.query_struct_type
-        clause_set = []
-
-        if Query_Struct_Type.w == q_type:
-            clause_set += dbq.pt_root.clause_set_by_kw('create')
-        if Query_Struct_Type.r == q_type:
-            clause_set += dbq.pt_root.clause_set_by_kw('match')
-        if Query_Struct_Type.rw == q_type:
-            clause_set += dbq.pt_root.clause_set_by_kw('create')
-            clause_set += dbq.pt_root.clause_set_by_kw('match')
-
-        for c in clause_set:
-            n_exp_set = c.sub_exp_set_by_type(p_node, recurse=True)
-            for n_exp in n_exp_set:
-
-                if n_exp.parent.__class__ == p_path:
-                    continue;
-
-                lbl_set = n_exp.label_set
-                if not lbl_set:  # add label set if necessary
-                    lbl_set = n_exp.spawn_label_set()
-                lbl_set.add_label(self.ns_label)
-
-            # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
-
-class QT_RZDOC_NS_Filter(QT_RZDOC_NS_Filter__common):
-
-    def __init__(self, rzdoc):
-        ns_label = rzdoc__ns_label(rzdoc)
-        super(QT_RZDOC_NS_Filter, self).__init__(ns_label)
-
-class QT_RZDOC_Meta_NS_Filter(QT_RZDOC_NS_Filter__common):
-
-    def __init__(self, rzdoc):
-        ns_label = rzdoc__meta_ns_label(rzdoc)
-        super(QT_RZDOC_Meta_NS_Filter, self).__init__(ns_label)
-
-class QT_Node_Filter__meta_label_set(Query_Transformation):
-    # TODO: impl
-    # 'where 0 = length(filter(_lbl in labels(n) where _lbl =~ \'^__.*$\'))',  # filter nodes with meta labels
-    pass
 
 class DB_Query(object):
 

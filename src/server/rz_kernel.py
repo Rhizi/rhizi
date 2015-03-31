@@ -9,9 +9,9 @@ from db_op import DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__cre
     DBO_rzdoc__lookup_by_name, DBO_rz_clone, DBO_rzdoc__delete, DBO_rzdoc__list
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
-from neo4j_cypher import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
 from model.model import RZDoc
 import neo4j_util
+from neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
 
 
 log = logging.getLogger('rhizi')
