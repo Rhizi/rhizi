@@ -131,9 +131,11 @@ class RZ_Kernel(object):
         rzdoc = RZDoc(rzdoc_name)
         rzdoc.id = neo4j_util.generate_random_rzdoc_id()
 
-        op = DBO_rzdoc__create(rzdoc)
+        op__rzdoc__create = DBO_rzdoc__create(rzdoc)
+        op__block_chain__init = DBO_block_chain__init(rzdoc)
         try:
-            self.db_ctl.exec_op(op)
+            self.db_ctl.exec_op(op__rzdoc__create)
+            self.db_ctl.exec_op(op__block_chain__init)
             return rzdoc
         except Exception as e:
             log.error(e.message)
