@@ -1,5 +1,4 @@
 from copy import deepcopy
-from geventwebsocket.websocket import WebSocket
 import gzip
 import hashlib
 import json
@@ -10,7 +9,7 @@ from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link, RZDoc
 from neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
-    quote__singlequote, rzdoc__meta_ns_label
+    quote__singlequote, rzdoc__meta_ns_label, quote__backtick
 from neo4j_util import cfmt
 import neo4j_util as db_util
 import logging
@@ -27,7 +26,7 @@ class DB_op(object):
         self.query_set = []
         self.result_set = []
         self.error_set = None
-        self.tx_id = None # int
+        self.tx_id = None  # int
         self.tx_commit_url = None  # cached from response to tx begin
 
     def __iter__(self):
@@ -69,7 +68,7 @@ class DB_op(object):
     def add_statement(self, q_str_or_array, query_params={}):
         """
         add a DB query language statement
-        
+
         @return: statement index (zero based)
         """
         db_q = DB_Query(q_str_or_array, query_params)
@@ -79,16 +78,13 @@ class DB_op(object):
     def name(self):
         return self.__class__.__name__
 
-    def parse_multi_statement_response_data(self, data):
-        pass
-
     def process_result_set(self):
         """
-        DB op can issue complex sets of quries all at once - this helper method
+        DB op can issue complex sets of queries all at once - this helper method
         assists in parsing response data from a single query.
         """
         ret = []
-        for _, _, r_set in self.iter__r_set():
+        for _q_idx, _dbq, r_set in self.iter__r_set():
             for row in r_set:
                 for col in row:
                     ret.append(col)
@@ -189,11 +185,7 @@ class DB_composed_op(DB_op):
 
 class DBO_block_chain__commit(DB_op):
     """
-    Label legend:
-       - __HEAD: HEAD commit, unique
-       - __Parent: parent commit relationship
-       - __Commit: node type
-       - __Authored-by: commit author
+    Rhizi version control
     """
 
     @staticmethod
@@ -208,7 +200,8 @@ class DBO_block_chain__commit(DB_op):
 
     def __init__(self, commit_obj=None, ctx=None):
         """
-        @param blob_obj: serializable blob
+        @param commit_obj: serializable blob
+
         @return: old_head, new_head, new_head.hash_value
         """
         super(DBO_block_chain__commit, self).__init__()
@@ -224,7 +217,7 @@ class DBO_block_chain__commit(DB_op):
                  'create (new_head:%s:%s {commit_attr})' % (neo4j_schema.META_LABEL__VC_HEAD,
                                                             neo4j_schema.META_LABEL__VC_COMMIT),
                  'create (new_head)-[r:%s {link_attr}]->(old_head)' % (neo4j_schema.META_LABEL__VC_PARENT),
-                 'remove old_head:%s'  % (neo4j_schema.META_LABEL__VC_HEAD),
+                 'remove old_head:%s' % (neo4j_schema.META_LABEL__VC_HEAD),
                  'set new_head.ts_created=timestamp()',
                  'return {head_parent_commit: old_head, head_commit: new_head}'
                  ]
@@ -251,7 +244,7 @@ class DBO_block_chain__commit(DB_op):
 
         q_arr = ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, ctx.user_name),
                  'with n',
-                 'match (m:%s)'  % (neo4j_schema.META_LABEL__VC_HEAD),  # FIXME: specify commit-label index
+                 'match (m:%s)' % (neo4j_schema.META_LABEL__VC_HEAD),  # FIXME: specify commit-label index
                  'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
                  ]
         self.add_statement(q_arr)
@@ -317,7 +310,7 @@ class DBO_block_chain__init(DB_op):
                                                         neo4j_schema.META_LABEL__VC_HEAD,
                                                         neo4j_schema.META_LABEL__VC_COMMIT,
                                                         ),
-                 'set n.ts_created=timestamp()',]
+                 'set n.ts_created=timestamp()', ]
 
         hash_value = neo4j_schema.META_LABEL__VC_EMPTY_RZDOC_HASH
         param_set = {'commit_attr': {
@@ -467,7 +460,7 @@ class DBO_diff_commit__attr(DB_op):
 
             assert len(attr_set_rm) > 0 or len(attr_set_wrt) > 0
 
-            q_arr = ["match (n {id: {match_attr_set}.id})", # [!] with match (n {match_attr_set}) neo4j returns: 'Parameter maps cannot be used in MATCH patterns (use a literal map instead'
+            q_arr = ["match (n {id: {match_attr_set}.id})",  # [!] with match (n {match_attr_set}) neo4j returns: 'Parameter maps cannot be used in MATCH patterns (use a literal map instead'
                      "return n.id, n"]
             q_param_set = {'match_attr_set': {'id': id_attr}}
 
@@ -761,7 +754,7 @@ class DBO_rzdoc__clone(DB_op):
 
                     ret_l_set.append(l)
 
-        if len(ret_n_set) >= self.limit: # TODO: generalize logic, mv to DB_Driver
+        if len(ret_n_set) >= self.limit:  # TODO: generalize logic, mv to DB_Driver
             log.warning('DB op result set larger than query limit: size: %d, limit: %d' % (len(ret_n_set), self.limit))
 
         topo_diff = Topo_Diff(node_set_add=ret_n_set,
@@ -776,6 +769,9 @@ class DBO_rzdoc__create(DB_op):
         """
         super(DBO_rzdoc__create, self).__init__()
 
+        #
+        # setup rzdoc node
+        #
         q_arr = ['merge (n:%s {id: {id}, name: {name}})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
                  'return n.id, n.name']
 
