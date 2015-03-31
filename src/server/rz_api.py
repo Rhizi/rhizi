@@ -46,7 +46,7 @@ def index(rzdoc_name=None):
         s_rzdoc_name = current_app.rz_config.rzdoc__mainpage_name
     else:
         try:
-            s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name, current_app.rz_config)
+            s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
         except Exception as e:
             log.exception(e)
 

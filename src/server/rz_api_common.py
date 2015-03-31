@@ -47,12 +47,12 @@ def sanitize_input__topo_diff(topo_diff):
 def sanitize_input__attr_diff(attr_diff):
     pass  # TODO: impl
 
-def sanitize_input__rzdoc_name(rzdoc_name, cfg):
+def sanitize_input__rzdoc_name(rzdoc_name):
     """
     sanitize rzdoc name raw input
     """
 
-    if None != rzdoc_name and len(rzdoc_name) > cfg.rzdoc__name__max_length:
+    if None != rzdoc_name and len(rzdoc_name) > current_app.rz_config.rzdoc__name__max_length:
         raise API_Exception__bad_request('rzdoc: open request: doc name exceeds max doc name limit: %s' % (rzdoc_name))
     return rzdoc_name
 

@@ -56,7 +56,7 @@ def __context__common(rzdoc_name=None):
         ret.user_name = session['username']
 
     if None != rzdoc_name:
-        s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name, current_app.rz_config)
+        s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
         ret.rzdoc = cache_lookup__rzdoc(s_rzdoc_name)
     return ret
 
