@@ -123,6 +123,21 @@ class Topo_Diff(object):
         def default(self, obj):
             return obj.to_json_dict()
 
+    @staticmethod
+    def from_json_dict(json_dict):
+        """
+        construct from dict - no node/link constructor set must be provided
+        """
+        ret = Topo_Diff()
+
+        # merge keys - this allows constructor argument omission (link_id_set_rm,
+        # node_id_set_rm, etc.) such as when constructing from POST JSON data
+        for k, _ in ret.__dict__.items():
+            v = json_dict.get(k)
+            if None != v:
+                ret.__dict__[k] = v
+        return ret
+
     def __init__(self, link_id_set_rm=[],
                        node_id_set_rm=[],
                        node_set_add=[],
@@ -149,18 +164,3 @@ class Topo_Diff(object):
          removing it's end-point - this stub should check for that
         """
         pass
-
-    @staticmethod
-    def from_json_dict(json_dict):
-        """
-        construct from dict - no node/link constructor set must be provided
-        """
-        ret = Topo_Diff()
-
-        # merge keys - this allows constructor argument omission (link_id_set_rm,
-        # node_id_set_rm, etc.) such as when constructing from POST JSON data
-        for k, _ in ret.__dict__.items():
-            v = json_dict.get(k)
-            if None != v:
-                ret.__dict__[k] = v
-        return ret
