@@ -839,8 +839,8 @@ class DBO_rzdoc__lookup_by_name(DB_op):
         if not rzdoc_dict_set: return None
 
         rzdoc_dict = rzdoc_dict_set.pop()
-        rzdoc = RZDoc(rzdoc_id=rzdoc_dict['id'],
-                      rzdoc_name=rzdoc_dict['name'])
+        rzdoc = RZDoc(rzdoc_name=rzdoc_dict['name'])
+        rzdoc.id = rzdoc_dict['id']
         return rzdoc
 
 

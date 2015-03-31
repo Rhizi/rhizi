@@ -58,8 +58,9 @@ def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     return ret_dict, lid
 
 def generate_random_RZDoc(test_label):
-    rzdoc_id = neo4j_util.generate_random_rzdoc_id()
-    return RZDoc(rzdoc_id, test_label)
+    rzdoc = RZDoc(test_label)
+    rzdoc.id = neo4j_util.generate_random_rzdoc_id()
+    return rzdoc
 
 def ws_emit__topo_diff():
     import logging

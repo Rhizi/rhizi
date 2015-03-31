@@ -38,6 +38,6 @@ class Link():
 
 class RZDoc():
 
-    def __init__(self, rzdoc_id = None, rzdoc_name = None):
-        self.id = rzdoc_id
+    def __init__(self, rzdoc_name = None):
+        self.id = None # set upon DB commit
         self.name = rzdoc_name

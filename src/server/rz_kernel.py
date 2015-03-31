@@ -128,8 +128,8 @@ class RZ_Kernel(object):
         @return: RZDoc object
         """
 
-        rzdoc_id = neo4j_util.generate_random_rzdoc_id()
-        rzdoc = RZDoc(rzdoc_id, rzdoc_name)
+        rzdoc = RZDoc(rzdoc_name)
+        rzdoc.id = neo4j_util.generate_random_rzdoc_id()
 
         op = DBO_rzdoc__create(rzdoc)
         try:
