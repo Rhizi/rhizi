@@ -19,6 +19,4 @@ create constraint on (x:__RZDOC) assert x.name is unique;
 
 create constraint on (x:Person) assert x.id is unique;
 create constraint on (x:Skill)  assert x.id is unique;
-create constraint on (x:Person) assert x.name is unique;
-create constraint on (x:Skill)  assert x.name is unique;
 
