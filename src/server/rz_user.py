@@ -137,7 +137,7 @@ def rest__login():
         try:
             _uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
         except:
-            log.warn('login: login attemt to unknown account. request: %s' % request)
+            log.warn('login: login attempt to unknown account. request: %s' % request)
             return make_response__json(status=401)  # return empty response
 
         try:
