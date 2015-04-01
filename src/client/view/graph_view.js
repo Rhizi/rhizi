@@ -1178,6 +1178,7 @@ function GraphView(spec) {
 
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
+        tick();
     });
     return gv;
 }
