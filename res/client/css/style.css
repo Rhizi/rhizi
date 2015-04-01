@@ -736,22 +736,30 @@ p {
   background-position: center;
   background-repeat: no-repeat; }
 
+#zoom-bar {
+  position: absolute;
+  bottom: 50px;
+  right: 10px;
+  background: white;
+  border-width: 1px;
+  border-style: solid;
+  border-color: grey;
+  padding: 5px 4px 0px 4px;
+  height: 40px; }
+
 #btn_zoom_in {
   background: url(../img/plus.svg);
   background-position: center;
   background-repeat: no-repeat;
-  border: 0px; }
+  width: 16px;
+  height: 16px; }
 
 #btn_zoom_out {
   background: url(../img/minus.svg);
   background-position: center;
   background-repeat: no-repeat;
-  border: 0px; }
-
-#zoom-bar {
-  position: absolute;
-  bottom: 50px;
-  right: 10px; }
+  width: 16px;
+  height: 25px; }
 
 .graph-view {
   background-color: #f5f5fa;
