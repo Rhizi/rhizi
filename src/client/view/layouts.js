@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'underscore', 'rz_core'],
-function($,        d3,   _,            rz_core) {
+define(['consts', 'jquery', 'd3', 'underscore', 'rz_core'],
+function(consts,   $,        d3,   _,            rz_core) {
     function layout__d3_force(graph) {
         return d3.layout.force()
                   .distance(240)
@@ -97,6 +97,9 @@ function($,        d3,   _,            rz_core) {
     }
 
     function layout__concentric() {
+        var single_width = consts.concentric_top_width,
+            ring_distance_minimum = consts.concentric_ring_distance_minimum;
+
         var cx = $(document.body).innerWidth() / 2,
             cy = $(document.body).innerHeight() / 2,
             pi = Math.PI,
@@ -123,7 +126,7 @@ function($,        d3,   _,            rz_core) {
                 node,
                 cos = Math.cos,
                 sin = Math.sin,
-                ring_radius = Math.max(50, (Math.min.apply(null, this.wh) - 50) / (types.length + 1));
+                ring_radius = Math.max(ring_distance_minimum, (Math.min.apply(null, this.wh) - 50) / (types.length + 1));
 
             function setxy(node, angle) {
                 node.x = node.px = cx + r * cos(angle);
@@ -140,8 +143,7 @@ function($,        d3,   _,            rz_core) {
                         setxy(node, small_number_angles[nodes.length][i]);
                     });
                 } else {
-                    var single_width = 200,
-                        small_angle = Math.min(pi / 2, single_width / r),
+                    var small_angle = Math.min(pi / 2, single_width / r),
                         small_angle_half = small_angle / 2,
                         large_count = Math.floor(count / 2) - 1,
                         pi_half = pi / 2,

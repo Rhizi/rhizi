@@ -30,5 +30,10 @@ define(function() {
         VK_TAB: 9,
         VK_SPACE: 32,
         VK_ENTER: 13,
+
+        // Layout constants
+        link_text_short_length: 14,
+        concentric_top_width: 200,
+        concentric_ring_distance_minimum: 200,
     };
 });

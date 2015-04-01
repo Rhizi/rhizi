@@ -476,10 +476,10 @@ function GraphView(spec) {
         function link_text__short(d) {
             var name = d.name || "";
 
-            if (temporary || name.length < 25) {
+            if (temporary || name.length < consts.link_text_short_length + 3) {
                 return name;
             }
-            return name.substring(0, 14) + "...";
+            return name.substring(0, consts.link_text_short_length) + "...";
         }
 
         link_text
