@@ -49,9 +49,6 @@ a:hover {
 a:active {
   color: #919095; }
 
-button {
-  border: none; }
-
 input, .input {
   background-color: white;
   color: #363636;
@@ -766,22 +763,30 @@ p {
   background-position: center;
   background-repeat: no-repeat; }
 
+#zoom-bar {
+  position: absolute;
+  bottom: 50px;
+  right: 10px;
+  background: white;
+  border-width: 1px;
+  border-style: solid;
+  border-color: grey;
+  padding: 5px 4px 0px 4px;
+  height: 40px; }
+
 #btn_zoom_in {
   background: url(../img/plus.svg);
   background-position: center;
   background-repeat: no-repeat;
-  border: 0px; }
+  width: 16px;
+  height: 16px; }
 
 #btn_zoom_out {
   background: url(../img/minus.svg);
   background-position: center;
   background-repeat: no-repeat;
-  border: 0px; }
-
-#zoom-bar {
-  position: absolute;
-  bottom: 50px;
-  right: 10px; }
+  width: 16px;
+  height: 25px; }
 
 .cmd-bar {
   background-color: #85B375;
@@ -956,7 +961,11 @@ p {
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
   opacity: 0.2;
+  pointer-events: none;
   -webkit-filter: blur(10px); }
+
+.linklabel.notselected {
+  display: none; }
 
 .node.first-selected .circle {
   stroke: #fad900;
@@ -1115,7 +1124,8 @@ g:focus circle {
     color: #363636; }
 
 .section-divider {
-  color: #919095; }
+  color: #919095;
+  position: relative; }
   .section-divider:before {
     content: "";
     width: 112px;
