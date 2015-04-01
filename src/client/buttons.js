@@ -145,7 +145,7 @@ $('#btn_rzdoc__new').click(function() {
         rz_api_backend.rzdoc_create(rzdoc_name, on_success, on_error);
     });
 
-    submit_btn.keyup(function(event) { // create on Enter key pressed
+    cmd_bar.on('keyup', function(event) { // create on Enter key pressed
         if(event.keyCode == 13) {
             submit_btn.click();
         }
