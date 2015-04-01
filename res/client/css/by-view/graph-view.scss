@@ -20,7 +20,7 @@
 }
 
 .circle:hover {
-    stroke: $yellow;
+    stroke: $orange;
     stroke-opacity: 1;
     stroke-width: 5px;
 }
@@ -188,9 +188,10 @@
 }
 
 .hovering .link {
-    stroke: $cyan;
+    stroke: $orange;
     stroke-opacity: 0.5;
     stroke-width: 2px;
+    opacity: 1;
     z-index: 1;
 }
 

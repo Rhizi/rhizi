@@ -295,8 +295,8 @@ function GraphView(spec) {
     }
 
     function dragged(d) {
-        d.px = d3.event.x;
-        d.py = d3.event.y;
+        d.px = d.x = d3.event.x;
+        d.py = d.y = d3.event.y;
         //tick();
         resumeLayout();
     }
@@ -373,11 +373,13 @@ function GraphView(spec) {
         link = d3.select(unselected_link_group).selectAll("g.link")
             .data(graph.links(), function(d) { return d.id; });
 
-        link_g = link.enter().append('g')
+        link_g = link.enter()
+            .append('g')
             .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
             .attr('class', 'link graph');
 
-        link_g.append("path")
+        link_g
+            .append("path")
             .attr("class", function(d) {
                 return d.state + ' link graph';
             })
@@ -385,8 +387,22 @@ function GraphView(spec) {
             .attr("marker-end", "url(#end)");
 
         // second path for larger click area
-        link_g.append("path")
+        link_g
+            .append("path")
             .attr("class", "ghostlink");
+
+        // add link label
+        link_g
+            .append("text")
+            .attr('id', function(d){ return 'text_' + d.id; }) // append link id to enable data->visual mapping
+            .attr("text-anchor", "middle")
+            .attr("class", "linklabel graph")
+            .on("click", function(d, i) {
+                if (!temporary) { // FIXME: if temporary don't even put a click handler
+                    svgInput.enable(this, d);
+                }
+            });
+
         function visit_one_down(base, visitor) {
             visitor(base);
             _.forEach(base.childNodes, visitor);
@@ -404,13 +420,13 @@ function GraphView(spec) {
                 $(this).hover(function (e) {
                     add_class(this, 'hovering');
                     // show text if not selected
-                    if (!selection.node_selected(d)) {
+                    if (!selection.link_selected(d)) {
                         set_link_label_text(this.id, link_text__short(d));
                     }
                 }, function (e) {
                     remove_class(this, 'hovering');
                     // hide text if not selected
-                    if (!selection.node_selected(d)) {
+                    if (!selection.link_selected(d)) {
                         set_link_label_text(this.id, "");
                     }
                 });
@@ -456,15 +472,6 @@ function GraphView(spec) {
 
         link_text = vis.selectAll(".linklabel")
             .data(graph.links(), function(d) { return d.id; });
-        link_text.enter()
-            .append("text")
-            .attr('id', function(d){ return 'text_' + d.id; }) // append link id to enable data->visual mapping
-            .attr("text-anchor", "middle")
-            .on("click", function(d, i) {
-                if (!temporary) { // FIXME: if temporary don't even put a click handler
-                    svgInput.enable(this, d);
-                }
-            });
 
         function link_text__short(d) {
             var name = d.name || "";
