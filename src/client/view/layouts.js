@@ -111,7 +111,9 @@ function($,        d3,   _,            rz_core) {
             small_cutoff = _.max(_.keys(small_number_angles));
 
         return layout__sync(function () {
-            var bytype = _.sortBy(_.groupBy(this._nodes, 'type'), "length"),
+            var bytype = _.sortBy(_.groupBy(this._nodes, 'type'), "length").map(function (nodes) {
+                    return _.sortBy(nodes, "name");
+                }),
                 types = _.keys(bytype),
                 i,
                 r,
