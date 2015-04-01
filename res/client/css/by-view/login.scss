@@ -111,6 +111,7 @@
 
 .section-divider {
   color: $mid-grey;
+  position: relative;
 
   &:before {
     content: "";

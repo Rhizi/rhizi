@@ -1030,7 +1030,8 @@ g:focus circle {
     color: #363636; }
 
 .section-divider {
-  color: #919095; }
+  color: #919095;
+  position: relative; }
   .section-divider:before {
     content: "";
     width: 112px;
