@@ -34,7 +34,7 @@ class DB_op(object):
             yield dbq
 
     def __repr__(self):
-        return '%s: tx-id: %d' % (self.__class__.__name__, self.tx_id)
+        return '%s: tx-id: %s' % (self.__class__.__name__, str(self.tx_id)) # id may be null if Tx open failed
 
     def iter__r_set(self):
         """
