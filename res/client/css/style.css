@@ -860,6 +860,11 @@ p {
   pointer-events: all;
   fill: #363636; }
 
+.circle:hover {
+  stroke: #fad900;
+  stroke-opacity: 1;
+  stroke-width: 5px; }
+
 .nodetext {
   fill: #363636;
   font-size: 18px;
@@ -886,7 +891,8 @@ p {
   background-color: transparent; }
 
 .link {
-  fill: none;
+  fill: #d10a40;
+  pointer-events: all;
   stroke: #919095;
   stroke-width: 1px;
   stroke-opacity: 0.5;
@@ -894,7 +900,8 @@ p {
 
 .ghostlink {
   opacity: 0.0;
-  fill: none;
+  fill: white;
+  pointer-events: all;
   stroke-width: 15px;
   z-index: 2;
   /* higher than link, lower than node */ }
@@ -955,9 +962,6 @@ p {
 .circle.empty {
   fill: #919095; }
 
-.circle.chainlink {
-  fill: #363636; }
-
 /* Selected parts of the graph, right now by clicking, later with search. */
 .notselected {
   opacity: 0.2;
@@ -989,8 +993,13 @@ p {
   stroke-width: 2px;
   z-index: 1; }
 
+.hovering .link {
+  stroke: #33c2e0;
+  stroke-opacity: 0.5;
+  stroke-width: 2px;
+  z-index: 1; }
+
 .link.enter, .link.exit, .link.selected {
-  fill: none;
   stroke: #33c2e0;
   stroke-opacity: 0.5;
   stroke-width: 2px;

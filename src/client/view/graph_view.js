@@ -386,8 +386,36 @@ function GraphView(spec) {
 
         // second path for larger click area
         link_g.append("path")
-            .attr("class", "ghostlink")
-            .on("click", function(d, i) {
+            .attr("class", "ghostlink");
+        function visit_one_down(base, visitor) {
+            visitor(base);
+            _.forEach(base.childNodes, visitor);
+        }
+        function add_class(base, clazz) {
+            visit_one_down(base, function (e) { e.classList.add(clazz); });
+        }
+        function remove_class(base, clazz) {
+            visit_one_down(base, function (e) { e.classList.remove(clazz); });
+        }
+        function set_link_label_text(link_id, text) {
+            $('#text_' + link_id).text(text);
+        }
+        link_g.each(function (d) {
+                $(this).hover(function (e) {
+                    add_class(this, 'hovering');
+                    // show text if not selected
+                    if (!selection.node_selected(d)) {
+                        set_link_label_text(this.id, link_text__short(d));
+                    }
+                }, function (e) {
+                    remove_class(this, 'hovering');
+                    // hide text if not selected
+                    if (!selection.node_selected(d)) {
+                        set_link_label_text(this.id, "");
+                    }
+                });
+            });
+        link_g.on("click", function(d, i) {
                 if (zoomInProgress) {
                     // don't disable zoomInProgress, it will be disabled by the svg_click_handler
                     // after this events bubbles to the svg element
@@ -420,7 +448,7 @@ function GraphView(spec) {
 
         link.exit().remove();
 
-        vis.selectAll('.ghostlink')
+        vis.selectAll('g.link')
             .data(graph.links())
             .each(function (d) {
                 this.link = d;
@@ -430,7 +458,7 @@ function GraphView(spec) {
             .data(graph.links(), function(d) { return d.id; });
         linktext.enter()
             .append("text")
-            .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
+            .attr('id', function(d){ return 'text_' + d.id; }) // append link id to enable data->visual mapping
             .attr("text-anchor", "middle")
             .on("click", function(d, i) {
                 if (!temporary) { // FIXME: if temporary don't even put a click handler
@@ -438,20 +466,27 @@ function GraphView(spec) {
                 }
             });
 
+        function link_text__short(d) {
+            var name = d.name || "";
+
+            if (temporary || name.length < 25) {
+                return name;
+            }
+            return name.substring(0, 14) + "...";
+        }
+
         linktext
             .text(function(d) {
-                var name = d.name || "",
-                    src_selected = selection.node_selected(d.__src),
+                var src_selected = selection.node_selected(d.__src),
                     dst_selected = selection.node_selected(d.__dst);
 
                 if (!temporary && !src_selected && !dst_selected) {
                     return "";
                 }
-                if (temporary || name.length < 25 || src_selected || dst_selected) {
-                    return name;
-                } else {
-                    return name.substring(0, 14) + "...";
+                if (src_selected && dst_selected) {
+                    return d.name;
                 }
+                return link_text__short(d);
             })
             .attr("class", function(d) {
                 return ["linklabel graph", selection.selected_class__link(d, temporary)].join(' ');
@@ -1295,7 +1330,6 @@ function GraphView(spec) {
     set_layout(temporary ? layout__empty : layouts[0].create);
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
-        tick();
     });
     return gv;
 }

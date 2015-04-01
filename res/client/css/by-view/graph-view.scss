@@ -19,6 +19,12 @@
   fill: $dark-grey;
 }
 
+.circle:hover {
+    stroke: $yellow;
+    stroke-opacity: 1;
+    stroke-width: 5px;
+}
+
 .nodetext {
   fill: $dark-grey;
   font-size: $h3-size;
@@ -53,7 +59,8 @@
 }
 
 .link {
-  fill: none;
+  fill: $dark-magenta;
+  pointer-events: all;
   stroke: $mid-grey;
   stroke-width: 1px;
   stroke-opacity: 0.5;
@@ -62,7 +69,8 @@
 
 .ghostlink {
   opacity: 0.0;
-  fill: none;
+  fill: white;
+  pointer-events: all;
   stroke-width: 15px;
   z-index:2; /* higher than link, lower than node */
 }
@@ -71,6 +79,7 @@
   stroke: $cyan;
   stroke-opacity: 0.5;
 }
+
 .circle.enter {
   stroke: $cyan;
   stroke-opacity: 0.5;
@@ -81,10 +90,12 @@
   stroke: rgba(87, 154, 202, 0.17);
   pointer-events:none;
 }
+
 .circle.exit {
   stroke: $cyan;
   stroke-opacity: 0.5;
 }
+
 .circle.chainlink {
   stroke: #AAA;
 }
@@ -137,10 +148,6 @@
   fill: $mid-grey;
 }
 
-.circle.chainlink {
-  fill: $dark-grey;
-}
-
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 
@@ -180,8 +187,14 @@
   z-index: 1;
 }
 
+.hovering .link {
+    stroke: $cyan;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+    z-index: 1;
+}
+
 .link.enter, .link.exit, .link.selected {
-  fill: none;
   stroke: $cyan;
   stroke-opacity: 0.5;
   stroke-width: 2px;
