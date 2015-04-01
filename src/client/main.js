@@ -26,15 +26,6 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         if (json) {
             rz_core.load_from_json(json);
         }
-        if (util.getParameterByName('debug')) {
-            $(document.body).addClass('debug');
-            rz_core.edit_graph.set_user('fakeuser');
-            rz_core.main_graph.set_user('fakeuser');
-            drag_n_drop.init();
-        } else {
-            drag_n_drop.prevent_default_drop_behavior();
-        }
-
         keyshortcuts.install();
 
         var intro_task_elem = $('#intro-task');
@@ -55,6 +46,17 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         selection.setup_toolbar(rz_core.main_graph);
         $.feedback({ajaxURL: rz_config.feedback_url});
         fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit();
+
+        // setup debug
+        if (util.getParameterByName('debug')) {
+            $(document.body).addClass('debug');
+            rz_core.edit_graph.set_user('fakeuser');
+            rz_core.main_graph.set_user('fakeuser');
+            drag_n_drop.init();
+        } else {
+            // drag and drop prevented in normal operation (debug not set)
+            drag_n_drop.prevent_default_drop_behavior();
+        }
     }
 
     return {
