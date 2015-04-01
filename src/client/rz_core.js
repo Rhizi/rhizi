@@ -286,7 +286,7 @@ var published_var_dict = {
     update_view__graph : update_view__graph,
 
     // vars, set by init
-    main_graph: undefined, 
+    main_graph: undefined,
     main_graph_view: undefined,
     edit_graph: undefined,
     edit_graph_view: undefined,
