@@ -360,8 +360,8 @@ function GraphView(spec) {
         var node,
             link,
             link_g,
-            linktext,
-            nodetext,
+            link_text,
+            node_text,
             circle,
             unselected_selector = '#' + graph_name + ' #link-group',
             selected_selector = '#' + graph_name + ' #selected-link-group',
@@ -454,9 +454,9 @@ function GraphView(spec) {
                 this.link = d;
             });
 
-        linktext = vis.selectAll(".linklabel")
+        link_text = vis.selectAll(".linklabel")
             .data(graph.links(), function(d) { return d.id; });
-        linktext.enter()
+        link_text.enter()
             .append("text")
             .attr('id', function(d){ return 'text_' + d.id; }) // append link id to enable data->visual mapping
             .attr("text-anchor", "middle")
@@ -475,7 +475,7 @@ function GraphView(spec) {
             return name.substring(0, 14) + "...";
         }
 
-        linktext
+        link_text
             .text(function(d) {
                 var src_selected = selection.node_selected(d.__src),
                     dst_selected = selection.node_selected(d.__dst);
@@ -492,7 +492,7 @@ function GraphView(spec) {
                 return ["linklabel graph", selection.selected_class__link(d, temporary)].join(' ');
             });
 
-        linktext.exit().remove();
+        link_text.exit().remove();
 
         node = vis.selectAll(".node")
             .data(graph.nodes(), function(d) {
@@ -544,7 +544,7 @@ function GraphView(spec) {
                     reparent(unselected_link_group, this);
                 }
             });
-            linktext.each(function (d) {
+            link_text.each(function (d) {
                 if (selection.link_selected(d)) {
                     ontop.push(this);
                 }
@@ -565,7 +565,7 @@ function GraphView(spec) {
             return urlValid(d) ? node_text_dx + node_url_dx : node_text_dx;
         }
 
-        nodetext = nodeEnter.insert("text")
+        node_text = nodeEnter.insert("text")
             .attr("class", "nodetext graph")
             .attr("dy", node_text_dy)
             .on("click", function(d, i) {
@@ -1000,7 +1000,7 @@ function GraphView(spec) {
             .data(graph.links(), function(d) {
                 return d.id;
             });
-        var linktext = vis.selectAll(".linklabel").data(graph.links());
+        var link_text = vis.selectAll(".linklabel").data(graph.links());
         var bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
 
         function transform(d) {
@@ -1046,7 +1046,7 @@ function GraphView(spec) {
             return d_val;
         });
 
-        linktext.attr("transform", function(d) {
+        link_text.attr("transform", function(d) {
             var src = same_zoom(d.__src),
                 dst = same_zoom(d.__dst);
             return "translate(" + (src[0] + dst[0]) / 2 + "," + (src[1] + dst[1]) / 2 + ")";
