@@ -21,31 +21,32 @@ function get_svg__body_position(node_id)
 }
 
 var typeselection = function TypeSelectionDialog() {
-    var e = $('.type_selection'),
+    var fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'),
+        e = $('.type_selection'),
         e_intro = e.find('#type_selection__intro'),
         e_label = e.find('#type_selection__chosen_type_label'),
         e_name = e.find('#type_selection__chosen_type_name'),
         e_desc = e.find('#type_selection__chosen_type_desc'),
         typeselection = {};
 
+    fo.appendChild(e[0]);
     typeselection.analysisNodeStart = function(node_id) {
         typeselection.show(node_id);
     }
-    function set_position(node_id)
-    {
-        var x,
-            y,
-            node_location;
+    function attach_to(node_id) {
+        var node = document.getElementById(node_id);
 
-        node_location = get_svg__body_position(node_id);
-        x = node_location.x - 20; // subtract average node size
-        y = node_location.y + 25;
-        e.css({ left: x,
-                top: y,
-              });
+        if (node === undefined) {
+            console.log('cannot show type selection since node does not exist: ' + node_id);
+            return;
+        }
+        node.appendChild(fo);
     }
     typeselection.show = function(node_id) {
-        set_position(node_id);
+        if (document.getElementById(node_id) === null) {
+            return;
+        }
+        attach_to(node_id);
         e_label.hide();
         e_desc.hide();
         e_intro.show();
@@ -57,7 +58,10 @@ var typeselection = function TypeSelectionDialog() {
     typeselection.showChosenType = function(node_id, nodetype) {
         var desc = description[nodetype];
 
-        set_position(node_id);
+        if (document.getElementById(node_id) === null) {
+            return;
+        }
+        attach_to(node_id);
         e_intro.hide();
         e_label.show();
         e_name.html(nodetype);
