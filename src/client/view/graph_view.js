@@ -1173,7 +1173,7 @@ function GraphView(spec) {
 
     set_layout(temporary ? layouts.empty : layouts.layouts[0].create);
     if (!temporary) {
-        set_layout_toolbar('#layout-bar');
+        set_layout_toolbar('#layout-buttons');
     }
 
     zoom_property.onValue(function (val) {
