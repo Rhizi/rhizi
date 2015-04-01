@@ -15,6 +15,7 @@ create (n:__RZDOC_NS_META_a000a000:__COMMIT:__HEAD {hash: 'adc83b19e793491b1c6ea
 // FIXME: use wildcard constraint when supported
 //
 create constraint on (x:__RZDOC) assert x.id   is unique;
+create constraint on (x:__RZDOC) assert x.name is unique;
 
 create constraint on (x:Person) assert x.id is unique;
 create constraint on (x:Skill)  assert x.id is unique;
