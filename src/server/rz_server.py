@@ -107,6 +107,10 @@ class Config(object):
         if False == os.path.isabs(ret.root_path):
             ret.root_path = os.path.abspath(ret.root_path)
 
+        # authentication keys - see issue #419
+        # for auth_key in ['neo4j_user', 'neo4j_pw']:
+        #     if None == cfg.get(auth_key): raise Exception('config: missing key: ' + auth_key)
+
         return ret
 
     def __str__(self):

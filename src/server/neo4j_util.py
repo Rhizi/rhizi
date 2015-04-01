@@ -301,6 +301,16 @@ def post(url, data):
 
     req.add_header('X-Stream', 'true')  # enable neo4j JSON streaming
 
+    #
+    # see issue #419
+    #
+    # Add neo4j HTTP Basic Auth header
+    #
+    # neo4j_user = current_app.rz_config.neo4j_user
+    # neo4j_pw = current_app.rz_config.neo4j_pw
+    # user_pw_base64 = base64.encodestring('%s:%s' % (neo4j_user, neo4j_pw))
+    # req.add_header('Authorization', 'Basic ' + user_pw_base64)  # enable neo4j JSON streaming
+
     try:
         ret = request.urlopen(req, post_data_json)
     except urllib_error.HTTPError as e:
