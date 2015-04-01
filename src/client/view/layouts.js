@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'rz_core'],
-function($,        d3,   rz_core) {
+define(['jquery', 'd3', 'underscore', 'rz_core'],
+function($,        d3,   _,            rz_core) {
     function layout__d3_force(graph) {
         return d3.layout.force()
                   .distance(240)
@@ -98,7 +98,17 @@ function($,        d3,   rz_core) {
 
     function layout__concentric() {
         var cx = $(document.body).innerWidth() / 2,
-            cy = $(document.body).innerHeight() / 2;
+            cy = $(document.body).innerHeight() / 2,
+            pi = Math.PI,
+            top_angle = pi / 2,
+            small_number_angles = {
+                1: [0],
+                2: [pi / 2, pi * 3 /2],
+                3: [2 * pi / 3, 4 * pi / 3, 0],
+                4: [0, 1, 2, 3].map(function (i) { return (1.0 / 17 + i / 4.0) * 2 * pi; }),
+                5: [0, 1, 2, 3, 4].map(function (i) { return (i / 5.0) * 2 * pi; }),
+                },
+            small_cutoff = _.max(_.keys(small_number_angles));
 
         return layout__sync(function () {
             var bytype = _.sortBy(_.groupBy(this._nodes, 'type'), "length"),
@@ -109,20 +119,48 @@ function($,        d3,   rz_core) {
                 count,
                 j,
                 node,
-                angle,
+                cos = Math.cos,
+                sin = Math.sin,
                 ring_radius = Math.max(50, (Math.min.apply(null, this.wh) - 50) / (types.length + 1));
+
+            function setxy(node, angle) {
+                node.x = node.px = cx + r * cos(angle);
+                node.y = node.py = cy + r * sin(angle);
+            }
 
             for (i = 0; i < types.length ; ++i) {
                 r = (i + 1) * ring_radius;
                 nodes = bytype[types[i]];
                 count = nodes.length;
 
-                for (j = 0 ; j < count; ++j) {
-                    node = nodes[j];
-                    angle = j * Math.PI * 2 / count;
+                if (count <= small_cutoff) {
+                    nodes.forEach(function (node, i) {
+                        setxy(node, small_number_angles[nodes.length][i]);
+                    });
+                } else {
+                    var single_width = 200,
+                        small_angle = Math.min(pi / 2, single_width / r),
+                        small_angle_half = small_angle / 2,
+                        large_count = Math.floor(count / 2) - 1,
+                        pi_half = pi / 2,
+                        large_angle = pi - small_angle,
+                        angle,
+                        dangle;
 
-                    node.x = node.px = cx + r * Math.cos(angle);
-                    node.y = node.py = cy + r * Math.sin(angle);
+                    dangle = large_angle / (large_count + 1);
+                    angle = -pi_half + small_angle_half + dangle;
+                    for (j = 0 ; j < large_count; ++j) {
+                        setxy(nodes[j], angle);
+                        angle += dangle;
+                    }
+                    setxy(nodes[large_count], pi / 2);
+                    dangle = large_angle / (count - large_count - 1);
+                    angle = pi_half + small_angle_half + dangle;
+                    for (j = large_count + 1 ; j < count - 1; ++j) {
+                        setxy(nodes[j], angle);
+                        angle += dangle;
+                    }
+                    setxy(nodes[count - 1], 3 * pi / 2);
                 }
             }
         });
