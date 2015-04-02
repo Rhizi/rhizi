@@ -203,10 +203,7 @@ $('#btn_rzdoc__open').click(function() {
                 return;
             }
 
-            rz_core.rzdoc__open(rzdoc_name);
-            cmd_bar.fadeToggle(200, function() {
-                cmd_bar.remove();
-            });
+            document.location.href = '/rz/' + rzdoc_name // redirect to rzdoc URL
         });
     }
     var on_error = function() {
