@@ -1145,16 +1145,25 @@ function GraphView(spec) {
 
     function set_layout_toolbar(selector) {
         var root = $(selector);
+        root.on('click', function() {
 
-        layouts.layouts.forEach(function (layout_data) {
-            var button = $('<div></div>');
-            button.html(layout_data.name);
-            button.addClass(layout_data.clazz);
-            button.addClass('btn_layout');
-            button.on('click', function () {
-                set_layout(layout_data.create);
+            var layout_btns = $('.btn_layout');
+            if (layout_btns.length > 0) { // menu open
+                layout_btns.remove();
+                return;
+            }
+
+            layouts.layouts.forEach(function (layout_data) {
+                var button = $('<div></div>');
+                button.html(layout_data.name);
+                button.addClass(layout_data.clazz);
+                button.addClass('btn_layout');
+                button.on('click', function () {
+                    set_layout(layout_data.create);
+                    layout_btns.remove();
+                });
+                root.append(button);
             });
-            root.append(button);
         });
     }
 
@@ -1173,7 +1182,7 @@ function GraphView(spec) {
 
     set_layout(temporary ? layouts.empty : layouts.layouts[0].create);
     if (!temporary) {
-        set_layout_toolbar('#layout-buttons');
+        set_layout_toolbar('#btn_layout');
     }
 
     zoom_property.onValue(function (val) {

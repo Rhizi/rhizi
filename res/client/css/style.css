@@ -745,15 +745,32 @@ p {
 #tool-bar-multiple-node-operations {
   float: right; }
 
+#btn_export {
+  background: url(../img/toolbar_icon__export.png);
+  background-position: center;
+  background-repeat: no-repeat; }
+
 #btn_filter {
   background: url(../img/toolbar_icon__filter.png);
   background-repeat: no-repeat;
   background-position: center; }
 
-#btn_export {
-  background: url(../img/toolbar_icon__export.png);
+#btn_layout {
+  background: url(../img/btn_graph-layout.png);
+  background-repeat: no-repeat;
   background-position: center;
-  background-repeat: no-repeat; }
+  background-size: 48px; }
+  #btn_layout:after {
+    bottom: 12px;
+    border-top: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-bottom: 5px solid black;
+    border-right: 5px solid black;
+    content: ' ';
+    height: 0;
+    position: absolute;
+    right: 65px;
+    width: 0; }
 
 #btn_merge {
   width: 80px; }
@@ -791,24 +808,16 @@ p {
   width: 16px;
   height: 25px; }
 
-#layout-buttons {
-  position: absolute;
-  bottom: 100px;
-  right: 10px;
-  background: white;
-  border-width: 1px;
-  border-style: solid;
-  border-color: grey;
-  padding: 5px 4px 0px 4px;
-  height: 40px; }
-
 .btn_layout {
   background-color: white;
-  border-width: 1px;
-  border-style: solid;
-  border-color: blue;
-  width: 64;
-  height: 16px; }
+  border: 1px solid black;
+  display: inline-block;
+  font-size: 12px;
+  margin-top: 5px;
+  position: relative;
+  top: 36px;
+  text-align: center;
+  width: 64px; }
 
 .cmd-bar {
   background-color: #85B375;

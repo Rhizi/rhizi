@@ -25,16 +25,36 @@
     float: right;
 }
 
+#btn_export {
+    background: url(../img/toolbar_icon__export.png);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 #btn_filter {
     background: url(../img/toolbar_icon__filter.png);
     background-repeat: no-repeat;
     background-position: center;
 }
 
-#btn_export {
-    background: url(../img/toolbar_icon__export.png);
-    background-position: center;
+#btn_layout {
+    background: url(../img/btn_graph-layout.png);
     background-repeat: no-repeat;
+    background-position: center;
+    background-size: 48px;
+
+    &:after {
+        bottom: 12px;
+        border-top: 5px solid transparent;
+        border-left: 5px solid transparent;
+        border-bottom: 5px solid black;
+        border-right: 5px solid black;
+        content: ' ';
+        height: 0;
+        position: absolute;
+        right: 65px;
+        width: 0;
+    }
 }
 
 #btn_merge {

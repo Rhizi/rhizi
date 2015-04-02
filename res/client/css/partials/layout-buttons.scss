@@ -1,20 +1,11 @@
-#layout-buttons {
-  position: absolute;
-  bottom: 100px;
-  right: 10px;
-  background: white;
-  border-width: 1px;
-  border-style: solid;
-  border-color: grey;
-  padding: 5px 4px 0px 4px;
-  height: 40px;
-}
-
 .btn_layout {
-  background-color: white;
-  border-width: 1px;
-  border-style: solid;
-  border-color: blue;
-  width: 64;
-  height: 16px;
+    background-color: white;
+    border: 1px solid black;
+    display: inline-block;
+    font-size: $h5-size;
+    margin-top: 5px;
+    position: relative;
+    top: 36px;
+    text-align: center;
+    width: 64px;
 }
