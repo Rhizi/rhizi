@@ -261,9 +261,9 @@ function rzdoc__open(rzdoc_name) {
 
     var rzdoc_bar = $('#rzdoc-bar_doc-label');
     var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');
-    rzdoc_bar.fadeToggle(1000, 'swing', function() {
+    rzdoc_bar.fadeToggle(500, 'swing', function() {
         rzdoc_bar__doc_lable.text(rzdoc_name);
-        rzdoc_bar.fadeToggle(1000);
+        rzdoc_bar.fadeToggle(500);
     });
     console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
 }
