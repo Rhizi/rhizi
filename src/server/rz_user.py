@@ -17,6 +17,7 @@ import crypt_util
 from rz_mail import send_email_message
 from rz_req_handling import make_response__json, make_response__json__html
 from rz_user_db import User_Account
+from rz_api_common import API_Exception__bad_request
 
 
 log = logging.getLogger('rhizi')
@@ -314,10 +315,14 @@ def rest__user_signup():
 
         for f_name, regex in field_to_regex_map.items():
             f_val = req_json.get(f_name)
-            if None == f_val:
-                raise Exception('malformed signup request: missing field: %s' % (f_name))
+            if None == f_val or 0 == len(f_val):
+                e = API_Exception__bad_request('malformed signup request: missing field: %s' % (f_name))
+                e.caller_err_msg = 'Missing value: %s' % (f_name.replace('_', ' '))
+                raise e
             if None == re.match(regex, f_val):
-                raise Exception('malformed signup request: regex match failure: regex: %s, input: %s' % (regex, f_val))
+                e = API_Exception__bad_request('malformed signup request: regex match failure: regex: %s, input: %s' % (regex, f_val))
+                e.caller_err_msg = 'Illegal value: %s' % (f_val)
+                raise e
 
         first_name = req_json['first_name']
         last_name = req_json['last_name']
@@ -358,6 +363,9 @@ def rest__user_signup():
 
         try:
             us_req = sanitize_and_validate_input(request)
+        except API_Exception__bad_request as e:
+            log.exception(e)
+            return make_response__json__html(status=400, html_str='<p>%s</p>' % (e.caller_err_msg))
         except Exception as e:
             log.exception(e)
             return make_response__json__html(status=400, html_str=html_err__tech_difficulty)

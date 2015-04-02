@@ -13,7 +13,11 @@ from rz_kernel import RZDoc_Exception__not_found
 
 log = logging.getLogger('rhizi')
 
-class API_Exception__bad_request(Exception): pass # raised by input sanitation functions
+class API_Exception__bad_request(Exception): # raised by input sanitation functions
+
+    def __init__(self, internal_err_msg, caller_err_msg = None):
+        super(API_Exception__bad_request, self).__init__(internal_err_msg)
+        self.caller_err_msg = None # may be set to carry short string error messages which may be presented to the caller 
 
 def __sanitize_input(*args, **kw_args):
     pass
