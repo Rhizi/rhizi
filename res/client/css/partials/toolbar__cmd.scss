@@ -6,8 +6,9 @@
 .cmd-bar_close_bar {
     background-color: lightgray;
     text-align: center;
-    font-size: 10px;
-    height: 10px;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-bottom: 1px;
     width: 100%;
 }
 
@@ -57,7 +58,7 @@
 }
 
 .cmd_bar__rzdoc_open__item {
-    border-radius: 2px;
+    border-radius: 3px;
     background-color: white;
     float: left;
     font-size: $h4-size;
