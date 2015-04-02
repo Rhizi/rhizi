@@ -49,6 +49,9 @@ a:hover {
 a:active {
   color: #919095; }
 
+button {
+  border: none; }
+
 input, .input {
   background-color: white;
   color: #363636;
@@ -1076,7 +1079,8 @@ g:focus circle {
   padding: 36px;
   margin-top: 36px;
   width: 420px;
-  background: white; }
+  background: white;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.55); }
 
 .login-view-section {
   width: 100%;
@@ -1146,11 +1150,47 @@ g:focus circle {
     background-position-x: 22px;
     border-top: none; }
 
+.contact-us-icon {
+  text-align: center;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url(../img/hr-email-icon.png) no-repeat;
+  margin-left: auto;
+  display: inline-block;
+  margin-right: auto;
+  height: 25px;
+  width: 25px; }
+
+.contact-us-text {
+  color: #ee3654; }
+
+.contact-us-link {
+  color: #ee3654;
+  text-decoration: underline; }
+
 .forgot-password {
   color: #919095;
   text-decoration: none; }
   .forgot-password:hover {
     color: #363636; }
+
+.login-form_button {
+  cursor: pointer;
+  background-color: #ee3654;
+  color: white;
+  font-size: 18px;
+  margin-top: 24px;
+  padding: 12px;
+  width: 100%; }
+  .login-form_button:hover {
+    background-color: #d10a40; }
+  .login-form_button:focus {
+    background-color: #d10a40; }
+
+.magenta-divider:before {
+  border-top: 1px solid #ee3654; }
+.magenta-divider:after {
+  border-top: 1px solid #ee3654; }
 
 .section-divider {
   color: #919095;
@@ -1172,41 +1212,9 @@ g:focus circle {
     height: 0;
     border-top: 1px solid #919095; }
 
-.contact-us-icon {
-  text-align: center;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  background: url(../img/hr-email-icon.png) no-repeat;
-  margin-left: auto;
-  display: inline-block;
-  margin-right: auto;
-  height: 25px;
-  width: 25px; }
-
-.contact-us-text {
-  color: #ee3654; }
-
-.contact-us-link {
-  color: #ee3654;
-  text-decoration: underline; }
-
-.magenta-divider:before {
-  border-top: 1px solid #ee3654; }
-.magenta-divider:after {
-  border-top: 1px solid #ee3654; }
-
-.login-form_button {
-  cursor: pointer;
-  background-color: #ee3654;
-  color: white;
-  font-size: 18px;
-  margin-top: 24px;
-  padding: 12px;
-  width: 100%; }
-  .login-form_button:hover {
-    background-color: #d10a40; }
-  .login-form_button:focus {
-    background-color: #d10a40; }
+#login-view_failed-login {
+  padding: 5px;
+  background-color: antiquewhite; }
 
 #login-page_forgot-password-button {
   margin-top: 12px; }

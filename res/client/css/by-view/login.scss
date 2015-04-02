@@ -11,190 +11,195 @@
   margin-top: $three-baselines;
   width: 420px;
   background: white;
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.55); 
 }
 
 .login-view-section {
-  width: 100%;
-  margin-top: $two-baselines;
-  margin-bottom: $one-baseline;
-  text-align: center;
+    width: 100%;
+    margin-top: $two-baselines;
+    margin-bottom: $one-baseline;
+    text-align: center;
 }
 
 .login-rhizi-logo {
-  background: url('/static/img/logo-red.png');
-  background-repeat: no-repeat;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  width: 54px;
-  height: 30px;
+    background: url('/static/img/logo-red.png');
+    background-repeat: no-repeat;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 54px;
+    height: 30px;
 }
 
 .login-header {
-  margin-top: 35px;
-  margin-bottom: 35px;
-  text-align: center;
-  color: $magenta;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    text-align: center;
+    color: $magenta;
 }
 
 .login-text {
-  font-size: $h3-size;
-  line-height: 22px;
-  text-align: center;
-  margin-bottom: $one-baseline;
+    font-size: $h3-size;
+    line-height: 22px;
+    text-align: center;
+    margin-bottom: $one-baseline;
 
-  em {
-    font-family: $bold-font-family;
-    font-style:normal;
-  }
+    em {
+        font-family: $bold-font-family;
+        font-style:normal;
+    }
 }
 
 .clearfix {
-  *zoom: 1;
+    *zoom: 1;
 
-  &:before,
-  &:after {
-    content: ' ';
-    display: table;
-  }
+    &:before,
+    &:after {
+        content: ' ';
+        display: table;
+    }
 
-  &:after {
-    clear: both;
-  }
+    &:after {
+        clear: both;
+    }
 
 }
 
 .login-form {
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .login-input {
-  width: 75%;
-  border: none;
-  font-family: inherit;
-  font-size: inherit;
-  background-color: $light-grey;
-  border: 1px solid $mid-light-grey;
-  -webkit-appearance: none;
-  padding: $one-baseline $one-baseline $one-baseline 20%;
-  background-repeat: no-repeat;
-  background-position: 18px 14px;
+    width: 75%;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    background-color: $light-grey;
+    border: 1px solid $mid-light-grey;
+    -webkit-appearance: none;
+    padding: $one-baseline $one-baseline $one-baseline 20%;
+    background-repeat: no-repeat;
+    background-position: 18px 14px;
 
-  &:focus {
+    &:focus {
     outline: none;
     background-color: $light-grey;
     border: 1px solid $mid-light-grey;
     @include rz-inset-box-shadow(0px, 0px, 6px, rgba(0,0,0,0.3) )
-  }
+    }
 
-  &[type="email"] {
+    &[type="email"] {
     background-image: url(../img/mail-icon.png);
-  }
+    }
 
-  &[type="password"] {
+    &[type="password"] {
     background-image: url(../img/password-icon.png);
     background-position-x: 22px;
     border-top: none;
-  }
-}
-
-.forgot-password {
-  color: $mid-grey;
-  text-decoration: none;
-  &:hover {
-    color: $dark-grey;
-  }
-}
-
-
-.section-divider {
-  color: $mid-grey;
-  position: relative;
-
-  &:before {
-    content: "";
-    width: 112px;
-    margin-top: $one-baseline;
-    position: absolute;
-    height: 0;
-    margin-left: -118px;
-    border-top: 1px solid $mid-grey;
-  }
-
-  &:after {
-    content: "";
-    width: 112px;
-    margin-top: $one-baseline;
-    position: absolute;
-    margin-left: 4px;
-    height: 0;
-    border-top: 1px solid $mid-grey;
-  }
+    }
 }
 
 .contact-us-icon {
-  text-align: center;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  background: url(../img/hr-email-icon.png) no-repeat;
-  margin-left: auto;
-  display: inline-block;
-  margin-right: auto;
-  height:25px;
-  width:25px;
+    text-align: center;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: url(../img/hr-email-icon.png) no-repeat;
+    margin-left: auto;
+    display: inline-block;
+    margin-right: auto;
+    height:25px;
+    width:25px;
 }
 
 .contact-us-text {
-  color: $magenta ;
+    color: $magenta ;
 }
 
 .contact-us-link {
-  color: $magenta;
-  text-decoration: underline;
+    color: $magenta;
+    text-decoration: underline;
+}
+
+.forgot-password {
+    color: $mid-grey;
+    text-decoration: none;
+    &:hover {
+    color: $dark-grey;
+    }
+}
+
+.login-form_button {
+    cursor: pointer;
+    background-color: $magenta;
+    color: $white;
+    font-size: $h3-size;
+    margin-top: $two-baselines;
+    padding: $one-baseline;
+    width: 100%;
+
+    &:hover {
+    background-color: $dark-magenta;
+    }
+
+    &:focus {
+    background-color: $dark-magenta; 
+    }
 }
 
 .magenta-divider {
 
-  &:before {
+    &:before {
     border-top: 1px solid $magenta;
-  }
+    }
 
-  &:after {
+    &:after {
     border-top: 1px solid $magenta;
-  }
-
+    }
 }
 
-.login-form_button {
-  cursor: pointer;
-  background-color: $magenta;
-  color: $white;
-  font-size: $h3-size;
-  margin-top: $two-baselines;
-  padding: $one-baseline;
-  width: 100%;
+.section-divider {
+    color: $mid-grey;
+    position: relative;
 
-  &:hover {
-    background-color: $dark-magenta;
-  }
+    &:before {
+        content: "";
+        width: 112px;
+        margin-top: $one-baseline;
+        position: absolute;
+        height: 0;
+        margin-left: -118px;
+        border-top: 1px solid $mid-grey;
+    }
 
-  &:focus {
-    background-color: $dark-magenta; 
-  }
+    &:after {
+        content: "";
+        width: 112px;
+        margin-top: $one-baseline;
+        position: absolute;
+        margin-left: 4px;
+        height: 0;
+        border-top: 1px solid $mid-grey;
+    }
+}
+
+
+#login-view_failed-login {
+    padding: 5px;
+    background-color: antiquewhite;
 }
 
 #login-page_forgot-password-button {
-  margin-top: $one-baseline;
+    margin-top: $one-baseline;
 }
 
 #login-page_create-account-button {
-  color: $light-grey;
-  background-color: $mid-grey;
-  padding: $one-baseline 0;
+    color: $light-grey;
+    background-color: $mid-grey;
+    padding: $one-baseline 0;
 
-  &:hover {
-      background-color: $dark-grey;
-  }
+    &:hover {
+        background-color: $dark-grey;
+    }
 }

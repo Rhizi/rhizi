@@ -20,7 +20,7 @@ function submit_login_form() {
             document.location = "/index";
         },
         error : function (xhr, status, err_thrown) {
-            $('#failed-login').show();
+            $('#login-view_failed-login').show();
         }
     });
 }
