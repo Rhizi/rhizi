@@ -1,36 +1,36 @@
 .task-alert{
-  position:relative;
-  width: 100%;
-  min-height:$four-baselines;
-  text-align: center;
-  background-color: $light-cyan;
-  color: $darker-cyan;
-  border-top: 1px solid $dark-cyan;
-  border-bottom: 1px solid $dark-cyan;
+    position:relative;
+    width: 100%;
+    min-height: $four-baselines;
+    text-align: center;
+    background-color: $light-cyan;
+    color: $darker-cyan;
+    border-top: 1px solid $dark-cyan;
+    border-bottom: 1px solid $dark-cyan;
 }
 
 .task-desc{
-  display: inline-block;
-  font-size: $h3-size;
-  padding: 15px 10px;
-  text-align: center;
+    display: inline-block;
+    font-size: $h3-size;
+    padding: 15px 10px;
+    text-align: center;
 }
 
 .task-close-button {
-  cursor: pointer;
-  font-size: $h4-size;
-  margin: 15px $doc-margin 15px 15px;
-  float: right;
-  width: $doc-margin;
-  text-align: right;
+    cursor: pointer;
+    font-size: $h4-size;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    width: $doc-margin;
 } 
 
 .task-close-button:after {
-  content: " ";
-  min-height: $icon-height;
-  padding-right: $icon-height;
-  margin-left: 4px;
-  background: url(../img/close-alert-button.png);
-  background-position: center;
-  background-repeat: no-repeat;
+    content: " ";
+    min-height: $icon-height;
+    padding-right: $icon-height;
+    margin-left: 4px;
+    background: url(../img/close-alert-button.png);
+    background-position: center;
+    background-repeat: no-repeat;
 }

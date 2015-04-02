@@ -625,10 +625,10 @@ body.debug .debug-ui-right {
 .task-close-button {
   cursor: pointer;
   font-size: 14px;
-  margin: 15px 70px 15px 15px;
-  float: right;
-  width: 70px;
-  text-align: right; }
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  width: 70px; }
 
 .task-close-button:after {
   content: " ";
@@ -1230,17 +1230,17 @@ g:focus circle {
 #cmn-form-row--instruction-line {
   margin-bottom: 12px; }
 
-/* #user_signup_form_panel {
-	width: 550px;
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	padding: 20px 30px;
-	margin-top: 80px;
-	background: white;
-	box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
-} */
+#user_signup_form_panel {
+  width: 550px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  padding: 20px 30px;
+  margin-top: 80px;
+  background: white;
+  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
+
 /* #signup_form__submit_button {
 	background-color: #ee3654;
 	border-radius: 3px;
