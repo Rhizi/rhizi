@@ -294,6 +294,7 @@ def rest__user_signup():
     """
     REST API endpoint: user sign up
     """
+
     def add_user_signup_req(us_req_map, us_req):
         key = us_req['email_address']
         us_req_map[key] = us_req  # finally, add request
@@ -306,11 +307,12 @@ def rest__user_signup():
         req_json = request.get_json()
 
         # TODO: sanitize
+        pw_min_len = 8
         field_to_regex_map = {'first_name': r'\w{3,16}',
                               'last_name': r'\w{3,16}',
                               'rz_username': r'\w{3,16}',
                               'email_address': r'[^@]+@[^@]+\.[^@]+',
-                              'pw_plaintxt': r'[A-Za-z0-9]{8,32}',  # avoid symbols
+                              'pw_plaintxt': r'[A-Za-z0-9]{%d,%d}' % (pw_min_len, 3 * pw_min_len),  # avoid symbols
                               }
 
         for f_name, regex in field_to_regex_map.items():
@@ -320,8 +322,12 @@ def rest__user_signup():
                 e.caller_err_msg = 'Missing value: %s' % (f_name.replace('_', ' '))
                 raise e
             if None == re.match(regex, f_val):
+
                 e = API_Exception__bad_request('malformed signup request: regex match failure: regex: %s, input: %s' % (regex, f_val))
-                e.caller_err_msg = 'Illegal value: %s' % (f_val)
+                if f_name == 'pw_plaintxt': # provide more info on invalid pw case
+                    e.caller_err_msg = 'Illegal password: use a minimum of %d alphanumeric chars' % (pw_min_len)
+                else:
+                    e.caller_err_msg = 'Illegal value: %s' % (f_val)
                 raise e
 
         first_name = req_json['first_name']
