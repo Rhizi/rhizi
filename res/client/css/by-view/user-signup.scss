@@ -28,7 +28,7 @@
 } */
 
 .signup_form__row {
-	width: 100%;
+    width: 100%;
 }
 
 /* .signup_form__field {
@@ -68,31 +68,34 @@
 }  */
 
 .input-username {
-	background-image: url(../img/user-icon.png);
-	background-position-x: 21px;
+    background-image: url(../img/user-icon.png);
+    background-position-x: 21px;
 }
 
 .signup-button {
-	width: 92%;
+    width: 92%;
+}
+
+#err_msg_row p {
+    margin-top: $one-baseline;
+    width: 92%;
+    padding: $one-baseline;
+    font-size: $h4-size;
+    line-hight: 18px;
+    text-align: center;
+    color: $dark-magenta;
+    background-color: lighten( $magenta, 40% );
+    border: 1px solid $dark-magenta;
 }
 
 #signup_form__submit_button:hover {
-	alpha: 1.0;
+    alpha: 1.0;
 }
 
 #signup_form__ajax_response {
-	margin-top: 30px;
-	margin: 10px;
+    margin-top: 30px;
+    margin: 10px;
 }
 
-#err_msg_row p{
-	margin-top: $one-baseline;
-	width: 92%;
-	padding: $one-baseline;
-	font-size: $h4-size;
-	line-hight: 18px;
-	text-align: center;
-	color: $dark-magenta;
-	background-color: lighten( $magenta, 40% );
-	border: 1px solid $dark-magenta;
+#signup_form__msg_row {
 }
