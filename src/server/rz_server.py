@@ -12,7 +12,6 @@ import re
 import signal
 
 import db_controller as dbc
-import rp
 import rz_api
 import rz_api_rest
 import rz_feedback
