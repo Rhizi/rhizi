@@ -315,19 +315,21 @@ def rest__user_signup():
                               'pw_plaintxt': r'[A-Za-z0-9]{%d,%d}' % (pw_min_len, 3 * pw_min_len),  # avoid symbols
                               }
 
-        for f_name, regex in field_to_regex_map.items():
-            f_val = req_json.get(f_name)
-            if None == f_val or 0 == len(f_val):
-                e = API_Exception__bad_request('malformed signup request: missing field: %s' % (f_name))
-                e.caller_err_msg = 'Missing value: %s' % (f_name.replace('_', ' '))
-                raise e
-            if None == re.match(regex, f_val):
+        for f_key, regex in field_to_regex_map.items():
+            f_val = req_json.get(f_key)
+            f_name = f_key.replace('_', ' ')
 
+            if None == f_val or 0 == len(f_val): # missing or empty value
+                e = API_Exception__bad_request('malformed signup request: missing field: %s' % (f_key))
+                e.caller_err_msg = 'Missing value: %s' % (f_name)
+                raise e
+
+            if None == re.match(regex, f_val):
                 e = API_Exception__bad_request('malformed signup request: regex match failure: regex: %s, input: %s' % (regex, f_val))
-                if f_name == 'pw_plaintxt': # provide more info on invalid pw case
+                if f_key == 'pw_plaintxt': # provide more info on invalid pw case
                     e.caller_err_msg = 'Illegal password: use a minimum of %d alphanumeric chars' % (pw_min_len)
                 else:
-                    e.caller_err_msg = 'Illegal value: %s' % (f_val)
+                    e.caller_err_msg = 'Illegal \'%s\' value: %s' % (f_name, f_val)
                 raise e
 
         first_name = req_json['first_name']

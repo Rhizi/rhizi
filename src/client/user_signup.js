@@ -3,14 +3,14 @@
 function signup_form__submit() {
 
     function validate_data(data) {
-        var err_msg_row = $('#err_msg_row'); // reset
-        err_msg_row.children().remove();
-
-        // FIXME call util.validate...
+        if (data.password_first != data.password_second) { // FIXME call util.validate...
+            throw { message: 'Passwords do not match' };
+        }
+        if (undefined == data.password_first || data.password_first.length < 8) { // FIXME call util.validate...
+            throw { message: 'Password too short - must be at least 8 charachters long' };
+        }
 
         // TODO validate email
-
-        err_msg_row.css('display', 'none');
         return true;
     }
 
@@ -23,7 +23,14 @@ function signup_form__submit() {
         password_second : $('#signup_form__password_second').val(),
     };
 
-    if (false == validate_data(form_data)) {
+    var msg_row = $('#signup_form__msg_row');
+    msg_row.children().remove(); // reset possible previous failures
+
+    try { // validate_data();
+        validate_data(form_data);
+    } catch (e) {
+        msg_row.append($('<p>' + e.message +'</p>'));
+        msg_row.show();
         return;
     }
 
@@ -31,8 +38,8 @@ function signup_form__submit() {
     var post_data = $.extend({}, form_data, {
         pw_plaintxt: form_data.password_first // rename field
     });
-    delete post_data.password_first
-    delete post_data.password_second
+    delete post_data.password_first;
+    delete post_data.password_second;
 
     $.ajax({
          type : "POST",
@@ -43,14 +50,14 @@ function signup_form__submit() {
          dataType : 'json',
          contentType : "application/json; charset=utf-8",
          success : function(data, status, xhr) {
-             var signup_form__ajax_response = $('#signup_form__ajax_response'); // reset
-             signup_form__ajax_response.children().remove();
-             signup_form__ajax_response.append($(data.response__html));
+             var msg_row = $('#signup_form__msg_row'); // reset
+             msg_row.children().remove();
+             msg_row.append($(xhr.responseJSON.response__html));
          },
          error : function(xhr, status, err_thrown) {
-             var signup_form__ajax_response = $('#signup_form__ajax_response'); // reset
-             signup_form__ajax_response.children().remove();
-             signup_form__ajax_response.append($(data.response__html));
+             var msg_row = $('#signup_form__msg_row'); // reset
+             msg_row.children().remove();
+             msg_row.append($(xhr.responseJSON.response__html));
          }
      });
 }
