@@ -512,11 +512,11 @@ function GraphView(spec) {
                 }
                 var that = this;
 
-                view.edge_info.on_delete(function () {
-                    view.edge_info.hide();
+                view.link_info.on_delete(function () {
+                    view.link_info.hide();
                     graph.links__delete([that.link.id]);
                 });
-                view.edge_info.show(d);
+                view.link_info.show(d);
                 (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
             });
 
