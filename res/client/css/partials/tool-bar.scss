@@ -6,7 +6,7 @@
     line-height: $three-baselines;
     margin-left: 10px;
     text-align: center;
-    width: 50px;
+    width: $toolbar-button-width;
 }
 
 #tool-bar {
@@ -31,20 +31,9 @@
     background-repeat: no-repeat;
 }
 
-#btn_filter {
-    background: url(../img/toolbar_icon__filter.png);
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
 #btn_layout {
-    background: url(../img/btn_graph-layout.png);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 48px;
-
     &:after {
-        bottom: 12px;
+        bottom: 10px;
         border-top: 5px solid transparent;
         border-left: 5px solid transparent;
         border-bottom: 5px solid black;
@@ -52,21 +41,27 @@
         content: ' ';
         height: 0;
         position: absolute;
-        right: 65px;
+        margin-left: 0px;
         width: 0;
     }
 }
 
 #btn_merge {
-    width: 80px;
+    width: $toolbar-button-width;
 }
 
 #btn_delete {
-    width: 80px;
+    width: $toolbar-button-width;
 }
 
-#btn_link_fan {
-    background: url(../img/url-icon.png);
-    background-position: center;
-    background-repeat: no-repeat;
+.btn_layout {
+    background-color: white;
+    border: 1px solid black;
+    display: inline-block;
+    font-size: $h5-size;
+    margin-top: 5px;
+    position: relative;
+    text-align: center;
+    width: $toolbar-button-width;
+    right: 1px;
 }

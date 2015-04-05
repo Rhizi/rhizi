@@ -47,33 +47,32 @@ var rz_config = { // set as a global variable
     <div id="tool-bar">
       <div id="tool-bar-top-bar">
         <div class="tool_bar_btn" id="btn_export" title="Export"></div>
-        <div class="tool_bar_btn" id="btn_layout" title="Layout"></div>
-        <div class="tool_bar_btn" id="btn_filter" title="Filter">
-          <div>
-            <div id="menu__type-filter" style="display:none">
-              <div class="dropdown-menu-heading" id="menu__type-filter__title">Filter by node type</div>
-              <ul class="dropdown-menu">
-                <li class="dropdown-item dropdown-item-type dropdown-item-type-internship">
-                  <label><input type="checkbox" checked="checked" name="internship">Internship</label>
-                </li>
-                <li class="dropdown-item dropdown-item-type dropdown-item-type-interest">
-                  <label><input type="checkbox" checked="checked" name="interest">Interest</label>
-                </li>
-                <li class="dropdown-item dropdown-item-type dropdown-item-type-Skill">
-                  <label><input type="checkbox" checked="checked" name="skill">Skill</label>
-                </li>
-                <li class="dropdown-item dropdown-item-type dropdown-item-type-Club">
-                  <label><input type="checkbox" checked="checked" name="club">Club</label>
-                </li>
-                <li class="dropdown-item dropdown-item-type dropdown-item-type-person">
-                  <label><input type="checkbox" checked="checked" name="person">Person</label>
-                </li>
-              </ul>
-            </div>
+        <div class="tool_bar_btn" id="btn_layout" title="Layout">Layout</div>
+        <div class="tool_bar_btn" id="btn_filter" title="Filter">Filter<div>
+          <div id="menu__type-filter" style="display:none">
+            <div class="dropdown-menu-heading" id="menu__type-filter__title">Filter by node type</div>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item dropdown-item-type dropdown-item-type-internship">
+                <label><input type="checkbox" checked="checked" name="internship">Internship</label>
+              </li>
+              <li class="dropdown-item dropdown-item-type dropdown-item-type-interest">
+                <label><input type="checkbox" checked="checked" name="interest">Interest</label>
+              </li>
+              <li class="dropdown-item dropdown-item-type dropdown-item-type-Skill">
+                <label><input type="checkbox" checked="checked" name="skill">Skill</label>
+              </li>
+              <li class="dropdown-item dropdown-item-type dropdown-item-type-Club">
+                <label><input type="checkbox" checked="checked" name="club">Club</label>
+              </li>
+              <li class="dropdown-item dropdown-item-type dropdown-item-type-person">
+                <label><input type="checkbox" checked="checked" name="person">Person</label>
+              </li>
+            </ul>
           </div>
         </div>
+  </div>
         <div id="tool-bar-multiple-node-operations" style="display: none">
-          <div class="tool_bar_btn" id="btn_link_fan" title="Link nodes in fan"></div>
+          <div class="tool_bar_btn" id="btn_link_fan" title="Link nodes in fan">Connect</div>
           <div class="tool_bar_btn" id="btn_merge" title="Merge nodes">Merge</div>
           <div class="tool_bar_btn" id="btn_delete" title="Delete nods">Delete</div>
         </div>
