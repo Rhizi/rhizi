@@ -1227,6 +1227,10 @@ function GraphView(spec) {
             layout.save();
             layout.stop();
         }
+        // remove fixed status, the fixed status is restored from the layout
+        graph.nodes().forEach(function (node) {
+            node.fixed = undefined;
+        });
         layout = new_layout
             .size([w, h])
             .on("tick", pushRedraw)
