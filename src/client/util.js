@@ -76,10 +76,10 @@ define(['jquery'], function($) {
 
     function input_validation__password(password_first, password_second) {
         if (password_first != password_second) {
-            throw { message: 'passwords do not match' }
+            throw { message: 'Passwords do not match' };
         }
         if (password_first.length < 8) {
-            throw { message: 'password too short - must be at least 8 charachters long' }
+            throw { message: 'Password too short - must be at least 8 charachters long' };
         }
     }
 

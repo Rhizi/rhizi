@@ -48,7 +48,7 @@ define('pw_reset__submit_new_pw', ['jquery', 'util', 'pw_reset__common'], functi
             msg_row.children().remove();
 
             util.input_validation__password($('#pw_reset_form__password_first').val(),
-                                            $('#pw_reset_form__password_second').val())
+                                            $('#pw_reset_form__password_second').val());
 
             msg_row.hide();
         } catch(e) {
