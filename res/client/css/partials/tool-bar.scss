@@ -25,12 +25,6 @@
     float: right;
 }
 
-#btn_export {
-    background: url(../img/toolbar_icon__export.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 #btn_layout {
     &:after {
         bottom: 10px;
