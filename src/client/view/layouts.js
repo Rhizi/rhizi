@@ -39,27 +39,29 @@ function(consts,   $,        d3,   _,            rz_core) {
 
     function layout__empty(graph, base) {
         function save() {
-            layout.saved_nodes_position = layout.nodes().map(function (node) {
-                return [node.x, node.y, node.px, node.py];
-            });
+            layout.saved_nodes_position = _.object(layout.nodes().map(function (node) {
+                return [node.id, {
+                    x: node.x,
+                    y: node.y,
+                    px: node.px,
+                    py: node.py,
+                    fixed: node.fixed
+                }];
+            }));
             return layout;
         }
 
         function restore() {
-            if (layout.saved_nodes_position === undefined ||
-                layout.saved_nodes_position.length != layout.nodes().length) {
+            if (layout.saved_nodes_position === undefined) {
                 return layout;
             }
-            layout.nodes().forEach(function (node, i) {
-                var state = layout.saved_nodes_position[i];
-                if (state[0] === undefined || state[1] === undefined || state[2] === undefined
-                    || state[3] === undefined) {
+            layout.nodes().forEach(function (node) {
+                var state = layout.saved_nodes_position[node.id];
+
+                if (state === undefined) {
                     return;
                 }
-                node.x = state[0];
-                node.y = state[1];
-                node.px = state[2];
-                node.py = state[3];
+                _.extend(node, state);
             });
             layout._saved_nodes_position = undefined;
             return layout;
