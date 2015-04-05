@@ -291,14 +291,14 @@ function GraphView(spec) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
         d.dragstart = {clientX:d3.event.sourceEvent.clientX, clientY:d3.event.sourceEvent.clientY};
+        d.fixed = true;
         layout.stop();
     }
 
     function dragged(d) {
         d.px = d.x = d3.event.x;
         d.py = d.y = d3.event.y;
-        //tick();
-        resumeLayout();
+        tick();
     }
 
     function setupInitialPositions()
