@@ -33,6 +33,9 @@ function(d3 ,   Bacon,   consts,   util ,  selection      ,  view_helpers,  mode
 // aliases
 var obj_take = util.obj_take;
 
+// constants (that should be moved somewhere else)
+var node_url_dx = 15;
+
 /* debugging helper */
 function enableDebugViewOfDiffs(graph)
 {
@@ -380,8 +383,7 @@ function GraphView(spec) {
         };
 
         function node_text_setup() {
-            var node_text,
-                node_url_dx = 15;
+            var node_text;
 
             node_text = vis.selectAll("g.nodetext")
                 .data(graph.nodes(), function(d) {
