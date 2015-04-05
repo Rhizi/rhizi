@@ -2,18 +2,16 @@ from datetime import datetime
 from datetime import timedelta
 from flask import current_app
 from flask import redirect
+from flask import make_response
 from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
-import flask
-import json
 import logging
 import re
 import uuid
 
 from crypt_util import hash_pw
-import crypt_util
 from rz_mail import send_email_message
 from rz_req_handling import make_response__json, make_response__json__html
 from rz_user_db import User_Account
@@ -164,8 +162,19 @@ def rest__logout():
     """
     # remove the username from the session if it's there
     u = session.pop('username', None)
+
+    assert None != u # assert user session was found - note: /logout is login protected
+
     log.debug('logout: success: user: %s' % (u))
-    return redirect(url_for('login'))
+
+    # redirect on GET, invalidate cookie on GET/POST
+    if request.method == 'GET':
+        resp = make_response(redirect(url_for('login')))
+    if request.method == 'POST':
+        resp = make_response__json()
+
+    resp.set_cookie(key='session', value='', expires=0) # UNIX timestamp 0
+    return resp
 
 def rest__pw_reset():
 

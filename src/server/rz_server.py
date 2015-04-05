@@ -2,12 +2,9 @@
 
 import argparse
 from flask import Flask
-from flask import Response
 from flask import redirect
 from flask import request
-from flask import send_from_directory
 from flask import session
-import flask
 from functools import wraps
 import logging
 import os
@@ -15,6 +12,7 @@ import re
 import signal
 
 import db_controller as dbc
+import rp
 import rz_api
 import rz_api_rest
 import rz_feedback
@@ -25,7 +23,6 @@ import rz_server_ctrl
 import rz_user
 import rz_blob
 from rz_user_db import User_DB
-import rz_api_common
 
 
 class Config(object):
@@ -199,7 +196,7 @@ def init_rest_interface(cfg, flask_webapp):
         """
         @wraps(f)
         def wrapped_function(*args, **kw):
-            if not 'username' in session:
+            if None == session.get('username'):
                 return redirect('/login')
             return f(*args, **kw)
 
