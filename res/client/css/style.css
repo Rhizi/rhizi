@@ -472,10 +472,11 @@ body.debug .debug-ui-right {
   opacity: 0.5; }
 
 .info-container {
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.55);
+  overflow-y: auto;
   position: absolute;
-  right: 20px;
   top: 130px;
-  overflow-y: auto; }
+  right: 20px; }
 
 .subtitle {
   font-style: italic;
@@ -887,11 +888,6 @@ p {
   font-size: 18px;
   background-color: transparent; }
 
-.linklabel {
-  stroke: #363636;
-  font-size: 14px;
-  background-color: transparent; }
-
 .svg-input-fo-link {
   stroke: #363636; }
 
@@ -906,6 +902,12 @@ p {
   stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index: 1; }
+
+.linklabel {
+  font-size: 14px;
+  fill: black;
+  stroke: transparent;
+  text-shadow: 2px 2px yellow; }
 
 .ghostlink {
   opacity: 0.0;
@@ -1216,80 +1218,15 @@ g:focus circle {
 #cmn-form-row--instruction-line {
   margin-bottom: 12px; }
 
-/* #user_signup_form_panel {
-	width: 550px;
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	padding: 20px 30px;
-	margin-top: 80px;
-	background: white;
-	box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
-} */
-/* #signup_form__submit_button {
-	background-color: #ee3654;
-	border-radius: 3px;
-	color: #fff;
-	cursor: pointer;
-	float: right;
-	font-weight: bold;s
-	margin: 20px;
-	padding: 12px 20px;
-	text-align: center;
-	width: 140px;
-} */
 .signup_form__row {
   width: 100%; }
 
-/* .signup_form__field {
-	border-radius: 3px;
-	border: 1px solid #4B7CBD;
-	float: left;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin: 5px;
-}
-
-.signup_form__row_sharing_field {
-	display: inline-block;
-}
-
-.signup_form__field input {
-	background-color: inherit;
-	border: none;
-}
-
-.signup_form__field input:focus {
-	outline: none;
-}
-
-#signup_form__title {
-	color: #ee3654;
-	margin-bottom: 30px;
-	background: url(../img/logo-red.png);
-	background-repeat: no-repeat;
-	background-position: 140px 2px;
-}
-
-#signup_form__submit_button_row {
-	overflow: auto;
-}  */
 .input-username {
   background-image: url(../img/user-icon.png);
   background-position-x: 21px; }
 
 .signup-button {
   width: 92%; }
-
-#signup_form__submit_button:hover {
-  alpha: 1.0; }
-
-#signup_form__ajax_response {
-  margin-top: 30px;
-  margin: 10px; }
 
 #err_msg_row p {
   margin-top: 12px;
@@ -1301,6 +1238,17 @@ g:focus circle {
   color: #d10a40;
   background-color: #fef2f4;
   border: 1px solid #d10a40; }
+
+#signup_form__submit_button:hover {
+  alpha: 1.0; }
+
+#signup_form__ajax_response {
+  margin-top: 30px;
+  margin: 10px; }
+
+#signup_form__msg_row {
+  padding: 5px;
+  background-color: antiquewhite; }
 
 svg text::selection {
   background: none; }
