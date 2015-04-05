@@ -36,8 +36,8 @@
    <property name="pkg_version" value="0.1.0" />
    <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
    <property name="targetDeploymentDir" value="deploy-local" />
-   <property name="remoteDeployServer" value="rhizi.net" />
-   <property name="targetDomain" value="rhizi.net" />
+   <property name="remoteDeployServer" value="rz-0.unige.ch" />
+   <property name="targetDomain" value="default.rhizi.net" />
    <property name="doClientOptimize" value="false" />
 
    <tstamp>
@@ -74,6 +74,8 @@
       <property name="src_server" value="src/server" />
 
       <mkdir dir="${targetDeploymentDir}/static" />
+      <mkdir dir="${targetDeploymentDir}/templates" />
+      <mkdir dir="${targetDeploymentDir}/templates/fragment" />
 
       <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
 
@@ -93,7 +95,8 @@
 
          <copy file="res/etc/rhizi-server.conf"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
-         <rsync src="res/templates/" dst="${targetDeploymentDir}/templates" />
+         <rsync src="res/templates/" dst="${targetDeploymentDir}/templates/" />
+         <rsync src="res/local/template/fragment/by-domain/${targetDomain}/" dst="${targetDeploymentDir}/templates/fragment/" />
          <copy file="res/etc/user_db.db" tofile="${targetDeploymentDir}/user_db.db" failonerror="false" />
       </parallel>
 
