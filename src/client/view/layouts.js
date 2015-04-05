@@ -1,7 +1,17 @@
 define(['consts', 'jquery', 'd3', 'underscore', 'rz_core'],
 function(consts,   $,        d3,   _,            rz_core) {
+
+    function extendOwn(obj, other) {
+        for (var prop in other) {
+            if (!obj.hasOwnProperty(prop) && other.hasOwnProperty(prop)) {
+                obj[prop] = other[prop];
+            }
+        }
+        return obj;
+    }
+
     function layout__d3_force(graph) {
-        return d3.layout.force()
+        return layout__empty(graph, d3.layout.force())
                   .distance(240)
                   .gravity(0.12)
                   .charge(-1800)
@@ -14,7 +24,7 @@ function(consts,   $,        d3,   _,            rz_core) {
     }
 
     function layout__cola(graph) {
-        return cola.d3adaptor()
+        return _.extend(layout__empty(graph), cola.d3adaptor())
                   //.linkDistance(120)
                   .avoidOverlaps(true);
         /*
@@ -27,25 +37,72 @@ function(consts,   $,        d3,   _,            rz_core) {
                   */
     }
 
-    function layout__empty(graph) {
-        var donothing = function () { return ret; },
-            ret = {
-                resume: donothing,
-                stop: donothing,
-                nodes: donothing,
-                links: donothing,
+    function layout__empty(graph, base) {
+        function save() {
+            layout.saved_nodes_position = layout.nodes().map(function (node) {
+                return [node.x, node.y, node.px, node.py];
+            });
+            return layout;
+        }
+
+        function restore() {
+            if (layout.saved_nodes_position === undefined ||
+                layout.saved_nodes_position.length != layout.nodes().length) {
+                return layout;
+            }
+            layout.nodes().forEach(function (node, i) {
+                var state = layout.saved_nodes_position[i];
+                if (state[0] === undefined || state[1] === undefined || state[2] === undefined
+                    || state[3] === undefined) {
+                    return;
+                }
+                node.x = state[0];
+                node.y = state[1];
+                node.px = state[2];
+                node.py = state[3];
+            });
+            layout._saved_nodes_position = undefined;
+            return layout;
+        }
+
+        function nodes(_nodes) {
+            if (arguments.length === 0) {
+                return layout._nodes;
+            }
+            layout._nodes = _nodes;
+            return layout;
+        }
+        function links(_links) {
+            if (arguments.length === 0) {
+                return layout._links;
+            }
+            layout._links = _links;
+            return layout;
+        }
+
+        var donothing = function () { return layout; },
+            layout = extendOwn(base || {}, {
+                // methods
+                resume: restore,
                 alpha: donothing,
-                start: donothing,
                 size: donothing,
                 on: donothing,
-            };
-        return ret;
+                nodes: nodes,
+                links: links,
+                save: save,
+                restore: restore,
+                stop: save,
+                start: restore,
+                // data
+                graph: graph,
+                _nodes: [],
+                _links: [],
+            });
+        return layout;
     }
 
-    function layout__sync(layer) {
-        var layout = {
-                _nodes: undefined,
-                _links: undefined,
+    function layout__sync(graph, layer) {
+        var layout = _.extend(layout__empty(graph), {
                 _tick: function () {
                     console.log('tick not set');
                 },
@@ -53,14 +110,11 @@ function(consts,   $,        d3,   _,            rz_core) {
                     console.log('end not set');
                 },
                 wh: [1, 1] // width + height
-            },
+            }),
             bound_layer = layer.bind(layout);
         
         layout.resume = function () {
             layout.start();
-            return layout;
-        };
-        layout.stop = function () {
             return layout;
         };
         layout.start = function () {
@@ -70,14 +124,6 @@ function(consts,   $,        d3,   _,            rz_core) {
             return layout;
         }
         layout.alpha = layout.start;
-        layout.nodes = function (_nodes) {
-            layout._nodes = _nodes;
-            return layout;
-        }
-        layout.links = function (_links) {
-            layout._links = _links;
-            return layout;
-        }
         layout.on = function (on_type, func) {
             switch (on_type) {
                 case 'tick':
@@ -96,7 +142,7 @@ function(consts,   $,        d3,   _,            rz_core) {
         return layout;
     }
 
-    function layout__concentric() {
+    function layout__concentric(graph) {
         var single_width = consts.concentric_top_width,
             ring_distance_minimum = consts.concentric_ring_distance_minimum;
 
@@ -113,7 +159,7 @@ function(consts,   $,        d3,   _,            rz_core) {
                 },
             small_cutoff = _.max(_.keys(small_number_angles));
 
-        return layout__sync(function () {
+        return layout__sync(graph, function () {
             var bytype = _.sortBy(_.groupBy(this._nodes, 'type'), "length").map(function (nodes) {
                     return _.sortBy(nodes, "name");
                 }),
@@ -208,6 +254,7 @@ function(consts,   $,        d3,   _,            rz_core) {
         ];
     return {
         layouts: layouts,
-        empty: layout__empty
+        empty: layout__empty,
+        layout__sync: layout__sync,
     };
 });

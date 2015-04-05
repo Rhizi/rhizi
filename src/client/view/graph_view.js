@@ -26,7 +26,7 @@
  */
 
 define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types', 'view/layouts'],
-function(d3 ,   Bacon,   consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types,        layouts) {
+function(d3 ,   Bacon,   consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types,   view_layouts) {
 
 "use strict"
 
@@ -1143,6 +1143,10 @@ function GraphView(spec) {
                     nodes.length + ' nodes');
     }
 
+    var layouts = view_layouts.layouts.map(function (layout_data) {
+        return layout_data.create(graph);
+    });
+
     function set_layout_toolbar(selector) {
         var root = $(selector);
         root.on('click', function() {
@@ -1153,13 +1157,15 @@ function GraphView(spec) {
                 return;
             }
 
-            layouts.layouts.forEach(function (layout_data) {
-                var button = $('<div></div>');
+            view_layouts.layouts.forEach(function (layout_data, i) {
+                var button_layout = layouts[i],
+                    button = $('<div></div>');
+
                 button.html(layout_data.name);
                 button.addClass(layout_data.clazz);
                 button.addClass('btn_layout');
                 button.on('click', function () {
-                    set_layout(layout_data.create);
+                    set_layout(button_layout);
                     layout_btns.remove();
                 });
                 root.append(button);
@@ -1167,23 +1173,29 @@ function GraphView(spec) {
         });
     }
 
-    function set_layout(layout_creator) {
+    function set_layout(new_layout) {
         if (layout !== undefined) {
+            layout.save();
             layout.stop();
         }
-        layout = layout_creator(graph)
+        layout = new_layout
             .size([w, h])
             .on("tick", pushRedraw)
             .on("end", record_position_to_local_storage)
             .nodes(graph.nodes())
             .links(graph.links())
+            .restore()
             .start();
     }
 
-    set_layout(temporary ? layouts.empty : layouts.layouts[0].create);
+    set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
     if (!temporary) {
         set_layout_toolbar('#btn_layout');
     }
+
+    gv.dev_set_layout = function (layout_func) {
+        set_layout(function () { return layouts.layout__sync(layout_func); });
+    };
 
     zoom_property.onValue(function (val) {
         zoomInProgress = val;
