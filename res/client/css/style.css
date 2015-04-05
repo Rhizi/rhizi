@@ -889,11 +889,6 @@ p {
   font-size: 18px;
   background-color: transparent; }
 
-.linklabel {
-  stroke: #363636;
-  font-size: 14px;
-  background-color: transparent; }
-
 .svg-input-fo-link {
   stroke: #363636; }
 
@@ -908,6 +903,12 @@ p {
   stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index: 1; }
+
+.linklabel {
+  font-size: 14px;
+  fill: black;
+  stroke: transparent;
+  text-shadow: 2px 2px yellow; }
 
 .ghostlink {
   opacity: 0.0;
