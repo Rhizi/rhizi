@@ -49,9 +49,6 @@ a:hover {
 a:active {
   color: #919095; }
 
-button {
-  border: none; }
-
 input, .input {
   background-color: white;
   color: #363636;
@@ -180,14 +177,14 @@ table {
   background: url("../img/rzdoc-new.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 20px;
+  background-size: 32px;
   width: 32px; }
 
 #btn_rzdoc__open {
   background: url("../img/rzdoc-open.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 20px;
+  background-size: 45px;
   width: 32px; }
 
 .cmn-form {
@@ -632,8 +629,8 @@ body.debug .debug-ui-right {
 
 .task-close-button:after {
   content: " ";
-  min-height: 20px;
-  padding-right: 20px;
+  min-height: 32px;
+  padding-right: 32px;
   margin-left: 4px;
   background: url(../img/close-alert-button.png);
   background-position: center;
@@ -1239,17 +1236,17 @@ g:focus circle {
 #cmn-form-row--instruction-line {
   margin-bottom: 12px; }
 
-#user_signup_form_panel {
-  width: 550px;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  padding: 20px 30px;
-  margin-top: 80px;
-  background: white;
-  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3); }
-
+/* #user_signup_form_panel {
+	width: 550px;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	padding: 20px 30px;
+	margin-top: 80px;
+	background: white;
+	box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.3);
+} */
 /* #signup_form__submit_button {
 	background-color: #ee3654;
 	border-radius: 3px;
