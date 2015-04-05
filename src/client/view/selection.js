@@ -65,7 +65,7 @@ function listen_on_diff_bus(diffBus)
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
             // reselect based on current graph
-            inner_update(root_nodes);
+            inner_select_nodes(root_nodes);
         });
 }
 
@@ -137,7 +137,7 @@ function links_to_nodes(links)
 function byVisitors(node_selector, link_selector) {
     var new_selection = get_main_graph().find__by_visitors(node_selector, link_selector);
 
-    inner_update(sum_nodes(new_selection.nodes, links_to_nodes(new_selection.links)));
+    inner_select_nodes(sum_nodes(new_selection.nodes, links_to_nodes(new_selection.links)));
 }
 
 function connectedComponent(nodes) {
@@ -171,9 +171,9 @@ function connectedComponent(nodes) {
             break;
         };
     }
+    // XXX side effect, should not be here
     nodes.forEach(function (n) { n.state = 'chosen'; });
-    selected_nodes = connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
-    updateSelectedNodesBus(nodes, selected_nodes);
+    return connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
 }
 
 var node_selected = function(node) {
@@ -221,25 +221,60 @@ function arr_compare(a1, a2)
     return true;
 }
 
-var inner_update = function(nodes)
+var inner_select_nodes = function(nodes)
 {
-    get_main_graph_view().nodes__user_visible(nodes);
-    connectedComponent(nodes);
+    inner_select(nodes, connectedComponent(nodes));
 }
 
-var update = function(nodes)
+var select_nodes = function(nodes)
 {
     var new_nodes = nodes;
     var not_same = !arr_compare(new_nodes, root_nodes);
 
     if (not_same) {
-        inner_update(new_nodes);
+        inner_select_nodes(new_nodes);
     }
 }
 
-var invert = function(nodes)
+var inner_select = function(new_root_nodes, new_selected_nodes)
 {
-    update(_.union(_.difference(root_nodes, nodes), _.difference(nodes, root_nodes)));
+    if (arr_compare(new_root_nodes, root_nodes) && arr_compare(new_selected_nodes, selected_nodes)) {
+        // no change
+        return;
+    }
+    get_main_graph_view().nodes__user_visible(new_selected_nodes);
+    updateSelectedNodesBus(new_root_nodes, new_selected_nodes);
+}
+
+function nodes_from_link(link)
+{
+    return [link.__src, link.__dst];
+}
+
+var select_link = function(link)
+{
+    var new_root_nodes = nodes_from_link(link);
+
+    inner_select(new_root_nodes, new_root_nodes);
+}
+
+function invert(initial, inverted)
+{
+    return _.union(_.difference(initial, inverted), _.difference(inverted, initial));
+}
+
+var invert_link = function(link)
+{
+    var link_nodes = nodes_from_link(link),
+        new_root_nodes = invert(root_nodes, link_nodes),
+        new_selected_nodes = invert(selected_nodes, link_nodes);
+
+    inner_select(new_root_nodes, new_selected_nodes);
+}
+
+var invert_nodes = function(nodes)
+{
+    select_nodes(invert(root_nodes, nodes));
 }
 
 var setup_toolbar = function(main_graph)
@@ -289,8 +324,10 @@ return {
     connectedComponent: connectedComponent,
     is_empty: is_empty,
     clear: clear,
-    invert: invert,
-    update: update,
+    select_nodes: select_nodes,
+    invert_nodes: invert_nodes,
+    select_link: select_link,
+    invert_link: invert_link,
     selected_class__node: selected_class__node,
     selected_class__link: selected_class__link,
     node_selected: node_selected,

@@ -399,7 +399,7 @@ function GraphView(spec) {
                     }
                     if (!temporary) {
                         svgInput.enable(this.querySelector('text'), d, nodeTextX(d));
-                        (d3.event.shiftKey ? selection.invert : selection.update)([d]);
+                        (d3.event.shiftKey ? selection.invert_nodes : selection.select_nodes)([d]);
                         showNodeInfo(graph.find_node__by_id(model_id_from_dom_id(this.id)));
                     }
                     d3.event.stopPropagation();
@@ -510,16 +510,14 @@ function GraphView(spec) {
                     // after this events bubbles to the svg element
                     return;
                 }
-                var that = this,
-                    src = this.link.__src,
-                    dst = this.link.__dst;
+                var that = this;
 
                 view.edge_info.on_delete(function () {
                     view.edge_info.hide();
                     graph.links__delete([that.link.id]);
                 });
                 view.edge_info.show(d);
-                (d3.event.shiftKey? selection.invert : selection.update)([src, dst]);
+                (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
             });
 
         //var selected_N = selection:
@@ -682,7 +680,7 @@ function GraphView(spec) {
                     return;
                 }
                 d3.event.stopPropagation();
-                (d3.event.shiftKey ? selection.invert : selection.update)([d]);
+                (d3.event.shiftKey ? selection.invert_nodes : selection.select_nodes)([d]);
                 if(!temporary) {
                     showNodeInfo(d);
                 }
