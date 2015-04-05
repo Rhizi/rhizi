@@ -103,6 +103,14 @@ function(consts,   $,        d3,   _,            rz_core) {
         return layout;
     }
 
+    function node__set_xy(node, x, y) {
+        if (node.fixed) {
+            return;
+        }
+        node.x = node.px = x;
+        node.y = node.py = y;
+    }
+
     function layout__sync(graph, layer) {
         var layout = _.extend(layout__empty(graph), {
                 _tick: function () {
@@ -176,9 +184,12 @@ function(consts,   $,        d3,   _,            rz_core) {
                 sin = Math.sin,
                 ring_radius = Math.max(ring_distance_minimum, (Math.min.apply(null, this.wh) - 50) / (types.length + 1));
 
-            function setxy(node, angle) {
-                node.x = node.px = cx + r * cos(angle);
-                node.y = node.py = cy + r * sin(angle);
+            function node__set_angle(node, angle) {
+                node__set_xy(
+                    node,
+                    cx + r * cos(angle),
+                    cy + r * sin(angle)
+                    );
             }
 
             for (i = 0; i < types.length ; ++i) {
@@ -188,7 +199,7 @@ function(consts,   $,        d3,   _,            rz_core) {
 
                 if (count <= small_cutoff) {
                     nodes.forEach(function (node, i) {
-                        setxy(node, small_number_angles[nodes.length][i]);
+                        node__set_angle(node, small_number_angles[nodes.length][i]);
                     });
                 } else {
                     var small_angle = Math.min(pi / 2, single_width / r),
@@ -202,17 +213,17 @@ function(consts,   $,        d3,   _,            rz_core) {
                     dangle = large_angle / (large_count + 1);
                     angle = -pi_half + small_angle_half + dangle;
                     for (j = 0 ; j < large_count; ++j) {
-                        setxy(nodes[j], angle);
+                        node__set_angle(nodes[j], angle);
                         angle += dangle;
                     }
-                    setxy(nodes[large_count], pi / 2);
+                    node__set_angle(nodes[large_count], pi / 2);
                     dangle = large_angle / (count - large_count - 1);
                     angle = pi_half + small_angle_half + dangle;
                     for (j = large_count + 1 ; j < count - 1; ++j) {
-                        setxy(nodes[j], angle);
+                        node__set_angle(nodes[j], angle);
                         angle += dangle;
                     }
-                    setxy(nodes[count - 1], 3 * pi / 2);
+                    node__set_angle(nodes[count - 1], 3 * pi / 2);
                 }
             }
         });
