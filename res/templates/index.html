@@ -96,10 +96,12 @@ var rz_config = { // set as a global variable
       </div>
     </div>
     <div class="info-container">
-      <div class="link_info" style="display:none">Title: <span id="edgetitle"></span><br/>
-          <button id="deleteedge">Delete</button>
+      <div id="link_info" class="info" style="display:none">Title: <span id="edgetitle"></span><br/>
+            <div id="info-container__bottom-btn-bar">
+              <button id="edit-node-dialog__delete" class="btn-regular btn-regular-outline">Delete</button>
+            </div>
       </div>
-      <div class="info" style="display:none">
+      <div id="info" class="info" style="display:none">
           <div id="editbox">
             <p class="info-card-message"></p>
             <p class="info-card-attr">Name</p>
