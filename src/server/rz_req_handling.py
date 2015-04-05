@@ -114,5 +114,8 @@ def make_response__json__redirect(redirect_url, status=303, html_str=''):
     """
     Construct a json response with redirect payload
     """
-    return make_response__json(data={'response__html': html_str,
+    assert status >= 300 and status < 400
+
+    return make_response__json(status=status,
+                               data={'response__html': html_str,
                                     'redirect_url': redirect_url })
