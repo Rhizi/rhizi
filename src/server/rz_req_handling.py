@@ -63,10 +63,10 @@ def common_rest_req_exception_handler(rest_API_endpoint):
             return rest_API_endpoint(*args, **kwargs)
         except API_Exception__bad_request as e:
             log.exception(e)
-            return common_resp_handle__client_error(error=e) # currently blame client for all DNFs
+            return common_resp_handle__client_error(error=e)  # currently blame client for all DNFs
         except RZDoc_Exception__not_found as e:
             log.exception(e)
-            return common_resp_handle__client_error(error=e) # currently blame client for all DNFs
+            return common_resp_handle__client_error(error=e)  # currently blame client for all DNFs
         except Exception as e:
             log.exception(e)
             return common_resp_handle__server_error(error=e)
@@ -108,7 +108,7 @@ def make_response__json__html(status=200, html_str=''):
     """
     Construct a json response with HTML payload
     """
-    return make_response__json(data={'response__html': html_str })
+    return make_response__json(status=status, data={'response__html': html_str })
 
 def make_response__json__redirect(redirect_url, status=303, html_str=''):
     """
