@@ -361,18 +361,92 @@ function GraphView(spec) {
             link,
             link_g,
             link_text,
-            node_text,
             circle,
             unselected_selector = '#' + graph_name + ' #link-group',
             selected_selector = '#' + graph_name + ' #selected-link-group',
             unselected_link_group = document.querySelector(unselected_selector),
             selected_link_group = document.querySelector(selected_selector);
 
+        var nodeTextX = function(d) {
+            return urlValid(d) ? node_text_dx + node_url_dx : node_text_dx;
+        }
+
+        function model_id_from_dom_id(dom_id) {
+            return dom_id.split('__')[0];
+        }
+
+        var urlValid = function(d) {
+            return d.url !== undefined && d.url !== null && d.url.length > 0;
+        };
+
+        function node_text_setup() {
+            var node_text,
+                node_url_dx = 15;
+
+            node_text = vis.selectAll("g.nodetext")
+                .data(graph.nodes(), function(d) {
+                    return d.id;
+                });
+            node_text.enter().insert('g')
+                .attr('id', function (d) { return text_node_id(d.id); })
+                .attr("class", "nodetext graph")
+                .on("click", function(d, i) {
+                    if (d3.event.defaultPrevented) {
+                        // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                        return;
+                    }
+                    if (!temporary) {
+                        svgInput.enable(this.querySelector('text'), d, nodeTextX(d));
+                        (d3.event.shiftKey ? selection.invert : selection.update)([d]);
+                        showNodeInfo(graph.find_node__by_id(model_id_from_dom_id(this.id)));
+                    }
+                    d3.event.stopPropagation();
+                })
+                .insert("text")
+                .attr("class", "nodetext graph")
+                .attr("dy", node_text_dy);
+            node_text.exit().remove();
+            var nodeText = function(d) {
+                var selected = selection.node_selected(d);
+
+                if (!d.name) {
+                    return "_";
+                }
+                if (temporary || selected) {
+                     return d.name;
+                } else {
+                    if (d.name.length < 28) {
+                        return d.name;
+                    } else {
+                        return d.name.substring(0, 25) + "...";
+                    }
+                }
+            };
+            node_text.select('text').text(nodeText)
+                .attr("dx", nodeTextX);
+        }
+        var link_on_hover = function (d, debug_name) {
+            $('#' + d.id).hover(function (e) {
+                add_class(this, 'hovering');
+                // show text if not selected
+                if (!selection.link_selected(d)) {
+                    set_link_label_text(this.id, link_text__short(d));
+                }
+            }, function (e) {
+                remove_class(this, 'hovering');
+                // hide text if not selected
+                if (!selection.link_selected(d)) {
+                    set_link_label_text(this.id, "");
+                }
+            });
+        }
+
         relayout = (relayout === undefined && true) || relayout;
 
         link = d3.select(unselected_link_group).selectAll("g.link")
             .data(graph.links(), function(d) { return d.id; });
 
+        // link group - container for paths. Created after text so it is above (see z-order for SVG 1.1)
         link_g = link.enter()
             .append('g')
             .attr('id', function(d){ return d.id; }) // append link id to enable data->visual mapping
@@ -391,10 +465,10 @@ function GraphView(spec) {
             .append("path")
             .attr("class", "ghostlink");
 
-        // add link label
+        // add link label third
         link_g
             .append("text")
-            .attr('id', function(d){ return 'text_' + d.id; }) // append link id to enable data->visual mapping
+            .attr('id', function(d){ return text_link_id(d.id); }) // append link id to enable data->visual mapping
             .attr("text-anchor", "middle")
             .attr("class", "linklabel graph")
             .on("click", function(d, i) {
@@ -403,33 +477,30 @@ function GraphView(spec) {
                 }
             });
 
+        function text_link_id(id) {
+            return id + '__link_text';
+        }
+
+        function text_node_id(id) {
+            return id + '__node_text';
+        }
+
         function visit_one_down(base, visitor) {
             visitor(base);
             _.forEach(base.childNodes, visitor);
         }
         function add_class(base, clazz) {
-            visit_one_down(base, function (e) { e.classList.add(clazz); });
+            visit_one_down(base, function (e) { e.classList && e.classList.add(clazz); });
         }
         function remove_class(base, clazz) {
-            visit_one_down(base, function (e) { e.classList.remove(clazz); });
+            visit_one_down(base, function (e) { e.classList && e.classList.remove(clazz); });
         }
         function set_link_label_text(link_id, text) {
-            $('#text_' + link_id).text(text);
+            $('#' + text_link_id(link_id)).text(text);
         }
+
         link_g.each(function (d) {
-                $(this).hover(function (e) {
-                    add_class(this, 'hovering');
-                    // show text if not selected
-                    if (!selection.link_selected(d)) {
-                        set_link_label_text(this.id, link_text__short(d));
-                    }
-                }, function (e) {
-                    remove_class(this, 'hovering');
-                    // hide text if not selected
-                    if (!selection.link_selected(d)) {
-                        set_link_label_text(this.id, "");
-                    }
-                });
+                link_on_hover(d, 'link-g');
             });
         link_g.on("click", function(d, i) {
                 if (zoomInProgress) {
@@ -470,9 +541,6 @@ function GraphView(spec) {
                 this.link = d;
             });
 
-        link_text = vis.selectAll(".linklabel")
-            .data(graph.links(), function(d) { return d.id; });
-
         function link_text__short(d) {
             var name = d.name || "";
 
@@ -481,6 +549,9 @@ function GraphView(spec) {
             }
             return name.substring(0, consts.link_text_short_length) + "...";
         }
+
+        link_text = vis.selectAll(".linklabel")
+            .data(graph.links(), function(d) { return d.id; });
 
         link_text
             .text(function(d) {
@@ -505,6 +576,8 @@ function GraphView(spec) {
             .data(graph.nodes(), function(d) {
                 return d.id;
             });
+
+        node_text_setup();
 
         var nodeEnter = node.enter()
             .append("g")
@@ -567,62 +640,18 @@ function GraphView(spec) {
             };
         }); //();
 
-        var node_url_dx = 15;
-        var nodeTextX = function(d) {
-            return urlValid(d) ? node_text_dx + node_url_dx : node_text_dx;
-        }
-
-        node_text = nodeEnter.insert("text")
-            .attr("class", "nodetext graph")
-            .attr("dy", node_text_dy)
-            .on("click", function(d, i) {
-                if (d3.event.defaultPrevented) {
-                    // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
-                    return;
-                }
-                if (!temporary) {
-                    svgInput.enable(this, d, nodeTextX(d));
-                    (d3.event.shiftKey ? selection.invert : selection.update)([d]);
-                    showNodeInfo(graph.find_node__by_id(this.parentNode.id));
-                }
-                d3.event.stopPropagation();
-            });
         var noderef = nodeEnter.insert('a')
             .attr("class", "nodeurl graph")
             .attr("transform", "translate(10,-7)")
             .attr("dy", node_text_dy);
         noderef.insert("image");
 
-        var urlValid = function(d) {
-            return d.url !== undefined && d.url !== null && d.url.length > 0;
-        };
-
-        var nodeText = function(d) {
-            var selected = selection.node_selected(d);
-
-            if (!d.name) {
-                return "_";
-            }
-            if (temporary || selected) {
-                 return d.name;
-            } else {
-                if (d.name.length < 28) {
-                    return d.name;
-                } else {
-                    return d.name.substring(0, 25) + "...";
-                }
-            }
-        };
-        node.select('g.node text')
-            .text(nodeText);
         node.select('g.node a')
             .attr("xlink:href", function (d) { return d.url; })
             .attr("xlink:title", function (d) { return d.url; })
             .attr("target", "_blank")
             .attr("visibility", function(d) { return urlValid(d) ? "visible" : "hidden"; })
             .attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
-        node.select('g.node text')
-            .attr("dx", nodeTextX);
         node.select('g.node a image')
             .each(function (d, i) {
                 var element = this,
@@ -1009,24 +1038,38 @@ function GraphView(spec) {
                 return d.id;
             });
         var link_text = vis.selectAll(".linklabel").data(graph.links());
+        var node_text = vis.selectAll("g.nodetext").data(graph.nodes());
         var bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
 
-        function transform(d) {
+        if (temporary) {
+            // XXX convert to a layout
+            circle__set_positions();
+        }
+
+        // XXX This computes every node ignoring filter.
+        graph.nodes().forEach(function (d) {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
+            }
+            if (d.x === undefined || d.y === undefined) {
+                console.log('oops, undefined position');
             }
             var d2 = d.__selection !== undefined ? d : bubble_transform(d, bubble_radius);
             d.bx = d2.x;
             d.by = d2.y;
-            return "translate(" + d2.x + "," + d2.y + ")";
+        });
+
+        function translate(x, y) {
+            if (x === undefined || y === undefined) {
+                console.log('oops, undefined translate');
+            }
+            return "translate(" + x + "," + y + ")";
         }
 
-        if (temporary) {
-            circle__set_positions();
-        }
-
+        function transform(d) { return translate(d.bx, d.by); }
         // transform nodes first to record bubble x & y (bx & by)
         node.attr("transform", transform);
+        node_text.attr("transform", transform);
 
         function same_zoom(d) {
             if (d.zoom_obj === null || parent_graph_zoom_obj === null) {
@@ -1068,12 +1111,16 @@ function GraphView(spec) {
             .attr('tabindex', function(d, i) { return i + 100; });
 
         // After initial placement we can make the nodes visible.
-        node.attr('visibility', function (d, i) {
-                 return node__is_shown(d) ? 'visible' : 'hidden';
-             });
-        link.attr('visibility', function (d, i) {
-                 return link__is_shown(d) ? 'visible' : 'hidden';
-             });
+        [node, node_text].forEach(function (list) {
+            list.attr('visibility', function (d, i) {
+                return node__is_shown(d) ? 'visible' : 'hidden';
+            });
+        });
+        [link, link_text].forEach(function (list) {
+            link.attr('visibility', function (d, i) {
+                return link__is_shown(d) ? 'visible' : 'hidden';
+            });
+        });
     }
 
     // SVG rendering order is last rendered on top, so to make sure

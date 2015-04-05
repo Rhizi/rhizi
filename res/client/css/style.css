@@ -873,7 +873,8 @@ p {
 .circle:hover {
   stroke: #ff8b11;
   stroke-opacity: 1;
-  stroke-width: 5px; }
+  stroke-width: 5px;
+  opacity: 1.0; }
 
 .nodetext {
   fill: #363636;
@@ -886,6 +887,11 @@ p {
 
 .svg-input-fo-node input {
   font-size: 18px;
+  background-color: transparent; }
+
+.linklabel {
+  stroke: #363636;
+  font-size: 14px;
   background-color: transparent; }
 
 .svg-input-fo-link {
@@ -902,12 +908,6 @@ p {
   stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index: 1; }
-
-.linklabel {
-  font-size: 14px;
-  fill: black;
-  stroke: transparent;
-  text-shadow: 2px 2px yellow; }
 
 .ghostlink {
   opacity: 0.0;
