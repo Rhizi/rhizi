@@ -64,8 +64,11 @@ function listen_on_diff_bus(diffBus)
             root_nodes = root_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
+            selected_nodes = selected_nodes.filter(function (n) {
+                return get_main_graph().find_node__by_id(n.id) !== null;
+            });
             // reselect based on current graph
-            inner_select_nodes(root_nodes);
+            inner_select(root_nodes, selected_nodes);
         });
 }
 
