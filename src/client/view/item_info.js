@@ -271,6 +271,8 @@ function show(_graph, new_item, visible_attributes)
 }
 
 function hide() {
+    commit();
+    diffBusUnsubscribe();
     item = null;
     info_container.hide();
 }
