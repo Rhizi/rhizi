@@ -25,6 +25,7 @@ from rz_req_handling import common_resp_handle__success, make_response__json, \
 from db_op import DBO_match_node_set_by_id_attribute, \
     DBO_load_link_set, DBO_match_node_id_set, DBO_diff_commit__topo
 from model.model import Link
+from rz_api import rz_mainpage
 
 
 log = logging.getLogger('rhizi')
@@ -183,6 +184,9 @@ def diff_commit__attr():
 
 def diff_commit__vis():
     pass
+
+def rzdoc__via_rz_url(rzdoc_name=None):
+    return rz_mainpage(rzdoc_name)
 
 @common_rest_req_exception_handler
 def rzdoc_clone():

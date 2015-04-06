@@ -15,6 +15,14 @@ from rz_api_common import sanitize_input__rzdoc_name
 log = logging.getLogger('rhizi')
 
 def index(rzdoc_name=None):
+    return rz_mainpage(rzdoc_name)
+
+def rz_mainpage(rzdoc_name=None):
+    """
+    Main application load function.
+
+    [!] Do not use as a flask endpoint as multiple functions redirect here
+    """
 
     # fetch rz_username for welcome message
     email_address = session.get('username')
