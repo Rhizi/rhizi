@@ -61,14 +61,14 @@ function listen_on_diff_bus(diffBus)
     diffBus
         .onValue(function (diff) {
             // update due to potentially removed nodes first
-            root_nodes = root_nodes.filter(function (n) {
+            new_root_nodes = root_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
-            selected_nodes = selected_nodes.filter(function (n) {
+            new_selected_nodes = selected_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
             // reselect based on current graph
-            inner_select(root_nodes, selected_nodes);
+            inner_select(new_root_nodes, new_selected_nodes);
         });
 }
 
@@ -188,7 +188,7 @@ var node_root_selected = function(node) {
 }
 
 var node_first_selected = function(node) {
-    return node.id === root_nodes[0].id;
+    return root_nodes && root_nodes.length > 0 && node.id === root_nodes[0].id;
 }
 
 var link_selected = function(link) {

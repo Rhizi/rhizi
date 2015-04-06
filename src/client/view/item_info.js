@@ -151,15 +151,15 @@ function setup_click_handlers()
         var msg = is_node(item) ? 'delete node?' : 'delete link?';
 
         e.preventDefault();
-        hide();
         if (confirm(msg)) {
             delete_item(item);
         }
+        hide();
     });
     $('#edit-dialog__save').on('click', function (e) {
         e.preventDefault();
-        hide();
         commit();
+        hide();
     });
 
     // warn user if the item has been changed while open
