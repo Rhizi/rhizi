@@ -576,7 +576,7 @@ function GraphView(spec) {
         var nodeEnter = node.enter()
             .append("g")
             .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
-            .attr('visibility', 'hidden') // made visible on first tick
+            .attr('display', 'none') // made visible on first tick
             .call(drag);
 
         node.attr('class', function(d) {
@@ -1106,13 +1106,13 @@ function GraphView(spec) {
 
         // After initial placement we can make the nodes visible.
         [node, node_text].forEach(function (list) {
-            list.attr('visibility', function (d, i) {
-                return node__is_shown(d) ? 'visible' : 'hidden';
+            list.attr('display', function (d, i) {
+                return node__is_shown(d) ? '' : 'none';
             });
         });
         [link, link_text].forEach(function (list) {
-            link.attr('visibility', function (d, i) {
-                return link__is_shown(d) ? 'visible' : 'hidden';
+            link.attr('display', function (d, i) {
+                return link__is_shown(d) ? '' : 'none';
             });
         });
     }
