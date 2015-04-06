@@ -95,6 +95,8 @@
 
          <copy file="res/etc/rhizi-server.conf"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
+         <copy file="src/local/domain/${targetDomain}/types.js"
+               tofile="${targetDeploymentDir}/static/model/types.js" description="copy schema, rename"/>
          <rsync src="res/templates/" dst="${targetDeploymentDir}/templates/" />
          <rsync src="res/local/template/fragment/by-domain/${targetDomain}/" dst="${targetDeploymentDir}/templates/fragment/" />
          <copy file="res/etc/user_db.db" tofile="${targetDeploymentDir}/user_db.db" failonerror="false" />
