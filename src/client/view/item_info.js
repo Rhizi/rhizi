@@ -226,8 +226,6 @@ function show(_graph, new_item, visible_attributes)
     info_container[0].style['max-height'] = String(max_height) + 'px';
 
     info_container.show();
-    console.log(visible_attributes);
-    console.log(hidden_attributes);
     _.each(visible_attributes, function (attr) {
         var element = edit_element_for_attribute(attr);
             value = item[attr];
