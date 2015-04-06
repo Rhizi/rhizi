@@ -1,6 +1,8 @@
 define(['jquery', 'jquery-ui', 'util', 'consts', 'view/helpers', 'model/diff', 'model/types'],
 function($, _unused_jquery_ui,  util,   consts,   view_helpers,   model_diff,   model_types) {
 
+"strict"
+
 var DEBOUNCE_TIME = 500; // milliseconds
 
 var item = null,
@@ -21,7 +23,8 @@ var item = null,
         })),
     change_handlers = [],
     status_display = info.find('#displaystatus'),
-    status = info.find('#editstatus');
+    status = info.find('#editstatus'),
+    diffBusUnsubscribe;
 
 /**
  *  Adds the div with the label, return the edit child
