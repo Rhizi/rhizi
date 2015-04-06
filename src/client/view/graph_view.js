@@ -828,8 +828,14 @@ function GraphView(spec) {
     }
     gv.__set_scale_translate = set_scale_translate;
 
-    var scale__absolute = function (scale) {
-        set_scale_translate(scale, zoom_obj.translate());
+    var scale__absolute = function (new_scale) {
+        var t = zoom_obj.translate(),
+            s = zoom_obj.scale(),
+            ds = new_scale - s,
+            w = window.innerWidth,
+            h = window.innerHeight;
+
+        set_scale_translate(new_scale, [t[0] - ds * w / 2, t[1] - ds * h / 2]);
     }
 
     gv.scale__absolute = scale__absolute;
