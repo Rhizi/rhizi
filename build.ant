@@ -62,8 +62,15 @@
       </delete>
    </target>
 
+   <target name="version-tag">
+      <exec dir="${basedir}" executable="/usr/bin/git" output="res/templates/fragment/version.txt">
+         <arg line="describe" />
+      </exec>
+
+   </target>
+
    <target name="deploy-local"
-           depends="deploy-local.clean"
+           depends="deploy-local.clean,version-tag"
            description="locally deploy webapp">
 
       <!-- [!] trailing '/' on rsync src targets critical -->
