@@ -91,6 +91,8 @@ function GraphView(spec) {
         zoom_obj_element = spec.zoom_obj_element,
         parent_graph_zoom_obj = spec.parent_graph_zoom_obj,
 
+        layout_menu = $('#btn_layout'),
+
         zoomInProgress = false,
         layout,
         drag,
@@ -151,9 +153,6 @@ function GraphView(spec) {
                 read_checkboxes();
                 console.log(filter_states);
                 update_view(true);
-            });
-            $('#btn_filter').on('click', function (e) {
-                $('#menu__type-filter').toggle();
             });
         });
     }
@@ -1194,11 +1193,10 @@ function GraphView(spec) {
         return layout_data.create(graph);
     });
 
-    function set_layout_toolbar(selector) {
-        var root = $(selector);
-        root.on('click', function() {
+    function set_layout_toolbar() {
+        layout_menu.on('click', function() {
 
-            var layout_btns = $('.btn_layout');
+            var layout_btns = layout_menu.find('.btn_layout');
             if (layout_btns.length > 0) { // menu open
                 layout_btns.remove();
                 return;
@@ -1215,7 +1213,7 @@ function GraphView(spec) {
                     set_layout(button_layout);
                     layout_btns.remove();
                 });
-                root.append(button);
+                layout_menu.append(button);
             });
         });
     }
@@ -1241,7 +1239,10 @@ function GraphView(spec) {
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
     if (!temporary) {
-        set_layout_toolbar('#btn_layout');
+        set_layout_toolbar(layout_menu);
+        gv.hide_layout_menu = function () {
+            layout_menu.find('.btn_layout').remove();
+        }
     }
 
     gv.dev_set_layout = function (layout_func) {

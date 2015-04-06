@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input'],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   item_info,        rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/helpers', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,   view_helpers,   item_info,        rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu) {
 
 var addednodes = [],
     vis,
@@ -41,7 +41,9 @@ function svg_click_handler(e) {
     }
     svgInput.hide();
     selection.clear();
-    item_info.hide();
+    item_info.hide(false);
+    filter_menu.hide();
+    main_graph_view.hide_layout_menu();
     update_view__graph(false);
 }
 

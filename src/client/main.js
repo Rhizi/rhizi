@@ -1,5 +1,5 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback', 'keyshortcuts'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_core,        selection,   util,   search,        feedback,   keyshortcuts) {
+define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback', 'keyshortcuts', 'view/filter_menu'],
+function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_core,        selection,   util,   search,        feedback,   keyshortcuts,        filter_menu) {
 
     function fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit() {
         $('.feedback-btn').attr('tabindex', -1);
@@ -43,6 +43,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         rz_core.init();
         textanalysis.init(rz_core.main_graph);
         search.init();
+        filter_menu.init();
         selection.setup_toolbar(rz_core.main_graph);
         $.feedback({ajaxURL: rz_config.feedback_url});
         fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit();
