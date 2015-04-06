@@ -171,7 +171,7 @@ function setup_click_handlers()
             warning('!! item has been deleted !!');
             return;
         }
-        if (model_diff.is_attr_diff(diff) || _.contains(_.keys(changed_set), item.id)) {
+        if (model_diff.is_attr_diff(diff) && _.contains(_.keys(changed_set), item.id)) {
             var changed = changed_set[item.id]['__attr_write'],
                 changed_keys = _.keys(changed),
                 form_subset = _.pick(_get_form_data(), changed_keys);
