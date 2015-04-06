@@ -24,12 +24,14 @@
        url('../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.ttf')  format('truetype'); /* Safari, Android, iOS */
 }
 
-//Font size
+// Font size
 $h1-size: 30px;
 $h2-size: 24px;
 $h3-size: 18px;
 $h4-size: 14px;
 $h5-size: 12px;
+
+$toolbar-font-size: 12px;
 
 //Font weights
 $light: 100;

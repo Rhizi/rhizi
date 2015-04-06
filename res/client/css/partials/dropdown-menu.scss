@@ -31,10 +31,31 @@
     cursor: default;
 }
 
+.menu__type-filter_item {
+    padding-left: 10px;
+    text-align: left;
+
+    &:hover {
+        background-color: lightgray;
+    }
+
+    & input {
+           position: relative;
+           left: -3px;
+           top: 3px;
+    }
+}
+
 #menu__type-filter {
     background-color: $white;
+    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
     position: absolute;
     right: 155px;
     top: 0;
-    width: 200px;
+    width: 150px;
+}
+
+#menu__type-filter_header {
+    background: darkgray;
+    font-weight: bold;
 }

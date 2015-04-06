@@ -309,12 +309,27 @@ body.debug .debug-ui-right {
 .dropdown-menu-heading:hover {
   cursor: default; }
 
+.menu__type-filter_item {
+  padding-left: 10px;
+  text-align: left; }
+  .menu__type-filter_item:hover {
+    background-color: lightgray; }
+  .menu__type-filter_item input {
+    position: relative;
+    left: -3px;
+    top: 3px; }
+
 #menu__type-filter {
   background-color: white;
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
   position: absolute;
   right: 155px;
   top: 0;
-  width: 200px; }
+  width: 150px; }
+
+#menu__type-filter_header {
+  background: darkgray;
+  font-weight: bold; }
 
 .input-container {
   width: 35%; }
@@ -724,6 +739,7 @@ p {
   border: 1px solid #919095;
   cursor: pointer;
   float: right;
+  font-size: 12px;
   height: 36px;
   line-height: 36px;
   margin-left: 10px;
@@ -753,6 +769,7 @@ p {
   height: 0;
   position: absolute;
   margin-left: 0px;
+  right: 0;
   width: 0; }
 
 #btn_merge {
