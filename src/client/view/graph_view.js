@@ -718,7 +718,7 @@ function GraphView(spec) {
 
         if (force_enabled) {
             if (!temporary) {
-                force__load_graph();
+                layout__load_graph();
             }
 
             if (relayout) {
@@ -733,7 +733,7 @@ function GraphView(spec) {
         }
     }
 
-    function force__load_graph() {
+    function layout__load_graph() {
         layout
              .nodes(graph.nodes().filter(node__is_shown))
              .links(graph.links().filter(link__is_shown));
@@ -1178,7 +1178,7 @@ function GraphView(spec) {
             }
         });
         if (success > 0) {
-            force__load_graph();
+            layout__load_graph();
         }
         console.log('restored ' + success + ' / ' + _.keys(positions).length + ' positions to ' +
                     nodes.length + ' nodes');
