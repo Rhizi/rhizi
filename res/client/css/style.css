@@ -882,6 +882,13 @@ p {
   font-size: 18px;
   z-index: 100; }
 
+.notselected .circle, .notselected * {
+  opacity: 0.2;
+  -webkit-filter: blur(10px); }
+
+.linklabel.notselected {
+  display: none; }
+
 .circle {
   z-index: 100;
   pointer-events: all;
@@ -992,14 +999,6 @@ p {
   fill: #919095; }
 
 /* Selected parts of the graph, right now by clicking, later with search. */
-.notselected {
-  opacity: 0.2;
-  pointer-events: none;
-  -webkit-filter: blur(10px); }
-
-.linklabel.notselected {
-  display: none; }
-
 .node.first-selected .circle {
   stroke: #fad900;
   stroke-opacity: 1;
