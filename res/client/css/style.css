@@ -311,9 +311,9 @@ body.debug .debug-ui-right {
 
 #menu__type-filter {
   background-color: white;
-  position: relative;
-  right: 220px;
-  top: -5px;
+  position: absolute;
+  right: 155px;
+  top: 0;
   width: 200px; }
 
 .input-container {
