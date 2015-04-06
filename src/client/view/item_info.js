@@ -272,7 +272,9 @@ function show(_graph, new_item, visible_attributes)
 
 function hide() {
     commit();
-    diffBusUnsubscribe();
+    if (diffBusUnsubscribe) {
+        diffBusUnsubscribe();
+    }
     item = null;
     info_container.hide();
 }
