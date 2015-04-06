@@ -25,8 +25,8 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/view', 'view/bubble', 'model/types', 'view/layouts'],
-function(d3 ,   Bacon,   consts,   util ,  selection      ,  view_helpers,  model_diff  ,  view,        view_bubble,   model_types,   view_layouts) {
+define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts'],
+function(d3 ,   Bacon,   consts,   util ,  selection      ,  view_helpers,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts) {
 
 "use strict"
 
@@ -287,7 +287,7 @@ function GraphView(spec) {
 
     function showNodeInfo(node) {
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
-        view.node_info.show(graph, node)
+        item_info.show(graph, node)
     }
 
     function dragstarted(d) {
@@ -510,13 +510,7 @@ function GraphView(spec) {
                     // after this events bubbles to the svg element
                     return;
                 }
-                var that = this;
-
-                view.link_info.on_delete(function () {
-                    view.link_info.hide();
-                    graph.links__delete([that.link.id]);
-                });
-                view.link_info.show(d);
+                item_info.show(graph, d, ['name']);
                 (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
             });
 

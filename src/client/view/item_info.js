@@ -1,15 +1,16 @@
-define(['jquery', 'jquery-ui', 'util', 'consts', 'view/helpers', 'view/internal', 'model/diff', 'model/types'],
-function($, _unused_jquery_ui,  util,   consts,   view_helpers, internal,          model_diff,   model_types) {
+define(['jquery', 'jquery-ui', 'util', 'consts', 'view/helpers', 'model/diff', 'model/types'],
+function($, _unused_jquery_ui,  util,   consts,   view_helpers,   model_diff,   model_types) {
 
-var d = null,
+var DEBOUNCE_TIME = 500; // milliseconds
+
+var item = null,
     msg_node = $('.info-card-message'),
     graph,
-    node,
     setup_done = false,
-    info = $('.info'),
+    info = $('#info'),
     info_container = $('.info-container'),
     form_element = $('#editbox'),
-    delete_button = $('#edit-node-dialog__delete'),
+    delete_button = $('#edit-dialog__delete'),
     form = _.object(model_types.all_attributes.map(function (attr) {
             var element = edit_element_for_attribute(attr);
 
@@ -61,9 +62,26 @@ function _get_form_data() {
     return ret;
 }
 
+function is_node(item)
+{
+    return item.__src === undefined;
+}
+
+function update_item(item, new_data)
+{
+    if (is_node(item)) {
+        graph.update_node(item, new_data);
+    } else {
+        graph.update_link(item, new_data);
+    }
+}
+
 function commit()
 {
-    graph.update_node(node, _get_form_data());
+    if (item === null) {
+        return;
+    }
+    update_item(item, _get_form_data());
 }
 
 function textarea_resize(text, max)
@@ -80,12 +98,12 @@ function textarea_resize(text, max)
 function setup_change_handlers()
 {
     disable_change_handlers();
-    // auto save style handlers
+    // auto save after DEBOUNCE_TIME inactivity
     var streams = _.map(_.values(form), function (element) {
         return element.asEventStream('change input keyup');
     });
     var single = _.reduce(streams, function (stream_a, stream_b) { return stream_a.merge(stream_b); });
-    change_handlers = [single.debounce(500).onValue(function () {
+    change_handlers = [single.debounce(DEBOUNCE_TIME).onValue(function () {
         commit();
     })];
 }
@@ -96,9 +114,18 @@ function disable_change_handlers()
     change_handlers = [];
 }
 
+function delete_item()
+{
+    if (is_node(item)) {
+        graph.nodes__delete([item.id]);
+    } else {
+        graph.links__delete([item.id]);
+    }
+}
+
 /**
  * XXX
- * need to update fields if and only if there have been no new input events associated with them since commit.
+ * need to update fields iff there have been no new input events associated with them since commit.
  * do not look at contents because that will exist in the past too.
  *
  * see Bacon.awaiting.
@@ -118,25 +145,31 @@ function setup_click_handlers()
         }
     });
     delete_button.on('click', function (e) {
+        var msg = is_node(item) ? 'delete node?' : 'delete link?';
+
         e.preventDefault();
         hide();
-        if (confirm('delete node?')) {
-            graph.nodes__delete([node.id]);
+        if (confirm(msg)) {
+            delete_item(item);
         }
     });
-    $('#edit-node-dialog__save').on('click', function (e) {
+    $('#edit-dialog__save').on('click', function (e) {
         e.preventDefault();
         hide();
         commit();
     });
-    // re-open dialog on node updates while it is open
+
+    // warn user if the item has been changed while open
     diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
-        if (model_diff.is_topo_diff(diff) && _.contains(diff.node_id_set_rm, node.id)) {
-            warning('!! node has been deleted !!');
+        var removed_set = is_node(item) ? diff.node_id_set_rm : diff.link_id_set_rm,
+            changed_set = is_node(item) ? diff.id_to_node_map : diff.id_to_link_map;
+            
+        if (model_diff.is_topo_diff(diff) && _.contains(removed_set, item.id)) {
+            warning('!! item has been deleted !!');
             return;
         }
-        if (model_diff.is_attr_diff(diff) || _.contains(_.keys(diff.id_to_node_map), node.id)) {
-            warning('!! node has been changed !!');
+        if (model_diff.is_attr_diff(diff) || _.contains(_.keys(changed_set), item.id)) {
+            warning('!! item has been changed !!');
             return;
         }
     });
@@ -163,37 +196,41 @@ function update_textarea(textarea, value)
     textarea_resize(textarea[0], 150);
 }
 
-function show(_graph, d) {
-    var visible_attributes = model_types.type_attributes(d.type).slice(0),
-        hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
+function show(_graph, new_item, visible_attributes)
+{
+    var visible_attributes,
+        hidden_attributes,
         visible_elements,
         hidden_elements,
         max_height;
 
+    visible_attributes = visible_attributes || model_types.type_attributes(new_item.type).slice(0);
+    hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
     visible_elements = visible_attributes.map(base_element_for_attribute);
     hidden_elements = hidden_attributes.map(base_element_for_attribute);
     warning(''); // reset warning
     graph = _graph;
-    node = d;
-    util.assert(graph.find_node__by_id(d.id) != null);
+    item = new_item;
+    util.assert((is_node(item) ? graph.find_node__by_id : graph.find_link__by_id)(item.id) != null);
 
     setup_click_handlers();
-
-    internal.edit_tab.show('node');
 
     _.each(hidden_elements, function (element) { element.hide(); });
     _.each(visible_elements, function (element) { element.show(); });
 
     info.attr('class', 'info');
-    info.addClass('type-' + d.type); // Add a class to distinguish types for css
+    info.addClass('type-' + item.type); // Add a class to distinguish types for css
 
     // hack - should be able to set max-height via css percentage, no?
     max_height = $(document.body).innerHeight() - $('.info')[0].getBoundingClientRect().top * 2;
     info_container[0].style['max-height'] = String(max_height) + 'px';
 
+    info_container.show();
+    console.log(visible_attributes);
+    console.log(hidden_attributes);
     _.each(visible_attributes, function (attr) {
         var element = edit_element_for_attribute(attr);
-            value = d[attr];
+            value = item[attr];
 
         switch (attr) {
         case 'enddate':
@@ -210,11 +247,11 @@ function show(_graph, d) {
             break;
         case 'status':
             if (_.contains(rz_config.role_set, 'admin')) {
-                status.val(d.status);
+                status.val(item.status);
                 status.show();
                 status_display.hide();
             } else {
-                status_display.text(d.status);
+                status_display.text(item.status);
                 status.hide();
                 status_display.show();
             }
@@ -224,18 +261,16 @@ function show(_graph, d) {
             element.val(value);
         }
     });
-
 }
 
 function hide() {
-    node_id = null;
-    internal.edit_tab.hide();
+    item = null;
+    info_container.hide();
 }
 
 return {
     show: show,
     hide: hide,
-    isOpenProperty: internal.edit_tab.isOpenProperty,
 };
 
 });

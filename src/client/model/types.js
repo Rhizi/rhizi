@@ -73,8 +73,8 @@ return (
     {
         nodetypes: nodetypes,
         type_attributes: function (type) {
-            util.assert(type[0] !== '_', 'invalid type name');
-            return type_attributes[type_attributes.hasOwnProperty(type) ? type : '_defaults'].attributes;
+            util.assert(!type || type[0] !== '_', 'invalid type name');
+            return type_attributes[!type && type_attributes.hasOwnProperty(type) ? type : '_defaults'].attributes;
         },
         all_attributes: all_attributes,
         attribute_titles: attribute_titles,
