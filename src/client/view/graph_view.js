@@ -128,7 +128,7 @@ function GraphView(spec) {
         var name,
             value,
             // jquery map does flattens, and we don't want that
-            checkboxes = _.map($('#menu__type-filter label input'),
+            checkboxes = _.map($('#menu__type-filter input'),
                 function (checkbox){
                         return [checkbox.name, checkbox.checked];
                     }
@@ -146,7 +146,7 @@ function GraphView(spec) {
     function redraw__set_on_checkbox_change()
     {
         $(function () {
-            var checkboxes = $('#menu__type-filter li').on('click', function (e) {
+            var checkboxes = $('#menu__type-filter').on('click', function (e) {
                 e.stopPropagation();
                 read_checkboxes();
                 console.log(filter_states);
