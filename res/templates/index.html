@@ -19,6 +19,16 @@ var rz_config = { // set as a global variable
     'separator_string': '  ',
 };
 
+function unquote_xml(s) {
+    return s.replace('&amp;', '&').replace('&apos;', "'")
+            .replace('&quot;', '"').replace('&gt;', '>')
+            .replace('&lt;', '<').replace(/&#(..);/g, function (_, d) {
+                return String.fromCharCode(d); }
+            );
+}
+
+rz_config.rzdoc_cur__name = unquote_xml(rz_config.rzdoc_cur__name);
+
 var RZ_VERSION = '{% include "fragment/version.txt" %}';
 </script>
 <script data-main='/static/app.js' src="/static/lib/require.js"></script>
