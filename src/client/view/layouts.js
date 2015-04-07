@@ -359,6 +359,13 @@ function(consts,   $,        d3,   _) {
         },
         /*
         {
+            name: 'STP-BFS',
+            create: layout__d3_force_stp,
+            clazz: 'btn_layout_d3_force'
+        },
+        */
+        /*
+        {
             name: 'Grid',
             create: layout__grid,
             clazz: 'btn_layout_grid'
