@@ -182,7 +182,6 @@ function GraphView(spec) {
     update_window_size();
 
     function node__is_shown(d) {
-        var type = d.type;
         return temporary || filter_states[d.type];
     }
 
@@ -449,6 +448,7 @@ function GraphView(spec) {
             node_text.select('text').text(nodeText)
                 .attr("dx", nodeTextX);
         }
+
         var link_on_hover = function (d, debug_name) {
             $('#' + d.id).hover(function (e) {
                 add_class(this, 'hovering');
@@ -722,21 +722,6 @@ function GraphView(spec) {
             });
 
         node.exit().remove();
-
-        //update deliverables
-        deliverables = [];
-        var nodes = graph.nodes();
-        for (var i = 0; i < nodes.length; i++) {
-            var current = nodes[i];
-            if (current.type === "internship") {
-                deliverables.push({
-                    "id": nodes[i].id,
-                    "startdate": nodes[i].start,
-                    "enddate": nodes[i].end
-                });
-            }
-            //Do something
-        }
 
         if (force_enabled) {
             if (!temporary) {
