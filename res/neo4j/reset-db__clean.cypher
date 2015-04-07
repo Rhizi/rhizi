@@ -20,7 +20,3 @@ create constraint on (x:__RZDOC) assert x.name is unique;
 create constraint on (x:Person) assert x.id is unique;
 create constraint on (x:Skill)  assert x.id is unique;
 
-// Drop constraints we used to have - there is no DROP CONSTRAINT * - see http://stackoverflow.com/questions/22357379/neo4j-how-to-drop-all-constraints
-
-drop constraint on (x:Person) assert x.name is unique;
-drop constraint on (x:Skill) assert x.name is unique;
