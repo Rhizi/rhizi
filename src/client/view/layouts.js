@@ -1,5 +1,76 @@
-define(['consts', 'jquery', 'd3', 'underscore', 'rz_core'],
-function(consts,   $,        d3,   _,            rz_core) {
+define(['consts', 'jquery', 'd3', 'underscore'],
+function(consts,   $,        d3,   _) {
+
+"use strict";
+
+    function stp_degree_max(nodes, links) {
+        var ret_links = [],
+            node_id_degree_d = {}, // sum of entering and exising degrees
+            node_id_degree,
+            node_by_id = _.object(_.map(nodes, "id"), nodes),
+            node_links = {};
+
+        if (nodes.length == 0) {
+            return [];
+        }
+
+        function inc(d, k) {
+            d[k] = d[k] === undefined ? 1 : d[k] + 1;
+        }
+
+        function append(d, k, v) {
+            if (d[k] === undefined) {
+                d[k] = [];
+            }
+            d[k].push(v);
+        }
+        _.each(links, function (l) {
+            var src_id = l.__src.id,
+                dst_id = l.__dst.id,
+                cur_node_links_src = node_links[src_id],
+                cur_node_links_dst = node_links[dst_id];
+
+            inc(node_id_degree_d, src_id);
+            inc(node_id_degree_d, dst_id);
+            append(node_links, src_id, l);
+            append(node_links, dst_id, l);
+        });
+        node_id_degree = _.pairs(node_id_degree).map(function (ar) { return [ar[1], ar[0]]; }).sort().reverse();
+
+        // now ignore all of that and do a BFS first
+        var queue = [nodes[0].id],
+            node_id,
+            visited = {},
+            i,
+            link,
+            other;
+
+        while (queue.length > 0) {
+            node_id = queue.pop();
+            for (i = 0 ; i < node_links[node_id].length; ++i) {
+                link = node_links[node_id][i];
+                other = link.__src.id === node_id ? link.__dst.id : link.__src.id;
+                if (!visited[other]) {
+                    queue.push(other);
+                    ret_links.push(link);
+                    visited[other] = true;
+                }
+            }
+            if (queue.length === 0 && visited.length < nodes.length) {
+                queue.push(_.difference(_.pick(nodes, 'id'), visited)[0]);
+            }
+        }
+        /*
+        _.each(node_id_degree.slice(0, node_id_degree.length - 1), function (_degree, node_id) {
+            var d = node_links[node_id];
+            // pick an edge
+            if (d.src.length > 0) {
+            }
+            // remove all incoming edges
+        });
+        */
+        return ret_links;
+    }
 
     function extendOwn(obj, other) {
         for (var prop in other) {
@@ -35,6 +106,16 @@ function(consts,   $,        d3,   _,            rz_core) {
                     return ret;
                   })
                   */
+    }
+
+    function layout__d3_force_stp(graph) {
+        var layout = layout__d3_force(graph);
+
+        layout.nodes_links = function (nodes, links) {
+            layout.nodes(nodes);
+            return layout.links(stp_degree_max(nodes, links));
+        };
+        return layout;
     }
 
     function layout__empty(graph, base) {
