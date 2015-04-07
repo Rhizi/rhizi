@@ -15,7 +15,7 @@ function(consts,   $,        d3,   _,            rz_core) {
                   .distance(240)
                   .gravity(0.12)
                   .charge(-1800)
-                  .linkDistance(function (link, i) {
+                  .linkDistance(function (link) {
                     var d_src = graph.degree(link.__src),
                         d_dst = graph.degree(link.__dst),
                         ret = (d_src + d_dst) * 10 + 10;
@@ -137,7 +137,7 @@ function(consts,   $,        d3,   _,            rz_core) {
             layout._tick();
             layout._end();
             return layout;
-        }
+        };
         layout.alpha = layout.start;
         layout.on = function (on_type, func) {
             switch (on_type) {
@@ -147,13 +147,13 @@ function(consts,   $,        d3,   _,            rz_core) {
                 case 'end':
                     layout._end = func;
                     break;
-            };
+            }
             return layout;
-        }
+        };
         layout.size = function (_wh) {
             layout.wh = _wh;
             return layout;
-        }
+        };
         return layout;
     }
 
@@ -164,7 +164,6 @@ function(consts,   $,        d3,   _,            rz_core) {
         var cx = $(document.body).innerWidth() / 2,
             cy = $(document.body).innerHeight() / 2,
             pi = Math.PI,
-            top_angle = pi / 2,
             small_number_angles = {
                 1: [0],
                 2: [pi / 2, pi * 3 /2],
@@ -184,7 +183,6 @@ function(consts,   $,        d3,   _,            rz_core) {
                 nodes,
                 count,
                 j,
-                node,
                 cos = Math.cos,
                 sin = Math.sin,
                 ring_radius = Math.max(ring_distance_minimum, (Math.min.apply(null, this.wh) - 50) / (types.length + 1));
@@ -197,15 +195,16 @@ function(consts,   $,        d3,   _,            rz_core) {
                     );
             }
 
+            function below_cutoff(node, i) {
+                node__set_angle(node, small_number_angles[nodes.length][i]);
+            }
             for (i = 0; i < types.length ; ++i) {
                 r = (i + 1) * ring_radius;
                 nodes = bytype[types[i]];
                 count = nodes.length;
 
                 if (count <= small_cutoff) {
-                    nodes.forEach(function (node, i) {
-                        node__set_angle(node, small_number_angles[nodes.length][i]);
-                    });
+                    nodes.forEach(below_cutoff);
                 } else {
                     var small_angle = Math.min(pi / 2, single_width / r),
                         small_angle_half = small_angle / 2,
@@ -232,7 +231,7 @@ function(consts,   $,        d3,   _,            rz_core) {
                 }
             }
         });
-    };
+    }
 
     function layout__grid() {
         return layout__sync(function () {
@@ -249,7 +248,7 @@ function(consts,   $,        d3,   _,            rz_core) {
                 node.y = node.py = (Math.floor(i / line) + 1) * hspace;
             }
         });
-    };
+    }
 
     var layouts = [
         {
