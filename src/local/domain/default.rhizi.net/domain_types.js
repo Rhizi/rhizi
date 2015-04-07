@@ -1,49 +1,55 @@
 define({
     type_attributes: {
-        'internship': {
-            'title': 'Internship',
-            'attributes':
-                ['status', 'startdate', 'enddate', 'description', 'url',
-                 'internship-type',
-                 'facility',
-                 'facility-affiliation',
-                 'cnrs-inserm-unit-code',
-                 'street-address',
-                 'city',
-                 'country',
-                ],
-            },
-        'skill': {
-            'title': 'Skill',
+        'keyword': {
+            'title': 'Keyword',
             'attributes': ['description', 'url'],
-            },
-        'interest': {
-            'title': 'Interesst',
-            'attributes': ['description', 'url'],
-            },
+        },
         'person': {
             'title': 'Person',
-            'attributes': ['description', 'url'],
+            'attributes': ['affiliation',
+                           'street-address',
+                           'description',
+                           'email',
+                           'image-url',
+                           'name',
+                           'url'
+                           ],
             },
-        'club': {
-            'title': 'Club',
+        'project': {
+            'title': 'Project',
+            'attributes': ['description', 'url'],
+        },
+        'project_component': {
+            'title': 'Project Component',
+            'attributes': ['description', 'url'],
+        },
+        'objective': {
+            'title': 'Objective',
+            'attributes': ['description', 'url'],
+        },
+        'outcome': {
+            'title': 'Objective',
             'attributes': ['description', 'url'],
         }
     },
     attribute_titles: {
-        'name': 'Name',
-        'type': 'Type',
+        'affiliation': 'Affiliation',
         'description': 'Description',
+        'email': 'Email',
+        'image-url': 'Image URL',
+        'name': 'Name',
+        'street-address': 'Street Address',
+        'type': 'Type',
         'url': 'URL',
-        'status': 'Status',
-        'startdate': 'Start Date',
-        'enddate': 'End Date',
-        'internship-type': 'Internship Type',
-        'facility': 'Lab/Company',
-        'facility-affiliation': 'Lab affiliation',
-        'cnrs-inserm-unit-code': 'CNRS / INSERM unit code',
-        'street-address': 'Street address',
-        'city': 'City',
-        'country': 'Country',
-    }
+    },
+    attribute_ui: {
+        'affiliation': 'textarea',
+        'description': 'textarea',
+        'email': 'input',
+        'image-url': 'image',
+        'name': 'input',
+        'street-address': 'textarea',
+        'type': 'type',
+        'url': 'url',
+    },
 });
