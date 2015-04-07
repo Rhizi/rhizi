@@ -5,9 +5,7 @@ function($, _unused_jquery_ui,  util,   consts,   view_helpers,   model_diff,   
 
 var DEBOUNCE_TIME = 500; // milliseconds
 
-var item = null,
-    msg_node = $('.info-card-message'),
-    graph,
+var msg_node = $('.info-card-message'),
     setup_done = false,
     info = $('#info'),
     info_container = $('.info-container'),
@@ -24,7 +22,12 @@ var item = null,
     change_handlers = [],
     status_display = info.find('#displaystatus'),
     status = info.find('#editstatus'),
-    diffBusUnsubscribe;
+    diffBusUnsubscribe,
+    outside_change = false,
+    visible_attributes,
+    item,
+    graph,
+    edited_attributes;
 
 /**
  *  Adds the div with the label, return the edit child
@@ -62,6 +65,7 @@ function _get_form_data() {
     var ret = _.object(_.keys(form),_.values(form).map(function (x) { return x.val(); }));
 
     ret.url = clean_url(ret.url);
+    ret = _.pick(ret, _.keys(edited_attributes));
     return ret;
 }
 
@@ -79,9 +83,19 @@ function update_item(item, new_data)
     }
 }
 
+function get_item_from_graph()
+{
+    return is_node(item) ? graph.find_node__by_id(item.id) : graph.find_link__by_id(item.id);
+}
+
+function no_change()
+{
+    return _.isEqual(_.pick(get_item_from_graph(), _.keys(edited_attributes)), _get_form_data());
+}
+
 function commit()
 {
-    if (item === null) {
+    if (item === null || outside_change || no_change()) {
         return;
     }
     update_item(item, _get_form_data());
@@ -104,6 +118,11 @@ function setup_change_handlers()
     // auto save after DEBOUNCE_TIME inactivity
     var streams = _.map(_.values(form), function (element) {
         return element.asEventStream('change input keyup');
+    });
+    streams.forEach(function (stream) {
+        stream.onValue(function (e) {
+            edited_attributes[e.target.id.slice(4)] = 1;
+        });
     });
     var single = _.reduce(streams, function (stream_a, stream_b) { return stream_a.merge(stream_b); });
     change_handlers = [single.debounce(DEBOUNCE_TIME).onValue(function () {
@@ -178,6 +197,7 @@ function setup_click_handlers()
 
             if (!_.isEqual(form_subset, changed)) {
                 warning('!! item has been changed !!');
+                outside_change = true;
             }
             return;
         }
@@ -205,22 +225,21 @@ function update_textarea(textarea, value)
     textarea_resize(textarea[0], 150);
 }
 
-function show(_graph, new_item, visible_attributes)
+function show(_graph, new_item, new_visible_attributes)
 {
-    var visible_attributes,
-        hidden_attributes,
+    var hidden_attributes,
         visible_elements,
         hidden_elements,
         max_height;
 
-    visible_attributes = visible_attributes || model_types.type_attributes(new_item.type).slice(0);
+    visible_attributes = new_visible_attributes || model_types.type_attributes(new_item.type).slice(0);
     hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
     visible_elements = visible_attributes.map(base_element_for_attribute);
     hidden_elements = hidden_attributes.map(base_element_for_attribute);
     warning(''); // reset warning
     graph = _graph;
     item = new_item;
-    util.assert((is_node(item) ? graph.find_node__by_id : graph.find_link__by_id)(item.id) != null);
+    util.assert(get_item_from_graph() != null);
 
     setup_click_handlers();
 
@@ -270,14 +289,27 @@ function show(_graph, new_item, visible_attributes)
     });
 }
 
-function hide() {
-    commit();
+function init() {
+    item = null;
+    outside_change = false;
+    graph = undefined;
+    visible_attributes = [];
+    edited_attributes = {};
+}
+
+function hide(do_commit) {
+    do_commit = do_commit === undefined || true;
+    if (do_commit) {
+        commit();
+    }
     if (diffBusUnsubscribe) {
         diffBusUnsubscribe();
     }
-    item = null;
+    init();
     info_container.hide();
 }
+
+init();
 
 return {
     show: show,
