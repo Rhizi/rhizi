@@ -55,6 +55,47 @@ function enableDebugViewOfDiffs(graph)
     });
 }
 
+function init_checkboxes(update_view) {
+    var // FIXME take filter names from index.html or both from graph db
+        filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
+
+    function read_checkboxes() {
+        var name,
+            value,
+            // jquery map does flattens, and we don't want that
+            checkboxes = _.map($('#menu__type-filter input'),
+                function (checkbox){
+                        return [checkbox.name, checkbox.checked];
+                    }
+                );
+        for (var i in checkboxes) {
+            name = checkboxes[i][0];
+            value = checkboxes[i][1];
+            if (undefined === filter_states[name]) {
+                continue;
+            }
+            filter_states[name] = value;
+        }
+    }
+
+    function redraw__set_on_checkbox_change()
+    {
+        $(function () {
+            var checkboxes = $('#menu__type-filter').on('click', function (e) {
+                e.stopPropagation();
+                read_checkboxes();
+                console.log(filter_states);
+                update_view(true);
+            });
+        });
+    }
+
+    read_checkboxes();
+    redraw__set_on_checkbox_change();
+
+    return filter_states;
+}
+
 /*
  * Creates a new view on the given graph contained in an appended last child
  * to the given parent node, parent
@@ -98,13 +139,12 @@ function GraphView(spec) {
         drag,
         vis,
         deliverables,
+        filter_states,
         // FIXME - want to use parent_element
         w,
         h,
         cx,
-        cy,
-        // FIXME take filter names from index.html or both from graph db
-        filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
+        cy;
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
@@ -126,37 +166,6 @@ function GraphView(spec) {
     $(window).asEventStream('resize').map(update_window_size).onValue(function () { update_view(false); });
     update_window_size();
 
-    function read_checkboxes() {
-        var name,
-            value,
-            // jquery map does flattens, and we don't want that
-            checkboxes = _.map($('#menu__type-filter input'),
-                function (checkbox){
-                        return [checkbox.name, checkbox.checked];
-                    }
-                );
-        for (var i in checkboxes) {
-            name = checkboxes[i][0];
-            value = checkboxes[i][1];
-            if (undefined === filter_states[name]) {
-                continue;
-            }
-            filter_states[name] = value;
-        }
-    }
-
-    function redraw__set_on_checkbox_change()
-    {
-        $(function () {
-            var checkboxes = $('#menu__type-filter').on('click', function (e) {
-                e.stopPropagation();
-                read_checkboxes();
-                console.log(filter_states);
-                update_view(true);
-            });
-        });
-    }
-
     function node__is_shown(d) {
         var type = d.type;
         return temporary || filter_states[d.type];
@@ -169,8 +178,7 @@ function GraphView(spec) {
 
     // Filter. FIXME: move away from here. separate element, connected via bacon property
     if (!temporary) {
-        read_checkboxes();
-        redraw__set_on_checkbox_change();
+        filter_states = init_checkboxes(update_view);
     }
 
     function range(start, end, number) {
