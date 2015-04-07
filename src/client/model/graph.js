@@ -1168,8 +1168,14 @@ function Graph(spec) {
     this.removeRelated = removeRelated;
 }
 
+function is_node(item)
+{
+    return item.__src === undefined;
+}
+
 return {
     Graph: Graph,
+    is_node: is_node,
 };
 
 });

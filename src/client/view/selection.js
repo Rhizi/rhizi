@@ -1,5 +1,5 @@
-define(['Bacon', 'jquery', 'underscore'],
-function(Bacon,           $,        _) {
+define(['Bacon', 'jquery', 'underscore', 'messages'],
+function(Bacon,           $,        _,    messages) {
 
 var rz_core; // circular dependency, see get_rz_core
 
@@ -288,7 +288,7 @@ var setup_toolbar = function(main_graph)
         delete_root_selection = function() {
             var ids = root_nodes_ids();
 
-            if (confirm('you are deleting ' + ids.length + ' nodes, are you sure?')) {
+            if (confirm(messages.delete_nodes_message(ids.length))) {
                 main_graph.nodes__delete(ids);
             }
         },

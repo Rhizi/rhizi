@@ -1,10 +1,15 @@
-define(['jquery', 'jquery-ui', 'util', 'consts', 'view/helpers', 'model/diff', 'model/types'],
-function($, _unused_jquery_ui,  util,   consts,   view_helpers,   model_diff,   model_types) {
+define(['jquery', 'jquery-ui', 'util', 'consts', 'view/helpers', 'model/diff', 'model/types', 'model/graph', 'messages'],
+function($, _unused_jquery_ui,  util,   consts,   view_helpers,   model_diff,   model_types,  graph,          messages) {
 
 "strict"
 
+// constants
 var DEBOUNCE_TIME = 500; // milliseconds
 
+// aliases
+var is_node = graph.is_node;
+
+// variables
 var msg_node = $('.info-card-message'),
     setup_done = false,
     info = $('#info'),
@@ -67,11 +72,6 @@ function _get_form_data() {
     ret.url = clean_url(ret.url);
     ret = _.pick(ret, _.keys(edited_attributes));
     return ret;
-}
-
-function is_node(item)
-{
-    return item.__src === undefined;
 }
 
 function update_item(item, new_data)
@@ -167,10 +167,8 @@ function setup_click_handlers()
         }
     });
     delete_button.on('click', function (e) {
-        var msg = is_node(item) ? 'delete node?' : 'delete link?';
-
         e.preventDefault();
-        if (confirm(msg)) {
+        if (confirm(messages.delete_items_message([item]))) {
             delete_item(item);
         }
         hide();
