@@ -55,16 +55,35 @@ function enableDebugViewOfDiffs(graph)
     });
 }
 
+function capitalize(word) {
+    if (word.length == 0) return '';
+    return word.slice(0, 1).toUpperCase() + word.slice(1, word.length);
+}
+
 function init_checkboxes(update_view) {
     var // FIXME take filter names from index.html or both from graph db
         filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
+
+    function create_checkboxes() {
+        var root = $('#menu__type-filter');
+
+        _.each(model_types.nodetypes, function (type) {
+            var input = $('<input type="checkbox" checked="checked">'),
+                div = $('<div class="menu__type-filter_item"></div>');
+
+            input.attr("name", type);
+            div.append(input);
+            div.append(capitalize(type));
+            root.append(div);
+        });
+    }
 
     function read_checkboxes() {
         var name,
             value,
             // jquery map does flattens, and we don't want that
             checkboxes = _.map($('#menu__type-filter input'),
-                function (checkbox){
+                function (checkbox) {
                         return [checkbox.name, checkbox.checked];
                     }
                 );
@@ -90,6 +109,7 @@ function init_checkboxes(update_view) {
         });
     }
 
+    create_checkboxes();
     read_checkboxes();
     redraw__set_on_checkbox_change();
 
