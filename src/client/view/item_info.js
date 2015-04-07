@@ -307,6 +307,16 @@ function hide(do_commit) {
     info_container.hide();
 }
 
+function first_time_init() {
+    // setup the special type select box based on the domain.
+    var root = info.find('#edittype');
+
+    model_types.nodetypes.forEach(function (nodetype) {
+        root.append($('<option value="' + nodetype + '">' + util.capitalize(nodetype) + '</option>'));
+    });
+}
+
+first_time_init();
 init();
 
 return {

@@ -55,11 +55,6 @@ function enableDebugViewOfDiffs(graph)
     });
 }
 
-function capitalize(word) {
-    if (word.length == 0) return '';
-    return word.slice(0, 1).toUpperCase() + word.slice(1, word.length);
-}
-
 function init_checkboxes(update_view) {
     var // FIXME take filter names from index.html or both from graph db
         filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
@@ -73,7 +68,7 @@ function init_checkboxes(update_view) {
 
             input.attr("name", type);
             div.append(input);
-            div.append(capitalize(type));
+            div.append(util.capitalize(type));
             root.append(div);
         });
     }

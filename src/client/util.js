@@ -228,6 +228,12 @@ define(['jquery'], function($) {
         return ret;
     }
 
+    // String utilities
+    function capitalize(word) {
+        if (word.length == 0) return '';
+        return word.slice(0, 1).toUpperCase() + word.slice(1, word.length);
+    }
+
     // logging helpers
     function log_error(msg) {
         console.log('error: ' + msg);
@@ -247,6 +253,8 @@ define(['jquery'], function($) {
         set_diff: set_diff,
         setSelection: setSelection,
         selectionStart: selectionStart,
+
+        capitalize: capitalize,
 
         log_error: log_error,
     };
