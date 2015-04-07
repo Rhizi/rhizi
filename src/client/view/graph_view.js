@@ -733,9 +733,10 @@ function GraphView(spec) {
     }
 
     function layout__load_graph() {
-        layout
-             .nodes(graph.nodes().filter(node__is_shown))
-             .links(graph.links().filter(link__is_shown));
+        var nodes_subset = graph.nodes().filter(node__is_shown),
+            links_subset = graph.links().filter(link__is_shown);
+
+        layout.nodes_links(nodes_subset, links_subset);
     }
 
     function segment_in_segment(inner_low, inner_high, outer_low, outer_high)
@@ -1231,8 +1232,7 @@ function GraphView(spec) {
             .size([w, h])
             .on("tick", pushRedraw)
             .on("end", record_position_to_local_storage)
-            .nodes(graph.nodes())
-            .links(graph.links())
+            .nodes_links(graph.nodes(), graph.links())
             .restore()
             .start();
     }

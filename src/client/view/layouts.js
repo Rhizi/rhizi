@@ -95,6 +95,11 @@ function(consts,   $,        d3,   _,            rz_core) {
                 restore: restore,
                 stop: save,
                 start: restore,
+                nodes_links: function (nodes, links) {
+                    // to update nodes and links atomically, required for stp and other changes
+                    layout.nodes(nodes);
+                    return layout.links(links);
+                },
                 // data
                 graph: graph,
                 _nodes: [],
