@@ -3,12 +3,32 @@ function(consts,   $,        d3,   _) {
 
 "use strict";
 
+    function object__append(d, k, v) {
+        if (d[k] === undefined) {
+            d[k] = [];
+        }
+        d[k].push(v);
+    }
+
+    function calc_node_links(nodes, links) {
+        var node_links = {};
+
+        _.each(links, function (l) {
+            var src_id = l.__src.id,
+                dst_id = l.__dst.id;
+
+            object__append(node_links, src_id, l);
+            object__append(node_links, dst_id, l);
+        });
+        return node_links;
+    }
+
     function stp_degree_max(nodes, links) {
         var ret_links = [],
             node_id_degree_d = {}, // sum of entering and exising degrees
             node_id_degree,
             node_by_id = _.object(_.map(nodes, "id"), nodes),
-            node_links = {};
+            node_links = calc_node_links(nodes, links);
 
         if (nodes.length == 0) {
             return [];
@@ -18,32 +38,36 @@ function(consts,   $,        d3,   _) {
             d[k] = d[k] === undefined ? 1 : d[k] + 1;
         }
 
-        function append(d, k, v) {
-            if (d[k] === undefined) {
-                d[k] = [];
-            }
-            d[k].push(v);
-        }
         _.each(links, function (l) {
             var src_id = l.__src.id,
-                dst_id = l.__dst.id,
-                cur_node_links_src = node_links[src_id],
-                cur_node_links_dst = node_links[dst_id];
+                dst_id = l.__dst.id;
 
             inc(node_id_degree_d, src_id);
             inc(node_id_degree_d, dst_id);
-            append(node_links, src_id, l);
-            append(node_links, dst_id, l);
         });
         node_id_degree = _.pairs(node_id_degree).map(function (ar) { return [ar[1], ar[0]]; }).sort().reverse();
 
-        // now ignore all of that and do a BFS first
-        var queue = [nodes[0].id],
+        /*
+        _.each(node_id_degree.slice(0, node_id_degree.length - 1), function (_degree, node_id) {
+            var d = node_links[node_id];
+            // pick an edge
+            if (d.src.length > 0) {
+            }
+            // remove all incoming edges
+        });
+        */
+        return ret_links;
+    }
+
+    function bfs(nodes, links) {
+        var ret_links = [],
+            queue = [nodes[0].id],
             node_id,
-            visited = {},
             i,
             link,
-            other;
+            other,
+            visited = {},
+            node_links = calc_node_links(nodes, links);
 
         while (queue.length > 0) {
             node_id = queue.pop();
@@ -60,15 +84,6 @@ function(consts,   $,        d3,   _) {
                 queue.push(_.difference(_.pick(nodes, 'id'), visited)[0]);
             }
         }
-        /*
-        _.each(node_id_degree.slice(0, node_id_degree.length - 1), function (_degree, node_id) {
-            var d = node_links[node_id];
-            // pick an edge
-            if (d.src.length > 0) {
-            }
-            // remove all incoming edges
-        });
-        */
         return ret_links;
     }
 
@@ -113,7 +128,7 @@ function(consts,   $,        d3,   _) {
 
         layout.nodes_links = function (nodes, links) {
             layout.nodes(nodes);
-            return layout.links(stp_degree_max(nodes, links));
+            return layout.links(bfs(nodes, links));
         };
         return layout;
     }
