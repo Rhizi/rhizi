@@ -7,8 +7,10 @@ from rz_api_common import API_Exception__bad_request
 from functools import wraps
 
 
+HTTP_STATUS__101_SWITCHING_PROTOCOLS = 101
 HTTP_STATUS__201_CREATED = 201
 HTTP_STATUS__204_NO_CONTENT = 204
+HTTP_STATUS__500_INTERNAL_SERVER_ERROR = 500
 
 log = logging.getLogger('rhizi')
 
