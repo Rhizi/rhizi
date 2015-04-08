@@ -182,7 +182,7 @@ function GraphView(spec) {
     update_window_size();
 
     function node__is_shown(d) {
-        var state = filter_states[d.type];
+        var state = filter_states && filter_states[d.type];
 
         return temporary || state === undefined || state;
     }
