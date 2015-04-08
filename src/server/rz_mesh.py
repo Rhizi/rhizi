@@ -72,18 +72,6 @@ def init_ws_interface(cfg, kernel, flask_webapp):
     ws_env = namedtuple('RZ_websocket_env', ['kernel'])
     ws_env.kernel = kernel
 
-    def socketio_route_handler(url_path):
-        try:
-            if None == request.environ.get('socketio'):
-                # avoid python-socketio's direct access to environ['socketio']
-                raise Exception('failed to obtain socketio object from WSGI environment')
-
-            # connect socketio manager
-            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_env)
-        except:
-            flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
-        return make_response__http__empty(101)  # 'switching protocols' HTTP status code
-
     def decorator__ws_multicast(ws_srv, f, f_multicast):
         """
         Emit multicast on topo_diff, attr_diff
@@ -149,6 +137,30 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             return
         req_ctx = f_args[1]
         return req_ctx.rzdoc
+
+    def socketio_route_handler(url_path):
+
+        # FIXME: ws upgrade process for non socketio clients
+        if None == request.environ.get('socketio'):
+            header__upgrade = request.headers.get('Upgrade')
+            if 'websocket' == header__upgrade:
+
+                remote_addr = request.environ['REMOTE_ADDR']
+                remote_port = request.environ['REMOTE_PORT']
+
+                log.debug('ws: \'Upgrade: websocket\' header detected, serving \'101\': remote-socket-addr: %s:%s' % (remote_addr, remote_port))
+                resp = make_response__http__empty(101)  # 'switching protocols' HTTP status code
+                resp.headers['Upgrade'] = 'websocket'
+                resp.headers['Connection'] = 'Upgrade'
+                return resp
+            else:
+                raise Exception('ws: failed to obtain socketio object from WSGI environment')
+
+        try:
+            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_env) # connect socketio manager
+        except:
+            log.exception("ws: exception while handling connection", exc_info=True)
+            return make_response__json(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR)
 
     def ws_broadcast_to_rzdoc_readers(ws_srv, pkt, rzdoc):
         """
