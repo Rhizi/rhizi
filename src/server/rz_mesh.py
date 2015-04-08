@@ -23,26 +23,38 @@ class RZ_WebSocket_Server(SocketIOServer):
         - allow response header injection on websocket connections
     """
 
-    class WebSocketHandlerExt(SocketIOHandler):
+    class RZ_SocketIOHandler(SocketIOHandler):
+
+        def __init__(self, config, *args, **kwargs):
+            SocketIOHandler.__init__(self, config, *args, **kwargs)
 
         def start_response(self, status, headers, exc_info=None):
-            headers['Access-Control-Allow-Origin'] = '*'
-            return WebSocketHandler.start_response(self, status, headers, exc_info)
+            # headers['Access-Control-Allow-Origin'] = '*'
+            return SocketIOHandler.start_response(self, status, headers, exc_info)
 
-        def handle_one_response(self):
-            return WebSocketHandler.handle_one_response(self)
+        def handle_disconnect_request(self):
+            SocketIOHandler.handle_disconnect_request(self)
+
+    class RZ_WebSocketHandler(WebSocketHandler):
+
+        def __init__(self, socket, address, server, rfile=None):
+            WebSocketHandler.__init__(self, socket, address, server, rfile=rfile)
+
+        def upgrade_connection(self):
+            return WebSocketHandler.upgrade_connection(self)
 
         def upgrade_websocket(self):
             return WebSocketHandler.upgrade_websocket(self)
 
     def __init__ (self, cfg, wsgi_app):
         self.wsgi_app = wsgi_app
-        # Thread.__init__(self)
         SocketIOServer.__init__(self,
                                 (cfg.listen_address, cfg.listen_port),
                                 wsgi_app,
-                                resource='socket.io',
-                                policy_server=False)
+                                resource='socket.io',  # URL prefix for socket.io requests
+                                policy_server=False,
+                                handler_class=RZ_WebSocket_Server.RZ_SocketIOHandler,
+                                ws_handler_class=RZ_WebSocket_Server.RZ_WebSocketHandler)
 
     def log_multicast(self, msg_name):
         multicast_size = len(self.sockets) - 1  # subtract self socket
