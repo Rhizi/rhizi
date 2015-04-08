@@ -132,7 +132,13 @@ class RZ_Kernel(object):
         Create & persist new RZDoc - may fail on unique name/id constraint violation
 
         @return: RZDoc object
+        @raise RZDoc_Exception__already_exists
         """
+        try:
+            self.cache_lookup__rzdoc(rzdoc_name)
+            raise RZDoc_Exception__already_exists(rzdoc_name)
+        except RZDoc_Exception__not_found:
+            pass
 
         rzdoc = RZDoc(rzdoc_name)
         rzdoc.id = neo4j_util.generate_random_rzdoc_id()
