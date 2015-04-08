@@ -41,3 +41,18 @@ class RZDoc():
     def __init__(self, rzdoc_name = None):
         self.id = None # set upon DB commit
         self.name = rzdoc_name
+
+    def __eq__(self, other):
+        if not isinstance(other, RZDoc): return False
+
+        assert self.id != None and other.id != None
+
+        return self.id == other.id
+
+    def __hash__(self):
+        assert self.id != None
+
+        return self.id.__hash__()
+
+    def __str__(self):
+        return 'rzdoc: name: %s' % (self.name)
