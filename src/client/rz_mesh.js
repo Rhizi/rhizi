@@ -13,6 +13,8 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
     var rz_mesh_graph_ref;
 
     /**
+     * [!] caller is responsible of calling destroy()
+     *
      * @param init_spec: expected to contain a graph:graph mapping
      */
     function init(init_spec) {
@@ -30,13 +32,11 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
         socket.on('error', on_error);
         socket.on('diff_commit__topo', ws_diff_merge__topo);
         socket.on('diff_commit__attr', ws_diff_merge__attr);
+    }
 
-        // attempt to actively disconnect on tab/window close
-        // ref: https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers.onbeforeunload
-        window.addEventListener("beforeunload", function(e){
-            socket.disconnect();
-            console.log('ws: connection closed on \'beforeunload\' event'); // no one will ever see this but still
-        });
+    function destroy(init_spec) {
+        socket.disconnect();
+        console.log('ws: connection closed on \'beforeunload\' event'); // no one will ever see this but still
     }
 
     function on_connect() {
@@ -102,7 +102,8 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
     }
 
     return {
-        init : init
+        init : init,
+        destroy: destroy,
         emit__rzdoc_subscribe: emit__rzdoc_subscribe,
         emit__rzdoc_unsubscribe: emit__rzdoc_unsubscribe,
     };

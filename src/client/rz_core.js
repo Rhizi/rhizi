@@ -162,10 +162,6 @@ var initDrawingArea = function () {
     });
 
     // $('#canvas_d3').dblclick(canvas_handler_dblclick); - see #138
-    if (rz_config.backend_enabled) {
-        var cur_rzdoc_name = rzdoc__current__get_name();
-        rzdoc__open(cur_rzdoc_name);
-    }
 
     root_element_id_to_graph_view = {};
     root_element_id_to_graph_view[main_graph_view.root_element.id] =  main_graph_view;
@@ -186,12 +182,25 @@ var initDrawingArea = function () {
 function init_ws_connection(){
     if (true == rz_config.backend__maintain_ws_connection){
         rz_mesh.init({graph: main_graph});
+
+        // attempt to actively disconnect on tab/window close
+        // ref: https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers.onbeforeunload
+        window.addEventListener("beforeunload", function(e){
+            var cur_rzdoc_name = rzdoc__current__get_name();
+            rz_mesh.emit__rzdoc_unsubscribe(cur_rzdoc_name);
+            rz_mesh.destroy();
+        });
     }
 }
 
 function init() {
     initDrawingArea();
     init_ws_connection();
+
+    if (rz_config.backend_enabled) {
+        var cur_rzdoc_name = rzdoc__current__get_name();
+        rzdoc__open(cur_rzdoc_name);
+    }
 }
 
 /**
@@ -267,6 +276,8 @@ function rzdoc__open(rzdoc_name) {
         rzdoc_bar__doc_lable.text(rzdoc_name);
         rzdoc_bar.fadeToggle(500);
     });
+
+    rz_mesh.emit__rzdoc_subscribe(rzdoc_name);
     console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
 }
 
