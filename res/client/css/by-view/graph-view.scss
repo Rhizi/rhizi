@@ -159,6 +159,27 @@
   fill: $mid-grey;
 }
 
+// TODO: how to define type colors using the scss dollar attributes? injecting css is easy, scss - not sure
+.circle.keyword {
+  fill: $magenta;
+}
+
+.circle.project {
+  fill: $yellow;
+}
+
+.circle.project_component {
+  fill: $purple;
+}
+
+.circle.objective {
+  fill: $green;
+}
+
+.circle.outcome {
+  fill: $cyan;
+}
+
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 

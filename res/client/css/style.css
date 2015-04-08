@@ -998,6 +998,21 @@ p {
 .circle.empty {
   fill: #919095; }
 
+.circle.keyword {
+  fill: #ee3654; }
+
+.circle.project {
+  fill: #fad900; }
+
+.circle.project_component {
+  fill: #8b3ab0; }
+
+.circle.objective {
+  fill: #40C200; }
+
+.circle.outcome {
+  fill: #33c2e0; }
+
 /* Selected parts of the graph, right now by clicking, later with search. */
 .node.first-selected .circle {
   stroke: #fad900;
