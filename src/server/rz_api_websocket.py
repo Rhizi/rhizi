@@ -20,12 +20,12 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
     def __init__(self, *args, **kw):
         super(WebSocket_Graph_NS, self).__init__(*args, **kw)
 
-    def __context__common(self):
+    def __context__common(self, json_dict):
         """
         build a common rquest context to pass along with a kernel diff commit
         """
-        # FIXME: impl
-        pass
+        rzdoc_name = json_dict['rzdoc_name']
+        return {'rzdoc_name': rzdoc_name}
 
     def _log_conn(self, prefix_msg):
         rmt_addr = self.environ['REMOTE_ADDR']
@@ -76,11 +76,13 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
             log.error(traceback.print_exc())
 
     def on_diff_commit__topo(self, json_data):
+
+        # FIXME: sanitize input
         json_dict = json.loads(json_data)
-        topo_diff = Topo_Diff.from_json_dict(json_dict)
+        topo_diff = Topo_Diff.from_json_dict(json_dict['topo_diff'])
         log.info('ws: rx: topo diff: ' + str(topo_diff))
 
-        ctx = self.__context__common()
+        ctx = self.__context__common(json_dict)
         kernel = self.request.kernel
         topo_diff, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
 
@@ -92,11 +94,13 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         return self.multicast_msg('diff_commit__topo', topo_diff_dict, commit_ret)
 
     def on_diff_commit__attr(self, json_data):
+
+        # FIXME: sanitize input
         json_dict = json.loads(json_data)
-        attr_diff = Attr_Diff.from_json_dict(json_dict)
+        attr_diff = Attr_Diff.from_json_dict(json_dict['attr_diff'])
         log.info('ws: rx: attr diff: ' + str(attr_diff))
 
-        ctx = self.__context__common()
+        ctx = self.__context__common(json_dict)
         kernel = self.request.kernel
         attr_diff, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
 
