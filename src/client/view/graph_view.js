@@ -25,8 +25,8 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'view/helpers', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts'],
-function(d3 ,   Bacon,   consts,   util ,  selection      ,  view_helpers,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts) {
+define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts'],
+function(d3 ,   Bacon,   consts,   util ,  selection      ,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts) {
 
 "use strict"
 
@@ -688,7 +688,7 @@ function GraphView(spec) {
                 return d.type + " " + d.state + " circle graph";
             })
             .attr("r", function(d) {
-                return view_helpers.customSize(d.type) - 2;
+                return 10;
             })
             .on("click", function(d, i) {
                 if (d3.event.defaultPrevented) {
