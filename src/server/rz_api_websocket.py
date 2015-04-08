@@ -7,8 +7,8 @@ import logging
 from socketio.mixins import BroadcastMixin
 from socketio.namespace import BaseNamespace
 import traceback
-
 from model.graph import Attr_Diff, Topo_Diff
+from rz_kernel import RZDoc_Exception__not_found
 
 
 log = logging.getLogger('rhizi')
@@ -27,6 +27,46 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         # FIXME: impl
         pass
 
+    def _log_conn(self, prefix_msg):
+        rmt_addr = self.environ['REMOTE_ADDR']
+        rmt_port = self.environ['REMOTE_PORT']
+        sid = self.environ['socketio'].sessid
+        log.info('ws: %s: sid: %s, remote-socket: %s:%s' % (prefix_msg, sid, rmt_addr, rmt_port))
+
+    def _on_rzdoc_subscribe_common(self, data_dict, is_subscribe=None):
+        rzdoc_name_raw = data_dict['rzdoc_name']
+
+        # FIXME: non-flask dep. sanitization
+        # rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name_raw)
+        rzdoc_name = rzdoc_name_raw
+
+        rmt_addr = self.environ['REMOTE_ADDR']
+        rmt_port = self.environ['REMOTE_PORT']
+        remote_socket_addr = (rmt_addr, rmt_port)
+        socket = self.socket
+
+        kernel = self.request.kernel
+        msg_name = 'rzdoc_subscribe' if is_subscribe else 'rzdoc_unsubscribe'
+        try:
+            if is_subscribe:
+                kernel.rzdoc__reader_subscribe(remote_socket_addr=remote_socket_addr,
+                                               rzdoc_name=rzdoc_name,
+                                               socket=socket)
+                self.ack(msg_name)
+            else:
+                kernel.rzdoc__reader_unsubscribe(remote_socket_addr=remote_socket_addr,
+                                                 rzdoc_name=rzdoc_name,
+                                                 socket=socket)
+                self.ack(msg_name)
+        except RZDoc_Exception__not_found:
+            self.nak(msg_name)
+
+    def ack(self, acked_msg_name):
+        self.emit('ack', acked_msg_name)
+
+    def nak(self, acked_msg_name):
+        self.emit('nak', acked_msg_name)
+
     def multicast_msg(self, msg_name, *args):
         self.socket.server.log_multicast(msg_name)
         try:
@@ -34,20 +74,6 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         except Exception as e:
             log.error(e.message)
             log.error(traceback.print_exc())
-
-    def _log_conn(self, prefix_msg):
-        rmt_addr = self.environ['REMOTE_ADDR']
-        rmt_port = self.environ['REMOTE_PORT']
-        sid = self.environ['socketio'].sessid
-        log.info('ws: %s: sid: %s, remote-socket: %s:%s' % (prefix_msg, sid, rmt_addr, rmt_port))
-
-    def recv_connect(self):
-        self._log_conn('conn open')
-        super(WebSocket_Graph_NS, self).recv_connect()  # super called despite being empty
-
-    def recv_disconnect(self):
-        self._log_conn('conn close')
-        super(WebSocket_Graph_NS, self).recv_disconnect()
 
     def on_diff_commit__topo(self, json_data):
         json_dict = json.loads(json_data)
@@ -77,4 +103,18 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         # [!] note: here we actually send the attr_diff twice, but in the future
         # commit_ret may not be the same
         return self.multicast_msg('diff_commit__attr', attr_diff, commit_ret)
+
+    def on_rzdoc_subscribe(self, data_dict):
+        return self._on_rzdoc_subscribe_common(data_dict, is_subscribe=True)
+
+    def on_rzdoc_unsubscribe(self, data_dict):
+        return self._on_rzdoc_subscribe_common(data_dict, is_subscribe=False)
+
+    def recv_connect(self):
+        self._log_conn('conn open')
+        super(WebSocket_Graph_NS, self).recv_connect()  # super called despite being empty
+
+    def recv_disconnect(self):
+        self._log_conn('conn close')
+        super(WebSocket_Graph_NS, self).recv_disconnect()
 
