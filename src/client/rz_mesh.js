@@ -87,8 +87,24 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
         rz_mesh_graph_ref.commit_diff__attr(attr_diff);
     }
 
+    function emit__rzdoc_subscribe(rzdoc_name) {
+        var callback = function(data) {
+            console.log('ws: rzdoc subscription acked: rzdoc name: \'' + rzdoc_name + '\'');
+        };
+        socket.emit('rzdoc_subscribe', { rzdoc_name: rzdoc_name}, callback);
+    }
+
+    function emit__rzdoc_unsubscribe(rzdoc_name) {
+        var callback = function(data) {
+            console.log('ws: rzdoc un-subscription acked: rzdoc name: \'' + rzdoc_name + '\'');
+        };
+        socket.emit('rzdoc_unsubscribe', { rzdoc_name: rzdoc_name}, callback);
+    }
+
     return {
         init : init
+        emit__rzdoc_subscribe: emit__rzdoc_subscribe,
+        emit__rzdoc_unsubscribe: emit__rzdoc_unsubscribe,
     };
 
 });
