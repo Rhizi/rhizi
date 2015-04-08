@@ -11,6 +11,7 @@ from flask import session
 from flask import redirect
 import logging
 from rz_api_common import sanitize_input__rzdoc_name
+from rz_req_handling import common_resp_handle__client_error
 
 log = logging.getLogger('rhizi')
 
@@ -30,13 +31,14 @@ def rz_mainpage(rzdoc_name=None):
     role_set = []
     if None != email_address:  # session cookie passed & contains uid (email_address)
         try:
-            uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
+            _uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
             role_set = u_account.role_set
             rz_username = escape(u_account.rz_username)
         except Exception as e:
             # may occur on user_db reset or malicious cookie != stale cookie,
             # for which the user would at least be known to the user_db
             log.exception(e)
+            return common_resp_handle__client_error()
 
     # establish rz_config template values
     client_POV_server_name = request.headers.get('X-Forwarded-Host')  # first probe for reverse proxy headers
@@ -57,6 +59,7 @@ def rz_mainpage(rzdoc_name=None):
             s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
         except Exception as e:
             log.exception(e)
+            return common_resp_handle__client_error(status=404)
 
     return render_template('index.html',
                            rz_username=rz_username,
