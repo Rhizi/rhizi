@@ -58,7 +58,7 @@ def __context__common(rzdoc_name=None):
 
     if None != rzdoc_name:
         s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
-        ret.rzdoc = cache_lookup__rzdoc(s_rzdoc_name)
+        ret.rzdoc = current_app.kernel.cache_lookup__rzdoc(s_rzdoc_name)
     return ret
 
 def __load_node_set_by_id_attr_common(id_set):

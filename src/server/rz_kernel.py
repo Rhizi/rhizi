@@ -84,19 +84,28 @@ class RZ_Kernel(object):
 
     def __init__(self):
         self.db_ctl = None
+        self.rzdoc_reader_assoc_map = defaultdict(list)
+        self.cache__rzdoc_name_to_rzdoc = {}
 
-    def exec_chain_commit_op(self, diff_obj, ctx):
+    def cache_lookup__rzdoc(self, rzdoc_name):
+        """
+        lookup RZDoc by rzdoc_name, possibly triggering a DB query
 
-        # FIXME: clean
-        if isinstance(diff_obj, Topo_Diff):
-            commit_obj = diff_obj.to_json_dict()
-        else:
-            commit_obj = diff_obj
+        @raise RZDoc_Exception__not_found
+        """
+        # FIXME: impl cache cleansing logic
 
-        rzdoc = ctx.rzdoc
-        op = DBO_block_chain__commit(commit_obj, ctx)
-        op = QT_RZDOC_Meta_NS_Filter(rzdoc)(op)
-        self.db_ctl.exec_op(op)
+        cache_doc = self.cache__rzdoc_name_to_rzdoc.get(rzdoc_name)
+        if None != cache_doc:
+            return cache_doc
+
+        rz_doc = self.rzdoc__lookup_by_name(rzdoc_name)
+
+        if None == rz_doc:
+            raise RZDoc_Exception__not_found(rzdoc_name)
+
+        self.cache__rzdoc_name_to_rzdoc[rzdoc_name] = rz_doc
+        return rz_doc
 
     def diff_commit__topo(self, topo_diff, ctx=None):
         """
@@ -131,6 +140,19 @@ class RZ_Kernel(object):
         op_ret = self.db_ctl.exec_op(op)
         self.exec_chain_commit_op(attr_diff, ctx)
         return attr_diff, op_ret
+
+    def exec_chain_commit_op(self, diff_obj, ctx):
+
+        # FIXME: clean
+        if isinstance(diff_obj, Topo_Diff):
+            commit_obj = diff_obj.to_json_dict()
+        else:
+            commit_obj = diff_obj
+
+        rzdoc = ctx.rzdoc
+        op = DBO_block_chain__commit(commit_obj, ctx)
+        op = QT_RZDOC_Meta_NS_Filter(rzdoc)(op)
+        self.db_ctl.exec_op(op)
 
 
 

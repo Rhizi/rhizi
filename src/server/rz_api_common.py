@@ -55,9 +55,9 @@ def sanitize_input__rzdoc_name(rzdoc_name):
     """
     sanitize rzdoc name raw input
     """
-
     if None != rzdoc_name and len(rzdoc_name) > current_app.rz_config.rzdoc__name__max_length:
         raise API_Exception__bad_request('rzdoc: open request: doc name exceeds max doc name limit: %s' % (rzdoc_name))
+
     return rzdoc_name
 
 def validate_obj__attr_diff(attr_diff):
@@ -66,25 +66,4 @@ def validate_obj__attr_diff(attr_diff):
         for attr_name in node_attr_diff_set['__attr_write'].keys():
             if 'id' == attr_name:
                 raise Exception('validation error: Attr_Diff: forbidden attribute change: \'id\', n_id: ' + n_id)
-
-def cache_lookup__rzdoc(rzdoc_name):
-    """
-    lookup RZDoc by rzdoc_name, possibly triggering a DB query
-    
-    @raise RZDoc_Exception__not_found
-    """
-    # FIXME: impl cache cleansing logic
-
-    cache_doc = current_app.cache__rzdoc_name_to_rzdoc.get(rzdoc_name)
-    if None != cache_doc:
-        return cache_doc
-
-    kernel = current_app.kernel
-    rz_doc = kernel.rzdoc__lookup_by_name(rzdoc_name)
-    
-    if None == rz_doc:
-        raise RZDoc_Exception__not_found(rzdoc_name)
-
-    current_app.cache__rzdoc_name_to_rzdoc[rzdoc_name] = rz_doc
-    return rz_doc
 
