@@ -124,6 +124,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             except Exception as e:
                 log.exception('decorator__ws_multicast: failed to detect REST/Websocket call via stack inspection')  # exception derived from stack
 
+            rzdoc = rzdoc_from_f_args_extractor(args)
             assert type(f_ret) in [list, tuple]
 
             pkt_data = map(_prep_for_serialization, f_ret)
@@ -141,6 +142,12 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             return f_ret
 
         return wrapped_function
+
+    def rzdoc_from_f_args_extractor(f_args):  # extract rzdoc from req ctx
+        if len(f_args) < 2 or not isinstance(f_args[1], Req_Context):
+            return
+        req_ctx = f_args[1]
+        return req_ctx.rzdoc
 
     # connect socketio route
     route_dec = flask_webapp.route('/socket.io/<path:url_path>')
