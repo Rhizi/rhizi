@@ -58,6 +58,8 @@ def sanitize_input__rzdoc_name(rzdoc_name):
     if None != rzdoc_name and len(rzdoc_name) > current_app.rz_config.rzdoc__name__max_length:
         raise API_Exception__bad_request('rzdoc: open request: doc name exceeds max doc name limit: %s' % (rzdoc_name))
 
+    # FIXME: fail on HTML escape codes, UTF handling, etc
+
     return rzdoc_name
 
 def validate_obj__attr_diff(attr_diff):
