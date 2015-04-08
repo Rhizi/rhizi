@@ -1,5 +1,4 @@
 from collections import namedtuple
-from flask import Response
 from flask import request
 from functools import wraps
 from geventwebsocket.handler import WebSocketHandler
@@ -12,7 +11,9 @@ from socketio.server import SocketIOServer
 from model.graph import Attr_Diff, Topo_Diff
 from rz_api_websocket import WebSocket_Graph_NS
 from rz_kernel import RZ_Kernel
-from rz_req_handling import make_response__http__empty
+from rz_req_handling import make_response__http__empty,\
+    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, make_response__json
+from rz_api_rest import Req_Context
 
 
 log = logging.getLogger('rhizi')
@@ -64,7 +65,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
     """
     Initialize websocket interface:
        - apply websocket route handlers
-    
+
     @return: an initialized RZ_WebSocket_Server object
     """
 
