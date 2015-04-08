@@ -7,17 +7,16 @@ define({
         'person': {
             'title': 'Person',
             'attributes': ['affiliation',
-                           'street-address',
                            'description',
                            'email',
-                           'image-URL',
+                           'image-url',
                            'name',
                            'url'
                            ],
             },
         'project': {
             'title': 'Project',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'rhizi-url'],
         },
         'project_component': {
             'title': 'Project Component',
@@ -36,9 +35,10 @@ define({
         'affiliation': 'Affiliation',
         'description': 'Description',
         'email': 'Email',
-        'image-URL': 'Image URL',
         'name': 'Name',
+        'type': 'Type',
         'url': 'URL',
-        'street-address': 'Street Address',
+        'image-url': 'Image URL',
+        'rhizi-url': 'Rhizi URL',
     }
 });
