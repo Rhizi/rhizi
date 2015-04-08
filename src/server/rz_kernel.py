@@ -287,7 +287,10 @@ class RZ_Kernel(object):
         op = DBO_rzdoc__delete(rzdoc)
         self.db_ctl.exec_op(op)
 
-        # TODO: broadcast delete event, clear cache mapping entry
+        # FIXME:
+        #    - broadcast delete event
+        #    - clear cache mapping entry
+        #    - unsubscribe all rzdoc readers
 
     def rzdoc__list(self, rzdoc, ctx=None):
         """
