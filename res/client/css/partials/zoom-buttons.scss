@@ -1,27 +1,27 @@
 #zoom-bar {
-  position: absolute;
-  bottom: 50px;
-  right: 10px;
-  background: white;
-  border-width: 1px;
-  border-style: solid;
-  border-color: grey;
-  padding: 5px 4px 0px 4px;
-  height: 40px;
+    position: absolute;
+    bottom: 90px;
+    right: 10px;
+    background: white;
+    border-width: 1px;
+    border-style: solid;
+    border-color: grey;
+    padding: 5px 4px 0px 4px;
 }
 
 #btn_zoom_in {
-  background: url(../img/plus.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
+    background: url(../img/plus.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    margin-bottom: 5px;
 }
 
 #btn_zoom_out {
-  background: url(../img/minus.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 25px;
+    background: url(../img/minus.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 25px;
 }

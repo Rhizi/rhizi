@@ -491,7 +491,7 @@ body.debug .debug-ui-right {
   overflow-y: auto;
   position: absolute;
   top: 130px;
-  right: 20px; }
+  right: 10px; }
 
 .subtitle {
   font-style: italic;
@@ -749,7 +749,7 @@ p {
 #tool-bar {
   margin-top: 24px;
   position: absolute;
-  right: 20px;
+  right: 10px;
   z-index: 1; }
 
 #tool-bar-top-bar {
@@ -791,21 +791,21 @@ p {
 
 #zoom-bar {
   position: absolute;
-  bottom: 50px;
+  bottom: 90px;
   right: 10px;
   background: white;
   border-width: 1px;
   border-style: solid;
   border-color: grey;
-  padding: 5px 4px 0px 4px;
-  height: 40px; }
+  padding: 5px 4px 0px 4px; }
 
 #btn_zoom_in {
   background: url(../img/plus.svg);
   background-position: center;
   background-repeat: no-repeat;
   width: 16px;
-  height: 16px; }
+  height: 16px;
+  margin-bottom: 5px; }
 
 #btn_zoom_out {
   background: url(../img/minus.svg);
