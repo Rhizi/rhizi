@@ -27,6 +27,28 @@ class RZDoc_Exception__already_exists(Exception):
     def __init__(self, rzdoc_name):
         super(RZDoc_Exception__already_exists, self).__init__('rzdoc already exists: \'%s\'' % (rzdoc_name))
 
+class RZDoc_Reader_Association:
+    """
+    RZDoc reader association used to map rzdoc's to update subscribing readers.
+
+    Note: the term reader is used to represent a party performing R/W operations
+    """
+
+    def __init__(self):
+        self.remote_socket_addr = None  # (addr, port)
+        self.rzdoc = None
+        self.socket = None
+        self.err_count__IO = 0  # allow n IO errors before disconnecting reader
+        self.mark__expired = False
+
+    def __eq__(self, other):
+        if not isinstance(other, RZDoc_Reader_Association): return False
+
+        return  self.socket == other.socket
+
+    def __str__(self):
+        return '%s: remote addr: %s:%s' % (self.rzdoc, self.remote_socket_addr[0], self.remote_socket_addr[1])
+
 class RZ_Kernel(object):
 
     def __init__(self):
