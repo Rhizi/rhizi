@@ -1,19 +1,21 @@
 """
 Rhizi kernel, home to core operation login
 """
-import json
+from functools import wraps
 import logging
 import traceback
+from concurrent.futures import ThreadPoolExecutor
 
 from db_op import DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create, \
-    DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list,\
+    DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list, \
     DBO_block_chain__init
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
 from model.model import RZDoc
-import neo4j_util
 from neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
-
+import neo4j_util
+from collections import defaultdict
+import time
 
 log = logging.getLogger('rhizi')
 
@@ -79,6 +81,7 @@ def for_all_public_functions(decorator):
 class RZ_Kernel(object):
     """
     RZ kernel:
+       - activation/shutdown via start(), shutdown()
        - all public methods decorated with deco__exception_log
     """
 
@@ -86,6 +89,34 @@ class RZ_Kernel(object):
         self.db_ctl = None
         self.rzdoc_reader_assoc_map = defaultdict(list)
         self.cache__rzdoc_name_to_rzdoc = {}
+        self.should_stop = False
+        self.heartbeat_period_sec = 5
+
+    def start(self):
+
+        def kernel_heartbeat():
+            """
+            Handle periodic server tasks:
+               - manage rzdoc subscriber lists
+            """
+            while False == self.should_stop:
+
+                for rzdoc, r_assoc_set in self.rzdoc_reader_assoc_map.items():
+                    for r_assoc in r_assoc_set:
+                        if r_assoc.err_count__IO > 3:
+                            r_assoc_set.remove(r_assoc)
+                            log.info('rz_kernel: evicting reader: IO error count exceeded limit: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr,
+                                                                                                                                rzdoc.name))
+                time.sleep(self.heartbeat_period_sec)
+
+        self.executor = ThreadPoolExecutor(max_workers=8)
+        self.executor.submit(kernel_heartbeat)
+        log.info('rz_kernel: on-line')
+
+    def shutdown(self):
+        self.should_stop = True
+        self.executor.shutdown()
+        log.info('rz_kernel: shutting down')
 
     def cache_lookup__rzdoc(self, rzdoc_name):
         """

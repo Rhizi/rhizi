@@ -278,6 +278,8 @@ def init_webapp(cfg, kernel, db_ctl=None):
     Initialize webapp:
        - call init_rest_interface()
     """
+    global webapp
+
     root_path = cfg.root_path
     assert os.path.exists(root_path), "root path doesn't exist: %s" % root_path
 
@@ -328,8 +330,9 @@ def init_signal_handlers():
     signal.signal(signal.SIGTERM, signal_handler__exit)
 
 def shutdown():
-    user_db.shutdown()
     log.info('rz_server: shutting down')
+    user_db.shutdown()
+    webapp.kernel.shutdown()
 
 if __name__ == "__main__":
 
@@ -363,7 +366,10 @@ if __name__ == "__main__":
         log.info('failed initialization, aborting')
         exit(-1)
 
+    # setup kernel
     kernel = RZ_Kernel()
+    kernel.start()
+
     webapp = init_webapp(cfg, kernel)
     ws_srv = init_ws_interface(cfg, kernel, webapp)
 
