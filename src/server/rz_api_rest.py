@@ -10,22 +10,22 @@ from flask import current_app
 
 import flask
 import logging
-import traceback
 
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
-from rz_api_common import sanitize_input__attr_diff, cache_lookup__rzdoc, \
+from rz_api_common import sanitize_input__attr_diff, \
     __sanitize_input, sanitize_input__rzdoc_name
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_common import validate_obj__attr_diff
 from rz_req_handling import common_resp_handle__success, make_response__json, \
     HTTP_STATUS__204_NO_CONTENT, HTTP_STATUS__201_CREATED, \
-    common_resp_handle__client_error, common_resp_handle__server_error, \
-    common_rest_req_exception_handler
+    common_resp_handle__client_error, \
+    common_rest_req_exception_handler, common_resp_handle__server_error
 from db_op import DBO_match_node_set_by_id_attribute, \
     DBO_load_link_set, DBO_match_node_id_set, DBO_diff_commit__topo
 from model.model import Link
 from rz_api import rz_mainpage
+from rz_kernel import RZDoc_Exception__already_exists
 
 
 log = logging.getLogger('rhizi')
@@ -213,7 +213,10 @@ def rzdoc__create(rzdoc_name):
     s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
     kernel = flask.current_app.kernel
     ctx = __context__common(rzdoc_name=None)  # avoid rzdoc cache lookup exception
-    kernel.rzdoc__create(s_rzdoc_name, ctx)
+    try:
+        kernel.rzdoc__create(s_rzdoc_name, ctx)
+    except RZDoc_Exception__already_exists as e:
+        return common_resp_handle__server_error(error='rzdoc already exists')
     return make_response__json(status=HTTP_STATUS__201_CREATED)
 
 @common_rest_req_exception_handler
