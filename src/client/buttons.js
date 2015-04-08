@@ -200,6 +200,7 @@ $('#btn_rzdoc__open').click(function() {
             var rzdoc_cur_name = rz_core.rzdoc__current__get_name();
             if (rzdoc_name == rzdoc_cur_name) {
                 console.log('rzdoc__open: ignoring request to reopen currently rzdoc: name: ' + rzdoc_cur_name);
+                cmd_bar.remove();
                 return;
             }
 
