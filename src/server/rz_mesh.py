@@ -84,9 +84,10 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
         return make_response__http__empty(101)  # 'switching protocols' HTTP status code
 
-    # link ws hooks: multicast on topo_diff, attr_diff
     def decorator__ws_multicast(ws_srv, f, f_multicast):
         """
+        Emit multicast on topo_diff, attr_diff
+
         @param f: [!] wrapped function, name used to derive socket message name
         """
 
@@ -100,9 +101,14 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         def wrapped_function(*args, **kw):
 
             f_ret = f(*args, **kw)
+            assert type(f_ret) in [list, tuple]  # expect (X_Diff, X_Diff.Commit_Result_Type)
 
+            #
+            # Identify f caller
+            #
+            # TODO: avoid stack inspection if possible
+            #
             try:
-                # TODO: avoid stack inspection if possible
                 stack = inspect.stack()
                 stack_frame = stack[1][0]
 
@@ -121,7 +127,6 @@ def init_ws_interface(cfg, kernel, flask_webapp):
                 log.exception('decorator__ws_multicast: failed to detect REST/Websocket call via stack inspection')  # exception derived from stack
 
             rzdoc = rzdoc_from_f_args_extractor(args)
-            assert type(f_ret) in [list, tuple]
 
             pkt_data = map(_prep_for_serialization, f_ret)
 
