@@ -84,10 +84,6 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             flask_webapp.logger.error("Exception while handling socketio connection", exc_info=True)
         return make_response__http__empty(101)  # 'switching protocols' HTTP status code
 
-    def ws_broadcast_to_all(pkt):
-        for sessid, socket in ws_srv.sockets.iteritems():
-            socket.send_packet(pkt)
-
     # link ws hooks: multicast on topo_diff, attr_diff
     def decorator__ws_multicast(ws_srv, f, f_multicast):
         """
@@ -137,7 +133,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
             ws_srv.log_multicast(msg_name)
 
-            ws_broadcast_to_all(pkt)
+            ws_broadcast_to_rzdoc_readers(ws_srv, pkt, rzdoc)
 
             return f_ret
 
@@ -148,6 +144,23 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             return
         req_ctx = f_args[1]
         return req_ctx.rzdoc
+
+    def ws_broadcast_to_rzdoc_readers(ws_srv, pkt, rzdoc):
+        """
+        Cast update messege to subscribed readers
+        """
+
+        cast_set = []
+        rzdoc_r_set = kernel.rzdoc__reader_set_from_rzdoc(rzdoc)
+        for r_assoc in rzdoc_r_set:
+            cast_set.append(r_assoc)
+
+        log.debug('reader diff cast: rzdoc: %s, cast size: %d' % (rzdoc.name, len(cast_set)))
+        for r_assoc in cast_set:
+            try:
+                r_assoc.socket.send_packet(pkt)
+            except Exception as e:
+                r_assoc.err_count__IO += 1
 
     # connect socketio route
     route_dec = flask_webapp.route('/socket.io/<path:url_path>')
