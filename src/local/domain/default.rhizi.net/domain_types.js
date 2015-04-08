@@ -27,7 +27,7 @@ define({
             'title': 'Objective',
             'attributes': ['description', 'url'],
         },
-        'outcome': {
+        'resource': {
             'title': 'Objective',
             'attributes': ['description', 'url'],
         }

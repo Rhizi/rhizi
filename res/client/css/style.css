@@ -1010,7 +1010,7 @@ p {
 .circle.objective {
   fill: #40C200; }
 
-.circle.outcome {
+.circle.resource {
   fill: #33c2e0; }
 
 /* Selected parts of the graph, right now by clicking, later with search. */
