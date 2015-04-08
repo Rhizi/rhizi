@@ -49,7 +49,38 @@ class RZDoc_Reader_Association:
     def __str__(self):
         return '%s: remote addr: %s:%s' % (self.rzdoc, self.remote_socket_addr[0], self.remote_socket_addr[1])
 
+def deco__exception_log(kernel_f):
+    """
+    Exception logger function decorator
+    """
+
+    @wraps(kernel_f)
+    def f_decorated(self, *args, **kwargs):
+        try:
+            ret = kernel_f(self, *args, **kwargs)
+            return ret
+        except Exception as e:
+            log.error(e.message)
+            log.error(traceback.print_exc())
+            raise e
+
+    return f_decorated
+
+def for_all_public_functions(decorator):
+
+    def cls_decorated(cls):
+        for attr in cls.__dict__:
+            if callable(getattr(cls, attr)) and not attr.startswith('_'):
+                setattr(cls, attr, decorator(getattr(cls, attr)))
+        return cls
+    return cls_decorated
+
+@for_all_public_functions(deco__exception_log)
 class RZ_Kernel(object):
+    """
+    RZ kernel:
+       - all public methods decorated with deco__exception_log
+    """
 
     def __init__(self):
         self.db_ctl = None
@@ -80,16 +111,9 @@ class RZ_Kernel(object):
         op = DBO_diff_commit__topo(topo_diff)
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
-        try:
-            op_ret = self.db_ctl.exec_op(op)
-
-            self.exec_chain_commit_op(topo_diff, ctx)
-
-            return topo_diff, op_ret
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
-            raise e
+        op_ret = self.db_ctl.exec_op(op)
+        self.exec_chain_commit_op(topo_diff, ctx)
+        return topo_diff, op_ret
 
     def diff_commit__attr(self, attr_diff, ctx=None):
         """
@@ -104,16 +128,11 @@ class RZ_Kernel(object):
         op = DBO_diff_commit__attr(attr_diff)
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
-        try:
-            op_ret = self.db_ctl.exec_op(op)
+        op_ret = self.db_ctl.exec_op(op)
+        self.exec_chain_commit_op(attr_diff, ctx)
+        return attr_diff, op_ret
 
-            self.exec_chain_commit_op(attr_diff, ctx)
 
-            return attr_diff, op_ret
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
-            raise e
 
     def rzdoc__clone(self, rzdoc, ctx=None):
         """
@@ -124,13 +143,8 @@ class RZ_Kernel(object):
         op = DBO_rzdoc__clone()
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
-        try:
-            topo_diff = self.db_ctl.exec_op(op)
-            return topo_diff
-        except Exception as e:
-            log.exception(e)
-            log.error(traceback.print_exc())
-            raise e
+        topo_diff = self.db_ctl.exec_op(op)
+        return topo_diff
 
     def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
         """
@@ -140,14 +154,9 @@ class RZ_Kernel(object):
         """
 
         op = DBO_rzdoc__lookup_by_name(rzdoc_name)
-        try:
-            rzdoc = self.db_ctl.exec_op(op)
-            if None == rzdoc: return None
 
-            return rzdoc
-        except Exception as e:
-            log.error(e.message)
-            raise e
+        rzdoc = self.db_ctl.exec_op(op)
+        return rzdoc  # may be None
 
     def rzdoc__create(self, rzdoc_name, ctx=None):
         """
@@ -167,15 +176,10 @@ class RZ_Kernel(object):
 
         op__rzdoc__create = DBO_rzdoc__create(rzdoc)
         op__block_chain__init = DBO_block_chain__init(rzdoc)
-        try:
-            self.db_ctl.exec_op(op__rzdoc__create)
-            self.db_ctl.exec_op(op__block_chain__init)
-            return rzdoc
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
-            raise e
 
+        self.db_ctl.exec_op(op__rzdoc__create)
+        self.db_ctl.exec_op(op__block_chain__init)
+        return rzdoc
 
     def rzdoc__delete(self, rzdoc, ctx=None):
         """
@@ -185,12 +189,7 @@ class RZ_Kernel(object):
         """
 
         op = DBO_rzdoc__delete(rzdoc)
-        try:
-            self.db_ctl.exec_op(op)
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
-            raise e
+        self.db_ctl.exec_op(op)
 
         # TODO: broadcast delete event, clear cache mapping entry
 
@@ -201,10 +200,5 @@ class RZ_Kernel(object):
         @return: RZDoc object
         """
         op = DBO_rzdoc__list()
-        try:
-            op_ret = self.db_ctl.exec_op(op)
-            return op_ret;
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
-            raise e
+        op_ret = self.db_ctl.exec_op(op)
+        return op_ret;
