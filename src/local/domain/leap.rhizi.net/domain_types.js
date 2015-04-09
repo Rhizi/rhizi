@@ -4,8 +4,8 @@ define({
             'title': 'Keyword',
             'attributes': ['description', 'url'],
         },
-        'person': {
-            'title': 'Person',
+        'collaborator': {
+            'title': 'Collaborator',
             'attributes': ['affiliation',
                            'description',
                            'email',
@@ -18,16 +18,16 @@ define({
             'title': 'Project',
             'attributes': ['description', 'url', 'rhizi-url'],
         },
-        'project_component': {
-            'title': 'Project Component',
+        'idea': {
+            'title': 'Idea',
             'attributes': ['description', 'url'],
         },
-        'objective': {
-            'title': 'Objective',
+        'need': {
+            'title': 'Need',
             'attributes': ['description', 'url'],
         },
         'resource': {
-            'title': 'Objective',
+            'title': 'Resource',
             'attributes': ['description', 'url'],
         }
     },
