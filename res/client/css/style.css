@@ -977,6 +977,9 @@ p {
 .circle.person {
   fill: #004681; }
 
+.circle.collaborator {
+  fill: #004681; }
+
 .circle.club {
   fill: #ee3654; }
 
@@ -998,16 +1001,16 @@ p {
 .circle.empty {
   fill: #919095; }
 
-.circle.keyword {
+.circle.need {
   fill: #ee3654; }
 
 .circle.project {
   fill: #fad900; }
 
-.circle.project_component {
+.circle.keyword {
   fill: #8b3ab0; }
 
-.circle.objective {
+.circle.idea {
   fill: #40C200; }
 
 .circle.resource {
@@ -1079,9 +1082,10 @@ g:focus circle {
   font-size: 18px; }
 
 #editbox textarea {
-  width: 100%;
   height: inherit;
-  font-size: 18px; }
+  font-size: 14px;
+  font-family: sans-serif;
+  width: 100%; }
 
 #graph-view__canvas {
   height: inherit; }

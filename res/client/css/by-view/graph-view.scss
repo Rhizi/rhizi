@@ -265,9 +265,10 @@ g:focus circle {
 }
 
 #editbox textarea {
+  height: inherit;
+  font-size: $h4-size;
+  font-family: sans-serif;
   width: 100%;
-  height:inherit;
-  font-size: $h3-size;
 }
 
 #graph-view__canvas {
