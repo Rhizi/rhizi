@@ -131,6 +131,10 @@
   fill: $blue;
 }
 
+.circle.collaborator {
+  fill: $blue;
+}
+
 .circle.club {
   fill: $magenta;
 }
@@ -160,7 +164,7 @@
 }
 
 // TODO: how to define type colors using the scss dollar attributes? injecting css is easy, scss - not sure
-.circle.keyword {
+.circle.need {
   fill: $magenta;
 }
 
@@ -168,11 +172,11 @@
   fill: $yellow;
 }
 
-.circle.project_component {
+.circle.keyword {
   fill: $purple;
 }
 
-.circle.objective {
+.circle.idea {
   fill: $green;
 }
 
