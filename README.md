@@ -10,7 +10,7 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 - python-gevent-websocket
 - python-six
 - python-socketio
-- python-concurrent.futures >= 2.2.0
+- python-futures >= 2.2.0
 
 ## Client
 All of the following are already bundled but noted here for reference:
