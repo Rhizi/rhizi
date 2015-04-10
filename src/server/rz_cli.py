@@ -121,10 +121,10 @@ if __name__ == '__main__':
     db_ctl = dbc.DB_Controller(cfg)
     kernel.db_ctl = db_ctl
     if args.list_table:
-        print('\n'.join('%30s %30s' % (d['name'].ljust(30), d['id'].ljust(30)) for d in kernel.rzdoc__list()))
+        print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30), d['id'].ljust(30)) for d in kernel.rzdoc__list()))
         raise SystemExit
     if args.list_names:
-        print('\n'.join(d['name'] for d in kernel.rzdoc__list()))
+        print(u'\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__list()))
         raise SystemExit
     if args.delete:
         remove(args.delete)
