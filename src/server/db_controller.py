@@ -41,7 +41,7 @@ class DB_Controller:
             self.db_driver.commit_tx(op)
 
             op_ret = op.process_result_set()
-            log.debug('exec_op:' + op.name + ': return value: ' + str(op_ret))
+            log.debug('exec_op:' + op.name + ': return value: ' + unicode(op_ret))
             return op_ret
 
         except Neo4JException as e:
