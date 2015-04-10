@@ -1,10 +1,10 @@
 define({
-    type_attributes: {
-        'keyword': {
+    type_attributes: [
+        ['keyword', {
             'title': 'Keyword',
             'attributes': ['description', 'url'],
-        },
-        'person': {
+        }],
+        ['person', {
             'title': 'Person',
             'attributes': ['affiliation',
                            'street-address',
@@ -14,24 +14,24 @@ define({
                            'name',
                            'url'
                            ],
-            },
-        'project': {
+         }],
+        ['project', {
             'title': 'Project',
             'attributes': ['description', 'url'],
-        },
-        'project_component': {
+        }],
+        ['project_component', {
             'title': 'Project Component',
             'attributes': ['description', 'url'],
-        },
-        'objective': {
+        }],
+        ['objective', {
             'title': 'Objective',
             'attributes': ['description', 'url'],
-        },
-        'resource': {
+        }],
+        ['resource', {
             'title': 'Objective',
             'attributes': ['description', 'url'],
-        }
-    },
+        }]
+    ],
     attribute_titles: {
         'affiliation': 'Affiliation',
         'description': 'Description',

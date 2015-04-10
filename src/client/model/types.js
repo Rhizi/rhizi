@@ -2,12 +2,10 @@ define(['underscore', 'util', 'model/domain_types'],
 function(_,            util,   domain_types)
 {
 
-var nodetypes,
-    all_attributes,
-    type_attributes = domain_types.type_attributes,
+var all_attributes,
+    type_attributes = _.object(domain_types.type_attributes),
+    nodetypes = _.map(domain_types.type_attributes, 0),
     attribute_titles = domain_types.attribute_titles;
-
-nodetypes = _.keys(type_attributes);
 
 if (undefined === type_attributes['_defaults']) {
     type_attributes['_defaults'] = {

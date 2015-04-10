@@ -1,10 +1,6 @@
 define({
-    type_attributes: {
-        'keyword': {
-            'title': 'Keyword',
-            'attributes': ['description', 'url'],
-        },
-        'collaborator': {
+    type_attributes: [
+        ['collaborator', {
             'title': 'Collaborator',
             'attributes': ['affiliation',
                            'description',
@@ -13,24 +9,28 @@ define({
                            'name',
                            'url'
                            ],
-            },
-        'project': {
+        }],
+        ['keyword', {
+            'title': 'Keyword',
+            'attributes': ['description', 'url'],
+        }],
+        ['project', {
             'title': 'Project',
             'attributes': ['description', 'url', 'rhizi-url'],
-        },
-        'idea': {
+        }],
+        ['idea', {
             'title': 'Idea',
             'attributes': ['description', 'url'],
-        },
-        'need': {
+        }],
+        ['need', {
             'title': 'Need',
             'attributes': ['description', 'url'],
-        },
-        'resource': {
+        }],
+        ['resource', {
             'title': 'Resource',
             'attributes': ['description', 'url'],
-        }
-    },
+        }]
+    ],
     attribute_titles: {
         'affiliation': 'Affiliation',
         'description': 'Description',

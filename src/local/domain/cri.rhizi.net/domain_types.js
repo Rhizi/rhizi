@@ -1,6 +1,6 @@
 define({
-    type_attributes: {
-        'internship': {
+    type_attributes: [
+        ['internship', {
             'title': 'Internship',
             'attributes':
                 ['status', 'startdate', 'enddate', 'description', 'url',
@@ -12,24 +12,24 @@ define({
                  'city',
                  'country',
                 ],
-            },
-        'skill': {
+        }],
+        ['skill', {
             'title': 'Skill',
             'attributes': ['description', 'url'],
-            },
-        'interest': {
+        }],
+        ['interest', {
             'title': 'Interesst',
             'attributes': ['description', 'url'],
-            },
-        'person': {
+        }],
+        ['person', {
             'title': 'Person',
             'attributes': ['description', 'url'],
-            },
-        'club': {
+        }],
+        ['club', {
             'title': 'Club',
             'attributes': ['description', 'url'],
-        }
-    },
+        }]
+    ],
     attribute_titles: {
         'name': 'Name',
         'type': 'Type',

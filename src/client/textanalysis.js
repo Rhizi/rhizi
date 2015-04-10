@@ -12,7 +12,7 @@ var separator_string = rz_config.separator_string;
 var typeindex = 0,
     nodetypes = model_types.nodetypes,
     nodetypes_count = nodetypes.length,
-    default_nodetype = util.first_contained(nodetypes, ['collaborator', 'person'], nodetypes[0]),
+    default_nodetype = nodetypes[0],
     node_name_to_type = {};
 
 util.assert(nodetypes.indexOf(default_nodetype) !== -1);
