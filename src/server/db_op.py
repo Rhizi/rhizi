@@ -796,7 +796,7 @@ class DBO_rzdoc__delete(DB_op):
         """
         super(DBO_rzdoc__delete, self).__init__()
 
-        rzdoc_label_q = quote__singlequote(rzdoc__ns_label(rzdoc))
+        rzdoc_label_q = quote__backtick(rzdoc__ns_label(rzdoc))
         rzdoc_id_q = quote__singlequote(rzdoc.id)
 
         # delete doc nodes & links
