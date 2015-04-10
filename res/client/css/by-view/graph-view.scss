@@ -264,13 +264,6 @@ g:focus circle {
   font-size: $h3-size;
 }
 
-#editbox textarea {
-  height: inherit;
-  font-size: $h4-size;
-  font-family: sans-serif;
-  width: 100%;
-}
-
 #graph-view__canvas {
     height: inherit; // inherit from container which should be set to 100%
 }

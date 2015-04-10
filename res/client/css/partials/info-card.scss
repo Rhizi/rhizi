@@ -1,98 +1,57 @@
 @import '../modules/mixins'; // For box-shadow and box-sizing
 
 .info-container {
+    background-color: white;
+    border-top: 6px solid $dark-grey;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.55);
     overflow-y: auto;
+    padding: 12px 10px;
     position: absolute;
-    top: 130px;
     right: $graph-margin-right;
-}
+    top: 120px;
+    width: 300px;
 
-.subtitle {
-    font-style:italic;
-    color: #bbb;
-    font-size: 12px;
-    float:right;
-}
-
-.info {
-    color: $dark-grey;
-    background-color: white;
-    @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
-    position: relative;
-    width: 100%;
-    padding: 12px 15px;
     @include rz-box-sizing-border;
-    border-top: 6px solid $dark-grey;
 }
 
-// change card top border color by node type
-.info.type-person {
-    border-top: 6px solid $blue;
-}
-
-.info.type-club {
-    border-top: 6px solid $magenta;
-}
-
-.info.type-skill {
-    border-top: 6px solid $yellow;
-}
-
-.info.type-third-internship-proposal {
-    border-top: 6px solid $cyan;
-}
-
-.info.type-internship {
-    border-top: 6px solid $orange;
-}
-
-.info.type-interest {
-    border-top: 6px solid $purple;
-}
-
-.info.type-empty {
-    border-top: 6px solid $mid-grey;
-}
-
-.info.type-project {
-    border-top: 6px solid $green;
+.info-container textarea {
+    font-size: $h4-size;
+    font-family: sans-serif;
+    max-width: 280px;
 }
 
 // card elements styles
 
-.info .info-card-attr {
-    display: block;
-    text-transform: capitalize;
+.info-card-attr {
     font-size: $h4-size;
     font-family: $bold-font-family;
+    text-transform: capitalize;
+    margin-bottom: 5px;
 }
 
-.info .info-card-attr-val {
-    display: block;
-    font-size: $h2-size;
-    margin: 12px 0px 24px 0px;
-}
-
-.info-card-attr-val input{
+.info-card-attr-val {
+    font-size: $h4-size;
     width: 100%;
-    font-size: $h2-size;
 }
 
-.info-card-url input{
-      font-size: $h4-size;
-      margin-left: 20px;
+.info-container__row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.info-card-url input {
+    font-size: $h4-size;
+    margin-left: 24px;
 }
 
 .info-card-url:before { //url icon before the url line
-    position: absolute;
-    margin-top: 7px;
-    content: "";
     background: url(../img/url-icon.png);
-    min-width: 14px;
-    min-height: 14px;
     background-position: center;
     background-repeat: no-repeat;
+    content: "";
+    min-width: 14px;
+    min-height: 14px;
+    position: absolute;
 }
 
 .select-dropdown {
@@ -103,21 +62,50 @@
     color: $dark-grey;
     width: 100%;
     padding: 0;
-    margin: 12px 0px 24px 0px;
 }
 
 .select-dropdown:focus {
     outline: none;
 }
 
-.select-dropdown option{
+.select-dropdown option {
     font-size: $h3-size;
     color: $dark-grey;
     border: 1px solid $dark-grey;
 }
 
+.subtitle {
+    font-style:italic;
+    color: #bbb;
+    font-size: 12px;
+    float:right;
+}
+
+// ----------------------------------------------------------------------------
+// ID selectors
+//
 #info-container__bottom-btn-bar {
     border-top: 2px solid $mid-light-grey;
     margin-top: 10px;
+    overflow: auto;
     padding-top: 10px;
 }
+
+#edit-dialog__delete {
+    float: right;
+}
+
+// ----------------------------------------------------------------------------
+// Domain Specific
+//    - change card top border color by node type
+//
+// FIXME: refactor to domain specific file / automate
+//
+.info-container.type-person                    { border-top-color: $blue;     }
+.info-container.type-club                      { border-top-color: $magenta;  }
+.info-container.type-skill                     { border-top-color: $yellow;   }
+.info-container.type-internship                { border-top-color: $orange;   }
+.info-container.type-interest                  { border-top-color: $purple;   }
+.info-container.type-empty                     { border-top-color: $mid-grey; }
+.info-container.type-third-internship-proposal { border-top-color: $cyan;     }
+.info-container.type-project                   { border-top-color: $green;    }

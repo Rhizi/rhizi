@@ -212,8 +212,6 @@ table {
     outline: none;
     background-color: #f5f5fa;
     border: 1px solid #d4d4d9;
-    -webkit-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
     box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3); }
   .cmn-form-input[type="email"] {
     background-image: url(../img/mail-icon.png); }
@@ -283,8 +281,6 @@ body.debug .debug-ui-right {
   font-size: 18px;
   list-style-type: none;
   z-index: 100;
-  -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3); }
 
 .dropdown-item {
@@ -296,8 +292,6 @@ body.debug .debug-ui-right {
   padding-left: 16px;
   background-color: #f5f5fa;
   border-left: 2px solid #33c2e0;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
 .dropdown-menu-heading {
@@ -342,15 +336,11 @@ body.debug .debug-ui-right {
   max-height: 36px;
   padding: 6px 8px 5px 8px;
   border: 1px solid #919095;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   background: white;
   width: 100%; }
   .input-bar:focus {
     border: 1px solid #919095;
-    -webkit-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3); }
 
 #input-container__search {
@@ -421,13 +411,9 @@ body.debug .debug-ui-right {
   width: inherit;
   margin-top: 6px;
   border: 1px solid #919095;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   background: white;
   z-index: 100;
-  -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3); }
 
 .suggestion-item {
@@ -438,8 +424,6 @@ body.debug .debug-ui-right {
   padding-left: 16px;
   background-color: #f5f5fa;
   border-left: 5px solid #33c2e0;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
 .suggestion td {
@@ -487,84 +471,48 @@ body.debug .debug-ui-right {
   opacity: 0.5; }
 
 .info-container {
+  background-color: white;
+  border-top: 6px solid #363636;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.55);
   overflow-y: auto;
+  padding: 12px 10px;
   position: absolute;
-  top: 130px;
-  right: 10px; }
+  right: 10px;
+  top: 120px;
+  width: 300px;
+  box-sizing: border-box; }
 
-.subtitle {
-  font-style: italic;
-  color: #bbb;
-  font-size: 12px;
-  float: right; }
-
-.info {
-  color: #363636;
-  background-color: white;
-  -webkit-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
-  position: relative;
-  width: 100%;
-  padding: 12px 15px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  border-top: 6px solid #363636; }
-
-.info.type-person {
-  border-top: 6px solid #004681; }
-
-.info.type-club {
-  border-top: 6px solid #ee3654; }
-
-.info.type-skill {
-  border-top: 6px solid #fad900; }
-
-.info.type-third-internship-proposal {
-  border-top: 6px solid #33c2e0; }
-
-.info.type-internship {
-  border-top: 6px solid #ff8b11; }
-
-.info.type-interest {
-  border-top: 6px solid #8b3ab0; }
-
-.info.type-empty {
-  border-top: 6px solid #919095; }
-
-.info.type-project {
-  border-top: 6px solid #40C200; }
-
-.info .info-card-attr {
-  display: block;
-  text-transform: capitalize;
+.info-container textarea {
   font-size: 14px;
-  font-family: "Source_Bold", sans-serif; }
+  font-family: sans-serif;
+  max-width: 280px; }
 
-.info .info-card-attr-val {
-  display: block;
-  font-size: 24px;
-  margin: 12px 0px 24px 0px; }
+.info-card-attr {
+  font-size: 14px;
+  font-family: "Source_Bold", sans-serif;
+  text-transform: capitalize;
+  margin-bottom: 5px; }
 
-.info-card-attr-val input {
-  width: 100%;
-  font-size: 24px; }
+.info-card-attr-val {
+  font-size: 14px;
+  width: 100%; }
+
+.info-container__row {
+  margin-top: 10px;
+  margin-bottom: 10px; }
 
 .info-card-url input {
   font-size: 14px;
-  margin-left: 20px; }
+  margin-left: 24px; }
 
 .info-card-url:before {
-  position: absolute;
-  margin-top: 7px;
-  content: "";
   background: url(../img/url-icon.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  content: "";
   min-width: 14px;
   min-height: 14px;
-  background-position: center;
-  background-repeat: no-repeat; }
+  position: absolute; }
 
 .select-dropdown {
   border: none;
@@ -573,8 +521,7 @@ body.debug .debug-ui-right {
   font-size: 18px;
   color: #363636;
   width: 100%;
-  padding: 0;
-  margin: 12px 0px 24px 0px; }
+  padding: 0; }
 
 .select-dropdown:focus {
   outline: none; }
@@ -584,10 +531,44 @@ body.debug .debug-ui-right {
   color: #363636;
   border: 1px solid #363636; }
 
+.subtitle {
+  font-style: italic;
+  color: #bbb;
+  font-size: 12px;
+  float: right; }
+
 #info-container__bottom-btn-bar {
   border-top: 2px solid #d4d4d9;
   margin-top: 10px;
+  overflow: auto;
   padding-top: 10px; }
+
+#edit-dialog__delete {
+  float: right; }
+
+.info-container.type-person {
+  border-top-color: #004681; }
+
+.info-container.type-club {
+  border-top-color: #ee3654; }
+
+.info-container.type-skill {
+  border-top-color: #fad900; }
+
+.info-container.type-internship {
+  border-top-color: #ff8b11; }
+
+.info-container.type-interest {
+  border-top-color: #8b3ab0; }
+
+.info-container.type-empty {
+  border-top-color: #919095; }
+
+.info-container.type-third-internship-proposal {
+  border-top-color: #33c2e0; }
+
+.info-container.type-project {
+  border-top-color: #40C200; }
 
 .kbd-button {
   background-color: #f7f7f7;
@@ -791,7 +772,7 @@ p {
 
 #zoom-bar {
   position: absolute;
-  bottom: 90px;
+  bottom: 70px;
   right: 10px;
   background: white;
   border-width: 1px;
@@ -1081,12 +1062,6 @@ g:focus circle {
   height: inherit;
   font-size: 18px; }
 
-#editbox textarea {
-  height: inherit;
-  font-size: 14px;
-  font-family: sans-serif;
-  width: 100%; }
-
 #graph-view__canvas {
   height: inherit; }
 
@@ -1165,8 +1140,6 @@ g:focus circle {
     outline: none;
     background-color: #f5f5fa;
     border: 1px solid #d4d4d9;
-    -webkit-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
     box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3); }
   .login-input[type="email"] {
     background-image: url(../img/mail-icon.png); }
