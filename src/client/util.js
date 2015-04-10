@@ -1,6 +1,6 @@
 "use strict"
 
-define(['jquery'], function($) {
+define(['underscore', 'jquery'], function(_, $) {
 
     function assert(condition, message) {
         if (false == condition) {
@@ -51,6 +51,16 @@ define(['jquery'], function($) {
         var sa = set_from_array(aa);
         var sb = set_from_array(ab);
         return set_diff(sa, sb);
+    }
+
+    function first_contained(list, candidates, default_result) {
+        for (var k in candidates) {
+            var list_item = list[k];
+            if (_.contains(candidates, list_item)) {
+                return list_item;
+            }
+        };
+        return default_result;
     }
 
     // TODO: jquery BBQ: $.deparam.querystring().json;
@@ -251,6 +261,7 @@ define(['jquery'], function($) {
         set_from_array: set_from_array,
         set_from_object: set_from_object,
         set_diff: set_diff,
+        first_contained: first_contained,
         setSelection: setSelection,
         selectionStart: selectionStart,
 
