@@ -12,7 +12,6 @@ var is_node = graph.is_node;
 // variables
 var msg_node = $('.info-card-message'),
     setup_done = false,
-    info = $('#info'),
     info_container = $('.info-container'),
     form_element = $('#editbox'),
     delete_button = $('#edit-dialog__delete'),
@@ -25,8 +24,8 @@ var msg_node = $('.info-card-message'),
             return [attr, element];
         })),
     change_handlers = [],
-    status_display = info.find('#displaystatus'),
-    status = info.find('#editstatus'),
+    status_display = info_container.find('#displaystatus'),
+    status = info_container.find('#editstatus'),
     diffBusUnsubscribe,
     outside_change = false,
     visible_attributes,
@@ -39,14 +38,15 @@ var msg_node = $('.info-card-message'),
  */
 function form_add_element(attr, value_element_type)
 {
-    var div = $('<div></div>'),
-        label = $('<label></label>'),
+    var div = $('<div>'),
+        label = $('<div>'),
         value = $('<' + value_element_type + '></' + value_element_type + '>'),
         delete_button = form_element.find('#info-container__bottom-btn-bar');
 
     div.attr('id', attr);
+    div.addClass('info-container__row');
     label.addClass('info-card-attr');
-    label.text(model_types.attribute_titles[attr] + ':');
+    label.text(model_types.attribute_titles[attr]);
     value.addClass('info-card-attr-val');
     value.attr('id', 'edit' + attr);
     div.append(label);
@@ -209,12 +209,12 @@ function warning(string)
 
 function base_element_for_attribute(attr)
 {
-    return info.find('#' + attr);
+    return info_container.find('#' + attr);
 }
 
 function edit_element_for_attribute(attr)
 {
-    return info.find('#edit' + attr);
+    return info_container.find('#edit' + attr);
 }
 
 function update_textarea(textarea, value)
@@ -227,8 +227,7 @@ function show(_graph, new_item, new_visible_attributes)
 {
     var hidden_attributes,
         visible_elements,
-        hidden_elements,
-        max_height;
+        hidden_elements;
 
     visible_attributes = new_visible_attributes || model_types.type_attributes(new_item.type).slice(0);
     hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
@@ -244,12 +243,8 @@ function show(_graph, new_item, new_visible_attributes)
     _.each(hidden_elements, function (element) { element.hide(); });
     _.each(visible_elements, function (element) { element.show(); });
 
-    info.attr('class', 'info');
-    info.addClass('type-' + item.type); // Add a class to distinguish types for css
-
-    // hack - should be able to set max-height via css percentage, no?
-    max_height = $(document.body).innerHeight() - $('.info')[0].getBoundingClientRect().top * 2;
-    info_container[0].style['max-height'] = String(max_height) + 'px';
+    info_container.attr('class', 'info-container'); // clear previous type-x css classes
+    info_container.addClass('type-' + item.type); // add css type class
 
     info_container.show();
     _.each(visible_attributes, function (attr) {
@@ -309,7 +304,7 @@ function hide(do_commit) {
 
 function first_time_init() {
     // setup the special type select box based on the domain.
-    var root = info.find('#edittype');
+    var root = info_container.find('#edittype');
 
     model_types.nodetypes.forEach(function (nodetype) {
         root.append($('<option value="' + nodetype + '">' + util.capitalize(nodetype) + '</option>'));
