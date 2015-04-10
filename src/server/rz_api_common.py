@@ -51,10 +51,12 @@ def sanitize_input__topo_diff(topo_diff):
 def sanitize_input__attr_diff(attr_diff):
     pass  # TODO: impl
 
-def sanitize_input__rzdoc_name(rzdoc_name):
+def sanitize_input__rzdoc_name(rzdoc_name_raw):
     """
     sanitize rzdoc name raw input
     """
+    rzdoc_name = rzdoc_name_raw.strip() # make sure we ommit trailing white spaces from doc name
+
     if None == rzdoc_name or 0 == len(rzdoc_name):
         raise API_Exception__bad_request('rzdoc: open request: empty doc name')
 
@@ -62,7 +64,6 @@ def sanitize_input__rzdoc_name(rzdoc_name):
         raise API_Exception__bad_request('rzdoc: open request: doc name exceeds max doc name limit: %s' % (rzdoc_name))
 
     # FIXME: fail on HTML escape codes, UTF handling, etc
-    rzdoc_name = rzdoc_name.strip() # make sure we ommit trailing white spaces from doc name
 
     return rzdoc_name
 
