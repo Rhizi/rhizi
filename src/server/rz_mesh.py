@@ -57,10 +57,6 @@ class RZ_WebSocket_Server(SocketIOServer):
                                 handler_class=RZ_WebSocket_Server.RZ_SocketIOHandler,
                                 ws_handler_class=RZ_WebSocket_Server.RZ_WebSocketHandler)
 
-    def log_multicast(self, msg_name):
-        multicast_size = len(self.sockets) - 1  # subtract self socket
-        log.info('ws: multicast: msg: \'%s\', cast-size ~= %d' % (msg_name, multicast_size))  # ~=: as race conditions apply
-
 def init_ws_interface(cfg, kernel, flask_webapp):
     """
     Initialize websocket interface:
@@ -126,8 +122,6 @@ def init_ws_interface(cfg, kernel, flask_webapp):
                        args=pkt_data,
                        endpoint='/graph')
 
-            ws_srv.log_multicast(msg_name)
-
             ws_broadcast_to_rzdoc_readers(ws_srv, pkt, rzdoc)
 
             return f_ret
@@ -174,7 +168,9 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         for r_assoc in rzdoc_r_set:
             cast_set.append(r_assoc)
 
-        log.debug('reader diff cast: rzdoc: %s, cast size: %d' % (rzdoc.name, len(cast_set)))
+        log.debug('ws: rzdoc reader cast: msg: \'%s\': rzdoc: %s, cast-size ~= %d' % (pkt.get('name'),
+                                                                                      rzdoc.name,
+                                                                                      len(cast_set)))
         for r_assoc in cast_set:
             try:
                 r_assoc.socket.send_packet(pkt)
