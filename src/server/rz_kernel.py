@@ -315,4 +315,4 @@ class RZ_Kernel(object):
         """
         op = DBO_rzdoc__list()
         op_ret = self.db_ctl.exec_op(op)
-        return op_ret;
+        return op_ret
