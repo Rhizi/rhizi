@@ -125,6 +125,6 @@ if __name__ == '__main__':
             merge_sources = args.merge.split(',')
         if args.merge_file:
             with open(args.merge_file) as fd:
-                merge_sources = fd.readlines()
+                merge_sources = [line.strip() for line in fd.readlines()]
         if merge_sources:
             merge(args.merge_target, merge_sources)
