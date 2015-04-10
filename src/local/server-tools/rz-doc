@@ -1,10 +1,14 @@
 #!/usr/bin/python
 
+import sys
 import os
 import argparse # TODO - use the newer / shorter argument parser. y?
 from collections import namedtuple
 import json
 import uuid
+
+# must be before any rhizi import
+import rz
 
 from neo4j_util import generate_random_id__uuid
 from rz_server import init_config
@@ -99,6 +103,11 @@ def merge(destination_name, sources=None):
 def remove(rzdoc_name):
     kernel.rzdoc__delete(kernel.rzdoc__lookup_by_name(rzdoc_name))
 
+def noeol(line):
+    if len(line) == 0:
+        return line
+    return line[:-1] if line[-1] == '\n' else line
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description="rhizi command line interface")
     p.add_argument('--config-dir', help='path to Rhizi config dir', default=None)
@@ -121,7 +130,8 @@ if __name__ == '__main__':
     db_ctl = dbc.DB_Controller(cfg)
     kernel.db_ctl = db_ctl
     if args.list_table:
-        print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30), d['id'].ljust(30)) for d in kernel.rzdoc__list()))
+        print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30),
+                                       d['id'].encode('utf-8').ljust(30)) for d in kernel.rzdoc__list()))
         raise SystemExit
     if args.list_names:
         print('\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__list()))
@@ -136,6 +146,6 @@ if __name__ == '__main__':
             merge_sources = args.merge.split(',')
         if args.merge_file:
             with open(args.merge_file) as fd:
-                merge_sources = [line.strip() for line in fd.readlines()]
+                merge_sources = [noeol(line) for line in fd.readlines()]
         if merge_sources:
             merge(args.merge_target, merge_sources)

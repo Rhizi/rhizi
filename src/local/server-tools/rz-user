@@ -6,9 +6,8 @@ import pickle
 import re
 import sys
 
-# access to crypt_util & rz_server
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'server'))
-#import pdb; pdb.set_trace()
+# must be before any rhizi import
+import rz
 
 from crypt_util import hash_pw
 from rz_server import init_config
