@@ -101,7 +101,8 @@ def remove(rzdoc_name):
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description="rhizi command line interface")
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
-    p.add_argument('--list', default=False, action='store_true')
+    p.add_argument('--list-names', default=False, action='store_true')
+    p.add_argument('--list-table', default=False, action='store_true')
     p.add_argument('--delete', help='doc name to delete')
     p.add_argument('--merge-target', help='name of resulting rzdoc')
     p.add_argument('--merge', help='comma separated names of docs to merge')
@@ -113,8 +114,12 @@ if __name__ == '__main__':
     kernel = RZ_Kernel()
     db_ctl = dbc.DB_Controller(cfg)
     kernel.db_ctl = db_ctl
-    if args.list:
+    if args.list_table:
         print('\n'.join('%30s %30s' % (d['name'].ljust(30), d['id'].ljust(30)) for d in kernel.rzdoc__list()))
+        raise SystemExit
+    if args.list_names:
+        print('\n'.join(d['name'] for d in kernel.rzdoc__list()))
+        raise SystemExit
     if args.delete:
         remove(args.delete)
     if args.clone:
