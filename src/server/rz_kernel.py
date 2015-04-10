@@ -99,15 +99,17 @@ class RZ_Kernel(object):
             Handle periodic server tasks:
                - manage rzdoc subscriber lists
             """
-            while False == self.should_stop:
-
+            while True:
                 for rzdoc, r_assoc_set in self.rzdoc_reader_assoc_map.items():
                     for r_assoc in r_assoc_set:
                         if r_assoc.err_count__IO > 3:
                             r_assoc_set.remove(r_assoc)
                             log.info('rz_kernel: evicting reader: IO error count exceeded limit: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr,
                                                                                                                                 rzdoc.name))
-                time.sleep(self.heartbeat_period_sec)
+                for i in xrange(self.heartbeat_period_sec * 2):
+                    if False == self.should_stop:
+                        return;
+                    time.sleep(0.5)
 
         self.executor = ThreadPoolExecutor(max_workers=8)
         self.executor.submit(kernel_heartbeat)
