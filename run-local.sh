@@ -18,6 +18,7 @@ if [ ! -f $CONFIG ]; then
     cp $EXAMPLE $CONFIG
 fi
 make # building css relies on Makefile
-ant -f build.ant deploy-local -DdefaultDomain=$DOMAIN -DtargetDomain=$DOMAIN
-cd deploy-local
-python2.7 bin/rz_server.py --config-dir etc
+ant -f build.ant deploy-local -DdefaultDomain=$DOMAIN -DtargetDomain=$DOMAIN && (
+    cd deploy-local
+    python2.7 bin/rz_server.py --config-dir etc
+)
