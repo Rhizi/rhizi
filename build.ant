@@ -135,6 +135,12 @@
                      includes="*" />
          </copy>
 
+         <!-- tools -->
+         <copy todir="${targetDeploymentDir}/bin/tools">
+            <fileset dir="src/local/server-tools"
+                     includes="*"/>
+         </copy>
+
       </parallel>
 
    </target>
