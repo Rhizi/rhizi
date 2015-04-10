@@ -6,7 +6,12 @@ quit_if_no_neo4j_running
 CONFIG=res/etc/rhizi-server.conf
 EXAMPLE=res/etc/rhizi-server.conf.example
 HTPASSWD=res/etc/htpasswd
-DOMAIN=cri.rhizi.net
+if [ "x$DOMAIN" == "x" ]; then
+    echo using default domain
+    DOMAIN=default.rhizi.net
+else
+    echo using $DOMAIN domain
+fi
 if [ ! -f $CONFIG ]; then
     echo "copying $EXAMPLE to $CONF"
     echo "please edit it as you see fit"
