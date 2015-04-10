@@ -79,12 +79,10 @@ def merge_topos(topos):
         print(word)
         print(result.node_set_add)
         print(result.link_set_add)
-    show("Before")
     for src, dst in renames:
         rename(result.link_set_add, src, dst)
     for node, (_, new_id) in zip(result.node_set_add, renames):
         node['id'] = new_id
-    show("After")
     return result
 
 def merge(destination_name, sources=None):
