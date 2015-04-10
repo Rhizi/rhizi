@@ -3,12 +3,13 @@ import sys
 import os
 
 # to work both from source dir and from deployment dir
-candidate = None
-for down in [['..', '..'], ['..']]:
-    candidate = os.path.join(*([os.path.dirname(__file__)] + down + ['server']))
+path = None
+for postfix in [['..'], ['..', '..', 'server']]:
+    candidate = os.path.join(*([os.path.dirname(__file__)] + postfix))
     if os.path.exists(candidate):
+        path = candidate
         break
-if None is candidate:
+if None is path:
     print("must be run from one or two directories above server")
     raise SystemExit
-sys.path.append(candidate)
+sys.path.append(path)
