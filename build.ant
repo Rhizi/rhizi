@@ -135,13 +135,13 @@
                      includes="*" />
          </copy>
 
-      </parallel>
+          <!-- tools. use cp to preserve permissions (copy doesn't).
+               out of parallel so ${targetDeploymentDir}/bin is already created -->
+          <exec executable="cp" failonerror="true">
+             <arg line="-R src/local/server-tools ${targetDeploymentDir}/tools"/>
+          </exec>
 
-      <!-- tools. use cp to preserve permissions (copy doesn't).
-           out of parallel so ${targetDeploymentDir}/bin is already created -->
-      <exec executable="cp" failonerror="true">
-         <arg line="-R src/local/server-tools ${targetDeploymentDir}/bin/tools"/>
-      </exec>
+      </parallel>
 
    </target>
 

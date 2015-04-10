@@ -4,7 +4,7 @@ import os
 
 # to work both from source dir and from deployment dir
 path = None
-for postfix in [['..'], ['..', '..', 'server']]:
+for postfix in [['..', 'bin'], ['..', '..', 'server']]:
     candidate = os.path.join(*([os.path.dirname(__file__)] + postfix))
     if os.path.exists(candidate):
         path = candidate
