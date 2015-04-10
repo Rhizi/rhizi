@@ -124,7 +124,7 @@ if __name__ == '__main__':
         print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30), d['id'].ljust(30)) for d in kernel.rzdoc__list()))
         raise SystemExit
     if args.list_names:
-        print(u'\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__list()))
+        print('\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__list()))
         raise SystemExit
     if args.delete:
         remove(args.delete)
