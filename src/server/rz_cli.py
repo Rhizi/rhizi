@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import argparse # TODO - use the newer / shorter argument parser. y?
 from collections import namedtuple
 import json
@@ -100,7 +101,7 @@ def remove(rzdoc_name):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description="rhizi command line interface")
-    p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
+    p.add_argument('--config-dir', help='path to Rhizi config dir', default=None)
     p.add_argument('--list-names', default=False, action='store_true')
     p.add_argument('--list-table', default=False, action='store_true')
     p.add_argument('--delete', help='doc name to delete')
@@ -110,6 +111,11 @@ if __name__ == '__main__':
     p.add_argument('--clone', help='show contents of doc')
     args = p.parse_args()
     
+    if args.config_dir is None:
+        for d in ['res/etc', '/etc/rhizi']:
+            if os.path.exists(d):
+                args.config_dir = d
+                break
     cfg = init_config(args.config_dir)
     kernel = RZ_Kernel()
     db_ctl = dbc.DB_Controller(cfg)
