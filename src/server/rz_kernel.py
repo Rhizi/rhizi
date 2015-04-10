@@ -295,7 +295,7 @@ class RZ_Kernel(object):
         #    - clear cache mapping entry
         #    - unsubscribe all rzdoc readers
 
-    def rzdoc__list(self, rzdoc, ctx=None):
+    def rzdoc__list(self, rzdoc=None, ctx=None):
         """
         List available RZDocs
 
