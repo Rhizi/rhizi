@@ -1,7 +1,9 @@
 define(['consts', 'view/completer', 'textanalysis', 'rz_core', 'view/selection'],
 function(consts,        completer,   textanalysis,   rz_core,        selection)
 {
-var search,
+var search = $('#search'),
+    search_btn = $('#btn_search'),
+    search_completer_element = $('#search-suggestion'),
     search_completer;
 
 var focus = function() {
@@ -9,8 +11,7 @@ var focus = function() {
 }
 
 function init() {
-    search = $('#search');
-    search_completer = completer(search, $('#search-suggestion'),
+    search_completer = completer(search, search_completer_element,
                                  {
                                     triggerStart:' |',
                                     triggerEnd:' |',
@@ -18,18 +19,17 @@ function init() {
                                  });
 
     search_completer.options.plug(textanalysis.suggestions_options.map('.nodes'));
-    search.asEventStream('input')
-        .merge(search.asEventStream('keydown').filter(
+    search.asEventStream('keydown').filter(
             function(e) {
-            if (e.which == consts.VK_ENTER && !search_completer.handleEnter()) {
+            if (e.which === consts.VK_ENTER && search_completer.handleEnter()) {
                 e.preventDefault();
-                return false;
             }
-            return true;
-        }))
+            return (e.which === consts.VK_ENTER);
+        })
+        .merge($('#btn_search').asEventStream('click'))
+        .merge(search_completer.completionsBus)
         .map(function () { return search[0].value.trim(); })
         .skipDuplicates()
-        .debounce(300)
         .onValue(search_on_submit);
 
     function attribute_match(obj, regexp) {

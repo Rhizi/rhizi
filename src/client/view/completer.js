@@ -41,6 +41,7 @@ var completer = (function (input_element, dropdown, base_config) {
         dropdown_raw = dropdown[0],
         dropdown_visible = false,
         options_bus = new Bacon.Bus(),
+        completionsBus = new Bacon.Bus(),
         options = [],
         selected_index = -1,
         input_element_raw = input_element[0],
@@ -208,6 +209,7 @@ var completer = (function (input_element, dropdown, base_config) {
         completions(string).forEach(function(name) {
             var suggestion = $('<div class="suggestion-item">' + name + '</div>');
             suggestion.on('click', function(e) {
+                // TODO: move to handling element?
                 _applySuggestion(name);
                 input_element.focus();
             });
@@ -272,6 +274,7 @@ var completer = (function (input_element, dropdown, base_config) {
             new_text = start + cur.slice(completion_end);
         setter(new_text, new_text.length);
         oninput('', 0);
+        completionsBus.push(str);
     }
     function handleEnter() {
         if (selected_index == -1) {
@@ -282,7 +285,10 @@ var completer = (function (input_element, dropdown, base_config) {
     }
 
     return {
+        // input bus
         options: options_bus,
+        // output bus
+        completionsBus: completionsBus,
         oninput: oninput,
         next_option: next_option,
         prev_option: prev_option,
