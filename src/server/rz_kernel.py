@@ -6,9 +6,9 @@ import logging
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 
-from db_op import DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create, \
-    DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list, \
-    DBO_block_chain__init
+from db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
+    DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list,
+    DBO_block_chain__init, DBO_rzdoc__rename)
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
 from model.model import RZDoc
@@ -296,6 +296,16 @@ class RZ_Kernel(object):
         #    - broadcast delete event
         #    - clear cache mapping entry
         #    - unsubscribe all rzdoc readers
+
+    def rzdoc__rename(self, cur_name, new_name):
+        op = DBO_rzdoc__rename(cur_name, new_name)
+
+        rzdoc = self.db_ctl.exec_op(op)
+        return rzdoc  # may be None
+        # FIXME:
+        #    - broadcast rename event
+        #    - update cache mapping entry
+        #    - notify all rzdoc readers
 
     def rzdoc__list(self, rzdoc=None, ctx=None):
         """

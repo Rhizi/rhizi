@@ -851,4 +851,28 @@ class DBO_rzdoc__lookup_by_name(DB_op):
         rzdoc.id = rzdoc_dict['id']
         return rzdoc
 
+class DBO_rzdoc__rename(DB_op):
+
+    def __init__(self, rzdoc_cur_name, rzdoc_new_name):
+        """
+        @return: [rzdoc] of [] if no doc with the given name was found
+        """
+        super(DBO_rzdoc__rename, self).__init__()
+
+        q_arr = ['match (n:%s {name: {cur_name}}) set n.name = {new_name}' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+                 'return n']
+
+        param_set = {'cur_name': rzdoc_cur_name, 'new_name': rzdoc_new_name}
+        db_q = DB_Query(q_arr, param_set)
+        self.add_db_query(db_q)
+
+    def process_result_set(self):
+        rzdoc_dict_set = DB_op.process_result_set(self)
+        if not rzdoc_dict_set: return None
+
+        rzdoc_dict = rzdoc_dict_set.pop()
+        rzdoc = RZDoc(rzdoc_name=rzdoc_dict['name'])
+        rzdoc.id = rzdoc_dict['id']
+        return rzdoc
+
 
