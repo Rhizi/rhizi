@@ -141,3 +141,18 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
  $ targetDomain="cri.rhizi.net"
  $ mkdir res/production-patch-set/${targetDomain}
  $ scp rz-1:/etc/rhizi/rhizi-server.conf res/production-patch-set/${targetDomain}/rhizi-server.production.conf
+
+## Tools
+### rz-doc
+
+This is the only way to merge a number of documents right now. Here is how:
+
+It is installed by default to /srv/www/<domain>/tools/rz-doc, lets call that rz-doc for short.
+
+rz-doc --list-names
+ - will show all available documents. uses default config in /etc/rhizi/rhizi-server.conf, can be overridden with --config-dir
+
+1. rz-doc --list-names > merge.file
+2. rz-doc --merge-file merge.file --merge-target "All Documents"
+
+creates a new doc called "All Documents" with the contents of all rzdocs in merge.file.
