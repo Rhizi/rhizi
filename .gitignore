@@ -12,3 +12,4 @@ res/etc/rhizi-server.conf
 src/client/main-built.js
 src/client/main-built.js.map
 res/templates/fragment/version.txt
+src/server/tools
