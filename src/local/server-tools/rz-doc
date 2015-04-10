@@ -103,6 +103,9 @@ def merge(destination_name, sources=None):
 def remove(rzdoc_name):
     kernel.rzdoc__delete(kernel.rzdoc__lookup_by_name(rzdoc_name))
 
+def rename(cur_name, new_name):
+    kernel.rzdoc__rename(cur_name, new_name)
+
 def noeol(line):
     if len(line) == 0:
         return line
@@ -118,6 +121,8 @@ if __name__ == '__main__':
     p.add_argument('--merge', help='comma separated names of docs to merge')
     p.add_argument('--merge-file', help='filename with line per doc name')
     p.add_argument('--clone', help='show contents of doc')
+    p.add_argument('--rename-from', help='rename current name')
+    p.add_argument('--rename-to', help='rename new name')
     args = p.parse_args()
     
     if args.config_dir is None:
@@ -138,6 +143,8 @@ if __name__ == '__main__':
         raise SystemExit
     if args.delete:
         remove(args.delete)
+    if args.rename_from and args.rename_to:
+        rename(args.rename_from, args.rename_to)
     if args.clone:
         print(json.dumps(clone(args.clone).to_json_dict()))
     if args.merge_target:
