@@ -230,6 +230,6 @@ def rzdoc__delete(rzdoc_name):
 def rzdoc__list():
     kernel = flask.current_app.kernel
     ctx = __context__common(rzdoc_name=None)  # avoid rzdoc cache lookup exception
-    rzdoc_set = kernel.rzdoc__list(ctx.rzdoc, ctx)
+    rzdoc_set = kernel.rzdoc__list(ctx)
     ret = [rzdoc_dict['name'] for rzdoc_dict in rzdoc_set]
     return common_resp_handle__success(data=ret)

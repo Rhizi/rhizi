@@ -1,10 +1,12 @@
 """
 Rhizi kernel, home to core operation login
 """
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from functools import wraps
 import logging
+import time
 import traceback
-from concurrent.futures import ThreadPoolExecutor
 
 from db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
     DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list,
@@ -14,8 +16,7 @@ from model.graph import Topo_Diff
 from model.model import RZDoc
 from neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
 import neo4j_util
-from collections import defaultdict
-import time
+
 
 log = logging.getLogger('rhizi')
 
@@ -307,7 +308,7 @@ class RZ_Kernel(object):
         #    - update cache mapping entry
         #    - notify all rzdoc readers
 
-    def rzdoc__list(self, rzdoc=None, ctx=None):
+    def rzdoc__list(self, ctx=None):
         """
         List available RZDocs
 
