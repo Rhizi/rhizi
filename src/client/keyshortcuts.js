@@ -26,7 +26,7 @@ function install() {
             search.focus();
         }
         if (e.ctrlKey && 'a' === key && e.target === document.body) {
-            selection.update(rz_core.main_graph.nodes(), false);
+            selection.select_nodes(rz_core.main_graph.nodes());
             handled = true;
         }
         if (e.ctrlKey && 'z' === key && e.target.nodeName !== 'INPUT') {
