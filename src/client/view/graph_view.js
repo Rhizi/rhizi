@@ -776,8 +776,7 @@ function GraphView(spec) {
             in_view = segment_in_segment(scaled_low, scaled_high, screen_low, screen_high),
             new_scale;
 
-        new_scale = ((rect_high === rect_low || in_view) ?
-            current_scale : (screen_high - screen_low) / (rect_high - rect_low) * percent);
+        new_scale = (screen_high - screen_low) / (rect_high - rect_low) * percent;
         new_scale = Math.min(3, Math.max(0.1, new_scale));
         return [
             in_view
@@ -790,11 +789,12 @@ function GraphView(spec) {
             ];
     }
 
-    gv.nodes__user_visible = function(nodes) {
+    gv.nodes__user_visible = function(nodes, zoom_if_visible) {
         if (nodes.length == 0) {
             return;
         }
-        var xs = nodes.map(obj_take('x')),
+        var ratio_used = 0.8,
+            xs = nodes.map(obj_take('x')),
             ys = nodes.map(obj_take('y')),
             x_min = Math.min.apply(null, xs),
             x_max = Math.max.apply(null, xs),
@@ -804,12 +804,12 @@ function GraphView(spec) {
             current_translate = zoom_obj.translate(),
             screen_width = $(document.body).innerWidth(),
             screen_height = $(document.body).innerHeight(),
-            x_data = scale_and_move(0, screen_width, x_min, x_max, 0.8,
+            x_data = scale_and_move(0, screen_width, x_min, x_max, ratio_used,
                                           current_scale, current_translate[0]),
             x_in_view = x_data[0],
             x_scale = x_data[1],
             x_translate_fn = x_data[2],
-            y_data = scale_and_move(0, screen_height, y_min, y_max, 0.8,
+            y_data = scale_and_move(0, screen_height, y_min, y_max, ratio_used,
                                           current_scale, current_translate[1]),
             y_in_view = y_data[0],
             y_scale = y_data[1],
@@ -818,7 +818,7 @@ function GraphView(spec) {
             x_translate = x_translate_fn(min_scale),
             y_translate = y_translate_fn(min_scale);
 
-        if (!x_in_view || !y_in_view) {
+        if (zoom_if_visible || (!x_in_view || !y_in_view)) {
             set_scale_translate(min_scale, [x_translate, y_translate]);
         }
     }

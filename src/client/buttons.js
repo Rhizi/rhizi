@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'FileSaver', 'rz_core', 'rz_api_backend'],
-function ($, saveAs, rz_core, rz_api_backend) {
+define(['jquery', 'FileSaver', 'rz_core', 'rz_api_backend', 'view/selection'],
+function ($,       saveAs,      rz_core,   rz_api_backend,   selection) {
 $('.tutorial').click(function(){});
 
 var key="#47989379";
@@ -247,6 +247,12 @@ $('#btn_zoom_in').asEventStream('click')
     .map(log_scale(zoom_range, zoom_min, zoom_max))
     .onValue(function (val) {
         rz_core.main_graph_view.scale__absolute(val);
+    });
+
+$('#btn_zoom_to_selection').asEventStream('click')
+    .map(selection.selected_nodes)
+    .onValue(function (selected) {
+        rz_core.main_graph_view.nodes__user_visible(selected, true);
     });
 
 return {'buttons': 'nothing here'};

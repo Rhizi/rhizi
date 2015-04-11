@@ -245,7 +245,6 @@ var inner_select = function(new_root_nodes, new_selected_nodes)
         // no change
         return;
     }
-    get_main_graph_view().nodes__user_visible(new_selected_nodes);
     updateSelectedNodesBus(new_root_nodes, new_selected_nodes);
 }
 
@@ -338,8 +337,8 @@ return {
     selectionChangedBus: selectionChangedBus,
     setup_toolbar: setup_toolbar,
 
-    __get_root_nodes: function() { return root_nodes; },
-    __get_selected_nodes: function() { return selected_nodes; },
+    root_nodes: function() { return root_nodes; },
+    selected_nodes: function() { return selected_nodes; },
 };
 
 });
