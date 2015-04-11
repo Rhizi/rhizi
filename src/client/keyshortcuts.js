@@ -22,8 +22,13 @@ function install() {
         if (e.altKey && e.ctrlKey && 'i' === key) {
             $('#textanalyser').focus();
         }
+        if (e.keyIdentifier === 'F6') {
+            rz_core.main_graph_view.nodes__user_visible(selection.selected_nodes(), true);
+            handled = true;
+        }
         if (e.altKey && e.ctrlKey && 'o' === key) {
             search.focus();
+            handled = true;
         }
         if (e.ctrlKey && 'a' === key && e.target === document.body) {
             selection.select_nodes(rz_core.main_graph.nodes());
