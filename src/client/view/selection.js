@@ -144,7 +144,7 @@ function byVisitors(node_selector, link_selector) {
 }
 
 function connectedComponent(nodes) {
-    var connected = get_main_graph().getConnectedNodesAndLinks(nodes, 1),
+    var connected = get_main_graph().neighbourhood(nodes, 1),
         i,
         node,
         link,

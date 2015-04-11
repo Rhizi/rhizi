@@ -234,26 +234,23 @@ function Graph(spec) {
 
     /**
      *
-     * getConnectedNodesAndLinks
+     * neighbourhood
      *
-     * @id
-     * @state - defines the starting node (must have id and state)
-     * @d - depth defining connected component. If -1 returns the entire connected component. (can be the whole graph)
-     *
-     * NOTE: chainlinks are treated specially, they don't count for distance. So all their decendants will be added.
+     * @chosen_nodes - list of starting nodes
+     * @d - radius of neighbours
      *
      * NOTE: Doesn't handle inter graph links
+     * NOTE: return doesn't include original nodes
      *
      * @return - {
      *  'node': [node]
      *  'link': [link]
      *  }
      *
-     * TODO: rewrite using efficient data structure. Right now iterates over everything
      * TODO: implement for d !== 1
      *
      */
-    this.getConnectedNodesAndLinks = function(chosen_nodes, d) {
+    this.neighbourhood = function(chosen_nodes, d) {
         var ret = {'nodes':[], 'links':[]};
 
         function addNode(node) {
@@ -262,47 +259,96 @@ function Graph(spec) {
             }
             ret.nodes.push(node);
         }
-        function same(n1, n2) {
-            // XXX: using name comparison because one of the nodes might be stale
-            return compareNames(n1.name, n2.name);
+        function get_name(node) {
+            // XXX: using lowercase name comparison instead of id because nodes may be stale
+            return node.name.toLowerCase();
         }
 
         if (chosen_nodes === undefined) {
-            console.log('getConnectedNodesAndLinks: bug: called with undefined node');
+            console.log('neighbourhood: bug: called with undefined node');
             return;
         }
-        if (d !== 1) {
-            console.log('getConnectedNodesAndLinks: bug: not implemented for d == ' + d);
+        if (d > 1) {
+            console.log('neighbourhood: bug: not implemented for d == ' + d);
+        }
+        if (d === 0) {
+            // 0 depth is empty group of nodes and links
+            return ret;
         }
         d = d || 1;
 
         if (chosen_nodes.length === undefined) {
-            console.log('getConnectedNodesAndLinks: expected array');
+            console.log('neighbourhood: expected array');
+            return ret;
         }
 
-        links_forEach(function(link) {
-            chosen_nodes.forEach(function (n) {
-                var adjacentnode;
-                if (same(link.__src, n)) {
-                    adjacentnode = find_node__by_id(link.__dst.id);
-                    addNode({type: 'exit', node: adjacentnode});
-                    ret.links.push({type: 'exit', link: link});
-                    if (link.__dst.type === "chainlink") {
-                        links_forEach(function(link2) {
-                            if (link.__dst.id === link2.__dst.id &&
-                                link2.__dst.type === "chainlink") {
-                                adjacentnode = find_node__by_id(link2.__src.id);
-                                addNode({type: 'enter', node: adjacentnode});
-                                ret.links.push({type: 'enter', link: link2});
-                            }
-                        });
-                    }
-                }
-                if (same(link.__dst, n)) {
-                    adjacentnode = find_node__by_id(link.__src.id);
-                    addNode({type: 'enter', node: adjacentnode});
-                    ret.links.push({type: 'enter', link: link});
-                }
+        function make_status(kind, node) {
+            return {node: node, kind: kind, links: [], depth: Infinity};
+        }
+
+        var nodes = get_nodes(),
+            links = get_links(),
+            neighbours = _.reduce(links, function(d, link) {
+                d[link.__src.id].src.push(link);
+                d[link.__dst.id].dst.push(link);
+                return d;
+            }, _.object(_.map(nodes, "id"),
+                        get_nodes().map(function (n) {
+                            return {node: n, src: [], dst: []};
+                        })
+                       )),
+            exit = 1,
+            enter = 2,
+            selected = 4,
+            visited = _.object(_.map(chosen_nodes, get_name),
+                               _.map(chosen_nodes, _.partial(make_status, selected)));
+
+        function visit(link, getter, kind, depth) {
+            var node = getter(link),
+                name = get_name(node),
+                data = visited[name];
+
+            if (data === undefined) {
+                data = visited[name] = make_status(0, node);
+            }
+            data.kind |= kind;
+            data.links.push({link: link, kind: kind});
+            data.depth = Math.min(data.depth, depth);
+            return data;
+        }
+
+        function kind_to_string(kind) {
+            switch (kind) {
+            case exit: return 'exit';
+            case enter: return 'enter';
+            case selected: return 'selected';
+            default:
+                // TODO: add css for both
+                return 'exit';
+            }
+        }
+
+        _.each(chosen_nodes, function (node) {
+            var N = neighbours[node.id];
+
+            _.each(N.src, function (link) {
+                visit(link, function (link) { return link.__dst; }, enter);
+            });
+            _.each(N.dst, function (link) {
+                visit(link, function (link) { return link.__src; }, exit);
+            });
+        });
+        _.values(visited).forEach(function (data) {
+            var node = data.node,
+                kind = data.kind,
+                links = data.links;
+
+            if ((kind & selected) === selected) {
+                return;
+            }
+            ret.nodes.push({type: kind_to_string(kind), node: node});
+            _.each(links, function (data) {
+                ret.links.push({link: data.link, kind: kind_to_string(kind)});
             });
         });
         return ret;
