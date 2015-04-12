@@ -91,7 +91,7 @@ class RZ_Kernel(object):
         self.rzdoc_reader_assoc_map = defaultdict(list)
         self.cache__rzdoc_name_to_rzdoc = {}
         self.should_stop = False
-        self.heartbeat_period_sec = 5
+        self.heartbeat_period_sec = 0.5
 
     def start(self):
 
