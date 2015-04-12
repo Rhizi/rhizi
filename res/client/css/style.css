@@ -1012,7 +1012,7 @@ p {
   stroke-width: 3px;
   z-index: 1; }
 
-.node.root-selected .circle {
+.node.selected .circle {
   stroke: #33c2e0;
   stroke-opacity: 1;
   stroke-width: 2px;
@@ -1035,7 +1035,7 @@ p {
   opacity: 1;
   z-index: 1; }
 
-.link.enter, .link.exit, .link.selected {
+.link.enter, .link.exit, .link.related {
   stroke: #33c2e0;
   stroke-opacity: 0.5;
   stroke-width: 2px;

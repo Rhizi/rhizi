@@ -543,12 +543,12 @@ function GraphView(spec) {
         link.attr("class", function(d, i){
                 var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && temporary) ? "temp_and" : "";
 
-                return ["graph link", temp_and, selection.selected_class__link(d, temporary)].join(' ');
+                return ["graph link", temp_and, selection.class__link(d, temporary)].join(' ');
             });
 
         link.selectAll('path.link')
             .attr('class', function(d) {
-                return [d.state || "perm", selection.selected_class__link(d, temporary), "link graph"].join(' ');
+                return [d.state || "perm", selection.class__link(d, temporary), "link graph"].join(' ');
             });
 
         link.exit().remove();
@@ -585,7 +585,7 @@ function GraphView(spec) {
                 return link_text__short(d);
             })
             .attr("class", function(d) {
-                return ["linklabel graph", selection.selected_class__link(d, temporary)].join(' ');
+                return ["linklabel graph", selection.class__link(d, temporary)].join(' ');
             });
 
         link_text.exit().remove();
@@ -604,7 +604,7 @@ function GraphView(spec) {
             .call(drag);
 
         node.attr('class', function(d) {
-                return ['node', selection.selected_class__node(d, temporary)].join(' ');
+                return ['node', selection.class__node(d, temporary)].join(' ');
             })
             .each(function (d) {
                 d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom

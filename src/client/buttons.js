@@ -250,7 +250,7 @@ $('#btn_zoom_in').asEventStream('click')
     });
 
 $('#btn_zoom_to_selection').asEventStream('click')
-    .map(selection.selected_nodes)
+    .map(selection.related)
     .onValue(function (selected) {
         rz_core.main_graph_view.nodes__user_visible(selected, true);
     });

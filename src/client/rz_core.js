@@ -72,7 +72,6 @@ var initDrawingArea = function () {
     // but there is no coordination, resulting in double updates.
     selection.selectionChangedBus.onValue(
         function() {
-            main_graph.setRegularState();
             update_view__graph(false);
         }
     );

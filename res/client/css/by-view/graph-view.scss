@@ -194,7 +194,7 @@
     z-index: 1;
 }
 
-.node.root-selected .circle {
+.node.selected .circle {
     stroke: $cyan;
     stroke-opacity: 1;
     stroke-width: 2px;
@@ -221,7 +221,7 @@
     z-index: 1;
 }
 
-.link.enter, .link.exit, .link.selected {
+.link.enter, .link.exit, .link.related {
   stroke: $cyan;
   stroke-opacity: 0.5;
   stroke-width: 2px;

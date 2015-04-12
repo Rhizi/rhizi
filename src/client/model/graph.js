@@ -236,7 +236,7 @@ function Graph(spec) {
      *
      * neighbourhood
      *
-     * @chosen_nodes - list of starting nodes
+     * @start - list of starting nodes
      * @d - radius of neighbours
      *
      * NOTE: Doesn't handle inter graph links
@@ -250,11 +250,11 @@ function Graph(spec) {
      * TODO: implement for d !== 1
      *
      */
-    this.neighbourhood = function(chosen_nodes, d) {
+    this.neighbourhood = function(start, d) {
         var ret = {'nodes':[], 'links':[]};
 
         function addNode(node) {
-            if (chosen_nodes.filter(function (n) { return n.id == node.id; }).length == 1) {
+            if (start.filter(function (n) { return n.id == node.id; }).length == 1) {
                 return;
             }
             ret.nodes.push(node);
@@ -264,7 +264,7 @@ function Graph(spec) {
             return node.name.toLowerCase();
         }
 
-        if (chosen_nodes === undefined) {
+        if (start === undefined) {
             console.log('neighbourhood: bug: called with undefined node');
             return;
         }
@@ -277,7 +277,7 @@ function Graph(spec) {
         }
         d = d || 1;
 
-        if (chosen_nodes.length === undefined) {
+        if (start.length === undefined) {
             console.log('neighbourhood: expected array');
             return ret;
         }
@@ -300,8 +300,8 @@ function Graph(spec) {
             exit = 1,
             enter = 2,
             selected = 4,
-            visited = _.object(_.map(chosen_nodes, get_name),
-                               _.map(chosen_nodes, _.partial(make_status, selected)));
+            visited = _.object(_.map(start, get_name),
+                               _.map(start, _.partial(make_status, selected)));
 
         function visit(link, getter, kind, depth) {
             var node = getter(link),
@@ -328,7 +328,7 @@ function Graph(spec) {
             }
         }
 
-        _.each(chosen_nodes, function (node) {
+        _.each(start, function (node) {
             var N = neighbours[node.id];
 
             _.each(N.src, function (link) {
@@ -1155,26 +1155,6 @@ function Graph(spec) {
         return cached_links;
     };
     this.links = get_links;
-
-    function setRegularState() {
-        var x, node, link, s;
-
-        for (x in id_to_node_map) {
-            node = id_to_node_map[x];
-            s = node.state;
-            if (s === 'chosen' || s === 'enter' || s === 'exit') {
-                node.state = 'perm';
-            }
-        }
-        for (x in id_to_link_map) {
-            link = id_to_link_map[x];
-            s = link.state;
-            if (s === 'chosen' || s === 'enter' || s === 'exit') {
-                link.state = 'perm';
-            }
-        }
-    }
-    this.setRegularState = setRegularState;
 
     this.find__by_visitors = function(node_visitor, link_visitor) {
         var nodes = get_nodes(),
