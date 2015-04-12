@@ -15,12 +15,13 @@ function Graph(spec) {
         id_to_link_id_set,
         diffBus = new Bacon.Bus(),
         cached_links,
-        invalidate_links,
+        invalidate_links = true,
         cached_nodes,
-        invalidate_nodes,
+        invalidate_nodes = true,
         temporary = spec.temporary,
         base = spec.base,
-        server_pending_objects = [];
+        server_pending_objects = [],
+        filtered_types = {}; // set of node types not to show
 
     this.temporary = temporary;
     this.base = base;
@@ -1152,7 +1153,9 @@ function Graph(spec) {
 
     var get_nodes = function() {
         if (cached_nodes === undefined || invalidate_nodes) {
-            cached_nodes = _.values(id_to_node_map);
+            cached_nodes = _.filter(id_to_node_map, function (node, node_id) {
+                return filtered_types[node.type] === undefined;
+            });
             invalidate_nodes = false;
         }
         return cached_nodes;
@@ -1161,7 +1164,10 @@ function Graph(spec) {
 
     var get_links = function() {
         if (cached_links === undefined || invalidate_links) {
-            cached_links = _.values(id_to_link_map);
+            cached_links = _.filter(id_to_link_map, function (link, link_id) {
+                return filtered_types[link.__src.type] === undefined &&
+                       filtered_types[link.__dst.type] === undefined;
+            });
             invalidate_links = false;
         }
         return cached_links;
@@ -1204,6 +1210,11 @@ function Graph(spec) {
         });
     }
     this.removeRelated = removeRelated;
+    this.node__set_filtered_types = function (new_filtered_types) {
+        filtered_types = new_filtered_types;
+        invalidate_links = true;
+        invalidate_nodes = true;
+    }
 }
 
 function is_node(item)
