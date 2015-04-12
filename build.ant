@@ -106,7 +106,7 @@
 
       <parallel>
 
-         <!-- code-->
+         <!-- code -->
          <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
          <symlink action="single"
                   overwrite="true"
@@ -117,7 +117,7 @@
          <copy file="res/etc/rhizi-server.conf"
                tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
 
-         <!-- res-->
+         <!-- res -->
          <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
          <rsync src="res/templates/" dst="${targetDeploymentDir}/templates/" />
 
@@ -130,9 +130,8 @@
          <copy file="src/local/domain/${targetDomain}/domain_types.js"
                tofile="${targetDeploymentDir}/static/model/domain_types.js" />
          <copy todir="${targetDeploymentDir}/templates/fragment"
-               failonerror="false">
-            <fileset dir="res/local/template/fragment/by-domain/${targetDomain}"
-                     includes="*" />
+               overwrite="true">
+            <fileset dir="res/local/template/fragment/by-domain/${targetDomain}" />
          </copy>
 
           <!-- tools. use cp to preserve permissions (copy doesn't).
