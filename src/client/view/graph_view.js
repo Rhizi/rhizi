@@ -1240,6 +1240,7 @@ function GraphView(spec) {
             .on("end", record_position_to_local_storage)
             .nodes_links(nodes__visible(), links__visible())
             .restore()
+            .zen_mode(zen_mode)
             .start();
     }
 
@@ -1262,13 +1263,17 @@ function GraphView(spec) {
 
     gv.link__pass_filter = link__pass_filter;
     gv.node__pass_filter = node__pass_filter;
-    gv.zen_mode__toggle = function () {
-        zen_mode = !zen_mode;
+    function zen_mode__set(value) {
+        zen_mode = value;
+        layout.zen_mode(value);
         update_view(true);
     }
+    gv.zen_mode__set = zen_mode__set;
+    gv.zen_mode__toggle = function () {
+        zen_mode__set(!zen_mode);
+    }
     gv.zen_mode__cancel = function () {
-        zen_mode = false;
-        update_view(true);
+        zen_mode__set(false);
     }
     return gv;
 }

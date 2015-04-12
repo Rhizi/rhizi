@@ -100,13 +100,25 @@ function(consts,   $,        d3,   _) {
         return layout__empty(graph, d3.layout.force())
                   .distance(240)
                   .gravity(0.12)
-                  .charge(-1800)
-                  .linkDistance(function (link) {
+                  .charge(-1800);
+    }
+
+    function layout__d3_force__link_distance(graph) {
+        var ret = layout__d3_force(graph);
+        ret.zen_mode = function (zen_mode) {
+            if (zen_mode) {
+                ret.distance(240)
+            } else {
+                ret.linkDistance(function (link) {
                     var d_src = graph.degree(link.__src),
                         d_dst = graph.degree(link.__dst),
                         ret = (d_src + d_dst) * 10 + 10;
                     return ret;
                   });
+            }
+            return ret;
+        }
+        return ret;
     }
 
     function layout__cola(graph) {
@@ -196,6 +208,8 @@ function(consts,   $,        d3,   _) {
                     layout.nodes(nodes);
                     return layout.links(links);
                 },
+                // zen_mode callback - to change layout based on it.
+                zen_mode: donothing,
                 // data
                 graph: graph,
                 _nodes: [],
@@ -349,7 +363,7 @@ function(consts,   $,        d3,   _) {
     var layouts = [
         {
             name: 'Force',
-            create: layout__d3_force,
+            create: layout__d3_force__link_distance,
             clazz: 'btn_layout_d3_force'
         },
         {
@@ -357,6 +371,13 @@ function(consts,   $,        d3,   _) {
             create: layout__concentric,
             clazz: 'btn_layout_concentric'
         },
+        /*
+        {
+            name: 'Force',
+            create: layout__d3_force,
+            clazz: 'btn_layout_d3_force'
+        },
+        */
         /*
         {
             name: 'STP-BFS',
