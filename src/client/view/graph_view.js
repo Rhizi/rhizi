@@ -433,7 +433,10 @@ function GraphView(spec) {
         function node_text_setup() {
             var node_text;
 
-            node_text = set_data_by_id(vis.selectAll("g.nodetext"), visible_nodes);
+            node_text = vis.selectAll("g.nodetext")
+                .data(visible_nodes, function (d) {
+                        return text_node_id(d.id);
+                    });
             node_text.enter().insert('g')
                 .attr('id', function (d) { return text_node_id(d.id); })
                 .attr("class", "nodetext graph")
@@ -1053,18 +1056,10 @@ function GraphView(spec) {
      * bubble animation.
      */
     function tick(e) {
-        var visible_nodes = nodes__visible(),
-            visible_links = links__visible(),
-            node = vis.selectAll(".node")
-            .data(visible_nodes, function(d) {
-                return d.id;
-            }),
-            link = vis.selectAll("path.link")
-            .data(visible_links, function(d) {
-                return d.id;
-            }),
-            link_text = vis.selectAll(".linklabel").data(visible_links),
-            node_text = vis.selectAll("g.nodetext").data(visible_nodes),
+        var node = vis.selectAll(".node"),
+            link = vis.selectAll("path.link"),
+            link_text = vis.selectAll(".linklabel"),
+            node_text = vis.selectAll("g.nodetext"),
             bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
 
         if (temporary) {
@@ -1073,7 +1068,7 @@ function GraphView(spec) {
         }
 
         // XXX This computes every node ignoring filter.
-        visible_nodes.forEach(function (d) {
+        node.each(function (d) {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
             }
