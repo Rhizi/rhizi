@@ -1150,17 +1150,9 @@ function Graph(spec) {
 
     this.clear_history = clear_history;
 
-    var object_values = function (obj) {
-        var values = [];
-        for (var o in obj) {
-            values.push(obj[o]);
-        }
-        return values;
-    }
-
     var get_nodes = function() {
         if (cached_nodes === undefined || invalidate_nodes) {
-            cached_nodes = object_values(id_to_node_map);
+            cached_nodes = _.values(id_to_node_map);
             invalidate_nodes = false;
         }
         return cached_nodes;
@@ -1169,7 +1161,7 @@ function Graph(spec) {
 
     var get_links = function() {
         if (cached_links === undefined || invalidate_links) {
-            cached_links = object_values(id_to_link_map);
+            cached_links = _.values(id_to_link_map);
             invalidate_links = false;
         }
         return cached_links;
