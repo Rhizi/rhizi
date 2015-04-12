@@ -42,7 +42,7 @@ class RZDoc_Reader_Association:
         self.rzdoc = None
         self.socket = None
         self.err_count__IO = 0  # allow n IO errors before disconnecting reader
-        self.mark__expired = False
+        self.mark__invalid = False  # set upon rzdoc deletion
 
     def __eq__(self, other):
         if not isinstance(other, RZDoc_Reader_Association): return False
@@ -104,11 +104,19 @@ class RZ_Kernel(object):
 
                 for rzdoc, r_assoc_set in self.rzdoc_reader_assoc_map.items():
                     for r_assoc in r_assoc_set:
+
+                        if r_assoc.mark__invalid:  # remove expired associations
+                            r_assoc_set.remove(r_assoc)
+                            log.debug('rz_kernel: removing invalid reader association: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr, rzdoc.name))
+
                         if r_assoc.err_count__IO > 3:
                             r_assoc_set.remove(r_assoc)
-                            log.info('rz_kernel: evicting reader: IO error count exceeded limit: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr,
-                                                                                                                                rzdoc.name))
-                time.sleep(self.heartbeat_period_sec)
+                            log.debug('rz_kernel: evicting reader: IO error count exceeded limit: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr, rzdoc.name))
+
+                for i in xrange(self.heartbeat_period_sec * 2):
+                    if False == self.should_stop:
+                        return;
+                    time.sleep(0.5)
 
         self.executor = ThreadPoolExecutor(max_workers=8)
         self.executor.submit(kernel_heartbeat)
@@ -123,6 +131,7 @@ class RZ_Kernel(object):
         """
         lookup RZDoc by rzdoc_name, possibly triggering a DB query
 
+        @return: RZDoc
         @raise RZDoc_Exception__not_found
         """
         # FIXME: impl cache cleansing logic
@@ -275,10 +284,12 @@ class RZ_Kernel(object):
         op = DBO_rzdoc__delete(rzdoc)
         self.db_ctl.exec_op(op)
 
+        for r_assoc in self.rzdoc_reader_assoc_map[rzdoc]:
+            r_assoc.mark__invalid = True
+
         # FIXME:
         #    - broadcast delete event
         #    - clear cache mapping entry
-        #    - unsubscribe all rzdoc readers
 
     def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
         """
