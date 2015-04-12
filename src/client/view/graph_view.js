@@ -155,6 +155,7 @@ function GraphView(spec) {
         vis,
         deliverables,
         filter_states,
+        zen_mode = false,
         // FIXME - want to use parent_element
         w,
         h,
@@ -181,14 +182,14 @@ function GraphView(spec) {
     $(window).asEventStream('resize').map(update_window_size).onValue(function () { update_view(false); });
     update_window_size();
 
-    function node__is_shown(d) {
+    function node__pass_filter(d) {
         var state = filter_states && filter_states[d.type];
 
         return temporary || state === undefined || state;
     }
 
-    function link__is_shown(d) {
-        return node__is_shown(d.__src) && node__is_shown(d.__dst);
+    function link__pass_filter(d) {
+        return node__pass_filter(d.__src) && node__pass_filter(d.__dst);
     }
 
 
@@ -382,12 +383,20 @@ function GraphView(spec) {
         return urlValid(d) && image_endings[d.url.slice(d.url.lastIndexOf('.') + 1)] !== undefined;
     };
 
+    function nodes__filtered() {
+        return graph.nodes().filter(node__pass_filter);
+    }
+
     function nodes__visible() {
-        return graph.nodes().filter(node__is_shown);
+        return zen_mode ? selection.related() : nodes__filtered();
+    }
+
+    function links__filtered() {
+        return graph.links().filter(link__pass_filter);
     }
 
     function links__visible() {
-        return graph.links().filter(link__is_shown);
+        return zen_mode ? graph.find_links__by_nodes(selection.related()) : links__filtered();
     }
 
     function update_view(relayout) {
@@ -1256,6 +1265,17 @@ function GraphView(spec) {
         zoomInProgress = val;
         tick();
     });
+
+    gv.link__pass_filter = link__pass_filter;
+    gv.node__pass_filter = node__pass_filter;
+    gv.zen_mode__toggle = function () {
+        zen_mode = !zen_mode;
+        update_view(true);
+    }
+    gv.zen_mode__cancel = function () {
+        zen_mode = false;
+        update_view(true);
+    }
     return gv;
 }
 

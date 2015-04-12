@@ -43,6 +43,7 @@ function svg_click_handler(e) {
     selection.clear();
     item_info.hide(false);
     filter_menu.hide();
+    main_graph_view.zen_mode__cancel();
     main_graph_view.hide_layout_menu();
     update_view__graph(false);
 }

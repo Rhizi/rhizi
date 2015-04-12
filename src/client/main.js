@@ -44,7 +44,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
         textanalysis.init(rz_core.main_graph);
         search.init();
         filter_menu.init();
-        selection.setup_toolbar(rz_core.main_graph);
+        selection.setup_toolbar(rz_core.main_graph, rz_core.main_graph_view);
         $.feedback({ajaxURL: rz_config.feedback_url});
         fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit();
 

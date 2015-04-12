@@ -1,5 +1,5 @@
-define(['Bacon', 'jquery', 'underscore', 'messages'],
-function(Bacon,           $,        _,    messages) {
+define(['Bacon', 'jquery', 'underscore', 'messages', 'util'],
+function(Bacon,           $,        _,    messages,   util) {
 
 var rz_core, // circular dependency, see get_rz_core
     selection_count_element = $('#selection-count');
@@ -122,15 +122,20 @@ function _type_to_state(type) {
 }
 
 function _select_nodes_helper(nodes, connected) {
-    _.each(connected.nodes, function (data) {
+    var main_graph_view = get_main_graph_view();
+
+    _.each(connected.nodes.filter(function (data) {
+        return main_graph_view.node__pass_filter(data.node);
+    }), function (data) {
         data.node.state = _type_to_state(data.type);
     });
-    _.each(connected.links, function (data) {
+    _.each(connected.links.filter(function (data) {
+        return main_graph_view.link__pass_filter(data.link);
+    }), function (data) {
         data.link.state = _type_to_state(data.type);
     });
     nodes.forEach(function (n) { n.state = 'selected'; });
     return connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
-
 }
 
 function mutual_neighbours(nodes) {
@@ -140,8 +145,7 @@ function mutual_neighbours(nodes) {
     connected.nodes = connected.nodes.filter(function (data) {
         return _.size(data.sources) > 1;
     });
-    ids = _.object(_.map(connected.nodes, function (data) { return data.node.id; }),
-                   _.map(connected.nodes, function () { return true; }));
+    ids = util.set_from_array(_.map(connected.nodes, function (data) { return data.node.id; }));
     connected.links = connected.links.filter(function (data) {
         return ids[data.link.__src.id] || ids[data.link.__dst.id];
     });
@@ -260,7 +264,7 @@ var invert_nodes = function(nodes)
     select_nodes(invert(selected, nodes));
 }
 
-var setup_toolbar = function(main_graph)
+var setup_toolbar = function(main_graph, main_graph_view)
 {
     var merge_selection = function() {
             main_graph.nodes__merge(selected_ids());
@@ -278,21 +282,34 @@ var setup_toolbar = function(main_graph)
         merge_btn = $('#btn_merge'),
         delete_btn = $('#btn_delete'),
         link_fan_btn = $('#btn_link_fan'),
+        zen_mode_btn = $('#btn_zen_mode'),
         multiple_node_operations = $('#tool-bar-multiple-node-operations');
 
     merge_btn.asEventStream('click').onValue(merge_selection);
     delete_btn.asEventStream('click').onValue(delete_selection);
     link_fan_btn.asEventStream('click').onValue(link_fan_selection);
 
+    function show(e, visible) {
+        if (visible) {
+            e.show();
+        } else {
+            e.hide();
+        }
+    }
+
     selectionChangedBus.map(function (selection) { return selection.selected.length > 1; })
         .skipDuplicates()
         .onValue(function (visible) {
-            if (visible) {
-                multiple_node_operations.show();
-            } else {
-                multiple_node_operations.hide();
-            }
+            show(multiple_node_operations, visible);
         });
+
+    selectionChangedBus.map(function (selection) { return selection.selected.length > 0; })
+        .skipDuplicates()
+        .onValue(function (visible) {
+            show(zen_mode_btn, visible);
+        });
+
+    zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
 }
 
 var is_empty = function() {
