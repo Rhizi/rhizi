@@ -382,6 +382,14 @@ function GraphView(spec) {
         return urlValid(d) && image_endings[d.url.slice(d.url.lastIndexOf('.') + 1)] !== undefined;
     };
 
+    function nodes__visible() {
+        return graph.nodes().filter(node__is_shown);
+    }
+
+    function links__visible() {
+        return graph.links().filter(link__is_shown);
+    }
+
     function update_view(relayout) {
         var node,
             link,
@@ -391,7 +399,15 @@ function GraphView(spec) {
             unselected_selector = '#' + graph_name + ' #link-group',
             selected_selector = '#' + graph_name + ' #selected-link-group',
             unselected_link_group = document.querySelector(unselected_selector),
-            selected_link_group = document.querySelector(selected_selector);
+            selected_link_group = document.querySelector(selected_selector),
+            visible_nodes = nodes__visible(),
+            visible_links = links__visible();
+
+        function set_data_by_id(d3e, data) {
+            return d3e.data(data, function (d) {
+                return d.id;
+            });
+        }
 
         var nodeTextX = function(d) {
             return urlValid(d) ? node_text_dx + node_url_dx : node_text_dx;
@@ -408,10 +424,7 @@ function GraphView(spec) {
         function node_text_setup() {
             var node_text;
 
-            node_text = vis.selectAll("g.nodetext")
-                .data(graph.nodes(), function(d) {
-                    return d.id;
-                });
+            node_text = set_data_by_id(vis.selectAll("g.nodetext"), visible_nodes);
             node_text.enter().insert('g')
                 .attr('id', function (d) { return text_node_id(d.id); })
                 .attr("class", "nodetext graph")
@@ -469,8 +482,7 @@ function GraphView(spec) {
 
         relayout = (relayout === undefined && true) || relayout;
 
-        link = d3.select(unselected_link_group).selectAll("g.link")
-            .data(graph.links(), function(d) { return d.id; });
+        link = set_data_by_id(d3.select(unselected_link_group).selectAll("g.link"), visible_links);
 
         // link group - container for paths. Created after text so it is above (see z-order for SVG 1.1)
         link_g = link.enter()
@@ -553,8 +565,7 @@ function GraphView(spec) {
 
         link.exit().remove();
 
-        vis.selectAll('g.link')
-            .data(graph.links())
+        set_data_by_id(vis.selectAll('g.link'), visible_links)
             .each(function (d) {
                 this.link = d;
             });
@@ -568,8 +579,7 @@ function GraphView(spec) {
             return name.substring(0, consts.link_text_short_length) + "...";
         }
 
-        link_text = vis.selectAll(".linklabel")
-            .data(graph.links(), function(d) { return d.id; });
+        link_text = set_data_by_id(vis.selectAll(".linklabel"), visible_links);
 
         link_text
             .text(function(d) {
@@ -590,17 +600,13 @@ function GraphView(spec) {
 
         link_text.exit().remove();
 
-        node = vis.selectAll(".node")
-            .data(graph.nodes(), function(d) {
-                return d.id;
-            });
+        node = set_data_by_id(vis.selectAll(".node"), visible_nodes);
 
         node_text_setup();
 
         var nodeEnter = node.enter()
             .append("g")
             .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
-            .attr('display', 'none') // made visible on first tick
             .call(drag);
 
         node.attr('class', function(d) {
@@ -743,10 +749,7 @@ function GraphView(spec) {
     }
 
     function layout__load_graph() {
-        var nodes_subset = graph.nodes().filter(node__is_shown),
-            links_subset = graph.links().filter(link__is_shown);
-
-        layout.nodes_links(nodes_subset, links_subset);
+        layout.nodes_links(nodes__visible(), links__visible());
     }
 
     function segment_in_segment(inner_low, inner_high, outer_low, outer_high)
@@ -1039,17 +1042,19 @@ function GraphView(spec) {
      * bubble animation.
      */
     function tick(e) {
-        var node = vis.selectAll(".node")
-            .data(graph.nodes(), function(d) {
+        var visible_nodes = nodes__visible(),
+            visible_links = links__visible(),
+            node = vis.selectAll(".node")
+            .data(visible_nodes, function(d) {
                 return d.id;
-            });
-        var link = vis.selectAll("path.link")
-            .data(graph.links(), function(d) {
+            }),
+            link = vis.selectAll("path.link")
+            .data(visible_links, function(d) {
                 return d.id;
-            });
-        var link_text = vis.selectAll(".linklabel").data(graph.links());
-        var node_text = vis.selectAll("g.nodetext").data(graph.nodes());
-        var bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
+            }),
+            link_text = vis.selectAll(".linklabel").data(visible_links),
+            node_text = vis.selectAll("g.nodetext").data(visible_nodes),
+            bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
 
         if (temporary) {
             // XXX convert to a layout
@@ -1057,7 +1062,7 @@ function GraphView(spec) {
         }
 
         // XXX This computes every node ignoring filter.
-        graph.nodes().forEach(function (d) {
+        visible_nodes.forEach(function (d) {
             if (check_for_nan(d.x) || check_for_nan(d.y)) {
                 return;
             }
@@ -1119,18 +1124,6 @@ function GraphView(spec) {
                 return b.py == a.py ? (b.px == a.px ? 0 : (b.px > a.px ? -1 : 1)) : (b.py > a.py ? -1 : 1);
             })
             .attr('tabindex', function(d, i) { return i + 100; });
-
-        // After initial placement we can make the nodes visible.
-        [node, node_text].forEach(function (list) {
-            list.attr('display', function (d, i) {
-                return node__is_shown(d) ? '' : 'none';
-            });
-        });
-        [link, link_text].forEach(function (list) {
-            link.attr('display', function (d, i) {
-                return link__is_shown(d) ? '' : 'none';
-            });
-        });
     }
 
     // SVG rendering order is last rendered on top, so to make sure
@@ -1242,7 +1235,7 @@ function GraphView(spec) {
             .size([w, h])
             .on("tick", pushRedraw)
             .on("end", record_position_to_local_storage)
-            .nodes_links(graph.nodes(), graph.links())
+            .nodes_links(nodes__visible(), links__visible())
             .restore()
             .start();
     }
