@@ -990,11 +990,8 @@ p {
 .circle.empty {
   fill: #919095; }
 
-.circle.need {
-  fill: #ee3654; }
-
 .circle.project {
-  fill: #fad900; }
+  fill: #ee3654; }
 
 .circle.keyword {
   fill: #8b3ab0; }
