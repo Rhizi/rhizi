@@ -255,12 +255,6 @@ class RZ_Kernel(object):
         rzdoc = self.db_ctl.exec_op(op)
         return rzdoc  # may be None
 
-    def rzdoc__lookup_by_name_with_cache(self, rzdoc_name):
-        cache_doc = self.cache__rzdoc_name_to_rzdoc.get(rzdoc_name)
-        if None != cache_doc:
-            return cache_doc
-        return self.rzdoc__lookup_by_name(rzdoc_name)
-
     def rzdoc__create(self, rzdoc_name, ctx=None):
         """
         Create & persist new RZDoc - may fail on unique name/id constraint violation
@@ -268,8 +262,10 @@ class RZ_Kernel(object):
         @return: RZDoc object
         @raise RZDoc_Exception__already_exists
         """
-        if None != self.rzdoc__lookup_by_name_with_cache(rzdoc_name):
+        try:
+            self.cache_lookup__rzdoc(rzdoc_name)
             raise RZDoc_Exception__already_exists(rzdoc_name)
+        except RZDoc_Exception__not_found: pass
 
         rzdoc = RZDoc(rzdoc_name)
         rzdoc.id = neo4j_util.generate_random_rzdoc_id()
