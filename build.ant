@@ -95,7 +95,7 @@
                tofile="res/etc/rhizi-server.conf" />
          <copy todir="${targetDeploymentDir}/templates/fragment"
                failonerror="false">
-            <fileset dir="res/local/template/fragment/by-domain/${targetDomain}"
+            <fileset dir="res/local/template/fragment/by-domain/${defaultDomain}"
                      includes="*" />
          </copy>
       </parallel>
