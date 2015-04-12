@@ -1,7 +1,8 @@
 define(['Bacon', 'jquery', 'underscore', 'messages'],
 function(Bacon,           $,        _,    messages) {
 
-var rz_core; // circular dependency, see get_rz_core
+var rz_core, // circular dependency, see get_rz_core
+    selection_count_element = $('#selection-count');
 
 function list_from_list_like(list_like)
 {
@@ -115,6 +116,7 @@ function updateSelectedNodesBus(nodes, new_selected_nodes)
     root_nodes__by_id = nodes_to_id_dict(nodes);
     selected_nodes = new_selected_nodes;
     selected_nodes__by_id = nodes_to_id_dict(selected_nodes);
+    selection_count_element.text(selected_nodes.length > 0 ? '' + nodes.length + ', ' + selected_nodes.length : '');
     selectionChangedBus.push(new_selection(selected_nodes, root_nodes));
 }
 
