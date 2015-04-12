@@ -714,6 +714,15 @@ function Graph(spec) {
         }
     }
 
+    var find_links__by_nodes = function(nodes) {
+        var ids = util.set_from_array(_.pluck(nodes, "id"));
+
+        return get_links().filter(function (link) {
+            return ids[link.__src.id] && ids[link.__dst.id];
+        });
+    }
+    this.find_links__by_nodes = find_links__by_nodes;
+
     var find_links__by_state = function(state) {
         var foundLinks = [];
         links_forEach(function (link) {
