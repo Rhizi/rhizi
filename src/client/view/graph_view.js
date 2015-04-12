@@ -450,7 +450,6 @@ function GraphView(spec) {
                     d3.event.stopPropagation();
                 })
                 .insert("text")
-                .attr("class", "nodetext graph")
                 .attr("dy", node_text_dy);
             node_text.exit().remove();
             var nodeText = function(d) {
@@ -471,6 +470,9 @@ function GraphView(spec) {
             };
             node_text.select('text').text(nodeText)
                 .attr("dx", nodeTextX);
+            node_text.attr('class', function(d) {
+                    return ['nodetext graph', selection.class__node(d, temporary)].join(' ');
+                });
         }
 
         var link_on_hover = function (d, debug_name) {
