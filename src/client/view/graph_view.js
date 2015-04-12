@@ -55,7 +55,7 @@ function enableDebugViewOfDiffs(graph)
     });
 }
 
-function init_checkboxes(update_view) {
+function init_checkboxes(graph, update_view) {
     var // FIXME take filter names from index.html or both from graph db
         filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
 
@@ -90,23 +90,36 @@ function init_checkboxes(update_view) {
             }
             filter_states[name] = value;
         }
-    }
-
-    function redraw__set_on_checkbox_change()
-    {
-        $(function () {
-            var checkboxes = $('#menu__type-filter').on('click', function (e) {
-                e.stopPropagation();
-                read_checkboxes();
-                console.log(filter_states);
-                update_view(true);
-            });
-        });
+        return filter_states;
     }
 
     create_checkboxes();
     read_checkboxes();
-    redraw__set_on_checkbox_change();
+    function filtered_states() {
+        var o = read_checkboxes(),
+            ret = {};
+
+        _.each(_.keys(o), function(type) {
+            if (!o[type]) {
+                ret[type] = 1;
+            }
+        });
+        return ret;
+    }
+    //$('.menu__type-filter_item,.menu__type-filter_item input')
+    $('#menu__type-filter')
+        .asEventStream('click')
+        .doAction(function (e) {
+            var inp = $(e.target).find('input')[0];
+            inp.checked = !inp.checked;
+            e.stopPropagation();
+            e.preventDefault();
+        })
+        .map(read_checkboxes)
+        .onValue(function (filter_states) {
+            graph.node__set_filtered_types(filtered_states());
+            update_view(true);
+        })
 
     return filter_states;
 }
@@ -195,7 +208,7 @@ function GraphView(spec) {
 
     // Filter. FIXME: move away from here. separate element, connected via bacon property
     if (!temporary) {
-        filter_states = init_checkboxes(update_view);
+        filter_states = init_checkboxes(graph, update_view);
     }
 
     function range(start, end, number) {
