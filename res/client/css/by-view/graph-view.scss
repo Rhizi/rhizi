@@ -164,12 +164,9 @@
 }
 
 // TODO: how to define type colors using the scss dollar attributes? injecting css is easy, scss - not sure
-.circle.need {
-  fill: $magenta;
-}
 
 .circle.project {
-  fill: $yellow;
+  fill: $magenta;
 }
 
 .circle.keyword {

@@ -22,8 +22,8 @@ define({
             'title': 'Idea',
             'attributes': ['description', 'url'],
         }],
-        ['need', {
-            'title': 'Need',
+        ['skill', {
+            'title': 'Skill',
             'attributes': ['description', 'url'],
         }],
         ['resource', {
