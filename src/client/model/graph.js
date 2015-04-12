@@ -243,9 +243,15 @@ function Graph(spec) {
      * NOTE: return doesn't include original nodes
      *
      * @return - {
-     *  'node': [node]
-     *  'link': [link]
+     *  'nodes': [{
+     *      node: node,
+     *      kind: kind,
+     *      sources: {node_id: true}
+     *   }]
+     *  'links: [{link: link, kind: kind}]
      *  }
+     *
+     * kind: exit/enter
      *
      * TODO: implement for d !== 1
      *
@@ -283,7 +289,7 @@ function Graph(spec) {
         }
 
         function make_status(kind, node) {
-            return {node: node, kind: kind, links: [], depth: Infinity};
+            return {node: node, kind: kind, links: [], depth: Infinity, sources: {}};
         }
 
         var nodes = get_nodes(),
@@ -303,7 +309,7 @@ function Graph(spec) {
             visited = _.object(_.map(start, get_name),
                                _.map(start, _.partial(make_status, selected)));
 
-        function visit(link, getter, kind, depth) {
+        function visit(source, link, getter, kind, depth) {
             var node = getter(link),
                 name = get_name(node),
                 data = visited[name];
@@ -314,6 +320,7 @@ function Graph(spec) {
             data.kind |= kind;
             data.links.push({link: link, kind: kind});
             data.depth = Math.min(data.depth, depth);
+            data.sources[source.id] = true;
             return data;
         }
 
@@ -332,10 +339,10 @@ function Graph(spec) {
             var N = neighbours[node.id];
 
             _.each(N.src, function (link) {
-                visit(link, function (link) { return link.__dst; }, enter);
+                visit(node, link, function (link) { return link.__dst; }, enter);
             });
             _.each(N.dst, function (link) {
-                visit(link, function (link) { return link.__src; }, exit);
+                visit(node, link, function (link) { return link.__src; }, exit);
             });
         });
         _.values(visited).forEach(function (data) {
@@ -346,7 +353,7 @@ function Graph(spec) {
             if ((kind & selected) === selected) {
                 return;
             }
-            ret.nodes.push({type: kind_to_string(kind), node: node});
+            ret.nodes.push({type: kind_to_string(kind), node: node, sources: data.sources});
             _.each(links, function (data) {
                 ret.links.push({link: data.link, kind: kind_to_string(kind)});
             });

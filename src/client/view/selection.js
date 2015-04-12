@@ -109,40 +109,55 @@ function byVisitors(node_selector, link_selector) {
     inner_select_nodes(sum_nodes(new_selection.nodes, links_to_nodes(new_selection.links)));
 }
 
-function connectedComponent(nodes) {
-    var connected = get_main_graph().neighbourhood(nodes, 1),
-        i,
-        node,
-        link,
-        data;
+function _type_to_state(type) {
+    switch (type) {
+    case 'exit':
+        return 'exit';
+        break;
+    case 'enter':
+        return 'enter';
+        break;
+    }
+    return '';
+}
 
-    for (i = 0 ; i < connected.nodes.length ; ++i) {
-        data = connected.nodes[i];
-        node = data.node;
-        switch (data.type) {
-        case 'exit':
-            node.state = 'exit';
-            break;
-        case 'enter':
-            node.state = 'enter';
-            break;
-        };
-    }
-    for (i = 0 ; i < connected.links.length ; ++i) {
-        data = connected.links[i];
-        link = data.link;
-        switch (data.type) {
-        case 'exit':
-            link.state = 'exit';
-            break;
-        case 'enter':
-            link.state = 'enter';
-            break;
-        };
-    }
-    // XXX side effect, should not be here
+function _select_nodes_helper(nodes, connected) {
+    _.each(connected.nodes, function (data) {
+        data.node.state = _type_to_state(data.type);
+    });
+    _.each(connected.links, function (data) {
+        data.link.state = _type_to_state(data.type);
+    });
     nodes.forEach(function (n) { n.state = 'selected'; });
     return connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
+
+}
+
+function mutual_neighbours(nodes) {
+    var connected = get_main_graph().neighbourhood(nodes, 1),
+        ids;
+
+    connected.nodes = connected.nodes.filter(function (data) {
+        return _.size(data.sources) > 1;
+    });
+    ids = _.object(_.map(connected.nodes, function (data) { return data.node.id; }),
+                   _.map(connected.nodes, function () { return true; }));
+    connected.links = connected.links.filter(function (data) {
+        return ids[data.link.__src.id] || ids[data.link.__dst.id];
+    });
+    return _select_nodes_helper(nodes, connected);
+}
+
+/**
+ * neighbours(nodes)
+ *
+ * set state of graph nodes and links that are neighbours of the nodes,
+ * and the nodes themselves.
+ */
+function neighbours(nodes) {
+    var connected = get_main_graph().neighbourhood(nodes, 1);
+
+    return _select_nodes_helper(nodes, connected);
 }
 
 var node_related = function(node) {
@@ -192,7 +207,7 @@ function arr_compare(a1, a2)
 
 var inner_select_nodes = function(nodes)
 {
-    inner_select(nodes, connectedComponent(nodes));
+    inner_select(nodes, nodes.length == 1 ? neighbours(nodes) : mutual_neighbours(nodes));
 }
 
 var select_nodes = function(nodes)
@@ -289,7 +304,6 @@ clear();
 
 return {
     byVisitors: byVisitors,
-    connectedComponent: connectedComponent,
     is_empty: is_empty,
     clear: clear,
     select_nodes: select_nodes,
