@@ -433,10 +433,7 @@ function GraphView(spec) {
         function node_text_setup() {
             var node_text;
 
-            node_text = vis.selectAll("g.nodetext")
-                .data(visible_nodes, function (d) {
-                        return text_node_id(d.id);
-                    });
+            node_text = set_data_by_id(vis.selectAll("g.nodetext"), visible_nodes);
             node_text.enter().insert('g')
                 .attr('id', function (d) { return text_node_id(d.id); })
                 .attr("class", "nodetext graph")
