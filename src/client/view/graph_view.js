@@ -109,14 +109,14 @@ function init_checkboxes(graph, update_view) {
     //$('.menu__type-filter_item,.menu__type-filter_item input')
     $('#menu__type-filter')
         .asEventStream('click')
-        .doAction(function (e) {
+        .onValue(function (e) {
             var inp = $(e.target).find('input')[0];
-            inp.checked = !inp.checked;
+
+            if (inp && inp.checked !== undefined) {
+                inp.checked = !inp.checked;
+                e.preventDefault();
+            }
             e.stopPropagation();
-            e.preventDefault();
-        })
-        .map(read_checkboxes)
-        .onValue(function (filter_states) {
             graph.node__set_filtered_types(filtered_states());
             update_view(true);
         })
