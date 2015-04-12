@@ -1009,7 +1009,7 @@ function GraphView(spec) {
     }
 
     function handle_space(e, node) {
-        (e.shiftKey? selection.invert : selection.update)([node]);
+        (e.shiftKey? selection.invert_nodes : selection.select_nodes)([node]);
     }
 
     function handle_enter(e, node) {
