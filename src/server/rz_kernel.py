@@ -243,18 +243,6 @@ class RZ_Kernel(object):
         topo_diff = self.db_ctl.exec_op(op)
         return topo_diff
 
-    def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
-        """
-        @param ctx: may be None
-
-        @return: RZDoc object or None if rzdoc was not found
-        """
-
-        op = DBO_rzdoc__lookup_by_name(rzdoc_name)
-
-        rzdoc = self.db_ctl.exec_op(op)
-        return rzdoc  # may be None
-
     def rzdoc__create(self, rzdoc_name, ctx=None):
         """
         Create & persist new RZDoc - may fail on unique name/id constraint violation
@@ -292,15 +280,17 @@ class RZ_Kernel(object):
         #    - clear cache mapping entry
         #    - unsubscribe all rzdoc readers
 
-    def rzdoc__rename(self, cur_name, new_name):
-        op = DBO_rzdoc__rename(cur_name, new_name)
+    def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
+        """
+        @param ctx: may be None
+
+        @return: RZDoc object or None if rzdoc was not found
+        """
+
+        op = DBO_rzdoc__lookup_by_name(rzdoc_name)
 
         rzdoc = self.db_ctl.exec_op(op)
         return rzdoc  # may be None
-        # FIXME:
-        #    - broadcast rename event
-        #    - update cache mapping entry
-        #    - notify all rzdoc readers
 
     def rzdoc__list(self, ctx=None):
         """
@@ -311,3 +301,13 @@ class RZ_Kernel(object):
         op = DBO_rzdoc__list()
         op_ret = self.db_ctl.exec_op(op)
         return op_ret
+
+    def rzdoc__rename(self, cur_name, new_name):
+        op = DBO_rzdoc__rename(cur_name, new_name)
+
+        rzdoc = self.db_ctl.exec_op(op)
+        return rzdoc  # may be None
+        # FIXME:
+        #    - broadcast rename event
+        #    - update cache mapping entry
+        #    - notify all rzdoc readers
