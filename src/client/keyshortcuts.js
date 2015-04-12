@@ -26,6 +26,12 @@ function install() {
             rz_core.main_graph_view.nodes__user_visible(selection.related(), true);
             handled = true;
         }
+        if (e.keyIdentifier === 'F7') {
+            if (!selection.is_empty()) {
+                rz_core.main_graph_view.zen_mode__toggle();
+            }
+            handled = true;
+        }
         if (e.altKey && e.ctrlKey && 'o' === key) {
             search.focus();
             handled = true;
