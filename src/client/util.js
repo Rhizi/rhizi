@@ -22,7 +22,7 @@ define(['underscore', 'jquery'], function(_, $) {
 
     function set_from_object(o) {
         var ret = {}
-        for ( var k in o) {
+        for (var k in o) {
             ret[k] = 1;
         }
         return ret;
