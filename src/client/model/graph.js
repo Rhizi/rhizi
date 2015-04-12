@@ -232,6 +232,18 @@ function Graph(spec) {
     }
     this._remove_node_set = _remove_node_set;
 
+    function calc_neighbours() {
+        return _.reduce(get_links(), function(d, link) {
+                d[link.__src.id].src.push(link);
+                d[link.__dst.id].dst.push(link);
+                return d;
+            }, _.object(_.map(get_nodes(), "id"),
+                        get_nodes().map(function (n) {
+                            return {node: n, src: [], dst: []};
+                        })
+                       ));
+    }
+
     /**
      *
      * neighbourhood
@@ -294,15 +306,7 @@ function Graph(spec) {
 
         var nodes = get_nodes(),
             links = get_links(),
-            neighbours = _.reduce(links, function(d, link) {
-                d[link.__src.id].src.push(link);
-                d[link.__dst.id].dst.push(link);
-                return d;
-            }, _.object(_.map(nodes, "id"),
-                        get_nodes().map(function (n) {
-                            return {node: n, src: [], dst: []};
-                        })
-                       )),
+            neighbours = calc_neighbours(),
             exit = 1,
             enter = 2,
             selected = 4,
