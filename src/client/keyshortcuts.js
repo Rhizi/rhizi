@@ -22,11 +22,11 @@ function install() {
         if (e.altKey && e.ctrlKey && 'i' === key) {
             $('#textanalyser').focus();
         }
-        if (e.keyIdentifier === 'F6') {
+        if (e.ctrlKey && '9' === key) {
             rz_core.main_graph_view.nodes__user_visible(selection.related(), true);
             handled = true;
         }
-        if (e.keyIdentifier === 'F7') {
+        if (e.ctrlKey && '0' === key) {
             if (!selection.is_empty()) {
                 rz_core.main_graph_view.zen_mode__toggle();
             }
