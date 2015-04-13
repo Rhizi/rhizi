@@ -167,18 +167,18 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
     def socketio_route_handler(url_path):
 
-        # FIXME: ws upgrade process for non socketio clients
-        if None == request.environ.get('socketio'):
+        # FIXME: rm if unused
+        if None == request.environ.get('socketio'):  # attempt ws upgrade process for non socketio clients
             header__upgrade = request.headers.get('Upgrade')
             if 'websocket' == header__upgrade:
 
-                remote_addr = request.environ['REMOTE_ADDR']
-                remote_port = request.environ['REMOTE_PORT']
-
-                log.debug('ws: \'Upgrade: websocket\' header detected, serving \'101\': remote-socket-addr: %s:%s' % (remote_addr, remote_port))
                 resp = make_response__http__empty(101)  # 'switching protocols' HTTP status code
                 resp.headers['Upgrade'] = 'websocket'
                 resp.headers['Connection'] = 'Upgrade'
+
+                rmt_addr, rmt_port = request.req_probe__sock_addr.probe_client_socket_addr__ws_conn(request.environ)
+                log.debug('ws: \'Upgrade: websocket\' header detected, serving \'101\': remote-socket-addr: %s:%s' % (rmt_addr, rmt_port))
+
                 return resp
             else:
                 raise Exception('ws: failed to obtain socketio object from WSGI environment')
@@ -204,7 +204,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         for r_assoc in rzdoc_r_set:
             cast_set.append(r_assoc)
 
-        log.debug('ws: rzdoc reader cast: msg: \'%s\': rzdoc: %s, cast-size ~= %d' % (pkt.get('name'),
+        log.debug('ws: rzdoc cast: msg: \'%s\': rzdoc: %s, cast-size ~= %d' % (pkt.get('name'),
                                                                                       rzdoc.name,
                                                                                       len(cast_set)))
         for r_assoc in cast_set:
