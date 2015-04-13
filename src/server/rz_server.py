@@ -271,6 +271,8 @@ def init_rest_interface(cfg, flask_webapp):
     def localhost_access_decorator__ipv4(f):
         """
         security boundary: assert request originated from localhost 
+
+        @bug: consider broken until #496 is resolved - in the meantime use AC in proxy
         """
 
         @wraps(f)
