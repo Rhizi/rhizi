@@ -20,7 +20,7 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
     function init(init_spec) {
 
         socket = io.connect(ws_server_url, {
-            'reconnectionDelay': 3000,
+            'reconnectionDelay': 30000,
         });
 
         util.assert(undefined != init_spec.graph, 'unable to init ws connection, graph undefined');
