@@ -1281,6 +1281,7 @@ function GraphView(spec) {
             return;
         }
         zen_mode = value;
+        layout.nodes_links(nodes__visible(), links__visible());
         layout.zen_mode(value);
         update_view(true);
     }

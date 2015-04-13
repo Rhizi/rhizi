@@ -105,7 +105,7 @@ function(consts,   $,        d3,   _) {
 
     function layout__d3_force__link_distance(graph) {
         var ret = layout__d3_force(graph);
-        ret.zen_mode = function (zen_mode) {
+        ret.zen_mode_inner = function (zen_mode) {
             if (zen_mode) {
                 ret.distance(240)
             } else {
@@ -208,8 +208,33 @@ function(consts,   $,        d3,   _) {
                     layout.nodes(nodes);
                     return layout.links(links);
                 },
-                // zen_mode callback - to change layout based on it.
-                zen_mode: donothing,
+                // zen_mode callback - to change layout based on it. reimplement inner only
+                _zen_mode__fixed: {},
+                _zen_mode_inner: donothing,
+                zen_mode: function (zen_mode) {
+                    if (zen_mode) {
+                        var nodes = layout.nodes();
+
+                        // store fixed position
+                        console.log('zen on:  storing fixed for ' + _.size(layout.nodes()));
+                        layout._zen_mode__fixed = _.object(_.pluck(nodes, "id"),
+                                                           _.pluck(nodes, "fixed"));
+                        _.each(nodes, function(node) { node.fixed = false; });
+                    } else {
+                        // restore fixed
+                        var nodes = layout.nodes(),
+                            d = _.object(_.pluck(nodes, "id"), nodes);
+                        console.log('zen off: restoring fixed for ' + _.size(nodes));
+                        _.each(_.keys(layout._zen_mode__fixed), function (node_id) {
+                            if (d[node_id] !== undefined) {
+                                d[node_id].fixed = layout._zen_mode__fixed[node_id];
+                            } else {
+                                console.log('missing ' + node_id);
+                            }
+                        });
+                    }
+                    return layout._zen_mode_inner(zen_mode);
+                },
                 // data
                 graph: graph,
                 _nodes: [],
