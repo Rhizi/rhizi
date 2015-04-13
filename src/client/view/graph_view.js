@@ -386,14 +386,14 @@ function GraphView(spec) {
         }
     }
 
-    var urlValid = function(d) {
-        return d.url !== undefined && d.url !== null && d.url.length > 0;
+    var urlValid = function(url) {
+        return url !== undefined && url !== null && url.length > 0;
     };
 
     var image_endings = {'jpg':1, 'gif':1, 'png':1, 'bmp':1, 'svg':1};
 
-    var urlImage = function(d) {
-        return urlValid(d) && image_endings[d.url.slice(d.url.lastIndexOf('.') + 1)] !== undefined;
+    var urlImage = function(url) {
+        return urlValid(url) && image_endings[url.slice(url.lastIndexOf('.') + 1)] !== undefined;
     };
 
     function nodes__filtered() {
@@ -432,16 +432,12 @@ function GraphView(spec) {
         }
 
         var nodeTextX = function(d) {
-            return urlValid(d) ? node_text_dx + node_url_dx : node_text_dx;
+            return urlValid(d.url) ? node_text_dx + node_url_dx : node_text_dx;
         }
 
         function model_id_from_dom_id(dom_id) {
             return dom_id.split('__')[0];
         }
-
-        var urlValid = function(d) {
-            return d.url !== undefined && d.url !== null && d.url.length > 0;
-        };
 
         function node_text_setup() {
             var node_text;
@@ -688,6 +684,20 @@ function GraphView(spec) {
             };
         }); //();
 
+        function load_image(element, image_url, set_href) {
+            var image = new Image();
+
+            image.onload = function () {
+                var aspect = this.height / this.width,
+                    width = Math.min(100, this.width);
+
+                element.setAttribute("width", width);
+                element.setAttribute("height", Math.min(width * aspect, this.height));
+                element.setAttributeNS("http://www.w3.org/1999/xlink", "href", this.src);
+            }
+            image.src = image_url;
+        }
+
         var noderef = nodeEnter.insert('a')
             .attr("class", "nodeurl graph")
             .attr("transform", "translate(10,-7)")
@@ -698,41 +708,52 @@ function GraphView(spec) {
             .attr("xlink:href", function (d) { return d.url; })
             .attr("xlink:title", function (d) { return d.url; })
             .attr("target", "_blank")
-            .attr("visibility", function(d) { return urlValid(d) ? "visible" : "hidden"; })
-            .attr("pointer-events", function(d) { return urlValid(d) ? "all" : "none"; });
-        node.select('g.node a image')
-            .each(function (d, i) {
-                var element = this,
-                    image = new Image();
-                image.onload = function () {
-                    var aspect = this.height / this.width,
-                        width = Math.min(100, this.width);
-
-                    element.setAttribute("width", width);
-                    element.setAttribute("height", Math.min(width * aspect, this.height));
-                    element.setAttributeNS("http://www.w3.org/1999/xlink", "href", this.src);
-                }
-                image.src = urlImage(d) ? d.url : "/static/img/url-icon.png";
+            .attr("visibility", function(d) { return urlValid(d.url) ? "visible" : "hidden"; })
+            .attr("pointer-events", function(d) { return urlValid(d.url) ? "all" : "none"; });
+        node.select('g.node > a > image')
+            .each(function () {
+                load_image(this, "/static/img/url-icon.png");
             });
+        var image = nodeEnter
+            .insert("image")
+            .attr("y", 9);
+
+        node.select('g.node > image').each(function (d) {
+                var image_url = d['image-url'];
+
+                if (urlImage(image_url)) {
+                    load_image(this, image_url);
+                }
+            })
+            .attr("display", function(d) {
+                return urlImage(d['image-url']) ? "" : "none";
+            })
+            .on("click", node_click_handler);
+
+        function node_click_handler(d, i) {
+            if (d3.event.defaultPrevented) {
+                // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
+                return;
+            }
+            d3.event.stopPropagation();
+            (d3.event.shiftKey ? selection.invert_nodes : selection.select_nodes)([d]);
+            if(!temporary) {
+                showNodeInfo(d);
+            }
+        }
+
         circle = nodeEnter.insert("circle");
-        node.select('g.node circle')
+        node.select('g.node > circle')
             .attr("class", function(d) {
                 return d.type + " " + d.state + " circle graph";
             })
             .attr("r", function(d) {
                 return 10;
             })
-            .on("click", function(d, i) {
-                if (d3.event.defaultPrevented) {
-                    // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
-                    return;
-                }
-                d3.event.stopPropagation();
-                (d3.event.shiftKey ? selection.invert_nodes : selection.select_nodes)([d]);
-                if(!temporary) {
-                    showNodeInfo(d);
-                }
-            });
+            .attr("display", function(d) {
+                return urlImage(d['image-url']) ? "none" : "";
+            })
+            .on("click", node_click_handler);
         circle.append("svg:image")
             .attr("class", "status graph")
             .attr('x', -7)
