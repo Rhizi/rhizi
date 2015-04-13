@@ -53,7 +53,7 @@ def merge_topos(topos, names):
         nodes = topo.node_set_add
         new_nodes = []
         for node in nodes:
-            name = node['name']
+            name = node['name'].lower()
             if name in node_names:
                 dropped_nodes.add(node['name'])
                 rename(links, node['id'], node_names[name]['id'])
