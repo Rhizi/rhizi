@@ -29,6 +29,30 @@ class RZ_WebSocket_Server(SocketIOServer):
         - allow response header injection on websocket connections
     """
 
+    class Req_Probe__sock_addr__proxy(object):
+
+        def probe_client_socket_addr__ws_conn(self, ws_environ):
+
+            ret = sock_addr_from_REMOTE_X_keys(ws_environ)
+
+            #
+            # relying on the presence of the 'X-Forwarded-For' is preferable, but
+            # a bit flaky as it is not always present - see #496
+            #
+            # TODO: evaluate proxy server's behavior on this
+            #
+            try:
+                _, __ = sock_addr_from_env_HTTP_headers(ws_environ, key_name__addr='X-Forwarded-For')
+            except Exception as e:
+                log.warning('ws: client socket addr probe: %s, peer-addr ~: %s:%s' % (e.message, ret[0], ret[1]))
+
+            return ret
+
+    class Req_Probe__sock_addr__direct(object):
+
+        def probe_client_socket_addr__ws_conn(self, ws_environ):
+            return sock_addr_from_REMOTE_X_keys(ws_environ)
+
     class RZ_SocketIOHandler(SocketIOHandler):
 
         def __init__(self, config, *args, **kwargs):

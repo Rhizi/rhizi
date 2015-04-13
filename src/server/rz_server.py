@@ -141,6 +141,59 @@ class FlaskExt(Flask):
     Flask server customization
     """
 
+    class Req_Probe__sock_addr__proxy(object):
+
+        def __init__(self, proxy_host, proxy_port):
+            self.proxy_host = proxy_host
+            self.proxy_port = proxy_port
+
+        def probe_client_socket_addr__http_req(self, req):
+
+            ret = sock_addr_from_REMOTE_X_keys(req.environ)
+
+            #
+            # relying on the presence of the 'X-Forwarded-For' is preferable, but
+            # a bit flaky as it is not always present - see #496
+            #
+            # TODO: evaluate proxy server's behavior on this
+            #
+            try:
+                _, __ = sock_addr_from_env_HTTP_headers(req.environ, key_name__addr='X-Forwarded-For')
+            except Exception as e:
+                log.warning('flask: client socket addr probe: %s, peer-addr ~: %s:%s' % (e.message, ret[0], ret[1]))
+
+            return ret
+
+        def probe_requested_host__http_req(self, req, probe_for_proxy=True):
+
+            ret = self.proxy_host, self.proxy_port
+
+            #
+            # relying on the presence of the 'X-Forwarded-Host' is preferable, but
+            # a bit flaky as it is not always present - see #496
+            #
+            # TODO: evaluate proxy server's behavior on this
+            #
+            try:
+                _, __ = sock_addr_from_env_HTTP_headers(req.environ, key_name__addr='X-Forwarded-Host')
+            except Exception as e:
+                log.warning('flask: client socket addr probe: %s, replacing with: \'%s:%s\'' % (e.message, ret[0], ret[1]))
+
+            return ret
+
+    class Req_Probe__sock_addr__direct(object):
+
+        def __init__(self, dafault_port):
+            self.dafault_port = dafault_port
+
+        def probe_client_socket_addr__http_req(self, req):
+            return sock_addr_from_REMOTE_X_keys(req.environ)
+
+        def probe_requested_host__http_req(self, req, probe_for_proxy=True):
+            req_host__addr, _ = sock_addr_from_env_HTTP_headers(req.environ, key_name__addr='Host')
+            req_host__port = self.dafault_port
+            return req_host__addr, req_host__port
+
     def __init__(self, import_name, *args, **kwargs):
         """
         reserved for future use
