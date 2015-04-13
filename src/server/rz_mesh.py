@@ -8,12 +8,12 @@ from socketio import socketio_manage
 from socketio.server import SocketIOHandler
 from socketio.server import SocketIOServer
 
-from model.graph import Attr_Diff, Topo_Diff
-from rz_api_websocket import WebSocket_Graph_NS
-from rz_kernel import RZ_Kernel
-from rz_req_handling import make_response__http__empty,\
-    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, make_response__json
+from model.graph import Topo_Diff
 from rz_api_rest import Req_Context
+from rz_api_websocket import WebSocket_Graph_NS
+from rz_req_handling import make_response__http__empty, \
+    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, make_response__json, \
+    sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys
 
 
 log = logging.getLogger('rhizi')
@@ -89,6 +89,8 @@ class RZ_WebSocket_Server(SocketIOServer):
                                 handler_class=RZ_WebSocket_Server.RZ_SocketIOHandler,
                                 resource='socket.io',  # URL prefix for socket.io requests
                                 ws_handler_class=RZ_WebSocket_Server.RZ_WebSocketHandler)
+
+        self.req_probe__sock_addr = None
 
 def init_ws_interface(cfg, kernel, flask_webapp):
     """
@@ -216,6 +218,10 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
     # init ws server
     ws_srv = RZ_WebSocket_Server(cfg, flask_webapp)
+    if cfg.reverse_proxy_host is not None:  # proxy mode
+        ws_srv.req_probe__sock_addr = RZ_WebSocket_Server.Req_Probe__sock_addr__proxy()
+    else:
+        ws_srv.req_probe__sock_addr = RZ_WebSocket_Server.Req_Probe__sock_addr__direct()
 
     kernel.diff_commit__topo = decorator__ws_multicast(ws_srv,
                                                        kernel.diff_commit__topo,
