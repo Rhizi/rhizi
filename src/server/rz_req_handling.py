@@ -121,3 +121,7 @@ def make_response__json__redirect(redirect_url, status=303, html_str=''):
     return make_response__json(status=status,
                                data={'response__html': html_str,
                                     'redirect_url': redirect_url })
+def sock_addr_from_REMOTE_X_keys(req_env):
+    rmt_addr = req_env['REMOTE_ADDR']
+    rmt_port = req_env['REMOTE_PORT']
+    return rmt_addr, rmt_port
