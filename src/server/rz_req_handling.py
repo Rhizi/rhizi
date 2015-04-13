@@ -1,10 +1,11 @@
 from flask import make_response
-from werkzeug.wrappers import BaseResponse as Response
-import json
-from rz_kernel import RZDoc_Exception__not_found
-import logging
-from rz_api_common import API_Exception__bad_request
 from functools import wraps
+import json
+import logging
+from werkzeug.wrappers import BaseResponse as Response
+
+from rz_api_common import API_Exception__bad_request
+from rz_kernel import RZDoc_Exception__not_found
 
 
 HTTP_STATUS__101_SWITCHING_PROTOCOLS = 101
@@ -85,6 +86,7 @@ def make_response__json(status=200, data={}):
     resp = make_response(data_str)
     resp.headers['Content-Type'] = "application/json"
     resp.status = str(status)
+
     return resp
 
 def make_response__http__empty(status=200):
@@ -121,6 +123,34 @@ def make_response__json__redirect(redirect_url, status=303, html_str=''):
     return make_response__json(status=status,
                                data={'response__html': html_str,
                                     'redirect_url': redirect_url })
+
+def sock_addr_from_env_HTTP_headers(req_env, key_name__addr):
+    """
+    Extract remote socket address based on header data
+
+    [!] if header value contains more than a single address only the first one is used.
+
+    @param key_name__addr: header name to probe for address value
+    @return: (remote_addr, remote_port) where remote_port may be None
+    @raise Exception: if header is missing from env
+    """
+    header_key = 'HTTP_' + key_name__addr.upper().replace('-', '_')
+    addr_set_str = req_env.get(header_key)
+    if not addr_set_str:
+        raise Exception('\'%s\' header missing' % (key_name__addr))
+
+    addr_set = addr_set_str.split(',')
+    if len(addr_set) > 1:
+        log.warning('%s header contains multiple addresses, using first: header value: \'%s\'' % (key_name__addr, addr_set_str))
+    addr_val = addr_set.pop()
+
+    # deduce addr:port - port might not be present in header value
+    addr_val_arr = addr_val.split(':')
+    rmt_addr = addr_val_arr[0]
+    rmt_port = addr_val_arr[1] if 2 == len(addr_val_arr) else None
+
+    return rmt_addr, rmt_port
+
 def sock_addr_from_REMOTE_X_keys(req_env):
     rmt_addr = req_env['REMOTE_ADDR']
     rmt_port = req_env['REMOTE_PORT']
