@@ -7,17 +7,16 @@ Common public API logic:
   - validae_object__XXX: concerned with validating the logical state of an object
 
 """
-import logging
 from flask import current_app
-from rz_kernel import RZDoc_Exception__not_found
+import logging
 
 log = logging.getLogger('rhizi')
 
-class API_Exception__bad_request(Exception): # raised by input sanitation functions
+class API_Exception__bad_request(Exception):  # raised by input sanitation functions
 
-    def __init__(self, internal_err_msg, caller_err_msg = None):
+    def __init__(self, internal_err_msg, caller_err_msg=None):
         super(API_Exception__bad_request, self).__init__(internal_err_msg)
-        self.caller_err_msg = None # may be set to carry short string error messages which may be presented to the caller 
+        self.caller_err_msg = None  # may be set to carry short string error messages which may be presented to the caller
 
 def __sanitize_input(*args, **kw_args):
     pass
@@ -55,7 +54,7 @@ def sanitize_input__rzdoc_name(rzdoc_name_raw):
     """
     sanitize rzdoc name raw input
     """
-    rzdoc_name = rzdoc_name_raw.strip() # make sure we ommit trailing white spaces from doc name
+    rzdoc_name = rzdoc_name_raw.strip()  # make sure we ommit trailing white spaces from doc name
 
     if None == rzdoc_name or 0 == len(rzdoc_name):
         raise API_Exception__bad_request('rzdoc: open request: empty doc name')
