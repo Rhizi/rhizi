@@ -18,6 +18,11 @@ from rz_api_rest import Req_Context
 
 log = logging.getLogger('rhizi')
 
+class WS_Req_Env(object):
+
+    def __init__(self):
+        self.kernel = None
+
 class RZ_WebSocket_Server(SocketIOServer):
     """
     Rhizi customized SocketIOServer:
@@ -68,10 +73,6 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
     @return: an initialized RZ_WebSocket_Server object
     """
-
-    # init websocket-env
-    ws_env = namedtuple('RZ_websocket_env', ['kernel'])
-    ws_env.kernel = kernel
 
     def decorator__ws_multicast(ws_srv, f, f_multicast):
         """
@@ -156,8 +157,11 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             else:
                 raise Exception('ws: failed to obtain socketio object from WSGI environment')
 
+        # init websocket-env
+        ws_req_env = WS_Req_Env()
+        ws_req_env.kernel = kernel
         try:
-            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_env) # connect socketio manager
+            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_req_env)  # connect socketio manager
         except:
             log.exception("ws: exception while handling connection", exc_info=True)
             return make_response__json(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR)
