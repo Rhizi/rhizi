@@ -12,23 +12,23 @@ define({
         }],
         ['keyword', {
             'title': 'Keyword',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'image-url'],
         }],
         ['project', {
             'title': 'Project',
-            'attributes': ['description', 'url', 'rhizi-url'],
+            'attributes': ['description', 'url', 'rhizi-url', 'image-url'],
         }],
         ['idea', {
             'title': 'Idea',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'image-url'],
         }],
         ['skill', {
             'title': 'Skill',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'image-url'],
         }],
         ['resource', {
             'title': 'Resource',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'image-url'],
         }]
     ],
     attribute_titles: {
