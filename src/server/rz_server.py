@@ -63,6 +63,12 @@ class Config(object):
         cfg['mail_hostname'] = 'localhost'
         cfg['mail_port'] = 25
 
+        # Network settings
+        #    - reverse_proxy_host: proxy host name as seen by clients
+        #
+        cfg['reverse_proxy_host'] = None
+        cfg['reverse_proxy_port'] = None
+
         # User feedback settings
         cfg['feedback_recipient'] = 'feedback@localhost'
 
