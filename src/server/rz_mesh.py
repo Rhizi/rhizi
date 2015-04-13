@@ -47,14 +47,18 @@ class RZ_WebSocket_Server(SocketIOServer):
         def upgrade_websocket(self):
             return WebSocketHandler.upgrade_websocket(self)
 
-    def __init__ (self, cfg, wsgi_app):
+    def __init__ (self, rz_config, wsgi_app):
         self.wsgi_app = wsgi_app
+        sock_addr = (rz_config.listen_address, rz_config.listen_port)
         SocketIOServer.__init__(self,
-                                (cfg.listen_address, cfg.listen_port),
+                                sock_addr,
                                 wsgi_app,
-                                resource='socket.io',  # URL prefix for socket.io requests
+                                close_timeout=60,
                                 policy_server=False,
+                                heartbeat_interval=20,  # should be less than the heartbeat_timeout
+                                heartbeat_timeout=40,
                                 handler_class=RZ_WebSocket_Server.RZ_SocketIOHandler,
+                                resource='socket.io',  # URL prefix for socket.io requests
                                 ws_handler_class=RZ_WebSocket_Server.RZ_WebSocketHandler)
 
 def init_ws_interface(cfg, kernel, flask_webapp):
