@@ -50,9 +50,9 @@ var typeselection = function TypeSelectionDialog() {
             return;
         }
         attach_to(node_id);
-        e_label.hide();
-        e_desc.hide();
         e_intro.show();
+        e_label.show();
+        e_desc.show();
         e.show();
     }
     typeselection.hide = function() {
