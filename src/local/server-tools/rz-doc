@@ -25,7 +25,7 @@ def names():
 def create_id():
     return uuid.uuid4().get_hex()[:8]
 
-def merge_topos(topos):
+def merge_topos(topos, names):
     """
     Merge a number of Topo_Diff's
 
@@ -75,7 +75,8 @@ def merge_topos(topos):
         result.node_set_add.extend(new_nodes)
         result.link_set_add.extend(new_links)
 
-    for topo in topos:
+    for topo, name in zip(topos, names):
+        print("merging %s" % name)
         merge(topo)
     # now realloc all ids since otherwise they are duplicates of originals
     renames = [(node['id'], create_id()) for node in result.node_set_add]
@@ -98,7 +99,7 @@ def merge(destination_name, sources=None):
     destination = kernel.rzdoc__create(destination_name)
 
     ctx = namedtuple('Context', ['user_name', 'rzdoc'])(None, destination)
-    kernel.diff_commit__topo(merge_topos(topos), ctx)
+    kernel.diff_commit__topo(merge_topos(topos, sources), ctx)
 
 def remove(rzdoc_name):
     kernel.rzdoc__delete(kernel.rzdoc__lookup_by_name(rzdoc_name))
