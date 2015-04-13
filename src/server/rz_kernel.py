@@ -284,12 +284,13 @@ class RZ_Kernel(object):
         op = DBO_rzdoc__delete(rzdoc)
         self.db_ctl.exec_op(op)
 
+        self.cache__rzdoc_name_to_rzdoc.pop(rzdoc.name, None)
+
         for r_assoc in self.rzdoc_reader_assoc_map[rzdoc]:
             r_assoc.mark__invalid = True
 
         # FIXME:
         #    - broadcast delete event
-        #    - clear cache mapping entry
 
     def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
         """
@@ -317,8 +318,12 @@ class RZ_Kernel(object):
         op = DBO_rzdoc__rename(cur_name, new_name)
 
         rzdoc = self.db_ctl.exec_op(op)
-        return rzdoc  # may be None
+
+        self.cache__rzdoc_name_to_rzdoc.pop(cur_name, None)
+        self.cache__rzdoc_name_to_rzdoc.pop(new_name, None)
+
         # FIXME:
         #    - broadcast rename event
-        #    - update cache mapping entry
         #    - notify all rzdoc readers
+
+        return rzdoc  # may be None
