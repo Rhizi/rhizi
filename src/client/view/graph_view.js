@@ -1277,6 +1277,9 @@ function GraphView(spec) {
     gv.link__pass_filter = link__pass_filter;
     gv.node__pass_filter = node__pass_filter;
     function zen_mode__set(value) {
+        if (zen_mode === value) {
+            return;
+        }
         zen_mode = value;
         layout.zen_mode(value);
         update_view(true);
