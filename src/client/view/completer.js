@@ -125,7 +125,7 @@ var completer = (function (input_element, dropdown, base_config) {
                 new RegExp(rz_config.separator_string) : anyof_re(base && base.triggerEnd || ' ')),
             hideOnTab: base && base.hasOwnProperty('hideOnTab') ? base.hideOnTab : true,
             matchStartOfString: (base && base.matchStartOfString) || rz_config.node_edge_separator,
-            appendSpaceOnEnter: (base && base.appendSpaceOnEnter) || false,
+            appendOnCompletion: (base && base.appendOnCompletion) || '',
             quoteSpaceContaining: (base && base.quoteSpaceContaining) || false,
         };
     }
@@ -270,7 +270,7 @@ var completer = (function (input_element, dropdown, base_config) {
     }
     function _applySuggestion(str) {
         var cur = getter(),
-            start = cur.slice(0, completion_start) + str + (config.appendSpaceOnEnter ? ' ' : ''),
+            start = cur.slice(0, completion_start) + str + config.appendOnCompletion,
             new_text = start + cur.slice(completion_end);
         setter(new_text, new_text.length);
         oninput('', 0);

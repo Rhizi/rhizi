@@ -226,7 +226,7 @@ function(consts,   $,        d3,   _) {
                             d = _.object(_.pluck(nodes, "id"), nodes);
                         console.log('zen off: restoring fixed for ' + _.size(nodes));
                         _.each(_.keys(layout._zen_mode__fixed), function (node_id) {
-                            if (d[node_id] !== undefined) {
+                            if (d[node_id] !== undefined && layout._zen_mode__fixed[node_id]) {
                                 d[node_id].fixed = layout._zen_mode__fixed[node_id];
                             } else {
                                 console.log('missing ' + node_id);

@@ -13,9 +13,10 @@ var focus = function() {
 function init() {
     search_completer = completer(search, search_completer_element,
                                  {
-                                    triggerStart:' |',
-                                    triggerEnd:' |',
+                                    triggerStart:'|',
+                                    triggerEnd:'|',
                                     matchStartOfString: true,
+                                    appendOnCompletion:'|',
                                  });
 
     search_completer.options.plug(textanalysis.suggestions_options.map('.nodes'));
@@ -49,13 +50,14 @@ function init() {
     function search_on_submit(text) {
         var r,
             selector = function (obj) { return attribute_match(obj, r); };
+            text_processed = text[text.length - 1] == '|' ? text.slice(0, text.length - 1) : text;
 
         try {
-            r = new RegExp(text.replace(/ /, '|'), 'i');
+            r = new RegExp(text_processed, 'i');
         } catch (e) {
             return; // don't clear selection either
         }
-        if (text.length > 0) {
+        if (text_processed.length > 0) {
             selection.byVisitors(selector, selector);
         } else {
             selection.clear();
