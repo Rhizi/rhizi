@@ -8,10 +8,11 @@ from flask import escape
 from flask import render_template
 from flask import request
 from flask import session
-from flask import redirect
 import logging
+
 from rz_api_common import sanitize_input__rzdoc_name
 from rz_req_handling import common_resp_handle__client_error
+
 
 log = logging.getLogger('rhizi')
 
@@ -41,16 +42,7 @@ def rz_mainpage(rzdoc_name=None):
             return common_resp_handle__client_error()
 
     # establish rz_config template values
-    client_POV_server_name = request.headers.get('X-Forwarded-Host')  # first probe for reverse proxy headers
-    if None == client_POV_server_name:
-        client_POV_server_name = request.headers.get('Host')  # otherwise use Host: header
-    assert None != client_POV_server_name, 'failed to establish hostname, unable to construct rz_config'
-
-    hostname = client_POV_server_name
-    port = 80
-    if ':' in client_POV_server_name:
-        hostname = client_POV_server_name.split(':')[0]
-        port = client_POV_server_name.split(':')[1]
+    host_addr, host_port = request.host_sock_addr
 
     if None == rzdoc_name:
         s_rzdoc_name = current_app.rz_config.rzdoc__mainpage_name
@@ -63,9 +55,9 @@ def rz_mainpage(rzdoc_name=None):
 
     return render_template('index.html',
                            rz_username=rz_username,
-                           rz_config__rzdoc_cur__name = s_rzdoc_name,
-                           rz_config__rzdoc_default__name = current_app.rz_config.rzdoc__mainpage_name,
-                           rz_config__hostname=hostname,
-                           rz_config__port=port,
+                           rz_config__rzdoc_cur__name=s_rzdoc_name,
+                           rz_config__rzdoc_default__name=current_app.rz_config.rzdoc__mainpage_name,
+                           rz_config__hostname=host_addr,
+                           rz_config__port=host_port,
                            rz_config__optimized_main='true' if current_app.rz_config.optimized_main else 'false',
                            rz_config__role_set=role_set)
