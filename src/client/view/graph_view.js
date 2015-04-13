@@ -466,7 +466,7 @@ function GraphView(spec) {
                 .attr("dy", node_text_dy);
             node_text.exit().remove();
             var nodeText = function(d) {
-                var selected = selection.node_selected(d);
+                var selected = selection.node_related(d);
 
                 if (!d.name) {
                     return "_";
@@ -492,13 +492,13 @@ function GraphView(spec) {
             $('#' + d.id).hover(function (e) {
                 add_class(this, 'hovering');
                 // show text if not selected
-                if (!selection.link_selected(d)) {
+                if (!selection.link_related(d)) {
                     set_link_label_text(this.id, link_text__short(d));
                 }
             }, function (e) {
                 remove_class(this, 'hovering');
                 // hide text if not selected
-                if (!selection.link_selected(d)) {
+                if (!selection.link_related(d)) {
                     set_link_label_text(this.id, "");
                 }
             });
@@ -673,7 +673,7 @@ function GraphView(spec) {
                 }
             });
             link_text.each(function (d) {
-                if (selection.link_selected(d)) {
+                if (selection.link_related(d)) {
                     ontop.push(this);
                 }
             });

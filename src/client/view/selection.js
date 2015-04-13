@@ -176,7 +176,7 @@ var node_first_selected = function(node) {
     return selected && selected.length > 0 && node.id === selected[0].id;
 }
 
-var link_selected = function(link) {
+var link_related = function(link) {
     return node_related(link.__src) && node_related(link.__dst);
 }
 
@@ -188,7 +188,7 @@ var class__node = function(node, temporary) {
 }
 
 var class__link = function(link, temporary) {
-    return !temporary && related.length > 0 ? (link_selected(link) ? "selected" : "notselected") : "";
+    return !temporary && related.length > 0 ? (link_related(link) ? "selected" : "notselected") : "";
 }
 
 var clear = function()
@@ -330,7 +330,8 @@ return {
     class__node: class__node,
     class__link: class__link,
     node_selected: node_selected,
-    link_selected: link_selected,
+    node_related: node_related,
+    link_related: link_related,
     selectionChangedBus: selectionChangedBus,
     setup_toolbar: setup_toolbar,
 
