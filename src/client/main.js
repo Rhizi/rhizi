@@ -30,7 +30,7 @@ function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,  
 
         var intro_task_elem = $('#intro-task');
         // TODO: messages (why tasks?) - this one is special but we want them to be handled in their own file.
-        if (!localStorage.intro_task_hide) {
+        if (false && !localStorage.intro_task_hide) {
             intro_task_elem.show();
         }
         $('#intro-task .task-close-button').click(function(e) {
