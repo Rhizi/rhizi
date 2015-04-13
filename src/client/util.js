@@ -3,7 +3,7 @@
 define(['underscore', 'jquery'], function(_, $) {
 
     function assert(condition, message) {
-        if (false == condition) {
+        if (false === condition) {
             message = message || "Assertion failed";
             if (typeof Error !== "undefined") {
                 throw new Error(message);
