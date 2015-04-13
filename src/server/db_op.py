@@ -2,19 +2,20 @@ from copy import deepcopy
 import gzip
 import hashlib
 import json
+import logging
 import re
 
 import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link, RZDoc
-from neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
-    quote__singlequote, rzdoc__meta_ns_label, quote__backtick
-from neo4j_util import cfmt
-import neo4j_util as db_util
-import logging
 from neo4j_cypher import DB_Query, DB_result_set
 import neo4j_schema
+from neo4j_util import cfmt
+from neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
+    quote__singlequote, rzdoc__meta_ns_label, quote__backtick
+import neo4j_util as db_util
+
 
 log = logging.getLogger('rhizi')
 
@@ -34,7 +35,7 @@ class DB_op(object):
             yield dbq
 
     def __repr__(self):
-        return '%s: tx-id: %s' % (self.__class__.__name__, str(self.tx_id)) # id may be null if Tx open failed
+        return '%s: tx-id: %s' % (self.__class__.__name__, str(self.tx_id))  # id may be null if Tx open failed
 
     def iter__r_set(self):
         """
@@ -831,7 +832,7 @@ class DBO_rzdoc__lookup_by_name(DB_op):
 
     def __init__(self, rzdoc_name):
         """
-        @return: [rzdoc] of [] if no doc with the given name was found
+        @return: [rzdoc] or [] if no doc with the given name was found
         """
         super(DBO_rzdoc__lookup_by_name, self).__init__()
 
@@ -855,7 +856,7 @@ class DBO_rzdoc__rename(DB_op):
 
     def __init__(self, rzdoc_cur_name, rzdoc_new_name):
         """
-        @return: [rzdoc] of [] if no doc with the given name was found
+        @return: [rzdoc] or [] if no doc with the given name was found
         """
         super(DBO_rzdoc__rename, self).__init__()
 

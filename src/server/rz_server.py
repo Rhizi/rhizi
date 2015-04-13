@@ -302,7 +302,7 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
 
                       # doc endpoints
-                      rest_entry('/rz/<path:rzdoc_name>', rz_api_rest.rzdoc__via_rz_url, {'methods': ['GET']}), # pretty URLs
+                      rest_entry('/rz/<path:rzdoc_name>', rz_api_rest.rzdoc__via_rz_url, {'methods': ['GET']}),  # pretty URLs
                       rest_entry('/graph/clone', rz_api_rest.rzdoc_clone),
                       rest_entry('/rzdoc/list', rz_api_rest.rzdoc__list),
                       rest_entry('/rzdoc/<path:rzdoc_name>/create', rz_api_rest.rzdoc__create),
