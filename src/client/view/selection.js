@@ -181,7 +181,7 @@ var link_related = function(link) {
 }
 
 var class__node = function(node, temporary) {
-    return !temporary && related.length > 0 || selected.length > 0 ?
+    return (!temporary && (related.length > 0 || selected.length > 0)) ?
         (node_first_selected(node) ? 'first-selected' :
             (node_selected(node) ? 'selected' :
                 (node_related(node) ? "related" : "notselected"))) : "";

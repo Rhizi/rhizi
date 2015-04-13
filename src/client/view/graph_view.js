@@ -1070,7 +1070,7 @@ function GraphView(spec) {
             link = vis.selectAll("path.link"),
             link_text = vis.selectAll(".linklabel"),
             node_text = vis.selectAll("g.nodetext"),
-            bubble_radius = selection.is_empty() || temporary ? gv.bubble_radius : selection_outer_radius;
+            bubble_radius = temporary ? 0 : gv.bubble_radius;
 
         if (temporary) {
             // XXX convert to a layout
