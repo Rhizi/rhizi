@@ -205,6 +205,8 @@ class FlaskExt(Flask):
         reserved for future use
         """
         super(FlaskExt, self).__init__(import_name, *args, **kwargs)
+        self.rz_config = None
+        self.req_probe__sock_addr = None
 
     def before_request(self, *args, **kwargs):
         # TODO impl
@@ -343,20 +345,31 @@ def init_webapp(cfg, kernel, db_ctl=None):
     root_path = cfg.root_path
     assert os.path.exists(root_path), "root path doesn't exist: %s" % root_path
 
+    #
+    # init webapp
+    #
     webapp = FlaskExt(__name__,
                       static_folder='static',
                       template_folder=os.path.join(root_path, 'templates'),
                       static_url_path=cfg.static_url_path)
     webapp.config.from_object(cfg)
     webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
+    webapp.rz_config = cfg
+    webapp.kernel = kernel
+    if cfg.reverse_proxy_host is not None:  # proxy mode
+        webapp.req_probe__sock_addr = FlaskExt.Req_Probe__sock_addr__proxy(cfg.reverse_proxy_host,
+                                                                           cfg.reverse_proxy_port)
+    else:
+        webapp.req_probe__sock_addr = FlaskExt.Req_Probe__sock_addr__direct(cfg.listen_port)
 
+    #
+    # init DB controller
+    #
     if None == db_ctl:
         db_ctl = dbc.DB_Controller(cfg)
     rz_api_rest.db_ctl = db_ctl
     kernel.db_ctl = db_ctl
 
-    webapp.rz_config = cfg
-    webapp.kernel = kernel
 
     init_rest_interface(cfg, webapp)
     return webapp
