@@ -52,19 +52,19 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
                 kernel.rzdoc__reader_subscribe(remote_socket_addr=remote_socket_addr,
                                                rzdoc_name=rzdoc_name,
                                                socket=socket)
-                self.ack(msg_name)
+                self.emit_ack(msg_name)
             else:
                 kernel.rzdoc__reader_unsubscribe(remote_socket_addr=remote_socket_addr,
                                                  rzdoc_name=rzdoc_name,
                                                  socket=socket)
-                self.ack(msg_name)
+                self.emit_ack(msg_name)
         except RZDoc_Exception__not_found:
-            self.nak(msg_name)
+            self.emit_nak(msg_name)
 
-    def ack(self, acked_msg_name):
-        self.emit('ack', acked_msg_name)
+    def emit_ack(self, acked_msg_name):
+        self.emit('emit_ack', acked_msg_name)
 
-    def nak(self, acked_msg_name):
+    def emit_nak(self, acked_msg_name):
         self.emit('nak', acked_msg_name)
 
     def multicast_msg(self, msg_name, *args):
