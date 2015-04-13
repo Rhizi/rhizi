@@ -1,6 +1,8 @@
 # -----------------------------------------------------------------------------
 # Sample Rhizi configuration - copy this to rhizi-server.conf
 #
+# Rhizi configuration values are documented in source code.
+#
 
 # -----------------------------------------------------------------------------
 # General
@@ -32,7 +34,7 @@ log_path = rhizi-server.log
 
 # -----------------------------------------------------------------------------
 # Flask Configuration
-#    - SERVER_NAME: if adding ':port', this should match listen_port
+#    - [!] SERVER_NAME: if adding ':port', this should match listen_port
 #
 SERVER_NAME = rhizi.local:8080
 SECRET_KEY = notverysecretbutpeppyyaya
