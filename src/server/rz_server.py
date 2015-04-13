@@ -79,10 +79,11 @@ class Config(object):
                     continue
 
                 kv_arr = line.split('=')
-                if 2 != len(kv_arr):
+                if len(kv_arr) != 2:
                     raise Exception('failed to parse config line: ' + line)
 
                 k, v = map(str.strip, kv_arr)
+                if '' == v: v = None
 
                 if None != cfg.get(k):
                     # apply type conversion based on default value type
