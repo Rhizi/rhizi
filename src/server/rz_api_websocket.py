@@ -28,8 +28,8 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         return {'rzdoc_name': rzdoc_name}
 
     def _log_conn(self, prefix_msg):
-        rmt_addr = self.environ['REMOTE_ADDR']
-        rmt_port = self.environ['REMOTE_PORT']
+        rmt_addr, rmt_port = self.request.peer_sock_addr
+
         sid = self.environ['socketio'].sessid
         log.info('ws: %s: sid: %s, remote-socket: %s:%s' % (prefix_msg, sid, rmt_addr, rmt_port))
 
@@ -40,8 +40,7 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         # rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name_raw)
         rzdoc_name = rzdoc_name_raw
 
-        rmt_addr = self.environ['REMOTE_ADDR']
-        rmt_port = self.environ['REMOTE_PORT']
+        rmt_addr, rmt_port = self.request.peer_sock_addr
         remote_socket_addr = (rmt_addr, rmt_port)
         socket = self.socket
 
