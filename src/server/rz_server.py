@@ -14,13 +14,14 @@ import signal
 import db_controller as dbc
 import rz_api
 import rz_api_rest
+import rz_blob
 import rz_feedback
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
-from rz_req_handling import make_response__http__empty
+from rz_req_handling import make_response__http__empty, \
+    sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys
 import rz_server_ctrl
 import rz_user
-import rz_blob
 from rz_user_db import User_DB
 
 
@@ -208,9 +209,12 @@ class FlaskExt(Flask):
         self.rz_config = None
         self.req_probe__sock_addr = None
 
-    def before_request(self, *args, **kwargs):
-        # TODO impl
-        pass
+        # register before_request functions
+        self.before_request(lambda: self.__pre_req__inject_peer_sock_addr())
+
+    def __pre_req__inject_peer_sock_addr(self):
+        request.peer_sock_addr = self.req_probe__sock_addr.probe_client_socket_addr__http_req(request)
+        request.host_sock_addr = self.req_probe__sock_addr.probe_requested_host__http_req(request)
 
     def make_default_options_response(self):
         ret = Flask.make_default_options_response(self)
@@ -369,7 +373,6 @@ def init_webapp(cfg, kernel, db_ctl=None):
         db_ctl = dbc.DB_Controller(cfg)
     rz_api_rest.db_ctl = db_ctl
     kernel.db_ctl = db_ctl
-
 
     init_rest_interface(cfg, webapp)
     return webapp
