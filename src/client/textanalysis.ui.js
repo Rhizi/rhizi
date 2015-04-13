@@ -29,6 +29,9 @@ var typeselection = function TypeSelectionDialog() {
         e_desc = e.find('#type_selection__chosen_type_desc'),
         typeselection = {};
 
+    fo.setAttribute('width', 400);
+    fo.setAttribute('height', 200);
+
     fo.appendChild(e[0]);
     typeselection.analysisNodeStart = function(node_id) {
         typeselection.show(node_id);
