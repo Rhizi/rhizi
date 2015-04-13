@@ -276,7 +276,8 @@ def init_rest_interface(cfg, flask_webapp):
         @wraps(f)
         def wrapped_function(*args, **kw):
 
-            if '127.0.0.1' != request.remote_addr:
+            rmt_addr, _ = request.peer_sock_addr
+            if '127.0.0.1' != rmt_addr:
                 log.warning('unauthorized attempt to access localhost restricted path: %s' % (request.path))
                 return make_response__http__empty(stauts=403)
 
