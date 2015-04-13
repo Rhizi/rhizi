@@ -87,6 +87,7 @@ function textanalyser_input(spec) {
             getter: current_value,
             setter: function (text, cursor) { update_element(text, cursor); },
             selectionStart: selectionStart,
+            appendOnCompletion: '  ',
         },
         analysisCompleter = completer(element, $(spec.completer_name), completer_spec),
         document_keydown = new Bacon.Bus(),
