@@ -859,7 +859,8 @@ class DBO_rzdoc__rename(DB_op):
         """
         super(DBO_rzdoc__rename, self).__init__()
 
-        q_arr = ['match (n:%s {name: {cur_name}}) set n.name = {new_name}' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+        q_arr = ['match (n:%s {name: {cur_name}})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+                 'set n.name = {new_name}',
                  'return n']
 
         param_set = {'cur_name': rzdoc_cur_name, 'new_name': rzdoc_new_name}
