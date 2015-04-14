@@ -420,15 +420,10 @@ function GraphView(spec) {
     }
 
     function node__transform(d) {
-        var bbox = $('#' + d.id)[0].getBBox(),
-            bx = d.bx || 0,
+        var bx = d.bx || 0,
             by = d.by || 0;
 
-        if (urlImage(d['image-url'])) {
-            return translate(d.bx - bbox.width / 2, d.by - bbox.height / 2);
-        } else {
-            return translate(d.bx, d.by);
-        }
+        return translate(d.bx, d.by);
     }
 
     function update_view(relayout) {
