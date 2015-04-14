@@ -419,6 +419,18 @@ function GraphView(spec) {
         return zen_mode ? graph.find_links__by_nodes(selection.related()) : links__filtered();
     }
 
+    function node__transform(d) {
+        var bbox = $('#' + d.id)[0].getBBox(),
+            bx = d.bx || 0,
+            by = d.by || 0;
+
+        if (urlImage(d['image-url'])) {
+            return translate(d.bx - bbox.width / 2, d.by - bbox.height / 2);
+        } else {
+            return translate(d.bx, d.by);
+        }
+    }
+
     function update_view(relayout) {
         var node,
             link,
@@ -736,6 +748,8 @@ function GraphView(spec) {
                 return urlImage(d['image-url']) ? "" : "none";
             })
             .on("click", node_click_handler);
+
+        node.attr("transform", node__transform);
 
         function node_click_handler(d, i) {
             if (d3.event.defaultPrevented) {
@@ -1118,15 +1132,9 @@ function GraphView(spec) {
             d.by = d2.y;
         });
 
-
-        function transform(d, istext) {
-            var bbox = $('#' + d.id)[0].getBBox();
-
-            return translate(d.bx - bbox.width / 2, d.by - bbox.height / 2);
-        }
         // transform nodes first to record bubble x & y (bx & by)
-        node.attr("transform", transform);
-        node_text.attr("transform", transform);
+        node.attr("transform", node__transform);
+        node_text.attr("transform", node__transform);
 
         function same_zoom(d) {
             if (d.zoom_obj === null || parent_graph_zoom_obj === null) {
