@@ -15,13 +15,13 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="rhizi-server"
 NAME=rhizi
-DAEMON=/srv/www/rhizi/rhizi.net/bin/rz_server.py
+DAEMON=/usr/bin/python2.7
 PIDFILE=/var/run/$NAME/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 USERNAME=www-data
 GROUPNAME=www-data
 
-ARGS__DAEMON="--config-dir=/etc/rhizi"
+ARGS__DAEMON="/srv/www/rhizi/rhizi.net/bin/rz_server.py --config-dir=/etc/rhizi"
 ARGS__START_STOP_DAEMON="--make-pidfile --background --chuid ${USERNAME}:${GROUPNAME}"
 
 # Exit if the package is not installed
