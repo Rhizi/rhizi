@@ -450,8 +450,8 @@ function GraphView(spec) {
             });
         }
 
-        var nodeTextX = function(d) {
-            return urlValid(d.url) ? node_text_dx + node_url_dx : node_text_dx;
+        var node__text_x = function(d) {
+            return node_text_dx + (urlValid(d.url) ? node_url_dx : 0);
         }
 
         function model_id_from_dom_id(dom_id) {
@@ -471,7 +471,7 @@ function GraphView(spec) {
                         return;
                     }
                     if (!temporary) {
-                        svgInput.enable(this.querySelector('text'), d, nodeTextX(d));
+                        svgInput.enable(this.querySelector('text'), d, node__text_x(d));
                         (d3.event.shiftKey ? selection.invert_nodes : selection.select_nodes)([d]);
                         showNodeInfo(graph.find_node__by_id(model_id_from_dom_id(this.id)));
                     }
@@ -497,7 +497,7 @@ function GraphView(spec) {
                 }
             };
             node_text.select('text').text(nodeText)
-                .attr("dx", nodeTextX);
+                .attr("dx", node__text_x);
             node_text.attr('class', function(d) {
                     return ['nodetext graph', selection.class__node(d, temporary)].join(' ');
                 });
