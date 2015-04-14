@@ -1118,7 +1118,11 @@ function GraphView(spec) {
             return "translate(" + x + "," + y + ")";
         }
 
-        function transform(d) { return translate(d.bx, d.by); }
+        function transform(d, istext) {
+            var bbox = $('#' + d.id)[0].getBBox();
+
+            return translate(d.bx - bbox.width / 2, d.by - bbox.height / 2);
+        }
         // transform nodes first to record bubble x & y (bx & by)
         node.attr("transform", transform);
         node_text.attr("transform", transform);
