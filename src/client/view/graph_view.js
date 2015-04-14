@@ -55,6 +55,13 @@ function enableDebugViewOfDiffs(graph)
     });
 }
 
+function translate(x, y) {
+    if (x === undefined || y === undefined) {
+        console.log('oops, undefined translate');
+    }
+    return "translate(" + x + "," + y + ")";
+}
+
 function init_checkboxes(graph, update_view) {
     var // FIXME take filter names from index.html or both from graph db
         filter_states = _.object(_.map(model_types.nodetypes, function (type) { return [type, null]; }));
@@ -1111,12 +1118,6 @@ function GraphView(spec) {
             d.by = d2.y;
         });
 
-        function translate(x, y) {
-            if (x === undefined || y === undefined) {
-                console.log('oops, undefined translate');
-            }
-            return "translate(" + x + "," + y + ")";
-        }
 
         function transform(d, istext) {
             var bbox = $('#' + d.id)[0].getBBox();
