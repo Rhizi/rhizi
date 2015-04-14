@@ -158,14 +158,15 @@
 
       <!-- -l: traverse bin/ -> ../src-py link -->
       <rsync src="${targetDeploymentDir}/"
-             extraopts="-lL --delete ${filter_list_str}"
-             dst="rsync://${remoteDeployServer}/${rsync_module}/" />
+             extraopts="--delete -lL ${filter_list_str}"
+             dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/" />
 
       <parallel>
          <!-- apply production patches -->
          <rsync extraopts="--delete"
                 src="res/production-patch-set/${targetDomain}/rhizi-server.production.conf"
-                dst="rsync://${remoteDeployServer}/${rsync_module}/etc/rhizi-server.conf" />
+                dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/etc/rhizi-server.conf" />
+
       </parallel>
    </target>
 
