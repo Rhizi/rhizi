@@ -728,25 +728,8 @@ function GraphView(spec) {
             .each(function () {
                 load_image(this, "/static/img/url-icon.png");
             });
-        var image = nodeEnter
-            .insert("image")
-            .attr("y", 9);
 
-        node.select('g.node > image').each(function (d) {
-                var image_url = d['image-url'];
-
-                if (urlImage(image_url)) {
-                    load_image(this, image_url);
-                }
-            })
-            .attr("display", function(d) {
-                return urlImage(d['image-url']) ? "" : "none";
-            })
-            .on("click", node_click_handler);
-
-        node.attr("transform", node__transform);
-
-        function node_click_handler(d, i) {
+        function node__click_handler(d, i) {
             if (d3.event.defaultPrevented) {
                 // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
                 return;
@@ -766,10 +749,7 @@ function GraphView(spec) {
             .attr("r", function(d) {
                 return 10;
             })
-            .attr("display", function(d) {
-                return urlImage(d['image-url']) ? "none" : "";
-            })
-            .on("click", node_click_handler);
+            .on("click", node__click_handler);
         circle.append("svg:image")
             .attr("class", "status graph")
             .attr('x', -7)
