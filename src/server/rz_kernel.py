@@ -10,7 +10,7 @@ import traceback
 
 from db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
     DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list,
-    DBO_block_chain__init, DBO_rzdoc__rename)
+    DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop)
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
 from model.model import RZDoc
@@ -92,6 +92,7 @@ class RZ_Kernel(object):
         self.cache__rzdoc_name_to_rzdoc = {}
         self.should_stop = False
         self.heartbeat_period_sec = 0.5
+        self.period__db_conn_check = 60
 
     def start(self):
 
@@ -100,7 +101,19 @@ class RZ_Kernel(object):
             Handle periodic server tasks:
                - manage rzdoc subscriber lists
             """
+            t__last_db_conn_check = 0
+
             while False == self.should_stop:
+
+                t_0 = time.time()
+                if t_0 - t__last_db_conn_check > self.period__db_conn_check:
+                    try:
+                        op = DBO_nop()
+                        self.db_ctl.exec_op(op)
+                    except Exception:
+                        log.info('rz_kernel: unable to establish DB connection')
+                    finally:
+                        t__last_db_conn_check = t_0
 
                 for rzdoc, r_assoc_set in self.rzdoc_reader_assoc_map.items():
                     for r_assoc in r_assoc_set:
@@ -119,8 +132,9 @@ class RZ_Kernel(object):
                     time.sleep(0.5)
 
         self.executor = ThreadPoolExecutor(max_workers=8)
-        self.executor.submit(kernel_heartbeat)
         log.info('rz_kernel: on-line')
+
+        self.executor.submit(kernel_heartbeat)
 
     def shutdown(self):
         self.should_stop = True

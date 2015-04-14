@@ -585,6 +585,13 @@ class DBO_match_node_set_by_id_attribute(DBO_match_node_id_set):
 
         super(DBO_match_node_set_by_id_attribute, self).__init__(filter_attr_map={'id': id_set})
 
+class DBO_nop(DB_op):
+
+    def __init__(self):
+        """
+        Do nothing op used to test DB availability
+        """
+        super(DBO_nop, self).__init__()
 
 class DBO_load_link_set(DB_op):
 
