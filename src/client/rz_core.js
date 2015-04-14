@@ -286,7 +286,7 @@ function rzdoc__current__get_name() {
 }
 
 function rzdoc__open_default() {
-    return rzdoc__open(rz_config.rzdoc_default__name);
+    return rzdoc__open(rz_config.rzdoc__mainpage_name);
 }
 
 var published_var_dict = {

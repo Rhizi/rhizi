@@ -77,7 +77,7 @@ class Config(object):
         cfg['SECRET_KEY'] = ''
 
         # Rhizi
-        cfg['rzdoc__welcome_doc__name'] = 'Welcome Rhizi'
+        cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
         cfg['rzdoc__name__max_length'] = 256
 
         with open(file_path, 'r') as f:
