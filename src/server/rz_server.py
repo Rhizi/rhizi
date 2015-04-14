@@ -342,7 +342,7 @@ def init_rest_interface(cfg, flask_webapp):
 
         flask_webapp.f = f  # assign decorated function
 
-def init_webapp(cfg, kernel, db_ctl=None):
+def init_webapp(cfg, kernel):
     """
     Initialize webapp:
        - call init_rest_interface()
@@ -368,14 +368,6 @@ def init_webapp(cfg, kernel, db_ctl=None):
                                                                            cfg.reverse_proxy_port)
     else:
         webapp.req_probe__sock_addr = FlaskExt.Req_Probe__sock_addr__direct(cfg.listen_port)
-
-    #
-    # init DB controller
-    #
-    if None == db_ctl:
-        db_ctl = dbc.DB_Controller(cfg)
-    rz_api_rest.db_ctl = db_ctl
-    kernel.db_ctl = db_ctl
 
     init_rest_interface(cfg, webapp)
     return webapp
@@ -445,16 +437,27 @@ if __name__ == "__main__":
         log.info('failed initialization, aborting')
         exit(-1)
 
-    # setup kernel
+    #
+    # init kernel
+    #
     kernel = RZ_Kernel()
-    kernel.start()
 
+    #
+    # init DB controller
+    #
+    kernel.db_ctl = dbc.DB_Controller(cfg)
+    rz_api_rest.db_ctl = kernel.db_ctl
+
+    #
+    # init webapp
+    #
     webapp = init_webapp(cfg, kernel)
     ws_srv = init_ws_interface(cfg, kernel, webapp)
 
     webapp.user_db = user_db
 
     try:
+        kernel.start()
         ws_srv.serve_forever()
     except Exception as e:
         log.exception(e)
