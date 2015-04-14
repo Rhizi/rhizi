@@ -394,13 +394,13 @@ function GraphView(spec) {
     }
 
     var urlValid = function(url) {
-        return url !== undefined && url !== null && url.length > 0;
+        return url !== undefined && url !== null && url.length > 0 && url.slice(0, 4) === 'http';
     };
 
     var image_endings = {'jpg':1, 'gif':1, 'png':1, 'bmp':1, 'svg':1};
 
     var urlImage = function(url) {
-        return urlValid(url) && image_endings[url.slice(url.lastIndexOf('.') + 1)] !== undefined;
+        return urlValid(url);
     };
 
     function nodes__filtered() {
