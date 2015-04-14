@@ -26,9 +26,9 @@
       <attribute name="root" />
       <attribute name="build" />
       <sequential>
-        <exec dir="@{root}" executable="/usr/bin/r.js" failonerror="true">
+         <exec dir="@{root}" executable="/usr/bin/r.js" failonerror="true">
             <arg line="-o @{build}" />
-        </exec>
+         </exec>
       </sequential>
    </macrodef>
 
@@ -134,12 +134,6 @@
             <fileset dir="res/local/template/fragment/by-domain/${targetDomain}" />
          </copy>
 
-          <!-- tools. use cp to preserve permissions (copy doesn't).
-               out of parallel so ${targetDeploymentDir}/bin is already created -->
-          <exec executable="cp" failonerror="true">
-             <arg line="-R src/local/server-tools ${targetDeploymentDir}/tools"/>
-          </exec>
-
       </parallel>
 
    </target>
@@ -166,6 +160,9 @@
          <rsync extraopts="--delete"
                 src="res/production-patch-set/${targetDomain}/rhizi-server.production.conf"
                 dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/etc/rhizi-server.conf" />
+
+         <rsync src="src/local/server-tools"
+                dst="rsync://${remoteDeployServer}/${rsync_module}/" />
 
       </parallel>
    </target>
