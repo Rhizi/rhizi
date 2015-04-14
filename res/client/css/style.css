@@ -480,6 +480,7 @@ body.debug .debug-ui-right {
   right: 10px;
   top: 120px;
   width: 300px;
+  bottom: 160px;
   box-sizing: border-box; }
 
 .info-container textarea {
