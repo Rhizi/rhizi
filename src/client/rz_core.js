@@ -16,9 +16,6 @@ var addednodes = [],
     edit_graph_view,
     root_element_id_to_graph_view;
 
-// "CSS" for SVG elements. Reused for editing elements.
-var node_text_dx = 15,
-    node_text_dy = '.30em';
 
 var zoomProgress = false,
     zoomBus = new Bacon.Bus(),
@@ -145,8 +142,6 @@ var initDrawingArea = function () {
             parent_graph_zoom_obj: null,
             zoom_property: zoom_property,
             temporary: false,
-            node_text_dx: node_text_dx,
-            node_text_dy: node_text_dy,
             svgInput: svgInput,
             // FIXME: good place to animate bubble radius
             bubble_property: bubble_property,
@@ -160,8 +155,6 @@ var initDrawingArea = function () {
             parent_graph_zoom_obj: zoom_obj,
             zoom_property: zoom_property,
             temporary: true,
-            node_text_dx: node_text_dx,
-            node_text_dy: node_text_dy,
             bubble_property: bubble_property,
     });
 

@@ -131,6 +131,10 @@ function init_checkboxes(graph, update_view) {
     return filter_states;
 }
 
+// "CSS" for SVG elements. Reused for editing elements.
+var node_text_dx = 5,
+    node_text_dy = '.30em';
+
 /*
  * Creates a new view on the given graph contained in an appended last child
  * to the given parent node, parent
@@ -160,8 +164,6 @@ function GraphView(spec) {
         graph_name = spec.graph_name,
         graph = spec.graph,
         zoom_property = spec.zoom_property,
-        node_text_dx = spec.node_text_dx,
-        node_text_dy = spec.node_text_dy,
         svgInput = spec.svgInput,
         zoom_obj = spec.zoom_obj,
         zoom_obj_element = spec.zoom_obj_element,
@@ -185,7 +187,6 @@ function GraphView(spec) {
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
                 temporary !== undefined && force_enabled !== undefined &&
-                node_text_dx !== undefined && node_text_dy !== undefined &&
                 zoom_obj !== undefined && parent_graph_zoom_obj !== undefined &&
                 zoom_obj_element !== undefined &&
                 (temporary || svgInput !== undefined),
