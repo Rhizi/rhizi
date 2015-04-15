@@ -447,7 +447,7 @@ function GraphView(spec) {
         }
 
         var node__text_x = function(d) {
-            return node_text_dx + (urlValid(d.url) ? node_url_dx : 0);
+            return node_text_dx + node__radius(d) + (urlValid(d.url) ? node_url_dx : 0);
         }
 
         function model_id_from_dom_id(dom_id) {
@@ -744,7 +744,9 @@ function GraphView(spec) {
             }
         }
 
-        var node_circle_radius = 10;
+        function node__radius (d) {
+            return urlValid(d['image-url']) ? 20 : 10;
+        }
         function filter_id(id) {
             return id + '__node_filter';
         }
@@ -787,7 +789,7 @@ function GraphView(spec) {
             .append('clipPath')
             .attr('id', function (d) { return clip_path_id(d.id); })
                 .append('circle')
-                .attr('r', node_circle_radius)
+                .attr('r', node__radius)
                 .attr('cx', 0)
                 .attr('cy', 0);
         circle = nodeEnter.insert("circle");
@@ -795,9 +797,7 @@ function GraphView(spec) {
             .attr("class", function(d) {
                 return d.type + " " + d.state + " circle graph";
             })
-            .attr("r", function(d) {
-                return node_circle_radius;
-            })
+            .attr("r", node__radius)
             .attr("filter", function (d) {
                 return urlImage(d['image-url']) ? svg_url(filter_id(d.id)) : '';
             })
