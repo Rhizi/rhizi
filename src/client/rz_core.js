@@ -93,10 +93,14 @@ var initDrawingArea = function () {
         .attr("height", '100%')
         .attr("pointer-events", "all");
 
-    vis.append('defs').append('filter').attr('id', 'f_blur__creation-circle')
-                                       .attr('y', '-10%')
-                                       .attr('x', '-10%').append('feGaussianBlur').attr('in', 'SourceGraphic')
-                                                                                  .attr('stdDeviation', '15');
+    var defs = vis.append('defs');
+
+    defs.append('filter').attr('id', 'f_blur__creation-circle')
+                          .attr('y', '-10%')
+                          .attr('x', '-10%').append('feGaussianBlur').attr('in', 'SourceGraphic')
+                                                                      .attr('stdDeviation', '15');
+    defs.append('g')
+        .attr('class', 'nodefilter-group');
 
     var zoom_g = vis
         .append("g")

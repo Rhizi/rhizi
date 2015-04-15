@@ -640,7 +640,9 @@ function GraphView(spec) {
 
         var nodeEnter = node.enter()
             .append("g")
-            .attr('id', function(d){ return d.id; }) // append node id to enable data->visual mapping
+            .attr('id', function(d) {
+                return d.id;
+            }) // append node id to enable data->visual mapping
             .call(drag);
 
         node.attr('class', function(d) {
@@ -741,13 +743,65 @@ function GraphView(spec) {
             }
         }
 
+        var node_circle_radius = 10;
+        function filter_id(id) {
+            return id + '__node_filter';
+        }
+        function feimage_id(id) {
+            return id + '__node_filter_feimage';
+        }
+        function clip_path_id(id) {
+            return id + '__node_clip_path';
+        }
+        function svg_url(id) {
+            return 'url(#' + id + ')';
+        }
+        var filter_group = d3.select('.nodefilter-group').selectAll(".nodefilter")
+            .data(visible_nodes, function (d) { return d.id; });
+        var filter = filter_group.enter()
+            .insert('filter')
+            .attr('class', 'nodefilter')
+            .attr('id', function(d) {
+                return filter_id(d.id);
+            })
+            .attr('x', '0%')
+            .attr('y', '0%')
+            .attr('width', '100%')
+            .attr('height', '100%')
+                .insert('feImage')
+                .attr('class', 'nodefilter_feimage')
+                .attr('id', function (d) { return feimage_id(d.id); });
+
+        d3.selectAll('.nodefilter_feimage')
+            .data(visible_nodes, function (d) { return d.id; })
+            .attr('xlink:href', function (d) {
+                return d['image-url'];
+            });
+        if (!temporary) {
+            // FIXME: defs per graph
+            filter_group.exit().remove();
+        }
+
+        var clip_path = nodeEnter
+            .append('clipPath')
+            .attr('id', function (d) { return clip_path_id(d.id); })
+                .append('circle')
+                .attr('r', node_circle_radius)
+                .attr('cx', 0)
+                .attr('cy', 0);
         circle = nodeEnter.insert("circle");
         node.select('g.node > circle')
             .attr("class", function(d) {
                 return d.type + " " + d.state + " circle graph";
             })
             .attr("r", function(d) {
-                return 10;
+                return node_circle_radius;
+            })
+            .attr("filter", function (d) {
+                return urlImage(d['image-url']) ? svg_url(filter_id(d.id)) : '';
+            })
+            .attr("clip-path", function (d) {
+                return urlImage(d['image-url']) ? svg_url(clip_path_id(d.id)) : '';
             })
             .on("click", node__click_handler);
         circle.append("svg:image")
