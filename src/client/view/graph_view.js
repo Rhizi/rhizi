@@ -787,11 +787,14 @@ function GraphView(spec) {
 
         var clip_path = nodeEnter
             .append('clipPath')
+            .attr('class', 'node_clippath')
             .attr('id', function (d) { return clip_path_id(d.id); })
                 .append('circle')
-                .attr('r', node__radius)
                 .attr('cx', 0)
                 .attr('cy', 0);
+        d3.selectAll('.node_clippath circle')
+            .data(visible_nodes, function (d) { return d.id; })
+            .attr('r', node__radius);
         circle = nodeEnter.insert("circle");
         node.select('g.node > circle')
             .attr("class", function(d) {
