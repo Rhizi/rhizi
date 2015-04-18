@@ -14,9 +14,13 @@ $('.save a').click(function(){
 });
 
 $('#btn_export').click(function() {
-    var json = rz_core.main_graph.save_to_json();
-    var filename = 'graph.json';
-    var blob = new Blob([json], {type: 'application/json'});
+    var json = rz_core.main_graph.save_to_json(),
+        blob = new Blob([json], {type: 'application/json'}),
+        now = new Date(),
+        date_string = ('' + now.getYear() + now.getMonth() + now.getDay() + '-' +
+            now.getHours() + now.getMinutes() + now.getSeconds()),
+        filename = rz_config.rzdoc_cur__name + '-' + date_string + '.json';
+
     console.log('saving ' + json.length + ' bytes to ' + filename);
     saveAs(blob, filename);
 });
