@@ -1,11 +1,12 @@
 # Rhizi
 A collaborative editor for organizing, communicating, and analyzing data in graph form.
 
-# Requirements
+# Dependencies
 - Neo4J DB server >= 2.1.5 - http://neo4j.com/download/
 - Flask - http://flask.pocoo.org/
 - Apache Ant >= 1.9.0
 - Python 2.7
+- python-enum
 - python-gevent
 - python-gevent-websocket
 - python-six
