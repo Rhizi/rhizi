@@ -11,25 +11,6 @@ import smtplib
 
 log = logging.getLogger('rhizi')
 
-def send_email__flask_ctx(recipients, subject, body, attachments=[]):
-    """
-    Flask context dependent email sending utility
-    """
-
-    send_from = current_app.rz_config.mail_default_sender
-    mta_host = current_app.rz_config.mta_host
-    mta_port = current_app.rz_config.mta_port
-
-    send_email(mta_host,
-                        mta_port,
-                        send_from=send_from,
-                        recipients=recipients,
-                        subject=subject,
-                        attachments=attachments,
-                        body=body)
-
-    log.info('email sent: recipients: %s: subject: %s, attachment-count: %d' % (recipients, subject, len(attachments)))
-
 def send_email(mta_host, mta_port, send_from, recipients, subject, attachments, body):
     """
     Note: to allow for easy testing this function should not depend on any flask app/request context
@@ -58,7 +39,21 @@ def send_email(mta_host, mta_port, send_from, recipients, subject, attachments, 
     smtp.sendmail(send_from, recipients, msg.as_string())
     smtp.close()
 
-if __name__ == '__main__':
-    # FIXME - move to actual test suite
-    send_email('localhost', 'alon@localhost', ['alon@localhost'], 'test subject', [
-        ('diary.txt', 'text/plain', "bla bla bla yeah that's right bla")], 'this is it pal')
+def send_email__flask_ctx(recipients, subject, body, attachments=[]):
+    """
+    Flask context dependent email sending utility
+    """
+
+    send_from = current_app.rz_config.mail_default_sender
+    mta_host = current_app.rz_config.mta_host
+    mta_port = current_app.rz_config.mta_port
+
+    send_email(mta_host,
+                        mta_port,
+                        send_from=send_from,
+                        recipients=recipients,
+                        subject=subject,
+                        attachments=attachments,
+                        body=body)
+
+    log.info('email sent: recipients: %s: subject: %s, attachment-count: %d' % (recipients, subject, len(attachments)))
