@@ -12,7 +12,7 @@ import re
 import uuid
 
 from crypt_util import hash_pw
-from rz_mail import send_email_message
+from rz_mail import send_email__flask_ctx
 from rz_req_handling import make_response__json, make_response__json__html
 from rz_user_db import User_Account
 from rz_api_common import API_Exception__bad_request
@@ -467,7 +467,7 @@ def send_user_activation_link__email(us_req):
                 ]
     msg_body = '\n'.join(msg_body)
 
-    send_email_message(recipients=[us_req['email_address']],
+    send_email__flask_ctx(recipients=[us_req['email_address']],
                        subject="Rhizi sign up request",
                        body=msg_body)
     return activation_link
@@ -497,7 +497,7 @@ def send_user_pw_reset__email(u_account, pw_reset_token):
                 ]
     msg_body = '\n'.join(msg_body)
 
-    send_email_message(recipients=[u_account.email_address],
+    send_email__flask_ctx(recipients=[u_account.email_address],
                        subject="Rhizi password reset request",
                        body=msg_body)
     return pw_reset_link
