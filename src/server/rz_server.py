@@ -10,6 +10,7 @@ import logging
 import os
 import re
 import signal
+import traceback
 
 import db_controller as dbc
 import rz_api
@@ -422,6 +423,7 @@ if __name__ == "__main__":
         log = init_log(cfg)
     except Exception as e:
         print('failed to initialize server: ' + e.message)
+        traceback.print_exc()
         exit(-1)
 
     try:
@@ -434,7 +436,7 @@ if __name__ == "__main__":
         init_user_db()
     except Exception as e:
         log.exception('failed to initialize server')
-        log.info('failed initialization, aborting')
+        traceback.print_exc()
         exit(-1)
 
     #
