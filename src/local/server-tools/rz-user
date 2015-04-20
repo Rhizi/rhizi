@@ -11,28 +11,30 @@ import rz
 
 from crypt_util import hash_pw
 from rz_server import init_config
-from rz_user_db import User_Account, User_DB
+from rz_user import User_Account
+from rz_user_db import User_DB
+
 
 def init_pw_db(cfg, user_pw_list_file, user_db_path):
 
     def add_user_login(first_name, last_name,
                        rz_username, email_address, pw_plaintext):
+
         pw_hash = hash_pw(str(pw_plaintext), salt)
         u_account = User_Account(first_name=first_name,
-                                  last_name=last_name,
-                                  rz_username=rz_username,
-                                  email_address=email_address,
-                                  pw_hash=pw_hash,
-                                  role_set=['user'])
-
-        print('user_db: added entry: user: %s, pw: %s...' % (u, pw_db[u][:5]))
+                                 last_name=last_name,
+                                 rz_username=rz_username,
+                                 email_address=email_address,
+                                 pw_hash=pw_hash,
+                                 role_set=['user'])
+        user_db.user_add(u_account)
 
     if os.path.exists(user_db_path):
         print('user_db_path already exists, aborting: ' + user_db_path)
         return
 
-    user_db = User_DB(db_path=db_path)
-    user_db.init(mode='c')
+    user_db = User_DB(db_path=user_db_path)
+    user_db.init(mode='n')  # always create a new, empty database, open for reading and writing
 
     salt = cfg.secret_key
     assert len(salt) > 8, 'server-key not found or too short'
@@ -48,15 +50,17 @@ def init_pw_db(cfg, user_pw_list_file, user_db_path):
             if 5 != len(kv_arr):
                 raise Exception('failed to parse first-name,last-name,email,user,pw line: ' + line)
 
-            first_name, last_name, rz_username, email_address, pw_plaintext = map(
-                str.strip, kv_arr)
+            first_name, last_name, rz_username, email_address, pw_plaintext = map(str.strip, kv_arr)
             add_user_login(first_name=first_name,
                            last_name=last_name,
                            rz_username=rz_username,
                            email_address=email_address,
                            pw_plaintext=pw_plaintext)
-            print('added user: u: ' + rz_username)
+
+            print('user_db: added entry: rz_username: %s, pw: %s...' % (rz_username, pw_plaintext[:3]))
             u_count = u_count + 1
+
+    user_db.shutdown()
     print('user_db generated: path: %s, user-count: %d' % (user_db_path, u_count))
 
 def open_existing_user_db(user_db_path):
@@ -85,11 +89,8 @@ def main():
     p.add_argument('--role-rm', help='role to remove from user')
 
     args = p.parse_args()
-    if None == args.user_db_path:
-        cfg = init_config(args.config_dir)
-        user_db_path = cfg.user_db_path
-    else:
-        user_db_path = args.user_db_path
+    cfg = init_config(args.config_dir)
+    user_db_path = cfg.user_db_path
 
     if args.init_user_db:
         init_pw_db(cfg, args.user_db_init_file, user_db_path)
