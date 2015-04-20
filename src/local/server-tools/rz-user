@@ -6,9 +6,6 @@ import pickle
 import re
 import sys
 
-# must be before any rhizi import
-import rz
-
 from crypt_util import hash_pw
 from rz_server import init_config
 from rz_user import User_Account
