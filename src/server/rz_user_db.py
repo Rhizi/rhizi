@@ -107,6 +107,9 @@ class User_DB(object):
         self.persistent_data_store[uid] = u_account  # write new record
         return old_pw_hash
 
+    def user_count(self):
+        return len(self.persistent_data_store.keys())
+
     def user_rm(self, uid):
         del self.persistent_data_store[uid]
 
