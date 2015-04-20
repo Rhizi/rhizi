@@ -1,8 +1,8 @@
 from datetime import datetime
 from datetime import timedelta
 from flask import current_app
-from flask import redirect
 from flask import make_response
+from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
@@ -12,9 +12,9 @@ import re
 import uuid
 
 from crypt_util import hash_pw
+from rz_api_common import API_Exception__bad_request
 from rz_mail import send_email__flask_ctx
 from rz_req_handling import make_response__json, make_response__json__html
-from rz_api_common import API_Exception__bad_request
 
 
 log = logging.getLogger('rhizi')
@@ -158,7 +158,7 @@ def rest__login():
         try:
             _uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
         except:
-            log.warn('login: login attempt to unknown account. request: %s' % request)
+            log.warn('login: login attempt to unknown account: email_address: \'%s\'' % (email_address))
             return make_response__json(status=401)  # return empty response
 
         try:
@@ -185,7 +185,7 @@ def rest__logout():
     # remove the username from the session if it's there
     u = session.pop('username', None)
 
-    assert None != u # assert user session was found - note: /logout is login protected
+    assert None != u  # assert user session was found - note: /logout is login protected
 
     log.debug('logout: success: user: %s' % (u))
 
@@ -195,7 +195,7 @@ def rest__logout():
     if request.method == 'POST':
         resp = make_response__json()
 
-    resp.set_cookie(key='session', value='', expires=0) # UNIX timestamp 0
+    resp.set_cookie(key='session', value='', expires=0)  # UNIX timestamp 0
     return resp
 
 def rest__pw_reset():
@@ -350,14 +350,14 @@ def rest__user_signup():
             f_val = req_json.get(f_key)
             f_name = f_key.replace('_', ' ')
 
-            if None == f_val or 0 == len(f_val): # missing or empty value
+            if None == f_val or 0 == len(f_val):  # missing or empty value
                 e = API_Exception__bad_request('malformed signup request: missing field: %s' % (f_key))
                 e.caller_err_msg = 'Missing value: %s' % (f_name)
                 raise e
 
             if None == re.match(regex, f_val):
                 e = API_Exception__bad_request('malformed signup request: regex match failure: regex: %s, input: %s' % (regex, f_val))
-                if f_key == 'pw_plaintxt': # provide more info on invalid pw case
+                if f_key == 'pw_plaintxt':  # provide more info on invalid pw case
                     e.caller_err_msg = 'Illegal password: use a minimum of %d alphanumeric chars' % (pw_min_len)
                 else:
                     e.caller_err_msg = 'Illegal \'%s\' value: %s' % (f_name, f_val)
