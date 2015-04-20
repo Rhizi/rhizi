@@ -382,13 +382,20 @@ def init_user_db():
     global user_db
 
     try:
+        if os.path.exists(cfg.user_db_path):
+            mode = 'w'  # anydbm doc: open existing database for reading and writing
+            log.info('user DB located, path: %s' % (cfg.user_db_path))
+        else:
+            mode = 'n'  # anydbm doc: create a new, empty database, open for reading and writing
+            log.info('user DB missing, generating one: path: %s' % (cfg.user_db_path))
+
         user_db = User_DB(db_path=cfg.user_db_path)
-        user_db.init(mode='c')  # dev default: create DB
+        user_db.init(mode=mode)
     except Exception as e:
         log.exception('failed to init user_db, configured user_db path: %s' % (cfg.user_db_path))
         raise e
 
-    log.info('user DB initialized: path: %s' % (cfg.user_db_path))
+    log.info('user DB initialized: path: %s, user-count: %s' % (cfg.user_db_path, user_db.user_count()))
     return user_db
 
 def init_signal_handlers():
