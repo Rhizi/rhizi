@@ -44,7 +44,8 @@ SECRET_KEY = notverysecretbutpeppyyaya
 # -----------------------------------------------------------------------------
 # Mail
 #
-mail_hostname = 127.0.0.1
+mta_host = 127.0.0.1
+mta_port = 127.0.0.1
 mail_default_sender = rhizi@localhost
 feedback_recipient = feedback@localhost
 

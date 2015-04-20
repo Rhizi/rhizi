@@ -14,15 +14,20 @@ log = logging.getLogger('rhizi')
 def send_email_message(recipients, subject, body, attachments=[]):
 
     send_from = current_app.rz_config.mail_default_sender
-    smtp_hostname = current_app.rz_config.mail_hostname
+    mta_host = current_app.rz_config.mta_host
+    mta_port = current_app.rz_config.mta_port
 
-    send_message_helper(smtp_hostname=smtp_hostname,
-                        send_from=send_from, recipients=recipients,
-                        subject=subject, attachments=attachments, body=body)
+    send_message_helper(mta_host,
+                        mta_port,
+                        send_from=send_from,
+                        recipients=recipients,
+                        subject=subject,
+                        attachments=attachments,
+                        body=body)
 
     log.info('email sent: recipients: %s: subject: %s, attachment-count: %d' % (recipients, subject, len(attachments)))
 
-def send_message_helper(smtp_hostname, send_from, recipients, subject, attachments, body):
+def send_message_helper(mta_host, mta_port, send_from, recipients, subject, attachments, body):
     """
     attachments is a list of tuples (filename, mimetype, data)
 
@@ -47,7 +52,7 @@ def send_message_helper(smtp_hostname, send_from, recipients, subject, attachmen
         # Content_Disposition: attachment; filename="feedback_page.html"
         msg.attach(part)
 
-    smtp = smtplib.SMTP(smtp_hostname)
+    smtp = smtplib.SMTP(host=mta_host, port=mta_port)
     smtp.sendmail(send_from, recipients, msg.as_string())
     smtp.close()
 

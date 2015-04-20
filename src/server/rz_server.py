@@ -61,8 +61,8 @@ class Config(object):
         cfg['optimized_main'] = False
 
         # Mail settings
-        cfg['mail_hostname'] = 'localhost'
-        cfg['mail_port'] = 25
+        cfg['mta_host'] = '127.0.0.1'
+        cfg['mta_port'] = 25
 
         # Network settings
         #    - reverse_proxy_host: proxy host name as seen by clients
