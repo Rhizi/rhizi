@@ -14,11 +14,33 @@ import uuid
 from crypt_util import hash_pw
 from rz_mail import send_email__flask_ctx
 from rz_req_handling import make_response__json, make_response__json__html
-from rz_user_db import User_Account
 from rz_api_common import API_Exception__bad_request
 
 
 log = logging.getLogger('rhizi')
+
+class User_Account(object):
+
+    def __init__(self, first_name,
+                       last_name,
+                       rz_username,
+                       email_address,
+                       pw_hash,
+                       role_set=[]):
+
+        self.first_name = first_name
+        self.last_name = last_name
+        self.rz_username = rz_username
+        self.email_address = email_address
+        self.pw_hash = pw_hash
+        self.role_set = role_set
+
+    def __str__(self, *args, **kwargs):
+        ret_arr = ['rz_username: %s' % (self.rz_username),
+                   'email_address: %s' % (self.email_address),
+                   'role-set: %s' % (self.role_set),
+                   ]
+        return ','.join(ret_arr)
 
 class User_Signup_Request(dict):
 
