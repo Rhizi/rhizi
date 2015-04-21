@@ -14,14 +14,20 @@ else
     fi
 fi
 
-function quit_if_no_neo4j_running () {
+function neo4j_running () {
     if [ `uname` == "Darwin" ]; then
         neo4j_count=`netstat -na -ptcp 2>/dev/null | grep 7474 | wc -l`
     else
         neo4j_count=`netstat -ltnop 2>/dev/null | grep 7474 | wc -l`
     fi
-    if [ $neo4j_count == "0" ]; then
-        echo run neo4j please
+    [ $neo4j_count -gt "0" ]
+}
+
+function quit_if_no_neo4j_running () {
+    if neo4j_running ; then
+        return 0
+    else
+        echo neo4j not running
         exit 0
     fi
 }
