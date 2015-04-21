@@ -1,11 +1,12 @@
 #!/usr/bin/python2.7
 
 from datetime import datetime
-import os
-import shutil
-import re
 from glob import glob
+import os
 from os.path import basename, dirname, exists
+import re
+import shutil
+
 
 root = '/var/lib/rhizi/backup'
 
@@ -15,8 +16,8 @@ backup_template = 'backup-%s.dump'
 backup_glob = backup_template % '*'
 backup_re = re.compile(backup_template % '(\d\d\d\d)(\d\d)(\d\d)')
 
-DAILY_KEPT = 7 # should be >= 7
-WEEKLY_KEPT = 5 # should be >= 5
+DAILY_KEPT = 7  # should be >= 7
+WEEKLY_KEPT = 5  # should be >= 5
 
 def unlink(filename):
     if debug:
@@ -66,7 +67,7 @@ def backup_year_month_day(filename):
 def to_weekly(filename):
     year, month, day = backup_year_month_day(filename)
     _, (wkly_year, wkly_month, wkly_day) = latest_weekly()
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     delta = datetime(year, month, day) - datetime(wkly_year, wkly_month, wkly_day)
     return delta.days >= 7
 
@@ -95,8 +96,8 @@ def latest(subdir):
 
 def sorted_backups(subdir):
     def cmp_files(fa, fb):
-        ta =  os.stat(fa).mtime
-        tb =  os.stat(fb).mtime
+        ta = os.stat(fa).mtime
+        tb = os.stat(fb).mtime
         if ta == tb:
             return 0
         if ta < tb:

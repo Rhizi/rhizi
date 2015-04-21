@@ -1,21 +1,21 @@
 #!/usr/bin/python2.7
 
-import sys
-import os
-import argparse # TODO - use the newer / shorter argument parser. y?
+import argparse  # TODO - use the newer / shorter argument parser. y?
 from collections import namedtuple
 import json
+import os
+import sys
 import uuid
 
-# must be before any rhizi import
-import rz
-
-from neo4j_util import generate_random_id__uuid
-from rz_server import init_config
-from rz_kernel import RZ_Kernel
-from model.graph import Topo_Diff
 import db_controller as dbc
+from model.graph import Topo_Diff
+from neo4j_util import generate_random_id__uuid
+import rz
+from rz_kernel import RZ_Kernel
+from rz_server import init_config
 
+
+# must be before any rhizi import
 def clone(rzdoc_name):
     return kernel.rzdoc__clone(kernel.rzdoc__lookup_by_name(rzdoc_name))
 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     p.add_argument('--rename-from', help='rename current name')
     p.add_argument('--rename-to', help='rename new name')
     args = p.parse_args()
-    
+
     if args.config_dir is None:
         for d in ['res/etc', '/etc/rhizi']:
             if os.path.exists(d):
