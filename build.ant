@@ -32,9 +32,12 @@
       </sequential>
    </macrodef>
 
-   <property name="pkg_name" value="rhizi-server" />
+   <property name="pkg_name" value="rhizi" />
    <property name="pkg_version" value="0.1.0" />
-   <property name="buildDir" value="build/${pkg_name}-${pkg_version}" />
+   <property name="pkg_fullname" value="${pkg_name}-${pkg_version}" />
+   <property name="pkg_debname" value="${pkg_name}_${pkg_version}" />
+   <property name="buildDir" value="build" />
+   <property name="build_dir__deb_pkg" value="${buildDir}/${pkg_fullname}" />
    <property name="targetDeploymentDir" value="deploy-local" />
    <property name="remoteDeployServer" value="rz-0.unige.ch" />
    <property name="targetDomain" value="default.rhizi.net" />
@@ -47,7 +50,7 @@
 
    <target name="clean" description="remove all work folders">
       <delete dir="dist" />
-      <delete dir="build" />
+      <delete dir="${buildDir}" />
    </target>
 
    <target name="deploy-local.clean">
@@ -168,23 +171,34 @@
       </parallel>
    </target>
 
-
    <target name="pkg-deb" depends="clean" description="package as .deb">
       <mkdir dir="dist" />
-      <mkdir dir="${buildDir}" />
+      <mkdir dir="${build_dir__deb_pkg}" />
 
       <exec dir="${basedir}" executable="/usr/bin/git">
          <arg value="clone" />
          <arg line="--depth 1" />
          <arg value="file://${basedir}" />
-         <arg value="${buildDir}" />
+         <arg value="${build_dir__deb_pkg}" />
       </exec>
 
-      <copy todir="${buildDir}/debian">
-         <fileset dir="debian" />
+      <copy todir="${build_dir__deb_pkg}/debian">
+         <fileset dir="res/debian" />
       </copy>
 
-      <exec dir="${buildDir}" executable="/usr/bin/debuild">
+      <!-- TODO: use when depending on libjs-jquery, libjs-underscore
+      <delete verbose="true" includeemptydirs="true">
+         <fileset file="${build_dir__deb_pkg}/res/client/lib/jquery.js" />
+         <fileset file="${build_dir__deb_pkg}/res/client/lib/underscore.js" />
+      </delete>
+      -->
+
+      <!-- debuild flags:
+           -b: binary-only build
+           -us: do not sign the source package
+           -uc: do not sign .changes
+       -->
+      <exec dir="${build_dir__deb_pkg}" executable="/usr/bin/debuild">
          <arg value="-b" />
          <arg value="-us" />
          <arg value="-uc" />
@@ -192,8 +206,8 @@
    </target>
 
    <target name="pkg-deb.list">
-      <exec dir="${buildDir}" executable="/usr/bin/dpkg">
-         <arg line="-c rhizi-server_0.1.0_amd64.deb" />
+      <exec executable="/usr/bin/dpkg">
+         <arg line="-c ${buildDir}/${pkg_debname}_amd64.deb" />
       </exec>
    </target>
 

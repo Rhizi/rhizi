@@ -1,0 +1,8 @@
+res/client/*      usr/share/rhizi/webapp/static/
+res/etc/*         etc/rhizi/
+res/templates/*   usr/share/rhizi/webapp/templates/
+
+res/apache/sites-availalbe   etc/apache2/sites-available/
+
+src/server/*               usr/lib/rhizi/rhizi-server/
+src/local/server-tools/*   usr/lib/rhizi/server-tools/

@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+DEB_CONFIGURE_EXTRA_FLAGS := \
+	--prefix=/usr \
+	--libdir=/usr/lib \
+	--enable-python
+
+%:
+	dh $@ --with python2
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(DEB_CONFIGURE_EXTRA_FLAGS)
+
+override_dh_auto_install:
+	dh_auto_install
+
+	# TODO: support python setup.py install:
+	# python setup.py install --root=$(CURDIR)/debian/supybot --prefix=/usr $(py_setup_install_args)
+
+override_dh_python2:
+	dh_python2 \
+		-p rhizi \
+		--exclude=rhizi-server.py

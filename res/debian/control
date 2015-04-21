@@ -1,0 +1,28 @@
+Source: rhizi
+Section: web
+Priority: optional
+Maintainer: Amir Sagie <sagie@rhizi.org>
+Build-Depends: debhelper (>= 9),
+               dh-python
+Standards-Version: 3.9.5
+Homepage: http://rhizi.net
+
+Package: rhizi
+Architecture: any
+Depends: ${python:Depends},
+         ${shlibs:Depends},
+         ${misc:Depends},
+         apache2 (>= 2.4),
+         neo4j-advanced (>= 2.2),
+         python2.7,
+         python-enum,
+         python-flask,
+         python-futures,
+         python-gevent,
+         python-gevent-websocket,
+         python-six,
+         python-socketio
+Description: Rhizi document server
+ Rhizi collaborative web editor
+ .
+ This package includes the Rhizi server
