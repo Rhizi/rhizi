@@ -134,7 +134,7 @@
                tofile="${targetDeploymentDir}/static/model/domain_types.js" />
          <copy todir="${targetDeploymentDir}/templates/fragment"
                overwrite="true"
-               failonerror="false" >
+               failonerror="false">
             <fileset dir="res/local/template/fragment/by-domain/${targetDomain}" />
          </copy>
 
