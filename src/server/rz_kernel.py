@@ -50,7 +50,7 @@ class RZDoc_Reader_Association:
         return  self.socket == other.socket
 
     def __str__(self):
-        return '%s: remote addr: %s:%s' % (self.rzdoc, self.remote_socket_addr[0], self.remote_socket_addr[1])
+        return '%s: peer-addr: %s:%s' % (self.rzdoc, self.remote_socket_addr[0], self.remote_socket_addr[1])
 
 def deco__exception_log(kernel_f):
     """
