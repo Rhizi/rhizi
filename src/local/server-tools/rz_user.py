@@ -3,6 +3,7 @@
 import argparse
 import os
 import pickle
+import pwd
 import re
 import sys
 
@@ -12,7 +13,10 @@ from rz_user import User_Account
 from rz_user_db import User_DB
 
 
-def init_pw_db(cfg, user_pw_list_file, user_db_path):
+def init_pw_db(cfg, user_pw_list_file, user_db_path, ugid_str='www-data'):
+    """
+    @param ugid_str: shared uid, gid set on generated file
+    """
 
     def add_user_login(first_name, last_name,
                        rz_username, email_address, pw_plaintext):
@@ -58,6 +62,10 @@ def init_pw_db(cfg, user_pw_list_file, user_db_path):
             u_count = u_count + 1
 
     user_db.shutdown()
+
+    ugid = pwd.getpwnam(ugid_str).pw_uid
+    os.chown(user_db_path, ugid, ugid)
+
     print('user_db generated: path: %s, user-count: %d' % (user_db_path, u_count))
 
 def open_existing_user_db(user_db_path):
