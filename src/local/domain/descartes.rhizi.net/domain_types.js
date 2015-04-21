@@ -37,7 +37,6 @@ define({
         'type': 'Type',
         'url': 'URL',
         'image-url': 'Image URL',
-        'rhizi-url': 'Rhizi URL',
         'total days': 'Total days',
         'budget': 'Budget',
     },
@@ -48,8 +47,7 @@ define({
         'type': 'type',
         'image-url': 'image',
         'url': 'url',
-        'rhizi-url': 'rhizi-url',
-        'total days': 'input',
+        'total days': 'total days',
         'budget': 'input',
     },
 });
