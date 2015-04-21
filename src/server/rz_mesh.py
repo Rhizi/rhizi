@@ -199,15 +199,12 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         Cast update messege to subscribed readers
         """
 
-        cast_set = []
-        rzdoc_r_set = kernel.rzdoc__reader_set_from_rzdoc(rzdoc)
-        for r_assoc in rzdoc_r_set:
-            cast_set.append(r_assoc)
+        r_assoc_set = kernel.rzdoc__reader_set_from_rzdoc(rzdoc)
 
         log.debug('ws: rzdoc cast: msg: \'%s\': rzdoc: %s, cast-size ~= %d' % (pkt.get('name'),
                                                                                       rzdoc.name,
-                                                                                      len(cast_set)))
-        for r_assoc in cast_set:
+                                                                                      len(r_assoc_set)))
+        for r_assoc in r_assoc_set:
             try:
                 r_assoc.socket.send_packet(pkt)
             except Exception as e:
