@@ -967,6 +967,18 @@ p {
 .circle.person {
   fill: #004681; }
 
+.circle.beneficiary {
+  fill: #40C200; }
+
+.circle.completed-project {
+  fill: #8b3ab0; }
+
+.circle.ongoing-project {
+  fill: #ee3654; }
+
+.circle.future-project {
+  fill: #33c2e0; }
+
 .circle.collaborator {
   fill: #004681; }
 

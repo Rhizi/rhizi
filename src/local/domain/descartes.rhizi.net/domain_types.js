@@ -13,15 +13,15 @@ define({
             'title': 'Beneficiary',
             'attributes': ['description', 'url', 'image-url', 'email'],
         }],
-        ['completed project', {
+        ['completed-project', {
             'title': 'Completed project',
             'attributes': ['description', 'url', 'budget', 'total days','image-url'],
         }],
-        ['ongoing project', {
+        ['ongoing-project', {
             'title': 'Ongoing project project',
             'attributes': ['description', 'url', 'budget', 'total days','image-url'],
         }],
-        ['future project', {
+        ['future-project', {
             'title': 'Future project',
             'attributes': ['description', 'url', 'budget', 'total days','image-url'],
         }],

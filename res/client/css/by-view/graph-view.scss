@@ -131,6 +131,21 @@
   fill: $blue;
 }
 
+.circle.beneficiary {
+  fill: $green;
+}
+
+.circle.completed-project {
+  fill: $purple;
+}
+
+.circle.ongoing-project {
+  fill: $magenta
+}
+
+.circle.future-project {
+  fill: $cyan
+}
 .circle.collaborator {
   fill: $blue;
 }
