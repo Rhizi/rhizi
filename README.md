@@ -35,9 +35,8 @@ ruby-sass
 ## Generic
 use pip to install all requirements
 
- $ pip install gevent-socketio
  $ pip install flask
- $ pip install flask-mail
+ $ pip install gevent-socketio
 
 # Use
 ## Running Rhizi Locally
