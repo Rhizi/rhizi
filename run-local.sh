@@ -1,5 +1,5 @@
 #!/bin/bash
-. tools/utils.sh
+. src/local/utils.sh
 
 quit_if_no_neo4j_running
 
