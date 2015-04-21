@@ -1,2 +1,0 @@
-#!/bin/bash
-neo4j-shell -file ./res/neo4j/reset-db__clean.cypher && ./src/local/domain/cri/from_csv --student *interests*.csv *nterns*
