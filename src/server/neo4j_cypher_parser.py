@@ -554,7 +554,7 @@ class Cypher_Parser(object):
         return root_node
 
     def __match(self, rgx, input):  # error handling match
-        ret = re.match(rgx, input)
+        ret = re.match(rgx, input, re.UNICODE)
         if not ret:
             raise Exception('cypher parse error: rgx match failure: rgx: %s, input: "%s"' % (rgx, input))
         return ret
