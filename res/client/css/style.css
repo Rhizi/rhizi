@@ -782,7 +782,7 @@ p {
   padding: 5px 4px 0px 4px; }
 
 #btn_zoom_to_selection {
-  background: url(../img/icon__zoom_to_selection.svg);
+  background: url(../img/icon__zoom_to_selection.png);
   background-position: center;
   background-repeat: no-repeat;
   width: 16px;
@@ -790,7 +790,7 @@ p {
   margin-bottom: 5px; }
 
 #btn_zoom_in {
-  background: url(../img/plus.svg);
+  background: url(../img/plus.png);
   background-position: center;
   background-repeat: no-repeat;
   width: 16px;
@@ -798,7 +798,7 @@ p {
   margin-bottom: 5px; }
 
 #btn_zoom_out {
-  background: url(../img/minus.svg);
+  background: url(../img/minus.png);
   background-position: center;
   background-repeat: no-repeat;
   width: 16px;
