@@ -13,4 +13,4 @@ src/client/main-built.js
 src/client/main-built.js.map
 res/templates/fragment/version.txt
 src/server/tools
-docker/fedora/neo4j-community-2.2.1-unix.tar.gz
+res/docker/fedora/neo4j-community-2.2.1-unix.tar.gz
