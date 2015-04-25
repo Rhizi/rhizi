@@ -553,10 +553,10 @@ class Cypher_Parser(object):
 
         return root_node
 
-    def __match(self, rgx, input):  # error handling match
-        ret = re.match(rgx, input, re.UNICODE)
+    def __match(self, rgx, input_str, flags=0):  # error handling match
+        ret = re.match(rgx, input_str, flags)
         if not ret:
-            raise Exception('cypher parse error: rgx match failure: rgx: %s, input: "%s"' % (rgx, input))
+            raise Exception('cypher parse error: rgx match failure: rgx: %s, input: "%s"' % (rgx, input_str))
         return ret
 
     def first_sibling_root(self, n):
@@ -573,7 +573,7 @@ class Cypher_Parser(object):
 
     def read__e_ident(self, input, n_ident):
         rgx_ident = r'^%s%s' % (e_ident.rgx(), self.rgx__suffix)
-        m = self.__match(rgx_ident, input)
+        m = self.__match(rgx_ident, input, re.UNICODE)
         n_ident.value = m.group('ident')
         return m.group('suffix')
 
@@ -587,7 +587,7 @@ class Cypher_Parser(object):
         else:  # non quoted value
             rgx_value = r'^%s%s' % (e_value.rgx__unquoted(), self.rgx__suffix)
 
-        m = self.__match(rgx_value, input)
+        m = self.__match(rgx_value, input, re.UNICODE)
         n_value.value = m.group('value')
         return m.group('suffix')
 
@@ -604,7 +604,7 @@ class Cypher_Parser(object):
 
         rgx_attr_set_or_param = r'^((%s:)|(%s))' % (e_ident.rgx('kv_pair__key'),
                                                     e_ident.rgx('ident'))
-        m = self.__match(rgx_attr_set_or_param, input)
+        m = self.__match(rgx_attr_set_or_param, input, re.UNICODE)
         if m.group('ident'):
             n_cur = n_cur.spawn_child(e_ident)
             return self.__parse(input, n_cur)
