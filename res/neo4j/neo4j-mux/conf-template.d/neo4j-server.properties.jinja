@@ -1,0 +1,16 @@
+# -----------------------------------------------------------------------------
+# Neo4j server configuration
+#
+dbms.security.auth_enabled=false
+org.neo4j.server.database.location=data/graph.db
+org.neo4j.server.db.tuning.properties=conf/neo4j.properties
+org.neo4j.server.http.log.config=conf/neo4j-http-logging.xml
+org.neo4j.server.http.log.enabled=false
+org.neo4j.server.webadmin.rrdb.location=data/rrd
+org.neo4j.server.webserver.https.cert.location=conf/ssl/snakeoil.cert
+org.neo4j.server.webserver.https.enabled=true
+org.neo4j.server.webserver.https.key.location=conf/ssl/snakeoil.key
+org.neo4j.server.webserver.https.keystore.location=data/keystore
+org.neo4j.server.webserver.https.port={{ org_neo4j_server_webserver_https_port }}
+org.neo4j.server.webserver.port={{ org_neo4j_server_webserver_port }}
+
