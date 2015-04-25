@@ -1,3 +1,5 @@
+# coding=utf-8   # TODO: rm on python 3 migration
+
 import unittest
 
 from db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
@@ -78,8 +80,8 @@ class Test_DB_Op(unittest.TestCase):
         #
         parser = Cypher_Parser()
         exp_set = [
-                   'match (n) with n order by n.id skip 0 limit 2 optional match (n)-[r]->(m) return n,labels(n),collect([m.id, r, type(r)])',
                    'create (n:A)-[r:B]->(m:C:D), ({a: 0, b: \'b\'})',
+                   'match (n) with n order by n.id skip 0 limit 2 optional match (n)-[r]->(m) return n,labels(n),collect([m.id, r, type(r)])',
                    'match (src {id: {src}.id}), (dst {id: {dst}.id})',
                    'match (n {id: {id_foo}})',
                    'match ()',
@@ -87,9 +89,16 @@ class Test_DB_Op(unittest.TestCase):
                    'match (n), ()-[r]-()',
                    'match ()-[:A]->()',
                    'match (n:`T_nMu7ktxW` {node_attr})',
-                   'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)'
-                   ]
+                   'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)',
 
+                   #
+                   # UNICODE tests
+                   #
+                   u'create (n:א)-[r:ב]->(m:ג:ד)',
+                   u'create ({א: 0})',
+                   u'create ({א: 0, נ: \'ערך ב\'})',
+                   ]
+        # exp_set = []
         for clause in exp_set:
             pt = parser.parse_expression(clause)
             validate_parse_tree(pt, clause)
@@ -100,6 +109,7 @@ class Test_DB_Op(unittest.TestCase):
         #
         test_label = neo4j_test_util.rand_label()
         op_set = self.gen_full_db_op_set(test_label)
+        # op_set = []
 
         for op in op_set:
             if isinstance(op, DB_composed_op): continue
