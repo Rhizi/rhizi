@@ -4,17 +4,18 @@ import unittest
 
 from db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
     DBO_block_chain__commit, DBO_diff_commit__attr, DBO_diff_commit__topo, \
-    DBO_rm_node_set, DB_composed_op, DBO_block_chain__init, DBO_rzdoc__create,\
+    DBO_rm_node_set, DB_composed_op, DBO_block_chain__init, DBO_rzdoc__create, \
     DBO_rzdoc__delete, DBO_rzdoc__list, DBO_rzdoc__lookup_by_name
 from model.graph import Attr_Diff, Topo_Diff
-from test_util import generate_random_node_dict, generate_random_link_dict,\
-    generate_random_RZDoc
+from neo4j_cypher import Cypher_Parser, DB_Query
+from neo4j_qt import QT_RZDOC_NS_Filter
 import neo4j_test_util
 from neo4j_util import meta_attr_list_to_meta_attr_map
 from rz_server import Config, init_log
-from neo4j_cypher import Cypher_Parser, DB_Query
+from test_util import generate_random_node_dict, generate_random_link_dict, \
+    generate_random_RZDoc
 from test_util__pydev import debug__pydev_pd_arg
-from neo4j_qt import QT_RZDOC_NS_Filter
+
 
 class Test_DB_Op(unittest.TestCase):
 
@@ -112,8 +113,8 @@ class Test_DB_Op(unittest.TestCase):
         # op_set = []
 
         for op in op_set:
-            if isinstance(op, DB_composed_op): continue
-            for _idx, db_q, _db_q_result in op:
+            if isinstance(op, DB_composed_op): continue  # validated through sub-ops
+            for _idx, db_q, _db_q_result in op.iter__r_set():
                 q_str = db_q.q_str
                 validate_parse_tree(db_q.pt_root, q_str)
                 valid_exp_set += [q_str]
@@ -136,9 +137,11 @@ class Test_DB_Op(unittest.TestCase):
 
     def test_T__add_node_filter__rzdoc_id_label(self):
         test_label = neo4j_test_util.rand_label()
+        test_rzdoc = generate_random_RZDoc(test_label)
 
         dbq_set = []
         op_set = self.gen_full_db_op_set(test_label)
+
         for op in op_set:
             if isinstance(op, DB_composed_op): continue  # sub-queries tested instead
             for dbq in op:
@@ -160,7 +163,7 @@ class Test_DB_Op(unittest.TestCase):
             q_str__pre = db_q.q_str
 
             try:
-                t = T(*args) # instantiate transformation
+                t = T(*args)  # instantiate transformation
                 t(db_q)
                 q_str__post = db_q.pt_root.str__cypher_query()
                 self.log.debug('test case:\n\t q: %s\n\tq\': %s\n' % (q_str__pre,
@@ -170,6 +173,7 @@ class Test_DB_Op(unittest.TestCase):
                                                                         db_q.pt_root))
                 self.log.exception(e)
 
+@debug__pydev_pd_arg
 def main():
     unittest.main(defaultTest='Test_DB_Op.test_cypher_exp_parsing', verbosity=2)
 
