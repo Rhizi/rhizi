@@ -3,7 +3,10 @@
  Rhizi build targets
 
 -->
-<project name="rhizi-server" default="pkg-deb" xmlns:if="ant:if">
+<project name="rhizi-server" default="pkg-deb"
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless"
+         >
 
    <macrodef name="rsync">
       <attribute name="src" />
@@ -42,6 +45,7 @@
    <property name="remoteDeployServer" value="rz-0.unige.ch" />
    <property name="targetDomain" value="default.rhizi.net" />
    <property name="doClientOptimize" value="false" />
+   <property name="localServerUseSymlink" value="true" />
    <property name="defaultDomain" value="default.rhizi.net" />
 
    <tstamp>
@@ -111,10 +115,14 @@
 
          <!-- code -->
          <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
-         <symlink action="single"
+
+         <symlink if:true="${localServerUseSymlink}"
+                  action="single"
                   overwrite="true"
                   link="${targetDeploymentDir}/bin"
                   resource="${basedir}/${src_server}" />
+         <rsync unless:true="${localServerUseSymlink}"
+                src="${basedir}/${src_server}/" dst="${targetDeploymentDir}/bin" />
 
          <!-- conf-->
          <copy file="res/etc/rhizi-server.conf"
