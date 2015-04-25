@@ -19,6 +19,5 @@ if [ ! -f $CONFIG ]; then
 fi
 make # building css relies on Makefile
 ant -f build.ant deploy-local -DdefaultDomain=$DOMAIN -DtargetDomain=$DOMAIN && (
-    cd deploy-local
-    python2.7 bin/rz_server.py --config-dir etc
+    python2.7 deploy-local/bin/rz_server.py --config-dir deploy-local/etc
 )
