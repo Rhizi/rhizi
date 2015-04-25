@@ -54,7 +54,7 @@ class Config(object):
         cfg['listen_address'] = '127.0.0.1'
         cfg['listen_port'] = 8080
         cfg['log_level'] = 'INFO'
-        cfg['root_path'] = os.getcwd()
+        cfg['root_path'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         cfg['static_url_path'] = '/static'
         cfg['user_db_path'] = os.path.join(cfg['config_dir'], 'user_db.db')
 
