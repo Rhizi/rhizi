@@ -7,10 +7,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
     function RZ_API_Backend() {
 
-        var rz_server_url = 'http://%h:%p';
-        rz_server_url = rz_server_url.replace('%h', rz_config.rz_server_host);
-        rz_server_url = rz_server_url.replace('%p', rz_config.rz_server_port);
-
+        var rz_server_url = document.location.origin;
 
         var common_req_ctx = function() {
             var common_ctx = { rzdoc_name: rz_config.rzdoc_cur__name }; // FIXME: call rz_core.rzdoc_get_current + avoid requirejs circular dep
