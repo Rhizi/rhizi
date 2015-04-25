@@ -8,7 +8,7 @@
 # General
 #
 development_mode = True
-root_path = .
+#root_path = .
 static_url_path = /static
 
 # -----------------------------------------------------------------------------
@@ -36,7 +36,7 @@ log_path = rhizi-server.log
 # Flask Configuration
 #    - [!] SERVER_NAME: if adding ':port', this should match listen_port
 #
-SERVER_NAME = rhizi.local:8080
+#SERVER_NAME = rhizi.local:8080
 SECRET_KEY = notverysecretbutpeppyyaya
 
 # use with HTTPS: SESSION_COOKIE_SECURE = True
