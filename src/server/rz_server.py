@@ -36,7 +36,7 @@ class Config(object):
         listen_port
         log_level: upper/lower case log level as specified by the logging module
         neo4j_url
-        root_path: root path from which the server will server content
+        root_path: root path from which the server will serve content
         user_db_path: absolute path to a Berkeley DB file used to store user accounts & password hash values
     """
 
