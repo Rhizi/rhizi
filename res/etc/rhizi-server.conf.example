@@ -52,8 +52,9 @@ feedback_recipient = feedback@localhost
 # -----------------------------------------------------------------------------
 # Security
 #
-access_control = False
-user_db_path = ./user_db.db
+access_control = True
+user_db_path = ./deploy-local/etc/user_db.db
+acl__singup__email_domain =
 
 # -----------------------------------------------------------------------------
 # Client settings

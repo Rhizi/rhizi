@@ -48,7 +48,6 @@ class Config(object):
 
         # apply defaults
         cfg = {}
-        cfg['access_control'] = True
         cfg['config_dir'] = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
         cfg['development_mode'] = False
         cfg['listen_address'] = '127.0.0.1'
@@ -76,6 +75,12 @@ class Config(object):
 
         # Flask keys
         cfg['SECRET_KEY'] = ''
+
+        # Security
+        #   - acl__singup__email_domain: restrict signup requests by email domain.
+        #                                depends on 'access_control==True', default: no restriction applied
+        cfg['access_control'] = True
+        cfg['acl__singup__email_domain'] = None
 
         # Rhizi
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
