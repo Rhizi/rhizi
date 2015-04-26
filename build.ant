@@ -194,12 +194,14 @@
          <fileset dir="res/debian" />
       </copy>
 
-      <!-- TODO: use when depending on libjs-jquery, libjs-underscore
       <delete verbose="true" includeemptydirs="true">
+         <fileset dir="${build_dir__deb_pkg}" includes="Makefile" />
+         <fileset dir="${build_dir__deb_pkg}" includes="**/*.scss" />
+         <!-- TODO: use when depending on libjs-jquery, libjs-underscore
          <fileset file="${build_dir__deb_pkg}/res/client/lib/jquery.js" />
          <fileset file="${build_dir__deb_pkg}/res/client/lib/underscore.js" />
-      </delete>
       -->
+      </delete>
 
       <!-- debuild flags:
            -b: binary-only build
