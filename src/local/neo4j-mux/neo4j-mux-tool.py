@@ -7,6 +7,9 @@ import os
 import random
 
 def gen_neo4j_domain_config(target_dir, domain_name):
+    """
+    Generate domain-specific neo4j configuration file set
+    """
 
     class Template_Task():
         def __init__(self, template_name, dst_path, kv_set):
@@ -32,7 +35,7 @@ def gen_neo4j_domain_config(target_dir, domain_name):
 
         with open(conf_task_obj.dst_path, 'w') as f_out:
             f_out.write(tmpl.render(**conf_task_obj.kv_set))
-            print('generated: %s' % (f_out.name))
+            print('neo4j-mux-tool: generated: %s' % (f_out.name))
 
     os.chmod('/etc/init.d/neo4j-service__%s' % (domain_name), 00755)
 

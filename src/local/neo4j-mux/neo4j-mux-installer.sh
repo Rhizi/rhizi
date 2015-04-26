@@ -58,7 +58,7 @@ install_neo4j_instance() {
     ln -vs /usr/share/neo4j/plugins                                -T /var/lib/neo4j/mux-root.d/${RZ_INSTANCE_NAME}/plugins
     ln -vs /usr/share/neo4j/system                                 -T /var/lib/neo4j/mux-root.d/${RZ_INSTANCE_NAME}/system
 
-    python /tmp/neo-m/gen_demain_neo4j_conf.py --domain ${RZ_INSTANCE_NAME}
+    python /tmp/neo-m/neo4j-mux-tool.py --domain ${RZ_INSTANCE_NAME}
 }
 
 DEFAULT_USER='neo4j'
