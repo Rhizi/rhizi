@@ -346,6 +346,7 @@ def rest__user_signup():
                               'pw_plaintxt': r'[A-Za-z0-9]{%d,%d}' % (pw_min_len, 3 * pw_min_len),  # avoid symbols
                               }
 
+        # match field_val <> regex
         for f_key, regex in field_to_regex_map.items():
             f_val = req_json.get(f_key)
             f_name = f_key.replace('_', ' ')
@@ -388,9 +389,11 @@ def rest__user_signup():
 
         return us_req_map
 
+    # TODO: externalize
     html_ok__submitted = '<p>Your request has been successfully submitted.<br>Please check your email to activate your account.</p>'
-    html_ok__already_pending = '<p>Your request has already been submitted.<br>please check your email to activate your account.</p>'
-    html_err__tech_difficulty = '<p>We are experiencing technical difficulty processing your request,<br>please try again later.</p>'
+    html_ok__already_pending = '<p>Your request has already been submitted.<br>Please check your email to activate your account.</p>'
+    html_err__tech_difficulty = '<p>We are experiencing technical difficulty processing your request,<br>Please try again later.</p>'
+    html_err__acl__singup__email_domain = '<p>Signup requires a \'@%s\' domain email account.<br>Please obtain one to proceed.</p>'
 
     # use incoming request as house keeping trigger
     us_req_map = get_or_init_usreq_map()
@@ -411,11 +414,18 @@ def rest__user_signup():
 
         # FIXME: implement form validation
 
+        # probe for existing request
         existing_req = us_req_map.get(us_req['email_address'])
         if None != existing_req:
             # already pending
             log.warning('user signup: request already pending: %s' % (existing_req))
             return make_response__json__html(status=200, html_str=html_ok__already_pending)
+
+        # validate email against ACL:email_domain
+        acl__singup__email_domain = current_app.rz_config.acl__singup__email_domain
+        if current_app.rz_config.access_control and acl__singup__email_domain is not None:
+            if us_req['email_address'].split('@')[-1].lower() != acl__singup__email_domain:
+                return make_response__json__html(status=500, html_str=html_err__acl__singup__email_domain % (acl__singup__email_domain))
 
         us_req['submission_date'] = datetime.now()
         us_req['validation_key'] = generate_security_token()
