@@ -34,7 +34,7 @@ $('.url-copy a').click(function() {
 
 var really_load = function() {
   if (!rz_core.main_graph.empty()) {
-    return confirm('All unsaved changes will be deleted, are you sure?');
+    return confirm('Current work will be merged with the new import, are you sure?');
   }
   return true;
 }
