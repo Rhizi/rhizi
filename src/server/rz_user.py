@@ -339,9 +339,9 @@ def rest__user_signup():
 
         # TODO: sanitize
         pw_min_len = 8
-        field_to_regex_map = {'first_name': r'\w{3,16}',
-                              'last_name': r'\w{3,16}',
-                              'rz_username': r'\w{3,16}',
+        field_to_regex_map = {'first_name': r'\w{1,16}',
+                              'last_name': r'\w{1,16}',
+                              'rz_username': r'\w{1,16}',
                               'email_address': r'[^@]+@[^@]+\.[^@]+',
                               'pw_plaintxt': r'[A-Za-z0-9]{%d,%d}' % (pw_min_len, 3 * pw_min_len),  # avoid symbols
                               }
