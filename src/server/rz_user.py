@@ -481,7 +481,7 @@ def send_user_activation_link__email(req__url_root, us_req):
     @raise exception: on send error
     """
 
-    activation_link = '%s/signup?v_tok=%s' % (req__url_root, us_req['validation_key'])
+    activation_link = '%ssignup?v_tok=%s' % (req__url_root, us_req['validation_key'])
 
     msg_body = ['Hello %s %s,' % (us_req['first_name'],
                                   us_req['last_name']),
@@ -510,7 +510,7 @@ def send_user_pw_reset__email(req__url_root, u_account, pw_reset_token):
     @raise exception: on send error
     """
 
-    pw_reset_link = '%s/pw-reset?pw_rst_tok=%s' % (req__url_root, pw_reset_token)
+    pw_reset_link = '%spw-reset?pw_rst_tok=%s' % (req__url_root, pw_reset_token)
 
     msg_body = ['Hello %s %s,' % (u_account.first_name,
                                   u_account.last_name),
