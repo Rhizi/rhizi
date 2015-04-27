@@ -2,6 +2,7 @@ import copy
 import logging
 import shelve
 import sys
+from functools import wraps
 
 import rz_user
 
@@ -65,6 +66,14 @@ class User_DB(object):
 
         raise Exception('no user found with email_address=%s' % (email_address))
 
+    def __sync_db(f):
+        @wraps(f)
+        def f_decorated(self, *args, **kw):
+            ret = f(self, *args, **kw)
+            self.persistent_data_store.sync()
+            return ret
+        return f_decorated
+
     def lookup_user__by_uid(self, uid):
         """
         @return: user record with pw entry removed
@@ -85,6 +94,7 @@ class User_DB(object):
         uid, u = self.__lookup_user__by_email_address(email_address)
         return self.__process_return_value(uid, u)
 
+    @__sync_db
     def user_add(self, u_account):
         """
         @return: the string uid of the newly added user
@@ -100,6 +110,7 @@ class User_DB(object):
         self.persistent_data_store[uid] = u_account
         return uid
 
+    @__sync_db
     def update_user_password(self, uid, new_plaintxt_pw):
         u_account = self.persistent_data_store[uid]
         old_pw_hash = u_account.pw_hash
@@ -110,9 +121,11 @@ class User_DB(object):
     def user_count(self):
         return len(self.persistent_data_store.keys())
 
+    @__sync_db
     def user_rm(self, uid):
         del self.persistent_data_store[uid]
 
+    @__sync_db
     def user_add_role(self, uid, role):
         if not self.valid_role(uid, role):
             raise Exception("invalid role %s for user %s" % (role, uid))
@@ -120,6 +133,7 @@ class User_DB(object):
         u.role_set.append(role)
         self.persistent_data_store[uid] = u
 
+    @__sync_db
     def user_rm_role(self, uid, role):
         u = self.persistent_data_store[uid]
         i = u.role_set.index(role)
