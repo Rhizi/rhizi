@@ -11,6 +11,7 @@ import os
 import re
 import signal
 import traceback
+import types
 
 import db_controller as dbc
 import rz_api
@@ -99,13 +100,15 @@ class Config(object):
                 k, v = map(str.strip, kv_arr)
                 if '' == v: v = None
 
-                if None != cfg.get(k):
-                    # apply type conversion based on default value type
-                    type_f = type(cfg[k])
-                    if bool == type_f:
-                        v = v in ("True", "true")  # workaround bool('false') = True
-                    else:
-                        v = type_f(v)
+                if v is None: continue
+
+                type_f = type(cfg[k])
+                if bool == type_f:
+                    v = v in ("True", "true")  # workaround bool('false') = True
+                elif types.NoneType != type_f:
+                    v = type_f(v)
+
+                # FIXME: handle type cast for keys which default to None (always str)
 
                 # [!] we can't use k.lower() as we are loading Flask configuration
                 # keys which are expected to be capitalized
