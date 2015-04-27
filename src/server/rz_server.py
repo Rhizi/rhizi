@@ -81,6 +81,7 @@ class Config(object):
         #                                depends on 'access_control==True', default: no restriction applied
         cfg['access_control'] = True
         cfg['acl__singup__email_domain'] = None
+        cfg['signup_enabled'] = True
 
         # Rhizi
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
@@ -307,7 +308,6 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/logout', rz_user.rest__logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api_rest.match_node_set_by_attr_filter_map),
                       rest_entry('/pw-reset', rz_user.rest__pw_reset, {'methods': ['GET', 'POST']}),
-                      rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}),
 
                       # doc endpoints
                       rest_entry('/rz/<path:rzdoc_name>', rz_api_rest.rzdoc__via_rz_url, {'methods': ['GET']}),  # pretty URLs
@@ -327,6 +327,8 @@ def init_rest_interface(cfg, flask_webapp):
 
                       # redirects - currently handled by reverse proxy
                   ]
+    if cfg.signup_enabled:
+        rest_entry_set.append(rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}))
 
     # FIXME: but should be rate limited (everything should be, regardless of login)
     no_login_paths = ['/feedback', '/login', '/pw-reset', '/signup']

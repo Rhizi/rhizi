@@ -176,7 +176,7 @@ def rest__login():
         return make_response__json(status=200)  # return empty response
 
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', signup_enabled=current_app.rz_config.signup_enabled)
 
 def rest__logout():
     """
