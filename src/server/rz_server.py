@@ -98,6 +98,9 @@ class Config(object):
                     raise Exception('failed to parse config line: ' + line)
 
                 k, v = map(str.strip, kv_arr)
+                if k not in cfg:
+                    raise Exception('unrecognized configuration key: ' + k)
+
                 if '' == v: v = None
 
                 if v is None: continue
