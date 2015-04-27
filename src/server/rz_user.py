@@ -307,7 +307,7 @@ def rest__pw_reset():
             pw_rst_req = User_Pw_Reset_Request(u_account, pw_rst_tok)
 
             try:
-                pw_reset_link = send_user_pw_reset__email(u_account, pw_rst_tok)
+                pw_reset_link = send_user_pw_reset__email(request.url_root, u_account, pw_rst_tok)
                 pw_rst_req.submission_date = datetime.now()  # mark submission date
                 pw_rst_req_map[pw_rst_tok] = pw_rst_req
                 pw_rst_req_map[email_address] = pw_rst_req
@@ -432,7 +432,7 @@ def rest__user_signup():
 
         # send activation email
         try:
-            activation_link = send_user_activation_link__email(us_req)
+            activation_link = send_user_activation_link__email(request.url_root, us_req)
 
             log.info('user sign-up: req received, activation link sent via email: link: %s' % (activation_link))
 
@@ -473,7 +473,7 @@ def rest__user_signup():
         else:  # no validation token: new user
             return render_template('user_signup.html')
 
-def send_user_activation_link__email(us_req):
+def send_user_activation_link__email(req__url_root, us_req):
     """
     Send user feedback by email along with screen capture attachments
     
@@ -481,9 +481,7 @@ def send_user_activation_link__email(us_req):
     @raise exception: on send error
     """
 
-    # FIXME: use HTTPS
-    activation_link = 'http://%s/signup?v_tok=%s' % (current_app.rz_config.SERVER_NAME,
-                                                       us_req['validation_key'])
+    activation_link = '%s/signup?v_tok=%s' % (req__url_root, us_req['validation_key'])
 
     msg_body = ['Hello %s %s,' % (us_req['first_name'],
                                   us_req['last_name']),
@@ -504,7 +502,7 @@ def send_user_activation_link__email(us_req):
                        body=msg_body)
     return activation_link
 
-def send_user_pw_reset__email(u_account, pw_reset_token):
+def send_user_pw_reset__email(req__url_root, u_account, pw_reset_token):
     """
     Send user pw reset email
     
@@ -512,9 +510,7 @@ def send_user_pw_reset__email(u_account, pw_reset_token):
     @raise exception: on send error
     """
 
-    # FIXME: use HTTPS
-    pw_reset_link = 'http://%s/pw-reset?pw_rst_tok=%s' % (current_app.rz_config.SERVER_NAME,
-                                                          pw_reset_token)
+    pw_reset_link = '%s/pw-reset?pw_rst_tok=%s' % (req__url_root, pw_reset_token)
 
     msg_body = ['Hello %s %s,' % (u_account.first_name,
                                   u_account.last_name),
