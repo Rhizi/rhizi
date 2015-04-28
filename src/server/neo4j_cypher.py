@@ -12,7 +12,7 @@ import neo4j_schema
 log = logging.getLogger('rhizi')
 
 class Query_Struct_Type(Enum):
-    unkown = 1
+    unknown = 1
     r = 2
     w = 3
     rw = 4
@@ -20,7 +20,7 @@ class Query_Struct_Type(Enum):
     def __add__(self, other):
         if self == other or self == Query_Struct_Type.rw:
             return self
-        if self == Query_Struct_Type.unkown:
+        if self == Query_Struct_Type.unknown:
             return other
         if self == Query_Struct_Type.r and other != Query_Struct_Type.r:
             return Query_Struct_Type.rw
@@ -28,7 +28,7 @@ class Query_Struct_Type(Enum):
             return Query_Struct_Type.rw
 
     def __str__(self):
-        if self == Query_Struct_Type.unkown: return 'unkown'
+        if self == Query_Struct_Type.unknown: return 'unknown'
         if self == Query_Struct_Type.r: return 'r'
         if self == Query_Struct_Type.w: return 'w'
         if self == Query_Struct_Type.rw: return 'rw'
@@ -110,7 +110,7 @@ class DB_Query(object):
         if r and w: return Query_Struct_Type.rw
         if r and not w: return Query_Struct_Type.r
         if w and not r: return Query_Struct_Type.w
-        return Query_Struct_Type.unkown
+        return Query_Struct_Type.unknown
 
     def str__cypher_query(self):
         return self.pt_root.str__cypher_query()
