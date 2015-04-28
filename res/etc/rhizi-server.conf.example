@@ -23,8 +23,8 @@ reverse_proxy_port =
 # Database
 #
 neo4j_url = http://127.0.0.1:7474
-neo4j_user = neo4j
-neo4j_pw = neo4j
+#neo4j_user = neo4j
+#neo4j_pw = neo4j
 
 # -----------------------------------------------------------------------------
 # Logging
