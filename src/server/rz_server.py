@@ -59,6 +59,7 @@ class Config(object):
         # Mail settings
         cfg['mta_host'] = '127.0.0.1'
         cfg['mta_port'] = 25
+        cfg['mail_default_sender'] = 'rhizi@localhost'
 
         # Network settings
         #    - reverse_proxy_host: proxy host name as seen by clients
@@ -79,9 +80,18 @@ class Config(object):
         cfg['acl__singup__email_domain'] = None
         cfg['signup_enabled'] = True
 
+        # Neo4j connection
+        cfg['neo4j_url'] = 'http://127.0.0.1:7474'
+
+        # Logging
+        cfg['log_path'] = 'rhizi-server.log'
+
         # Rhizi
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
         cfg['rzdoc__name__max_length'] = 256
+
+        # Flask options
+        cfg['DEBUG'] = False
 
         return cfg
 
