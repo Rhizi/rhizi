@@ -1,55 +1,54 @@
 define({
     type_attributes: [
-        ['keyword', {
-            'title': 'Keyword',
-            'attributes': ['description', 'url'],
-        }],
-        ['person', {
-            'title': 'Person',
+        ['collaborator', {
+            'title': 'Collaborator',
             'attributes': ['affiliation',
-                           'street-address',
                            'description',
                            'email',
                            'image-url',
                            'name',
                            'url'
                            ],
-         }],
+        }],
+        ['keyword', {
+            'title': 'Keyword',
+            'attributes': ['description', 'url', 'image-url'],
+        }],
         ['project', {
             'title': 'Project',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'rhizi-url', 'image-url'],
         }],
-        ['project_component', {
-            'title': 'Project Component',
-            'attributes': ['description', 'url'],
+        ['idea', {
+            'title': 'Idea',
+            'attributes': ['description', 'url', 'image-url'],
         }],
-        ['objective', {
-            'title': 'Objective',
-            'attributes': ['description', 'url'],
+        ['skill', {
+            'title': 'Skill',
+            'attributes': ['description', 'url', 'image-url'],
         }],
         ['resource', {
-            'title': 'Objective',
-            'attributes': ['description', 'url'],
+            'title': 'Resource',
+            'attributes': ['description', 'url', 'image-url'],
         }]
     ],
     attribute_titles: {
         'affiliation': 'Affiliation',
         'description': 'Description',
         'email': 'Email',
-        'image-url': 'Image URL',
         'name': 'Name',
-        'street-address': 'Street Address',
         'type': 'Type',
         'url': 'URL',
+        'image-url': 'Image URL',
+        'rhizi-url': 'Rhizi URL',
     },
     attribute_ui: {
         'affiliation': 'textarea',
         'description': 'textarea',
         'email': 'input',
-        'image-url': 'image',
         'name': 'input',
-        'street-address': 'textarea',
         'type': 'type',
+        'image-url': 'image',
         'url': 'url',
+        'rhizi-url': 'rhizi-url',
     },
 });
