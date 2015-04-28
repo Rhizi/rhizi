@@ -1,14 +1,20 @@
 #!/usr/bin/python2.7
 
+import click
+
 from datetime import datetime
 from glob import glob
 import os
+from subprocess import Popen
 from os.path import basename, dirname, exists
 import re
 import shutil
 
 
-root = '/var/lib/rhizi/backup'
+# Set by command line arguments, defaults below Click.command()
+root = None
+docker_container_id = None
+neo4j_shell = None
 
 debug = True
 
@@ -43,10 +49,12 @@ def copy(src, dst):
     shutil.copy(src, dst)
 
 def neo4jshell(command, stdout):
-    cmdline = "neo4j-shell -c '%s' > '%s'" % (command, stdout)
+    args = [neo4j_shell, '-c', command]
+    if docker_container_id is not None:
+        args = ['docker', 'exec', docker_container_id] + args
     if debug:
-        print("executing %r" % cmdline)
-    os.system(cmdline)
+        print("executing %s (%r)" % (' '.join(args), args))
+    Popen(args=args, stdout=open(stdout, 'w+')).wait()
 
 def next_daily_filename():
     filename = os.path.join(daily_root(), backup_template % datetime.now().strftime('%Y%m%d'))
@@ -111,7 +119,20 @@ def create_daily_backup():
     neo4jshell("dump", stdout=filename)
     return filename
 
-def main():
+@click.command()
+@click.option('--root', 'cli_root', default='/var/lib/rhizi/backup',
+              type=click.Path(exists=True))
+@click.option('--docker', 'cli_docker_container_id', default=None)
+@click.option('--neo4j-shell', 'cli_neo4j_shell', default='neo4j-shell')
+def backup(cli_root, cli_docker_container_id, cli_neo4j_shell):
+
+    global root
+    global docker_container_id
+    global neo4j_shell
+    root = cli_root
+    docker_container_id = cli_docker_container_id
+    neo4j_shell = cli_neo4j_shell
+
     # create the daily backup
     filename = create_daily_backup()
 
@@ -128,4 +149,4 @@ def main():
         unlink(filename)
 
 if __name__ == '__main__':
-    main()
+    backup()
