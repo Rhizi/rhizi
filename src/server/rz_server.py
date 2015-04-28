@@ -42,21 +42,16 @@ class Config(object):
     """
 
     @staticmethod
-    def init_from_file(file_path):
-
-        if False == os.path.exists(file_path):
-            raise Exception('config file not found: ' + file_path)
-
-        # apply defaults
+    def generate_default():
         cfg = {}
-        cfg['config_dir'] = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
+        cfg['config_dir'] = '.'
         cfg['development_mode'] = False
         cfg['listen_address'] = '127.0.0.1'
         cfg['listen_port'] = 8080
         cfg['log_level'] = 'INFO'
         cfg['root_path'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         cfg['static_url_path'] = '/static'
-        cfg['user_db_path'] = os.path.join(cfg['config_dir'], 'user_db.db')
+        cfg['user_db_path'] = './user_db.db'
 
         # client configuration
         cfg['optimized_main'] = False
@@ -87,6 +82,17 @@ class Config(object):
         # Rhizi
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
         cfg['rzdoc__name__max_length'] = 256
+
+        return cfg
+
+    @staticmethod
+    def init_from_file(file_path):
+
+        if False == os.path.exists(file_path):
+            raise Exception('config file not found: ' + file_path)
+
+        cfg = Config.generate_default()
+        cfg['config_dir'] = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
 
         with open(file_path, 'r') as f:
             for line in f:
