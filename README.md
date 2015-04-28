@@ -13,6 +13,9 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 - python-socketio
 - python-futures >= 2.2.0
 
+For rz-backup:
+- python-click >= 3.3 (not tested with anything prior)
+
 ## Client
 All of the following are already bundled but noted here for reference:
 - feedback - https://github.com/ivoviz/feedback (it also bundles html2canvas)
