@@ -177,8 +177,12 @@ class DB_composed_op(DB_op):
         for s_op in self.sub_op_set:
             yield s_op
 
+    def post_sub_op_exec_hook(self, prv_sub_op, prv_sub_op_ret):
         """
+        Called after each successful sub-op execution. Throwing an exception here
+        will prevent the execution of the subsequent sub_op's.
         """
+        pass
 
     def process_result_set(self):
         ret = []
