@@ -237,7 +237,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.rzdoc_create = function(rzdoc_name, on_success, on_error) {
 
             var req_opts = { type : 'POST' };
-            return ajax_rs('/rzdoc/' + rzdoc_name + '/create', req_opts, on_success, on_error);
+            return ajax_rs('/api/rzdoc/' + rzdoc_name + '/create', req_opts, on_success, on_error);
         }
 
         /**
@@ -246,7 +246,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.rzdoc_list = function(on_success, on_error) {
 
             var req_opts = { type : 'POST' };
-            return ajax_rs('/rzdoc/list', req_opts, on_success, on_error);
+            return ajax_rs('/api/rzdoc/list', req_opts, on_success, on_error);
         }
     }
 
