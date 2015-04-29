@@ -716,6 +716,29 @@ class DBO_rm_link_set(DB_op):
         q_params = {'id_set': id_set}
         self.add_statement(q_arr, q_params)
 
+class DBO_rzdb__fetch_DB_metablock(DB_op):
+
+    def __init__(self, length_lim=None):
+        """
+        Fetch DB metadata
+
+        @retrun metablock or None if none was found
+        """
+        super(DBO_rzdb__fetch_DB_metablock, self).__init__()
+
+        q_arr = ['match (n:%s)' % (neo4j_schema.META_LABEL__RZDB_META),
+                 'return n'
+                 ]
+        self.add_statement(q_arr)
+
+    def process_result_set(self):
+        ret = super(DBO_rzdb__fetch_DB_metablock, self).process_result_set()
+        if len(ret) > 1:  # assert DB contains single metablock
+            raise Exception('found more than one DB metablocks, DB may be corrupt')
+        if 0 == len(ret):
+            return None
+        return ret.pop()
+
 class DBO_rzdoc__clone(DB_op):
 
     def __init__(self, limit=16384):
