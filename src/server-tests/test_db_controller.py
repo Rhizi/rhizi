@@ -2,7 +2,8 @@ import logging
 import unittest
 
 import db_controller as dbc
-from db_op import DBO_add_link_set, DBO_block_chain__commit
+from db_op import DBO_add_link_set, DBO_block_chain__commit, DBO_rzdoc__clone, \
+    DBO_rzdb__init_DB, DBO_rzdb__fetch_DB_metablock
 from db_op import DBO_add_node_set
 from db_op import DBO_block_chain__list
 from db_op import DBO_diff_commit__attr
@@ -12,20 +13,18 @@ from db_op import DBO_load_node_set_by_DB_id
 from db_op import DBO_match_link_id_set
 from db_op import DBO_match_node_id_set
 from db_op import DBO_match_node_set_by_id_attribute
-from db_op import DBO_rm_node_set
-from db_op import DBO_rz_clone
-from db_op import DBO_rz_clone
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link
-from neo4j_test_util import DBO_random_data_generation, DBO_flush_db
+from neo4j_cypher import DB_Query
+from neo4j_test_util import DBO_random_data_generation
 import neo4j_test_util
-from neo4j_util import Neo4JException, DB_Query
+from neo4j_util import Neo4JException
 from neo4j_util import meta_attr_list_to_meta_attr_map
 from rz_server import Config
 from test_util import generate_random_link_dict
 from test_util import generate_random_node_dict
-import test_util
+from test_util__pydev import debug__pydev_pd_arg
 
 
 class TestDBController(unittest.TestCase):
@@ -357,6 +356,26 @@ class TestDBController(unittest.TestCase):
         # TODO improve assertions
         self.assertTrue(0 < len(n_set))
         self.assertTrue(0 < len(l_set))
+
+    def test_rzdb__init_DB(self):
+        rz_cfg = Config.generate_default()
+        op = DBO_rzdb__init_DB(rz_cfg)
+        try:  # assert first init call passes
+            self.db_ctl.exec_op(op)
+        except:
+            self.fail()
+
+        try:  # assert second init call fails
+            self.db_ctl.exec_op(op)
+        except:
+            return
+        self.fail()
+
+    def test_rzdb__fetch_DB_metadata(self):
+        rz_cfg = Config.generate_default()
+        op = DBO_rzdb__fetch_DB_metablock(rz_cfg)
+        dbmb = self.db_ctl.exec_op(op)
+        print('%s' % (dbmb))
 
     def tearDown(self): pass
 
