@@ -100,23 +100,7 @@
 
       <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
 
-      <!-- copy defaults-->
       <parallel>
-         <copy file="res/etc/rhizi-server.conf.example"
-               tofile="res/etc/rhizi-server.conf" />
-         <copy todir="${targetDeploymentDir}/templates/fragment"
-               failonerror="false">
-            <fileset dir="res/local/template/fragment/by-domain/${defaultDomain}"
-                     includes="*" />
-         </copy>
-      </parallel>
-
-      <client-optimize if:true="${doClientOptimize}"
-                       root="src/client/"
-                       build="build.js" />
-
-      <parallel>
-
          <!-- code -->
          <rsync src="${src_client}/" dst="${targetDeploymentDir}/static/js" />
 
@@ -126,7 +110,8 @@
                   link="${targetDeploymentDir}/bin"
                   resource="${basedir}/${src_server}" />
          <rsync unless:true="${localServerUseSymlink}"
-                src="${basedir}/${src_server}/" dst="${targetDeploymentDir}/bin" />
+                src="${basedir}/${src_server}/"
+                dst="${targetDeploymentDir}/bin" />
 
          <!-- conf-->
          <copy file="res/etc/rhizi-server.conf"
@@ -141,7 +126,22 @@
                tofile="${targetDeploymentDir}/user_db.db"
                failonerror="false" />
 
-         <!-- domain specific: schema, templates, fragments-->
+         <!-- domain specific defaults-->
+         <copy file="res/etc/rhizi-server.conf.example"
+               tofile="res/etc/rhizi-server.conf" />
+         <copy todir="${targetDeploymentDir}/templates/fragment"
+               failonerror="false">
+            <fileset dir="res/local/template/fragment/by-domain/${defaultDomain}"
+                     includes="*" />
+         </copy>
+      </parallel>
+
+      <client-optimize if:true="${doClientOptimize}"
+                       root="src/client/"
+                       build="build.js" />
+
+      <parallel>
+         <!-- domain specific overrides -->
          <copy file="src/local/domain/${targetDomain}/domain_types.js"
                tofile="${targetDeploymentDir}/static/js/model/domain_types.js" />
          <copy todir="${targetDeploymentDir}/templates/fragment"
