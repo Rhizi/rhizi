@@ -1,0 +1,70 @@
+# -----------------------------------------------------------------------------
+# Sample Rhizi configuration - copy this to rhizi-server.conf
+#
+# Rhizi configuration values are documented in source code.
+#
+
+# -----------------------------------------------------------------------------
+# General
+#
+root_path = {{ root_path }}
+
+development_mode = True
+static_url_path = /static
+
+# -----------------------------------------------------------------------------
+# Network
+#
+listen_address = 127.0.0.1
+listen_port = {{ rz_port__http }}
+reverse_proxy_host = {{ domain_name }}.rhizi.net
+reverse_proxy_port = 80
+
+# -----------------------------------------------------------------------------
+# Database
+#
+neo4j_url = http://127.0.0.1:{{ neo4j_port__http }}
+
+# -----------------------------------------------------------------------------
+# Logging
+#
+log_level = debug
+log_path = /var/log/rhizi-server__{{ domain_name }}.log
+
+# -----------------------------------------------------------------------------
+# Flask Configuration
+#
+SECRET_KEY = {{ rz_server_secret }}
+
+# use with HTTPS: SESSION_COOKIE_SECURE = True
+
+# -----------------------------------------------------------------------------
+# Mail
+#
+mta_host = 127.0.0.1
+mta_port = 25
+mail_default_sender = rhizi@localhost
+feedback_recipient = feedback@localhost
+
+# -----------------------------------------------------------------------------
+# Security
+#
+access_control = True
+user_db_path = {{ user_db_path }}
+acl__singup__email_domain =
+
+# -----------------------------------------------------------------------------
+# Client settings
+#
+optimized_main = False
+
+# -----------------------------------------------------------------------------
+# Rhizi
+#
+rzdoc__mainpage_name = Welcome Rhizi
+rzdoc__name__max_length = 256
+
+# -----------------------------------------------------------------------------
+# Other
+#
+DEBUG = True
