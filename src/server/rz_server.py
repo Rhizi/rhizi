@@ -14,6 +14,7 @@ import traceback
 import types
 
 import db_controller as dbc
+from db_op import DBO_rzdb__fetch_DB_metablock, DBO_rzdb__init_DB
 import rz_api
 import rz_api_rest
 import rz_blob
@@ -407,6 +408,27 @@ def init_config(cfg_dir):
     cfg = Config.init_from_file(cfg_path)
     return cfg
 
+def init_DB(cfg):
+    db_ctl = dbc.DB_Controller(cfg)
+    op_probe = DBO_rzdb__fetch_DB_metablock(cfg)
+
+    try:
+        dbmb = db_ctl.exec_op(op_probe)
+        if dbmb is None:
+            log.warning('detected uninitialized DB, initializing')
+            op_init = DBO_rzdb__init_DB(cfg)
+            db_ctl.exec_op(op_init)
+            op_probe = DBO_rzdb__fetch_DB_metablock(cfg)  # reprobe for metablock
+            dbmb = db_ctl.exec_op(op_probe)
+            log.info('DB initialized, schema-version: %s' % (dbmb['schema_version']))
+        else:
+            log.info('DB connection established, schema-version: %s' % (dbmb['schema_version']))
+    except Exception as e:
+        log.exception('failed to init DB')
+        raise e
+
+    return db_ctl
+
 def init_user_db():
     global user_db
 
@@ -483,7 +505,8 @@ if __name__ == "__main__":
     #
     # init DB controller
     #
-    kernel.db_ctl = dbc.DB_Controller(cfg)
+
+    kernel.db_ctl = init_DB(cfg)
     rz_api_rest.db_ctl = kernel.db_ctl
 
     #
