@@ -362,7 +362,10 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/monitor/server-info', rz_server_ctrl.monitor__server_info, {'methods': ['GET']}),
                       rest_entry('/monitor/user/list', rz_server_ctrl.rest__list_users, {'methods': ['GET']}),
 
-                      # redirects - currently handled by reverse proxy
+                      # redirects
+                      redirect_entry('/', '/index', {'methods': ['GET']}),
+                      redirect_entry('/index.html', '/index', {'methods': ['GET']}),
+
                   ]
     if cfg.signup_enabled:
         rest_entry_set.append(rest_entry('/signup', rz_user.rest__user_signup, {'methods': ['GET', 'POST']}))
