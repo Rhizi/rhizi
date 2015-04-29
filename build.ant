@@ -118,7 +118,7 @@
       <parallel>
 
          <!-- code -->
-         <rsync src="${src_client}/" dst="${targetDeploymentDir}/static" />
+         <rsync src="${src_client}/" dst="${targetDeploymentDir}/static/js" />
 
          <symlink if:true="${localServerUseSymlink}"
                   action="single"
@@ -143,7 +143,7 @@
 
          <!-- domain specific: schema, templates, fragments-->
          <copy file="src/local/domain/${targetDomain}/domain_types.js"
-               tofile="${targetDeploymentDir}/static/model/domain_types.js" />
+               tofile="${targetDeploymentDir}/static/js/model/domain_types.js" />
          <copy todir="${targetDeploymentDir}/templates/fragment"
                overwrite="true"
                failonerror="false">
