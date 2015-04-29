@@ -153,21 +153,6 @@ class DB_composed_op(DB_op):
     def __assert_false_statement_access(self):
         assert False, "composed_op may not contain statements, only sub-ops"
 
-    def add_statement(self, query, query_params={}):
-        self.__assert_false_statement_access()
-
-    def add_sub_op(self, op):
-        self.sub_op_set.append(op)
-
-    def __iter__(self):
-        for s_op in self.sub_op_set:
-            for dbq in s_op:
-                yield dbq
-
-    def iter__sub_op(self):
-        for s_op in self.sub_op_set:
-            yield s_op
-
     def __getattribute__(self, attr):
         """
         intercept 'query_set' attr get
@@ -176,6 +161,24 @@ class DB_composed_op(DB_op):
             self.__assert_false_statement_access()
 
         return object.__getattribute__(self, attr)
+
+    def __iter__(self):
+        for s_op in self.sub_op_set:
+            for dbq in s_op:
+                yield dbq
+
+    def add_statement(self, query, query_params={}):
+        self.__assert_false_statement_access()
+
+    def add_sub_op(self, op):
+        self.sub_op_set.append(op)
+
+    def iter__sub_op(self):
+        for s_op in self.sub_op_set:
+            yield s_op
+
+        """
+        """
 
     def process_result_set(self):
         ret = []
