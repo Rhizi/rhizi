@@ -47,29 +47,43 @@ class Config(object):
         cfg = {}
         cfg['config_dir'] = '.'
         cfg['development_mode'] = False
-        cfg['listen_address'] = '127.0.0.1'
-        cfg['listen_port'] = 8080
-        cfg['log_level'] = 'INFO'
+
         cfg['root_path'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        cfg['static_url_path'] = '/static'
+
         cfg['user_db_path'] = './user_db.db'
 
         # client configuration
         cfg['optimized_main'] = False
 
+        # log
+        cfg['log_level'] = 'INFO'
+        cfg['log_path'] = '.'
+
         # Mail settings
         cfg['mta_host'] = '127.0.0.1'
         cfg['mta_port'] = 25
         cfg['mail_default_sender'] = 'rhizi@localhost'
+        cfg['feedback_recipient'] = ''
+
+        # Neo4j
+        #    - user/pw: used when neo4j access control is enabled
+        cfg['neo4j_url'] = 'http://127.0.0.1:7474'
+        cfg['neo4j_user'] = None
+        cfg['neo4j_pw'] = None
 
         # Network settings
         #    - reverse_proxy_host: proxy host name as seen by clients
         #
+        cfg['listen_address'] = '127.0.0.1'
+        cfg['listen_port'] = 8080
         cfg['reverse_proxy_host'] = None
         cfg['reverse_proxy_port'] = None
 
         # User feedback settings
-        cfg['feedback_recipient'] = 'feedback@localhost'
+        cfg['feedback_recipient'] = 'feedback@rhizi.local'
+
+        # Flask
+        cfg['static_url_path'] = '/static'
 
         # Flask keys
         cfg['SECRET_KEY'] = ''
