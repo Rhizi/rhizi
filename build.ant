@@ -35,6 +35,17 @@
       </sequential>
    </macrodef>
 
+   <macrodef name="generate_version_tag">
+      <attribute name="output" />
+      <sequential>
+         <exec dir="${basedir}"
+               executable="/usr/bin/git"
+               output="@{output}/version.txt">
+            <arg line="describe" />
+         </exec>
+      </sequential>
+   </macrodef>
+
    <property name="pkg_name" value="rhizi" />
    <property name="pkg_version" value="0.1.0" />
    <property name="pkg_fullname" value="${pkg_name}-${pkg_version}" />
@@ -70,17 +81,8 @@
       </delete>
    </target>
 
-   <target name="version-tag">
-      <exec dir="${basedir}"
-            executable="/usr/bin/git"
-            output="res/templates/fragment/version.txt">
-         <arg line="describe" />
-      </exec>
-
-   </target>
-
    <target name="deploy-local"
-           depends="deploy-local.clean,version-tag"
+           depends="deploy-local.clean"
            description="locally deploy webapp">
 
       <!-- [!] trailing '/' on rsync src targets critical -->
@@ -89,6 +91,8 @@
       <local name="src_server" />
       <property name="src_client" value="src/client" />
       <property name="src_server" value="src/server" />
+
+      <generate_version_tag output="res/templates/fragment" />
 
       <mkdir dir="${targetDeploymentDir}/static" />
       <mkdir dir="${targetDeploymentDir}/templates" />
@@ -190,6 +194,7 @@
          <arg value="${build_dir__deb_pkg}" />
       </exec>
 
+      <generate_version_tag output="${build_dir__deb_pkg}/res/templates/fragment/" />
       <copy todir="${build_dir__deb_pkg}/debian">
          <fileset dir="res/debian" />
       </copy>
