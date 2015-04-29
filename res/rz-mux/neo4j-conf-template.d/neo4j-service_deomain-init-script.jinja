@@ -35,9 +35,9 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Neo4j Graph Database"
 NAME=neo4j__{{ domain_name }}
-DAEMON=/var/lib/neo4j/instance-root.d/{{ domain_name }}/bin/neo4j
+DAEMON=/var/lib/neo4j/mux-root.d/{{ domain_name }}/bin/neo4j
 DAEMON_ARGS="start"
-PIDFILE=/var/lib/neo4j/instance-root.d/{{ domain_name }}/data/neo4j-service.pid
+PIDFILE=/var/lib/neo4j/mux-root.d/{{ domain_name }}/data/neo4j-service.pid
 SCRIPTNAME=/etc/init.d/neo4j-service__{{ domain_name }}
 
 NEO_USER=neo4j
