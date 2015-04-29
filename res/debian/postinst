@@ -21,6 +21,17 @@ set -e
 case "$1" in
     configure)
        # call chmod, chown, etc.
+
+       chown www-data:www-data /var/run/rhizi
+
+       # configure apache - FIXME: impl undo
+       echo 'enabling apache proxy modules - warning: this will not be reverted during package uninstall'
+       /usr/sbin/a2enmod deflate
+       /usr/sbin/a2enmod proxy
+       /usr/sbin/a2enmod proxy_http
+       /usr/sbin/a2enmod proxy_wstunnel
+       /usr/sbin/a2enmod rewrite
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
