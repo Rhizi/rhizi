@@ -90,10 +90,9 @@ class Config(object):
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
         cfg['rzdoc__name__max_length'] = 256
 
-        # Flask options
-        cfg['DEBUG'] = False
-
-        return cfg
+        ret = Config()
+        ret.__dict__ = cfg  # allows setting of @property attributes
+        return ret
 
     @staticmethod
     def init_from_file(file_path):
@@ -102,7 +101,7 @@ class Config(object):
             raise Exception('config file not found: ' + file_path)
 
         cfg = Config.generate_default()
-        cfg['config_dir'] = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
+        cfg.config_dir = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
 
         with open(file_path, 'r') as f:
             for line in f:
@@ -114,14 +113,18 @@ class Config(object):
                     raise Exception('failed to parse config line: ' + line)
 
                 k, v = map(str.strip, kv_arr)
-                if k not in cfg:
-                    raise Exception('unrecognized configuration key: ' + k)
+                if k.isupper() and not hasattr(cfg, k):  # Flask config key, add & continue
+                    setattr(cfg, k, v)
+                    continue
+
+                if not k.isupper() and not hasattr(cfg, k):  # not Flask config key & unknown
+                    raise Exception('unrecognized config key: \'%s\'' % (k))
 
                 if '' == v: v = None
 
                 if v is None: continue
 
-                type_f = type(cfg[k])
+                type_f = type(getattr(cfg, k))
                 if bool == type_f:
                     v = v in ("True", "true")  # workaround bool('false') = True
                 elif types.NoneType != type_f:
@@ -131,20 +134,17 @@ class Config(object):
 
                 # [!] we can't use k.lower() as we are loading Flask configuration
                 # keys which are expected to be capitalized
-                cfg[k] = v
-
-        ret = Config()
-        ret.__dict__ = cfg  # allows setting of @property attributes
+                setattr(cfg, k, v)
 
         # validate config
-        if False == os.path.isabs(ret.root_path):
-            ret.root_path = os.path.abspath(ret.root_path)
+        if False == os.path.isabs(cfg.root_path):
+            cfg.root_path = os.path.abspath(cfg.root_path)
 
         # authentication keys - see issue #419
         # for auth_key in ['neo4j_user', 'neo4j_pw']:
         #     if None == cfg.get(auth_key): raise Exception('config: missing key: ' + auth_key)
 
-        return ret
+        return cfg
 
     def __str__(self):
         kv_item_set = []
