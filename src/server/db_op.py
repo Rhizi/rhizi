@@ -739,6 +739,42 @@ class DBO_rzdb__fetch_DB_metablock(DB_op):
             return None
         return ret.pop()
 
+class DBO_rzdb__init_DB(DB_composed_op):
+
+    class _init_DB_subop(DB_op):
+
+        def __init__(self, length_lim=None):
+            super(DBO_rzdb__init_DB. _init_DB_subop, self).__init__()
+
+            # init DB metadata node
+            q_arr = ['create (n:%s {db_attr})' % (neo4j_schema.META_LABEL__RZDB_META)]
+            q_params = {'db_attr': {'schema_version': '0.1'}}
+            self.add_statement(q_arr, q_params)
+
+    def __init__(self, rz_config):
+        """
+        Fetch DB metadata
+        """
+        super(DBO_rzdb__init_DB, self).__init__()
+
+        # probe for an existing metablock, fail if found via post_sub_op_exec_hook()
+        self.add_sub_op(DBO_rzdb__fetch_DB_metablock())
+
+        # init DB metadata node
+        self.add_sub_op(DBO_rzdb__init_DB._init_DB_subop())
+
+        # create mainpage
+        mainpage_rzdoc = RZDoc(rz_config.rzdoc__mainpage_name)
+        mainpage_rzdoc.id = 'a000a000'
+        self.add_sub_op(DBO_rzdoc__create(mainpage_rzdoc))
+        self.add_sub_op(DBO_block_chain__init(mainpage_rzdoc))
+
+    def post_sub_op_exec_hook(self, prv_sub_op, prv_sub_op_ret):
+
+        if isinstance(prv_sub_op, DBO_rzdb__fetch_DB_metablock) and prv_sub_op_ret is not None:
+            raise Exception('DB contains metadata, aborting initialization of pre-initialized DB')
+
+
 class DBO_rzdoc__clone(DB_op):
 
     def __init__(self, limit=16384):
