@@ -160,7 +160,9 @@ class TestMeshAPI(unittest.TestCase):
         self.assertEqual(Attr_Diff, type(diff_in))
         self.assertEqual(Attr_Diff, type(commit_ret))
 
+@debug__pydev_pd_arg
+def main():
+    unittest.main(defaultTest='TestMeshAPI.test_REST_post_triggers_ws_multicast__topo_diff', verbosity=2)
+
 if __name__ == "__main__":
-
-    unittest.main()
-
+    main()

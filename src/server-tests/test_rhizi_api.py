@@ -9,6 +9,7 @@ import db_controller as dbc
 from rhizi_server import Config
 import rz_api
 from rz_server import Config
+from test_util__pydev import debug__pydev_pd_arg
 
 class TestRhiziAPI(unittest.TestCase):
 
@@ -61,5 +62,9 @@ class TestRhiziAPI(unittest.TestCase):
     def test_load_node_set(self):
         pass
 
+@debug__pydev_pd_arg
+def main():
+    unittest.main(defaultTest='Test_DB_Op.test_cypher_exp_parsing', verbosity=2)
+
 if __name__ == "__main__":
-    unittest.main()
+    main()

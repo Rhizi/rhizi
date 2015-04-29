@@ -3,6 +3,7 @@ import unittest
 
 from rz_user import User_Account
 from rz_user_db import User_DB
+from test_util__pydev import debug__pydev_pd_arg
 
 class TestUser_DB(unittest.TestCase):
 
@@ -57,8 +58,9 @@ class TestUser_DB(unittest.TestCase):
     def tearDown(self):
         pass
 
+@debug__pydev_pd_arg
 def main():
-    unittest.main()
+    unittest.main(defaultTest='TestUser_DB.test_db_lifecycle', verbosity=2)
 
 if __name__ == "__main__":
     main()
