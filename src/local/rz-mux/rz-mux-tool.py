@@ -1,14 +1,17 @@
 """
  Multiplexed-Rhizi instance configuration generator:
-    - setup Neo4J domain instance
-    - setup Rhizi domain instance
+    - setup Apache instance configuration
+    - setup Neo4J instance,  instance configuration
+    - setup Rhizi instance configuration
 """
 import argparse
 from jinja2 import Environment, FileSystemLoader
 import os
 import pwd
 import random
+import uuid
 
+class Config__port_map(): pass
 
 class Template_Task():
 
@@ -69,8 +72,31 @@ def gen_dom_config__apache(domain_name, port_map):
     for conf_task_obj in conf_task_set:
         conf_task_obj.do_exec()
 
-def gen_dom_config__rhizi(domain_name):
-    pass
+def gen_dom_config__rhizi(domain_name, port_map):
+    rz_template_path_prefix = 'rhizi-conf-template.d'
+    rhizi_top_domain_name = 'rhizi.net'
+    domain_fqdn = '%s.%s' % (domain_name, rhizi_top_domain_name)
+
+    rz_server_secret = str(uuid.uuid4()).replace('-', '')
+    root_path = os.path.join('/srv/www/rhizi/mux-root.d/', domain_name, 'webapp')
+    user_db_path = os.path.join('/srv/www/rhizi/mux-root.d/', domain_name, 'auth', 'user_db.db')
+
+    conf_task_set = [Template_Task(os.path.join(rz_template_path_prefix, 'rhizi-server.conf.jinja'),
+                                   os.path.join(install_prefix, 'etc/rhizi/mux-conf.d', domain_name, 'rhizi-server.conf'),
+                                   {'domain_name': domain_name,
+                                    'neo4j_port__http': port_map.neo4j_port__http,
+                                    'root_path': root_path,
+                                    'rz_port__http': port_map.rz_port__http,
+                                    'rz_server_secret': rz_server_secret,
+                                    'user_db_path': user_db_path,
+                                    }),
+                     Template_Task(os.path.join(rz_template_path_prefix, 'rhizi.init.jinja'),
+                                   os.path.join(install_prefix, 'etc/init.d/', 'rhizi__%s' % (domain_name)),
+                                   {'domain_name': domain_name}),
+                     ]
+
+    for conf_task_obj in conf_task_set:
+        conf_task_obj.do_exec()
 
 if __name__ == '__main__':
     global env
@@ -98,3 +124,4 @@ if __name__ == '__main__':
 
     gen_dom_config__neo4j(domain_name, cfg_port_map)
     gen_dom_config__rhizi(domain_name, cfg_port_map)
+    gen_dom_config__apache(domain_name, cfg_port_map)
