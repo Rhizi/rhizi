@@ -46,12 +46,7 @@
       </sequential>
    </macrodef>
 
-   <property name="pkg_name" value="rhizi" />
-   <property name="pkg_version" value="0.1.0" />
-   <property name="pkg_fullname" value="${pkg_name}-${pkg_version}" />
-   <property name="pkg_debname" value="${pkg_name}_${pkg_version}" />
    <property name="buildDir" value="build" />
-   <property name="build_dir__deb_pkg" value="${buildDir}/${pkg_fullname}" />
    <property name="targetDeploymentDir" value="deploy-local" />
    <property name="remoteDeployServer" value="rz-0.unige.ch" />
    <property name="targetDomain" value="default.rhizi.net" />
@@ -184,6 +179,13 @@
    </target>
 
    <target name="pkg-deb" depends="clean" description="package as .deb">
+
+      <property name="pkg_name" value="rhizi" />
+      <property name="pkg_version" value="0.1.0" />
+      <property name="pkg_debname" value="${pkg_name}_${pkg_version}" />
+      <property name="pkg_fullname" value="${pkg_name}-${pkg_version}" />
+      <property name="build_dir__deb_pkg" value="${buildDir}/${pkg_fullname}" />
+
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
 
