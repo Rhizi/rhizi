@@ -9,5 +9,5 @@ src/local/server-tools/*              usr/lib/rhizi/tools/server-tools
 src/local/rz-mux/*                    usr/lib/rhizi/tools/rz-mux
 
 # Domain specific - install defaults
+src/local/domain/default.rhizi.net/domain_types.js        usr/lib/rhizi/webapp/static/js/model/
 res/local/template/fragment/by-domain/default.rhizi.net/* usr/share/rhizi/webapp/templates/fragment
-src/local/domain/default.rhizi.net/domain_types.js        usr/share/rhizi/webapp/static/js/model/
