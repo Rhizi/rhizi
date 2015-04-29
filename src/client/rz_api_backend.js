@@ -228,7 +228,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data)
             };
 
-            ajax_rs('/graph/clone', req_opts, on_success, on_error);
+            ajax_rs('/api/rzdoc/clone', req_opts, on_success, on_error);
         }
 
         /**
