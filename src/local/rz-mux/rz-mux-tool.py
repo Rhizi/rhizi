@@ -1,8 +1,11 @@
 """
  Multiplexed-Rhizi instance configuration generator:
-    - setup Apache instance configuration
-    - setup Neo4J instance,  instance configuration
-    - setup Rhizi instance configuration
+    - generate Apache instance configuration files
+    - generate Neo4J instance,  instance configuration files
+    - generate Rhizi instance configuration files
+
+ This tool currently does not handle module confdir/rootdir creation, file mode/ownership creation,
+ which are handled by the .sh accompanying shell script.
 """
 import argparse
 from jinja2 import Environment, FileSystemLoader
@@ -21,11 +24,6 @@ class Template_Task():
         self.kv_set = kv_set
 
     def do_exec(self):
-
-        dst_dir = os.path.dirname(self.dst_path)
-        if not os.path.exists(dst_dir):
-            print('rz-mux-tool: warning: target dir missing, installing: %s, please adjust usr/grp' % (dst_dir))
-            os.makedirs(dst_dir)
 
         with open(self.dst_path, 'w') as f_out:
             f_out.write(self.jinja_tmpl.render(**self.kv_set))

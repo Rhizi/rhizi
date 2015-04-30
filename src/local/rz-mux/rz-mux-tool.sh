@@ -89,8 +89,6 @@ install_instance__neo4j() {
     ln -vfs -T /usr/share/neo4j/plugins            ${neo4j_module__rootdir}/plugins
     ln -vfs -T /usr/share/neo4j/system             ${neo4j_module__rootdir}/system
 
-    # set modes, ownership
-    chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
 }
 
 install_instance__apache() {
@@ -122,7 +120,6 @@ install_instance__rhizi() {
     install -v --directory ${rz_module__confdir} \
                --directory ${rz_module__bkp}
 
-    chmod +x /etc/init.d/rhizi__${RZI_NAME}
 }
 
 uninstall_instance__apache() {
@@ -172,13 +169,17 @@ case $1 in
 
         set -e
 
+        install_instance__apache
+        install_instance__neo4j
+        install_instance__rhizi
+
         python /usr/lib/rhizi/tools/rz-mux/rz-mux-tool.py \
                --template-dir /usr/share/rhizi/rz-mux/ \
                --domain ${RZI_NAME}
 
-        install_instance__apache
-        install_instance__neo4j
-        install_instance__rhizi
+        # set modes, ownership
+        chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
+        chmod +x /etc/init.d/rhizi__${RZI_NAME}
 
         tree -ug --noreport /etc/apache2/sites-available
         tree -ug --noreport /etc/apache2/sites-enabled
