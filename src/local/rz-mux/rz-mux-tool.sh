@@ -55,7 +55,11 @@ set_path_vars() {
     neo4j_module__confdir=/etc/neo4j/mux-conf.d/${RZI_NAME}
     neo4j_module__rootdir=/var/lib/neo4j/mux-root.d/${RZI_NAME}
 
+<<<<<<< HEAD
     rz_module__confdir=/etc/rhizi/mux-conf.d/${RZI_NAME}
+=======
+    rz_module__conf=/etc/rhizi/mux-conf.d/${RZI_NAME}
+>>>>>>> 1688d01... rz-mux-tool: generate cron bkp scripts
     rz_module__bkp=/var/lib/rhizi/mux-bkp.d/${RZI_NAME}
 
     apache_module__siteconf_filename=${RZI_NAME}.conf

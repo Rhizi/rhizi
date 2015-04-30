@@ -93,6 +93,10 @@ def gen_dom_config__rhizi(domain_name, port_map):
                      Template_Task(os.path.join(rz_template_path_prefix, 'rhizi.init.jinja'),
                                    os.path.join(install_prefix, 'etc/init.d/', 'rhizi__%s' % (domain_name)),
                                    {'domain_name': domain_name}),
+                     Template_Task(os.path.join(rz_template_path_prefix, 'rhizi-cron-bkp.daily.sh.jinja'),
+                                   os.path.join(install_prefix, '/etc/cron.daily/', 'rhizi__%s' % (domain_name)),
+                                   {'domain_name': domain_name,
+                                    'neo4j_port__shell': port_map.neo4j_port__shell}),
                      ]
 
     for conf_task_obj in conf_task_set:
