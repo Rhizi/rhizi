@@ -47,23 +47,30 @@
 set -e
 
 die() {
-    echo $1 1>&2; exit 1
+    echo "error: $1" 1>&2; exit 1
 }
 
-set_path_vars__apache() {
-    apache_site_conf=${RZI_NAME}.conf
-    apache_site_root=/srv/www/rhizi/mux-root.d/${RZI_NAME}
+set_path_vars() {
+
+    neo4j_module__confdir=/etc/neo4j/mux-conf.d/${RZI_NAME}
+    neo4j_module__rootdir=/var/lib/neo4j/mux-root.d/${RZI_NAME}
+
+    rz_module__confdir=/etc/rhizi/mux-conf.d/${RZI_NAME}
+    rz_module__bkp=/var/lib/rhizi/mux-bkp.d/${RZI_NAME}
+
+    apache_module__siteconf_filename=${RZI_NAME}.conf
+    apache_module__rootdir=/srv/www/rhizi/mux-root.d/${RZI_NAME}
+
 }
 
 install_instance__neo4j() {
 
-    [[ -e "/etc/init.d/${RZI_NEO4J_SVC_NAME}" ]] && die "${RZI_NEO4J_SVC_NAME} already installed."
+    [[ -e "${neo4j_module__rootdir}" ]] && die "neo4j module already installed: ${neo4j_module__rootdir}"
 
-    install -v --owner=${NEO4J_USER} --group=adm --directory /etc/neo4j/mux-conf.d/${RZI_NAME} \
-                                                             /etc/neo4j/mux-conf.d/${RZI_NAME} \
-                                                             /etc/neo4j/mux-conf.d/${RZI_NAME}/ssl \
-                                                             /var/lib/neo4j/mux-root.d/${RZI_NAME} \
-                                                             /var/lib/neo4j/mux-root.d/${RZI_NAME}/data
+    install -v --owner=${NEO4J_USER} --group=adm --directory ${neo4j_module__confdir} \
+                                                             ${neo4j_module__confdir}/ssl \
+                                                             ${neo4j_module__rootdir} \
+                                                             ${neo4j_module__rootdir}/data
 
     # copy non-generated config files
     cp /etc/neo4j/custom-logback.xml \
@@ -78,11 +85,11 @@ install_instance__neo4j() {
        /etc/neo4j/ssl/snakeoil.key \
        /etc/neo4j/mux-conf.d/${RZI_NAME}/ssl
 
-    ln -vfs -T /etc/neo4j/mux-conf.d/${RZI_NAME}   /var/lib/neo4j/mux-root.d/${RZI_NAME}/conf
-    ln -vfs -T /var/lib/neo4j/bin                  /var/lib/neo4j/mux-root.d/${RZI_NAME}/bin
-    ln -vfs -T /usr/share/neo4j/lib                /var/lib/neo4j/mux-root.d/${RZI_NAME}/lib
-    ln -vfs -T /usr/share/neo4j/plugins            /var/lib/neo4j/mux-root.d/${RZI_NAME}/plugins
-    ln -vfs -T /usr/share/neo4j/system             /var/lib/neo4j/mux-root.d/${RZI_NAME}/system
+    ln -vfs -T /etc/neo4j/mux-conf.d/${RZI_NAME}   ${neo4j_module__rootdir}/conf
+    ln -vfs -T /var/lib/neo4j/bin                  ${neo4j_module__rootdir}/bin
+    ln -vfs -T /usr/share/neo4j/lib                ${neo4j_module__rootdir}/lib
+    ln -vfs -T /usr/share/neo4j/plugins            ${neo4j_module__rootdir}/plugins
+    ln -vfs -T /usr/share/neo4j/system             ${neo4j_module__rootdir}/system
 
     # set modes, ownership
     chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
@@ -90,49 +97,54 @@ install_instance__neo4j() {
 
 install_instance__apache() {
 
-    set_path_vars__apache
+    [[ -e "${apache_module__rootdir}" ]] && die "apache module already installed: ${apache_module__rootdir}"
 
-    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root} \
-                                                             --directory ${apache_site_root}/webapp \
-                                                             --directory ${apache_site_root}/webapp/static \
-                                                             --directory ${apache_site_root}/webapp/static/rzi-overrides/js \
-                                                             --directory ${apache_site_root}/webapp/static/rzi-overrides/templates/fragment \
-                                                             --directory ${apache_site_root}/auth
+    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_module__rootdir} \
+                                                             --directory ${apache_module__rootdir}/webapp \
+                                                             --directory ${apache_module__rootdir}/webapp/static \
+                                                             --directory ${apache_module__rootdir}/webapp/static/rzi-overrides/js \
+                                                             --directory ${apache_module__rootdir}/webapp/static/rzi-overrides/templates/fragment \
+                                                             --directory ${apache_module__rootdir}/auth
 
-    ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}   /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/etc
-    ln -vfs -T /usr/lib/rhizi/webapp/static/js             /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/static/js
-    ln -vfs -T /usr/share/rhizi/webapp/static/css          /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/static/css
-    ln -vfs -T /usr/share/rhizi/webapp/static/font         /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/static/font
-    ln -vfs -T /usr/share/rhizi/webapp/static/img          /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/static/img
-    ln -vfs -T /usr/share/rhizi/webapp/static/lib          /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/static/lib
-    ln -vfs -T /usr/share/rhizi/webapp/templates/          /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/templates
+    ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}     ${apache_module__rootdir}/webapp/etc
+    ln -vfs -T /usr/lib/rhizi/webapp/static/js       ${apache_module__rootdir}/webapp/static/js
+    ln -vfs -T /usr/share/rhizi/webapp/static/css    ${apache_module__rootdir}/webapp/static/css
+    ln -vfs -T /usr/share/rhizi/webapp/static/font   ${apache_module__rootdir}/webapp/static/font
+    ln -vfs -T /usr/share/rhizi/webapp/static/img    ${apache_module__rootdir}/webapp/static/img
+    ln -vfs -T /usr/share/rhizi/webapp/static/lib    ${apache_module__rootdir}/webapp/static/lib
+    ln -vfs -T /usr/share/rhizi/webapp/templates/    ${apache_module__rootdir}/webapp/templates
 
-    ln -vfs -T /etc/apache2/sites-available/${apache_site_conf} /etc/apache2/sites-enabled/${apache_site_conf}
+    ln -vfs -T /etc/apache2/sites-available/${apache_module__siteconf_filename} /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
 }
 
-install_instance__rz() {
-    install -v --directory /etc/rhizi/mux-conf.d/${RZI_NAME}
+install_instance__rhizi() {
+
+    [[ -e "${rz_module__confdir}" ]] && die "rhizi module already installed: ${rz_module__confdir}"
+
+    install -v --directory ${rz_module__confdir} \
+               --directory ${rz_module__bkp}
 
     chmod +x /etc/init.d/rhizi__${RZI_NAME}
 }
 
 uninstall_instance__apache() {
 
-    set_path_vars__apache
-
-    rm -rvf /srv/www/rhizi/mux-root.d/${RZI_NAME}
-    rm -rvf /etc/apache2/sites-enabled/${apache_site_conf}
-    rm -rvf /etc/apache2/sites-available/${apache_site_conf}
+    rm -rvf ${apache_module__rootdir}
+    rm -rvf /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
+    rm -rvf /etc/apache2/sites-available/${apache_module__siteconf_filename}
 }
 
 uninstall_instance__neo4j() {
-     rm ${RZI_NEO4J_INIT_SCRIPT_PATH}
-     rm -rf /etc/neo4j/mux-conf.d/${RZI_NAME}
-     rm -rf /var/lib/neo4j/mux-root.d/${RZI_NAME}
+
+     rm -vf ${RZI_NEO4J_INIT_SCRIPT_PATH}
+     rm -rf ${neo4j_module__confdir}
+     rm -rf ${neo4j_module__rootdir}
 }
 
-uninstall_instance__rz() {
-    rm -rvf /etc/rhizi/mux-conf.d/${RZI_NAME}
+uninstall_instance__rhizi() {
+
+    rm -rvf ${rz_module__confdir}
+    echo "[!] leaving rhizi bkp dir removal to user: ${rz_module__bkp}"
 }
 
 #
@@ -155,6 +167,8 @@ RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 [ -e ${RZI_NEO4J_PID_FILE} ] && die "${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing"
 [ -e ${RZI_RZ_PID_FILE} ] && die "${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing"
 
+set_path_vars
+
 case $1 in
     install)
 
@@ -164,7 +178,7 @@ case $1 in
 
         install_instance__apache
         install_instance__neo4j
-        install_instance__rz
+        install_instance__rhizi
 
         tree -ug --noreport /etc/apache2/sites-available
         tree -ug --noreport /etc/apache2/sites-enabled
@@ -182,13 +196,13 @@ case $1 in
         echo "#     - /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
         echo "#"
         echo "# [!] populate instance-specific overrides here:
-        echo "#     - ${apache_site_root}/webapp/static/rzi-overrides/*"
+        echo "#     - ${apache_module__root}/webapp/static/rzi-overrides/*"
         echo "#"
     ;;
     uninstall)
         uninstall_instance__apache
         uninstall_instance__neo4j
-        uninstall_instance__rz
+        uninstall_instance__rhizi
     ;;
     *)
     echo "Usage: $0 <install|remove>"
