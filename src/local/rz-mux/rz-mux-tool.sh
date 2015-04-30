@@ -59,11 +59,11 @@ install_instance__neo4j() {
 
     [[ -e "/etc/init.d/${RZI_NEO4J_SVC_NAME}" ]] && die "${RZI_NEO4J_SVC_NAME} already installed."
 
-    install -v --owner=${NEO4J_USER} --group=adm --directory /etc/neo4j/mux-conf.d/${RZI_NAME}
-    install -v --owner=${NEO4J_USER} --group=adm --directory /etc/neo4j/mux-conf.d/${RZI_NAME}
-    install -v --owner=${NEO4J_USER} --group=adm --directory /etc/neo4j/mux-conf.d/${RZI_NAME}/ssl
-    install -v --owner=${NEO4J_USER} --group=adm --directory /var/lib/neo4j/mux-root.d/${RZI_NAME}
-    install -v --owner=${NEO4J_USER} --group=adm --directory /var/lib/neo4j/mux-root.d/${RZI_NAME}/data
+    install -v --owner=${NEO4J_USER} --group=adm --directory /etc/neo4j/mux-conf.d/${RZI_NAME} \
+                                                             /etc/neo4j/mux-conf.d/${RZI_NAME} \
+                                                             /etc/neo4j/mux-conf.d/${RZI_NAME}/ssl \
+                                                             /var/lib/neo4j/mux-root.d/${RZI_NAME} \
+                                                             /var/lib/neo4j/mux-root.d/${RZI_NAME}/data
 
     # copy non-generated config files
     cp /etc/neo4j/custom-logback.xml \
@@ -92,10 +92,10 @@ install_instance__apache() {
 
     set_path_vars__apache
 
-    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root}
-    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root}/webapp
-    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root}/webapp/static
-    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root}/auth
+    install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root} \
+                                                             --directory ${apache_site_root}/webapp \
+                                                             --directory ${apache_site_root}/webapp/static \
+                                                             --directory ${apache_site_root}/auth
 
     ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}   /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/etc
     ln -vfs -T /usr/lib/rhizi/webapp/static/js             /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/static/js
