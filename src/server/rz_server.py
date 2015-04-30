@@ -351,7 +351,7 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/api/rzdoc/clone', rz_api_rest.rzdoc_clone),
                       rest_entry('/api/rzdoc/list', rz_api_rest.rzdoc__list),
                       rest_entry('/api/rzdoc/<path:rzdoc_name>/create', rz_api_rest.rzdoc__create),
-                      rest_entry('/api/rzdoc/<path:rzdoc_name>/delete', rz_api_rest.rzdoc__delete, {'methods': ['GET', 'DELETE']}),
+                      rest_entry('/api/rzdoc/<path:rzdoc_name>/delete', rz_api_rest.rzdoc__delete, {'methods': ['GET', 'DELETE']}),  # TODO: rm 'GET' once we have UI deletion support - see #436
 
                       # upload endpoints - this might change to external later, keep minimal and separate
                       rest_entry('/blob/upload', rz_blob.upload, {'methods': ['POST']}),
