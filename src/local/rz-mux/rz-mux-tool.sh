@@ -95,6 +95,8 @@ install_instance__apache() {
     install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_site_root} \
                                                              --directory ${apache_site_root}/webapp \
                                                              --directory ${apache_site_root}/webapp/static \
+                                                             --directory ${apache_site_root}/webapp/static/rzi-overrides/js \
+                                                             --directory ${apache_site_root}/webapp/static/rzi-overrides/templates/fragment \
                                                              --directory ${apache_site_root}/auth
 
     ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}   /srv/www/rhizi/mux-root.d/${RZI_NAME}/webapp/etc
@@ -176,7 +178,11 @@ case $1 in
         echo "#"
         echo "# rz instance installed: name: ${RZI_NAME}"
         echo "#"
-        echo "# [!] please review & adjust /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
+        echo "# [!] please review / adjust the following:
+        echo "#     - /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
+        echo "#"
+        echo "# [!] please install instance-specific overrides here:
+        echo "#     - ${apache_site_root}/webapp/static/rzi-overrides/*"
         echo "#"
     ;;
     uninstall)
