@@ -33,13 +33,14 @@ def rz_mainpage(rzdoc_name=None):
     if None != email_address:  # session cookie passed & contains uid (email_address)
         try:
             _uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
-            role_set = u_account.role_set
-            rz_username = escape(u_account.rz_username)
         except Exception as e:
             # may occur on user_db reset or malicious cookie != stale cookie,
             # for which the user would at least be known to the user_db
-            log.exception(e)
-            return common_resp_handle__client_error()
+            # FIXME: remove the cookie
+            pass
+        else:
+            role_set = u_account.role_set
+            rz_username = escape(u_account.rz_username)
 
     if None == rzdoc_name:
         s_rzdoc_name = current_app.rz_config.rzdoc__mainpage_name
