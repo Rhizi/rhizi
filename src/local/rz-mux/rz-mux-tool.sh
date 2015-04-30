@@ -181,7 +181,7 @@ case $1 in
         echo "# [!] please review / adjust the following:
         echo "#     - /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
         echo "#"
-        echo "# [!] please install instance-specific overrides here:
+        echo "# [!] populate instance-specific overrides here:
         echo "#     - ${apache_site_root}/webapp/static/rzi-overrides/*"
         echo "#"
     ;;
