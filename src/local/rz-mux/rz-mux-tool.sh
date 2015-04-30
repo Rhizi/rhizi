@@ -79,10 +79,10 @@ install_instance__neo4j() {
        /etc/neo4j/mux-conf.d/${RZI_NAME}/ssl
 
     ln -vfs -T /etc/neo4j/mux-conf.d/${RZI_NAME}   /var/lib/neo4j/mux-root.d/${RZI_NAME}/conf
-    ln -vfs -T /var/lib/neo4j/bin                          /var/lib/neo4j/mux-root.d/${RZI_NAME}/bin
-    ln -vfs -T /usr/share/neo4j/lib                        /var/lib/neo4j/mux-root.d/${RZI_NAME}/lib
-    ln -vfs -T /usr/share/neo4j/plugins                    /var/lib/neo4j/mux-root.d/${RZI_NAME}/plugins
-    ln -vfs -T /usr/share/neo4j/system                     /var/lib/neo4j/mux-root.d/${RZI_NAME}/system
+    ln -vfs -T /var/lib/neo4j/bin                  /var/lib/neo4j/mux-root.d/${RZI_NAME}/bin
+    ln -vfs -T /usr/share/neo4j/lib                /var/lib/neo4j/mux-root.d/${RZI_NAME}/lib
+    ln -vfs -T /usr/share/neo4j/plugins            /var/lib/neo4j/mux-root.d/${RZI_NAME}/plugins
+    ln -vfs -T /usr/share/neo4j/system             /var/lib/neo4j/mux-root.d/${RZI_NAME}/system
 
     # set modes, ownership
     chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
@@ -142,7 +142,7 @@ APACHE_USER=www-data
 NEO4J_USER=neo4j
 
 RZI_NAME=$2 # rhizi-instance name, preferable a FQDN
-RZI_NEO4J_SVC_NAME='neo4j-service__${RZI_NAME}'
+RZI_NEO4J_SVC_NAME=neo4j-service__${RZI_NAME}
 RZI_NEO4J_INIT_SCRIPT_PATH=/etc/init.d/${RZI_NEO4J_SVC_NAME}
 RZI_NEO4J_PID_FILE=/var/run/${RZI_NEO4J_SVC_NAME}
 RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
@@ -152,8 +152,8 @@ RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 #
 [ $UID != 0 ] && die 'must be root to continue.'
 [ -z ${RZI_NAME} ] && die 'RZI_NAME arg missing, aborting'
-[ -e ${RZI_NEO4J_PID_FILE} ] && die '${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing'
-[ -e ${RZI_RZ_PID_FILE} ] && die '${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing'
+[ -e ${RZI_NEO4J_PID_FILE} ] && die "${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing"
+[ -e ${RZI_RZ_PID_FILE} ] && die "${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing"
 
 case $1 in
     install)
