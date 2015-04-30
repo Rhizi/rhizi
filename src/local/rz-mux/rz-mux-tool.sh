@@ -53,11 +53,7 @@ set_path_vars() {
     neo4j_module__confdir=/etc/neo4j/mux-conf.d/${RZI_NAME}
     neo4j_module__rootdir=/var/lib/neo4j/mux-root.d/${RZI_NAME}
 
-<<<<<<< HEAD
     rz_module__confdir=/etc/rhizi/mux-conf.d/${RZI_NAME}
-=======
-    rz_module__conf=/etc/rhizi/mux-conf.d/${RZI_NAME}
->>>>>>> 1688d01... rz-mux-tool: generate cron bkp scripts
     rz_module__bkp=/var/lib/rhizi/mux-bkp.d/${RZI_NAME}
 
     apache_module__siteconf_filename=${RZI_NAME}.conf
@@ -164,7 +160,7 @@ RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 #
 # sanity checks
 #
-[ $UID != 0 ] && die 'must be root to continue.'
+[ 0 != $UID ] && die 'must be root to continue.'
 [ -z ${RZI_NAME} ] && die 'RZI_NAME arg missing, aborting'
 [ -e ${RZI_NEO4J_PID_FILE} ] && die "${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing"
 [ -e ${RZI_RZ_PID_FILE} ] && die "${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing"
@@ -196,11 +192,11 @@ case $1 in
         echo "#"
         echo "# rz instance installed: name: ${RZI_NAME}"
         echo "#"
-        echo "# [!] please review / adjust the following:
+        echo "# [!] please review / adjust the following:"
         echo "#     - /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
         echo "#"
-        echo "# [!] populate instance-specific overrides here:
-        echo "#     - ${apache_module__root}/webapp/static/rzi-overrides/*"
+        echo "# [!] populate instance-specific overrides here:"
+        echo "#     - ${apache_module__rootdir}/webapp/static/rzi-overrides/*"
         echo "#"
     ;;
     uninstall)
