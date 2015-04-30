@@ -299,6 +299,12 @@ def init_rest_interface(cfg, flask_webapp):
     def rest_entry(path, f, flask_args={'methods': ['POST']}):
         return (path, f, flask_args)
 
+    def redirect_entry(path, path_to, flask_args):
+        def redirector():
+            return redirect(path_to, code=302)
+        redirector.func_name = 'redirector_%s' % path.replace('/', '_')
+        return (path, redirector, flask_args)
+
     def login_decorator(f):
         """
         security boundary: assert logged-in user before executing REST api call
