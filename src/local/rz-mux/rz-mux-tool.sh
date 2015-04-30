@@ -44,8 +44,6 @@
 #            └── rhizi-server.conf.example
 #
 
-set -e
-
 die() {
     echo "error: $1" 1>&2; exit 1
 }
@@ -175,6 +173,8 @@ set_path_vars
 
 case $1 in
     install)
+
+        set -e
 
         python /usr/lib/rhizi/tools/rz-mux/rz-mux-tool.py \
                --template-dir /usr/share/rhizi/rz-mux/ \
