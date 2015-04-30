@@ -23,6 +23,7 @@ case "$1" in
        # call chmod, chown, etc.
 
        chown www-data:www-data /var/run/rhizi
+       chown www-data:www-data /var/log/rhizi
 
        # configure apache - FIXME: impl undo
        echo 'enabling apache proxy modules - warning: this will not be reverted during package uninstall'
