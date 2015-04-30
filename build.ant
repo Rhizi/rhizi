@@ -25,6 +25,23 @@
       </sequential>
    </macrodef>
 
+   <macrodef name="scp_macro"
+             description="a .ssh/config aware scp invocation macro">
+      <!-- user arg intentionally unsupported, rely on .ssh/config -->
+      <attribute name="src" />
+      <attribute name="todir" />
+      <attribute name="remotehost" />
+      <attribute name="extraOpts" default="" />
+
+      <sequential>
+         <exec dir="${basedir}" executable="/usr/bin/scp" failonerror="true">
+            <arg line="@{extraOpts}" />
+            <arg line="@{src}" />
+            <arg value="@{remotehost}:@{todir}" />
+         </exec>
+      </sequential>
+   </macrodef>
+
    <macrodef name="client-optimize">
       <attribute name="root" />
       <attribute name="build" />
