@@ -17,7 +17,7 @@ static_url_path = /static
 #
 listen_address = 127.0.0.1
 listen_port = {{ rz_port__http }}
-reverse_proxy_host = {{ domain_name }}.rhizi.net
+reverse_proxy_host = {{ domain_fqdn }}.rhizi.net
 reverse_proxy_port = 80
 
 # -----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ neo4j_url = http://127.0.0.1:{{ neo4j_port__http }}
 # Logging
 #
 log_level = debug
-log_path = /var/log/rhizi/rhizi-server__{{ domain_name }}.log
+log_path = /var/log/rhizi/rhizi-server__{{ domain_fqdn }}.log
 
 # -----------------------------------------------------------------------------
 # Flask Configuration

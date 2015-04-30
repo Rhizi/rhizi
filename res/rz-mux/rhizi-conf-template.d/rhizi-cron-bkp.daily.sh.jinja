@@ -1,7 +1,7 @@
 #!/bin/sh
 
-bkp_dir=/var/lib/rhizi/mux-bkp.d/{{ domain_name }}
-bkp_filename={{ domain_name }}-bkp_$(date +%Y-%m-%d).dump
+bkp_dir=/var/lib/rhizi/mux-bkp.d/{{ domain_fqdn }}
+bkp_filename={{ domain_fqdn }}-bkp_$(date +%Y-%m-%d).dump
 bkp_filepath=${bkp_dir}/${bkp_filename}
 
 # dump neo4j DB

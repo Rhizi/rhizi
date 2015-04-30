@@ -1,7 +1,7 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          neo4j__{{ domain_name }}
+# Provides:          neo4j__{{ domain_fqdn }}
 # Required-Start:    $remote_fs $syslog $network
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -34,11 +34,11 @@
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Neo4j Graph Database"
-NAME=neo4j__{{ domain_name }}
-DAEMON=/var/lib/neo4j/mux-root.d/{{ domain_name }}/bin/neo4j
+NAME=neo4j__{{ domain_fqdn }}
+DAEMON=/var/lib/neo4j/mux-root.d/{{ domain_fqdn }}/bin/neo4j
 DAEMON_ARGS="start"
-PIDFILE=/var/lib/neo4j/mux-root.d/{{ domain_name }}/data/neo4j-service.pid
-SCRIPTNAME=/etc/init.d/neo4j-service__{{ domain_name }}
+PIDFILE=/var/lib/neo4j/mux-root.d/{{ domain_fqdn }}/data/neo4j-service.pid
+SCRIPTNAME=/etc/init.d/neo4j-service__{{ domain_fqdn }}
 
 NEO_USER=neo4j
 
