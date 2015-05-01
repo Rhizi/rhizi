@@ -745,7 +745,7 @@ class DBO_rzdb__init_DB(DB_composed_op):
 
             # init DB metadata node
             q_arr = ['create (n:%s {db_attr})' % (neo4j_schema.META_LABEL__RZDB_META)]
-            q_params = {'db_attr': {'schema_version': '0.1'}}
+            q_params = {'db_attr': {'schema_version': '0.2.0'}}
             self.add_statement(q_arr, q_params)
 
     def __init__(self, rz_config):
