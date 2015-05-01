@@ -45,7 +45,7 @@
 #
 
 die() {
-    echo "error: $1" 1>&2; exit 1
+    echo "$1" 1>&2; exit 1
 }
 
 set_path_vars() {
@@ -63,7 +63,7 @@ set_path_vars() {
 
 install_instance__neo4j() {
 
-    [[ -e "${neo4j_module__rootdir}" ]] && die "neo4j module already installed: ${neo4j_module__rootdir}"
+    [[ -e "${neo4j_module__rootdir}" ]] && die "error: neo4j module already installed: ${neo4j_module__rootdir}"
 
     install -v --owner=${NEO4J_USER} --group=adm --directory ${neo4j_module__confdir} \
                                                              ${neo4j_module__confdir}/ssl \
@@ -93,7 +93,7 @@ install_instance__neo4j() {
 
 install_instance__apache() {
 
-    [[ -e "${apache_module__rootdir}" ]] && die "apache module already installed: ${apache_module__rootdir}"
+    [[ -e "${apache_module__rootdir}" ]] && die "error: apache module already installed: ${apache_module__rootdir}"
 
     install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_module__rootdir} \
                                                              --directory ${apache_module__rootdir}/webapp \
@@ -115,7 +115,7 @@ install_instance__apache() {
 
 install_instance__rhizi() {
 
-    [[ -e "${rz_module__confdir}" ]] && die "rhizi module already installed: ${rz_module__confdir}"
+    [[ -e "${rz_module__confdir}" ]] && die "error: rhizi module already installed: ${rz_module__confdir}"
 
     install -v --directory ${rz_module__confdir} \
                --directory ${rz_module__bkp}
@@ -157,10 +157,10 @@ RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 #
 # sanity checks
 #
-[ 0 != $UID ] && die 'must be root to continue.'
-[ -z ${RZI_NAME} ] && die 'RZI_NAME arg missing, aborting'
-[ -e ${RZI_NEO4J_PID_FILE} ] && die "${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing"
-[ -e ${RZI_RZ_PID_FILE} ] && die "${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing"
+[ 0 != $UID ] && die 'error: must be root to continue.'
+[ -z ${RZI_NAME} ] && die 'error: RZI_NAME arg missing, aborting'
+[ -e ${RZI_NEO4J_PID_FILE} ] && die "error: ${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing"
+[ -e ${RZI_RZ_PID_FILE} ] && die "error: ${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing"
 
 set_path_vars
 
