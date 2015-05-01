@@ -104,6 +104,7 @@ class Config(object):
         # Rhizi
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
         cfg['rzdoc__name__max_length'] = 256
+        cfg['neo4j_schema_version'] = '0.2.0'
 
         ret = Config()
         ret.__dict__ = cfg  # allows setting of @property attributes
