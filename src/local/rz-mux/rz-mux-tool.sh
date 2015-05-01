@@ -180,6 +180,8 @@ case $1 in
         # set modes, ownership
         chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
         chmod +x /etc/init.d/rhizi__${RZI_NAME}
+        chgrp ${APACHE_USER} /etc/rhizi/mux-conf.d/${RZI_NAME}/*
+        chmod o-r /etc/rhizi/mux-conf.d/${RZI_NAME}/*
 
         tree -ug --noreport /etc/apache2/sites-available
         tree -ug --noreport /etc/apache2/sites-enabled
