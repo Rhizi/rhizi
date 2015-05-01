@@ -151,7 +151,7 @@ NEO4J_USER=neo4j
 RZI_NAME=$2 # rhizi-instance name, preferable a FQDN
 RZI_NEO4J_SVC_NAME=neo4j-service__${RZI_NAME}
 RZI_NEO4J_INIT_SCRIPT_PATH=/etc/init.d/${RZI_NEO4J_SVC_NAME}
-RZI_NEO4J_PID_FILE=/var/run/${RZI_NEO4J_SVC_NAME}
+RZI_NEO4J_PID_FILE=/var/lib/neo4j/mux-root.d/${RZI_NAME}/data/neo4j-service.pid
 RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 
 #
