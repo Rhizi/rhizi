@@ -1,3 +1,4 @@
+import base64
 from copy import deepcopy
 import gzip
 import hashlib
@@ -217,7 +218,6 @@ class DBO_block_chain__commit(DB_op):
         blob = self._convert_to_blob(commit_obj)
         hash_value = self.calc_blob_hash(blob)
 
-        name_value = hash_value[:8] + '...' if commit_obj == None else str(commit_obj)
         l_id = generate_random_id__uuid()
 
         q_arr = ['match (old_head:%s:%s)' % (neo4j_schema.META_LABEL__VC_HEAD,
@@ -230,11 +230,9 @@ class DBO_block_chain__commit(DB_op):
                  'return {head_parent_commit: old_head, head_commit: new_head}'
                  ]
 
-        q_param_set = {'commit_attr': {
-                                       'blob': blob,
+        q_param_set = {'commit_attr': {'blob': blob,
                                        'hash': hash_value,
-                                       'id': hash_value,
-                                       'name': name_value},
+                                       'id': hash_value},
                        'link_attr': {'id': l_id},
                        }
 
@@ -243,7 +241,6 @@ class DBO_block_chain__commit(DB_op):
         # cache values necessary to generate op result
         self.commit_obj = commit_obj
         self.n_id = hash_value
-        self.n_name_value = name_value
         self.l_id = l_id
 
         # create commit-[:__Authored-by]->__User link if possible
@@ -262,9 +259,10 @@ class DBO_block_chain__commit(DB_op):
         @return: blob = json.dumps(obj)
         """
         obj_str = json.dumps(obj)
-        # blob_gzip = self._gzip_compress_string(obj_str)
+        blob_gzip = self._gzip_compress_string(obj_str)
+        blob_base64 = base64.encodestring(blob_gzip)
 
-        return obj_str
+        return blob_base64
 
     def _gzip_compress_string(self, input_string):
         out = sio.StringIO()
@@ -293,7 +291,6 @@ class DBO_block_chain__commit(DB_op):
                     hash_child = ret_dict['head_commit']['hash']
 
         ret.node_set_add = [{'id': self.n_id,
-                             'name': self.n_name_value,
                              '__label_set': ['__Commit']}
                            ]
         l = Link.Link_Ptr(src_id=hash_parent, dst_id=hash_child)
