@@ -203,6 +203,14 @@ case $1 in
         echo "#"
     ;;
     uninstall)
+        echo "[!] This will purge all instance data including:"
+        echo "       - '${neo4j_module__rootdir}"
+        echo "       - '${apache_module__rootdir}"
+        echo ""
+        echo "    Are you sure you want to proceed? [y/N]"
+        read uninstall__proceed
+        [ "$uninstall__proceed" != "y" ] && die 'Aborting'
+
         uninstall_instance__apache
         uninstall_instance__neo4j
         uninstall_instance__rhizi
