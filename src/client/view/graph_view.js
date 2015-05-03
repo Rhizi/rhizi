@@ -892,7 +892,7 @@ function GraphView(spec) {
             ];
     }
 
-    gv.nodes__user_visible = function(nodes, zoom_if_visible) {
+    function nodes__user_visible(nodes, zoom_if_visible) {
         if (nodes.length == 0) {
             return;
         }
@@ -924,7 +924,8 @@ function GraphView(spec) {
         if (zoom_if_visible || (!x_in_view || !y_in_view)) {
             set_scale_translate(min_scale, [x_translate, y_translate]);
         }
-    }
+    };
+    gv.nodes__user_visible = nodes__user_visible;
 
     var set_scale_translate = function(scale, translate) {
         var current_scale = zoom_obj.scale(),
