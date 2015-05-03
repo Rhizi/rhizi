@@ -265,10 +265,16 @@ function load_from_json(result) {
     update_view__graph(true);
 }
 
-function set_title(rzdoc_name)
+function page_title(rzdoc_name)
 {
     // [!] needs to be synced with server provided title (index.html). double the code, half the latency.
-    document.title = rzdoc_name + ' -- Rhizi Prototype';
+    return rzdoc_name + ' -- Rhizi Prototype';
+}
+
+function url_for_doc(rzdoc_name)
+{
+    // [!] needs to be synced with server
+    return '/rz/' + rzdoc_name;
 }
 
 /**
@@ -282,8 +288,8 @@ function rzdoc__open(rzdoc_name) {
     main_graph.clear();
     edit_graph.clear();
     main_graph.load_from_backend();
-    set_title(rzdoc_name);
     get_search().clear();
+    window.history.replaceState(null, page_title(rzdoc_name), url_for_doc(rzdoc_name));
 
     var rzdoc_bar = $('#rzdoc-bar_doc-label');
     var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');
