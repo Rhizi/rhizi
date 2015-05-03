@@ -906,10 +906,11 @@ class DBO_rzdoc__lookup_by_name(DB_op):
         """
         super(DBO_rzdoc__lookup_by_name, self).__init__()
 
-        q_arr = ['match (n:%s {name: {name}})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+        q_arr = ['match (n:%s)' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+                 'where n.name =~ {name}',
                  'return n']
 
-        param_set = {'name': rzdoc_name}
+        param_set = {'name': '(?i)' + rzdoc_name}
         db_q = DB_Query(q_arr, param_set)
         self.add_db_query(db_q)
 
