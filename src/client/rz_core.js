@@ -3,6 +3,16 @@
 define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu'],
 function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu) {
 
+// fix circular module dependency
+var search;
+function get_search()
+{
+    if (search === undefined) {
+        search = require('view/search');
+    }
+    return search;
+}
+
 var addednodes = [],
     vis,
     graphinterval = 0,
@@ -273,6 +283,7 @@ function rzdoc__open(rzdoc_name) {
     edit_graph.clear();
     main_graph.load_from_backend();
     set_title(rzdoc_name);
+    get_search().clear();
 
     var rzdoc_bar = $('#rzdoc-bar_doc-label');
     var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');

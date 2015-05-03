@@ -67,11 +67,14 @@ function init() {
 
 }
 
-
+function clear() {
+    search.val('');
+}
 
 return {
     focus: focus,
     init: init,
+    clear: clear,
 };
 }
 );
