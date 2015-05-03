@@ -1332,6 +1332,7 @@ function GraphView(spec) {
             .restore()
             .zen_mode(zen_mode)
             .start();
+        gv.layout = layout;
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
