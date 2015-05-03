@@ -7,7 +7,8 @@ from functools import wraps
 import rz_user
 
 class Fake_User_DB(object):
-    pass
+    def shutdown(self):
+        pass
 
 class User_DB(object):
     """
