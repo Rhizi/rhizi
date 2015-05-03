@@ -256,7 +256,7 @@ class DBO_block_chain__commit(DB_op):
 
     def _convert_to_blob(self, obj):
         """
-        @return: blob = json.dumps(obj)
+        @return: blob = base64(gzip(json.dumps(obj)))
         """
         obj_str = json.dumps(obj)
         blob_gzip = self._gzip_compress_string(obj_str)
