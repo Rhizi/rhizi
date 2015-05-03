@@ -837,7 +837,7 @@ function GraphView(spec) {
             }
 
             if (relayout) {
-                layout.alpha(0.1).start();
+                layout__reset(0.1);
             } else {
                 // XXX If we are stopped we need to update the text of the links at least,
                 // and this is the simplest way
@@ -1304,6 +1304,13 @@ function GraphView(spec) {
                 layout_menu.append(button);
             });
         });
+    }
+
+    function layout__reset(alpha) {
+        alpha = alpha | 0.1;
+        layout.nodes_links(nodes__visible(), links__visible())
+              .alpha(alpha)
+              .start();
     }
 
     function set_layout(new_layout) {
