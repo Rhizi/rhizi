@@ -840,6 +840,10 @@ p {
 #cmd_bar__rzdoc_new__submit {
   background-color: yellowgreen; }
 
+#cmd_bar__rzdoc_new__submit_error {
+  color: red;
+  margin-left: 5px; }
+
 #cmd_bar__rzdoc_open__rzdoc_list {
   overflow: auto; }
 

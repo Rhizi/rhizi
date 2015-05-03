@@ -99,7 +99,8 @@ $('#btn_rzdoc__new').click(function() {
     var cmd_bar,
         cmd_bar_body,
         submit_btn,
-        close_btn;
+        close_btn,
+        error_element;
 
     cmd_bar = $('#cmd_bar__rzdoc_new');
     if (cmd_bar.length > 0) { // cmd bar present
@@ -113,6 +114,7 @@ $('#btn_rzdoc__new').click(function() {
     cmd_bar_body = $('<div class="cmd-bar_body" id="cmd_bar__rzdoc_new__body">');
     close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
     submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
+    error_element = $('<span id="cmd_bar__rzdoc_new__submit_error"></span>');
 
     cmd_bar.append(close_btn);
     cmd_bar.append(cmd_bar_body);
@@ -121,10 +123,15 @@ $('#btn_rzdoc__new').click(function() {
     cmd_bar_body.append('<label for="cmd_bar__rzdoc_new__input" id="cmd_bar__rzdoc_new__label">Rhizi Title:');
     cmd_bar_body.append('<input id="cmd_bar__rzdoc_new__input">');
     cmd_bar_body.append(submit_btn);
+    cmd_bar_body.append(error_element);
 
     cmd_bar.css('display', 'none');
 
     cmd_bar.insertAfter('.top-bar');
+
+    function display_doc_name_taken_error(rzdoc_name) {
+        error_element.text("Cannot create document - A document titled '" + rzdoc_name + "' already exists");
+    }
 
     // submit
     submit_btn.attr('tabindex', 1); // assume focus on next tab key press
@@ -140,8 +147,8 @@ $('#btn_rzdoc__new').click(function() {
         };
 
         var on_error = function() {
-            // TODO: handle doc already exists
             // TODO: handle malformed doc name
+            display_doc_name_taken_error(rzdoc_name);
         };
 
         // TODO: validate rzdoc name
