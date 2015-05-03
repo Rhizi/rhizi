@@ -178,7 +178,10 @@ function GraphView(spec) {
         vis,
         deliverables,
         filter_states,
+
         zen_mode = false,
+        zen_mode__auto_center = false,
+
         // FIXME - want to use parent_element
         w,
         h,
@@ -330,6 +333,13 @@ function GraphView(spec) {
             [spec.bubble_property], function (data, radius) { return [data[0], radius]; }
         ).skip(1).onValue(transformOnSelection);
     }
+
+    selection.selectionChangedBus.onValue(function () {
+        if (zen_mode) {
+            zen_mode__auto_center = true;
+            layout__reset(1.0);
+        }
+    });
 
     function showNodeInfo(node) {
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
@@ -1308,6 +1318,14 @@ function GraphView(spec) {
         });
     }
 
+    function layout__tick__callback()
+    {
+        if (zen_mode && zen_mode__auto_center) {
+            center_on_selection_related();
+        }
+        pushRedraw();
+    }
+
     function layout__reset(alpha) {
         alpha = alpha | 0.1;
         layout.nodes_links(nodes__visible(), links__visible())
@@ -1326,7 +1344,7 @@ function GraphView(spec) {
         });
         layout = new_layout
             .size([w, h])
-            .on("tick", pushRedraw)
+            .on("tick", layout__tick__callback)
             .on("end", record_position_to_local_storage)
             .nodes_links(nodes__visible(), links__visible())
             .restore()
@@ -1352,6 +1370,13 @@ function GraphView(spec) {
         tick();
     });
 
+    function disable_zen_mode_auto_center() {
+        zen_mode__auto_center = false;
+    }
+    // [!] hack, should take control of these event listeners and feed them to the zoom behaviour
+    parent_element[0][0].parentElement.addEventListener('wheel', disable_zen_mode_auto_center);
+    parent_element[0][0].parentElement.addEventListener('mousedown', disable_zen_mode_auto_center);
+
     function center_on_selection_related() {
         nodes__user_visible(selection.related(), true, 100 /* ms, duration of animation */);
     }
@@ -1366,6 +1391,7 @@ function GraphView(spec) {
         layout.nodes_links(nodes__visible(), links__visible());
         layout.zen_mode(value);
         update_view(true);
+        zen_mode__auto_center = zen_mode;
     }
     gv.zen_mode__set = zen_mode__set;
     gv.zen_mode__toggle = function () {
