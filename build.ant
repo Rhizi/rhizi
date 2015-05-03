@@ -195,13 +195,30 @@
       </parallel>
    </target>
 
-   <target name="pkg-deb" depends="clean" description="package as .deb">
+   <target name="pkg-deb__mux" depends="clean" description="package as .deb">
+      <antcall target="pkg-deb__common">
+         <!-- FIXME: use rhizi-mux -->
+         <param name="pkg_name" value="rhizi" />
+         <param name="pkg_variant" value="rhizi-mux" />
+      </antcall>
+   </target>
 
-      <property name="pkg_name" value="rhizi" />
+   <target name="pkg-deb__single" depends="clean" description="package as .deb">
+      <antcall target="pkg-deb__common">
+         <param name="pkg_name" value="rhizi" />
+         <param name="pkg_variant" value="rhizi-single" />
+      </antcall>
+   </target>
+
+   <target name="pkg-deb__common" depends="clean" description="package as .deb">
+
+      <fail unless="pkg_variant" />
+      <fail unless="pkg_name" />
+
       <property name="pkg_version" value="0.1.0" />
       <property name="pkg_debname" value="${pkg_name}_${pkg_version}" />
       <property name="pkg_fullname" value="${pkg_name}-${pkg_version}" />
-      <property name="build_dir__deb_pkg" value="${buildDir}/${pkg_fullname}" />
+      <property name="build_dir__deb_pkg" value="${buildDir}/deb-pkg__${pkg_variant}/${pkg_fullname}" />
 
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
@@ -215,7 +232,8 @@
 
       <generate_version_tag output="${build_dir__deb_pkg}/res/templates/fragment/" />
       <copy todir="${build_dir__deb_pkg}/debian">
-         <fileset dir="res/debian" />
+         <fileset dir="res/debian/pkg__rhizi-common" />
+         <fileset dir="res/debian/pkg__${pkg_variant}" />
       </copy>
 
       <delete verbose="true" includeemptydirs="true">
