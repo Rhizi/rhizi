@@ -199,14 +199,14 @@
    <target name="pkg-deb__mux" description="package as .deb">
       <antcall target="pkg-deb__common">
          <!-- FIXME: use rhizi-mux -->
-         <param name="pkg_name" value="rhizi" />
+         <param name="package_name" value="rhizi-mux" />
          <param name="pkg_variant" value="rhizi-mux" />
       </antcall>
    </target>
 
    <target name="pkg-deb__single" description="package as .deb">
       <antcall target="pkg-deb__common">
-         <param name="pkg_name" value="rhizi" />
+         <param name="package_name" value="rhizi" />
          <param name="pkg_variant" value="rhizi-single" />
       </antcall>
    </target>
@@ -214,17 +214,16 @@
    <target name="pkg-deb__common" depends="clean" description="package as .deb">
 
       <fail unless="pkg_variant" />
-      <fail unless="pkg_name" />
+      <fail unless="package_name" />
 
       <property name="pkg_version" value="0.1.0" />
-      <property name="pkg_debname" value="${pkg_name}_${pkg_version}" />
-      <property name="pkg_fullname" value="${pkg_name}-${pkg_version}" />
-      <property name="build_dir__deb_pkg" value="${buildDir}/deb-pkg__${pkg_variant}/${pkg_fullname}" />
+      <property name="pkg_debname" value="${package_name}_${pkg_version}" />
+      <property name="pkg_fullname" value="${package_name}-${pkg_version}" />
+      <property name="build_dir__deb_pkg"
+                value="${buildDir}/deb-pkg__${pkg_variant}/${pkg_fullname}" />
 
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
-      <mkdir dir="${build_dir__deb_pkg}/template.d" />
-      <mkdir dir="${build_dir__deb_pkg}/template.d/fragment.d" />
 
       <exec dir="${basedir}" executable="/usr/bin/git">
          <arg value="clone" />
@@ -238,10 +237,15 @@
          <fileset dir="res/debian/pkg__${pkg_variant}" />
       </copy>
 
+      <!-- set debian/control package name -->
+      <replaceregexp file="${build_dir__deb_pkg}/debian/control">
+         <regexp pattern="\$\{package-name\}" />
+         <substitution expression="${package_name}" />
+      </replaceregexp>
+
+      <!-- generate version fragment -->
+      <mkdir dir="${build_dir__deb_pkg}/res/template.d/fragment.d" />
       <generate_version_tag output="${build_dir__deb_pkg}/res/template.d/fragment.d/" />
-      <replace file="${build_dir__deb_pkg}/control"
-               token="\${package-name}"
-               value="${package_name}" />
 
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${build_dir__deb_pkg}" includes="Makefile" />
@@ -262,6 +266,7 @@
          <arg value="-us" />
          <arg value="-uc" />
       </exec>
+
    </target>
 
    <target name="pkg-deb.list">

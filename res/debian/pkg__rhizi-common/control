@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9),
 Standards-Version: 3.9.5
 Homepage: http://rhizi.net
 
-Package: rhizi
+Package: ${package-name}
 Architecture: any
 Depends: ${python:Depends},
          ${shlibs:Depends},
