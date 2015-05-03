@@ -53,7 +53,7 @@ feedback_recipient = feedback@localhost
 # Security
 #
 access_control = True
-user_db_path = ./deploy-local/etc/user_db.db
+user_db_path = ./etc/user_db.db
 acl__singup__email_domain =
 signup_enabled = True
 
