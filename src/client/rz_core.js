@@ -289,6 +289,7 @@ function rzdoc__open(rzdoc_name) {
     edit_graph.clear();
     main_graph.load_from_backend();
     get_search().clear();
+    main_graph_view.zen_mode__cancel();
     window.history.replaceState(null, page_title(rzdoc_name), url_for_doc(rzdoc_name));
 
     var rzdoc_bar = $('#rzdoc-bar_doc-label');
