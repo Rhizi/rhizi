@@ -1352,6 +1352,10 @@ function GraphView(spec) {
         tick();
     });
 
+    function center_on_selection_related() {
+        nodes__user_visible(selection.related(), true, 100 /* ms, duration of animation */);
+    }
+
     gv.link__pass_filter = link__pass_filter;
     gv.node__pass_filter = node__pass_filter;
     function zen_mode__set(value) {
