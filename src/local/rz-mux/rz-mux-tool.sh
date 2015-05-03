@@ -98,8 +98,8 @@ install_instance__apache() {
     install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_module__rootdir} \
                                                              --directory ${apache_module__rootdir}/webapp \
                                                              --directory ${apache_module__rootdir}/webapp/static \
-                                                             --directory ${apache_module__rootdir}/webapp/static/rzi-override.d/js \
-                                                             --directory ${apache_module__rootdir}/webapp/static/rzi-override.d/templates/fragment \
+                                                             --directory ${apache_module__rootdir}/webapp/static/fragment.d/js \
+                                                             --directory ${apache_module__rootdir}/webapp/static/fragment.d/templates/fragment \
                                                              --directory ${apache_module__rootdir}/auth
 
     ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}     ${apache_module__rootdir}/webapp/etc
@@ -199,7 +199,7 @@ case $1 in
         echo "#     - /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
         echo "#"
         echo "# [!] populate instance-specific overrides here:"
-        echo "#     - ${apache_module__rootdir}/webapp/static/rzi-override.d/*"
+        echo "#     - ${apache_module__rootdir}/webapp/static/fragment.d/*"
         echo "#"
     ;;
     uninstall)
@@ -216,6 +216,6 @@ case $1 in
         uninstall_instance__rhizi
     ;;
     *)
-    echo "Usage: $0 <install|remove>"
+    echo "Usage: $0 <install|uninstall> <rhizi-instance-FQDN>"
     ;;
 esac
