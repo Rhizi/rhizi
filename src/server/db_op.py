@@ -740,12 +740,12 @@ class DBO_rzdb__init_DB(DB_composed_op):
 
     class _init_DB_subop(DB_op):
 
-        def __init__(self, length_lim=None):
+        def __init__(self, neo4j_schema_version):
             super(DBO_rzdb__init_DB. _init_DB_subop, self).__init__()
 
             # init DB metadata node
             q_arr = ['create (n:%s {db_attr})' % (neo4j_schema.META_LABEL__RZDB_META)]
-            q_params = {'db_attr': {'schema_version': '0.2.0'}}
+            q_params = {'db_attr': {'schema_version': neo4j_schema_version}}
             self.add_statement(q_arr, q_params)
 
     def __init__(self, rz_config):
@@ -758,7 +758,7 @@ class DBO_rzdb__init_DB(DB_composed_op):
         self.add_sub_op(DBO_rzdb__fetch_DB_metablock())
 
         # init DB metadata node
-        self.add_sub_op(DBO_rzdb__init_DB._init_DB_subop())
+        self.add_sub_op(DBO_rzdb__init_DB._init_DB_subop(rz_config.neo4j_schema_version))
 
         # create mainpage
         mainpage_rzdoc = RZDoc(rz_config.rzdoc__mainpage_name)
