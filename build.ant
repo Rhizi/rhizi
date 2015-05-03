@@ -104,11 +104,11 @@
       <property name="src_client" value="src/client" />
       <property name="src_server" value="src/server" />
 
-      <generate_version_tag output="res/templates/fragment" />
-
       <mkdir dir="${targetDeploymentDir}/static" />
       <mkdir dir="${targetDeploymentDir}/templates" />
       <mkdir dir="${targetDeploymentDir}/templates/fragment" />
+
+      <generate_version_tag output="res/templates/fragment" />
 
       <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
 
