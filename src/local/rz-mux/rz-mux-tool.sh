@@ -207,7 +207,7 @@ case $1 in
         echo "       - '${neo4j_module__rootdir}"
         echo "       - '${apache_module__rootdir}"
         echo ""
-        echo "    Are you sure you want to proceed? [y/N]"
+        echo "Are you sure you want to proceed? [y/N]"
         read uninstall__proceed
         [ "$uninstall__proceed" != "y" ] && die 'Aborting'
 
