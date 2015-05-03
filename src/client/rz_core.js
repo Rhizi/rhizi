@@ -255,6 +255,12 @@ function load_from_json(result) {
     update_view__graph(true);
 }
 
+function set_title(rzdoc_name)
+{
+    // [!] needs to be synced with server provided title (index.html). double the code, half the latency.
+    document.title = rzdoc_name + ' -- Rhizi Prototype';
+}
+
 /**
  * open rzdoc:
  *    - set rz_config.rzdoc_cur__name
@@ -266,6 +272,7 @@ function rzdoc__open(rzdoc_name) {
     main_graph.clear();
     edit_graph.clear();
     main_graph.load_from_backend();
+    set_title(rzdoc_name);
 
     var rzdoc_bar = $('#rzdoc-bar_doc-label');
     var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');

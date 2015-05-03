@@ -208,7 +208,7 @@ $('#btn_rzdoc__open').click(function() {
                 return;
             }
 
-            document.location.href = '/rz/' + rzdoc_name // redirect to rzdoc URL
+            rz_core.rzdoc__open(rzdoc_name);
         });
     }
     var on_error = function() {
