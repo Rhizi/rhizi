@@ -25,7 +25,7 @@ from rz_req_handling import make_response__http__empty, \
     sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys
 import rz_server_ctrl
 import rz_user
-from rz_user_db import User_DB
+from rz_user_db import User_DB, Fake_User_DB
 
 
 class Config(object):
@@ -453,8 +453,12 @@ def init_DB(cfg):
 
     return db_ctl
 
-def init_user_db():
+def init_user_db(cfg):
     global user_db
+
+    if not cfg.access_control:
+        user_db = Fake_User_DB()
+        return user_db
 
     try:
         if os.path.exists(cfg.user_db_path):
@@ -515,7 +519,7 @@ if __name__ == "__main__":
             log.warn('[!] access control disabled, all-granted access set on all URLs')
 
         init_signal_handlers()
-        init_user_db()
+        init_user_db(cfg)
     except Exception as e:
         log.exception('failed to initialize server')
         traceback.print_exc()

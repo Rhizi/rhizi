@@ -6,6 +6,9 @@ from functools import wraps
 
 import rz_user
 
+class Fake_User_DB(object):
+    pass
+
 class User_DB(object):
     """
     Simple user database:
