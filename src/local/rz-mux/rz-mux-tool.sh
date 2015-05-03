@@ -16,7 +16,10 @@
 #             │   ├── img -> /usr/share/rhizi/webapp/static/img
 #             │   ├── js -> /usr/lib/rhizi/webapp/static/js
 #             │   └── lib -> /usr/share/rhizi/webapp/static/lib
-#             └── templates -> /usr/share/rhizi/webapp/templates/
+#             └── fragment.d                                           // webapp fragments
+#                 ├── js
+#                 ├── img
+#                 └── template.d                                       // HTML template fragments
 #
 # generated neo4j dir structure:
 #
@@ -96,11 +99,12 @@ install_instance__apache() {
     [[ -e "${apache_module__rootdir}" ]] && die "error: apache module already installed: ${apache_module__rootdir}"
 
     install -v --owner=${APACHE_USER} --group=${APACHE_USER} --directory ${apache_module__rootdir} \
+                                                             --directory ${apache_module__rootdir}/auth \
                                                              --directory ${apache_module__rootdir}/webapp \
                                                              --directory ${apache_module__rootdir}/webapp/static \
-                                                             --directory ${apache_module__rootdir}/webapp/static/fragment.d/js \
-                                                             --directory ${apache_module__rootdir}/webapp/static/fragment.d/templates/fragment \
-                                                             --directory ${apache_module__rootdir}/auth
+                                                             --directory ${apache_module__rootdir}/webapp/fragment.d/img \
+                                                             --directory ${apache_module__rootdir}/webapp/fragment.d/js \
+                                                             --directory ${apache_module__rootdir}/webapp/fragment.d/template.d
 
     ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}     ${apache_module__rootdir}/webapp/etc
     ln -vfs -T /usr/lib/rhizi/webapp/static/js       ${apache_module__rootdir}/webapp/static/js
@@ -108,8 +112,11 @@ install_instance__apache() {
     ln -vfs -T /usr/share/rhizi/webapp/static/font   ${apache_module__rootdir}/webapp/static/font
     ln -vfs -T /usr/share/rhizi/webapp/static/img    ${apache_module__rootdir}/webapp/static/img
     ln -vfs -T /usr/share/rhizi/webapp/static/lib    ${apache_module__rootdir}/webapp/static/lib
-    ln -vfs -T /usr/share/rhizi/webapp/templates/    ${apache_module__rootdir}/webapp/templates
 
+    # populate fragment.d
+    cp /usr/share/rhizi/webapp/template.d/*            ${apache_module__rootdir}/webapp/fragment.d/template.d/
+
+    # enable site
     ln -vfs -T /etc/apache2/sites-available/${apache_module__siteconf_filename} /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
 }
 
@@ -198,8 +205,9 @@ case $1 in
         echo "# [!] please review / adjust the following:"
         echo "#     - /etc/rhizi/mux-conf.d/${RZI_NAME}/rhizi-server.conf"
         echo "#"
-        echo "# [!] populate instance-specific overrides here:"
-        echo "#     - ${apache_module__rootdir}/webapp/static/fragment.d/*"
+        echo "# [!] adjust instance-specific files here:"
+        echo "#     - ${apache_module__rootdir}/webapp/static/fragment.d/js"
+        echo "#     - ${apache_module__rootdir}/webapp/static/fragment.d/template.d"
         echo "#"
     ;;
     uninstall)
