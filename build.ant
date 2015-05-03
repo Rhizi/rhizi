@@ -105,10 +105,10 @@
       <property name="src_server" value="src/server" />
 
       <mkdir dir="${targetDeploymentDir}/static" />
-      <mkdir dir="${targetDeploymentDir}/templates" />
-      <mkdir dir="${targetDeploymentDir}/templates/fragment" />
+      <mkdir dir="${targetDeploymentDir}/template.d" />
+      <mkdir dir="${targetDeploymentDir}/template.d/fragment.d" />
 
-      <generate_version_tag output="res/templates/fragment" />
+      <generate_version_tag output="res/template.d/fragment.d" />
 
       <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
 
@@ -131,7 +131,8 @@
 
          <!-- res -->
          <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
-         <rsync src="res/templates/" dst="${targetDeploymentDir}/templates/" />
+         <rsync src="res/template.d/"
+                dst="${targetDeploymentDir}/template.d/" />
 
          <!-- auth-->
          <copy file="res/etc/user_db.db"
@@ -141,7 +142,7 @@
          <!-- domain specific defaults-->
          <copy file="res/etc/rhizi-server.conf.example"
                tofile="res/etc/rhizi-server.conf" />
-         <copy todir="${targetDeploymentDir}/templates/fragment"
+         <copy todir="${targetDeploymentDir}/template.d/fragment.d"
                failonerror="false">
             <fileset dir="res/local/template/fragment/by-domain/${defaultDomain}"
                      includes="*" />
@@ -156,7 +157,7 @@
          <!-- domain specific overrides -->
          <copy file="src/local/domain/${targetDomain}/domain_types.js"
                tofile="${targetDeploymentDir}/static/js/model/domain_types.js" />
-         <copy todir="${targetDeploymentDir}/templates/fragment"
+         <copy todir="${targetDeploymentDir}/template.d/fragment.d"
                overwrite="true"
                failonerror="false">
             <fileset dir="res/local/template/fragment/by-domain/${targetDomain}" />
@@ -222,6 +223,8 @@
 
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
+      <mkdir dir="${build_dir__deb_pkg}/template.d" />
+      <mkdir dir="${build_dir__deb_pkg}/template.d/fragment.d" />
 
       <exec dir="${basedir}" executable="/usr/bin/git">
          <arg value="clone" />
@@ -230,11 +233,15 @@
          <arg value="${build_dir__deb_pkg}" />
       </exec>
 
-      <generate_version_tag output="${build_dir__deb_pkg}/res/templates/fragment/" />
       <copy todir="${build_dir__deb_pkg}/debian">
          <fileset dir="res/debian/pkg__rhizi-common" />
          <fileset dir="res/debian/pkg__${pkg_variant}" />
       </copy>
+
+      <generate_version_tag output="${build_dir__deb_pkg}/res/template.d/fragment.d/" />
+      <replace file="${build_dir__deb_pkg}/control"
+               token="\${package-name}"
+               value="${package_name}" />
 
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${build_dir__deb_pkg}" includes="Makefile" />
