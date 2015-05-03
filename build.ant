@@ -196,7 +196,7 @@
       </parallel>
    </target>
 
-   <target name="pkg-deb__mux" depends="clean" description="package as .deb">
+   <target name="pkg-deb__mux" description="package as .deb">
       <antcall target="pkg-deb__common">
          <!-- FIXME: use rhizi-mux -->
          <param name="pkg_name" value="rhizi" />
@@ -204,7 +204,7 @@
       </antcall>
    </target>
 
-   <target name="pkg-deb__single" depends="clean" description="package as .deb">
+   <target name="pkg-deb__single" description="package as .deb">
       <antcall target="pkg-deb__common">
          <param name="pkg_name" value="rhizi" />
          <param name="pkg_variant" value="rhizi-single" />
