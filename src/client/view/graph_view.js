@@ -892,7 +892,7 @@ function GraphView(spec) {
             ];
     }
 
-    function nodes__user_visible(nodes, zoom_if_visible) {
+    function nodes__user_visible(nodes, zoom_if_visible, duration) {
         if (nodes.length == 0) {
             return;
         }
@@ -922,14 +922,15 @@ function GraphView(spec) {
             y_translate = y_translate_fn(min_scale);
 
         if (zoom_if_visible || (!x_in_view || !y_in_view)) {
-            set_scale_translate(min_scale, [x_translate, y_translate]);
+            set_scale_translate(min_scale, [x_translate, y_translate], duration);
         }
     };
     gv.nodes__user_visible = nodes__user_visible;
 
-    var set_scale_translate = function(scale, translate) {
+    var set_scale_translate = function(scale, translate, duration) {
         var current_scale = zoom_obj.scale(),
             current_translate = zoom_obj.translate();
+        duration = duration || 0;
 
         if (scale === current_scale &&
             translate[0] === current_translate[0] &&
@@ -938,7 +939,7 @@ function GraphView(spec) {
         }
         zoom_obj.translate([translate[0], translate[1]]);
         zoom_obj.scale(scale);
-        zoom_obj.event(zoom_obj_element.transition().duration(200));
+        zoom_obj.event(zoom_obj_element.transition().duration(duration));
     }
     gv.__set_scale_translate = set_scale_translate;
 
@@ -949,7 +950,7 @@ function GraphView(spec) {
             w = window.innerWidth,
             h = window.innerHeight;
 
-        set_scale_translate(new_scale, [t[0] - ds * w / 2, t[1] - ds * h / 2]);
+        set_scale_translate(new_scale, [t[0] - ds * w / 2, t[1] - ds * h / 2], 200);
     }
 
     gv.scale__absolute = scale__absolute;
