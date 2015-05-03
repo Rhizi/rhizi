@@ -157,6 +157,7 @@ function GraphView(spec) {
             },
             zoom_obj: spec.zoom_obj,
             parent_graph_zoom_obj: spec.parent_graph_zoom_obj,
+            parent_element: parent_element,
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
