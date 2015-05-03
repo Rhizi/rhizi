@@ -84,6 +84,7 @@ def gen_dom_config__rhizi(domain_fqdn, port_map):
                                     'rz_port__http': port_map.rz_port__http,
                                     'rz_server_secret': rz_server_secret,
                                     'user_db_path': user_db_path,
+                                    'template_d_path': '/srv/www/rhizi/mux-root.d/%s/webapp/fragment.d/template.d' % (domain_fqdn),
                                     }),
                      Template_Task(os.path.join(rz_template_path_prefix, 'rhizi.init.jinja'),
                                    os.path.join(install_prefix, 'etc/init.d/', 'rhizi__%s' % (domain_fqdn)),

@@ -40,6 +40,7 @@ class Config(object):
         neo4j_url
         root_path: root path from which the server will serve content
         user_db_path: absolute path to a Berkeley DB file used to store user accounts & password hash values
+        template.d_path: absolute path to the jinja HTML template dir
     """
 
     @staticmethod
@@ -49,6 +50,7 @@ class Config(object):
         cfg['development_mode'] = False
 
         cfg['root_path'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        cfg['template.d_path'] = os.path.join(cfg['root_path'], 'template.d')
 
         cfg['user_db_path'] = './user_db.db'
 
@@ -412,7 +414,7 @@ def init_webapp(cfg, kernel):
     #
     webapp = FlaskExt(__name__,
                       static_folder='static',
-                      template_folder=os.path.join(root_path, 'templates'),
+                      template_folder=cfg.template_folder,
                       static_url_path=cfg.static_url_path)
     webapp.config.from_object(cfg)
     webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
