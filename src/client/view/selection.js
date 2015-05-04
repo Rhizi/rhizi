@@ -4,19 +4,19 @@ function(Bacon,           $,        _,    messages,   util) {
 var rz_core, // circular dependency, see get_rz_core
     selection_count_element = $('#selection-count');
 
-function selected_ids() {
-    return _.pluck(selected, 'id');
+function selected_nodes_ids() {
+    return _.pluck(selected_nodes, 'id');
 }
 
 function Selection() {
 }
 
-function new_selection(selected, related)
+function new_selection(selected_nodes, related_nodes)
 {
     var ret = new Selection();
 
-    ret.related = related;
-    ret.selected = selected;
+    ret.related_nodes = related_nodes;
+    ret.selected_nodes = selected_nodes;
     return ret;
 }
 
@@ -40,10 +40,10 @@ function get_main_graph_view()
     return get_rz_core().main_graph_view;
 }
 
-var selected, // these are the nodes that are requested via update
-    related,  // these are not directly selected but we want to show them to users
-    selected__by_id,
-    related__by_id,
+var selected_nodes, // these are the nodes that are requested via update
+    related_nodes,  // these are not directly selected but we want to show them to users
+    selected_nodes__by_id,
+    related_nodes__by_id,
     selectionChangedBus = new Bacon.Bus();
 
 function listen_on_diff_bus(diffBus)
@@ -51,14 +51,14 @@ function listen_on_diff_bus(diffBus)
     diffBus
         .onValue(function (diff) {
             // update due to potentially removed nodes first
-            new_selected = selected.filter(function (n) {
+            new_selected_nodes = selected_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
-            new_related = related.filter(function (n) {
+            new_related_nodes = related_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
             // reselect based on current graph
-            inner_select(new_selected, new_related);
+            inner_select(new_selected_nodes, new_related_nodes);
         });
 }
 
@@ -71,17 +71,17 @@ function nodes_to_id_dict(nodes)
             }, {});
 }
 
-function updateSelectedNodesBus(new_selected, new_related)
+function updateSelectedNodesBus(new_selected_nodes, new_related_nodes)
 {
-    if (_.isEqual(selected, new_selected) && _.isEqual(related, new_related)) {
+    if (_.isEqual(selected_nodes, new_selected_nodes) && _.isEqual(related_nodes, new_related_nodes)) {
         return;
     }
-    selected = new_selected;
-    selected__by_id = nodes_to_id_dict(selected);
-    related = new_related;
-    related__by_id = nodes_to_id_dict(related);
-    selection_count_element.text(related.length > 0 ? '' + selected.length + ', ' + related.length : '');
-    selectionChangedBus.push(new_selection(selected, related));
+    selected_nodes = new_selected_nodes;
+    selected_nodes__by_id = nodes_to_id_dict(selected_nodes);
+    related_nodes = new_related_nodes;
+    related_nodes__by_id = nodes_to_id_dict(related_nodes);
+    selection_count_element.text(related_nodes.length > 0 ? '' + selected_nodes.length + ', ' + related_nodes.length : '');
+    selectionChangedBus.push(new_selection(selected_nodes, related_nodes));
 }
 
 /* add nodes in nodes_b to a copy of nodes_a in order, skipping duplicates */
@@ -165,15 +165,15 @@ function neighbours(nodes) {
 }
 
 var node_related = function(node) {
-    return related__by_id[node.id] !== undefined;
+    return related_nodes__by_id[node.id] !== undefined;
 }
 
 var node_selected = function(node) {
-    return selected__by_id[node.id] !== undefined;
+    return selected_nodes__by_id[node.id] !== undefined;
 }
 
 var node_first_selected = function(node) {
-    return selected && selected.length > 0 && node.id === selected[0].id;
+    return selected_nodes && selected_nodes.length > 0 && node.id === selected_nodes[0].id;
 }
 
 var link_related = function(link) {
@@ -181,14 +181,14 @@ var link_related = function(link) {
 }
 
 var class__node = function(node, temporary) {
-    return (!temporary && (related.length > 0 || selected.length > 0)) ?
+    return (!temporary && (related_nodes.length > 0 || selected_nodes.length > 0)) ?
         (node_first_selected(node) ? 'first-selected' :
             (node_selected(node) ? 'selected' :
                 (node_related(node) ? "related" : "notselected"))) : "";
 }
 
 var class__link = function(link, temporary) {
-    return !temporary && related.length > 0 ? (link_related(link) ? "selected" : "notselected") : "";
+    return !temporary && related_nodes.length > 0 ? (link_related(link) ? "selected" : "notselected") : "";
 }
 
 var clear = function()
@@ -217,20 +217,20 @@ var inner_select_nodes = function(nodes)
 var select_nodes = function(nodes)
 {
     var new_nodes = nodes;
-    var not_same = !arr_compare(new_nodes, selected);
+    var not_same = !arr_compare(new_nodes, selected_nodes);
 
     if (not_same) {
         inner_select_nodes(new_nodes);
     }
 }
 
-var inner_select = function(new_selected, new_related)
+var inner_select = function(new_selected_nodes, new_related_nodes)
 {
-    if (arr_compare(new_selected, selected) && arr_compare(new_related, related)) {
+    if (arr_compare(new_selected_nodes, selected_nodes) && arr_compare(new_related_nodes, related_nodes)) {
         // no change
         return;
     }
-    updateSelectedNodesBus(new_selected, new_related);
+    updateSelectedNodesBus(new_selected_nodes, new_related_nodes);
 }
 
 function nodes_from_link(link)
@@ -240,9 +240,9 @@ function nodes_from_link(link)
 
 var select_link = function(link)
 {
-    var new_selected = nodes_from_link(link);
+    var new_selected_nodes = nodes_from_link(link);
 
-    inner_select(new_selected, new_selected);
+    inner_select(new_selected_nodes, new_selected_nodes);
 }
 
 function invert(initial, inverted)
@@ -253,31 +253,31 @@ function invert(initial, inverted)
 var invert_link = function(link)
 {
     var link_nodes = nodes_from_link(link),
-        new_selected = invert(selected, link_nodes),
-        new_related = invert(related, link_nodes);
+        new_selected_nodes = invert(selected_nodes, link_nodes),
+        new_related_nodes = invert(related_nodes, link_nodes);
 
-    inner_select(new_selected, new_related);
+    inner_select(new_selected_nodes, new_related_nodes);
 }
 
 var invert_nodes = function(nodes)
 {
-    select_nodes(invert(selected, nodes));
+    select_nodes(invert(selected_nodes, nodes));
 }
 
 var setup_toolbar = function(main_graph, main_graph_view)
 {
     var merge_selection = function() {
-            main_graph.nodes__merge(selected_ids());
+            main_graph.nodes__merge(selected_nodes_ids());
         },
         delete_selection = function() {
-            var ids = selected_ids();
+            var ids = selected_nodes_ids();
 
             if (confirm(messages.delete_nodes_message(ids.length))) {
                 main_graph.nodes__delete(ids);
             }
         },
         link_fan_selection = function() {
-            main_graph.nodes__link_fan(selected_ids());
+            main_graph.nodes__link_fan(selected_nodes_ids());
         },
         merge_btn = $('#btn_merge'),
         delete_btn = $('#btn_delete'),
@@ -298,14 +298,14 @@ var setup_toolbar = function(main_graph, main_graph_view)
     }
 
     // operations requiring 2 or more nodes
-    selectionChangedBus.map(function (selection) { return selection.selected.length > 1; })
+    selectionChangedBus.map(function (selection) { return selection.selected_nodes.length > 1; })
         .skipDuplicates()
         .onValue(function (visible) {
             show(multiple_node_operations, visible);
         });
 
     // operations requiring 1 or more nodes
-    selectionChangedBus.map(function (selection) { return selection.selected.length > 0; })
+    selectionChangedBus.map(function (selection) { return selection.selected_nodes.length > 0; })
         .skipDuplicates()
         .onValue(function (visible) {
             show(zen_mode_btn, visible);
@@ -316,7 +316,7 @@ var setup_toolbar = function(main_graph, main_graph_view)
 }
 
 var is_empty = function() {
-    return selected && selected.length == 0;
+    return selected_nodes && selected_nodes.length == 0;
 }
 
 // initialize
@@ -338,8 +338,8 @@ return {
     selectionChangedBus: selectionChangedBus,
     setup_toolbar: setup_toolbar,
 
-    selected: function() { return selected; },
-    related: function() { return related; },
+    selected_nodes: function() { return selected_nodes; },
+    related_nodes: function() { return related_nodes; },
 };
 
 });
