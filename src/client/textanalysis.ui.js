@@ -118,7 +118,8 @@ function analyzeSentence(spec)
 
 function changeType(up)
 {
-    var lastnode = textanalysis.lastnode(rz_core.edit_graph, input.selectionStart()),
+    var cursor = input.selectionStart(),
+        lastnode = textanalysis.lastnode(rz_core.edit_graph, cursor),
         nodetype,
         id,
         name;
@@ -145,6 +146,15 @@ var main = function ()
                 finalize: false,
             }));
         });
+    input.on_cursor.onValue(function (cursor) {
+        var lastnode = textanalysis.lastnode(rz_core.edit_graph, cursor);
+
+        if (lastnode === null) {
+            return;
+        }
+        textanalysis.selected_type_set(lastnode.type);
+        typeselection.showChosenType(lastnode.id, lastnode.type);
+    });
     input.on_type.onValue(function (up) {
             if (textanalysis.lastnode(rz_core.edit_graph, input.selectionStart())) {
                 changeType(up);

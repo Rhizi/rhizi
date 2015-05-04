@@ -12,10 +12,8 @@ var separator_string = rz_config.separator_string;
 var typeindex = 0,
     nodetypes = model_types.nodetypes,
     nodetypes_count = nodetypes.length,
-    default_nodetype = nodetypes[0],
-    node_name_to_type = {};
-
-util.assert(nodetypes.indexOf(default_nodetype) !== -1);
+    node_name_to_type = {},
+    nodetype_to_index = _.object(nodetypes, _.range(nodetypes.length));
 
 var _get_lastnode,
     get_lastnode = function (editgraph, cursor) {
@@ -619,6 +617,11 @@ function init(main_graph)
         .onValue(auto_suggest__update_from_graph);
 }
 
+function selected_type_set(typename)
+{
+    typeindex = nodetype_to_index[typename] || 0;
+}
+
 return {
     init:init,
     textAnalyser:textAnalyser,
@@ -643,6 +646,7 @@ return {
         typeindex = (typeindex + nodetypes_count - 1) % nodetypes_count;
         return selectedType();
     },
+    selected_type_set: selected_type_set,
     selected_type: selectedType,
 };
 });

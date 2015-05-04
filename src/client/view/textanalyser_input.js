@@ -74,6 +74,7 @@ function textanalyser_input(spec) {
             spec: spec,
             on_analysis__input: new Bacon.Bus(),
             on_analysis__output: new Bacon.Bus(),
+            on_cursor: new Bacon.Bus(),
             on_resize: new Bacon.Bus(),
             element: $(element_name),
             selectionStart: selectionStart,
@@ -148,6 +149,9 @@ function textanalyser_input(spec) {
         e.stopPropagation();
         e.preventDefault();
     });
+
+    ta.on_cursor.plug(element.asEventStream('input keyup click selectionchange').map(function() {
+        return selectionStart();}).skipDuplicates());
 
     ta.on_analysis__input.plug(element.asEventStream('input').map(current_value).map(function (val) {
         return update_element(val);
