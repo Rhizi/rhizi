@@ -40,9 +40,9 @@ ARGS__START_STOP_DAEMON="--make-pidfile --background --chuid ${USERNAME}:${GROUP
 . /lib/lsb/init-functions
 
 # make sure /var/run/$NAME exists with proper +w mode as the uid:gid used to fork the server
-if [ ! -d /var/run/$NAME ]; then
-    mkdir /var/run/$NAME
-    chown ${USERNAME}:${GROUPNAME} /var/run/$NAME
+if [ ! -d /var/run/rhizi ]; then
+    mkdir /var/run/rhizi
+    chown ${USERNAME}:${GROUPNAME} /var/run/rhizi
 fi
 
 #
