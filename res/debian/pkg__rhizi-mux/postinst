@@ -27,11 +27,12 @@ case "$1" in
 
        # configure apache - FIXME: impl undo
        echo 'enabling apache proxy modules - warning: this will not be reverted during package uninstall'
-       /usr/sbin/a2enmod deflate
-       /usr/sbin/a2enmod proxy
-       /usr/sbin/a2enmod proxy_http
-       /usr/sbin/a2enmod proxy_wstunnel
-       /usr/sbin/a2enmod rewrite
+       apache_mod_e_dir=/etc/apache2/mods-enabled
+       [ ! -e ${apache_mod_e_dir}/deflate.load ]        && /usr/sbin/a2enmod deflate
+       [ ! -e ${apache_mod_e_dir}/proxy.load ]          && /usr/sbin/a2enmod proxy
+       [ ! -e ${apache_mod_e_dir}/proxy_http.load ]     && /usr/sbin/a2enmod proxy_http
+       [ ! -e ${apache_mod_e_dir}/proxy_wstunnel.load ] && /usr/sbin/a2enmod proxy_wstunnel
+       [ ! -e ${apache_mod_e_dir}/rewrite.load ]        && /usr/sbin/a2enmod rewrite
 
     ;;
 
