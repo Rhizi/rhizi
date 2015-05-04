@@ -109,7 +109,7 @@ class RZ_Kernel(object):
                 log.warning('detected uninitialized DB, initializing')
                 op_init = DBO_rzdb__init_DB(self.cfg)
                 self.db_ctl.exec_op(op_init)
-                op_probe = DBO_rzdb__fetch_DB_metablock(self.cfg)  # reprobe for metablock
+                op_probe = DBO_rzdb__fetch_DB_metablock()  # reprobe for metablock
                 dbmb = self.db_ctl.exec_op(op_probe)
                 log.info('DB initialized, schema-version: %s' % (dbmb['schema_version']))
             else:
