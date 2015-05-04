@@ -29,8 +29,6 @@ from rz_req_handling import common_resp_handle__success, make_response__json, \
 
 log = logging.getLogger('rhizi')
 
-db_ctl = None  # injected: DB controller
-
 class Req_Context():
     """
     Request context:

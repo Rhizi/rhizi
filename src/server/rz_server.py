@@ -537,7 +537,6 @@ if __name__ == "__main__":
     #
 
     kernel.db_ctl = init_DB(cfg)
-    rz_api_rest.db_ctl = kernel.db_ctl
 
     #
     # init webapp
