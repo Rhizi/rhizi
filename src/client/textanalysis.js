@@ -377,7 +377,7 @@ var textAnalyser = function (spec) {
         if (name === NEW_NODE_NAME) {
             type = selectedType();
         } else {
-            type = node_name_to_type[name] || default_nodetype;
+            type = node_name_to_type[name] || selectedType();
         }
         var node = {
                     'name': name,
