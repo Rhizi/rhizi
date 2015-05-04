@@ -6,10 +6,12 @@ from werkzeug.test import EnvironBuilder
 
 from db_controller import DB_Driver_Embedded
 import db_controller as dbc
+from db_op import DBO_cypher_query
 from rhizi_server import Config
 import rz_api
 from rz_server import Config
 from test_util__pydev import debug__pydev_pd_arg
+
 
 class TestRhiziAPI(unittest.TestCase):
 
@@ -48,7 +50,9 @@ class TestRhiziAPI(unittest.TestCase):
         loading an existing node test
         """
         id_set = ['skill_00']
-        self.db_ctl.exec_cypher_query('create (s:Skill {id: \'skill_00\'} )')
+        q = ['create (s:Skill {id: \'skill_00\'} )']
+        op = DBO_cypher_query(q)
+        self.db_ctl.exec_op(op)
 
         with rz_api.webapp.test_client() as c:
             req = c.post('/load/node-set-by-id',

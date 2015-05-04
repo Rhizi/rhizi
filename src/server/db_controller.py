@@ -59,15 +59,3 @@ class DB_Controller:
     def create_db_op(self, f_work, f_cont):
         ret = DB_op(f_work, f_cont)
         return ret
-
-    def exec_cypher_query(self, q):
-        """
-        @deprecated: use DBO_cypher_query
-        """
-
-        # call post and not db_util.post_neo4j to avoid response key errors
-        try:
-            db_util.post(self.config.db_base_url + '/db/data/cypher', {"query" : q})
-        except Exception as e:
-            log.exception('q: %s' % (q))
-            raise e
