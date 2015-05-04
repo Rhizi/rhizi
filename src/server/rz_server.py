@@ -261,6 +261,9 @@ class FlaskExt(Flask):
         request.peer_sock_addr = self.req_probe__sock_addr.probe_client_socket_addr__http_req(request)
         request.host_sock_addr = self.req_probe__sock_addr.probe_requested_host__http_req(request)
 
+    def gen_op__rzdb__init_DB(self):  # provided to assist kernel with DB initialization
+        return DBO_rzdb__init_DB(self.rz_config.rzdoc__mainpage_name)
+
     def make_default_options_response(self):
         ret = Flask.make_default_options_response(self)
 
@@ -508,14 +511,15 @@ if __name__ == "__main__":
     # init kernel
     #
     kernel = RZ_Kernel()
+    kernel.db_ctl = DB_Controller(cfg.db_base_url)
 
     #
     # init webapp
     #
     webapp = init_webapp(cfg, kernel)
-    ws_srv = init_ws_interface(cfg, kernel, webapp)
-
     webapp.user_db = user_db
+    kernel.op_factory__DBO_rzdb__init_DB = webapp  # assist kernel with DB initialization
+    ws_srv = init_ws_interface(cfg, kernel, webapp)
 
     try:
         kernel.start()

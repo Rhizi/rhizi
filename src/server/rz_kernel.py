@@ -89,36 +89,18 @@ class RZ_Kernel(object):
        - all public methods decorated with deco__exception_log
     """
 
-    def __init__(self, cfg):
-        self.cfg = cfg
+    def __init__(self):
         self.cache__rzdoc_name_to_rzdoc = {}
         self.heartbeat_period_sec = 0.5
-        self.db_ctl = DB_Controller(cfg.db_base_url)
         self.period__db_conn_check = 60
         self.rzdoc_reader_assoc_map = defaultdict(list)
 
+        self.db_ctl = None  # set by caller
+        self.op_factory__DBO_rzdb__init_DB = None  # required for DB initialization, set by caller
+
         self.should_stop = False
-        self.db_initialized = False
-
-    def _init_DB(self):
-        op_probe = DBO_rzdb__fetch_DB_metablock()
-
-        try:
-            dbmb = self.db_ctl.exec_op(op_probe)
-            if dbmb is None:
-                log.warning('detected uninitialized DB, initializing')
-                op_init = DBO_rzdb__init_DB(self.cfg.rzdoc__mainpage_name)
-                self.db_ctl.exec_op(op_init)
-                op_probe = DBO_rzdb__fetch_DB_metablock()  # reprobe for metablock
-                dbmb = self.db_ctl.exec_op(op_probe)
-                log.info('DB initialized, schema-version: %s' % (dbmb['schema_version']))
-            else:
-                log.info('DB connection established, schema-version: %s' % (dbmb['schema_version']))
-        except Exception as e:
-            log.exception('failed to init DB')
-            raise e
-
-        return self.db_ctl
+        self.db_conn_avail = False
+        self.db_metablock_obtained = False
 
     def start(self):
 
@@ -137,14 +119,29 @@ class RZ_Kernel(object):
                     try:
                         op = DBO_nop()
                         self.db_ctl.exec_op(op)
-
-                        if not self.db_initialized:
-                            self._init_DB()
-
-                    except Exception:
+                        self.db_conn_avail = True
+                    except Exception as e:
                         log.info('rz_kernel: unable to establish DB connection')
+                        self.db_conn_avail = False
                     finally:
                         t__last_db_conn_check = t_0
+
+                if self.db_conn_avail and not self.db_metablock_obtained:
+                    try:
+                        op_probe = DBO_rzdb__fetch_DB_metablock()
+                        db_mb = self.db_ctl.exec_op(op_probe)
+                        if db_mb is None:
+                            log.warning('uninitialized DB detected, attempting initialization')
+                            op_init = self.op_factory__DBO_rzdb__init_DB.gen_op__rzdb__init_DB()
+                            self.db_ctl.exec_op(op_init)
+                            op_probe = DBO_rzdb__fetch_DB_metablock()  # reattempt mb fetch
+                            db_mb = self.db_ctl.exec_op(op_probe)
+                            log.info('DB initialized, schema-version: %s' % (db_mb['schema_version']))
+                        else:
+                            log.info('DB metablock read, schema-version: %s' % (db_mb['schema_version']))
+                        self.db_metablock_obtained = True
+                    except Exception as e:
+                        log.info('rz_kernel: failed DB metablock fetch / DB init')
 
                 for rzdoc, r_assoc_set in self.rzdoc_reader_assoc_map.items():
                     for r_assoc in r_assoc_set:
