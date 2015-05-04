@@ -4,28 +4,27 @@ Rhizi REST web API:
    - make use of rz_api_common for common API logic
 
 """
+from flask import current_app
 from flask import request
 from flask import session
-from flask import current_app
-
 import flask
 import logging
 
+from db_op import DBO_match_node_set_by_id_attribute, \
+    DBO_load_link_set, DBO_match_node_id_set, DBO_diff_commit__topo
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
+from model.model import Link
+from rz_api import rz_mainpage
 from rz_api_common import sanitize_input__attr_diff, \
     __sanitize_input, sanitize_input__rzdoc_name
 from rz_api_common import sanitize_input__topo_diff
 from rz_api_common import validate_obj__attr_diff
+from rz_kernel import RZDoc_Exception__already_exists
 from rz_req_handling import common_resp_handle__success, make_response__json, \
     HTTP_STATUS__204_NO_CONTENT, HTTP_STATUS__201_CREATED, \
     common_resp_handle__client_error, \
     common_rest_req_exception_handler, common_resp_handle__server_error
-from db_op import DBO_match_node_set_by_id_attribute, \
-    DBO_load_link_set, DBO_match_node_id_set, DBO_diff_commit__topo
-from model.model import Link
-from rz_api import rz_mainpage
-from rz_kernel import RZDoc_Exception__already_exists
 
 
 log = logging.getLogger('rhizi')
@@ -61,18 +60,15 @@ def __context__common(rzdoc_name=None):
         ret.rzdoc = current_app.kernel.cache_lookup__rzdoc(s_rzdoc_name)
     return ret
 
-def __load_node_set_by_id_attr_common(id_set):
+def __load_node_set_by_id_attr_common(rzdoc_name, id_set):
     """
     @param f_k: optional attribute filter key
     @param f_vset: possible key values to match against
     """
-    op = DBO_match_node_set_by_id_attribute(id_set=id_set)
-    try:
-        n_set = db_ctl.exec_op(op)
-        return common_resp_handle__success(data=n_set)
-    except Exception as e:
-        log.exception(e)
-        return common_resp_handle__client_error(error='unable to load node with ids: {0}'.format(id_set))
+    ctx = __context__common(rzdoc_name)
+    kernel = flask.current_app.kernel
+    _, commit_ret = kernel.load_node_set_by_id_attr(id_set, ctx)
+    return common_resp_handle__success(data=commit_ret)
 
 def diff_commit__set():
     """
@@ -113,6 +109,7 @@ def load_link_set_by_link_ptr_set():
 
     assert False
 
+@common_rest_req_exception_handler
 def load_node_set_by_id_attr():
     """
     load node-set by ID attribute
@@ -122,12 +119,16 @@ def load_node_set_by_id_attr():
             an empty list if the requested node is not found
     @raise exception: on error
     """
-    req_json = request.get_json()
-    id_set = req_json['id_set']
 
-    __sanitize_input(id_set)
+    def sanitize_input(req):
+        req_json = request.get_json()
+        rzdoc_name = req_json['rzdoc_name']
+        id_set = req_json['id_set']
+        return rzdoc_name, id_set
 
-    return __load_node_set_by_id_attr_common(id_set)
+    rzdoc_name, id_set = sanitize_input(request)
+
+    return __load_node_set_by_id_attr_common(rzdoc_name, id_set)
 
 def match_node_set_by_attr_filter_map(attr_filter_map):
     """

@@ -209,6 +209,10 @@ class RZ_Kernel(object):
         op = QT_RZDOC_Meta_NS_Filter(rzdoc)(op)
         self.db_ctl.exec_op(op)
 
+    def load_node_set_by_id_attr(self, id_set, ctx=None):
+        op = DBO_match_node_set_by_id_attribute(id_set=id_set)
+        self.db_ctl.exec_op(op)
+
     def rzdoc__reader_subscribe(self,
                                 remote_socket_addr=None,
                                 rzdoc_name=None,
