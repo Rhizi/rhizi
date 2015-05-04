@@ -642,6 +642,7 @@ return {
     selected_type_prev: function() {
         typeindex = (typeindex + nodetypes_count - 1) % nodetypes_count;
         return selectedType();
-    }
+    },
+    selected_type: selectedType,
 };
 });

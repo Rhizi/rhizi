@@ -306,7 +306,8 @@ function first_time_init() {
     var root = info_container.find('#edittype');
 
     model_types.nodetypes.forEach(function (nodetype) {
-        root.append($('<option value="' + nodetype + '">' + util.capitalize(nodetype) + '</option>'));
+        root.append($('<option value="' + nodetype + '">' +
+                    util.capitalize(model_types.node_titles[nodetype]) + '</option>'));
     });
 }
 

@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input'],
-function($,        Bacon         ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,        textanalyser_input) {
+define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input', 'model/types'],
+function($,        Bacon ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,        textanalyser_input,   model_types) {
 
 var element_name = '#textanalyser',
     input = textanalyser_input({
@@ -53,6 +53,7 @@ var typeselection = function TypeSelectionDialog() {
         e_intro.show();
         e_label.show();
         e_desc.show();
+        e_name.html(model_types.node_titles[textanalysis.selected_type()]);
         e.show();
     }
     typeselection.hide = function() {
@@ -67,7 +68,7 @@ var typeselection = function TypeSelectionDialog() {
         attach_to(node_id);
         e_intro.hide();
         e_label.show();
-        e_name.html(nodetype);
+        e_name.html(model_types.node_titles[nodetype]);
         if (desc) {
             e_desc.html(description[nodetype]);
             e_desc.show();

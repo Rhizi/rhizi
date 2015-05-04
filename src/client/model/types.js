@@ -5,7 +5,8 @@ function(_,            util,   domain_types)
 var all_attributes,
     type_attributes = _.object(domain_types.type_attributes),
     nodetypes = _.map(domain_types.type_attributes, 0),
-    attribute_titles = domain_types.attribute_titles;
+    attribute_titles = domain_types.attribute_titles,
+    node_titles = _.object(nodetypes, _.map(domain_types.type_attributes, function(v) { return v[1].title; }));
 
 if (undefined === type_attributes['_defaults']) {
     type_attributes['_defaults'] = {
@@ -31,6 +32,7 @@ return (
         },
         all_attributes: all_attributes,
         attribute_titles: attribute_titles,
+        node_titles: node_titles,
     });
 }
 )
