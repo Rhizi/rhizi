@@ -227,7 +227,7 @@ function show(_graph, new_item, new_visible_attributes)
         visible_elements,
         hidden_elements;
 
-    visible_attributes = new_visible_attributes || model_types.type_attributes(new_item.type).slice(0);
+    visible_attributes = (new_visible_attributes || model_types.type_attributes(new_item.type)).slice(0).reverse();
     hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
     visible_elements = visible_attributes.map(base_element_for_attribute);
     hidden_elements = hidden_attributes.map(base_element_for_attribute);
@@ -244,11 +244,11 @@ function show(_graph, new_item, new_visible_attributes)
     info_container.attr('class', 'info-container'); // clear previous type-x css classes
     info_container.addClass('type-' + item.type); // add css type class
 
-    info_container.show();
     _.each(visible_attributes, function (attr) {
         var element = edit_element_for_attribute(attr);
             value = item[attr];
 
+        element.parent().insertBefore(element.parent().parent().children().first());
         switch (attr) {
         case 'enddate':
         case 'startdate':
@@ -278,6 +278,7 @@ function show(_graph, new_item, new_visible_attributes)
             element.val(value);
         }
     });
+    info_container.show();
 }
 
 function init() {
