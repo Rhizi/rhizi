@@ -159,3 +159,7 @@ rz-doc --list-names
 2. rz-doc --merge-file merge.file --merge-target "All Documents"
 
 creates a new doc called "All Documents" with the contents of all rzdocs in merge.file.
+
+## API(WIP)
+
+[URL]/rz/[doc-title]/api/delete - Delete current doc 
