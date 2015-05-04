@@ -135,8 +135,8 @@ install_instance__rhizi() { # depends on install_instance__apache()
 uninstall_instance__apache() {
 
     rm -rvf ${apache_module__rootdir}
-    rm -rvf /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
-    rm -rvf /etc/apache2/sites-available/${apache_module__siteconf_filename}
+    rm -vf /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
+    rm -vf /etc/apache2/sites-available/${apache_module__siteconf_filename}
 }
 
 uninstall_instance__neo4j() {
@@ -148,6 +148,7 @@ uninstall_instance__neo4j() {
 
 uninstall_instance__rhizi() {
 
+    rm -vf ${RZI_RZ_INIT_SCRIPT_PATH}
     rm -rvf ${rz_module__confdir}
     echo "[!] leaving rhizi bkp dir removal to user: ${rz_module__bkp}"
 }
@@ -163,6 +164,7 @@ RZI_NEO4J_SVC_NAME=neo4j-service__${RZI_NAME}
 RZI_NEO4J_INIT_SCRIPT_PATH=/etc/init.d/${RZI_NEO4J_SVC_NAME}
 RZI_NEO4J_PID_FILE=/var/lib/neo4j/mux-root.d/${RZI_NAME}/data/neo4j-service.pid
 RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
+RZI_RZ_INIT_SCRIPT_PATH=/etc/init.d/rhizi__${RZI_NAME}
 
 #
 # sanity checks
@@ -189,7 +191,7 @@ case $1 in
 
         # set modes, ownership
         chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
-        chmod +x /etc/init.d/rhizi__${RZI_NAME}
+        chmod +x ${RZI_RZ_INIT_SCRIPT_PATH}
         chgrp ${APACHE_USER} /etc/rhizi/mux-conf.d/${RZI_NAME}/*
         chmod o-r /etc/rhizi/mux-conf.d/${RZI_NAME}/*
 
