@@ -23,7 +23,7 @@ define({
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['resource', {
-            'title': 'Tool',
+            'title': 'Technology',
             'attributes': ['description', 'url', 'image-url'],
         }]
     ],
