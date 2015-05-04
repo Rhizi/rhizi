@@ -20,6 +20,7 @@ Depends: ${python:Depends},
          python-futures,
          python-gevent,
          python-gevent-websocket,
+         python-jinja2,
          python-six,
          python-socketio
 Description: Rhizi document server
