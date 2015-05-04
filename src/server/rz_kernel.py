@@ -8,9 +8,12 @@ import logging
 import time
 import traceback
 
+from db_controller import DB_Controller
 from db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
     DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__list,
-    DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop)
+    DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop,
+    DBO_match_node_set_by_id_attribute, DBO_rzdb__fetch_DB_metablock,
+    DBO_rzdb__init_DB)
 from db_op import DBO_diff_commit__topo
 from model.graph import Topo_Diff
 from model.model import RZDoc
@@ -86,13 +89,36 @@ class RZ_Kernel(object):
        - all public methods decorated with deco__exception_log
     """
 
-    def __init__(self):
-        self.db_ctl = None
-        self.rzdoc_reader_assoc_map = defaultdict(list)
+    def __init__(self, cfg):
+        self.cfg = cfg
         self.cache__rzdoc_name_to_rzdoc = {}
-        self.should_stop = False
         self.heartbeat_period_sec = 0.5
+        self.db_ctl = DB_Controller(cfg)
         self.period__db_conn_check = 60
+        self.rzdoc_reader_assoc_map = defaultdict(list)
+
+        self.should_stop = False
+        self.db_initialized = False
+
+    def _init_DB(self):
+        op_probe = DBO_rzdb__fetch_DB_metablock()
+
+        try:
+            dbmb = self.db_ctl.exec_op(op_probe)
+            if dbmb is None:
+                log.warning('detected uninitialized DB, initializing')
+                op_init = DBO_rzdb__init_DB(self.cfg)
+                self.db_ctl.exec_op(op_init)
+                op_probe = DBO_rzdb__fetch_DB_metablock(self.cfg)  # reprobe for metablock
+                dbmb = self.db_ctl.exec_op(op_probe)
+                log.info('DB initialized, schema-version: %s' % (dbmb['schema_version']))
+            else:
+                log.info('DB connection established, schema-version: %s' % (dbmb['schema_version']))
+        except Exception as e:
+            log.exception('failed to init DB')
+            raise e
+
+        return self.db_ctl
 
     def start(self):
 
@@ -106,10 +132,15 @@ class RZ_Kernel(object):
             while False == self.should_stop:
 
                 t_0 = time.time()
+
                 if t_0 - t__last_db_conn_check > self.period__db_conn_check:
                     try:
                         op = DBO_nop()
                         self.db_ctl.exec_op(op)
+
+                        if not self.db_initialized:
+                            self._init_DB()
+
                     except Exception:
                         log.info('rz_kernel: unable to establish DB connection')
                     finally:
