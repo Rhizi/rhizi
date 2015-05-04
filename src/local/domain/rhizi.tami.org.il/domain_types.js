@@ -10,10 +10,6 @@ define({
                            'url'
                            ],
         }],
-        ['keyword', {
-            'title': 'Keyword',
-            'attributes': ['description', 'url', 'image-url'],
-        }],
         ['project', {
             'title': 'Project',
             'attributes': ['description', 'url', 'rhizi-url', 'image-url'],
