@@ -107,7 +107,7 @@ class RZ_Kernel(object):
             dbmb = self.db_ctl.exec_op(op_probe)
             if dbmb is None:
                 log.warning('detected uninitialized DB, initializing')
-                op_init = DBO_rzdb__init_DB(self.cfg)
+                op_init = DBO_rzdb__init_DB(self.cfg.rzdoc__mainpage_name)
                 self.db_ctl.exec_op(op_init)
                 op_probe = DBO_rzdb__fetch_DB_metablock()  # reprobe for metablock
                 dbmb = self.db_ctl.exec_op(op_probe)

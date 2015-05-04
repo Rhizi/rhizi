@@ -748,7 +748,7 @@ class DBO_rzdb__init_DB(DB_composed_op):
             q_params = {'db_attr': {'schema_version': neo4j_schema.NEO4J_SCHEMA_VERSION}}
             self.add_statement(q_arr, q_params)
 
-    def __init__(self, rz_config):
+    def __init__(self, rzdoc__mainpage_name):
         """
         Fetch DB metadata
         """
@@ -761,7 +761,7 @@ class DBO_rzdb__init_DB(DB_composed_op):
         self.add_sub_op(DBO_rzdb__init_DB._init_DB_subop())
 
         # create mainpage
-        mainpage_rzdoc = RZDoc(rz_config.rzdoc__mainpage_name)
+        mainpage_rzdoc = RZDoc(rzdoc__mainpage_name)
         mainpage_rzdoc.id = 'a000a000'
         self.add_sub_op(DBO_rzdoc__create(mainpage_rzdoc))
         self.add_sub_op(DBO_block_chain__init(mainpage_rzdoc))

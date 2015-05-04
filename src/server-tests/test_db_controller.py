@@ -359,7 +359,7 @@ class TestDBController(unittest.TestCase):
 
     def test_rzdb__init_DB(self):
         rz_cfg = Config.generate_default()
-        op = DBO_rzdb__init_DB(rz_cfg)
+        op = DBO_rzdb__init_DB(rz_cfg.rzdoc__mainpage_name)
         try:  # assert first init call passes
             self.db_ctl.exec_op(op)
         except:
