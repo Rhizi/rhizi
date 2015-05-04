@@ -309,6 +309,11 @@ function first_time_init() {
         root.append($('<option value="' + nodetype + '">' +
                     util.capitalize(model_types.node_titles[nodetype]) + '</option>'));
     });
+
+    // set directionality of the information box, per domain_types
+    if (model_types.misc && model_types.misc.direction) {
+        info_container.css('direction', model_types.misc.direction);
+    }
 }
 
 first_time_init();

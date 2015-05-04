@@ -33,6 +33,7 @@ return (
         all_attributes: all_attributes,
         attribute_titles: attribute_titles,
         node_titles: node_titles,
+        misc: domain_types.misc,
     });
 }
 )

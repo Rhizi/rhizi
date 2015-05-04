@@ -51,4 +51,8 @@ define({
         'url': 'url',
         'rhizi-url': 'rhizi-url',
     },
+    misc: {
+        // [!] direction of item info box only right now. should be per client.
+        'direction': 'rtl'
+    }
 });
