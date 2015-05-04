@@ -101,14 +101,12 @@ function commit()
     update_item(item, _get_form_data());
 }
 
-function textarea_resize(text, max)
+function textarea_resize(text, min, max)
 {
     var height;
     text.style.height = 'auto';
     height = text.scrollHeight;
-    if (max) {
-        height = Math.min(max, height);
-    }
+    height = Math.max(min, Math.min(max, height));
     text.style.height = height + 'px';
 }
 
@@ -220,7 +218,7 @@ function edit_element_for_attribute(attr)
 function update_textarea(textarea, value)
 {
     textarea.val(value);
-    textarea_resize(textarea[0], 150);
+    textarea_resize(textarea[0], 25, 150);
 }
 
 function show(_graph, new_item, new_visible_attributes)
