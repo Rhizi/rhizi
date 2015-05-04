@@ -105,10 +105,9 @@
       <property name="src_server" value="src/server" />
 
       <mkdir dir="${targetDeploymentDir}/static" />
-      <mkdir dir="${targetDeploymentDir}/template.d" />
-      <mkdir dir="${targetDeploymentDir}/template.d/fragment.d" />
+      <mkdir dir="${targetDeploymentDir}/fragment.d/template.d" />
 
-      <generate_version_tag output="res/template.d/fragment.d" />
+      <generate_version_tag output="res/template.d" />
 
       <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
 
@@ -132,7 +131,7 @@
          <!-- res -->
          <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
          <rsync src="res/template.d/"
-                dst="${targetDeploymentDir}/template.d/" />
+                dst="${targetDeploymentDir}/fragment.d/template.d" />
 
          <!-- auth-->
          <copy file="res/etc/user_db.db"
@@ -142,7 +141,7 @@
          <!-- domain specific defaults-->
          <copy file="res/etc/rhizi-server.conf.example"
                tofile="res/etc/rhizi-server.conf" />
-         <copy todir="${targetDeploymentDir}/template.d/fragment.d"
+         <copy todir="${targetDeploymentDir}/fragment.d/template.d"
                failonerror="false">
             <fileset dir="res/local/template/fragment/by-domain/${defaultDomain}"
                      includes="*" />
@@ -157,7 +156,7 @@
          <!-- domain specific overrides -->
          <copy file="src/local/domain/${targetDomain}/domain_types.js"
                tofile="${targetDeploymentDir}/static/js/model/domain_types.js" />
-         <copy todir="${targetDeploymentDir}/template.d/fragment.d"
+         <copy todir="${targetDeploymentDir}/fragment.d/template.d"
                overwrite="true"
                failonerror="false">
             <fileset dir="res/local/template/fragment/by-domain/${targetDomain}" />
@@ -244,8 +243,7 @@
       </replaceregexp>
 
       <!-- generate version fragment -->
-      <mkdir dir="${build_dir__deb_pkg}/res/template.d/fragment.d" />
-      <generate_version_tag output="${build_dir__deb_pkg}/res/template.d/fragment.d/" />
+      <generate_version_tag output="${build_dir__deb_pkg}/res/template.d" />
 
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${build_dir__deb_pkg}" includes="Makefile" />
