@@ -14,7 +14,6 @@ var msg_node = $('.info-card-message'),
     setup_done = false,
     info_container = $('.info-container'),
     form_element = $('#editbox'),
-    delete_button = $('#edit-dialog__delete'),
     form = _.object(model_types.all_attributes.map(function (attr) {
             var element = edit_element_for_attribute(attr);
 
@@ -40,8 +39,7 @@ function form_add_element(attr, value_element_type)
 {
     var div = $('<div>'),
         label = $('<div>'),
-        value = $('<' + value_element_type + '></' + value_element_type + '>'),
-        delete_button = form_element.find('#info-container__bottom-btn-bar');
+        value = $('<' + value_element_type + '></' + value_element_type + '>');
 
     div.attr('id', attr);
     div.addClass('info-container__row');
@@ -51,7 +49,7 @@ function form_add_element(attr, value_element_type)
     value.attr('id', 'edit' + attr);
     div.append(label);
     div.append(value);
-    div.insertBefore(delete_button);
+    div.insertAfter(msg_node);
     return value;
 }
 
@@ -160,16 +158,9 @@ function setup_click_handlers()
     }
     setup_done = true;
     form_element.on('keydown', function (e) {
-        if (e.which == consts.VK_ENTER && e.target !== delete_button[0]) {
+        if (e.which == consts.VK_ENTER) {
             e.preventDefault();
         }
-    });
-    delete_button.on('click', function (e) {
-        e.preventDefault();
-        if (confirm(messages.delete_items_message([item]))) {
-            delete_item(item);
-        }
-        hide();
     });
     $('#edit-dialog__save').on('click', function (e) {
         e.preventDefault();
@@ -248,7 +239,7 @@ function show(_graph, new_item, new_visible_attributes)
         var element = edit_element_for_attribute(attr);
             value = item[attr];
 
-        element.parent().insertBefore(element.parent().parent().children().first());
+        element.parent().insertAfter(msg_node);
         switch (attr) {
         case 'enddate':
         case 'startdate':

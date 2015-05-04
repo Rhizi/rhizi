@@ -297,16 +297,19 @@ var setup_toolbar = function(main_graph, main_graph_view)
         }
     }
 
+    // operations requiring 2 or more nodes
     selectionChangedBus.map(function (selection) { return selection.selected.length > 1; })
         .skipDuplicates()
         .onValue(function (visible) {
             show(multiple_node_operations, visible);
         });
 
+    // operations requiring 1 or more nodes
     selectionChangedBus.map(function (selection) { return selection.selected.length > 0; })
         .skipDuplicates()
         .onValue(function (visible) {
             show(zen_mode_btn, visible);
+            show(delete_btn, visible);
         });
 
     zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
