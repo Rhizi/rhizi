@@ -69,7 +69,6 @@ optimized_main = False
 #
 rzdoc__mainpage_name = Welcome Rhizi
 rzdoc__name__max_length = 256
-neo4j_schema_version = 0.2.0
 
 # -----------------------------------------------------------------------------
 # Other

@@ -1,6 +1,8 @@
 #
 # meta label schema
 #
+NEO4J_SCHEMA_VERSION = '0.2.0'
+
 META_LABEL__RZDB_META = '__RZDB_META'
 
 META_LABEL__RZDOC_TYPE = '__RZDOC'  # RZdoc node
