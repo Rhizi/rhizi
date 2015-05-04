@@ -15,9 +15,7 @@ if (undefined === type_attributes['_defaults']) {
 }
 
 _.pluck(_.values(type_attributes), 'attributes').map(function (attributes) {
-        attributes.push('name');
-        attributes.push('type');
-        attributes.sort();
+        attributes.splice(0, 0, 'name', 'type');
     });
 
 all_attributes = _.union(_.flatten(_.pluck(_.values(type_attributes), 'attributes'))).sort();
