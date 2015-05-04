@@ -9,7 +9,7 @@ define({
                            ],
         }],
         ['keyword', {
-            'title': 'מילת-מפצח',
+            'title': 'מילת-מפתח',
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['project', {
@@ -17,11 +17,11 @@ define({
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['idea', {
-            'title': 'שאלות-ראיון',
+            'title': 'שאלת-ראיון',
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['skill', {
-            'title': 'מאפיןן-מנהיגות',
+            'title': 'מאפין-מנהיגות',
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['resource', {
@@ -30,23 +30,17 @@ define({
         }]
     ],
     attribute_titles: {
-        'affiliation': 'Affiliation',
         'description': 'תיאור',
-        'email': 'מייל',
         'name': 'שם',
         'type': 'סוג',
         'url': 'לינק',
         'image-url': 'לינק-תמונה',
-        'rhizi-url': 'Rhizi URL',
     },
     attribute_ui: {
-        'affiliation': 'textarea',
         'description': 'textarea',
-        'email': 'input',
         'name': 'input',
         'type': 'type',
         'image-url': 'image',
         'url': 'url',
-        'rhizi-url': 'rhizi-url',
     },
 });
