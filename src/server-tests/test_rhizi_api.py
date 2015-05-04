@@ -21,7 +21,7 @@ class TestRhiziAPI(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         cfg = Config.init_from_file('res/etc/rhizi-server.conf')
-        self.db_ctl = dbc.DB_Controller(cfg)
+        self.db_ctl = dbc.DB_Controller(cfg.db_base_url)
         rz_api.db_ctl = self.db_ctl
 
         # TODO extract to superclass

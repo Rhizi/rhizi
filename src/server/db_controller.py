@@ -15,10 +15,9 @@ class DB_Controller:
     """
     neo4j DB controller
     """
-    def __init__(self, config, db_driver_class=None):
-        self.config = config
+    def __init__(self, rest_api_base_url, db_driver_class=None):
         if not db_driver_class:
-            self.db_driver = DB_Driver_REST(self.config.db_base_url)
+            self.db_driver = DB_Driver_REST(rest_api_base_url)
         else:
             self.db_driver = db_driver_class()
         assert isinstance(self.db_driver, DB_Driver_Base)

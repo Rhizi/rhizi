@@ -93,7 +93,7 @@ class RZ_Kernel(object):
         self.cfg = cfg
         self.cache__rzdoc_name_to_rzdoc = {}
         self.heartbeat_period_sec = 0.5
-        self.db_ctl = DB_Controller(cfg)
+        self.db_ctl = DB_Controller(cfg.db_base_url)
         self.period__db_conn_check = 60
         self.rzdoc_reader_assoc_map = defaultdict(list)
 

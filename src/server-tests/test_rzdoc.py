@@ -13,7 +13,7 @@ class TestRZDoc(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         cfg = Config.init_from_file('res/etc/rhizi-server.conf')
-        self.db_ctl = db_controller.DB_Controller(cfg)
+        self.db_ctl = db_controller.DB_Controller(cfg.db_base_url)
         self.log = logging.getLogger('rhizi')
         self.log.addHandler(logging.StreamHandler())
         self.kernel = RZ_Kernel()

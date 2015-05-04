@@ -16,7 +16,7 @@ import test_rz_mesh
 
 
 def init_test_db_controller(cfg):
-    ret = dbc.DB_Controller(cfg)
+    ret = dbc.DB_Controller(cfg.db_base_url)
     return ret
 
 def init_test_ws_server(cfg, db_ctl):
