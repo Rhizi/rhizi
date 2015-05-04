@@ -43,4 +43,7 @@ define({
         'image-url': 'image',
         'url': 'url',
     },
+    misc: {
+        'direction': 'rtl'
+    }
 });

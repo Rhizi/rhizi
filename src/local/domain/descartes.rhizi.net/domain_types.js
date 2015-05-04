@@ -9,7 +9,7 @@ define({
                            'url'
                            ],
             }],
-        ['organisation', {
+        ['resource', {
             'title':'Organisation',
             'attributes':['description', 'url', 'image-url', 'email'],
             }],
@@ -18,8 +18,8 @@ define({
             'attributes':['description', 'status', 'url', 'budget', 'total days','image-url'],
             }],
         ['skill', {
-        'title':'Compétence',
-        'attributes':['description', 'url', 'image-url'],
+            'title':'Compétence',
+            'attributes':['description', 'url', 'image-url'],
         }]
     ],
     attribute_titles:{
