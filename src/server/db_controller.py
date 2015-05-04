@@ -6,12 +6,11 @@ from db_driver import DB_Driver_REST, DB_Driver_Base
 from db_op import DB_composed_op
 from db_op import DB_op
 from neo4j_util import Neo4JException
-import neo4j_util as db_util
 
 
 log = logging.getLogger('rhizi')
 
-class DB_Controller:
+class DB_Controller(object):
     """
     neo4j DB controller
     """

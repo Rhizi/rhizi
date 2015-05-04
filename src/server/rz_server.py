@@ -13,6 +13,7 @@ import signal
 import traceback
 import types
 
+from db_controller import DB_Controller
 from db_op import DBO_rzdb__fetch_DB_metablock, DBO_rzdb__init_DB
 import rz_api
 import rz_api_rest
