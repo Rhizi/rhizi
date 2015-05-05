@@ -11,12 +11,14 @@ function selected_nodes_ids() {
 function Selection() {
 }
 
-function new_selection(selected_nodes, related_nodes)
+function new_selection(selected_nodes, related_nodes, selected_links, related_links)
 {
     var ret = new Selection();
 
     ret.related_nodes = related_nodes;
     ret.selected_nodes = selected_nodes;
+    ret.related_links = related_links;
+    ret.selected_links = selected_links;
     return ret;
 }
 
@@ -41,9 +43,16 @@ function get_main_graph_view()
 }
 
 var selected_nodes, // these are the nodes that are requested via update
-    related_nodes,  // these are not directly selected but we want to show them to users
     selected_nodes__by_id,
+    related_nodes,  // these are not directly selected but we want to show them to users
     related_nodes__by_id,
+    selected_links, // explicitly selected via external call
+    selected_links__by_id,
+    selected_links__by_node_id,
+    related_links,  // implicitly selected via selected_links. note that links
+                    // are considered related if both nodes are related as well.
+    related_links__by_id,
+    related_links__by_node_id,
     selectionChangedBus = new Bacon.Bus();
 
 function listen_on_diff_bus(diffBus)
@@ -54,11 +63,18 @@ function listen_on_diff_bus(diffBus)
             new_selected_nodes = selected_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
+            new_selected_links = selected_links.filter(function (n) {
+                return get_main_graph().find_link__by_id(n.id) !== null;
+            });
             new_related_nodes = related_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
             });
+            new_related_links = related_links.filter(function (n) {
+                return get_main_graph().find_link__by_id(n.id) !== null;
+            });
             // reselect based on current graph
-            inner_select(new_selected_nodes, new_related_nodes);
+            inner_select(new_selected_nodes=new_selected_nodes, new_related_nodes=new_related_nodes,
+                         new_selected_links=new_selected_links, new_related_links=new_related_links);
         });
 }
 
@@ -71,42 +87,54 @@ function nodes_to_id_dict(nodes)
             }, {});
 }
 
-function updateSelectedNodesBus(new_selected_nodes, new_related_nodes)
+function links_to_id_dict(links)
 {
-    if (_.isEqual(selected_nodes, new_selected_nodes) && _.isEqual(related_nodes, new_related_nodes)) {
+    return links.reduce(
+            function(d, v) {
+                d[v.id] = v;
+                return d;
+            }, {});
+}
+
+function links_to_node_id_dict(links)
+{
+    return links.reduce(
+            function(d, v) {
+                d[v.__src.id] = v;
+                d[v.__dst.id] = v;
+                return d;
+            }, {});
+}
+
+function updateSelectedNodesBus(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
+{
+    var selection_empty = new_selected_nodes.length + new_selected_links.length == 0;
+
+    if (_.isEqual(selected_nodes, new_selected_nodes) && _.isEqual(related_nodes, new_related_nodes) &&
+        _.isEqual(selected_links, new_selected_links) && _.isEqual(related_links, new_related_links)) {
         return;
     }
     selected_nodes = new_selected_nodes;
     selected_nodes__by_id = nodes_to_id_dict(selected_nodes);
     related_nodes = new_related_nodes;
     related_nodes__by_id = nodes_to_id_dict(related_nodes);
-    selection_count_element.text(related_nodes.length > 0 ? '' + selected_nodes.length + ', ' + related_nodes.length : '');
-    selectionChangedBus.push(new_selection(selected_nodes, related_nodes));
-}
-
-/* add nodes in nodes_b to a copy of nodes_a in order, skipping duplicates */
-function sum_nodes(nodes_a, nodes_b)
-{
-    var set_a_id = _.object(nodes_a.map(function (n) { return [n.id, 1]; })),
-        ret = nodes_a.slice(0);
-
-    for (var k in nodes_b) {
-        if (set_a_id[nodes_b[k].id] === undefined) {
-            ret.push(nodes_b[k]);
-        }
-    }
-    return ret;
-}
-
-function links_to_nodes(links)
-{
-    return _.flatten(_.map(links, function (link) { return [link.__src, link.__dst]; }));
+    selected_links = new_selected_links;
+    selected_links__by_id = links_to_id_dict(selected_links);
+    related_links = new_related_links;
+    related_links__by_id = links_to_id_dict(related_links);
+    selected_links__by_node_id = links_to_node_id_dict(selected_links);
+    related_links__by_node_id = links_to_node_id_dict(related_links);
+    selection_count_element.text(
+        selection_empty ? '' :
+            '' + selected_nodes.length + ', ' + related_nodes.length + ' | ' +
+            '' + selected_links.length + ', ' + related_links.length);
+    selectionChangedBus.push(new_selection(selected_nodes, related_nodes, selected_links, related_links));
 }
 
 function byVisitors(node_selector, link_selector) {
     var new_selection = get_main_graph().find__by_visitors(node_selector, link_selector);
 
-    inner_select_nodes(sum_nodes(new_selection.nodes, links_to_nodes(new_selection.links)));
+    inner_select_nodes(new_selection.nodes, new_selection.links);
 }
 
 function _type_to_state(type) {
@@ -135,7 +163,10 @@ function _select_nodes_helper(nodes, connected) {
         data.link.state = _type_to_state(data.type);
     });
     nodes.forEach(function (n) { n.state = 'selected'; });
-    return connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice());
+    return {
+        nodes: connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice()),
+        links: connected.links.map(function (d) { return d.link; }),
+    }
 }
 
 function mutual_neighbours(nodes) {
@@ -162,38 +193,51 @@ function neighbours(nodes) {
     var connected = get_main_graph().neighbourhood(nodes, 1);
 
     return _select_nodes_helper(nodes, connected);
-}
+};
 
 var node_related = function(node) {
-    return related_nodes__by_id[node.id] !== undefined;
-}
+    return related_nodes__by_id[node.id] !== undefined ||
+           related_links__by_node_id[node.id] !== undefined;
+};
 
 var node_selected = function(node) {
     return selected_nodes__by_id[node.id] !== undefined;
-}
+};
 
 var node_first_selected = function(node) {
     return selected_nodes && selected_nodes.length > 0 && node.id === selected_nodes[0].id;
-}
+};
 
 var link_related = function(link) {
-    return node_related(link.__src) && node_related(link.__dst);
+    return related_links__by_id[link.id] !== undefined ||
+           node_related(link.__src) && node_related(link.__dst);
+};
+
+var link_selected = function(link) {
+    return selected_links__by_id[link.id] !== undefined;
+};
+
+function empty_selection() {
+    return related_nodes.length == 0 && selected_nodes.length == 0 &&
+           related_links.length == 0 && selected_links.length == 0;
 }
 
 var class__node = function(node, temporary) {
-    return (!temporary && (related_nodes.length > 0 || selected_nodes.length > 0)) ?
+    return (!temporary && !empty_selection()) ?
         (node_first_selected(node) ? 'first-selected' :
             (node_selected(node) ? 'selected' :
                 (node_related(node) ? "related" : "notselected"))) : "";
 }
 
 var class__link = function(link, temporary) {
-    return !temporary && related_nodes.length > 0 ? (link_related(link) ? "selected" : "notselected") : "";
+    return !temporary && !empty_selection() ?
+        (link_selected(link) ? 'selected' :
+            (link_related(link) ? "related" : "notselected")) : "";
 }
 
 var clear = function()
 {
-    updateSelectedNodesBus([], []);
+    updateSelectedNodesBus([], [], [], []);
 }
 
 function arr_compare(a1, a2)
@@ -211,7 +255,10 @@ function arr_compare(a1, a2)
 
 var inner_select_nodes = function(nodes)
 {
-    inner_select(nodes, nodes.length == 1 ? neighbours(nodes) : mutual_neighbours(nodes));
+    var related = nodes.length == 1 ? neighbours(nodes) : mutual_neighbours(nodes);
+
+    console.dir(related);
+    inner_select(nodes, related.nodes, [], related.links);
 }
 
 var select_nodes = function(nodes)
@@ -224,25 +271,24 @@ var select_nodes = function(nodes)
     }
 }
 
-var inner_select = function(new_selected_nodes, new_related_nodes)
+var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
 {
-    if (arr_compare(new_selected_nodes, selected_nodes) && arr_compare(new_related_nodes, related_nodes)) {
+    if (arr_compare(new_selected_nodes, selected_nodes) && arr_compare(new_related_nodes, related_nodes) &&
+        arr_compare(new_selected_links, selected_links) && arr_compare(new_related_links, related_links)) {
         // no change
         return;
     }
-    updateSelectedNodesBus(new_selected_nodes, new_related_nodes);
+    updateSelectedNodesBus(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links);
 }
 
-function nodes_from_link(link)
-{
-    return [link.__src, link.__dst];
+
+var all_related_nodes = function() {
+    return _.union(related_nodes, nodes_from_links(related_links));
 }
 
 var select_link = function(link)
 {
-    var new_selected_nodes = nodes_from_link(link);
-
-    inner_select(new_selected_nodes, new_selected_nodes);
+    inner_select([], nodes_from_links([link]), [link], [link]);
 }
 
 function invert(initial, inverted)
@@ -252,11 +298,10 @@ function invert(initial, inverted)
 
 var invert_link = function(link)
 {
-    var link_nodes = nodes_from_link(link),
-        new_selected_nodes = invert(selected_nodes, link_nodes),
-        new_related_nodes = invert(related_nodes, link_nodes);
+    var new_selected_links = invert(selected_links, [link]),
+        new_related_links = _.union(invert(related_links, [link]), new_selected_links);
 
-    inner_select(new_selected_nodes, new_related_nodes);
+    inner_select(selected_nodes, all_related_nodes(), new_selected_links, new_related_links);
 }
 
 var invert_nodes = function(nodes)
@@ -270,8 +315,10 @@ var setup_toolbar = function(main_graph, main_graph_view)
             main_graph.nodes__merge(selected_nodes_ids());
         },
         delete_selection = function() {
-            if (confirm(messages.delete_nodes_links_message(selected_nodes, []))) {
-                main_graph.nodes__delete(ids);
+            if (confirm(messages.delete_nodes_links_message(selected_nodes, selected_links))) {
+                // FIXME: atomic undo
+                main_graph.links__delete(_.map(selected_links, 'id'));
+                main_graph.nodes__delete(_.map(selected_nodes, 'id'));
             }
         },
         link_fan_selection = function() {
@@ -286,6 +333,7 @@ var setup_toolbar = function(main_graph, main_graph_view)
     merge_btn.asEventStream('click').onValue(merge_selection);
     delete_btn.asEventStream('click').onValue(delete_selection);
     link_fan_btn.asEventStream('click').onValue(link_fan_selection);
+    zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
 
     function show(e, visible) {
         if (visible) {
@@ -302,19 +350,31 @@ var setup_toolbar = function(main_graph, main_graph_view)
             show(multiple_node_operations, visible);
         });
 
-    // operations requiring 1 or more nodes
-    selectionChangedBus.map(function (selection) { return selection.selected_nodes.length > 0; })
+    // operations requiring 1 or more node or link
+    selectionChangedBus
+        .map(function (selection) {
+            return selection.selected_nodes.length + selection.selected_links.length > 0;
+         })
         .skipDuplicates()
         .onValue(function (visible) {
-            show(zen_mode_btn, visible);
             show(delete_btn, visible);
         });
 
-    zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
+    // operations requiring 1 or more nodes
+    selectionChangedBus
+        .map(function (selection) { return selection.selected_nodes.length > 0; })
+        .skipDuplicates()
+        .onValue(function (visible) {
+            show(zen_mode_btn, visible);
+        });
 }
 
 var is_empty = function() {
     return selected_nodes && selected_nodes.length == 0;
+};
+
+var nodes_from_links = function(links) {
+    return _.flatten(_.map(links, function (l) { return [l.__src, l.__dst]; }));
 }
 
 // initialize
@@ -338,6 +398,8 @@ return {
 
     selected_nodes: function() { return selected_nodes; },
     related_nodes: function() { return related_nodes; },
+    selected_links: function() { return selected_links; },
+    related_links: function() { return related_links; },
 };
 
 });

@@ -420,7 +420,7 @@ function GraphView(spec) {
     }
 
     function nodes__visible() {
-        return zen_mode ? selection.related() : nodes__filtered();
+        return zen_mode ? selection.related_nodes() : nodes__filtered();
     }
 
     function links__filtered() {
@@ -428,7 +428,7 @@ function GraphView(spec) {
     }
 
     function links__visible() {
-        return zen_mode ? graph.find_links__by_nodes(selection.related()) : links__filtered();
+        return zen_mode ? graph.find_links__by_nodes(selection.related_nodes()) : links__filtered();
     }
 
     function node__transform(d) {
@@ -1380,7 +1380,7 @@ function GraphView(spec) {
     parent_element[0][0].parentElement.addEventListener('mousedown', disable_zen_mode_auto_center);
 
     function center_on_selection_related() {
-        nodes__user_visible(selection.related(), true, 100 /* ms, duration of animation */);
+        nodes__user_visible(selection.related_nodes(), true, 100 /* ms, duration of animation */);
     }
 
     gv.link__pass_filter = link__pass_filter;

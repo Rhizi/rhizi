@@ -23,7 +23,7 @@ function install() {
             $('#textanalyser').focus();
         }
         if (e.ctrlKey && '9' === key) {
-            rz_core.main_graph_view.nodes__user_visible(selection.related(), true);
+            rz_core.main_graph_view.nodes__user_visible(selection.related_nodes(), true);
             handled = true;
         }
         if (e.ctrlKey && '0' === key) {
