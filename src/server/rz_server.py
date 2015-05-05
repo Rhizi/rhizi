@@ -50,7 +50,7 @@ class Config(object):
         cfg['development_mode'] = False
 
         cfg['root_path'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        cfg['template_d_path'] = os.path.join(cfg['root_path'], 'template.d')
+        cfg['template_d_path'] = os.path.join(cfg['root_path'], 'fragment.d', 'template.d')
 
         cfg['user_db_path'] = './user_db.db'
 
