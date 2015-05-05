@@ -5,12 +5,13 @@
 #
 # Domain: '{{ domain_fqdn }}'
 #
+rzi_FQDN={{ domain_fqdn }}
 cmn_prefix="rhizi-bkp_$(date +%Y-%m-%d)"
 
-bkp_dir=/var/lib/rhizi/mux-bkp.d/{{ domain_fqdn }}
+bkp_dir=/var/lib/rhizi/mux-bkp.d/${rzi_FQDN}
 
-bkp_filepath__data=${bkp_dir}/${cmn_prefix}_{{ domain_fqdn }}___data.dump
-bkp_filepath__user=${bkp_dir}/${cmn_prefix}_{{ domain_fqdn }}__user-db.db
+bkp_filepath__data=${bkp_dir}/${cmn_prefix}_${rzi_FQDN}___data.dump
+bkp_filepath__user=${bkp_dir}/${cmn_prefix}_${rzi_FQDN}__user-db.db
 bkp_filepath__conf=${bkp_dir}/${cmn_prefix}_rhizi-server.conf
 bkp_filepath__tarball=${bkp_dir}/${cmn_prefix}.tar.gz
 
@@ -18,15 +19,15 @@ bkp_filepath__tarball=${bkp_dir}/${cmn_prefix}.tar.gz
 neo4j-shell -port {{ neo4j_port__shell }} -c dump > ${bkp_filepath__data}
 
 # backup user-db - FIXME: drop when switching to DB backed user-db
-cp /srv/www/rhizi/mux-root.d/{{ domain_fqdn }}/auth/user_db.db ${bkp_filepath__user}
+cp /srv/www/rhizi/mux-root.d/${rzi_FQDN}/auth/user_db.db ${bkp_filepath__user}
 
 # backup conf
-cp /etc/rhizi/mux-conf.d/{{ domain_fqdn }}/rhizi-server.conf ${bkp_filepath__conf}
+cp /etc/rhizi/mux-conf.d/${rzi_FQDN}/rhizi-server.conf ${bkp_filepath__conf}
 
 # create tarball, remove originals
-tar --remove-files -cvaf  ${bkp_filepath__tarball} ${bkp_filepath__user} \
-                                                   ${bkp_filepath__data} \
-                                                   ${bkp_filepath__conf}
+tar --remove-files -C ${bkp_dir} -cvaf  ${bkp_filepath__tarball} ${bkp_filepath__user} \
+                                                                 ${bkp_filepath__data} \
+                                                                 ${bkp_filepath__conf}
 
 # remove > 3 days old backups
 find ${bkp_dir}/ -type f -mtime +3 -exec rm -vf '{}' \;
