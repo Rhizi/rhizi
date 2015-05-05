@@ -629,13 +629,12 @@ function GraphView(spec) {
 
         link_text
             .text(function(d) {
-                var src_selected = selection.node_selected(d.__src),
-                    dst_selected = selection.node_selected(d.__dst);
+                var related = selection.link_related(d);
 
-                if (!temporary && !src_selected && !dst_selected) {
+                if (!temporary && !related) {
                     return "";
                 }
-                if (src_selected && dst_selected) {
+                if (related) {
                     return d.name;
                 }
                 return link_text__short(d);
