@@ -21,7 +21,7 @@ from neo4j_test_util import DBO_random_data_generation
 import neo4j_test_util
 from neo4j_util import Neo4JException
 from neo4j_util import meta_attr_list_to_meta_attr_map
-from rz_config import Config
+from rz_config import RZ_Config
 from test_util import generate_random_link_dict
 from test_util import generate_random_node_dict
 from test_util__pydev import debug__pydev_pd_arg
@@ -358,7 +358,7 @@ class TestDBController(unittest.TestCase):
         self.assertTrue(0 < len(l_set))
 
     def test_rzdb__init_DB(self):
-        rz_cfg = Config.generate_default()
+        rz_cfg = RZ_Config.generate_default()
         op = DBO_rzdb__init_DB(rz_cfg.rzdoc__mainpage_name)
         try:  # assert first init call passes
             self.db_ctl.exec_op(op)

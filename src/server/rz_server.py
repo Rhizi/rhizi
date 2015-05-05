@@ -8,17 +8,16 @@ from flask import session
 from functools import wraps
 import logging
 import os
-import re
 import signal
 import traceback
-import types
+
 
 from db_controller import DB_Controller
-from db_op import DBO_rzdb__fetch_DB_metablock, DBO_rzdb__init_DB
+from db_op import DBO_rzdb__init_DB
 import rz_api
 import rz_api_rest
 import rz_blob
-from rz_config import Config
+from rz_config import RZ_Config
 import rz_feedback
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
@@ -273,7 +272,7 @@ def init_webapp(cfg, kernel):
 
 def init_config(cfg_dir):
     cfg_path = os.path.join(cfg_dir, 'rhizi-server.conf')
-    cfg = Config.init_from_file(cfg_path)
+    cfg = RZ_Config.init_from_file(cfg_path)
     return cfg
 
 def init_user_db(cfg):

@@ -11,7 +11,7 @@ from neo4j_cypher import Cypher_Parser, DB_Query
 from neo4j_qt import QT_RZDOC_NS_Filter
 import neo4j_test_util
 from neo4j_util import meta_attr_list_to_meta_attr_map
-from rz_config import Config
+from rz_config import RZ_Config
 from rz_server import init_log
 from test_util import generate_random_node_dict, generate_random_link_dict, \
     generate_random_RZDoc
@@ -22,7 +22,7 @@ class Test_DB_Op(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        cfg = Config.init_from_file('res/etc/rhizi-server.conf')
+        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
         self.log = init_log(cfg)
 
     def setUp(self):

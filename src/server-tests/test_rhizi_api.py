@@ -7,7 +7,7 @@ from werkzeug.test import EnvironBuilder
 import db_controller as dbc
 from db_op import DBO_cypher_query
 import rz_api
-from rz_config import Config
+from rz_config import RZ_Config
 from test_util__pydev import debug__pydev_pd_arg
 
 
@@ -18,7 +18,7 @@ class TestRhiziAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        cfg = Config.init_from_file('res/etc/rhizi-server.conf')
+        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
         self.db_ctl = dbc.DB_Controller(cfg.db_base_url)
         rz_api.db_ctl = self.db_ctl
 

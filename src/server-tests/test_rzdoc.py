@@ -3,7 +3,7 @@ import unittest
 
 import db_controller
 import neo4j_test_util
-from rz_config import Config
+from rz_config import RZ_Config
 from rz_kernel import RZ_Kernel
 import test_util
 from test_util__pydev import debug__pydev_pd_arg
@@ -13,7 +13,7 @@ class TestRZDoc(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        cfg = Config.init_from_file('res/etc/rhizi-server.conf')
+        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
         self.db_ctl = db_controller.DB_Controller(cfg.db_base_url)
         self.log = logging.getLogger('rhizi')
         self.log.addHandler(logging.StreamHandler())

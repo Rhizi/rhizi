@@ -1,8 +1,8 @@
 import os
 import re
+import types
 
-
-class Config(object):
+class RZ_Config(object):
     """
     rhizi-server configuration
 
@@ -81,7 +81,7 @@ class Config(object):
         cfg['rzdoc__mainpage_name'] = 'Welcome Rhizi'
         cfg['rzdoc__name__max_length'] = 256
 
-        ret = Config()
+        ret = RZ_Config()
         ret.__dict__ = cfg  # allows setting of @property attributes
         return ret
 
@@ -91,7 +91,7 @@ class Config(object):
         if False == os.path.exists(file_path):
             raise Exception('config file not found: ' + file_path)
 
-        cfg = Config.generate_default()
+        cfg = RZ_Config.generate_default()
         cfg.config_dir = os.path.abspath(os.path.dirname(file_path))  # bypass prop restriction
 
         with open(file_path, 'r') as f:
