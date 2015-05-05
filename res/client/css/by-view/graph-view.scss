@@ -202,12 +202,12 @@
 .node.first-selected .circle {
     stroke: $yellow;
     stroke-opacity: 1;
-    stroke-width: 3px;
+    stroke-width: 6px;
     z-index: 1;
 }
 
 .node.selected .circle {
-    stroke: $cyan;
+    stroke: $yellow;
     stroke-opacity: 1;
     stroke-width: 2px;
     z-index: 1;
@@ -233,9 +233,9 @@
     z-index: 1;
 }
 
-.link.enter, .link.exit, .link.related {
-  stroke: $cyan;
-  stroke-opacity: 0.5;
+.link.selected {
+  stroke: $yellow;
+  stroke-opacity: 1.0;
   stroke-width: 2px;
   z-index: 1;
 }
