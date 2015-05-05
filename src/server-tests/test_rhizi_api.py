@@ -4,12 +4,10 @@ import unittest
 from werkzeug.test import Client
 from werkzeug.test import EnvironBuilder
 
-from db_controller import DB_Driver_Embedded
 import db_controller as dbc
 from db_op import DBO_cypher_query
-from rhizi_server import Config
 import rz_api
-from rz_server import Config
+from rz_config import Config
 from test_util__pydev import debug__pydev_pd_arg
 
 

@@ -21,7 +21,7 @@ from neo4j_test_util import DBO_random_data_generation
 import neo4j_test_util
 from neo4j_util import Neo4JException
 from neo4j_util import meta_attr_list_to_meta_attr_map
-from rz_server import Config
+from rz_config import Config
 from test_util import generate_random_link_dict
 from test_util import generate_random_node_dict
 from test_util__pydev import debug__pydev_pd_arg

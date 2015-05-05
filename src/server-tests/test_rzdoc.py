@@ -3,11 +3,10 @@ import unittest
 
 import db_controller
 import neo4j_test_util
+from rz_config import Config
 from rz_kernel import RZ_Kernel
-from rz_server import Config
-from model.graph import Topo_Diff
-from test_util__pydev import debug__pydev_pd_arg
 import test_util
+from test_util__pydev import debug__pydev_pd_arg
 
 
 class TestRZDoc(unittest.TestCase):
