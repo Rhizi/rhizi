@@ -270,9 +270,7 @@ var setup_toolbar = function(main_graph, main_graph_view)
             main_graph.nodes__merge(selected_nodes_ids());
         },
         delete_selection = function() {
-            var ids = selected_nodes_ids();
-
-            if (confirm(messages.delete_nodes_message(ids.length))) {
+            if (confirm(messages.delete_items_message(selected_nodes, []))) {
                 main_graph.nodes__delete(ids);
             }
         },

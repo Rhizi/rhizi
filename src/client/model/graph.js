@@ -1222,9 +1222,15 @@ function is_node(item)
     return item.__src === undefined;
 }
 
+function is_link(item)
+{
+    return item.__src !== undefined;
+}
+
 return {
     Graph: Graph,
     is_node: is_node,
+    is_link: is_link,
 };
 
 });
