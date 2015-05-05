@@ -157,11 +157,6 @@ function setup_click_handlers()
         return;
     }
     setup_done = true;
-    form_element.on('keydown', function (e) {
-        if (e.which == consts.VK_ENTER) {
-            e.preventDefault();
-        }
-    });
     $('#edit-dialog__save').on('click', function (e) {
         e.preventDefault();
         commit();
