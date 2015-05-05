@@ -3,16 +3,13 @@ function (_,            util,         graph) {
 
 
 
-function delete_items_message(items) {
-    util.assert(items && items.length && items.length > 0);
+function delete_nodes_links_message(nodes, links) {
+    util.assert(nodes && links && nodes.length && links.length && nodes.length + links.length > 0);
 
-    var nodes = _.filter(items, graph.is_node),
-        links = _.filter(items, graph.is_link);
-
-    return delete_items_message_by_name(nodes, links);
+    return delete_nodes_links_message_by_name(nodes, links);
 }
 
-function delete_items_message_by_name(nodes, links)
+function delete_nodes_links_message_by_name(nodes, links)
 {
     var middle,
         node_names = _.map(_.map(nodes, 'name'), quoted),
@@ -22,6 +19,8 @@ function delete_items_message_by_name(nodes, links)
         middle = english_conjunction(node_names) + ', and ' + english_conjunction(link_names) + ' connections';
     } else if (nodes.length > 0) {
         middle = english_conjunction(node_names);
+    } else {
+        middle = english_conjunction(link_names);
     }
     return 'Delete ' + middle + '?';
 }
@@ -42,7 +41,7 @@ function english_conjunction(names)
     return names.slice(0, names.length - 1).join(', ') + ' and ' + names[names.length - 1];
 }
 
-function delete_items_message_by_number(type, nodes, links) {
+function delete_nodes_links_message_by_number(type, nodes, links) {
     var count_nodes = nodes.length,
         count_links = links.length,
         make_descriptor = function (type, count) { return count > 1 ? '' + count + ' ' + type + 's' : 'a ' + type; },
@@ -53,6 +52,6 @@ function delete_items_message_by_number(type, nodes, links) {
 }
 
 return {
-    delete_items_message: delete_items_message,
+    delete_nodes_links_message: delete_nodes_links_message,
 };
 });
