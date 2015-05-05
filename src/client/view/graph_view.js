@@ -728,7 +728,6 @@ function GraphView(spec) {
 
         var noderef = nodeEnter.insert('a')
             .attr("class", "nodeurl graph")
-            .attr("transform", "translate(10,-7)")
             .attr("dy", node_text_dy);
         noderef.insert("image");
 
@@ -737,7 +736,10 @@ function GraphView(spec) {
             .attr("xlink:title", function (d) { return d.url; })
             .attr("target", "_blank")
             .attr("visibility", function(d) { return urlValid(d.url) ? "visible" : "hidden"; })
-            .attr("pointer-events", function(d) { return urlValid(d.url) ? "all" : "none"; });
+            .attr("pointer-events", function(d) { return urlValid(d.url) ? "all" : "none"; })
+            .attr("transform", function (d) {
+                return urlValid(d['image-url']) ? "translate(22,-7)" : "translate(10, -7)";
+            });
         node.select('g.node > a > image')
             .each(function () {
                 load_image(this, "/static/img/url-icon.png");
