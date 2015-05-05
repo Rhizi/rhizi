@@ -257,7 +257,6 @@ var inner_select_nodes = function(nodes)
 {
     var related = nodes.length == 1 ? neighbours(nodes) : mutual_neighbours(nodes);
 
-    console.dir(related);
     inner_select(nodes, related.nodes, [], related.links);
 }
 
