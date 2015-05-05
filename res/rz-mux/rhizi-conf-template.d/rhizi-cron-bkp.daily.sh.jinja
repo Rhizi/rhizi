@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#
+# Auto-generated Rhizi cron configuration
+#
+# Domain: '{{ domain_fqdn }}'
+#
 bkp_dir=/var/lib/rhizi/mux-bkp.d/{{ domain_fqdn }}
 bkp_filename={{ domain_fqdn }}-bkp_$(date +%Y-%m-%d).dump
 bkp_filepath=${bkp_dir}/${bkp_filename}
