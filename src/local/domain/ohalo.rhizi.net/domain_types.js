@@ -21,7 +21,7 @@ define({
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['skill', {
-            'title': 'מאפין-מנהיגות',
+            'title': 'מאפיין-מנהיגות',
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['resource', {
