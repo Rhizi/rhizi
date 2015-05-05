@@ -7,6 +7,12 @@
   stroke-width: 1px;
   font-size: $h3-size;
   z-index:100;
+  &.related {
+    fill: none;
+    stroke: $cyan;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+  }
 }
 
 .ghostnode{
@@ -32,7 +38,7 @@
     stroke: $orange;
     stroke-opacity: 1;
     stroke-width: 5px;
-    opacity: 1.0;
+    opacity: 1;
 }
 
 .nodetext {
@@ -69,6 +75,23 @@
   stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index:1;
+  &.selected {
+    stroke: $yellow;
+    stroke-opacity: 1.0;
+    stroke-width: 2px;
+  }
+  &.related {
+    fill: none;
+    stroke: $cyan;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+  }
+  &.hovering {
+      stroke: $orange;
+      stroke-opacity: 1;
+      stroke-width: 2px;
+      opacity: 1;
+  }
 }
 
 .linklabel{
@@ -92,8 +115,7 @@
 }
 
 .circle.enter {
-  stroke: $cyan;
-  stroke-opacity: 0.5;
+  stroke-opacity: 1;
 }
 
 .circle.bubble {
@@ -103,8 +125,7 @@
 }
 
 .circle.exit {
-  stroke: $cyan;
-  stroke-opacity: 0.5;
+  stroke-opacity: 1;
 }
 
 .circle.chainlink {
@@ -204,6 +225,10 @@
     stroke-opacity: 1;
     stroke-width: 6px;
     z-index: 1;
+    &:hover {
+      stroke: $orange;
+      stroke-opacity: 1;
+    }
 }
 
 .node.selected .circle {
@@ -217,28 +242,6 @@
   stroke-dasharray: 3,3;
 }
 
-.highlightlink {
-  fill: none;
-  stroke: $cyan;
-  stroke-opacity: 0.5;
-  stroke-width: 2px;
-  z-index: 1;
-}
-
-.hovering .link {
-    stroke: $orange;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    opacity: 1;
-    z-index: 1;
-}
-
-.link.selected {
-  stroke: $yellow;
-  stroke-opacity: 1.0;
-  stroke-width: 2px;
-  z-index: 1;
-}
 
 #editbox input{
   width:130px;
