@@ -120,12 +120,15 @@ install_instance__apache() {
     ln -vfs -T /etc/apache2/sites-available/${apache_module__siteconf_filename} /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
 }
 
-install_instance__rhizi() {
+install_instance__rhizi() { # depends on install_instance__apache()
 
     [[ -e "${rz_module__confdir}" ]] && die "error: rhizi module already installed: ${rz_module__confdir}"
 
     install -v --directory ${rz_module__confdir} \
                --directory ${rz_module__bkp}
+
+    # install default fragments - JS
+    cp -v /usr/lib/rhizi/webapp/static/js/model/domain_types.js ${apache_module__rootdir}/webapp/fragment.d/js/
 
 }
 
