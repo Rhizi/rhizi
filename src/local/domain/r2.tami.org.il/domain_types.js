@@ -23,7 +23,7 @@ define({
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['skill', {
-            'title': 'Oragnisation',
+            'title': 'Organisation',
             'attributes': ['description', 'url', 'image-url'],
         }],
         ['resource', {
