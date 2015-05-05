@@ -6,11 +6,16 @@
 # Domain: '{{ domain_fqdn }}'
 #
 bkp_dir=/var/lib/rhizi/mux-bkp.d/{{ domain_fqdn }}
-bkp_filename={{ domain_fqdn }}-bkp_$(date +%Y-%m-%d).dump
-bkp_filepath=${bkp_dir}/${bkp_filename}
+bkp_filename__data={{ domain_fqdn }}-bkp_$(date +%Y-%m-%d)__data.dump
+bkp_filepath__data=${bkp_dir}/${bkp_filename__data}
+bkp_filename__user={{ domain_fqdn }}-bkp_$(date +%Y-%m-%d)__udb.db
+bkp_filepath__user=${bkp_dir}/${bkp_filename__data}
 
 # dump neo4j DB
-neo4j-shell -port {{ neo4j_port__shell }} -c dump > ${bkp_filepath}
+neo4j-shell -port {{ neo4j_port__shell }} -c dump > ${bkp_filepath__data}
+
+# backup user-db - FIXME: drop when switching to DB backed user-db
+cp /srv/www/rhizi/mux-root.d/{{ domain_fqdn }}/auth/user_db.db ${bkp_filepath__user}
 
 # remove > 3 days old backups
 find ${bkp_dir}/ -type f -mtime +3 -exec rm -vf '{}' \;
