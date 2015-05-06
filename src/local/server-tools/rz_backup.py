@@ -104,8 +104,8 @@ def latest(subdir):
 
 def sorted_backups(subdir):
     def cmp_files(fa, fb):
-        ta = os.stat(fa).mtime
-        tb = os.stat(fb).mtime
+        ta = os.stat(fa).st_mtime
+        tb = os.stat(fb).st_mtime
         if ta == tb:
             return 0
         if ta < tb:
