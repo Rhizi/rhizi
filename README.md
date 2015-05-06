@@ -161,5 +161,4 @@ rz-doc --list-names
 creates a new doc called "All Documents" with the contents of all rzdocs in merge.file.
 
 ## API(WIP)
-
-[URL]/rz/[doc-title]/api/delete - Delete current doc 
+[url]/api/rzdoc/[doc-title]/delete
