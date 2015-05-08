@@ -22,8 +22,12 @@ define({
             'attributes': ['description', 'url'],
         }],
         ['person', {
-            'title': 'Person',
-            'attributes': ['description', 'url'],
+            'title': 'Student',
+            'attributes': ['description', 'url', 'email', 'image-url'],
+        }],
+        ['resource', {
+            'title': 'Mentor',
+            'attributes': ['description', 'url', 'organisation', 'image-url'],
         }],
         ['club', {
             'title': 'Club',
@@ -44,6 +48,26 @@ define({
         'cnrs-inserm-unit-code': 'CNRS / INSERM unit code',
         'street-address': 'Street address',
         'city': 'City',
+        'email': 'Email',
+        'image-url':'Image URL',
         'country': 'Country',
-    }
+    }, 
+    attribute_ui:{
+        'name': 'input',
+        'type': 'type',
+        'description': 'textarea',
+        'url': 'url',
+        'status': 'input',
+        'startdate': 'Start Date',
+        'enddate': 'End Date',
+        'internship-type': 'input',
+        'facility': 'input',
+        'facility-affiliation': 'input',
+        'cnrs-inserm-unit-code': 'input',
+        'street-address': 'input',
+        'city': 'input',
+        'email': 'email',
+        'image-url':'image',
+        'country': 'input',
+    },
 });
