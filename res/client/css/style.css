@@ -866,6 +866,11 @@ p {
   stroke-width: 1px;
   font-size: 18px;
   z-index: 100; }
+  .node.related {
+    fill: none;
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 2px; }
 
 .notselected .circle, .notselected * {
   opacity: 0.2;
@@ -883,7 +888,7 @@ p {
   stroke: #ff8b11;
   stroke-opacity: 1;
   stroke-width: 5px;
-  opacity: 1.0; }
+  opacity: 1; }
 
 .nodetext {
   fill: #363636;
@@ -912,6 +917,20 @@ p {
   stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index: 1; }
+  .link.selected {
+    stroke: #fad900;
+    stroke-opacity: 1.0;
+    stroke-width: 2px; }
+  .link.related {
+    fill: none;
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 2px; }
+  .link.hovering {
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 2px;
+    opacity: 1; }
 
 .linklabel {
   font-size: 14px;
@@ -932,8 +951,7 @@ p {
   stroke-opacity: 0.5; }
 
 .circle.enter {
-  stroke: #33c2e0;
-  stroke-opacity: 0.5; }
+  stroke-opacity: 1; }
 
 .circle.bubble {
   fill: rgba(87, 154, 202, 0.17);
@@ -941,8 +959,7 @@ p {
   pointer-events: none; }
 
 .circle.exit {
-  stroke: #33c2e0;
-  stroke-opacity: 0.5; }
+  stroke-opacity: 1; }
 
 .circle.chainlink {
   stroke: #AAA; }
@@ -1016,6 +1033,9 @@ p {
   stroke-opacity: 1;
   stroke-width: 6px;
   z-index: 1; }
+  .node.first-selected .circle:hover {
+    stroke: #ff8b11;
+    stroke-opacity: 1; }
 
 .node.selected .circle {
   stroke: #fad900;
@@ -1025,26 +1045,6 @@ p {
 
 .graph.link.temp_and {
   stroke-dasharray: 3,3; }
-
-.highlightlink {
-  fill: none;
-  stroke: #33c2e0;
-  stroke-opacity: 0.5;
-  stroke-width: 2px;
-  z-index: 1; }
-
-.hovering .link {
-  stroke: #ff8b11;
-  stroke-opacity: 0.5;
-  stroke-width: 2px;
-  opacity: 1;
-  z-index: 1; }
-
-.link.selected {
-  stroke: #fad900;
-  stroke-opacity: 1.0;
-  stroke-width: 2px;
-  z-index: 1; }
 
 #editbox input {
   width: 130px; }
