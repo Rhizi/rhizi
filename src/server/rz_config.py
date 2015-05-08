@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import re
 import types
+
+
+log = logging.getLogger('rhizi')
 
 class RZ_Config(object):
     """
@@ -78,10 +82,15 @@ class RZ_Config(object):
         cfg['SECRET_KEY'] = ''
 
         # Security
-        #   - acl__singup__email_domain: restrict signup requests by email domain.
-        #                                depends on 'access_control==True', default: no restriction applied
+        #   - acl_wl__email_domain_set: comma separated email domain whitelist matched during signup.
+        #                               depends on 'access_control==True', default: no restriction applied
+        #   - acl_wl__email_address_file_path: path to email address whitelist file containing an email per line
+        #                                      once read, the attribute acl_wl__email_address_set should be available
+        #
         cfg['access_control'] = True
-        cfg['acl__singup__email_domain'] = None
+        cfg['acl_wl__email_domain_set'] = None
+        cfg['acl_wl__email_address_file_path'] = None
+        cfg['user_db_path'] = './user_db.db'
         cfg['signup_enabled'] = True
 
         # Neo4j connection
@@ -96,6 +105,10 @@ class RZ_Config(object):
 
         ret = RZ_Config()
         ret.__dict__ = cfg  # allows setting of @property attributes
+
+        # set default attribute cache values
+        ret.acl_wl__email_address_set_cached = None
+
         return ret
 
     @staticmethod
@@ -164,6 +177,21 @@ class RZ_Config(object):
 
         kv_item_set.sort()
         return '\n'.join(kv_item_set)
+
+    @property
+    def acl_wl__email_address_set(self):  # lazy load on first access from configured file source
+        if self.acl_wl__email_address_set_cached is not None:
+            return self.acl_wl__email_address_set_cached
+        else:  # first access, attempt to init from file
+            wl_email_set = []
+            if self.acl_wl__email_address_file_path is not None:
+                with open(self.acl_wl__email_address_file_path) as email_address_file:
+                    for line in email_address_file.readlines():
+                        # TODO: check email format
+                        email = line
+                        wl_email_set.append(email)
+                log.info('acl initialized: acl_wl__email_address, email-count: %d' % (len(wl_email_set)))
+            self.acl_wl__email_address_set_cached = wl_email_set
 
     @property
     def db_base_url(self):
