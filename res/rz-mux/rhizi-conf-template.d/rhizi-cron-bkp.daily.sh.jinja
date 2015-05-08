@@ -6,12 +6,12 @@
 # Domain: '{{ domain_fqdn }}'
 #
 rzi_FQDN={{ domain_fqdn }}
-cmn_prefix="rhizi-bkp_$(date +%Y-%m-%d)"
+cmn_prefix="rhizi-bkp_$(date +%Y-%m-%d)_${rzi_FQDN}"
 
 bkp_dir=/var/lib/rhizi/mux-bkp.d/${rzi_FQDN}
 
-bkp_filepath__data=${bkp_dir}/${cmn_prefix}_${rzi_FQDN}___data.dump
-bkp_filepath__user=${bkp_dir}/${cmn_prefix}_${rzi_FQDN}__user-db.db
+bkp_filepath__data=${bkp_dir}/${cmn_prefix}__data.dump
+bkp_filepath__user=${bkp_dir}/${cmn_prefix}__user-db.db
 bkp_filepath__conf=${bkp_dir}/${cmn_prefix}_rhizi-server.conf
 bkp_filepath__tarball=${bkp_dir}/${cmn_prefix}.tar.gz
 
@@ -31,3 +31,4 @@ tar --remove-files -C ${bkp_dir} -cvaf  ${bkp_filepath__tarball} ${bkp_filepath_
 
 # remove > 3 days old backups
 find ${bkp_dir}/ -type f -mtime +3 -exec rm -vf '{}' \;
+
