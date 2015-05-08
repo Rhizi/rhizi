@@ -14,7 +14,7 @@ import pwd
 import random
 import uuid
 
-class Config__port_map(): pass
+class Config(): pass
 
 class Template_Task():
 
@@ -30,7 +30,7 @@ class Template_Task():
 
             print('rz-mux-tool: generated: %s' % (f_out.name))
 
-def gen_dom_config__neo4j(domain_fqdn, port_map):
+def gen_dom_config__neo4j(domain_fqdn, cfg):
     """
     Generate domain-specific neo4j configuration file set
     """
@@ -40,11 +40,11 @@ def gen_dom_config__neo4j(domain_fqdn, port_map):
 
     conf_task_set = [Template_Task(os.path.join(neo4j_template_path_prefix, 'neo4j-server.properties.jinja'),
                                    os.path.join(install_prefix, target_dir, 'neo4j-server.properties'),
-                                   {'org_neo4j_server_webserver_https_port': port_map.neo4j_port__https,
-                                    'org_neo4j_server_webserver_port': port_map.neo4j_port__http}),
+                                   {'org_neo4j_server_webserver_https_port': cfg.neo4j_port__https,
+                                    'org_neo4j_server_webserver_port': cfg.neo4j_port__http}),
                      Template_Task(os.path.join(neo4j_template_path_prefix, 'neo4j.properties.jinja'),
                                    os.path.join(install_prefix, target_dir, 'neo4j.properties'),
-                                   {'remote_shell_port': port_map.neo4j_port__shell}),
+                                   {'remote_shell_port': cfg.neo4j_port__shell}),
                      Template_Task(os.path.join(neo4j_template_path_prefix, 'neo4j-service_deomain-init-script.jinja'),
                                    os.path.join(install_prefix, 'etc/init.d/', 'neo4j-service__%s' % (domain_fqdn)),
                                    {'domain_fqdn': domain_fqdn}),
@@ -53,7 +53,7 @@ def gen_dom_config__neo4j(domain_fqdn, port_map):
     for conf_task_obj in conf_task_set:
         conf_task_obj.do_exec()
 
-def gen_dom_config__apache(domain_fqdn, port_map):
+def gen_dom_config__apache(domain_fqdn, cfg):
     """
     Generate domain-specific neo4j configuration file set
     """
@@ -63,13 +63,13 @@ def gen_dom_config__apache(domain_fqdn, port_map):
     conf_task_set = [Template_Task(os.path.join(apache_template_path_prefix, 'x.%s.conf' % (rhizi_top_domain_fqdn)),
                                    os.path.join(install_prefix, 'etc/apache2/sites-available', domain_fqdn + '.conf'),
                                    {'domain_fqdn': domain_fqdn,
-                                    'rz_port__http': port_map.rz_port__http}),
+                                    'rz_port__http': cfg.rz_port__http}),
                      ]
 
     for conf_task_obj in conf_task_set:
         conf_task_obj.do_exec()
 
-def gen_dom_config__rhizi(domain_fqdn, port_map):
+def gen_dom_config__rhizi(domain_fqdn, cfg):
     rz_template_path_prefix = 'rhizi-conf-template.d'
 
     rz_server_secret = str(uuid.uuid4()).replace('-', '')
@@ -79,20 +79,20 @@ def gen_dom_config__rhizi(domain_fqdn, port_map):
     conf_task_set = [Template_Task(os.path.join(rz_template_path_prefix, 'rhizi-server.conf.jinja'),
                                    os.path.join(install_prefix, 'etc/rhizi/mux-conf.d', domain_fqdn, 'rhizi-server.conf'),
                                    {'domain_fqdn': domain_fqdn,
-                                    'neo4j_port__http': port_map.neo4j_port__http,
+                                    'neo4j_port__http': cfg.neo4j_port__http,
                                     'root_path': root_path,
-                                    'rz_port__http': port_map.rz_port__http,
+                                    'rz_port__http': cfg.rz_port__http,
                                     'rz_server_secret': rz_server_secret,
                                     'user_db_path': user_db_path,
-                                    'template_d_path': '/srv/www/rhizi/mux-root.d/%s/webapp/fragment.d/template.d' % (domain_fqdn),
+                                    'template_d_path': 'template.d',
                                     }),
                      Template_Task(os.path.join(rz_template_path_prefix, 'rhizi.init.jinja'),
                                    os.path.join(install_prefix, 'etc/init.d/', 'rhizi__%s' % (domain_fqdn)),
                                    {'domain_fqdn': domain_fqdn}),
                      Template_Task(os.path.join(rz_template_path_prefix, 'rhizi-cron-bkp.daily.sh.jinja'),
-                                   os.path.join(install_prefix, '/etc/cron.daily/', 'rhizi__%s' % (domain_fqdn)),
+                                   os.path.join(install_prefix, 'etc/cron.daily/', 'rhizi__%s' % (domain_fqdn)),
                                    {'domain_fqdn': domain_fqdn,
-                                    'neo4j_port__shell': port_map.neo4j_port__shell}),
+                                    'neo4j_port__shell': cfg.neo4j_port__shell}),
                      ]
 
     for conf_task_obj in conf_task_set:
@@ -116,12 +116,12 @@ if __name__ == '__main__':
     # generate optimistic-collision-avoiding instance port map
     #
     port_seed = 40000 + random.randint(1000, 9990)
-    cfg_port_map = Config__port_map()
-    setattr(cfg_port_map, 'neo4j_port__https', port_seed)  # REST API port
-    setattr(cfg_port_map, 'neo4j_port__http', port_seed + 1)
-    setattr(cfg_port_map, 'neo4j_port__shell', port_seed + 2)
-    setattr(cfg_port_map, 'rz_port__http', 48000 + port_seed % 1000)
+    cfg = Config()
+    setattr(cfg, 'neo4j_port__https', port_seed + 0)  # REST API port
+    setattr(cfg, 'neo4j_port__http', port_seed + 1)
+    setattr(cfg, 'neo4j_port__shell', port_seed + 2)
+    setattr(cfg, 'rz_port__http', 48000 + port_seed % 1000)
 
-    gen_dom_config__neo4j(domain_fqdn, cfg_port_map)
-    gen_dom_config__rhizi(domain_fqdn, cfg_port_map)
-    gen_dom_config__apache(domain_fqdn, cfg_port_map)
+    gen_dom_config__neo4j(domain_fqdn, cfg)
+    gen_dom_config__rhizi(domain_fqdn, cfg)
+    gen_dom_config__apache(domain_fqdn, cfg)
