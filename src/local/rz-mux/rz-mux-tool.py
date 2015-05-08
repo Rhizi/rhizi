@@ -115,12 +115,12 @@ if __name__ == '__main__':
     #
     # generate optimistic-collision-avoiding instance port map
     #
-    port_seed = 40000 + random.randint(1000, 9990)
+    port_seed = 1000 + random.randint(0, pow(2, 16) - 1000 - 10)
     cfg = Config()
     setattr(cfg, 'neo4j_port__https', port_seed + 0)  # REST API port
     setattr(cfg, 'neo4j_port__http', port_seed + 1)
     setattr(cfg, 'neo4j_port__shell', port_seed + 2)
-    setattr(cfg, 'rz_port__http', 48000 + port_seed % 1000)
+    setattr(cfg, 'rz_port__http', port_seed + 3)
 
     gen_dom_config__neo4j(domain_fqdn, cfg)
     gen_dom_config__rhizi(domain_fqdn, cfg)
