@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import re
 import types
@@ -20,13 +22,24 @@ class RZ_Config(object):
     @staticmethod
     def generate_default():
         cfg = {}
+
+        #
+        # [!] All resource paths are converted to absolute values after
+        #     reading the actual configuration
+        #
+
         cfg['config_dir'] = '.'
         cfg['development_mode'] = False
 
-        cfg['root_path'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        cfg['template_d_path'] = os.path.join(cfg['root_path'], 'fragment.d', 'template.d')
-
-        cfg['user_db_path'] = './user_db.db'
+        #
+        # defualt deployment places server under the following tree structure:
+        # .                   // root_dir_default
+        # └── bin
+        #     └── rz_server.py
+        #
+        root_dir_default = os.path.join(os.path.dirname(__file__), '..')
+        cfg['root_path'] = root_dir_default
+        cfg['template_d_path'] = os.path.join(root_dir_default, 'fragment.d', 'template.d')
 
         # client configuration
         cfg['optimized_main'] = False
@@ -128,8 +141,13 @@ class RZ_Config(object):
                 setattr(cfg, k, v)
 
         # adjust paths
-        if False == os.path.isabs(cfg.root_path):
-            cfg.root_path = os.path.abspath(cfg.root_path)
+        for path in ['config_dir',
+                     'root_path',
+                     'template_d_path',
+                     'user_db_path']:
+            path_value = getattr(cfg, path)
+            if False == os.path.isabs(path_value):
+                setattr(cfg, path, os.path.abspath(path_value))
 
         # authentication keys - see issue #419
         # for auth_key in ['neo4j_user', 'neo4j_pw']:
