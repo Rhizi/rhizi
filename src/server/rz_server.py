@@ -316,6 +316,8 @@ def shutdown():
 
 if __name__ == "__main__":
 
+    global log
+
     try:  # enable pydev remote debugging
         import pydevd
         pydevd.settrace()
@@ -326,11 +328,13 @@ if __name__ == "__main__":
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     args = p.parse_args()
 
+    log = logging.getLogger('rhizi')  # init config-unaware log, used until we call init_log
+
     try:
         cfg = init_config(args.config_dir)
         log = init_log(cfg)
     except Exception as e:
-        print('failed to initialize server: ' + e.message)
+        log.error('failed to initialize server: ' + e.message)
         traceback.print_exc()
         exit(-1)
 
