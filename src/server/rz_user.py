@@ -395,7 +395,7 @@ def rest__user_signup():
     html_ok__submitted = '<p>Your request has been successfully submitted.<br>Please check your email to activate your account.</p>'
     html_ok__already_pending = '<p>Your request has already been submitted.<br>Please check your email to activate your account.</p>'
     html_err__tech_difficulty = '<p>We are experiencing technical difficulty processing your request,<br>Please try again later.</p>'
-    html_err__acl__singup__email_domain = '<p>Signup requires a \'@%s\' domain email account.<br>Please obtain one to proceed.</p>'
+    html_err__acl__singup = '<p>Invalid email: \'%s\'. Please use an email account from the following domains or contact an administrator: %s.</p>'
 
     # use incoming request as house keeping trigger
     us_req_map = get_or_init_usreq_map()
@@ -409,25 +409,24 @@ def rest__user_signup():
             us_req = sanitize_and_validate_input(request)
         except API_Exception__bad_request as e:
             log.exception(e)
-            return make_response__json__html(status=400, html_str='<p>%s</p>' % (e.caller_err_msg))
+            return make_response__json__html(status=HTTP_STATUS__400_BAD_REQUEST, html_str='<p>%s</p>' % (e.caller_err_msg))
         except Exception as e:
             log.exception(e)
-            return make_response__json__html(status=400, html_str=html_err__tech_difficulty)
+            return make_response__json__html(status=HTTP_STATUS__400_BAD_REQUEST, html_str=html_err__tech_difficulty)
 
         # FIXME: implement form validation
 
         # probe for existing request
-        existing_req = us_req_map.get(us_req['email_address'])
+        req_email_address = us_req['email_address']
+        existing_req = us_req_map.get(req_email_address)
         if None != existing_req:
             # already pending
             log.warning('user signup: request already pending: %s' % (existing_req))
-            return make_response__json__html(status=200, html_str=html_ok__already_pending)
+            return make_response__json__html(status=HTTP_STATUS__200_OK, html_str=html_ok__already_pending)
 
-        # validate email against ACL:email_domain
-        acl__singup__email_domain = current_app.rz_config.acl__singup__email_domain
-        if current_app.rz_config.access_control and acl__singup__email_domain is not None:
-            if us_req['email_address'].split('@')[-1].lower() != acl__singup__email_domain:
-                return make_response__json__html(status=500, html_str=html_err__acl__singup__email_domain % (acl__singup__email_domain))
+        if current_app.rz_config.access_control:
+            if False == acl_match__email_address(req_email_address):
+                return make_response__json__html(status=HTTP_STATUS__400_BAD_REQUEST, html_str=html_err__acl__singup % (req_email_address, current_app.rz_config.acl_wl__email_domain_set))
 
         us_req['submission_date'] = datetime.now()
         us_req['validation_key'] = generate_security_token()
@@ -531,3 +530,30 @@ def send_user_pw_reset__email(req__url_root, u_account, pw_reset_token):
                        subject="Rhizi password reset request",
                        body=msg_body)
     return pw_reset_link
+
+def acl_match__email_address(sanitized_email_address):
+    """
+    Match email against domain ACL / email_list ACL
+
+    @param sanitized_email_address is a sanitized valid email address
+    @return: True if email passed ACL check
+    """
+
+    em_sender, em_domain = sanitized_email_address.lower().split('@')
+
+    # match against domain list
+    if current_app.rz_config.acl_wl__email_domain_set is not None:
+        domain_set = current_app.rz_config.acl_wl__email_domain_set.split(',')
+        domain_set = [domain.strip() for domain in domain_set]  # strip whitespace chars
+        if em_domain in domain_set:
+            return True
+
+    # match against email list
+    if current_app.rz_config.acl_wl__email_address_set is not None:
+        email_address_set = current_app.rz_config.acl_wl__email_address_set
+        email_address_set = [email_address.strip() for email_address in email_address_set]  # strip whitespace chars
+
+        if '%s@%s' % (em_sender, em_domain) in email_address_set:
+            return True
+
+    return False
