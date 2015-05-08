@@ -14,7 +14,9 @@ import uuid
 from crypt_util import hash_pw
 from rz_api_common import API_Exception__bad_request
 from rz_mail import send_email__flask_ctx
-from rz_req_handling import make_response__json, make_response__json__html
+from rz_req_handling import make_response__json, make_response__json__html, \
+    HTTP_STATUS__400_BAD_REQUEST, HTTP_STATUS__500_INTERNAL_SERVER_ERROR, \
+    HTTP_STATUS__200_OK, HTTP_STATUS__401_UNAUTORIZED
 
 
 log = logging.getLogger('rhizi')
@@ -152,14 +154,14 @@ def rest__login():
             email_address, p = sanitize_input(request)
         except:
             log.warn('failed to sanitize inputs. request: %s' % request)
-            return make_response__json(status=401)  # return empty response
+            return make_response__json(status=HTTP_STATUS__401_UNAUTORIZED)  # return empty response
 
         u_account = None
         try:
             _uid, u_account = current_app.user_db.lookup_user__by_email_address(email_address)
         except:
             log.warn('login: login attempt to unknown account: email_address: \'%s\'' % (email_address))
-            return make_response__json(status=401)  # return empty response
+            return make_response__json(status=HTTP_STATUS__401_UNAUTORIZED)  # return empty response
 
         try:
             salt = current_app.rz_config.secret_key
@@ -168,12 +170,12 @@ def rest__login():
         except Exception as e:
             # login failed
             log.warn('login: unauthorized: user: %s' % (email_address))
-            return make_response__json(status=401)  # return empty response
+            return make_response__json(status=HTTP_STATUS__401_UNAUTORIZED)  # return empty response
 
         # login successful
         session['username'] = email_address
         log.debug('login: success: user: %s' % (email_address))
-        return make_response__json(status=200)  # return empty response
+        return make_response__json(status=HTTP_STATUS__200_OK)  # return empty response
 
     if request.method == 'GET':
         return render_template('login.html', signup_enabled=current_app.rz_config.signup_enabled)
@@ -279,7 +281,7 @@ def rest__pw_reset():
             if None == pw_rst_req:
                 # request expired & already removed OR bad token
                 log.warning('pw reset: request not found or bad token: remote-address: %s' % (request.remote_addr))
-                return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
+                return make_response__json__html(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR, html_str=html_err__tech_difficulty)
 
             # perform pw update
             uid, u_account = user_db.lookup_user__by_email_address(pw_rst_req.u_account.email_address)
@@ -298,7 +300,7 @@ def rest__pw_reset():
                 uid, u_account = user_db.lookup_user__by_email_address(email_address)
             except Exception as _:
                 log.exception('pw reset request for non-existing account: email_address: %s' % (email_address))
-                return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
+                return make_response__json__html(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR, html_str=html_err__tech_difficulty)
 
             if None != pw_rst_req_map.get(email_address):  # probe for pending requests
                 return make_response__json__html(html_str=html_ok__already_pending)
@@ -316,10 +318,10 @@ def rest__pw_reset():
                 return make_response__json__html(html_str=html_ok__submitted)
 
             except Exception as _:
-                return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
+                return make_response__json__html(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR, html_str=html_err__tech_difficulty)
 
         else:  # weird state: missing / unnecessary post fields
-            return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
+            return make_response__json__html(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR, html_str=html_err__tech_difficulty)
 
 def rest__user_signup():
     """
@@ -440,7 +442,7 @@ def rest__user_signup():
             return make_response__json__html(html_str=html_ok__submitted)
         except Exception as e:
             log.exception('user sign-up: failed to send validation email')  # exception derived from stack
-            return make_response__json__html(status=500, html_str=html_err__tech_difficulty)
+            return make_response__json__html(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR, html_str=html_err__tech_difficulty)
 
     if request.method == 'GET':
 
