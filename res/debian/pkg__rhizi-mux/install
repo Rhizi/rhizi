@@ -1,13 +1,9 @@
 res/client/*                          usr/share/rhizi/webapp/static/
 res/neo4j/reset-db__clean.cypher      usr/lib/rhizi/tools/neo4j
-res/template.d/*                      usr/share/rhizi/webapp/template.d/
+res/domain-fragment.d/default         usr/share/rhizi/webapp/domain-fragment.d/
 res/rz-mux/*                          usr/share/rhizi/rz-mux/
 
 src/client/*                          usr/lib/rhizi/webapp/static/js
 src/server/*                          usr/lib/rhizi/rhizi-server/
 src/local/server-tools/*              usr/lib/rhizi/tools/server-tools
 src/local/rz-mux/*                    usr/lib/rhizi/tools/rz-mux
-
-# Domain specific - install defaults
-src/local/domain/default.rhizi.net/domain_types.js        usr/lib/rhizi/webapp/static/js/model/
-res/local/template/fragment/by-domain/default.rhizi.net/* usr/share/rhizi/webapp/template.d/
