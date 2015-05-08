@@ -113,9 +113,6 @@ install_instance__apache() {
     ln -vfs -T /usr/share/rhizi/webapp/static/img    ${apache_module__rootdir}/webapp/static/img
     ln -vfs -T /usr/share/rhizi/webapp/static/lib    ${apache_module__rootdir}/webapp/static/lib
 
-    # populate fragment.d
-    cp /usr/share/rhizi/webapp/template.d/*            ${apache_module__rootdir}/webapp/fragment.d/template.d/
-
     # enable site
     ln -vfs -T /etc/apache2/sites-available/${apache_module__siteconf_filename} /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
 }
@@ -128,7 +125,7 @@ install_instance__rhizi() { # depends on install_instance__apache()
                --directory ${rz_module__bkp}
 
     # install default fragments - JS
-    cp -v /usr/lib/rhizi/webapp/static/js/model/domain_types.js ${apache_module__rootdir}/webapp/fragment.d/js/
+    cp -vr /usr/share/rhizi/webapp/domain-fragment.d/default/* ${apache_module__rootdir}/webapp/fragment.d/
 
 }
 
