@@ -84,7 +84,6 @@ def gen_dom_config__rhizi(domain_fqdn, cfg):
                                     'rz_port__http': cfg.rz_port__http,
                                     'rz_server_secret': rz_server_secret,
                                     'user_db_path': user_db_path,
-                                    'template_d_path': 'template.d',
                                     }),
                      Template_Task(os.path.join(rz_template_path_prefix, 'rhizi.init.jinja'),
                                    os.path.join(install_prefix, 'etc/init.d/', 'rhizi__%s' % (domain_fqdn)),

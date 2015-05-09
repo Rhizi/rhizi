@@ -255,8 +255,8 @@ def init_webapp(cfg, kernel):
     #
     webapp = FlaskExt(__name__,
                       static_folder='static',
-                      template_folder=cfg.template_d_path,
-                      static_url_path=cfg.static_url_path)
+                      static_url_path=cfg.static_url_path,
+                      template_folder=cfg.template_d_relpath)
     webapp.config.from_object(cfg)
     webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
     webapp.rz_config = cfg

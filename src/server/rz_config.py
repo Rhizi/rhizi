@@ -41,9 +41,11 @@ class RZ_Config(object):
         # └── bin
         #     └── rz_server.py
         #
+        # - template_d_relpath: root_path relative path to template dir
+        #
         root_dir_default = os.path.join(os.path.dirname(__file__), '..')
         cfg['root_path'] = root_dir_default
-        cfg['template_d_path'] = os.path.join(root_dir_default, 'fragment.d', 'template.d')
+        cfg['template_d_relpath'] = 'fragment.d/template.d'
 
         # client configuration
         cfg['optimized_main'] = False
@@ -156,7 +158,6 @@ class RZ_Config(object):
         # adjust paths
         for path in ['config_dir',
                      'root_path',
-                     'template_d_path',
                      'user_db_path']:
             path_value = getattr(cfg, path)
             if False == os.path.isabs(path_value):
