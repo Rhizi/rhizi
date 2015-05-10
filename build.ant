@@ -3,10 +3,10 @@
  Rhizi build targets
 
 -->
-<project name="rhizi-server" default="pkg-deb"
+<project name="rhizi-server"
+         default="pkg-deb"
          xmlns:if="ant:if"
-         xmlns:unless="ant:unless"
-         >
+         xmlns:unless="ant:unless">
 
    <macrodef name="rsync">
       <attribute name="src" />
@@ -64,7 +64,7 @@
    </macrodef>
 
    <property name="buildDir" value="build" />
-   <property name="targetDeploymentDir" value="deploy-local" />
+   <property name="deploy_target_dir" value="deploy-local" />
    <property name="remoteDeployServer" value="rz-0.unige.ch" />
    <property name="targetDomain"
              value="default"
@@ -89,12 +89,12 @@
 
    <target name="deploy-local.clean">
 
-      <mkdir dir="${targetDeploymentDir}" description="bootstrap if missing" />
+      <mkdir dir="${deploy_target_dir}" description="bootstrap if missing" />
 
       <!-- bin/ -> link: avoid specifying followsymlinks on the following delete task -->
       <symlink action="delete" link="deploy-local/bin" />
       <delete verbose="true" includeemptydirs="true">
-         <fileset dir="${targetDeploymentDir}"
+         <fileset dir="${deploy_target_dir}"
                   includes="**/*"
                   defaultexcludes="false" />
       </delete>
@@ -116,62 +116,43 @@
       <mkdir dir="${targetDeploymentDir}/fragment.d/template.d" />
       <mkdir dir="${targetDeploymentDir}/static" />
 
-      <generate_version_tag output="res/template.d" />
-      <generate_version_tag outputDir="${targetDeploymentDir}/fragment.d/template.d" />
-
-      <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
-      <mkdir dir="${targetDeploymentDir}/static/img" />
-
       <parallel>
 
          <!-- client code -->
-         <rsync src="${src_client}/" dst="${targetDeploymentDir}/static/js" />
+         <rsync src="${src_client}/" dst="${deploy_target_dir}/static/js" />
 
          <symlink if:true="${localServerUseSymlink}"
                   action="single"
                   overwrite="true"
-                  link="${targetDeploymentDir}/bin"
+                  link="${deploy_target_dir}/bin"
                   resource="${basedir}/${src_server}" />
          <rsync unless:true="${localServerUseSymlink}"
                 src="${basedir}/${src_server}/"
-                dst="${targetDeploymentDir}/bin" />
+                dst="${deploy_target_dir}/bin" />
 
          <!-- conf -->
          <copy file="res/etc/rhizi-server.conf"
-               tofile="${targetDeploymentDir}/etc/rhizi-server.conf" />
+               tofile="${deploy_target_dir}/etc/rhizi-server.conf" />
 
          <!-- res -->
-         <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
+         <rsync src="res/client/" dst="${deploy_target_dir}/static" />
 
          <!-- auth -->
          <copy file="res/etc/user_db.db"
-               tofile="${targetDeploymentDir}/user_db.db"
+               tofile="${deploy_target_dir}/user_db.db"
                failonerror="false" />
 
          <!-- default fragments: templates -->
-         <generate_version_tag outputdir="${deploy_target_dir}/fragment.d/template.d" />
+         <generate_version_tag outputDir="${deploy_target_dir}/fragment.d/template.d" />
          <rsync src="${default_fragmentd_src_path}/template.d"
                 dst="${deploy_target_dir}/fragment.d" />
 
          <!-- default fragments: other - [!] must reside under static/ -->
          <copy file="res/etc/rhizi-server.conf.example"
                tofile="res/etc/rhizi-server.conf" />
-         <copy todir="${targetDeploymentDir}/fragment.d/template.d"
-               failonerror="false">
-            <fileset dir="res/local/template/fragment/by-domain/${defaultDomain}"
-                     includes="*" />
-         </copy>
-         <!-- default fragments: templates -->
-         <generate_version_tag outputDir="${targetDeploymentDir}/fragment.d/template.d" />
-         <rsync src="${default_fragmentd_src_path}/template.d"
-                dst="${targetDeploymentDir}/fragment.d" />
-
-         <!-- default fragments: other - [!] must reside under static/ -->
-         <copy file="res/etc/rhizi-server.conf.example"
-               tofile="res/etc/rhizi-server.conf" />
          <!-- FIXME: generalize once #529 is resolved-->
          <copy file="${default_fragmentd_src_path}/js/domain_types.js"
-               todir="${targetDeploymentDir}/static/js/model"
+               todir="${deploy_target_dir}/static/js/model"
                failonerror="false" />
 
       </parallel>
@@ -181,16 +162,9 @@
                        build="build.js" />
 
       <parallel>
-         <!-- domain specific overrides -->
-         <copy file="src/local/domain/${targetDomain}/domain_types.js"
-               tofile="${targetDeploymentDir}/static/js/model/domain_types.js" />
-         <copy todir="${targetDeploymentDir}/fragment.d/template.d"
-               overwrite="true"
-               failonerror="false">
-            <fileset dir="res/local/template/fragment/by-domain/${targetDomain}" />
 
          <!-- domain specific fragments -->
-         <copy todir="${targetDeploymentDir}/static"
+         <copy todir="${deploy_target_dir}/static"
                overwrite="true"
                failonerror="false">
             <fileset dir="${domain_fragmentd_src_path}"
@@ -215,7 +189,7 @@
                        build="build.js" />
 
       <!-- -l: traverse bin/ -> ../src-py link -->
-      <rsync src="${targetDeploymentDir}/"
+      <rsync src="${deploy_target_dir}/"
              extraopts="--delete -lL ${filter_list_str}"
              dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/" />
 
