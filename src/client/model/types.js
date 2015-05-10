@@ -1,4 +1,4 @@
-define(['underscore', 'util', 'model/domain_types'],
+define(['underscore', 'util', 'domain_types'],
 function(_,            util,   domain_types)
 {
 
