@@ -17,12 +17,13 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="rhizi-server"
 NAME=rhizi__{{ domain_name }}
 DAEMON=/usr/bin/python2.7
+RZ_DAEMON=/usr/lib/rhizi/rhizi-server/rz_server.py
 PIDFILE=/var/run/rhizi/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 USERNAME=www-data
 GROUPNAME=www-data
 
-ARGS__DAEMON="/usr/lib/rhizi/rhizi-server/rz_server.py --config-dir=/etc/rhizi/mux-conf.d/{{ domain_name }}/"
+ARGS__DAEMON="$RZ_DAEMON --config-dir=/etc/rhizi/mux-conf.d/{{ domain_name }}/"
 ARGS__START_STOP_DAEMON="--make-pidfile --background --chuid ${USERNAME}:${GROUPNAME}"
 
 # Exit if the package is not installed
@@ -81,7 +82,7 @@ do_stop()
     # that waits for the process to drop all resources that could be
     # needed by services started subsequently.  A last resort is to
     # sleep for some time.
-    start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+    start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --name $RZ_DAEMON
     [ "$?" = 2 ] && return 2
 
     # Many daemons don't delete their pidfiles when they exit.
