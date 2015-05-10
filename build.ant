@@ -76,7 +76,7 @@
              value="${fragmentd_root_path}/default"
              description="source path for default fragments" />
    <property name="domain_fragmentd_src_path"
-             value="res/domain-fragment.d/${targetDomain}" />
+             value="${fragmentd_root_path}/${targetDomain}" />
 
    <tstamp>
       <format property="versionQualifier" pattern="yyyyMMddHHmm" />
@@ -108,13 +108,15 @@
 
       <local name="src_client" />
       <local name="src_server" />
+      <local name="fragment_d_path" />
       <property name="src_client" value="src/client" />
       <property name="src_server" value="src/server" />
+      <property name="fragment_d_path"
+                value="${deploy_target_dir}/fragment.d" />
 
-      <mkdir dir="${targetDeploymentDir}/etc" />
-      <mkdir dir="${targetDeploymentDir}/fragment.d" />
-      <mkdir dir="${targetDeploymentDir}/fragment.d/template.d" />
-      <mkdir dir="${targetDeploymentDir}/static" />
+      <mkdir dir="${deploy_target_dir}" />
+      <mkdir dir="${deploy_target_dir}/etc" />
+      <mkdir dir="${deploy_target_dir}/static" />
 
       <parallel>
 
@@ -143,17 +145,8 @@
                failonerror="false" />
 
          <!-- default fragments: templates -->
-         <generate_version_tag outputDir="${deploy_target_dir}/fragment.d/template.d" />
-         <rsync src="${default_fragmentd_src_path}/template.d"
-                dst="${deploy_target_dir}/fragment.d" />
-
-         <!-- default fragments: other - [!] must reside under static/ -->
-         <copy file="res/etc/rhizi-server.conf.example"
-               tofile="res/etc/rhizi-server.conf" />
-         <!-- FIXME: generalize once #529 is resolved-->
-         <copy file="${default_fragmentd_src_path}/js/domain_types.js"
-               todir="${deploy_target_dir}/static/js/model"
-               failonerror="false" />
+         <generate_version_tag outputdir="${fragment_d_path}/template.d" />
+         <rsync src="${default_fragmentd_src_path}/" dst="${fragment_d_path}" />
 
       </parallel>
 
@@ -163,10 +156,8 @@
 
       <parallel>
 
-         <!-- domain specific fragments -->
-         <copy todir="${deploy_target_dir}/static"
-               overwrite="true"
-               failonerror="false">
+         <!-- domain-specific fragments -->
+         <copy todir="${fragment_d_path}" overwrite="true" failonerror="false">
             <fileset dir="${domain_fragmentd_src_path}"
                      includes="**/*"
                      excludes="template.d/" />

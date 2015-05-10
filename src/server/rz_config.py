@@ -39,11 +39,12 @@ class RZ_Config(object):
         # - root_path: path to server root - relative paths are converted to absolute
         #                                    default: current working dir
         # - user_db_path: user_db path - relative paths are converted to absolute
-        # - template_d_relpath: root_path relative location of template dir
+        # - template_d_path: root_path relative location of template dir
         #
-        cfg['root_path'] = os.getcwd()
+        cfg['root_path'] = '.'
         cfg['user_db_path'] = './user_db.db'
-        cfg['template_d_relpath'] = 'fragment.d/template.d'
+        cfg['fragment_d_path'] = '/static/fragment.d'
+        cfg['template_d_path'] = '/static/fragment.d/template.d'
 
         # client configuration
         cfg['optimized_main'] = False
