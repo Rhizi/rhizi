@@ -10,16 +10,16 @@
         },
         paths: {
             autocomplete: lib_path + 'autocomplete',
-            caret: lib_path + 'caret',
             Bacon: lib_path + 'Bacon',
+            caret: lib_path + 'caret',
+            cola: lib_path + 'cola',
             d3: lib_path + 'd3/d3',
+            feedback: lib_path + 'feedback',
             FileSaver: lib_path + 'FileSaver',
+            html2canvas: lib_path + 'html2canvas',
             jquery: lib_path + 'jquery',
             socketio: lib_path + 'socket.io/socket.io.min_0.9.10',
-            html2canvas: lib_path + 'html2canvas',
             underscore: lib_path + 'underscore',
-            feedback: lib_path + 'feedback',
-            cola: lib_path + 'cola',
         }
     }
 
