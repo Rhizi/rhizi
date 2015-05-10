@@ -3,7 +3,8 @@
 /**
  * Manage backend websocket connection
  */
-define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_diff, model_util, io) {
+define([ 'util', 'model/diff', 'model/util', 'socketio', 'view/activity'],
+function( util,   model_diff,   model_util,   io,              activity) {
 
     var ws_server_url = document.location.origin + '/graph'; // socketio namespace
 
@@ -71,6 +72,7 @@ define([ 'util', 'model/diff', 'model/util', 'socketio'], function(util, model_d
 
         console.log('ws: rx: ws_diff_merge__topo, committing wire-adapted topo_diff:', topo_diff);
 
+        activity.incomingActivityBus.push(topo_diff_spec);
         rz_mesh_graph_ref.commit_diff__topo(model_diff.new_topo_diff(topo_diff_spec));
     }
 
