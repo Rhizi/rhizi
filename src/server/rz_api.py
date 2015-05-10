@@ -42,8 +42,9 @@ def rz_mainpage(rzdoc_name=None):
             role_set = u_account.role_set
             rz_username = escape(u_account.rz_username)
 
+    rz_config = current_app.rz_config
     if None == rzdoc_name:
-        s_rzdoc_name = current_app.rz_config.rzdoc__mainpage_name
+        s_rzdoc_name = rz_config.rzdoc__mainpage_name
     else:
         try:
             s_rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name)
@@ -54,10 +55,12 @@ def rz_mainpage(rzdoc_name=None):
     # establish rz_config template values
     host_addr, host_port = request.host_sock_addr[0], request.host_sock_addr[1]
     rz_config = {'rz_config__rzdoc_cur__name': s_rzdoc_name,
-                 'rz_config__rzdoc__mainpage_name': current_app.rz_config.rzdoc__mainpage_name,
+                 'rz_config__rzdoc__mainpage_name': rz_config.rzdoc__mainpage_name,
                  'rz_config__hostname': host_addr,
                  'rz_config__port': host_port,
-                 'rz_config__optimized_main': 'true' if current_app.rz_config.optimized_main else 'false',
-                 'rz_config__role_set': role_set}
+                 'rz_config__optimized_main': 'true' if rz_config.optimized_main else 'false',
+                 'rz_config__role_set': role_set,
+                 'fragment_d_path': rz_config.fragment_d_path,
+                 }
     return render_template('index.html', rz_username=rz_username, **rz_config)
 
