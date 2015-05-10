@@ -253,10 +253,17 @@ def init_webapp(cfg, kernel):
     #
     # init webapp
     #
+
+    # due to magic in os.path.join: os.path.join('/a', '/b') -> '/b',
+    # we pass a non-absolute template_d path, even though it is configured as such
+    template_d_relpath = cfg.template_d_path
+    if template_d_relpath.startswith('/'): template_d_relpath = template_d_relpath[1:]
+
     webapp = FlaskExt(__name__,
                       static_folder='static',
                       static_url_path=cfg.static_url_path,
-                      template_folder=cfg.template_d_relpath)
+                      template_folder=template_d_relpath)
+
     webapp.config.from_object(cfg)
     webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
     webapp.rz_config = cfg
