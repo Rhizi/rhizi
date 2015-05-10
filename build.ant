@@ -131,8 +131,8 @@
 
          <!-- res -->
          <rsync src="res/client/" dst="${targetDeploymentDir}/static" />
-         <rsync src="res/template.d/"
-                dst="${targetDeploymentDir}/fragment.d/template.d" />
+         <rsync src="${fragmentd_default_path}/"
+                dst="${targetDeploymentDir}/fragment.d" />
 
          <!-- auth-->
          <copy file="res/etc/user_db.db"
