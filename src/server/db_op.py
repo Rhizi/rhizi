@@ -916,11 +916,11 @@ class DBO_rzdoc__create(DB_op):
         #
         # setup rzdoc node
         #
-        q_arr = ['merge (n:%s {id: {id}, name: {name}})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
+        q_arr = ['create (n:%s {rzdoc_attr})' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
                  'return n.id, n.name']
 
-        param_set = {'id': rzdoc.id,
-                     'name': rzdoc.name}
+        param_set = {'rzdoc_attr': {'id': rzdoc.id,
+                                    'name': rzdoc.name}}
 
         db_q = DB_Query(q_arr, param_set)
         self.add_db_query(db_q)
@@ -950,7 +950,6 @@ class DBO_rzdoc__delete(DB_op):
                  'delete r,n']
         db_q = DB_Query(q_arr)
         self.add_db_query(db_q)
-
 
 class DBO_rzdoc__list(DB_op):
 
