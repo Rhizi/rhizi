@@ -36,15 +36,13 @@ class RZ_Config(object):
         cfg['development_mode'] = False
 
         #
-        # defualt deployment places server under the following tree structure:
-        # .                   // root_dir_default
-        # └── bin
-        #     └── rz_server.py
+        # - root_path: path to server root - relative paths are converted to absolute
+        #                                    default: current working dir
+        # - user_db_path: user_db path - relative paths are converted to absolute
+        # - template_d_relpath: root_path relative location of template dir
         #
-        # - template_d_relpath: root_path relative path to template dir
-        #
-        root_dir_default = os.path.join(os.path.dirname(__file__), '..')
-        cfg['root_path'] = root_dir_default
+        cfg['root_path'] = os.getcwd()
+        cfg['user_db_path'] = './user_db.db'
         cfg['template_d_relpath'] = 'fragment.d/template.d'
 
         # client configuration
@@ -92,7 +90,6 @@ class RZ_Config(object):
         cfg['access_control'] = True
         cfg['acl_wl__email_domain_set'] = None
         cfg['acl_wl__email_address_file_path'] = None
-        cfg['user_db_path'] = './user_db.db'
         cfg['signup_enabled'] = True
 
         # Neo4j connection
@@ -155,9 +152,8 @@ class RZ_Config(object):
                 # keys which are expected to be capitalized
                 setattr(cfg, k, v)
 
-        # adjust paths
-        for path in ['config_dir',
-                     'root_path',
+        # use absolute paths for the following
+        for path in ['root_path',
                      'user_db_path']:
             path_value = getattr(cfg, path)
             if False == os.path.isabs(path_value):

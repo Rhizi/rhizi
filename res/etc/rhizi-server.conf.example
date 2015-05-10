@@ -8,8 +8,8 @@
 # General
 #
 #root_path =
-#template_d_path
-template_d_relpath = fragment.d/template.d
+#template_d_relpath =
+#user_db_path =
 
 development_mode = True
 static_url_path = /static
@@ -56,7 +56,6 @@ feedback_recipient = feedback@localhost
 # Security
 #
 access_control = True
-user_db_path = ./deploy-local/etc/user_db.db
 acl_wl__email_domain_set =
 acl_wl__email_address_file_path =
 signup_enabled = True
