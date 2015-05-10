@@ -1,5 +1,5 @@
-define(['jquery', 'jquery-ui', 'util', 'consts', 'model/diff', 'model/types', 'model/graph', 'messages'],
-function($, _unused_jquery_ui,  util,   consts,   model_diff,   model_types,  graph,          messages) {
+define(['jquery', 'util', 'consts', 'model/diff', 'model/types', 'model/graph', 'messages'],
+function($, util,   consts,   model_diff,   model_types,  graph,          messages) {
 
 "strict"
 
