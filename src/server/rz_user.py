@@ -424,9 +424,13 @@ def rest__user_signup():
             log.warning('user signup: request already pending: %s' % (existing_req))
             return make_response__json__html(status=HTTP_STATUS__200_OK, html_str=html_ok__already_pending)
 
-        if current_app.rz_config.access_control:
-            if False == acl_match__email_address(req_email_address):
-                return make_response__json__html(status=HTTP_STATUS__400_BAD_REQUEST, html_str=html_err__acl__singup % (req_email_address, current_app.rz_config.acl_wl__email_domain_set))
+        # match email if access_control is enabled and at least one ACL was provided
+        rz_config = current_app.rz_config
+        if rz_config.access_control:
+            if rz_config.acl_wl__email_domain_set is not None or \
+               rz_config.acl_wl__email_address_set is not None:
+                if False == acl_wl_match__email_address(req_email_address):
+                    return make_response__json__html(status=HTTP_STATUS__400_BAD_REQUEST, html_str=html_err__acl__singup % (req_email_address, current_app.rz_config.acl_wl__email_domain_set))
 
         us_req['submission_date'] = datetime.now()
         us_req['validation_key'] = generate_security_token()
@@ -531,7 +535,7 @@ def send_user_pw_reset__email(req__url_root, u_account, pw_reset_token):
                        body=msg_body)
     return pw_reset_link
 
-def acl_match__email_address(sanitized_email_address):
+def acl_wl_match__email_address(sanitized_email_address):
     """
     Match email against domain ACL / email_list ACL
 
