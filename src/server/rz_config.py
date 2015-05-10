@@ -106,7 +106,7 @@ class RZ_Config(object):
         ret.__dict__ = cfg  # allows setting of @property attributes
 
         # set default attribute cache values
-        ret.acl_wl__email_address_set_cached = None
+        ret.acl_wl__email_address_set_cached = None  # [!] may caching of None value - see property access function
 
         return ret
 
@@ -176,19 +176,26 @@ class RZ_Config(object):
         return '\n'.join(kv_item_set)
 
     @property
-    def acl_wl__email_address_set(self):  # lazy load on first access from configured file source
+    def acl_wl__email_address_set(self):
+        """
+        lazy load on first access from configured file source
+
+        [!] may cache None value
+        """
         if self.acl_wl__email_address_set_cached is not None:
-            return self.acl_wl__email_address_set_cached
+            return self.acl_wl__email_address_set_cached[0]
         else:  # first access, attempt to init from file
-            wl_email_set = []
             if self.acl_wl__email_address_file_path is not None:
+                wl_email_set = []
                 with open(self.acl_wl__email_address_file_path) as email_address_file:
                     for line in email_address_file.readlines():
                         # TODO: check email format
                         email = line
                         wl_email_set.append(email)
                 log.info('acl initialized: acl_wl__email_address, email-count: %d' % (len(wl_email_set)))
-            self.acl_wl__email_address_set_cached = wl_email_set
+                self.acl_wl__email_address_set_cached = wl_email_set
+            else:
+                self.acl_wl__email_address_set_cached = [None]
 
     @property
     def db_base_url(self):
