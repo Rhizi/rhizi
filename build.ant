@@ -104,8 +104,9 @@
       <property name="src_client" value="src/client" />
       <property name="src_server" value="src/server" />
 
-      <mkdir dir="${targetDeploymentDir}/static" />
+      <mkdir dir="${targetDeploymentDir}/etc" />
       <mkdir dir="${targetDeploymentDir}/fragment.d/template.d" />
+      <mkdir dir="${targetDeploymentDir}/static" />
 
       <generate_version_tag output="res/template.d" />
       <generate_version_tag outputDir="${targetDeploymentDir}/fragment.d/template.d" />
@@ -134,7 +135,7 @@
          <rsync src="${fragmentd_default_path}/"
                 dst="${targetDeploymentDir}/fragment.d" />
 
-         <!-- auth-->
+         <!-- auth -->
          <copy file="res/etc/user_db.db"
                tofile="${targetDeploymentDir}/user_db.db"
                failonerror="false" />
