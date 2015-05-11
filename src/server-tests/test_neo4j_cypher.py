@@ -91,6 +91,7 @@ class Test_DB_Op(unittest.TestCase):
                    'match ()-[:A]->()',
                    'match (n:`T_nMu7ktxW` {node_attr})',
                    'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)',
+                   'match (n:A)-[r:B*0..432]-(m)',
 
                    #
                    # UNICODE tests
