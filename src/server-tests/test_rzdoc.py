@@ -21,7 +21,7 @@ class TestRZDoc(unittest.TestCase):
 
     def setUp(self): pass
 
-    def test_rzdoc_lifcycle(self):
+    def test_rzdoc_lifecycle(self):
         test_label = neo4j_test_util.rand_label()
 
         rzdoc_name = test_label
