@@ -192,6 +192,14 @@ class DB_composed_op(DB_op):
             ret.append(s_result_set)
         return ret
 
+def obj_from_blob(blob):
+    """
+    @return json.loads(gzip_decompress(base64_decode(blob)))
+    """
+    blob_gzip = base64.decodestring(blob)
+    blob = gzip.zlib.decompress(blob_gzip)
+    return json.loads(blob)
+
 def obj_to_blob(obj):
     """
     @return: blob = base64(gzip(json.dumps(obj)))
@@ -217,7 +225,7 @@ class DBO_block_chain__commit(DB_op):
         ret = sha1.hexdigest()
         return ret
 
-    def __init__(self, commit_obj=None, ctx=None):
+    def __init__(self, commit_obj=None, ctx=None, meta=None):
         """
         @param commit_obj: serializable blob
 
@@ -256,6 +264,18 @@ class DBO_block_chain__commit(DB_op):
         # create commit-[:__Authored-by]->__User link if possible
         if None != ctx and None != ctx.user_name:
             self.add_statement(self._authored_by_statement(ctx.user_name))
+
+        if None != meta and 'sentence' in meta and meta['sentence'] != '':
+            self.add_statement(self._result_of_sentence(ctx.user_name, meta['sentence']))
+
+    def _result_of_sentence(self, user_name, sentence):
+        return ['match (head:%s:%s)' % (neo4j_schema.META_LABEL__VC_HEAD,
+                                        neo4j_schema.META_LABEL__VC_COMMIT),
+                'create (head)-[r:%s]->(result_of:%s {sentence: \'%s\'} )' % (
+                    neo4j_schema.META_LABEL__VC_COMMIT_RESULT_OF,
+                    neo4j_schema.META_LABEL__VC_OPERATION,
+                    sentence,
+                    )]
 
     def _authored_by_statement(self, user_name):
         return ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, user_name),
