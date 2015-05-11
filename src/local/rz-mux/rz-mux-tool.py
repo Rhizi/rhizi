@@ -78,7 +78,8 @@ def gen_dom_config__rhizi(domain_fqdn, cfg):
 
     conf_task_set = [Template_Task(os.path.join(rz_template_path_prefix, 'rhizi-server.conf.jinja'),
                                    os.path.join(install_prefix, 'etc/rhizi/mux-conf.d', domain_fqdn, 'rhizi-server.conf'),
-                                   {'domain_fqdn': domain_fqdn,
+                                   {'access_control': cfg.access_control,
+                                    'domain_fqdn': domain_fqdn,
                                     'neo4j_port__http': cfg.neo4j_port__http,
                                     'root_path': root_path,
                                     'rz_port__http': cfg.rz_port__http,
@@ -105,6 +106,7 @@ if __name__ == '__main__':
     p.add_argument('-d', '--domain', required=True, help='target domain name')
     p.add_argument('--install-prefix', default='/', help='install dir path prefix, default=\'/\'')
     p.add_argument('--template-dir', default='.', help='path to template dir')  # default devied from installed pkg layout
+    p.add_argument('--rz_config__disable_access_control', action='store_const', const=True, default=False)
     args = p.parse_args()
 
     env = Environment(loader=FileSystemLoader(args.template_dir))
@@ -120,6 +122,7 @@ if __name__ == '__main__':
     cfg.neo4j_port__http = port_seed + 1
     cfg.neo4j_port__shell = port_seed + 2
     cfg.rz_port__http = port_seed + 3
+    cfg.access_control = False if args.rz_config__disable_access_control else True
 
     gen_dom_config__neo4j(domain_fqdn, cfg)
     gen_dom_config__rhizi(domain_fqdn, cfg)
