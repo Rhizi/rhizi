@@ -192,6 +192,16 @@ class DB_composed_op(DB_op):
             ret.append(s_result_set)
         return ret
 
+def obj_to_blob(obj):
+    """
+    @return: blob = base64(gzip(json.dumps(obj)))
+    """
+    obj_str = json.dumps(obj)
+    blob_gzip = gzip.zlib.compress(obj_str)
+    blob_base64 = base64.encodestring(blob_gzip)
+
+    return blob_base64
+
 class DBO_block_chain__commit(DB_op):
     """
     Rhizi version control
@@ -215,7 +225,7 @@ class DBO_block_chain__commit(DB_op):
         """
         super(DBO_block_chain__commit, self).__init__()
 
-        blob = self._convert_to_blob(commit_obj)
+        blob = obj_to_blob(commit_obj)
         hash_value = self.calc_blob_hash(blob)
 
         l_id = generate_random_id__uuid()
@@ -253,24 +263,6 @@ class DBO_block_chain__commit(DB_op):
                  'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
                  ]
         self.add_statement(q_arr)
-
-    def _convert_to_blob(self, obj):
-        """
-        @return: blob = base64(gzip(json.dumps(obj)))
-        """
-        obj_str = json.dumps(obj)
-        blob_gzip = self._gzip_compress_string(obj_str)
-        blob_base64 = base64.encodestring(blob_gzip)
-
-        return blob_base64
-
-    def _gzip_compress_string(self, input_string):
-        out = sio.StringIO()
-        with gzip.GzipFile(fileobj=out, mode='wb') as f:
-            f.write(input_string)
-
-        ret = out.getvalue()
-        return ret
 
     def process_result_set(self):
         """
