@@ -190,7 +190,7 @@ class RZ_Kernel(object):
         self.cache__rzdoc_name_to_rzdoc[rzdoc_name] = rz_doc
         return rz_doc
 
-    def diff_commit__topo(self, topo_diff, ctx=None):
+    def diff_commit__topo(self, topo_diff, ctx):
         """
         commit a graph topology diff - this is a common pathway for:
            - RESP API calls
@@ -207,7 +207,7 @@ class RZ_Kernel(object):
         self.exec_chain_commit_op(topo_diff, ctx)
         return topo_diff, op_ret
 
-    def diff_commit__attr(self, attr_diff, ctx=None):
+    def diff_commit__attr(self, attr_diff, ctx):
         """
         commit a graph attribute diff - this is a common pathway for:
            - RESP API calls
