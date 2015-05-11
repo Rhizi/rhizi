@@ -254,15 +254,15 @@ class DBO_block_chain__commit(DB_op):
         self.l_id = l_id
 
         # create commit-[:__Authored-by]->__User link if possible
-        if None == ctx or None == ctx.user_name:
-            return
+        if None != ctx and None != ctx.user_name:
+            self.add_statement(self._authored_by_statement(ctx.user_name))
 
-        q_arr = ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, ctx.user_name),
-                 'with n',
-                 'match (m:%s)' % (neo4j_schema.META_LABEL__VC_HEAD),  # FIXME: specify commit-label index
-                 'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
-                 ]
-        self.add_statement(q_arr)
+    def _authored_by_statement(self, user_name):
+        return ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, user_name),
+                'with n',
+                'match (m:%s)' % (neo4j_schema.META_LABEL__VC_HEAD),  # FIXME: specify commit-label index
+                'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
+                ]
 
     def process_result_set(self):
         """
