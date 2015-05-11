@@ -182,9 +182,12 @@ case $1 in
         install_instance__neo4j
         install_instance__rhizi
 
+        # pass-on extra argument to python: install dom-x ...:
+        #    - opt: --rz_config__disable_access_control
+        if [ $# -ge 3 ] ; then shift 2; py_extra_args=$@ ; fi
         python /usr/lib/rhizi/tools/rz-mux/rz-mux-tool.py \
                --template-dir /usr/share/rhizi/rz-mux/ \
-               --domain ${RZI_NAME}
+               --domain ${RZI_NAME} ${py_extra_args}
 
         # set modes, ownership
         chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
