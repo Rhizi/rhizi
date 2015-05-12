@@ -16,6 +16,7 @@ class Attr_Diff(dict):
     def __init__(self):
         self['__type_node'] = {}
         self['__type_link'] = {}
+        self['meta'] = {}
 
     def init_node_attr_diff(self, n_id):
         ret = {'__attr_write': {},
@@ -54,6 +55,10 @@ class Attr_Diff(dict):
     @property
     def type__link(self):
         return self['__type_link']
+
+    @property
+    def meta(self):
+        return self['meta']
 
     def add_node_attr_write(self, n_id, attr_name, attr_val):
 
@@ -109,6 +114,7 @@ class Topo_Diff(object):
             self['link_id_set_add'] = link_id_set_add
             self['node_id_set_rm'] = node_id_set_rm
             self['link_id_set_rm'] = link_id_set_rm
+            self['meta'] = {}
 
         @staticmethod
         def from_json_dict(json_dict):
@@ -141,12 +147,14 @@ class Topo_Diff(object):
     def __init__(self, link_id_set_rm=[],
                        node_id_set_rm=[],
                        node_set_add=[],
-                       link_set_add=[]):
+                       link_set_add=[],
+                       meta={}):
 
         self.link_id_set_rm = link_id_set_rm
         self.node_id_set_rm = node_id_set_rm
         self.node_set_add = node_set_add
         self.link_set_add = link_set_add
+        self.meta = {}
 
     def __str__(self):
         return __name__ + ': ' + ', '.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
@@ -167,7 +175,8 @@ class Topo_Diff(object):
         ret = {k: getattr(self, k) for k in ['link_id_set_rm',
                                              'node_id_set_rm',
                                              'node_set_add',
-                                             'link_set_add'] }
+                                             'link_set_add',
+                                             'meta'] }
         return ret
 
     def to_str__commit_name(self):
