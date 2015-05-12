@@ -127,6 +127,16 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
     - didn't complete.
 
 # Deployment
+Deployment takes two forms currently: 
+- development mode, in which flask handles all resource serving, including client/server code, resources & fragments
+- reverse proxy mode, in which a reverse proxy, eg. Apache is used to serve all static content
+
+These modes impost a slightly different resource layout, and require the following values to be correcly set/injected:
+- app.js: <code>fragment_d_path</code>, handled by jinja
+- rhizi-server.conf: <code>fragment_d_path</code>
+- rhizi-server.conf: <code>template_d_path</code>
+
+## Deployment Steps
 - obtain a server configuration by either adjusting res/etc/rhizi-server.conf.example or reusing an already active one.
 - the following configuration keys will likely need changing: DEBUG, SECRET_KEY, root_path, access_control, etc.
 - let targetDomain be the target domain (i.e. rhizi.example.com)
@@ -139,7 +149,7 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
 - Deploying:
  $ ant -v -f build.ant -DremoteDeployServer=rhizi.example.com -Drsync_module=/srv/www/rhizi.example.com deploy-remote
 
-## getting the current config file from the server:
+### getting the current config file from the server:
 
  $ targetDomain="cri.rhizi.net"
  $ mkdir res/production-patch-set/${targetDomain}
