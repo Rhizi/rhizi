@@ -529,7 +529,7 @@ function GraphView(spec) {
             }
         }
 
-        var link_on_hover = function (d, debug_name) {
+        var link_on_hover = function (d) {
             $('#' + d.id).hover(function (e) {
                 link__hover__start.call(this, d);
             }, function (e) {
@@ -595,7 +595,7 @@ function GraphView(spec) {
         }
 
         link_g.each(function (d) {
-                link_on_hover(d, 'link-g');
+                link_on_hover(d);
             });
         link_g.on("click", function(d, i) {
                 if (zoomInProgress) {
