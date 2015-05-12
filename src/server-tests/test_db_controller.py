@@ -373,7 +373,7 @@ class TestDBController(unittest.TestCase):
 
     def test_rzdb__fetch_DB_metadata(self):
         rz_cfg = Config.generate_default()
-        op = DBO_rzdb__fetch_DB_metablock(rz_cfg)
+        op = DBO_rzdb__fetch_DB_metablock()
         dbmb = self.db_ctl.exec_op(op)
         print('%s' % (dbmb))
 
