@@ -783,6 +783,56 @@ class DBO_rzdb__init_DB(DB_composed_op):
         if isinstance(prv_sub_op, DBO_rzdb__fetch_DB_metablock) and prv_sub_op_ret is not None:
             raise Exception('DB contains metadata, aborting initialization of pre-initialized DB')
 
+class DBO_rzdoc__commit_log(DB_op):
+
+    def __init__(self, limit):
+        """
+        return last @limit commits including the operations that caused them
+        """
+        super(DBO_rzdoc__commit_log, self).__init__()
+        self.limit = limit
+
+        q_arr = ['match (n:%s)' % (
+                    neo4j_schema.META_LABEL__VC_HEAD,
+                 ),
+                 'match (n)-[:%s*0..%s]->(c)' % (
+                    neo4j_schema.META_LABEL__VC_PARENT,
+                    limit - 1,
+                 ),
+                 'optional match (c)-[:%s]->(o:%s)' % (
+                    neo4j_schema.META_LABEL__VC_COMMIT_RESULT_OF,
+                    neo4j_schema.META_LABEL__VC_OPERATION,
+                 ),
+                 'optional match (c)-[:`%s`]->(u:%s)' % (
+                    neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR,
+                    neo4j_schema.META_LABEL__USER,
+                 ),
+                 'return collect([c, o, u])'] # since o is optional we need to pair them
+
+        db_q = DB_Query(q_arr)
+        self.add_db_query(db_q)
+
+    def process_result_set(self):
+        ret = []
+        # break out the blobs, return them - binary all the way home
+        for _, _, r_set in self.iter__r_set():
+            for row in r_set:
+                pairs = row.items()[0]  # see query return statement
+                for commit, operation, user in pairs:
+                    if commit['blob'] == '':
+                        # root commit, done
+                        break
+                    # TODO: get author
+                    diff = obj_from_blob(commit['blob'])
+                    diff['meta'] = dict(
+                        ts_created=commit['ts_created'],
+                        author = 'Anonymous' if user is None else user['user_name'],
+                        commit=commit['hash'],
+                    )
+                    if None is not operation and 'sentence' in operation:
+                        diff['meta']['sentence'] = operation['sentence']
+                    ret.append(diff)
+        return ret
 
 class DBO_rzdoc__clone(DB_op):
 
