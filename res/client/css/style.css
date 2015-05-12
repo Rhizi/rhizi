@@ -1088,10 +1088,20 @@ g:focus circle {
 
 .activity-root-div {
   position: fixed;
-  right: 10px;
-  width: 100px;
-  height: 80%;
-  top: 10%; }
+  left: 10px;
+  width: 200px;
+  height: 70%;
+  top: 20%; }
+
+.activity-div {
+  border: 1px solid #004681; }
+
+.activity-div:hover {
+  color: #8eb6bf;
+  border-color: #8eb6bf; }
+
+.activity-div:focus {
+  outline: none; }
 
 .welcome-box {
   margin-left: auto;
