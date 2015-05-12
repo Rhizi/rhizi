@@ -59,16 +59,27 @@ function recenterZoom() {
     vis.attr("transform", "translate(0,0)scale(1)");
 }
 
-var initDrawingArea = function () {
+function init_graphs() {
+    var user_id = $('#user_id'),
+        user = user_id.text();
+
+    main_graph = new model_graph.Graph({temporary: false, base: null});
+    edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
+
+    if (user_id.length > 0) {
+        console.log('found user ID: \'' + user + '\'');
+        main_graph.set_user(user);
+        edit_graph.set_user(user);
+    }
+}
+
+var init_graph_views = function () {
 
     function zoom() {
         zoom_g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         d3.event.sourceEvent != null && d3.event.sourceEvent.stopPropagation();
         updateZoomProgress(true);
     }
-
-    main_graph = new model_graph.Graph({temporary: false, base: null});
-    edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
 
     // TODO: we are listening both on graph.diffBus and selection.selectionChangedBus,
     //  but the relation is actually:
@@ -83,15 +94,6 @@ var initDrawingArea = function () {
             update_view__graph(false);
         }
     );
-
-    var user_id = $('#user_id'),
-        user = user_id.text();
-
-    if (user_id.length > 0) {
-        console.log('found user ID: \'' + user + '\'');
-        main_graph.set_user(user);
-        edit_graph.set_user(user);
-    }
 
     var el = document.body;
     vis = d3.select('#graph-view__canvas').append("svg:svg")
@@ -201,7 +203,8 @@ function init_ws_connection(){
 }
 
 function init() {
-    initDrawingArea();
+    init_graphs();
+    init_graph_views();
     init_ws_connection();
     activity.init($('.graph-view'));
 
