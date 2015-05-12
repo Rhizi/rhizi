@@ -85,6 +85,8 @@ function( util,   model_diff,   model_util,   io,              activity) {
     function ws_diff_merge__attr(attr_diff_spec, attr_diff_cr) {
         var attr_diff = model_diff.new_attr_diff_from_spec(attr_diff_spec); // run through validation
         console.log('ws: rx: ws_diff_merge__attr, committing wire-adapted topo_diff:', attr_diff);
+
+        activity.incomingActivityBus.push(attr_diff_spec);
         rz_mesh_graph_ref.commit_diff__attr(attr_diff);
     }
 
