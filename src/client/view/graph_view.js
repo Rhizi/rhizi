@@ -510,19 +510,30 @@ function GraphView(spec) {
                 });
         }
 
+        /*
+         * @this - the element being hovered on. Could use d.id instead
+         */
+        var link__hover__start = function (d) {
+            add_class(this, 'hovering');
+            // show text if not selected
+            if (!selection.link_related(d)) {
+                set_link_label_text(this.id, link_text__short(d));
+            }
+        }
+
+        var link__hover__end = function (d) {
+            remove_class(this, 'hovering');
+            // hide text if not selected
+            if (!selection.link_related(d)) {
+                set_link_label_text(this.id, "");
+            }
+        }
+
         var link_on_hover = function (d, debug_name) {
             $('#' + d.id).hover(function (e) {
-                add_class(this, 'hovering');
-                // show text if not selected
-                if (!selection.link_related(d)) {
-                    set_link_label_text(this.id, link_text__short(d));
-                }
+                link__hover__start.call(this, d);
             }, function (e) {
-                remove_class(this, 'hovering');
-                // hide text if not selected
-                if (!selection.link_related(d)) {
-                    set_link_label_text(this.id, "");
-                }
+                link__hover__end.call(this, d);
             });
         }
 
