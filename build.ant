@@ -89,15 +89,16 @@
 
    <target name="deploy-local.clean">
 
-      <mkdir dir="${deploy_target_dir}" description="bootstrap if missing" />
+      <symlink action="delete" link="${deploy_target_dir}/static/fragment.d" />
+      <symlink action="delete" link="${deploy_target_dir}/bin" />
 
-      <!-- bin/ -> link: avoid specifying followsymlinks on the following delete task -->
-      <symlink action="delete" link="deploy-local/bin" />
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${deploy_target_dir}"
                   includes="**/*"
-                  defaultexcludes="false" />
+                  defaultexcludes="false"
+                  followsymlinks="false" />
       </delete>
+
    </target>
 
    <target name="deploy-local"
