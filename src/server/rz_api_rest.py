@@ -202,7 +202,8 @@ def rzdoc_clone():
     ctx = __context__common(rzdoc_name)
     topo_diff = kernel.rzdoc__clone(ctx.rzdoc, ctx)
     topo_diff_json = topo_diff.to_json_dict()  # serialize Topo_Diff before including in response
-    return common_resp_handle__success(data=topo_diff_json)
+    commit_log = kernel.rzdoc__commit_log(ctx.rzdoc, limit=10)
+    return common_resp_handle__success(data=[topo_diff_json, commit_log])
 
 @common_rest_req_exception_handler
 def rzdoc__create(rzdoc_name):
