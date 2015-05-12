@@ -106,11 +106,7 @@
 
       <!-- [!] trailing '/' on rsync src targets critical -->
 
-      <local name="src_client" />
-      <local name="src_server" />
       <local name="fragment_d_path" />
-      <property name="src_client" value="src/client" />
-      <property name="src_server" value="src/server" />
       <property name="fragment_d_path"
                 value="${deploy_target_dir}/fragment.d" />
 
@@ -121,15 +117,19 @@
       <parallel>
 
          <!-- client code -->
-         <rsync src="${src_client}/" dst="${deploy_target_dir}/static/js" />
+         <rsync src="src/client/" dst="${deploy_target_dir}/static/js" />
 
+         <!-- [!] use absolute paths on all symlink targets -->
          <symlink if:true="${localServerUseSymlink}"
                   action="single"
-                  overwrite="true"
                   link="${deploy_target_dir}/bin"
-                  resource="${basedir}/${src_server}" />
+                  resource="${basedir}/src/server" />
+         <symlink if:true="${localServerUseSymlink}"
+                  action="single"
+                  link="${deploy_target_dir}/static/fragment.d"
+                  resource="${basedir}/${fragment_d_path}" />
          <rsync unless:true="${localServerUseSymlink}"
-                src="${basedir}/${src_server}/"
+                src="src/server/"
                 dst="${deploy_target_dir}/bin" />
 
          <!-- conf -->
