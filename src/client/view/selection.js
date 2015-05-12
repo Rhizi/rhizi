@@ -73,8 +73,8 @@ function listen_on_diff_bus(diffBus)
                 return get_main_graph().find_link__by_id(n.id) !== null;
             });
             // reselect based on current graph
-            inner_select(new_selected_nodes=new_selected_nodes, new_related_nodes=new_related_nodes,
-                         new_selected_links=new_selected_links, new_related_links=new_related_links);
+            inner_select(new_selected_nodes, new_related_nodes,
+                         new_selected_links, new_related_links);
         });
 }
 
