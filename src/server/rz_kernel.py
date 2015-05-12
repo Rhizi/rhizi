@@ -14,7 +14,7 @@ from db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__cr
     DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop,
     DBO_match_node_set_by_id_attribute, DBO_rzdb__fetch_DB_metablock,
     DBO_rzdb__init_DB)
-from db_op import DBO_diff_commit__topo
+from db_op import DBO_diff_commit__topo, DBO_rzdoc__commit_log
 from model.graph import Topo_Diff
 from model.model import RZDoc
 from neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
@@ -301,6 +301,16 @@ class RZ_Kernel(object):
 
         topo_diff = self.db_ctl.exec_op(op)
         return topo_diff
+
+    def rzdoc__commit_log(self, rzdoc, limit):
+        """
+        return commit log
+        """
+        op = DBO_rzdoc__commit_log(limit=limit)
+        op = QT_RZDOC_Meta_NS_Filter(rzdoc)(op)
+
+        commit_log = self.db_ctl.exec_op(op)
+        return commit_log
 
     def rzdoc__create(self, rzdoc_name, ctx=None):
         """
