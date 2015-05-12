@@ -207,7 +207,7 @@ function init() {
     init_graphs();
     init_graph_views();
     init_ws_connection();
-    activity.init($('.graph-view'));
+    activity.init(main_graph, $('.graph-view'));
 
     if (rz_config.backend_enabled) {
         var cur_rzdoc_name = rzdoc__current__get_name();
