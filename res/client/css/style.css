@@ -890,6 +890,12 @@ p {
   stroke-width: 5px;
   opacity: 1; }
 
+.circle.hovering {
+  stroke: #ff8b11;
+  stroke-opacity: 1;
+  stroke-width: 5px;
+  opacity: 1; }
+
 .nodetext {
   fill: #363636;
   font-size: 18px;

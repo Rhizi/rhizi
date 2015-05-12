@@ -41,6 +41,14 @@
     opacity: 1;
 }
 
+// [!] identical to :hover, used by activity
+.circle.hovering {
+    stroke: $orange;
+    stroke-opacity: 1;
+    stroke-width: 5px;
+    opacity: 1;
+}
+
 .nodetext {
   fill: $dark-grey;
   font-size: $h3-size;
