@@ -53,11 +53,11 @@
    </macrodef>
 
    <macrodef name="generate_version_tag">
-      <attribute name="output" />
+      <attribute name="outputDir" />
       <sequential>
          <exec dir="${basedir}"
                executable="/usr/bin/git"
-               output="@{output}/version.txt">
+               output="@{outputDir}/version.txt">
             <arg line="describe" />
          </exec>
       </sequential>
@@ -108,6 +108,7 @@
       <mkdir dir="${targetDeploymentDir}/fragment.d/template.d" />
 
       <generate_version_tag output="res/template.d" />
+      <generate_version_tag outputDir="${targetDeploymentDir}/fragment.d/template.d" />
 
       <!-- note: defaults to not overwriting, so rhizi-server.conf is safe  -->
 
@@ -138,7 +139,12 @@
                tofile="${targetDeploymentDir}/user_db.db"
                failonerror="false" />
 
-         <!-- domain specific defaults-->
+         <!-- default fragments: templates -->
+         <generate_version_tag outputdir="${deploy_target_dir}/fragment.d/template.d" />
+         <rsync src="${default_fragmentd_src_path}/template.d"
+                dst="${deploy_target_dir}/fragment.d" />
+
+         <!-- default fragments: other - [!] must reside under static/ -->
          <copy file="res/etc/rhizi-server.conf.example"
                tofile="res/etc/rhizi-server.conf" />
          <copy todir="${targetDeploymentDir}/fragment.d/template.d"
@@ -243,7 +249,7 @@
       </replaceregexp>
 
       <!-- generate version fragment -->
-      <generate_version_tag output="${build_dir__deb_pkg}/res/template.d" />
+      <generate_version_tag outputdir="${build_dir__deb_pkg}/${default_fragmentd_src_path}/template.d" />
 
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${build_dir__deb_pkg}" includes="Makefile" />
