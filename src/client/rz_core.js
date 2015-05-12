@@ -71,6 +71,7 @@ function init_graphs() {
         main_graph.set_user(user);
         edit_graph.set_user(user);
     }
+    activity.incomingActivityBus.plug(main_graph.activityBus);
 }
 
 var init_graph_views = function () {
