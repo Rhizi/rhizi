@@ -92,7 +92,11 @@ class Test_DB_Op(unittest.TestCase):
                    'match ()-[:A]->()',
                    'match (n:`T_nMu7ktxW` {node_attr})',
                    'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)',
-                   'match (n:A)-[r:B*0..432]-(m)',
+
+                   # path quantifier
+                   'match (n:A)-[r:B*0..4]-(m)',
+                   'match (m)-[*0..2]-(m)',
+                   'match ()-[r*0..6]-()',
 
                    #
                    # UNICODE tests
@@ -155,7 +159,7 @@ class Test_DB_Op(unittest.TestCase):
         dbq = DB_Query(q_arr)
         dbq_set = [dbq]
 
-        #dbq_set = dbq_set[:1]
+        # dbq_set = dbq_set[:1]
         self.test_T__common(dbq_set, QT_RZDOC_NS_Filter, test_rzdoc)
 
     def test_T__common(self, dbq_set, T, *args):
