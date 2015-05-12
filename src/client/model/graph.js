@@ -14,6 +14,7 @@ function Graph(spec) {
         id_to_link_map,
         id_to_link_id_set,
         diffBus = new Bacon.Bus(),
+        activityBus = new Bacon.Bus(),
         cached_links,
         invalidate_links = true,
         cached_nodes,
@@ -33,6 +34,10 @@ function Graph(spec) {
     // All operations done on the graph. When the server is used (i.e. always) this
     // bus contains the server events, not the user events (most of the time the same just with delay).
     this.diffBus = diffBus;
+
+    // Same as diffBus, but includes operations done in the past, loaded when
+    // the document is loaded (commit log)
+    this.activityBus = activityBus;
 
     var links_forEach = function (f) {
         for (var link_key in id_to_link_map) {
