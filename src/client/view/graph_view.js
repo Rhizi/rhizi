@@ -522,6 +522,7 @@ function GraphView(spec) {
                 set_link_label_text(d.id, link_text__short(d));
             }
         }
+        gv.link__hover__start = link__hover__start;
 
         var link__hover__end = function (d) {
             var e = document.getElementById(d.id);
@@ -532,6 +533,7 @@ function GraphView(spec) {
                 set_link_label_text(d.id, "");
             }
         }
+        gv.link__hover__end = link__hover__end;
 
         var link_on_hover = function (d) {
             $('#' + d.id).hover(function (e) {
@@ -539,6 +541,18 @@ function GraphView(spec) {
             }, function (e) {
                 link__hover__end(d);
             });
+        }
+
+        gv.node__hover__start = function (d) {
+            var e = document.getElementById(d.id);
+
+            add_class(e, 'hovering');
+        }
+
+        gv.node__hover__end = function (d) {
+            var e = document.getElementById(d.id);
+
+            remove_class(e, 'hovering');
         }
 
         relayout = (relayout === undefined && true) || relayout;
