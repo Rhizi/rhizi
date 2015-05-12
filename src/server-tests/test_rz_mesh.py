@@ -12,6 +12,10 @@ from neo4j_util import generate_random_id__uuid
 from rz_api_websocket import WebSocket_Graph_NS
 import test_util
 
+if 'debug__pydev_pd_arg' not in globals():
+    def debug__pydev_pd_arg(f):
+        return f
+
 class RZ_websocket(object):
 
     def __init__(self, namespace=BaseNamespace):
