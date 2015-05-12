@@ -255,9 +255,7 @@ function arr_compare(a1, a2)
 
 var inner_select_nodes = function(nodes, keep_selected_links)
 {
-    var related = nodes.length == 1 ? neighbours(nodes) : mutual_neighbours(nodes);
-
-    inner_select(nodes, related.nodes, keep_selected_links ? selected_links : [], related.links);
+    select_both(nodes, keep_selected_links ? selected_links : []);
 }
 
 var select_nodes = function(nodes, keep_selected_links)
@@ -268,6 +266,13 @@ var select_nodes = function(nodes, keep_selected_links)
     if (not_same) {
         inner_select_nodes(new_nodes, keep_selected_links);
     }
+}
+
+var select_both = function(new_nodes, new_links)
+{
+    var related = new_nodes.length == 1 ? neighbours(new_nodes) : mutual_neighbours(new_nodes);
+
+    inner_select(new_nodes, related.nodes, new_links, related.links);
 }
 
 var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
@@ -306,6 +311,11 @@ var invert_link = function(link)
 var invert_nodes = function(nodes)
 {
     select_nodes(invert(selected_nodes, nodes), true);
+}
+
+var invert_both = function(nodes, links)
+{
+    select_both(invert(selected_nodes, nodes), invert(selected_links, links));
 }
 
 var setup_toolbar = function(main_graph, main_graph_view)
@@ -387,6 +397,8 @@ return {
     invert_nodes: invert_nodes,
     select_link: select_link,
     invert_link: invert_link,
+    select_both: select_both,
+    invert_both: invert_both,
     class__node: class__node,
     class__link: class__link,
     node_selected: node_selected,
