@@ -204,7 +204,9 @@ class RZ_Kernel(object):
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         op_ret = self.db_ctl.exec_op(op)
-        self.exec_chain_commit_op(topo_diff, ctx)
+        ts_created = self.exec_chain_commit_op(topo_diff, ctx, topo_diff.meta)
+        topo_diff.meta['ts_created'] = ts_created
+        op_ret['meta'] = topo_diff.meta
         return topo_diff, op_ret
 
     def diff_commit__attr(self, attr_diff, ctx):
@@ -221,10 +223,11 @@ class RZ_Kernel(object):
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         op_ret = self.db_ctl.exec_op(op)
-        self.exec_chain_commit_op(attr_diff, ctx)
+        ts_created = self.exec_chain_commit_op(attr_diff, ctx)
+        attr_diff.meta['ts_created'] = ts_created
         return attr_diff, op_ret
 
-    def exec_chain_commit_op(self, diff_obj, ctx):
+    def exec_chain_commit_op(self, diff_obj, ctx, meta=None):
 
         # FIXME: clean
         if isinstance(diff_obj, Topo_Diff):
@@ -233,9 +236,10 @@ class RZ_Kernel(object):
             commit_obj = diff_obj
 
         rzdoc = ctx.rzdoc
-        op = DBO_block_chain__commit(commit_obj, ctx)
+        op = DBO_block_chain__commit(commit_obj, ctx, meta)
         op = QT_RZDOC_Meta_NS_Filter(rzdoc)(op)
-        self.db_ctl.exec_op(op)
+        op_ret = self.db_ctl.exec_op(op)
+        return op_ret.meta['ts_created']
 
     def load_node_set_by_id_attr(self, id_set, ctx=None):
         op = DBO_match_node_set_by_id_attribute(id_set=id_set)

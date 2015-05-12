@@ -245,7 +245,7 @@ class DBO_block_chain__commit(DB_op):
                  'create (new_head)-[r:%s {link_attr}]->(old_head)' % (neo4j_schema.META_LABEL__VC_PARENT),
                  'remove old_head:%s' % (neo4j_schema.META_LABEL__VC_HEAD),
                  'set new_head.ts_created=timestamp()',
-                 'return {head_parent_commit: old_head, head_commit: new_head}'
+                 'return {head_parent_commit: old_head, head_commit: new_head, ts_created: new_head.ts_created}'
                  ]
 
         q_param_set = {'commit_attr': {'blob': blob,
@@ -292,15 +292,18 @@ class DBO_block_chain__commit(DB_op):
 
         hash_parent = None
         hash_child = None
+        ts_created = None
         for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
 
                     assert None == hash_parent  # assert hash values set once only
                     assert None == hash_child
+                    assert None == ts_created
 
                     hash_parent = ret_dict['head_parent_commit']['hash']
                     hash_child = ret_dict['head_commit']['hash']
+                    ts_created = ret_dict['ts_created']
 
         ret.node_set_add = [{'id': self.n_id,
                              '__label_set': ['__Commit']}
@@ -309,6 +312,7 @@ class DBO_block_chain__commit(DB_op):
         l['id'] = self.l_id
         l['__type'] = '__Parent'
         ret.link_set_add = [l]
+        ret.meta['ts_created'] = ts_created
         return ret
 
 class DBO_block_chain__init(DB_op):
