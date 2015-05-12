@@ -78,7 +78,10 @@ To update the css files you need [sass](http://sass-lang.com/). To rebuild the c
 
  For dev mode(debbuging, manual file load) use `?debug=1` at end of URL: e.g. `file://rhizifolder/html.index?debug=1`
 
-## CSS / SCSS Coding Conventions
+## Coding Conventions - Ant Scripts
+- use underscore as delimiter in var name, eg: <code>pkg_foo_bar</code>
+
+## Coding Conventions - CSS / SCSS
 - assume use of modern browsers
 - indent files using 4 space characters
 - apply alphabetical ordering whenever possible: selectors, directives, etc.
