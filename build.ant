@@ -163,6 +163,11 @@
                      excludes="template.d/" />
          </copy>
 
+         <replaceregexp file="${deploy_target_dir}/static/js/app.js">
+            <regexp pattern="\$\{fragment_d_path\}" />
+            <substitution expression="/static/fragment.d" />
+         </replaceregexp>
+
       </parallel>
 
    </target>
@@ -241,6 +246,11 @@
       <replaceregexp file="${build_dir__deb_pkg}/debian/control">
          <regexp pattern="\$\{package-name\}" />
          <substitution expression="${package_name}" />
+      </replaceregexp>
+
+      <replaceregexp file="${build_dir__deb_pkg}/src/client/app.js">
+         <regexp pattern="\$\{fragment_d_path\}" />
+         <substitution expression="/fragment.d" />
       </replaceregexp>
 
       <!-- generate version fragment -->
