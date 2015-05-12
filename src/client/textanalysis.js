@@ -366,7 +366,7 @@ var textAnalyser = function (spec) {
         nodes = [],
         nodes_set = {},
         links = [],
-        ret = model_diff.new_topo_diff();
+        ret = model_diff.new_topo_diff({meta: {sentence: newtext}});
 
     util.assert(spec.sentence !== undefined &&
                 spec.finalize !== undefined &&
