@@ -263,26 +263,26 @@ class DBO_block_chain__commit(DB_op):
 
         # create commit-[:__Authored-by]->__User link if possible
         if None != ctx and None != ctx.user_name:
-            self.add_statement(self._authored_by_statement(ctx.user_name))
+            self.add_statement(self._add_statement__authored_by(ctx.user_name))
 
         if None != meta and 'sentence' in meta and meta['sentence'] != '':
-            self.add_statement(self._result_of_sentence(ctx.user_name, meta['sentence']))
+            self.add_statement(self._add_statement__result_of_sentence(ctx.user_name, meta['sentence']))
 
-    def _result_of_sentence(self, user_name, sentence):
-        return ['match (head:%s:%s)' % (neo4j_schema.META_LABEL__VC_HEAD,
-                                        neo4j_schema.META_LABEL__VC_COMMIT),
-                'create (head)-[r:%s]->(result_of:%s {sentence: \'%s\'} )' % (
-                    neo4j_schema.META_LABEL__VC_COMMIT_RESULT_OF,
-                    neo4j_schema.META_LABEL__VC_OPERATION,
-                    sentence,
-                    )]
-
-    def _authored_by_statement(self, user_name):
+    def _add_statement__authored_by(self, user_name):
         return ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, user_name),
                 'with n',
                 'match (m:%s)' % (neo4j_schema.META_LABEL__VC_HEAD),  # FIXME: specify commit-label index
                 'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
                 ]
+
+    def _add_statement__result_of_sentence(self, user_name, sentence):
+        return ['match (head:%s:%s)' % (neo4j_schema.META_LABEL__VC_HEAD,
+                                        neo4j_schema.META_LABEL__VC_COMMIT),
+                'create (head)-[r:%s]->(result_of:%s {sentence: \'%s\'} )' % (
+                neo4j_schema.META_LABEL__VC_COMMIT_RESULT_OF,
+                neo4j_schema.META_LABEL__VC_OPERATION,
+                sentence,
+                )]
 
     def process_result_set(self):
         """
@@ -811,7 +811,7 @@ class DBO_rzdoc__commit_log(DB_op):
                     neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR,
                     neo4j_schema.META_LABEL__USER,
                  ),
-                 'return collect([c, o, u])'] # since o is optional we need to pair them
+                 'return collect([c, o, u])']  # since o is optional we need to pair them
 
         db_q = DB_Query(q_arr)
         self.add_db_query(db_q)
@@ -830,7 +830,7 @@ class DBO_rzdoc__commit_log(DB_op):
                     diff = obj_from_blob(commit['blob'])
                     diff['meta'] = dict(
                         ts_created=commit['ts_created'],
-                        author = 'Anonymous' if user is None else user['user_name'],
+                        author='Anonymous' if user is None else user['user_name'],
                         commit=commit['hash'],
                     )
                     if None is not operation and 'sentence' in operation:
