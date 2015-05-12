@@ -911,12 +911,17 @@ function Graph(spec) {
     }
 
     function __commit_diff_ajax__clone(clone) {
-        var node_specs = clone.node_set_add.map(on_backend__node_add),
+        var topo = clone[0],
+            commits = clone[1],
+            node_specs = topo.node_set_add.map(on_backend__node_add),
             nodes = _add_node_set(node_specs),
-            link_specs = clone.link_set_add.map(on_backend__link_add).filter(function (link_spec) {
+            link_specs = topo.link_set_add.map(on_backend__link_add).filter(function (link_spec) {
                 return link_spec !== null;
             }),
             links = _add_link_set(link_specs);
+        commits.forEach(function (commit) {
+            activityBus.push(commit);
+        });
         diffBus.push({node_set_add: nodes, link_set_add: links});
     }
 
