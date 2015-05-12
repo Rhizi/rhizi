@@ -1,15 +1,12 @@
-import base64
 from copy import deepcopy
-import gzip
 import hashlib
-import json
 import logging
 import re
 
 import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
-from model.model import Link, RZDoc
+from model.model import Link, RZDoc, RZCommit
 from neo4j_cypher import DB_Query, DB_result_set
 import neo4j_schema
 from neo4j_util import cfmt
@@ -192,24 +189,6 @@ class DB_composed_op(DB_op):
             ret.append(s_result_set)
         return ret
 
-def obj_from_blob(blob):
-    """
-    @return json.loads(gzip_decompress(base64_decode(blob)))
-    """
-    blob_gzip = base64.decodestring(blob)
-    blob = gzip.zlib.decompress(blob_gzip)
-    return json.loads(blob)
-
-def obj_to_blob(obj):
-    """
-    @return: blob = base64(gzip(json.dumps(obj)))
-    """
-    obj_str = json.dumps(obj)
-    blob_gzip = gzip.zlib.compress(obj_str)
-    blob_base64 = base64.encodestring(blob_gzip)
-
-    return blob_base64
-
 class DBO_block_chain__commit(DB_op):
     """
     Rhizi version control
@@ -233,7 +212,7 @@ class DBO_block_chain__commit(DB_op):
         """
         super(DBO_block_chain__commit, self).__init__()
 
-        blob = obj_to_blob(commit_obj)
+        blob = RZCommit.blob_from_diff_obj(commit_obj)
         hash_value = self.calc_blob_hash(blob)
 
         l_id = generate_random_id__uuid()
@@ -827,12 +806,11 @@ class DBO_rzdoc__commit_log(DB_op):
                         # root commit, done
                         break
                     # TODO: get author
-                    diff = obj_from_blob(commit['blob'])
-                    diff['meta'] = dict(
-                        ts_created=commit['ts_created'],
-                        author='Anonymous' if user is None else user['user_name'],
-                        commit=commit['hash'],
-                    )
+                    diff = RZCommit.diff_obj_from_blob(commit['blob'])
+                    diff['meta'] = dict(ts_created=commit['ts_created'],
+                                        author='Anonymous' if user is None else user['user_name'],
+                                        commit=commit['hash'],
+                                        )
                     if None is not operation and 'sentence' in operation:
                         diff['meta']['sentence'] = operation['sentence']
                     ret.append(diff)

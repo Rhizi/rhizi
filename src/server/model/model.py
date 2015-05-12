@@ -1,3 +1,35 @@
+import base64
+import gzip
+import json
+
+class RZCommit():
+    """
+    Rhizi Commit object
+
+    Currently this object is substituted by either a diff object, this currently
+    acts as a model stub.
+    """
+
+    @staticmethod
+    def diff_obj_from_blob(blob):
+        """
+        @return json.loads(gzip_decompress(base64_decode(blob)))
+        """
+        blob_gzip = base64.decodestring(blob)
+        blob = gzip.zlib.decompress(blob_gzip)
+        return json.loads(blob)
+
+    @staticmethod
+    def blob_from_diff_obj(obj):
+        """
+        @return: blob = base64(gzip(json.dumps(obj)))
+        """
+        obj_str = json.dumps(obj)
+        blob_gzip = gzip.zlib.compress(obj_str)
+        blob_base64 = base64.encodestring(blob_gzip)
+
+        return blob_base64
+
 class Link():
     """
     documentation anchor - this class currently carries no implementation
@@ -38,8 +70,8 @@ class Link():
 
 class RZDoc():
 
-    def __init__(self, rzdoc_name = None):
-        self.id = None # set upon DB commit
+    def __init__(self, rzdoc_name=None):
+        self.id = None  # set upon DB commit
         self.name = rzdoc_name
 
     def __eq__(self, other):
