@@ -4,13 +4,15 @@ function($,        _,            Bacon,        selection) {
 var incomingActivityBus = new Bacon.Bus(),
     activity_element,
     graph_view_element,
+    graph_view,
     graph;
 
-function init(_graph, _graph_view_element)
+function init(_graph, _graph_view, _graph_view_element)
 {
     activity_element = $('<div class="activity-root-div"></div>');
     graph_view_element = _graph_view_element;
     graph_view_element.append(activity_element);
+    graph_view = _graph_view;
     graph = _graph;
 }
 
@@ -104,6 +106,13 @@ function appendActivity(diff)
     new_div.on('click', function (event) {
         (event.shiftKey ? selection.invert_both : selection.select_both)
             (affected_nodes, affected_links);
+    });
+    new_div.hover(function (e) {
+        _.each(affected_nodes, graph_view.node__hover__start);
+        _.each(affected_links, graph_view.link__hover__start);
+    }, function (e) {
+        _.each(affected_nodes, graph_view.node__hover__end);
+        _.each(affected_links, graph_view.link__hover__end);
     });
     // TODO - x button
     // TODO - format of text per activity (topo/attr)
