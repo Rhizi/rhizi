@@ -5,7 +5,9 @@ import db_controller
 import neo4j_test_util
 from rz_kernel import RZ_Kernel
 from rz_server import Config
+from model.graph import Topo_Diff
 from test_util__pydev import debug__pydev_pd_arg
+import test_util
 
 
 class TestRZDoc(unittest.TestCase):
@@ -35,6 +37,32 @@ class TestRZDoc(unittest.TestCase):
         self.kernel.rzdoc__delete(lookup_ret)
         lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
         self.assertIsNone(lookup_ret)
+
+    def test_rzdoc_commit_log(self):
+        rzdoc_a = 'test_commit_log_doc_a'
+        rzdoc_b = 'test_commit_log_doc_b'
+        for rzdoc_name in [rzdoc_a, rzdoc_b]:
+            lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+            if lookup_ret != None:
+                self.kernel.rzdoc__delete(lookup_ret)
+        ret_create = self.kernel.rzdoc__create(rzdoc_a)
+        ret_create = self.kernel.rzdoc__create(rzdoc_b)
+        node_a, _ = test_util.generate_random_node_dict('type_a')
+        node_b, _ = test_util.generate_random_node_dict('type_b')
+        topo_diff_a = Topo_Diff(node_set_add=[node_a], meta={'sentence': 'a'})
+        topo_diff_b = Topo_Diff(node_set_add=[node_b], meta={'sentence': 'b'})
+        class FakeRZDoc(object):
+            def __init__(self, id):
+                self.id = id
+        class FakeContext(object):
+            def __init__(self, id):
+                self.rzdoc = FakeRZDoc(id)
+                self.user_name = None
+        ctx_a = FakeContext(rzdoc_a)
+        ctx_b = FakeContext(rzdoc_b)
+        self.kernel.diff_commit__topo(topo_diff=topo_diff_a, ctx=ctx_a)
+        self.kernel.diff_commit__topo(topo_diff=topo_diff_b, ctx=ctx_b)
+        commit_log = self.kernel.rzdoc__commit_log(rzdoc=ctx_a, limit=10)
 
     def tearDown(self): pass
 
