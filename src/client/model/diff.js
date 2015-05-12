@@ -6,6 +6,18 @@
 define(['consts'],
 function(consts) {
 
+function Meta(obj_spec) {
+    this.sentence = (obj_spec && obj_spec.sentence) || '';
+    this.author = (obj_spec && obj_spec.author) || '';
+    this.ts_created = (obj_spec && obj_spec.ts_created) || undefined;
+}
+
+function new_meta_from_spec(obj_spec) {
+    var ret = new Meta(obj_spec);
+
+    return ret;
+}
+
 /**
  * A set of diff objects
  */
@@ -36,6 +48,7 @@ function Topo_Diff(obj_spec) {
     this.node_set_add = obj_spec.node_set_add;
     this.link_set_add = obj_spec.link_set_add;
     this._link_set_add__fix_empty_links();
+    this.meta = new_meta_from_spec(obj_spec.meta);
 
 }
 
@@ -212,6 +225,7 @@ function new_attr_diff() {
     var ret = new Attr_Diff();
     ret.__type_node = {}; // id-to-obj map
     ret.__type_link = {}; // id-to-obj map
+    ret.meta = new_meta_from_spec({});
     return ret;
 }
 
@@ -253,6 +267,8 @@ function new_attr_diff_from_spec(attr_diff_spec) {
             ret.add_link_attr_remove(l_id, attr_name);
         };
     };
+
+    ret.meta =  attr_diff_spec.meta;
 
     return ret;
 }
