@@ -514,26 +514,30 @@ function GraphView(spec) {
          * @this - the element being hovered on. Could use d.id instead
          */
         var link__hover__start = function (d) {
-            add_class(this, 'hovering');
+            var e = document.getElementById(d.id);
+
+            add_class(e, 'hovering');
             // show text if not selected
             if (!selection.link_related(d)) {
-                set_link_label_text(this.id, link_text__short(d));
+                set_link_label_text(d.id, link_text__short(d));
             }
         }
 
         var link__hover__end = function (d) {
-            remove_class(this, 'hovering');
+            var e = document.getElementById(d.id);
+
+            remove_class(e, 'hovering');
             // hide text if not selected
             if (!selection.link_related(d)) {
-                set_link_label_text(this.id, "");
+                set_link_label_text(d.id, "");
             }
         }
 
         var link_on_hover = function (d) {
             $('#' + d.id).hover(function (e) {
-                link__hover__start.call(this, d);
+                link__hover__start(d);
             }, function (e) {
-                link__hover__end.call(this, d);
+                link__hover__end(d);
             });
         }
 
