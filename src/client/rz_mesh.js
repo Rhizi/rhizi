@@ -64,7 +64,8 @@ function( util,   model_diff,   model_util,   io,              activity) {
         var topo_diff_spec = { node_set_add: node_set_add,
                                link_set_add: link_ptr_set,
                                node_id_set_rm: topo_diff_spec_raw.node_id_set_rm,
-                               link_id_set_rm: topo_diff_spec_raw.link_id_set_rm };
+                               link_id_set_rm: topo_diff_spec_raw.link_id_set_rm,
+                               meta: topo_diff_spec_raw.meta };
 
         // [!] note: this is not a pure Topo_Diff object in the sense it contain a link_ptr_set,
         // not a resolved link object set
