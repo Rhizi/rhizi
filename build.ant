@@ -145,7 +145,6 @@
                failonerror="false" />
 
          <!-- default fragments: templates -->
-         <generate_version_tag outputdir="${fragment_d_path}/template.d" />
          <rsync src="${default_fragmentd_src_path}/" dst="${fragment_d_path}" />
 
       </parallel>
@@ -155,6 +154,9 @@
                        build="build.js" />
 
       <parallel>
+
+         <!-- requires default fragment rsync to have finished -->
+         <generate_version_tag outputdir="${fragment_d_path}/template.d" />
 
          <!-- domain-specific fragments -->
          <copy todir="${fragment_d_path}" overwrite="true" failonerror="false">
