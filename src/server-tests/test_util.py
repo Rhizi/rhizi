@@ -85,6 +85,14 @@ def generate_random_RZDoc(test_label):
     rzdoc.id = neo4j_util.generate_random_rzdoc_id()
     return rzdoc
 
+def gen_random_user_signup(self):
+    seed = gen_random_name()
+    us_req = User_Signup_Request(rz_username='rz_username_%s' % (seed),
+                                 email_address='%s@localhost' % (seed),
+                                 first_name='firstname%s' % (seed),
+                                 last_name='lastname%s' % (seed),
+                                 pw_plaintxt='aaaa12345')
+    return us_req
 def ws_emit__topo_diff():
     import logging
 
