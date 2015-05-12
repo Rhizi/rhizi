@@ -1,5 +1,4 @@
 from random import choice
-import random
 import string
 import uuid
 
@@ -53,12 +52,6 @@ class DBO_random_data_generation(DB_op):
     @property
     def link_set_label(self):
         return self.r_label
-
-def gen_random_name(size=8, char_set=string.ascii_uppercase + string.digits):
-    """
-    used for random node generation
-    """
-    return ''.join(random.choice(char_set) for _ in range(size))
 
 def rand_label(prefix='T_', length=8):
     """

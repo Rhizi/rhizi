@@ -30,6 +30,12 @@ def init_test_ws_server(cfg, db_ctl):
     ws_srv = init_ws_interface(cfg, webapp)
     return ws_srv
 
+def gen_random_name(size=8, char_set=string.ascii_uppercase + string.digits):
+    """
+    used for random node generation
+    """
+    return ''.join(random.choice(char_set) for _ in range(size))
+
 def generate_random_node_dict(n_type, nid=None):
     """
     @param n_type: is converted to a label set
