@@ -250,6 +250,25 @@ function Graph(spec) {
                        ));
     }
 
+
+    /**
+     * Visitation constants for neighbourhood and shortest paths computation.
+     */
+    var kind_exit = 1,
+        kind_enter = 2,
+        kind_selected = 4;
+
+    function kind_to_string(kind) {
+        switch (kind) {
+        case kind_exit: return 'exit';
+        case kind_enter: return 'enter';
+        case kind_selected: return 'selected';
+        default:
+            // TODO: add css for both
+            return 'exit';
+        }
+    }
+
     /**
      *
      * neighbourhood
@@ -313,11 +332,8 @@ function Graph(spec) {
         var nodes = get_nodes(),
             links = get_links(),
             neighbours = calc_neighbours(),
-            exit = 1,
-            enter = 2,
-            selected = 4,
             visited = _.object(_.map(start, get_name),
-                               _.map(start, _.partial(make_status, selected)));
+                               _.map(start, _.partial(make_status, kind_selected)));
 
         function visit(source, link, getter, kind, depth) {
             var node = getter(link),
@@ -334,25 +350,14 @@ function Graph(spec) {
             return data;
         }
 
-        function kind_to_string(kind) {
-            switch (kind) {
-            case exit: return 'exit';
-            case enter: return 'enter';
-            case selected: return 'selected';
-            default:
-                // TODO: add css for both
-                return 'exit';
-            }
-        }
-
         _.each(start, function (node) {
             var N = neighbours[node.id];
 
             _.each(N.src, function (link) {
-                visit(node, link, function (link) { return link.__dst; }, enter);
+                visit(node, link, function (link) { return link.__dst; }, kind_enter);
             });
             _.each(N.dst, function (link) {
-                visit(node, link, function (link) { return link.__src; }, exit);
+                visit(node, link, function (link) { return link.__src; }, kind_exit);
             });
         });
         _.values(visited).forEach(function (data) {
@@ -360,7 +365,7 @@ function Graph(spec) {
                 kind = data.kind,
                 links = data.links;
 
-            if ((kind & selected) === selected) {
+            if ((kind & kind_selected) === kind_selected) {
                 return;
             }
             ret.nodes.push({type: kind_to_string(kind), node: node, sources: data.sources});
