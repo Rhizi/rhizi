@@ -912,7 +912,7 @@ function Graph(spec) {
 
     function __commit_diff_ajax__clone(clone) {
         var topo = clone[0],
-            commits = clone[1],
+            commits = clone[1].reverse(), // [!] received in new to old order, need them reversed
             node_specs = topo.node_set_add.map(on_backend__node_add),
             nodes = _add_node_set(node_specs),
             link_specs = topo.link_set_add.map(on_backend__link_add).filter(function (link_spec) {
