@@ -1,20 +1,14 @@
 define(['jquery', 'underscore', 'Bacon', 'view/selection'],
 function($,        _,            Bacon,        selection) {
 
+var MINUTE_IN_MSEC = 60000;
+
 var incomingActivityBus = new Bacon.Bus(),
     activity_element,
     graph_view_element,
     graph_view,
-    graph;
-
-function init(_graph, _graph_view, _graph_view_element)
-{
-    activity_element = $('<div class="activity-root-div"></div>');
-    graph_view_element = _graph_view_element;
-    graph_view_element.append(activity_element);
-    graph_view = _graph_view;
-    graph = _graph;
-}
+    graph,
+    activities = [];
 
 function is_topo(diff)
 {
@@ -50,7 +44,32 @@ function topo_explanation(diff)
 function attr_explanation(diff)
 {
     //var nodes_changed = _.map(diff.__type_node0
-    return '' + diff;
+    var nodes_changed,
+        links_changed;
+
+    function collect(root, find) {
+        return _.map(_.keys(root), function (id) {
+                var writes = root[id].__attr_write,
+                    ret = [];
+
+                _.each(_.keys(writes), function (key) {
+                    var val = writes[key];
+
+                    if (key === 'name') {
+                        ret.push('renamed to ' + val)
+                    } else {
+                        ret.push(key + ' changed to ' + val);
+                    }
+                });
+                _.map(root[id].__attr_remove, function (id) {
+                    ret.push(id + ' removed');
+                });
+                return find(id).name + ': ' + ret.join(', '); /* TODO: use the previous name of the node, not the new name */
+            });
+    }
+    nodes_changed = collect(diff.__type_node, graph.find_node__by_id);
+    links_changed = collect(diff.__type_link, graph.find_link__by_id);
+    return (nodes_changed.concat(links_changed)).join(';');
 }
 
 function explanation_from_diff(diff)
@@ -64,21 +83,80 @@ function explanation_from_diff(diff)
 
 }
 
-function time_diff(d1, d2)
+function time_diff(old_date, new_date)
 {
-    var delta = Math.floor((d2 - d1) / 1000.0),
-        seconds = delta % 60,
-        minutes = (delta / 60) % 60,
-        hours = (delta / 3600) % 24,
+    var delta = Math.floor((new_date - old_date) / 1000.0),
+        seconds = Math.floor(delta % 60),
+        minutes = Math.floor((delta / 60) % 60),
+        hours = Math.floor((delta / 3600) % 24),
         days = Math.floor((delta / 86400));
 
     if (delta < 60) {
-        return '' + delta + ' seconds ago';
+        return 'less than a minute ago'
     }
     if (delta < 3600) {
-        return '' + minutes + 'minutes and ' + seconds + ' seconds ago';
+        return '' + minutes + ' minutes ago';
     }
-    return '' + days + ' days, ' + minutes + ' minutes and ' + seconds + ' seconds ago';
+    if (delta < 86400) {
+        return '' + hours + ' hours ago';
+    }
+    return '' + days + ' days ago';
+}
+
+function make_time_ago_div(creation_date, now)
+{
+    return 
+}
+
+function Activity(diff)
+{
+    var meta = diff.meta || {},
+        new_div = $('<div class="activity-div"></div>'),
+        activity = this,
+        affected_node_ids = node_ids_from_diff(diff),
+        affected_link_ids = link_ids_from_diff(diff),
+        author = meta.author || 'Anonymous',
+        sentence = meta.sentence,
+        explanation = (sentence !== undefined && sentence.length > 0) ? sentence : explanation_from_diff(diff);
+
+    this.div = new_div;
+    this.creation_date = meta.ts_created !== undefined ? new Date(meta.ts_created) : new Date();
+    this.commit = meta.commit; // [!] unused, should link to permanent url
+    this.author = author;
+    this.sentence = sentence;
+    this.explanation = explanation;
+    this.diff = diff;
+    this.affected_node_ids = affected_node_ids;
+    this.affected_link_ids = affected_link_ids;
+    this.author_element = $('<div class="activity-div-author">' + author + '</div>'),
+    this.explanation_element = $('<div class="activity-div-explanation">' + explanation + '</div>');
+    this.time_ago_element = $('<div class="activity-div-time-ago"></div>');
+    new_div.append([this.author_element, this.explanation_element, this.time_ago_element]);
+
+    new_div.on('click', function (event) {
+        var affected_nodes = _.filter(_.map(activity.affected_node_ids, graph.find_node__by_id), null);
+
+        (event.shiftKey ? selection.invert_both : selection.select_both)
+            (affected_nodes, affected_links);
+    });
+    new_div.hover(function (e) {
+        var affected_nodes = _.filter(_.map(activity.affected_node_ids, graph.find_node__by_id), null);
+            affected_links = _.filter(_.map(activity.affected_link_ids, graph.find_link__by_id), null);
+
+        _.each(affected_nodes, graph_view.node__hover__start);
+        _.each(affected_links, graph_view.link__hover__start);
+    }, function (e) {
+        var affected_nodes = _.filter(_.map(activity.affected_node_ids, graph.find_node__by_id), null);
+            affected_links = _.filter(_.map(activity.affected_link_ids, graph.find_link__by_id), null);
+
+        _.each(affected_nodes, graph_view.node__hover__end);
+        _.each(affected_links, graph_view.link__hover__end);
+    });
+    this.update_time_ago_element(new Date());
+}
+
+Activity.prototype.update_time_ago_element = function (zero_time) {
+    this.time_ago_element.text(time_diff(this.creation_date, zero_time));
 }
 
 /**
@@ -89,37 +167,35 @@ function time_diff(d1, d2)
  */
 function appendActivity(diff)
 {
-    var new_div = $('<div class="activity-div"></div>'),
-        meta = diff.meta || {},
-        creation_date = meta.ts_created !== undefined ? new Date(meta.ts_created) : new Date(),
-        commit = meta.commit, // [!] unused, should link to permanent url
-        author = meta.author || 'Anonymous',
-        sentence = meta.sentence,
-        affected_node_ids = node_ids_from_diff(diff),
-        affected_link_ids = link_ids_from_diff(diff),
-        affected_nodes = _.filter(_.map(affected_node_ids, graph.find_node__by_id), null),
-        affected_links = _.filter(_.map(affected_link_ids, graph.find_link__by_id), null);
-        explanation = (sentence !== undefined && sentence.length > 0) ? sentence : explanation_from_diff(diff);
+    var activity = new Activity(diff);
 
-    new_div.text(creation_date + ' ' + author + ': ' + explanation);
-    activity_element.prepend(new_div);
-    new_div.on('click', function (event) {
-        (event.shiftKey ? selection.invert_both : selection.select_both)
-            (affected_nodes, affected_links);
-    });
-    new_div.hover(function (e) {
-        _.each(affected_nodes, graph_view.node__hover__start);
-        _.each(affected_links, graph_view.link__hover__start);
-    }, function (e) {
-        _.each(affected_nodes, graph_view.node__hover__end);
-        _.each(affected_links, graph_view.link__hover__end);
-    });
+    activities.push(activity);
+    activity_element.prepend(activity.div);
+    // TODO - only update visible (visible_in / out hooks?)
     // TODO - x button
-    // TODO - format of text per activity (topo/attr)
-    // TODO - user data (requires protocol update?)
+    // TODO - user name (requires protocol update?)
 }
 
-incomingActivityBus.onValue(appendActivity);
+function update_div_ago(activity)
+{
+    activity.update_time_ago_element(new Date());
+}
+
+function update_ago()
+{
+    _.each(activities, update_div_ago);
+}
+
+function init(_graph, _graph_view, _graph_view_element)
+{
+    incomingActivityBus.onValue(appendActivity);
+    activity_element = $('<div class="activity-root-div"></div>');
+    graph_view_element = _graph_view_element;
+    graph_view_element.append(activity_element);
+    graph_view = _graph_view;
+    graph = _graph;
+    setInterval(update_ago, MINUTE_IN_MSEC);
+}
 
 return {
     init: init,
