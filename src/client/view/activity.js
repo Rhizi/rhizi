@@ -120,6 +120,12 @@ function Activity(diff)
         explanation = (sentence !== undefined && sentence.length > 0) ? sentence : explanation_from_diff(diff);
 
     this.div = new_div;
+    if (is_topo(diff)) {
+        new_div[0].classList.add('topo-diff');
+    }
+    if (is_attr(diff)) {
+        new_div[0].classList.add('attr-diff');
+    }
     this.creation_date = meta.ts_created !== undefined ? new Date(meta.ts_created) : new Date();
     this.commit = meta.commit; // [!] unused, should link to permanent url
     this.author = author;
