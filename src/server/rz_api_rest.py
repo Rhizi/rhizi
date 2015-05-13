@@ -154,6 +154,8 @@ def diff_commit__topo():
         return rzdoc_name, topo_diff
 
     rzdoc_name, topo_diff = sanitize_input(request)
+    if topo_diff.is_empty():
+        return common_resp_handle__client_error()
 
     ctx = __context__common(rzdoc_name)
     kernel = flask.current_app.kernel
