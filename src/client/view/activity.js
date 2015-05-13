@@ -189,9 +189,7 @@ function update_ago()
 function init(_graph, _graph_view, _graph_view_element)
 {
     incomingActivityBus.onValue(appendActivity);
-    activity_element = $('<div class="activity-root-div"></div>');
-    graph_view_element = _graph_view_element;
-    graph_view_element.append(activity_element);
+    activity_element = $('.activity-root-div');
     graph_view = _graph_view;
     graph = _graph;
     setInterval(update_ago, MINUTE_IN_MSEC);
