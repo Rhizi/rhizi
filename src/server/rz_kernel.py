@@ -205,6 +205,7 @@ class RZ_Kernel(object):
 
         op_ret = self.db_ctl.exec_op(op)
         ts_created = self.exec_chain_commit_op(topo_diff, ctx, topo_diff.meta)
+        topo_diff.meta['author'] = ctx.user_name
         topo_diff.meta['ts_created'] = ts_created
         op_ret['meta'] = topo_diff.meta
         return topo_diff, op_ret
@@ -224,6 +225,7 @@ class RZ_Kernel(object):
 
         op_ret = self.db_ctl.exec_op(op)
         ts_created = self.exec_chain_commit_op(attr_diff, ctx)
+        attr_diff.meta['author'] = ctx.user_name
         attr_diff.meta['ts_created'] = ts_created
         return attr_diff, op_ret
 
