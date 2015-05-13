@@ -171,6 +171,9 @@ class Topo_Diff(object):
     def len__l_id_rm(self):
         return len(self.link_id_set_rm)
 
+    def is_empty(self):
+        return self.len__n_add() + self.len__n_id_rm() + self.len__l_add() + self.len__l_id_rm() == 0
+
     def to_json_dict(self):
         ret = {k: getattr(self, k) for k in ['link_id_set_rm',
                                              'node_id_set_rm',
