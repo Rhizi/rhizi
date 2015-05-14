@@ -134,9 +134,9 @@ function Activity(diff)
     this.diff = diff;
     this.affected_node_ids = affected_node_ids;
     this.affected_link_ids = affected_link_ids;
-    this.author_element = $('<div class="activity-div-author">' + author + '</div>'),
-    this.explanation_element = $('<div class="activity-div-explanation">' + explanation + '</div>');
-    this.time_ago_element = $('<div class="activity-div-time-ago"></div>');
+    this.author_element = $('<span class="activity-div-author">' + author + ": " + '</span>'),
+    this.explanation_element = $('<span class="activity-div-explanation">' + explanation + " " + '</span>');
+    this.time_ago_element = $('<span class="activity-div-time-ago"></span>');
     new_div.append([this.author_element, this.explanation_element, this.time_ago_element]);
 
     new_div.on('click', function (event) {
