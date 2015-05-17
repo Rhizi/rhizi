@@ -485,7 +485,8 @@ function GraphView(spec) {
                     d3.event.stopPropagation();
                 })
                 .insert("text")
-                .attr("dy", node_text_dy);
+                .attr("dy", node_text_dy)
+                .attr("transform", "matrix(1.956, 0.267, -1.467, 2.400, 0, 0)");
             node_text.exit().remove();
             var nodeText = function(d) {
                 var selected = selection.node_related(d);
@@ -584,6 +585,7 @@ function GraphView(spec) {
             .attr('id', function(d){ return text_link_id(d.id); }) // append link id to enable data->visual mapping
             .attr("text-anchor", "middle")
             .attr("class", "linklabel graph")
+            .attr("transform", "matrix(1.956, 0.267, -1.467, 2.400, 0, 0)")
             .on("click", function(d, i) {
                 if (!temporary) { // FIXME: if temporary don't even put a click handler
                     svgInput.enable(this, d);
