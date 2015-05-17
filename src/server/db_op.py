@@ -1,9 +1,9 @@
 from copy import deepcopy
+import gzip
 import hashlib
 import logging
 import re
 
-import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link, RZDoc, RZCommit
