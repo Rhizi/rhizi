@@ -102,6 +102,9 @@ or by creating a launch configuration in your IDE of choice.
 Note: server test-cases do not yet support pre-run DB state validation and are
 likely to leave DB side-effects.
 
+## Random data generation
+Taks a look at <code>src/server-tests/test_util__rzdoc#DBO_RDG__skill_graph</code> as a starting point for random data generation.
+
 ## Installing on windows (WIP)
 mingw doesn't have python support, so using mingw (I want a unix native python)
 
