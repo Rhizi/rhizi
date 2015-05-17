@@ -2,13 +2,13 @@
 Various test utilities
 """
 import json
+import string
 
 import db_controller as dbc
 from model.graph import Topo_Diff
 from model.model import Link, RZDoc
-from neo4j_test_util import gen_random_name, rand_label
-from neo4j_util import generate_random_id__uuid
-import neo4j_util
+from neo4j_test_util import rand_label
+from neo4j_util import generate_random_id__uuid, generate_random_rzdoc_id
 from rz_kernel import RZ_Kernel
 from rz_mesh import init_ws_interface
 from rz_server import init_webapp
@@ -82,7 +82,7 @@ def generate_random_diff__topo__minimal(test_label):
 
 def generate_random_RZDoc(test_label):
     rzdoc = RZDoc(test_label)
-    rzdoc.id = neo4j_util.generate_random_rzdoc_id()
+    rzdoc.id = generate_random_rzdoc_id()
     return rzdoc
 
 def gen_random_user_signup(self):
