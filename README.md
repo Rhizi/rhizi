@@ -90,10 +90,9 @@ To update the css files you need [sass](http://sass-lang.com/). To rebuild the c
 - avoid using browser-specific CSS directives when hand-writing CSS code
 
 ## Neo4J DB management
-- to reset the DB:
+- Clean Neo4J instances are auto-initialized by the rhizi server
+- to reset the DB manually:
  $ neo4j-shell -file res/neo4j/reset-db__clean.cypher
-- then to add a single test link:
- $ neo4j-shell -file res/neo4j/reset-db__single_link.cypher
 
 ## Running server tests
 Test code makes use of Python's unittest - run by invoking them with python,
@@ -161,9 +160,8 @@ These modes impost a slightly different resource layout, and require the followi
  $ mkdir res/production-patch-set/${targetDomain}
  $ scp rz-1:/etc/rhizi/rhizi-server.conf res/production-patch-set/${targetDomain}/rhizi-server.production.conf
 
-## Tools
-### rz-doc
-
+# Tools
+## rz-doc
 This is the only way to merge a number of documents right now. Here is how:
 
 It is installed by default to /srv/www/<domain>/tools/rz-doc, lets call that rz-doc for short.
