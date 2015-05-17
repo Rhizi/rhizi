@@ -885,13 +885,13 @@ p {
 
 .circle:hover {
   stroke: #ff8b11;
-  stroke-opacity: 1;
+  stroke-opacity: 0.5;
   stroke-width: 5px;
   opacity: 1; }
 
 .circle.hovering {
   stroke: #ff8b11;
-  stroke-opacity: 1;
+  stroke-opacity: 0.5;
   stroke-width: 5px;
   opacity: 1; }
 
@@ -933,7 +933,7 @@ p {
     stroke-width: 2px; }
   .link.hovering {
     stroke: #ff8b11;
-    stroke-opacity: 1;
+    stroke-opacity: 0.5;
     stroke-width: 2px;
     opacity: 1; }
 
@@ -951,12 +951,15 @@ p {
   z-index: 2;
   /* higher than link, lower than node */ }
 
+.circle {
+  stroke-opacity: 0.5; }
+
 .circle.chosen {
   stroke: #33c2e0;
   stroke-opacity: 0.5; }
 
 .circle.enter {
-  stroke-opacity: 1; }
+  stroke-opacity: 0.5; }
 
 .circle.bubble {
   fill: rgba(87, 154, 202, 0.17);
@@ -964,7 +967,7 @@ p {
   pointer-events: none; }
 
 .circle.exit {
-  stroke-opacity: 1; }
+  stroke-opacity: 0.5; }
 
 .circle.chainlink {
   stroke: #AAA; }
@@ -982,69 +985,188 @@ p {
  * note that this should be automatically generated somehow for user settings.
  */
 .circle.person {
-  fill: #004681; }
+  fill: #004681;
+  stroke: #004681;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.person:hover {
+    stroke: #004681;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.beneficiary {
-  fill: #40C200; }
+  fill: #40C200;
+  stroke: #40C200;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.beneficiary:hover {
+    stroke: #40C200;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.completed-project {
-  fill: #8b3ab0; }
+  fill: #8b3ab0;
+  stroke: #8b3ab0;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.completed-project:hover {
+    stroke: #8b3ab0;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.ongoing-project {
-  fill: #ee3654; }
+  fill: #ee3654;
+  stroke: #ee3654;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.ongoing-project:hover {
+    stroke: #ee3654;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.future-project {
-  fill: #33c2e0; }
+  fill: #33c2e0;
+  stroke: #33c2e0;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.future-project:hover {
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.collaborator {
-  fill: #004681; }
+  fill: #004681;
+  stroke: #004681;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.collaborator:hover {
+    stroke: #004681;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.club {
-  fill: #ee3654; }
+  fill: #ee3654;
+  stroke: #ee3654;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.club:hover {
+    stroke: #ee3654;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.skill {
-  fill: #fad900; }
+  fill: #fad900;
+  stroke: #fad900;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.skill:hover {
+    stroke: #fad900;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.interest {
-  fill: #8b3ab0; }
+  fill: #8b3ab0;
+  stroke: #8b3ab0;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.interest:hover {
+    stroke: #8b3ab0;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.project {
-  fill: #40C200; }
+  fill: #40C200;
+  stroke: #40C200;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.project:hover {
+    stroke: #40C200;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.third-internship-proposal {
-  fill: #33c2e0; }
+  fill: #33c2e0;
+  stroke: #33c2e0;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.third-internship-proposal:hover {
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.internship {
-  fill: #ff8b11; }
+  fill: #ff8b11;
+  stroke: #ff8b11;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.internship:hover {
+    stroke: #ff8b11;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.empty {
-  fill: #919095; }
+  fill: #919095;
+  stroke: #919095;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.empty:hover {
+    stroke: #919095;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.project {
-  fill: #ee3654; }
+  fill: #ee3654;
+  stroke: #ee3654;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.project:hover {
+    stroke: #ee3654;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.keyword {
-  fill: #8b3ab0; }
+  fill: #8b3ab0;
+  stroke: #8b3ab0;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.keyword:hover {
+    stroke: #8b3ab0;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.idea {
-  fill: #40C200; }
+  fill: #40C200;
+  stroke: #40C200;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.idea:hover {
+    stroke: #40C200;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 .circle.resource {
-  fill: #33c2e0; }
+  fill: #33c2e0;
+  stroke: #33c2e0;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.resource:hover {
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 .node.first-selected .circle {
   stroke: #fad900;
-  stroke-opacity: 1;
+  stroke-opacity: 0.5;
   stroke-width: 6px;
   z-index: 1; }
   .node.first-selected .circle:hover {
     stroke: #ff8b11;
-    stroke-opacity: 1; }
+    stroke-opacity: 0.5; }
 
 .node.selected .circle {
   stroke: #fad900;
-  stroke-opacity: 1;
+  stroke-opacity: 0.5;
   stroke-width: 2px;
   z-index: 1; }
 
@@ -1061,7 +1183,7 @@ p {
 
 g:focus circle {
   stroke: #ff0000;
-  stroke-opacity: 1;
+  stroke-opacity: 0.5;
   stroke-width: 3px;
   z-index: 1; }
 
