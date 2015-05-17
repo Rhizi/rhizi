@@ -3,11 +3,13 @@ Neo4j DB object
 """
 
 from enum import Enum
-from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword,\
-    e_value
 import logging
+
+from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword, \
+    e_value
 import neo4j_cypher_parser
 import neo4j_schema
+
 
 log = logging.getLogger('rhizi')
 
@@ -44,6 +46,9 @@ class Query_Struct_Type(Enum):
 
 
 class DB_Query(object):
+    """
+    DB query object
+    """
 
     def __init__(self, q_arr, param_set={}):
         """
@@ -113,6 +118,22 @@ class DB_Query(object):
 
     def str__cypher_query(self):
         return self.pt_root.str__cypher_query()
+
+class DB_Raw_Query(object):
+    """
+    Raw DB query object which does not undergo parsing
+    """
+
+    def __init__(self, q_arr, param_set={}):
+        self.q_arr = q_arr
+        self.param_set = param_set
+
+    def __iter__(self):
+        for keyword, clause_set in self.pt_root.index__kw_to_clause_set().items():
+            yield keyword, clause_set
+
+    def str__cypher_query(self):
+        return ' '.join(self.q_arr)
 
 class DB_row(object):
     def __init__(self, data):

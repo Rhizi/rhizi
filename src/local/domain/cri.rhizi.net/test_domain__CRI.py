@@ -4,7 +4,7 @@ import tempfile
 import unittest
 
 import db_controller as dbc
-from db_op import DBO_cypher_query, DBO_rzdoc__create
+from db_op import DBO_raw_query_set, DBO_rzdoc__create
 from neo4j_test_util import rand_label
 from rz_config import RZ_Config
 from test_util import generate_random_RZDoc
@@ -126,7 +126,7 @@ class Test_Domain_CRI(unittest.TestCase):
                  'match (n)-[r:Novice|Intermediate|Expert]->(m:Skill)',  # [!] expect link type to be proficiency level
                  'return n.name, collect({skill_name: m.name, skill_level: r.proficiency})'
                  ]
-        op = DBO_cypher_query(q_arr)
+        op = DBO_raw_query_set(q_arr)
 
         #
         # write csv file

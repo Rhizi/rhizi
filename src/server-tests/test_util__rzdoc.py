@@ -1,8 +1,8 @@
-from db_op import DBO_cypher_query
+from db_op import DBO_raw_query_set
 import neo4j_util
 
 
-class DBO_RDG__skill_graph(DBO_cypher_query):
+class DBO_RDG__skill_graph(DBO_raw_query_set):
 
     def __init__(self, rzdoc,
                        lim_n=50,

@@ -2,11 +2,11 @@ from random import choice
 import string
 import uuid
 
-from db_op import DB_op, DBO_cypher_query
+from db_op import DB_op, DBO_raw_query_set
 import neo4j_cypher
 import neo4j_schema
 
-class DBO_flush_db(DBO_cypher_query):
+class DBO_flush_db(DBO_raw_query_set):
     """
     complete DB flush: remove all nodes & links
     """

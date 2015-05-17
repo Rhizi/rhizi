@@ -7,7 +7,7 @@ import StringIO as sio
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link, RZDoc, RZCommit
-from neo4j_cypher import DB_Query, DB_result_set
+from neo4j_cypher import DB_Query, DB_result_set, DB_Raw_Query
 import neo4j_schema
 from neo4j_util import cfmt
 from neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
@@ -355,13 +355,30 @@ class DBO_block_chain__list(DB_op):
                 for col in row:
                     return col
 
-class DBO_cypher_query(DB_op):
+class DBO_raw_query_set(DB_op):
     """
-    freeform cypher query
+    Freeform set of DB query statements
+
+    [!] use of this class is discouraged and should be done
+        only when no other DB_op is able to handle the task
+        at hand
     """
-    def __init__(self, q, q_params={}):
-        super(DBO_cypher_query, self).__init__()
-        self.add_statement(q, q_params)
+    def __init__(self, q_arr=None, q_params={}):
+        super(DBO_raw_query_set, self).__init__()
+
+        if q_arr is not None:
+            self.add_statement(q_arr, q_params)
+
+    def add_statement(self, q_arr, query_params={}):
+        """
+        super.add_statement() override: use raw queries
+        """
+        db_q = DB_Raw_Query(q_arr, query_params)
+        self.query_set.append(db_q)
+        return len(self.query_set)
+
+    def add_db_query(self, db_q):
+        assert False, 'DBO_raw_query_set only supports raw queries - use add_statement()'
 
 class DBO_diff_commit__topo(DB_composed_op):
 
