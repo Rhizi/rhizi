@@ -1,9 +1,17 @@
 .feedback-btn {
-  font-size: 14px;
+  background-clip: padding-box;
+  bottom: 200px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  font-size: 12px;
+  filter: none;
+  left: -45px;
   position: fixed;
-  bottom: -3px;
-  left: 45px;
+  padding: 8px;
+  transform: rotate(90deg);
   width: auto;
+  outline: 0;
+  opacity: 0.6;
+  z-index: 40000;
 }
 #feedback-module p {  font-size: 13px }
 #feedback-note-tmp {
@@ -130,15 +138,6 @@
   position: fixed;
   width: 600px;
   height: auto;
-}
-.feedback-btn {
-  padding: 10px;
-  outline: 0;
-  background-clip: padding-box;
-  -webkit-box-shadow: 0 4px 16px rgba(0,0,0,.2);
-  -moz-box-shadow: 0 4px 16px rgba(0,0,0,.2);
-  box-shadow: 0 4px 16px rgba(0,0,0,.2);
-  z-index: 40000;
 }
 .feedback-btn-gray {
   text-align: center;
