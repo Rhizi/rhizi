@@ -1,0 +1,16 @@
+#status-bar {
+    background-color: #A3C9EA;
+}
+
+.status-bar__body {
+    padding: 10px 20px;
+}
+
+.status-bar__btn_rzdoc_create_post_404 {
+    border-radius: 2px;  // TODO: generalize via .toolbar__btn
+    background-color: #4499E0;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 2px 8px;
+}
