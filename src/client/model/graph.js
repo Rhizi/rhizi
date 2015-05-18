@@ -1163,18 +1163,14 @@ function Graph(spec) {
      * @param on_success: should be used by MVP presentors to trigger UI update
      */
     // @ajax-trans
-    function load_from_backend(on_success) {
+    function load_from_backend(on_success, on_error) {
 
-        function on_success__ajax(clone) {
+        function on_success_wrapper(clone) {
             __commit_diff_ajax__clone(clone);
             undefined != on_success && on_success();
         }
 
-        function on_error__ajax(clone) {
-           // FIXME: update status line with 'rzdoc not found' status
-        }
-
-        rz_api_backend.rzdoc_clone(on_success__ajax, on_error__ajax);
+        rz_api_backend.rzdoc_clone(on_success_wrapper, on_error);
     }
     this.load_from_backend = load_from_backend;
 
