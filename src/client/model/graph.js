@@ -353,7 +353,7 @@ function Graph(spec) {
         }
 
         pairs_symmetric(ids, function (one, two) {
-            if (bfs[one][two].distance === Infinity) {
+            if (bfs[one][two] !== undefined && bfs[one][two].distance === Infinity) {
                 return;
             }
             append_paths(bfs[one], two);
