@@ -821,6 +821,8 @@ p {
   padding: 8px 20px; }
 
 .cmd-bar_btn {
+  border-radius: 2px;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   color: white;
   padding: 2px 8px;
@@ -841,10 +843,6 @@ p {
 #cmd_bar__rzdoc_new__submit {
   background-color: yellowgreen; }
 
-#cmd_bar__rzdoc_new__submit_error {
-  color: red;
-  margin-left: 5px; }
-
 #cmd_bar__rzdoc_open__rzdoc_list {
   overflow: auto; }
 
@@ -859,6 +857,21 @@ p {
   .cmd_bar__rzdoc_open__item:hover {
     background-color: #b9b9b9;
     cursor: pointer; }
+
+#status-bar {
+  background-color: #A3C9EA; }
+
+.status-bar__body {
+  padding: 10px 20px; }
+
+.status-bar__btn_rzdoc_create_post_404 {
+  border-radius: 2px;
+  background-color: #4499E0;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 2px 8px; }
 
 .graph-view {
   background-color: #f5f5fa;
