@@ -962,7 +962,7 @@ p {
 .node.person {
   fill: #004681;
   stroke: #004681;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.person.related {
     stroke: #33c2e0;
@@ -981,7 +981,7 @@ p {
 .node.personality-trait {
   fill: #ff8b11;
   stroke: #ff8b11;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.personality-trait.related {
     stroke: #33c2e0;
@@ -1000,7 +1000,7 @@ p {
 .node.accepting-changes {
   fill: #b3fa00;
   stroke: #b3fa00;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.accepting-changes.related {
     stroke: #33c2e0;
@@ -1019,7 +1019,7 @@ p {
 .node.decision-making {
   fill: #4bfa00;
   stroke: #4bfa00;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.decision-making.related {
     stroke: #33c2e0;
@@ -1038,7 +1038,7 @@ p {
 .node.beneficiary {
   fill: #40C200;
   stroke: #40C200;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.beneficiary.related {
     stroke: #33c2e0;
@@ -1057,7 +1057,7 @@ p {
 .node.completed-project {
   fill: #8b3ab0;
   stroke: #8b3ab0;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.completed-project.related {
     stroke: #33c2e0;
@@ -1076,7 +1076,7 @@ p {
 .node.ongoing-project {
   fill: #ee3654;
   stroke: #ee3654;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.ongoing-project.related {
     stroke: #33c2e0;
@@ -1095,7 +1095,7 @@ p {
 .node.future-project {
   fill: #33c2e0;
   stroke: #33c2e0;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.future-project.related {
     stroke: #33c2e0;
@@ -1114,7 +1114,7 @@ p {
 .node.collaborator {
   fill: #004681;
   stroke: #004681;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.collaborator.related {
     stroke: #33c2e0;
@@ -1133,7 +1133,7 @@ p {
 .node.club {
   fill: #ee3654;
   stroke: #ee3654;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.club.related {
     stroke: #33c2e0;
@@ -1152,7 +1152,7 @@ p {
 .node.skill {
   fill: #fad900;
   stroke: #fad900;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.skill.related {
     stroke: #33c2e0;
@@ -1171,7 +1171,7 @@ p {
 .node.interest {
   fill: #8b3ab0;
   stroke: #8b3ab0;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.interest.related {
     stroke: #33c2e0;
@@ -1190,7 +1190,7 @@ p {
 .node.third-internship-proposal {
   fill: #33c2e0;
   stroke: #33c2e0;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.third-internship-proposal.related {
     stroke: #33c2e0;
@@ -1209,7 +1209,7 @@ p {
 .node.internship {
   fill: #ff8b11;
   stroke: #ff8b11;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.internship.related {
     stroke: #33c2e0;
@@ -1228,7 +1228,7 @@ p {
 .node.empty {
   fill: #919095;
   stroke: #919095;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.empty.related {
     stroke: #33c2e0;
@@ -1247,7 +1247,7 @@ p {
 .node.project {
   fill: #ee3654;
   stroke: #ee3654;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.project.related {
     stroke: #33c2e0;
@@ -1266,7 +1266,7 @@ p {
 .node.keyword {
   fill: #8b3ab0;
   stroke: #8b3ab0;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.keyword.related {
     stroke: #33c2e0;
@@ -1285,7 +1285,7 @@ p {
 .node.idea {
   fill: #40C200;
   stroke: #40C200;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.idea.related {
     stroke: #33c2e0;
@@ -1304,7 +1304,7 @@ p {
 .node.resource {
   fill: #33c2e0;
   stroke: #33c2e0;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.resource.related {
     stroke: #33c2e0;

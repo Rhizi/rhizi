@@ -1,7 +1,7 @@
 @mixin node-fill-color($color) {
   fill: $color;
   stroke: $color;
-  stroke-width: 11px;
+  stroke-width: 4px;
   stroke-opacity: 0.4;
   &.related {
     stroke: $cyan;
