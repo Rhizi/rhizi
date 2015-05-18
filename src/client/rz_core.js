@@ -322,23 +322,64 @@ function rzdoc__create_and_open(rzdoc_name) {
  *    - do nothing if name of current rzdoc equals requested rzdoc
  */
 function rzdoc__open(rzdoc_name) {
+
+    function on_success() {
+        get_search().clear();
+        main_graph_view.zen_mode__cancel();
+        window.history.replaceState(null, page_title(rzdoc_name), url_for_doc(rzdoc_name) + location.search);
+
+        var rzdoc_bar = $('#rzdoc-bar_doc-label');
+        var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');
+        rzdoc_bar.fadeToggle(500, 'swing', function() {
+            rzdoc_bar__doc_lable.text(rzdoc_name);
+            rzdoc_bar.fadeToggle(500);
+        });
+
+        rz_mesh.emit__rzdoc_subscribe(rzdoc_name);
+        console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
+    };
+
+    function on_error(xhr, status, err_thrown) {
+        var close_btn,
+            create_btn,
+            status_bar_body,
+            rzdoc_name,
+            status_bar;
+
+        rzdoc_name = xhr.responseJSON.data.rzdoc_name;
+
+        create_btn = $('<span>');
+        create_btn.text('Create document');
+        create_btn.addClass('status-bar__btn_rzdoc_create_post_404');
+
+        close_btn = $('<div>x</div>');
+        close_btn.addClass('toolbar__close_btn');
+
+        status_bar_body = $('<div>');
+        status_bar_body.text('Rhizi could not find a document titled \'' + rzdoc_name + '\'.');
+        status_bar_body.addClass('status-bar__body');
+        status_bar_body.append(create_btn);
+
+        status_bar = $('#status-bar'); // reset
+        status_bar.children().remove();
+        status_bar.append(close_btn);
+        status_bar.append(status_bar_body);
+
+        create_btn.click(function() {
+            rzdoc__create_and_open(rzdoc_name);
+            status_bar.hide();
+        });
+        close_btn.click(function() {
+            status_bar.hide();
+        });
+
+        status_bar.show();
+    }
+
     rz_config.rzdoc_cur__name = rzdoc_name;
     main_graph.clear();
     edit_graph.clear();
-    main_graph.load_from_backend();
-    get_search().clear();
-    main_graph_view.zen_mode__cancel();
-    window.history.replaceState(null, page_title(rzdoc_name), url_for_doc(rzdoc_name) + location.search);
-
-    var rzdoc_bar = $('#rzdoc-bar_doc-label');
-    var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');
-    rzdoc_bar.fadeToggle(500, 'swing', function() {
-        rzdoc_bar__doc_lable.text(rzdoc_name);
-        rzdoc_bar.fadeToggle(500);
-    });
-
-    rz_mesh.emit__rzdoc_subscribe(rzdoc_name);
-    console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
+    main_graph.load_from_backend(on_success, on_error);
 }
 
 function rzdoc__current__get_name() {
