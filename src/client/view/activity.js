@@ -199,6 +199,9 @@ function init(_graph, _graph_view, _graph_view_element)
     graph_view = _graph_view;
     graph = _graph;
     setInterval(update_ago, MINUTE_IN_MSEC);
+    $('.activity-fold-button').on('click', function() {
+        activity_element.toggle();
+    });
 }
 
 return {
