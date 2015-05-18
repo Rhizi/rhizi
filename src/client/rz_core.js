@@ -350,6 +350,7 @@ function rzdoc__open(rzdoc_name) {
     rz_config.rzdoc_cur__name = rzdoc_name;
     main_graph.clear();
     edit_graph.clear();
+    activity.clear();
     main_graph.load_from_backend(on_success, on_error);
 }
 

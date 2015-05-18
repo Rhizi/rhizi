@@ -192,6 +192,12 @@ function update_ago()
     _.each(activities, update_div_ago);
 }
 
+function clear()
+{
+    activities.splice(0); // reset activities
+    activity_element.empty();
+}
+
 function init(_graph, _graph_view, _graph_view_element)
 {
     incomingActivityBus.onValue(appendActivity);
@@ -202,10 +208,12 @@ function init(_graph, _graph_view, _graph_view_element)
     $('.activity-fold-button').on('click', function() {
         activity_element.toggle();
     });
+    clear();
 }
 
 return {
     init: init,
+    clear: clear,
     incomingActivityBus: incomingActivityBus,
 };
 
