@@ -269,6 +269,107 @@ function Graph(spec) {
         }
     }
 
+    function BFS(node_id) {
+        var neighbours = calc_neighbours(),
+            queue = [node_id],
+            start_id,
+            node_ids = get_node_ids(),
+            V = _.object(node_ids, _.map(node_ids, function (id) {
+                return {node_id: id, distance: Infinity, prev: {}};
+            })),
+            ret = {};
+
+        V[node_id].distance = 0;
+        while ((start_id = queue.shift()) !== undefined) {
+            var src_ids = _.pluck(_.pluck(neighbours[start_id].src, "__dst"), "id"),
+                dst_ids = _.pluck(_.pluck(neighbours[start_id].dst, "__src"), "id"),
+                n_ids = src_ids.concat(dst_ids);
+
+            _.each(n_ids, function(next_id) {
+                var distance = V[start_id].distance + 1;
+
+                if (V[next_id].distance >= distance) {
+                    V[next_id].distance = distance;
+                    V[next_id].prev[start_id] = true;
+                    queue.push(next_id);
+                }
+            });
+        }
+        _.each(_.keys(V), function (k) {
+            if (V[k].distance !== Infinity) {
+                ret[k] = V[k];
+            }
+        });
+        return ret;
+    }
+    this.BFS = BFS;
+
+    /**
+     * pairs_symmetric
+     *
+     * cb will be called for every pair in the input list but only in the order
+     * lower_index, maybe_higher_index
+     * where lower_index <= maybe_higher_index (i.e. diagonal is covered).
+     *
+     * i.e. for |list| = N, (N + 1) * N / 2 calls are made
+     */
+    function pairs_symmetric(list, cb) {
+        var i, j, N = list.length;
+
+        for (i = 0 ; i < N; ++i) {
+            for (j = i; j < N ; ++j) {
+                cb(list[i], list[j]);
+            }
+        }
+    }
+
+    /**
+     * @sources - list of nodes
+     *
+     * returns all nodes in the shortest paths between all sources.
+     *
+     * returns same dictionary as neighbourhood.
+     */
+    function shortest_paths(sources) {
+
+        function make_status(node, distance, prev_nodes) {
+            return {node: node, distances: distance || 0, prev_nodes: prev_nodes || {}};
+        }
+        var ids = _.pluck(sources, 'id'),
+            bfs = _.object(ids, _.map(ids, BFS)),
+            nodes = {};
+
+        function append_paths(bfs, start_id) {
+            var queue = [bfs[start_id]],
+                next,
+                next_id;
+
+            while ((next = queue.shift()) !== undefined) {
+                next_id = next.node_id;
+                if (nodes[next_id] === undefined) {
+                    nodes[next_id] = {node_id: next_id, sources: {}};
+                }
+                _.each(_.keys(next.prev), function (p) {
+                    nodes[next_id].sources[p] = true;
+                    queue.push(bfs[p]);
+                });
+            }
+        }
+
+        pairs_symmetric(ids, function (one, two) {
+            if (bfs[one][two].distance === Infinity) {
+                return;
+            }
+            append_paths(bfs[one], two);
+        });
+
+        return {
+            'nodes': _.values(nodes),
+            'links': []
+        };
+    }
+    this.shortest_paths = shortest_paths;
+
     /**
      *
      * neighbourhood
