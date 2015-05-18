@@ -24,7 +24,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 var err_msg = xhr.responseJSON && xhr.responseJSON.error;
                 console.error('ajax error: status: \'' + text_status + '\' error-msg: ' + err_msg);
                 if (on_error && typeof (on_error) === "function") {
-                    on_error(err_msg);
+                    on_error(xhr, text_status, err_thrown);
                 }
             }
 
