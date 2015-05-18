@@ -3,11 +3,22 @@
   stroke: $color;
   stroke-width: 11px;
   stroke-opacity: 0.4;
+  &.related {
+    stroke: $cyan;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+  }
+  &.selected {
+    stroke: $yellow;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+    z-index: 1;
+  }
   &:hover { 
-    stroke: $color;
+    stroke: $orange;
     stroke-opacity: 0.5;
     stroke-width: 5px;
-    }
+  }
 }
 
 
@@ -20,46 +31,22 @@
   stroke-width: 1px;
   font-size: $h3-size;
   z-index:100;
-  &.related {
-    fill: none;
-    stroke: $cyan;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-  }
+  pointer-events:all;
 }
 
-.ghostnode{
-
-}
-
-.notselected .circle, .notselected *{
+.notselected, .notselected *{
   opacity: 0.2;
   -webkit-filter: blur(10px);
+  &:hover {
+    opacity: 1;
+    stroke: $orange;
+    stroke-opacity: 0.5;
+    stroke-width: 5px;
+  }
 }
 
 .linklabel.notselected {
   display: none;
-}
-
-.circle {
-  z-index: 100;
-  pointer-events:all;
-  fill: $dark-grey;
-}
-
-.circle:hover {
-    stroke: $orange;
-    stroke-opacity: 0.5;
-    stroke-width: 5px;
-    opacity: 1;
-}
-
-// [!] identical to :hover, used by activity
-.circle.hovering {
-    stroke: $orange;
-    stroke-opacity: 0.5;
-    stroke-width: 5px;
-    opacity: 1;
 }
 
 .nodetext {
@@ -129,18 +116,6 @@
   stroke-width: 15px;
   z-index:2; /* higher than link, lower than node */
 }
-.circle {
-  stroke-opacity: 0.5;
-}
-
-.circle.chosen {
-  stroke: $cyan;
-  stroke-opacity: 0.5;
-}
-
-.circle.enter {
-  stroke-opacity: 0.5;
-}
 
 .circle.bubble {
   fill: rgba(87, 154, 202, 0.17);
@@ -148,115 +123,91 @@
   pointer-events:none;
 }
 
-.circle.exit {
-  stroke-opacity: 0.5;
-}
-
-.circle.chainlink {
-  stroke: #AAA;
-}
-
-.circle.temp {
-  box-shadow: 0 0 40px #FFFF8F;
-}
-
-.circle.temp, .circle.chosen {
-  stroke-width: 3px;
-}
-
-.circle.temp.empty {
-  stroke-width: 1.5px;
-}
-
 /* Per node and edge type (type is a property of nodes and links) styling
  * note that this should be automatically generated somehow for user settings.
  */
 
-.circle.person {
+.node.person {
   @include node-fill-color($blue);
 }
 
-.circle.personality-trait {
+.node.personality-trait {
   @include node-fill-color($orange);
 }
 
-.circle.accepting-changes {
+.node.accepting-changes {
   @include node-fill-color(adjust-hue($yellow, 25));
 }
 
-.circle.decision-making {
+.node.decision-making {
   @include node-fill-color(adjust-hue($yellow, 50));
 }
 
-.circle.beneficiary {
+.node.beneficiary {
   @include node-fill-color($green);
 }
 
-.circle.completed-project {
+.node.completed-project {
   @include node-fill-color($purple);
 }
 
-.circle.ongoing-project {
+.node.ongoing-project {
   @include node-fill-color($magenta);
 }
 
-.circle.future-project {
+.node.future-project {
   @include node-fill-color($cyan);
 }
-.circle.collaborator {
+.node.collaborator {
   @include node-fill-color($blue);
 }
 
-.circle.club {
+.node.club {
   @include node-fill-color($magenta);
 }
 
-.circle.skill {
+.node.skill {
   @include node-fill-color($yellow);
 }
 
-.circle.interest {
+.node.interest {
   @include node-fill-color($purple);
 }
 
-.circle.project {
-  @include node-fill-color($green);
-}
-
-.circle.third-internship-proposal {
+.node.third-internship-proposal {
   @include node-fill-color($cyan);
 }
 
-.circle.internship {
+.node.internship {
   @include node-fill-color($orange);
 }
 
-.circle.empty {
+.node.empty {
   @include node-fill-color($mid-grey);
 }
 
 // TODO: how to define type colors using the scss dollar attributes? injecting css is easy, scss - not sure
 
-.circle.project {
+.node.project {
   @include node-fill-color($magenta);
 }
 
-.circle.keyword {
+.node.keyword {
   @include node-fill-color($purple);
 }
 
-.circle.idea {
+.node.idea {
   @include node-fill-color($green);
 }
 
-.circle.resource {
+.node.resource {
   @include node-fill-color($cyan);
 }
 
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 
-.node.first-selected .circle {
+.node.first-selected {
     stroke: $yellow;
     stroke-opacity: 0.5;
     stroke-width: 6px;
@@ -265,13 +216,6 @@
       stroke: $orange;
       stroke-opacity: 0.5;
     }
-}
-
-.node.selected .circle {
-    stroke: $yellow;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1;
 }
 
 .graph.link.temp_and {
@@ -288,13 +232,6 @@
   pointer-events: all;
   z-index:0;
 
-}
-
-g:focus circle {
-    stroke: #ff0000;
-    stroke-opacity: 0.5;
-    stroke-width: 3px;
-    z-index: 1;
 }
 
 .editinfo{

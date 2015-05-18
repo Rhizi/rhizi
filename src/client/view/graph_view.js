@@ -686,7 +686,7 @@ function GraphView(spec) {
             .call(drag);
 
         node.attr('class', function(d) {
-                return ['node', selection.class__node(d, temporary)].join(' ');
+                return ['node' +" " + d.type + " " + d.state + " " + "graph", selection.class__node(d, temporary)].join(' ');
             })
             .each(function (d) {
                 d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
@@ -838,9 +838,6 @@ function GraphView(spec) {
             .attr('r', node__radius);
         circle = nodeEnter.insert("circle");
         node.select('g.node > circle')
-            .attr("class", function(d) {
-                return d.type + " " + d.state + " circle graph";
-            })
             .attr("r", node__radius)
             .attr("filter", function (d) {
                 return urlImage(d['image-url']) ? svg_url(filter_id(d.id)) : '';
