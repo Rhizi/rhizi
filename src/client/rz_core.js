@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu', 'view/activity'],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,        activity) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu', 'view/activity', 'rz_api_backend'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,        activity, rz_api_backend) {
 
 // fix circular module dependency
 var search;
@@ -282,6 +282,39 @@ function url_for_doc(rzdoc_name)
     return '/rz/' + rzdoc_name;
 }
 
+function rzdoc__create_and_open(rzdoc_name) {
+
+    var on_success = function (clone_obj) {
+        rzdoc__open(rzdoc_name);
+    };
+
+    var on_error = function(xhr, status, err_thrown) {
+
+        var status_bar,
+            status_bar_body;
+
+        // TODO: handle malformed doc name
+        status_bar_body = $('<div>Cannot create document titled \'' + rzdoc_name + '\', document already exists.</div>');
+
+        close_btn = $('<div>x</div>');
+        close_btn.addClass('toolbar__close_btn');
+
+        status_bar = $('#status-bar'); // reset
+        status_bar.children().remove();
+        status_bar.append(close_btn);
+        status_bar.append(status_bar_body);
+
+        close_btn.click(function() {
+            status_bar.hide();
+        });
+
+        status_bar.show();
+    };
+
+    // TODO: validate rzdoc name
+    rz_api_backend.rzdoc_create(rzdoc_name, on_success, on_error);
+}
+
 /**
  * open rzdoc:
  *    - set rz_config.rzdoc_cur__name
@@ -320,6 +353,7 @@ var published_var_dict = {
     // functions
     init: init,
     load_from_json: load_from_json,
+    rzdoc__create_and_open: rzdoc__create_and_open,
     rzdoc__open: rzdoc__open,
     rzdoc__current__get_name: rzdoc__current__get_name,
     rzdoc__open_default: rzdoc__open_default,
