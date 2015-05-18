@@ -1,7 +1,7 @@
 "use strict"
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu', 'view/activity', 'rz_api_backend'],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,        activity, rz_api_backend) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu', 'view/activity', 'rz_api_backend', 'view/toolbar__status'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,        activity, rz_api_backend, toolbar__status) {
 
 // fix circular module dependency
 var search;
@@ -289,26 +289,11 @@ function rzdoc__create_and_open(rzdoc_name) {
     };
 
     var on_error = function(xhr, status, err_thrown) {
-
-        var status_bar,
-            status_bar_body;
-
         // TODO: handle malformed doc name
-        status_bar_body = $('<div>Cannot create document titled \'' + rzdoc_name + '\', document already exists.</div>');
+        var toolbar__status_body;
 
-        close_btn = $('<div>x</div>');
-        close_btn.addClass('toolbar__close_btn');
-
-        status_bar = $('#status-bar'); // reset
-        status_bar.children().remove();
-        status_bar.append(close_btn);
-        status_bar.append(status_bar_body);
-
-        close_btn.click(function() {
-            status_bar.hide();
-        });
-
-        status_bar.show();
+        toolbar__status_body = $('<div>Cannot create document titled \'' + rzdoc_name + '\', document already exists.</div>');
+        toolbar__status.display_html_frag(toolbar__status_body);
     };
 
     // TODO: validate rzdoc name
@@ -340,11 +325,9 @@ function rzdoc__open(rzdoc_name) {
     };
 
     function on_error(xhr, status, err_thrown) {
-        var close_btn,
-            create_btn,
-            status_bar_body,
+        var create_btn,
             rzdoc_name,
-            status_bar;
+            toolbar__status_body;
 
         rzdoc_name = xhr.responseJSON.data.rzdoc_name;
 
@@ -352,28 +335,16 @@ function rzdoc__open(rzdoc_name) {
         create_btn.text('Create document');
         create_btn.addClass('status-bar__btn_rzdoc_create_post_404');
 
-        close_btn = $('<div>x</div>');
-        close_btn.addClass('toolbar__close_btn');
-
-        status_bar_body = $('<div>');
-        status_bar_body.text('Rhizi could not find a document titled \'' + rzdoc_name + '\'.');
-        status_bar_body.addClass('status-bar__body');
-        status_bar_body.append(create_btn);
-
-        status_bar = $('#status-bar'); // reset
-        status_bar.children().remove();
-        status_bar.append(close_btn);
-        status_bar.append(status_bar_body);
+        toolbar__status_body = $('<div>');
+        toolbar__status_body.text('Rhizi could not find a document titled \'' + rzdoc_name + '\'.');
+        toolbar__status_body.append(create_btn);
 
         create_btn.click(function() {
             rzdoc__create_and_open(rzdoc_name);
-            status_bar.hide();
-        });
-        close_btn.click(function() {
-            status_bar.hide();
+            toolbar__status.hide();
         });
 
-        status_bar.show();
+        toolbar__status.display_html_frag(toolbar__status_body);
     }
 
     rz_config.rzdoc_cur__name = rzdoc_name;
