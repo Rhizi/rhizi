@@ -39,7 +39,9 @@ function($) {
 
     return {
         display_html_frag : display_html_frag,
-        hide: toolbar__status.hide
+        hide: function () {
+            toolbar__status.hide();
+        }
     };
 
 });
