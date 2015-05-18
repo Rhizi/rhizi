@@ -72,7 +72,7 @@ def common_rest_req_exception_handler(rest_API_endpoint):
             return common_resp_handle__client_error(error=e)  # currently blame client for all DNFs
         except RZDoc_Exception__not_found as e:
             log.exception(e)
-            return common_resp_handle__client_error(error=e)  # currently blame client for all DNFs
+            return common_resp_handle__client_error(data={'rzdoc_name': e.rzdoc_name}, error=e)  # currently blame client for all DNFs
         except Exception as e:
             log.exception(e)
             return common_resp_handle__server_error(error=e)

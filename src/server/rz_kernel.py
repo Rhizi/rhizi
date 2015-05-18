@@ -27,6 +27,7 @@ class RZDoc_Exception__not_found(Exception):
 
     def __init__(self, rzdoc_name):
         super(RZDoc_Exception__not_found, self).__init__('rzdoc not found: \'%s\'' % (rzdoc_name))
+        self.rzdoc_name = rzdoc_name
 
 class RZDoc_Exception__already_exists(Exception):
 
