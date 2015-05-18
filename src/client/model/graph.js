@@ -872,6 +872,11 @@ function Graph(spec) {
     }
     this.find_node__by_id = find_node__by_id;
 
+    var find_nodes__by_id = function(ids, recursive) {
+        return _.map(ids, function (id) { return find_node__by_id(id, recursive); });
+    }
+    this.find_nodes__by_id = find_nodes__by_id;
+
     /**
      * @param filter: must return true in order for node to be included in the returned set
      */
