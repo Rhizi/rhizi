@@ -1177,6 +1177,11 @@ function Graph(spec) {
     };
     this.nodes = get_nodes;
 
+    var get_node_ids = function() {
+        return _.keys(id_to_node_map);
+    }
+    this.get_node_ids = get_node_ids;
+
     var get_links = function() {
         if (cached_links === undefined || invalidate_links) {
             cached_links = _.filter(id_to_link_map, function (link, link_id) {
