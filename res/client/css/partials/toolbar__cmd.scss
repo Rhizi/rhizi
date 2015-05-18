@@ -17,6 +17,7 @@
 }
 
 .cmd-bar_btn {
+    border-radius: 2px; // TODO: generalize via .toolbar__btn
     cursor: pointer;
     color: white;
     padding: 2px 8px;
@@ -39,11 +40,6 @@
 
 #cmd_bar__rzdoc_new__submit {
     background-color: yellowgreen;
-}
-
-#cmd_bar__rzdoc_new__submit_error {
-    color: red;
-    margin-left: 5px;
 }
 
 #cmd_bar__rzdoc_open {
