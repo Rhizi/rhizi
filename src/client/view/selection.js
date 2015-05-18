@@ -183,6 +183,13 @@ function mutual_neighbours(nodes) {
     return _select_nodes_helper(nodes, connected);
 }
 
+function shortest_paths(nodes) {
+    var ret = get_main_graph().shortest_paths(nodes);
+
+    ret.nodes = get_main_graph().find_nodes__by_id(_.pluck(ret.nodes, "node_id"));
+    return ret;
+}
+
 /**
  * neighbours(nodes)
  *
@@ -270,7 +277,7 @@ var select_nodes = function(nodes, keep_selected_links)
 
 var select_both = function(new_nodes, new_links)
 {
-    var related = new_nodes.length == 1 ? neighbours(new_nodes) : mutual_neighbours(new_nodes);
+    var related = new_nodes.length == 1 ? neighbours(new_nodes) : shortest_paths(new_nodes);
 
     inner_select(new_nodes, related.nodes, new_links, related.links);
 }
