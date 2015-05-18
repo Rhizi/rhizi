@@ -134,11 +134,7 @@ function Graph(spec) {
             return !hasNodeByName(n.name);
         });
 
-        var graph_on_error = function(error) {
-            console.log('error:');
-            console.dir(error);
-        }
-        rz_api_backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo, graph_on_error);
+        rz_api_backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo);
     }
     this.commit_and_tx_diff__topo = commit_and_tx_diff__topo;
 
