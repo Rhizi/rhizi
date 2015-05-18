@@ -198,11 +198,8 @@ $('#btn_rzdoc__open').click(function() {
             rz_core.rzdoc__open(rzdoc_name);
         });
     }
-    var on_error = function() {
-        // TODO: handle doc list timeout
-    }
 
-    rz_api_backend.rzdoc_list(on_success, on_error);
+    rz_api_backend.rzdoc_list(on_success); // TODO: handle doc list timeout
     cmd_bar.fadeToggle(400);
 });
 
