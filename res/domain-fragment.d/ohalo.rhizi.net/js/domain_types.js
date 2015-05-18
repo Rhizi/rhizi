@@ -27,7 +27,19 @@ define({
         ['resource', {
             'title': 'מרואיין',
             'attributes': ['description', 'url', 'image-url'],
-        }]
+        }],
+        ['personality-trait', {
+            'title': 'פרופיל אישי',
+            'attributes': ['description', 'url', 'image-url'],
+        }],
+        ['accepting-changes', {
+            'title': 'קבלת שינויים',
+            'attributes': ['description', 'url', 'image-url'],
+        }],
+        ['decision-making', {
+            'title': 'קבלת החלטות',
+            'attributes': ['description', 'url', 'image-url'],
+        }],
     ],
     attribute_titles: {
         'description': 'תיאור',

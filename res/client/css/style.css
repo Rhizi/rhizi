@@ -994,6 +994,36 @@ p {
     stroke-opacity: 0.5;
     stroke-width: 5px; }
 
+.circle.personality-trait {
+  fill: #ff8b11;
+  stroke: #ff8b11;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.personality-trait:hover {
+    stroke: #ff8b11;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
+
+.circle.accepting-changes {
+  fill: #b3fa00;
+  stroke: #b3fa00;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.accepting-changes:hover {
+    stroke: #b3fa00;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
+
+.circle.decision-making {
+  fill: #4bfa00;
+  stroke: #4bfa00;
+  stroke-width: 11px;
+  stroke-opacity: 0.4; }
+  .circle.decision-making:hover {
+    stroke: #4bfa00;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
+
 .circle.beneficiary {
   fill: #40C200;
   stroke: #40C200;

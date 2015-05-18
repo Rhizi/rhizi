@@ -176,6 +176,18 @@
   @include node-fill-color($blue);
 }
 
+.circle.personality-trait {
+  @include node-fill-color($orange);
+}
+
+.circle.accepting-changes {
+  @include node-fill-color(adjust-hue($yellow, 25));
+}
+
+.circle.decision-making {
+  @include node-fill-color(adjust-hue($yellow, 50));
+}
+
 .circle.beneficiary {
   @include node-fill-color($green);
 }
