@@ -10,6 +10,18 @@
     width: $toolbar-button-width;
 }
 
+.toolbar__close_btn {
+    border-bottom-left-radius: 6px;
+    background-color: dimgray;
+    color: white;
+    cursor: pointer;
+    font-family: fantasy;
+    font-size: 12px;
+    padding: 2px 8px;
+    position: absolute;
+    right: 0px;
+}
+
 #tool-bar {
     margin-top: $two-baselines;
     position: absolute;

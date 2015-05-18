@@ -718,6 +718,17 @@ p {
   text-align: center;
   width: 65px; }
 
+.toolbar__close_btn {
+  border-bottom-left-radius: 6px;
+  background-color: dimgray;
+  color: white;
+  cursor: pointer;
+  font-family: fantasy;
+  font-size: 12px;
+  padding: 2px 8px;
+  position: absolute;
+  right: 0px; }
+
 #tool-bar {
   margin-top: 24px;
   position: absolute;
@@ -836,14 +847,6 @@ p {
 
 #cmd_bar__rzdoc_open__rzdoc_list {
   overflow: auto; }
-
-#cmd_bar__rzdoc_close {
-  border-bottom-left-radius: 6px;
-  background-color: dimgray;
-  font-family: fantasy;
-  font-size: 12px;
-  position: absolute;
-  right: 0px; }
 
 .cmd_bar__rzdoc_open__item {
   border-radius: 3px;

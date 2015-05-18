@@ -111,7 +111,10 @@ $('#btn_rzdoc__new').click(function() {
 
     cmd_bar = $('<div class="cmd-bar" id="cmd_bar__rzdoc_new">');
     cmd_bar_body = $('<div class="cmd-bar_body" id="cmd_bar__rzdoc_new__body">');
-    close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
+
+    close_btn = $('<div id="cmd_bar__rzdoc_close">x</div>');
+    close_btn.addClass('toolbar__close_btn');
+
     submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
 
     cmd_bar.append(close_btn);
@@ -162,7 +165,8 @@ $('#btn_rzdoc__open').click(function() {
     cmd_bar = $('<div class="cmd-bar" id="cmd_bar__rzdoc_open">');
     cmd_bar.css('display', 'none');
 
-    close_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_close">x</span>');
+    close_btn = $('<div id="cmd_bar__rzdoc_close">x</div>');
+    close_btn.addClass('toolbar__close_btn');
     close_btn.appendTo(cmd_bar);
 
     cmd_bar_body = $('<div class="cmd-bar_body" id="cmd_bar__rzdoc_open__rzdoc_list">');
