@@ -249,51 +249,6 @@ class RZ_Kernel(object):
         op = DBO_match_node_set_by_id_attribute(id_set=id_set)
         self.db_ctl.exec_op(op)
 
-    def rzdoc__reader_subscribe(self,
-                                remote_socket_addr=None,
-                                rzdoc_name=None,
-                                socket=None):
-
-        rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
-
-        r_assoc = RZDoc_Reader_Association()
-        r_assoc.remote_socket_addr = remote_socket_addr
-        r_assoc.rzdoc = rzdoc
-        r_assoc.socket = socket
-
-        self.rzdoc_reader_assoc_map[rzdoc].append(r_assoc)
-        log.debug("rz_kernel: reader subscribed: assoc: %s" % (r_assoc))
-
-    def rzdoc__reader_unsubscribe__r_assoc(self, r_assoc):
-        return self.rzdoc__reader_unsubscribe(r_assoc.remote_socket_addr,
-                                              r_assoc.rzdoc_name,
-                                              r_assoc.socket)
-
-    def rzdoc__reader_unsubscribe(self,
-                                  remote_socket_addr=None,
-                                  rzdoc_name=None,
-                                  socket=None):
-
-        rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
-
-        rm_target = None
-        r_assoc_set = self.rzdoc_reader_assoc_map[rzdoc]
-        for r_assoc in r_assoc_set:
-            if r_assoc.socket == socket:
-                rm_target = r_assoc
-
-        if None == rm_target:  # target possibly removed after becoming stale
-            log.debug("rz_kernel: rzdoc__reader_unsubscribe: assoc not found: remote-address: %s" % (remote_socket_addr))
-            return
-
-        r_assoc_set.remove(rm_target)  # FIXME: make thread safe
-        log.debug("rz_kernel: reader unsubscribed: %s" % (rm_target))
-
-    def rzdoc__reader_set_from_rzdoc(self, rzdoc):
-        rzdoc_r_set = self.rzdoc_reader_assoc_map[rzdoc]
-        ret_list = list(rzdoc_r_set)
-        return ret_list
-
     def rzdoc__clone(self, rzdoc, ctx=None):
         """
         Clone entire rzdoc
@@ -367,6 +322,52 @@ class RZ_Kernel(object):
 
         rzdoc = self.db_ctl.exec_op(op)
         return rzdoc  # may be None
+
+    def rzdoc__reader_subscribe(self,
+                                remote_socket_addr=None,
+                                rzdoc_name=None,
+                                socket=None):
+
+        rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
+
+        r_assoc = RZDoc_Reader_Association()
+        r_assoc.remote_socket_addr = remote_socket_addr
+        r_assoc.rzdoc = rzdoc
+        r_assoc.socket = socket
+
+        self.rzdoc_reader_assoc_map[rzdoc].append(r_assoc)
+        log.debug("rz_kernel: reader subscribed: assoc: %s" % (r_assoc))
+
+    def rzdoc__reader_unsubscribe__r_assoc(self, r_assoc):
+        return self.rzdoc__reader_unsubscribe(r_assoc.remote_socket_addr,
+                                              r_assoc.rzdoc_name,
+                                              r_assoc.socket)
+
+    def rzdoc__reader_unsubscribe(self,
+                                  remote_socket_addr=None,
+                                  rzdoc_name=None,
+                                  socket=None):
+
+        rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
+
+        rm_target = None
+        r_assoc_set = self.rzdoc_reader_assoc_map[rzdoc]
+        for r_assoc in r_assoc_set:
+            if r_assoc.socket == socket:
+                rm_target = r_assoc
+
+        if None == rm_target:  # target possibly removed after becoming stale
+            log.debug("rz_kernel: rzdoc__reader_unsubscribe: assoc not found: remote-address: %s" % (remote_socket_addr))
+            return
+
+        r_assoc_set.remove(rm_target)  # FIXME: make thread safe
+        log.debug("rz_kernel: reader unsubscribed: %s" % (rm_target))
+
+    def rzdoc__reader_set_from_rzdoc(self, rzdoc):
+        rzdoc_r_set = self.rzdoc_reader_assoc_map[rzdoc]
+        ret_list = list(rzdoc_r_set)
+        return ret_list
+
 
     def rzdoc__list(self, ctx=None):
         """
