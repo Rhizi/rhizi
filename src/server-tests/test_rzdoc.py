@@ -22,21 +22,6 @@ class TestRZDoc(unittest.TestCase):
 
     def setUp(self): pass
 
-    def test_rzdoc_lifecycle(self):
-        test_label = neo4j_test_util.rand_label()
-
-        rzdoc_name = test_label
-        lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        self.assertIsNone(lookup_ret)
-
-        ret_create = self.kernel.rzdoc__create(rzdoc_name)
-        lookup_ret = self.kernel.rzdoc__lookup_by_name(ret_create.name)
-        self.assertTrue(None != lookup_ret and lookup_ret.name == rzdoc_name)
-
-        self.kernel.rzdoc__delete(lookup_ret)
-        lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        self.assertIsNone(lookup_ret)
-
     def test_rzdoc_commit_log(self):
         rzdoc_a = 'test_commit_log_doc_a'
         rzdoc_b = 'test_commit_log_doc_b'
@@ -62,6 +47,31 @@ class TestRZDoc(unittest.TestCase):
         self.kernel.diff_commit__topo(topo_diff=topo_diff_a, ctx=ctx_a)
         self.kernel.diff_commit__topo(topo_diff=topo_diff_b, ctx=ctx_b)
         commit_log = self.kernel.rzdoc__commit_log(rzdoc=ctx_a, limit=10)
+
+    def test_rzdoc_lifecycle(self):
+        test_label = neo4j_test_util.rand_label()
+
+        rzdoc_name = test_label
+        lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+        self.assertIsNone(lookup_ret__by_name)
+
+        # create
+        rzdoc, m_rzdoc = self.kernel.rzdoc__create(rzdoc_name)
+
+        # lookup
+        for rzd in [rzdoc, m_rzdoc]:
+            lookup_ret__by_id = self.kernel.rzdoc__lookup_by_id(rzd.id)
+            lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzd.name)
+            self.assertTrue(None != lookup_ret__by_id)
+            self.assertTrue(None != lookup_ret__by_name)
+
+        # delete
+        self.kernel.rzdoc__delete(rzdoc)
+        lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+        self.assertIsNone(lookup_ret__by_name)
+
+    def test_rzdoc_search(self):
+        pass
 
     def tearDown(self): pass
 
