@@ -95,11 +95,15 @@ function time_diff(old_date, new_date)
         return 'less than a minute ago'
     }
     if (delta < 3600) {
+        if (minutes === 1) return '1 minute ago';
         return '' + minutes + ' minutes ago';
     }
     if (delta < 86400) {
+        if (hours === 1) return '1 hour ago';
         return '' + hours + ' hours ago';
     }
+
+    if (days === 1) return 'a day ago';
     return '' + days + ' days ago';
 }
 
