@@ -115,7 +115,7 @@ function make_time_ago_div(creation_date, now)
 function Activity(diff)
 {
     var meta = diff.meta || {},
-        new_div = $('<div class="activity-div"></div>'),
+        new_div = $('<div class="activity__entry"></div>'),
         activity = this,
         affected_node_ids = node_ids_from_diff(diff),
         affected_link_ids = link_ids_from_diff(diff),
@@ -138,10 +138,10 @@ function Activity(diff)
     this.diff = diff;
     this.affected_node_ids = affected_node_ids;
     this.affected_link_ids = affected_link_ids;
-    this.author_element = $('<span class="activity-div-author">' + author + ": " + '</span>'),
-    this.explanation_element = $('<span class="activity-div-explanation">' + explanation + " " + '</span>');
-    this.time_ago_element = $('<span class="activity-div-time-ago"></span>');
-    new_div.append([this.author_element, this.explanation_element, this.time_ago_element]);
+    this.author_element = $('<span class="activity__entry__author">by ' + author + '</span>'),
+    this.explanation_element = $('<span class="activity__entry__summery">' + explanation + '</span>');
+    this.time_ago_element = $('<span class="activity__entry__date"></span>');
+    new_div.append([this.explanation_element, this.author_element, this.time_ago_element]);
 
     new_div.on('click', function (event) {
         var affected_nodes = _.filter(_.map(activity.affected_node_ids, graph.find_node__by_id), null);
@@ -205,11 +205,11 @@ function clear()
 function init(_graph, _graph_view, _graph_view_element)
 {
     incomingActivityBus.onValue(appendActivity);
-    activity_element = $('.activity-root-div');
+    activity_element = $('#activity_view__body');
     graph_view = _graph_view;
     graph = _graph;
     setInterval(update_ago, MINUTE_IN_MSEC);
-    $('.activity-fold-button').on('click', function() {
+    $('#activity_view__header').on('click', function() {
         activity_element.toggle();
     });
     clear();

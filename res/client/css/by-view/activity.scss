@@ -1,0 +1,51 @@
+.activity__entry {
+    background-color: #E0E0E0;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    line-height: 20px;
+    padding: 0px 5px;
+
+    &:hover {
+        background-color: darken(lightgray, 10%);
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.activity__entry__author {
+    font-size: 0.8em;
+    margin-left: 5px;
+    float: right;
+    color: crimson;
+}
+
+.activity__entry__summery {
+    color: blue;
+}
+
+.activity__entry__date {
+    font-size: 0.6em;
+    float: right;
+}
+
+#activity_view{
+    bottom: 0px;
+    cursor: pointer;
+    left: 10px;
+    position: fixed;
+    width: 45%;
+}
+
+#activity_view__body {
+    background-color: transparent;
+    max-height: 110px;
+    overflow-y: auto;
+}
+
+#activity_view__header {
+    background-color: rgba(1.0, 1.0, 1.0, 0.3);
+    border-radius: 3px 3px 0 0;
+    text-align: center;
+}
