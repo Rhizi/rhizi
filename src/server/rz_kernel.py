@@ -101,7 +101,7 @@ class RZ_Kernel(object):
 
         self.should_stop = False
         self.db_conn_avail = False
-        self.db_metablock_obtained = False
+        self.db_metablock = None
 
     def start(self):
 
@@ -127,7 +127,7 @@ class RZ_Kernel(object):
                     finally:
                         t__last_db_conn_check = t_0
 
-                if self.db_conn_avail and not self.db_metablock_obtained:
+                if self.db_conn_avail and self.db_metablock is None:
                     try:
                         op_probe = DBO_rzdb__fetch_DB_metablock()
                         db_mb = self.db_ctl.exec_op(op_probe)
@@ -140,7 +140,8 @@ class RZ_Kernel(object):
                             log.info('DB initialized, schema-version: %s' % (db_mb['schema_version']))
                         else:
                             log.info('DB metablock read, schema-version: %s' % (db_mb['schema_version']))
-                        self.db_metablock_obtained = True
+
+                        self.db_metablock = db_mb
                     except Exception as e:
                         log.info('rz_kernel: failed DB metablock fetch / DB init')
 
