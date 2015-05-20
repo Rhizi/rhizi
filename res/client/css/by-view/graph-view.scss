@@ -182,6 +182,10 @@
   @include node-fill-color($orange);
 }
 
+.node.team {
+  @include node-fill-color($orange);
+}
+
 .node.empty {
   @include node-fill-color($mid-grey);
 }
