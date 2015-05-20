@@ -901,9 +901,8 @@ p {
 #activity_view {
   bottom: 0px;
   cursor: pointer;
-  left: 10px;
   position: fixed;
-  width: 45%; }
+  width: 35%; }
 
 #activity_view__body {
   background-color: transparent;
@@ -1263,6 +1262,25 @@ p {
     stroke-width: 2px;
     z-index: 1; }
   .node.internship:hover {
+    stroke: #ff8b11;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
+
+.node.team {
+  fill: #ff8b11;
+  stroke: #ff8b11;
+  stroke-width: 4px;
+  stroke-opacity: 0.4; }
+  .node.team.related {
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 2px; }
+  .node.team.selected {
+    stroke: #fad900;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+    z-index: 1; }
+  .node.team:hover {
     stroke: #ff8b11;
     stroke-opacity: 0.5;
     stroke-width: 5px; }
