@@ -368,14 +368,15 @@ class RZ_Kernel(object):
         ret_list = list(rzdoc_r_set)
         return ret_list
 
-
-    def rzdoc__list(self, ctx=None):
+    @deco__DB_status_check
+    def rzdoc__search(self, search_query, ctx=None):
         """
         List available RZDocs
 
         @return: RZDoc object
         """
-        op = DBO_rzdoc__list()
+        rzdoc__name__max_length = self.db_metablock['rzdoc__name__max_length']
+        op = DBO_rzdoc__search(search_query, rzdoc__name__max_length)
         op_ret = self.db_ctl.exec_op(op)
         return op_ret
 

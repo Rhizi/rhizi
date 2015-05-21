@@ -946,16 +946,25 @@ class DBO_rzdoc__delete(DB_op):
         db_q = DB_Query(q_arr)
         self.add_db_query(db_q)
 
-class DBO_rzdoc__list(DB_op):
+class DBO_rzdoc__search(DB_op):
 
-    def __init__(self):
+    def __init__(self, search_query, rzdoc__name__max_length=neo4j_schema.RZDOC__NAME__MAX_LENGTH):
         """
-        list available rhizi docs (common to all users)
+        Search rhizi docs by name:
+           - search is case insensitive
+           - any substring occurrence is considered a match
         """
-        super(DBO_rzdoc__list, self).__init__()
+        super(DBO_rzdoc__search, self).__init__()
         q_arr = ['match (n:%s)' % (neo4j_schema.META_LABEL__RZDOC_TYPE),
                  'return n']
-        db_q = DB_Query(q_arr)
+        param_set = {}
+
+        if search_query is not None and len(search_query) > 0:
+            lim_x_fix = rzdoc__name__max_length - len(search_query)  # pre/post prefix limit
+            q_arr.insert(1, 'where n.name =~ {search_query_regx}')
+            param_set = {'search_query_regx': '(?i).{0,%s}%s.{0,%s}' % (lim_x_fix, search_query, lim_x_fix)}
+
+        db_q = DB_Query(q_arr, param_set)
         self.add_db_query(db_q)
 
 class DBO_rzdoc__lookup_by_name(DB_op):

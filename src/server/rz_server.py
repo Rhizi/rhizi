@@ -199,7 +199,7 @@ def init_rest_interface(cfg, flask_webapp):
                       # doc endpoints
                       rest_entry('/rz/<path:rzdoc_name>', rz_api_rest.rzdoc__via_rz_url, {'methods': ['GET']}),  # pretty URLs
                       rest_entry('/api/rzdoc/clone', rz_api_rest.rzdoc_clone),
-                      rest_entry('/api/rzdoc/list', rz_api_rest.rzdoc__list),
+                      rest_entry('/api/rzdoc/search', rz_api_rest.rzdoc__search),
                       rest_entry('/api/rzdoc/<path:rzdoc_name>/create', rz_api_rest.rzdoc__create),
                       rest_entry('/api/rzdoc/<path:rzdoc_name>/delete', rz_api_rest.rzdoc__delete, {'methods': ['GET', 'DELETE']}),  # TODO: rm 'GET' once we have UI deletion support - see #436
 
