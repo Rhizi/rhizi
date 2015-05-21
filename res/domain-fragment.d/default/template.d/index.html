@@ -23,21 +23,33 @@ var RZ_VERSION = '{% include "version.txt" %}';
 <script src="/static/js/local_config.js"></script>
 {% endblock %}
 {% block content %}
-  <div class="top-bar">
-    <span id="top-bar_float-left">
+  <div id="top-bar">
+    <div id="top-bar_L1">
       <div id="rzdoc-bar">
         <span id="rzdoc-bar_doc-label"></span>
-        <span class="tool_bar_btn" id="btn_rzdoc__new" title="New"></span>
-        <span class="tool_bar_btn" id="btn_rzdoc__open" title="Open"></span>
       </div>
-    </span>
-    <span id="top-bar_float-right">
-      <span class="top-bar__user-area">
-           <span id="profile-circle"></span>
-           <span class="profile-username">Hello&nbsp;<span id="user_id">{{ rz_username }}</span>!<span id="btn-logout" class="button">Logout</span></span>
-      </span>
-      <span class="site-logo"><a tabindex="-1"><img id="site-logo" src="{{ fragment_d_path }}/img/site-logo.png"></a></span>
-    </span>
+      <div id="top-bar__brand-area">
+        <span class="site-logo"><a tabindex="-1"><img id="site-logo" src="{{ fragment_d_path }}/img/site-logo.png"></a></span>
+      </div>
+      <div id="top-bar__user-area">
+        <span class="profile-username">Hello&nbsp;<span id="user_id">{{ rz_username }}!</span>
+        <span id="top-bar__logout-btn">Logout</span></span>
+      </div>
+    </div>
+    <div id="top-bar_L2">
+      <div id="menu-bar">
+        <div class="menu-bar__item" id="menu-bar__rzdoc-new" title="New">New</div>
+        <span class="menu-bar__delimiter">・</span>
+        <div class="menu-bar__item" id="menu-bar__rzdoc-open" title="Open">Open</div>
+        <span class="menu-bar__delimiter">・</span>
+        <div class="menu-bar__item" id="menu-bar__activity-view-toggle" title="Enable checkbox to display activity log">
+          <span>Show Activity Log</span><input id="checkbox__activity-view-toggle" type="checkbox" name="activity-view-toggle">
+        </div>
+        <div class="menu-bar__item" id="menu-bar__rzdoc-search" title="Search for Rhizi documents">
+          <input id="menu-bar__rzdoc-search__input" placeholder="Search for documents">
+        </div>
+      </div>
+    </div>
   </div>
   <div id="status-bar" style="display:none"></div>
   <div id="intro-task" class="task-alert" style="display:none">

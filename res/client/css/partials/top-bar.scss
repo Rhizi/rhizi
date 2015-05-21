@@ -1,58 +1,53 @@
-.top-bar{
-    line-height: 40px;
-    background-color: $dark-grey;
-    overflow-y: auto;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-.top-bar__user-area {
-    margin-right: 20px;
-    vertical-align: middle;
-}
-
 .username {
     display: inline-block;
     text-align: right;
 }
 
-.profile-circle{
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    background: $cyan;
-    display: none;
-}
-
-.profile-initials {
-    display: inline-block;
-    color: $light-grey;
-    font-size: $h4-size;
-    position: relative;
-    left: -27px;
-    top: -10px;
-}
-
 .profile-username {
-    color: $light-grey;
+    font-size: 14px;
+    margin-right: 10px;
 }
 
-#top-bar_float-left {
-    float: left;
-    margin-left: 40px;
-}
-
-#top-bar_float-right {
+#top-bar__user-area {
     float: right;
     margin-right: 20px;
+    vertical-align: middle;
+}
+
+#top-bar{
+}
+
+#top-bar__brand-area {
+    float: right;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+#top-bar_L1 {
+    // background-color: #363636;
+    border-bottom: 2px solid lightgray;
+    line-height: 40px;
+    overflow: auto;
+    padding-left: $graph-margin-left;
+}
+
+#top-bar_L2 {
+    background-color: #CFE5FF;
+}
+
+#top-bar__logout-btn {
+    margin-left: 15px;
+    font-size: 14px;
+
+    @include btn-change-on-hover__opacity
 }
 
 #rzdoc-bar {
-    color: $light-grey;
-    position: relative;
-    overflow-x: auto;
-    margin-right: 20px;
+    // color: $light-grey;
+    float: left;
     min-width: 250px;
+    overflow-x: auto;
+    position: relative;
 }
 
 #rzdoc-bar_doc-label {
