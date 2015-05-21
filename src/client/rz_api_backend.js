@@ -22,7 +22,7 @@ define(['util', 'model/core'], function(util, model_core) {
             function on_error_wrapper(xhr, text_status, err_thrown) {
                 // log wrap callback
                 var err_msg = xhr.responseJSON && xhr.responseJSON.error;
-                console.error('ajax error: status: \'' + text_status + '\' error-msg: ' + err_msg);
+                console.error('ajax error: status: \'' + text_status + '\', error-msg: ' + err_msg);
                 if (on_error && typeof (on_error) === "function") {
                     on_error(xhr, text_status, err_thrown);
                 }
@@ -243,10 +243,12 @@ define(['util', 'model/core'], function(util, model_core) {
         /**
          * list available rzdocs
          */
-        this.rzdoc_list = function(on_success, on_error) {
+        this.rzdoc_search = function(search_query, on_success, on_error) {
 
-            var req_opts = { type : 'POST' };
-            return ajax_rs('/api/rzdoc/list', req_opts, on_success, on_error);
+            var req_data = {'search_query': search_query};
+            var req_opts = { type : 'POST', data : JSON.stringify(req_data)};
+
+            return ajax_rs('/api/rzdoc/search', req_opts, on_success, on_error);
         }
     }
 
