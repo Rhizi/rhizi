@@ -1034,15 +1034,6 @@ function GraphView(spec) {
         on_interval();
     }
 
-    var debug_print = function(message) {
-        var element = $(".debug");
-        if (element.length == 1) {
-            element.html(message);
-        } else {
-            console.log(message);
-        }
-    }
-
     function check_for_nan(x) {
         if (Number.isNaN(x)) {
             console.log('nan problem');
