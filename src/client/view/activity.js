@@ -4,7 +4,6 @@ function($,        _,            Bacon,        selection) {
 var MINUTE_IN_MSEC = 60000;
 
 var incomingActivityBus = new Bacon.Bus(),
-    activity_element,
     graph_view_element,
     graph_view,
     graph,
@@ -180,7 +179,7 @@ function appendActivity(diff)
     var activity = new Activity(diff);
 
     activities.push(activity);
-    activity_element.prepend(activity.div);
+    $('#activity_view__body').prepend(activity.div);
     // TODO - only update visible (visible_in / out hooks?)
     // TODO - x button
     // TODO - user name (requires protocol update?)
@@ -199,18 +198,17 @@ function update_ago()
 function clear()
 {
     activities.splice(0); // reset activities
-    activity_element.empty();
+    $('#activity_view__body').empty();
 }
 
 function init(_graph, _graph_view, _graph_view_element)
 {
     incomingActivityBus.onValue(appendActivity);
-    activity_element = $('#activity_view__body');
     graph_view = _graph_view;
     graph = _graph;
     setInterval(update_ago, MINUTE_IN_MSEC);
-    $('#activity_view__header').on('click', function() {
-        activity_element.toggle();
+    $('#checkbox__activity-view-toggle').on('change', function() {
+        $('#activity_view').toggle();
     });
     clear();
 }
