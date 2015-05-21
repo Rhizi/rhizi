@@ -82,14 +82,14 @@ var RZ_VERSION = '{% include "version.txt" %}';
     </div>
     <div id="input-box-set-container">
       <div class="input-container" id="input-container__search">
-          <input class="input-bar" tabindex="1" id="search" placeholder="Search and select nodes"/>
-          <button tabindex="-1" id="btn_search"></button>
-          <div id="selection-count"></div>
+        <input class="input-bar" tabindex="1" id="search" placeholder="Select elements"/>
+        <button tabindex="-1" id="btn_search"></button>
+        <div id="selection-count"></div>
         <div id="search-suggestion" class="suggestion" style="display: none"></div>
       </div>
       <div class="input-container" id="input-container__graph-input">
-          <div contentEditable="true" tabindex="2" class="input input-bar" id="textanalyser" placeholder="Add nodes or links" autofocus ></div>
-          <button tabindex="-1" id="btn_add"></button>
+        <div contentEditable="true" tabindex="2" class="input input-bar" id="textanalyser" placeholder="Add elements" autofocus ></div>
+        <button tabindex="-1" id="btn_add"></button>
         <div id="input-suggestion" class="suggestion" style="display: none"></div>
       </div>
     </div>
@@ -102,13 +102,13 @@ var RZ_VERSION = '{% include "version.txt" %}';
            </select>
          </div>
          <div class="info-container__row" id="status" style="display:none">
-             <div class="info-card-attr">Status</div>
-             <select id="editstatus" style="display:none">
-               <option value="waiting">Waiting</option>
-               <option value="approved">Approved</option>
-               <option value="notapproved">Not Approved</option>
-             </select>
-             <span class="info-card-attr" id="displaystatus"></span>
+           <div class="info-card-attr">Status</div>
+           <select id="editstatus" style="display:none">
+             <option value="waiting">Waiting</option>
+             <option value="approved">Approved</option>
+             <option value="notapproved">Not Approved</option>
+           </select>
+           <span class="info-card-attr" id="displaystatus"></span>
          </div>
        </div>
     </div>
