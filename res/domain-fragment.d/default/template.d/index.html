@@ -106,44 +106,6 @@ var RZ_VERSION = '{% include "version.txt" %}';
       <div class="type_selection__row" id="type_selection__chosen_type_label">Chosen Type: <span id="type_selection__chosen_type_name"/></div>
       <div class="type_selection__row" id="type_selection__chosen_type_desc"></div>
     </div>
-    <div class="debug-ui">
-    <div class="debug-ui-row">
-        <div class="debug-ui-left">
-            <a class="save-history" href="#">Save history</a>
-        </div>
-        <div class="debug-ui-right">
-            <a id="replay-history" style="display: none" href="#">Replay history</a>
-        </div>
-    </div>
-    <div class="debug-ui-row">
-        <div class="debug-ui-left">
-            <div class="save">
-                <a href="#">Save</a>
-            </div>
-        </div>
-    </div>
-    <div class="debug-ui-row">
-    <div class="debug-ui-left">
-        <div class="local-storage-load">
-            <a href="#">Load</a>
-        </div>
-    </div>
-    <div class="debug-ui-right">
-        <div class="url-copy">
-            <a href="#">Copy to URL</a>
-        </div>
-    </div>
-    </div>
-    <div class="debug-ui-row">
-        Import <input type="file" class="file-import" />
-    </div>
-    <div class="debug-ui-row">
-        <button id="btn_export" title="Export">Export</button>
-    </div>
-
-
-
-    </div>
   </div>
   <div id="activity_view" style="display:none">
     <div id="activity_view__header">Activity</div>
@@ -151,5 +113,36 @@ var RZ_VERSION = '{% include "version.txt" %}';
   </div>
   <div class="rhizi-logo"><a tabindex="-1" href="http://www.rhizi.org">
     <img src="/static/img/rhizi-logo.png"/></a>
+  </div>
+{% endblock %}
+{% block devtools %}
+  <div id="debug-view__import">
+    <input id="debug-view__import__input_element" type="file" multiple="true" style="display: none;"/>
+    <span>Import: </span>
+    <span id="devtools__import__select-files-btn" class="devtools__btn">select files</span>
+    <span id="devtools__import__step__export" style="display: none;">
+      <span class="debug-view__multi-step-cmd-delim">→</span>
+      <span id="devtools__import__execute-import-btn" class="devtools__btn">execute import</span>
+    </span>
+  </div>
+  <div id="debug-view__export">
+    <span id="debug-view__export_btn" class="devtools__btn">Export</span>
+  </div>
+  <div>
+    <span id="debug-view__save" class="devtools__btn">
+      <a href="#">Save</a>
+    </span>
+    <span>・</span>
+    <span id="debug-view__local-storage-load" class="devtools__btn">
+        <a href="#">Load</a>
+    </span>
+  </div>
+  <div id="debug-view__history">
+    <a id="debug-view__save-history" href="#">save history</a>
+    <span>・</span>
+    <a id="debug-view__replay-history" href="#">replay history</a>
+  </div>
+  <div class="debug-view__url-copy">
+    <a href="#">Copy to URL</a>
   </div>
 {% endblock %}
