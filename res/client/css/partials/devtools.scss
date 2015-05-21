@@ -1,0 +1,32 @@
+#devtools {
+    position: absolute;
+    bottom: 0;
+    border-top: 10px solid gray;
+    padding-left: 10px;
+    height: 20%;
+    width: 100%;
+    line-height: 20px;
+}
+
+#devtools span {
+    font-family: monospace;
+}
+
+.devtools__btn {
+
+    &:hover {
+        cursor: pointer;
+        color: gold;
+    }
+}
+
+.debug-view__multi-step-cmd-delim {
+    color: red;
+    margin-left: 4px;
+    margin-right: 2px;
+}
+
+.debug-view__import__input_file_name {
+    font-family: monospace;
+    margin-left: 20px;
+}

@@ -3,6 +3,7 @@
  */
 define([
         'buttons',
+        'devtools',
         'drag_n_drop',
         'feedback',
         'history',
@@ -13,7 +14,6 @@ define([
         'textanalysis',
         'textanalysis.ui',
         'util',
-        'view/devtools',
         'view/filter_menu',
         'view/search',
         'view/selection',
@@ -24,6 +24,7 @@ define([
  */
 function(
          buttons,
+         devtools,
          drag_n_drop,
          feedback,
          history,
@@ -34,7 +35,6 @@ function(
          textanalysis,
          textanalysis_ui,
          util,
-         devtools,
          filter_menu,
          search,
          selection
@@ -89,7 +89,7 @@ function(
 
         // setup debug
         if (util.getParameterByName('debug')) {
-            $(document.body).addClass('debug');
+            $('#devtools').show();
             rz_core.edit_graph.set_user('fakeuser');
             rz_core.main_graph.set_user('fakeuser');
             drag_n_drop.init();
