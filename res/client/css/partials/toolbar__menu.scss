@@ -1,0 +1,53 @@
+.menu-bar__item {
+    float: left;
+    font-size: 14px;
+}
+
+.menu-bar__delimiter {
+    float: left;
+    color: white;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+#menu-bar {
+    height: 24px;
+    line-height: 24px;
+    padding-left: 20px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+
+    &:before {
+        margin-left: 20px;
+    }
+}
+
+#menu-bar__activity-view-toggle {
+    cursor: default;
+}
+
+#menu-bar__activity-view-toggle input {
+    left: 3px;
+    position: relative;
+    top: 3px;
+}
+
+#menu-bar__rzdoc-new {
+    @include btn-change-on-hover__color(red)
+}
+
+#menu-bar__rzdoc-open {
+    @include btn-change-on-hover__color(red)
+}
+
+#menu-bar__rzdoc-search {
+    float: right;
+    margin-right: 10px;
+
+    @include btn-change-on-hover__color(red)
+}
+
+#menu-bar__rzdoc-search input {
+    font-size: 14px;
+    padding: 2px 8px;
+}
