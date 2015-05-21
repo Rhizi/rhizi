@@ -1,5 +1,44 @@
-define(['textanalysis.ui', 'textanalysis', 'buttons', 'history', 'drag_n_drop', 'robot', 'model/core', 'rz_core', 'view/selection', 'util', 'view/search', 'feedback', 'keyshortcuts', 'view/filter_menu'],
-function(textanalysis_ui,   textanalysis,   buttons,   history,   drag_n_drop,   robot,   model_core,   rz_core,        selection,   util,   search,        feedback,   keyshortcuts,        filter_menu) {
+/**
+ * [!] order must match function args order
+ */
+define([
+        'buttons',
+        'drag_n_drop',
+        'feedback',
+        'history',
+        'keyshortcuts',
+        'model/core',
+        'robot',
+        'rz_core',
+        'textanalysis',
+        'textanalysis.ui',
+        'util',
+        'view/devtools',
+        'view/filter_menu',
+        'view/search',
+        'view/selection',
+        ],
+
+/**
+ * [!] order must match define element order
+ */
+function(
+         buttons,
+         drag_n_drop,
+         feedback,
+         history,
+         keyshortcuts,
+         model_core,
+         robot,
+         rz_core,
+         textanalysis,
+         textanalysis_ui,
+         util,
+         devtools,
+         filter_menu,
+         search,
+         selection
+         ) {
 
     function fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit() {
         $('.feedback-btn').attr('tabindex', -1);
