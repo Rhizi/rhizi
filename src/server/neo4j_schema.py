@@ -33,3 +33,6 @@ meta_label_set = [META_LABEL__VC_HEAD,
                   META_LABEL__RZDOC_NS_META_PREFIX,
                   ]
 
+
+RZDOC__NAME__MAX_LENGTH = 256
+RZDOC__DEFAULT_MAINPAGE_NAME = 'Welcome Rhizi'
