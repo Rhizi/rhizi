@@ -125,6 +125,14 @@ class RZ_Kernel(object):
         op_ret = self.db_ctl.exec_op(op)
         return op_ret.meta['ts_created']
 
+    def _init_DB(self):
+        op_init = self.db_op_factory.gen_op__rzdb__init_DB()
+        self.db_ctl.exec_op(op_init)
+        op_probe = DBO_rzdb__fetch_DB_metablock()  # reattempt mb fetch
+        db_mb = self.db_ctl.exec_op(op_probe)
+        log.info('DB initialized, schema-version: %s' % (db_mb['schema_version']))
+        return db_mb
+
     def start(self):
 
         def kernel_heartbeat():
@@ -155,11 +163,7 @@ class RZ_Kernel(object):
                         db_mb = self.db_ctl.exec_op(op_probe)
                         if db_mb is None:
                             log.warning('uninitialized DB detected, attempting initialization')
-                            op_init = self.op_factory__DBO_rzdb__init_DB.gen_op__rzdb__init_DB()
-                            self.db_ctl.exec_op(op_init)
-                            op_probe = DBO_rzdb__fetch_DB_metablock()  # reattempt mb fetch
-                            db_mb = self.db_ctl.exec_op(op_probe)
-                            log.info('DB initialized, schema-version: %s' % (db_mb['schema_version']))
+                            db_mb = self._init_DB()
                         else:
                             log.info('DB metablock read, schema-version: %s' % (db_mb['schema_version']))
 
