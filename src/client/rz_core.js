@@ -300,6 +300,10 @@ function rzdoc__create_and_open(rzdoc_name) {
     rz_api_backend.rzdoc_create(rzdoc_name, on_success, on_error);
 }
 
+function rzdoc__current__get_name() {
+    return rz_config.rzdoc_cur__name;
+}
+
 /**
  * open rzdoc:
  *    - set rz_config.rzdoc_cur__name
@@ -352,10 +356,6 @@ function rzdoc__open(rzdoc_name) {
     edit_graph.clear();
     activity.clear();
     main_graph.load_from_backend(on_success, on_error);
-}
-
-function rzdoc__current__get_name() {
-    return rz_config.rzdoc_cur__name;
 }
 
 function rzdoc__open_default() {
