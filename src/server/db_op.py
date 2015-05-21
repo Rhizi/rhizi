@@ -1,5 +1,4 @@
 from copy import deepcopy
-import gzip
 import hashlib
 import logging
 import re
@@ -16,6 +15,17 @@ import neo4j_util as db_util
 
 
 log = logging.getLogger('rhizi')
+
+class DBO_factory__default(object):
+    """
+    Default configuration DB op factory, providing the following function:
+       - gen_op__rzdb__init_DB(): DB init op
+    """
+
+    def gen_op__rzdb__init_DB(self):
+        return DBO_rzdb__init_DB(neo4j_schema.RZDOC__DEFAULT_MAINPAGE_NAME,
+                                 neo4j_schema.RZDOC__NAME__MAX_LENGTH)
+
 
 class DB_op(object):
     """
