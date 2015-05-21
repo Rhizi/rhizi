@@ -1,22 +1,23 @@
 .cmd-bar {
-    background-color: #85B375;
-    width: 100%;
+    background-color: lightgray;
 }
 
-.cmd-bar_close_bar {
-    background-color: lightgray;
-    text-align: center;
+.cmd-bar__close_bar {
+    background-color: #4D4D4D;
+    color: white;
     font-size: 12px;
     padding-top: 2px;
     padding-bottom: 1px;
+    text-align: center;
     width: 100%;
 }
 
-.cmd-bar_body {
+.cmd-bar__body {
     padding: 8px 20px;
 }
 
 .cmd-bar_btn {
+    background-color: #32C232;
     border-radius: 2px; // TODO: generalize via .toolbar__btn
     box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
     cursor: pointer;
@@ -26,28 +27,31 @@
     vertical-align: middle;
 }
 
-#cmd_bar__rzdoc_new__input {
+#cmd-bar__rzdoc-new input {
+    font-size: 14px;
     padding: 2px 8px;
-    margin-left: 10px;
-    vertical-align: middle;
-    width: 200px;
 }
 
-#cmd_bar__rzdoc_new__label {
-    color: white;
-    margin-left: 40px;
-    vertical-align: middle;
+#cmd-bar__rzdoc-search {
 }
 
-#cmd_bar__rzdoc_new__submit {
-    background-color: yellowgreen;
-}
-
-#cmd_bar__rzdoc_open {
-}
-
-#cmd_bar__rzdoc_open__rzdoc_list {
+#cmd-bar__rzdoc-search__result-body {
+    font-size: 14px;
     overflow: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 20px; // align with global left margin
+    padding-right: 30px; // clear close button
+}
+
+#cmd-bar__rzdoc-search__query-echo {
+    font-style: italic;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+#cmd-bar__rzdoc-search__no-results {
+    margin: 5px;
 }
 
 .cmd_bar__rzdoc_open__item {
@@ -55,12 +59,13 @@
     background-color: white;
     float: left;
     font-size: $h4-size;
-    margin: 3px 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
     padding: 3px 5px;
     white-space: nowrap;
 
     &:hover {
-        background-color: darken(lightgray, 10%);
+        background-color: gold;
         cursor: pointer;
     }
 }
