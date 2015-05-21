@@ -96,14 +96,3 @@ def gen_random_user_signup(self):
                                  last_name='lastname%s' % (seed),
                                  pw_plaintxt='aaaa12345')
     return us_req
-def ws_emit__topo_diff():
-    import logging
-
-    r_label = rand_label()
-    n, n_id = generate_random_node_dict(r_label)
-    topo_diff = Topo_Diff(node_set_add=[n])
-    data = json.dumps(topo_diff, cls=Topo_Diff.JSON_Encoder)
-
-    with test_rz_mesh.RZ_websocket() as (_, ns_sock):
-        ns_sock.emit('diff_commit__topo', data)
-
