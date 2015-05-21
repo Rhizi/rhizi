@@ -80,9 +80,12 @@ def generate_random_diff__topo__minimal(test_label):
                           link_set_add=l_set)
     return topo_diff
 
-def generate_random_RZDoc(test_label):
-    rzdoc = RZDoc(test_label)
-    rzdoc.id = generate_random_rzdoc_id()
+def generate_random_RZDoc(rzdoc_name=None):
+    if rzdoc_name is None:
+        rzdoc_name = gen_random_name()
+
+    rzdoc = RZDoc(rzdoc_name)
+    rzdoc.id = neo4j_util.generate_random_rzdoc_id()
     return rzdoc
 
 def gen_random_user_signup(self):
