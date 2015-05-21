@@ -91,13 +91,21 @@ class RZ_Kernel(object):
     """
 
     def __init__(self):
+        """
+        caller must set:
+           - self.db_ctl
+
+        caller may set:
+           - self.db_op_factory: mush support gen_op__rzdb__init_DB()
+        """
+
         self.cache__rzdoc_name_to_rzdoc = {}
         self.heartbeat_period_sec = 0.5
         self.period__db_conn_check = 60
         self.rzdoc_reader_assoc_map = defaultdict(list)
 
         self.db_ctl = None  # set by caller
-        self.op_factory__DBO_rzdb__init_DB = None  # required for DB initialization, set by caller
+        self.db_op_factory = DBO_factory__default()
 
         self.should_stop = False
         self.db_conn_avail = False

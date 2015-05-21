@@ -369,7 +369,7 @@ if __name__ == "__main__":
     #
     webapp = init_webapp(cfg, kernel)
     webapp.user_db = user_db
-    kernel.op_factory__DBO_rzdb__init_DB = webapp  # assist kernel with DB initialization
+    kernel.db_op_factory = webapp  # assist kernel with DB initialization
     ws_srv = init_ws_interface(cfg, kernel, webapp)
 
     try:
