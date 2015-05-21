@@ -94,23 +94,19 @@ $('a.save-history').click(function () {
     rz_core.main_graph.history.save_to_file();
 });
 
+$('#menu-bar__rzdoc-open').click(function() {
 $('#btn_rzdoc__new').click(function() {
 
-    var cmd_bar,
-        cmd_bar_body,
-        submit_btn,
-        close_btn;
+    var cmd_bar;
 
-    cmd_bar = $('#cmd_bar__rzdoc_new');
+    cmd_bar = $('#cmd-bar__rzdoc-search');
     if (cmd_bar.length > 0) { // cmd bar present
-        cmd_bar.fadeToggle(400, function() {
-            cmd_bar.remove();
-        });
+        cmd_bar.remove();
         return;
     }
 
-    cmd_bar = $('<div class="cmd-bar" id="cmd_bar__rzdoc_new">');
-    cmd_bar_body = $('<div class="cmd-bar_body" id="cmd_bar__rzdoc_new__body">');
+    rz_core.rzdoc__search(''); // this should match all existing documents
+});
 
     close_btn = $('<div id="cmd_bar__rzdoc_close">x</div>');
     close_btn.addClass('toolbar__close_btn');
@@ -150,18 +146,6 @@ $('#btn_rzdoc__new').click(function() {
 });
 
 $('#menu-bar__rzdoc-search').on('keypress', function(e) {
-$('#btn_rzdoc__open').click(function() {
-    var cmd_bar,
-        cmd_bar_body,
-        close_btn;
-
-    cmd_bar = $('#cmd_bar__rzdoc_open');
-    if (cmd_bar.length > 0) { // cmd bar present
-        cmd_bar.fadeToggle(400, function() {
-            cmd_bar.remove();
-        });
-        return;
-    }
 
     var search_query;
 
