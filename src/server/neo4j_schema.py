@@ -1,7 +1,7 @@
 #
 # meta label schema
 #
-NEO4J_SCHEMA_VERSION = '0.2.0'
+NEO4J_SCHEMA_VERSION = '0.2.1'
 
 META_LABEL__RZDB_META = '__RZDB_META'
 
