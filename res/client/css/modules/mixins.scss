@@ -13,3 +13,17 @@
 @mixin rz-box-sizing-padding() {
             box-sizing: padding-box;
 }
+
+@mixin btn-change-on-hover__opacity() {
+    &:hover {
+        opacity: 0.7;
+        cursor: pointer;
+    }
+}
+
+@mixin btn-change-on-hover__color($color) {
+    &:hover {
+        color: $color;
+        cursor: pointer;
+    }
+}
