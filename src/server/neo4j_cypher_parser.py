@@ -4,9 +4,10 @@ Cypher language parser
    - e_XXX class object should be considered internal
 """
 
-import re
 from collections import defaultdict
 import logging
+import re
+
 
 #
 # Tokens
@@ -214,9 +215,9 @@ class pt_abs_composite_node(pt_abs_node):
                 if isinstance(n, exp_type): ctx += [n]
 
         if False == recurse:
-            f_recurse = lambda _n, _ctx, depth: depth <= 1 # [!] visit child nodes only 
+            f_recurse = lambda _n, _ctx, depth: depth <= 1  # [!] visit child nodes only
         if True == recurse:
-            f_recurse = lambda _n, _ctx, _depth: True # recurse
+            f_recurse = lambda _n, _ctx, _depth: True  # recurse
         return self.tree_walk__pre(f_visit=f_visit, f_recurse=f_recurse, ctx=[])
 
     def tree_walk__pre(self, f_pre=lambda n, ctx: None,
@@ -663,7 +664,7 @@ class Cypher_Parser(object):
         if ':' == input[0]:  # open sibling
             return self.parse__e_val_or_param(input[1:], n_cur)
 
-        if not n_cur.is_set__value(): # kv_pair key yet to be set
+        if not n_cur.is_set__value():  # kv_pair key yet to be set
             n_cur = n_cur.spawn_child(e_ident)
             return self.__parse(input, n_cur)
 

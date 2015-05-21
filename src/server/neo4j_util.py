@@ -5,16 +5,15 @@
 import json
 import six
 import string
-import time
 import uuid
 
 import model
+from neo4j_cypher_parser import tok__quote__backquote, tok__quote__singlequote
+import neo4j_schema
 from six.moves.urllib import request
 import six.moves.urllib_error as urllib_error
 from util import debug_log_duration
-import re
-from neo4j_cypher_parser import tok__quote__backquote, tok__quote__singlequote
-import neo4j_schema
+
 
 class Neo4JException(Exception):
     def __init__(self, error_set):
@@ -66,7 +65,7 @@ def rzdoc__ns_label(rzdoc):
     """
     return neo4j_schema.META_LABEL__RZDOC_NS_PREFIX + rzdoc.id
 
-def rzdoc__meta_ns_label(rzdoc): 
+def rzdoc__meta_ns_label(rzdoc):
     """
     [!] must be quoted when used in queries
     """
