@@ -79,10 +79,6 @@ var RZ_VERSION = '{% include "version.txt" %}';
           <div contentEditable="true" tabindex="2" class="input input-bar" id="textanalyser" placeholder="Add nodes or links" autofocus ></div>
           <button tabindex="-1" id="btn_add"></button>
         <div id="input-suggestion" class="suggestion" style="display: none"></div>
-        <div id="activity_view">
-          <div id="activity_view__header">Activity</div>
-          <div id="activity_view__body" style="display:none"></div>
-        </div>
       </div>
     </div>
     <div class="info-container" style="display:none">
@@ -148,6 +144,10 @@ var RZ_VERSION = '{% include "version.txt" %}';
 
 
     </div>
+  </div>
+  <div id="activity_view" style="display:none">
+    <div id="activity_view__header">Activity</div>
+    <div id="activity_view__body"></div>
   </div>
   <div class="rhizi-logo"><a tabindex="-1" href="http://www.rhizi.org">
     <img src="/static/img/rhizi-logo.png"/></a>
