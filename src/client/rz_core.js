@@ -362,6 +362,93 @@ function rzdoc__open_default() {
     return rzdoc__open(rz_config.rzdoc__mainpage_name);
 }
 
+function rzdoc__search(search_query) {
+
+    var cmd_bar,
+    close_btn,
+    result_body;
+
+    cmd_bar = $('#cmd-bar__rzdoc-search');
+    if (cmd_bar.length > 0) { // cmd bar present
+        cmd_bar.remove();
+    }
+
+    cmd_bar = $('<div class="cmd-bar" id="cmd-bar__rzdoc-search">');
+    cmd_bar.css('display', 'none');
+
+    close_btn = $('<div id="cmd_bar__rzdoc_close">x</div>');
+    close_btn.addClass('toolbar__close_btn');
+    cmd_bar.append(close_btn);
+
+    result_body = $('<div id="cmd-bar__rzdoc-search__result-body">');
+    cmd_bar.append(result_body);
+
+    cmd_bar.append($('<div class="cmd-bar__close_bar">Search results</div>'));
+
+    function on_error(rzdoc_name_list) {
+        // TODO: impl
+    }
+
+    function on_success(rzdoc_name_list) {
+
+        if (0 === rzdoc_name_list.length) { // no document found, suggest creation
+            var create_btn,
+                msg,
+                query_echo,
+                block_div_wrapper;
+
+            create_btn = $('<span>');
+            create_btn.text('Create document');
+            create_btn.addClass('cmd-bar_btn');
+
+            query_echo = '<span id=\"cmd-bar__rzdoc-search__query-echo\">\'' + search_query + '\'</span>';
+            msg = $('<span>No document titled ' + query_echo + ' was found.</span>');
+
+            block_div_wrapper = $('<div id="cmd-bar__rzdoc-search__no-results">')
+            block_div_wrapper.append(msg);
+            block_div_wrapper.append(create_btn);
+
+            result_body.append(block_div_wrapper);
+
+            create_btn.click(function() {
+                rzdoc__create_and_open(search_query);
+                cmd_bar.remove();
+            });
+
+            return;
+        }
+
+        rzdoc_name_list.sort();
+        for (var i = 0; i < rzdoc_name_list.length; i++) {
+            var rzdoc_item = $('<div title="Open Rhizi">' + rzdoc_name_list[i] + '</div>');
+            rzdoc_item.addClass('cmd_bar__rzdoc_open__item');
+            result_body.append(rzdoc_item);
+        }
+
+        $('.cmd_bar__rzdoc_open__item').click(function(click_event) { // attach common click handler
+            var rzdoc_name = click_event.currentTarget.textContent;
+            var rzdoc_cur_name = rzdoc__current__get_name();
+            if (rzdoc_name == rzdoc_cur_name) {
+                console.log('rzdoc__open: ignoring request to reopen currently rzdoc: name: ' + rzdoc_cur_name);
+                $("#rzdoc-bar_doc-label").fadeOut(400).fadeIn(400); // signal user
+            } else {
+                rzdoc__open(rzdoc_name);
+                cmd_bar.remove();
+            }
+        });
+    }
+
+    // close
+    close_btn.on('click', function() {
+        cmd_bar.remove();
+    });
+
+    rz_api_backend.rzdoc_search(search_query, on_success, on_error); // TODO: handle doc list timeout
+
+    cmd_bar.insertAfter('#top-bar');
+    cmd_bar.fadeToggle(400);
+}
+
 var published_var_dict = {
     // functions
     init: init,
@@ -370,6 +457,7 @@ var published_var_dict = {
     rzdoc__open: rzdoc__open,
     rzdoc__current__get_name: rzdoc__current__get_name,
     rzdoc__open_default: rzdoc__open_default,
+    rzdoc__search: rzdoc__search,
     update_view__graph : update_view__graph,
 
     // vars, set by init
