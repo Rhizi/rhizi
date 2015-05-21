@@ -73,6 +73,24 @@ def deco__exception_log(kernel_f):
 
     return f_decorated
 
+def deco__DB_status_check(kernel_f):
+    """
+    Check DB status:
+       - connection available
+       - DB metablock available
+    """
+
+    @wraps(kernel_f)
+    def f_decorated(self, *args, **kwargs):
+        if False == self.db_conn_avail:
+            raise RZKernel_Exception__DB_conn_unavailable()
+        if self.db_metablock is None:
+            raise RZKernel_Exception__DB_metablock_unavailable()
+
+        return kernel_f(self, *args, **kwargs)
+
+    return f_decorated
+
 def for_all_public_functions(decorator):
 
     def cls_decorated(cls):
@@ -218,6 +236,10 @@ class RZ_Kernel(object):
         self.cache__rzdoc_name_to_rzdoc[rzdoc_name] = rz_doc
         return rz_doc
 
+    def is_DB_status__ok(self):
+        return self.db_conn_avail and self.db_metablock is not None
+
+    @deco__DB_status_check
     def diff_commit__topo(self, topo_diff, ctx):
         """
         commit a graph topology diff - this is a common pathway for:
@@ -238,6 +260,7 @@ class RZ_Kernel(object):
         op_ret['meta'] = topo_diff.meta
         return topo_diff, op_ret
 
+    @deco__DB_status_check
     def diff_commit__attr(self, attr_diff, ctx):
         """
         commit a graph attribute diff - this is a common pathway for:
@@ -257,10 +280,12 @@ class RZ_Kernel(object):
         attr_diff.meta['ts_created'] = ts_created
         return attr_diff, op_ret
 
+    @deco__DB_status_check
     def load_node_set_by_id_attr(self, id_set, ctx=None):
         op = DBO_match_node_set_by_id_attribute(id_set=id_set)
         self.db_ctl.exec_op(op)
 
+    @deco__DB_status_check
     def rzdoc__clone(self, rzdoc, ctx=None):
         """
         Clone entire rzdoc
@@ -273,6 +298,7 @@ class RZ_Kernel(object):
         topo_diff = self.db_ctl.exec_op(op)
         return topo_diff
 
+    @deco__DB_status_check
     def rzdoc__commit_log(self, rzdoc, limit):
         """
         return commit log
@@ -283,6 +309,7 @@ class RZ_Kernel(object):
         commit_log = self.db_ctl.exec_op(op)
         return commit_log
 
+    @deco__DB_status_check
     def rzdoc__create(self, rzdoc_name, ctx=None):
         """
         Create & persist new RZDoc - may fail on unique name/id constraint violation
@@ -305,6 +332,7 @@ class RZ_Kernel(object):
         self.db_ctl.exec_op(op__block_chain__init)
         return rzdoc
 
+    @deco__DB_status_check
     def rzdoc__delete(self, rzdoc, ctx=None):
         """
         Delete RZDoc
@@ -323,6 +351,7 @@ class RZ_Kernel(object):
         # FIXME:
         #    - broadcast delete event
 
+    @deco__DB_status_check
     def rzdoc__lookup_by_name(self, rzdoc_name, ctx=None):
         """
         @param ctx: may be None
@@ -331,7 +360,6 @@ class RZ_Kernel(object):
         """
 
         op = DBO_rzdoc__lookup_by_name(rzdoc_name)
-
         rzdoc = self.db_ctl.exec_op(op)
         return rzdoc  # may be None
 
@@ -392,6 +420,7 @@ class RZ_Kernel(object):
         op_ret = self.db_ctl.exec_op(op)
         return op_ret
 
+    @deco__DB_status_check
     def rzdoc__rename(self, cur_name, new_name):
         op = DBO_rzdoc__rename(cur_name, new_name)
 
