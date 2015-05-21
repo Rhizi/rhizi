@@ -229,9 +229,20 @@ def rzdoc__delete(rzdoc_name):
     return make_response__json(status=HTTP_STATUS__204_NO_CONTENT)
 
 @common_rest_req_exception_handler
-def rzdoc__list():
+def rzdoc__search():
+
+    def sanitize_input(req):
+        search_query = req.get_json().get('search_query')
+
+        if search_query is None or \
+           len(search_query) > current_app.rz_config.rzdoc__name__max_length:
+            raise Exception('malformed rzdoc search query')
+
+        return search_query
+
+    search_query = sanitize_input(request)
     kernel = flask.current_app.kernel
     ctx = __context__common(rzdoc_name=None)  # avoid rzdoc cache lookup exception
-    rzdoc_set = kernel.rzdoc__list(ctx)
+    rzdoc_set = kernel.rzdoc__search(search_query, ctx)
     ret = [rzdoc_dict['name'] for rzdoc_dict in rzdoc_set]
     return common_resp_handle__success(data=ret)
