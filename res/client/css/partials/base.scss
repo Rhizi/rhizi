@@ -69,11 +69,9 @@ input, .input {
 }
 
 .rhizi-logo {
-  position: fixed;
-  color: $dark-grey;
+  position: absolute;
   bottom: 10px;
   right: 10px;
-  vertical-align: middle;
 }
 
 .logo-3rd-party {

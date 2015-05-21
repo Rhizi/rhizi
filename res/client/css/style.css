@@ -78,11 +78,9 @@ input, .input {
   color: #919095; }
 
 .rhizi-logo {
-  position: fixed;
-  color: #363636;
+  position: absolute;
   bottom: 10px;
-  right: 10px;
-  vertical-align: middle; }
+  right: 10px; }
 
 .logo-3rd-party {
   height: 30px; }
@@ -165,28 +163,6 @@ table {
   background-position: center;
   background-color: lightgreen; }
 
-#btn-logout {
-  margin-left: 15px;
-  font-size: 0.8em; }
-
-#btn-logout:hover {
-  opacity: 0.7;
-  cursor: pointer; }
-
-#btn_rzdoc__new {
-  background: url("../img/rzdoc-new.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 32px;
-  width: 32px; }
-
-#btn_rzdoc__open {
-  background: url("../img/rzdoc-open.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 45px;
-  width: 32px; }
-
 .cmn-form {
   width: 420px;
   background-color: white;
@@ -256,24 +232,30 @@ table {
   padding: 12px;
   text-align: center; }
 
-.debug-ui {
-  display: none; }
+#devtools {
+  position: absolute;
+  bottom: 0;
+  border-top: 10px solid gray;
+  padding-left: 10px;
+  height: 20%;
+  width: 100%;
+  line-height: 20px; }
 
-body.debug .debug-ui {
-  display: inline;
-  position: fixed;
-  bottom: 70px;
-  left: 10px;
-  text-decoration: none; }
-body.debug .debug-ui-row {
-  float: left;
-  width: 100%; }
-body.debug .debug-ui-left {
-  float: left;
-  width: 50%; }
-body.debug .debug-ui-right {
-  float: right;
-  width: 50%; }
+#devtools span {
+  font-family: monospace; }
+
+.devtools__btn:hover {
+  cursor: pointer;
+  color: gold; }
+
+.debug-view__multi-step-cmd-delim {
+  color: red;
+  margin-left: 4px;
+  margin-right: 2px; }
+
+.debug-view__import__input_file_name {
+  font-family: monospace;
+  margin-left: 20px; }
 
 .dropdown-menu {
   border: 1px solid #919095;
@@ -326,6 +308,7 @@ body.debug .debug-ui-right {
   font-weight: bold; }
 
 .input-container {
+  left: 20px;
   width: 35%; }
   .input-container form {
     display: inline; }
@@ -344,14 +327,12 @@ body.debug .debug-ui-right {
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3); }
 
 #input-container__search {
-  left: 24px;
   margin-top: 24px;
   position: absolute; }
 
 #input-container__graph-input {
   position: absolute;
   margin-top: 80px;
-  left: 24px;
   height: 36px;
   line-height: initial; }
   #input-container__graph-input:focus {
@@ -626,53 +607,45 @@ body.debug .debug-ui-right {
   background-position: center;
   background-repeat: no-repeat; }
 
-.top-bar {
-  line-height: 40px;
-  background-color: #363636;
-  overflow-y: auto;
-  padding-top: 5px;
-  padding-bottom: 5px; }
-
-.top-bar__user-area {
-  margin-right: 20px;
-  vertical-align: middle; }
-
 .username {
   display: inline-block;
   text-align: right; }
 
-.profile-circle {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  background: #33c2e0;
-  display: none; }
-
-.profile-initials {
-  display: inline-block;
-  color: #f5f5fa;
-  font-size: 14px;
-  position: relative;
-  left: -27px;
-  top: -10px; }
-
 .profile-username {
-  color: #f5f5fa; }
+  font-size: 14px;
+  margin-right: 10px; }
 
-#top-bar_float-left {
-  float: left;
-  margin-left: 40px; }
-
-#top-bar_float-right {
+#top-bar__user-area {
   float: right;
-  margin-right: 20px; }
+  margin-right: 20px;
+  vertical-align: middle; }
+
+#top-bar__brand-area {
+  float: right;
+  margin-right: 10px;
+  vertical-align: middle; }
+
+#top-bar_L1 {
+  border-bottom: 2px solid lightgray;
+  line-height: 40px;
+  overflow: auto;
+  padding-left: 20px; }
+
+#top-bar_L2 {
+  background-color: #CFE5FF; }
+
+#top-bar__logout-btn {
+  margin-left: 15px;
+  font-size: 14px; }
+  #top-bar__logout-btn:hover {
+    opacity: 0.7;
+    cursor: pointer; }
 
 #rzdoc-bar {
-  color: #f5f5fa;
-  position: relative;
+  float: left;
+  min-width: 250px;
   overflow-x: auto;
-  margin-right: 20px;
-  min-width: 250px; }
+  position: relative; }
 
 #rzdoc-bar_doc-label {
   font-family: "Source_Semibold", sans-serif;
@@ -807,21 +780,22 @@ p {
   height: 25px; }
 
 .cmd-bar {
-  background-color: #85B375;
-  width: 100%; }
+  background-color: lightgray; }
 
-.cmd-bar_close_bar {
-  background-color: lightgray;
-  text-align: center;
+.cmd-bar__close_bar {
+  background-color: #4D4D4D;
+  color: white;
   font-size: 12px;
   padding-top: 2px;
   padding-bottom: 1px;
+  text-align: center;
   width: 100%; }
 
-.cmd-bar_body {
+.cmd-bar__body {
   padding: 8px 20px; }
 
 .cmd-bar_btn {
+  background-color: #32C232;
   border-radius: 2px;
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
@@ -830,33 +804,37 @@ p {
   margin-left: 10px;
   vertical-align: middle; }
 
-#cmd_bar__rzdoc_new__input {
-  padding: 2px 8px;
-  margin-left: 10px;
-  vertical-align: middle;
-  width: 200px; }
+#cmd-bar__rzdoc-new input {
+  font-size: 14px;
+  padding: 2px 8px; }
 
-#cmd_bar__rzdoc_new__label {
-  color: white;
-  margin-left: 40px;
-  vertical-align: middle; }
+#cmd-bar__rzdoc-search__result-body {
+  font-size: 14px;
+  overflow: auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  padding-right: 30px; }
 
-#cmd_bar__rzdoc_new__submit {
-  background-color: yellowgreen; }
+#cmd-bar__rzdoc-search__query-echo {
+  font-style: italic;
+  margin-left: 2px;
+  margin-right: 2px; }
 
-#cmd_bar__rzdoc_open__rzdoc_list {
-  overflow: auto; }
+#cmd-bar__rzdoc-search__no-results {
+  margin: 5px; }
 
 .cmd_bar__rzdoc_open__item {
   border-radius: 3px;
   background-color: white;
   float: left;
   font-size: 14px;
-  margin: 3px 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
   padding: 3px 5px;
   white-space: nowrap; }
   .cmd_bar__rzdoc_open__item:hover {
-    background-color: #b9b9b9;
+    background-color: gold;
     cursor: pointer; }
 
 #status-bar {
@@ -874,10 +852,55 @@ p {
   margin-left: 10px;
   padding: 2px 8px; }
 
+.menu-bar__item {
+  float: left;
+  font-size: 14px; }
+
+.menu-bar__delimiter {
+  float: left;
+  color: white;
+  margin-left: 0px;
+  margin-right: 0px; }
+
+#menu-bar {
+  height: 24px;
+  line-height: 24px;
+  padding-left: 20px;
+  padding-bottom: 3px;
+  padding-top: 3px; }
+  #menu-bar:before {
+    margin-left: 20px; }
+
+#menu-bar__activity-view-toggle {
+  cursor: default; }
+
+#menu-bar__activity-view-toggle input {
+  left: 3px;
+  position: relative;
+  top: 3px; }
+
+#menu-bar__rzdoc-new:hover {
+  color: red;
+  cursor: pointer; }
+
+#menu-bar__rzdoc-open:hover {
+  color: red;
+  cursor: pointer; }
+
+#menu-bar__rzdoc-search {
+  float: right;
+  margin-right: 10px; }
+  #menu-bar__rzdoc-search:hover {
+    color: red;
+    cursor: pointer; }
+
+#menu-bar__rzdoc-search input {
+  font-size: 14px;
+  padding: 2px 8px; }
+
 .activity__entry {
   background-color: #E0E0E0;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
+  border-bottom: 2px solid white;
   line-height: 20px;
   padding: 0px 5px; }
   .activity__entry:hover {
@@ -908,11 +931,15 @@ p {
   background-color: transparent;
   max-height: 110px;
   overflow-y: auto; }
+  #activity_view__body:first-child:before {
+    border-top: 2px solid white; }
 
 #activity_view__header {
-  background-color: rgba(1, 1, 1, 0.3);
+  background-color: #CFE5FF;
   border-radius: 3px 3px 0 0;
-  text-align: center; }
+  text-align: center;
+  font-size: 14px;
+  padding: 5px; }
 
 .graph-view {
   background-color: #f5f5fa;

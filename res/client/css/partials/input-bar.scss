@@ -1,6 +1,7 @@
 @import '../modules/mixins'; // For box-shadow
 
 .input-container {
+  left: $graph-margin-left;
   width: 35%;
 
   form {
@@ -25,7 +26,6 @@
 }
 
 #input-container__search {
-  left: 24px;
   margin-top: $two-baselines;
   position: absolute;
 }
@@ -33,7 +33,6 @@
 #input-container__graph-input {
   position: absolute;
   margin-top: 80px;
-  left: 24px;
   height: 36px;
   line-height: initial;
   &:focus {
