@@ -1,7 +1,9 @@
 import logging
+import time
 import unittest
 
 import db_controller
+from db_op import DBO_factory__default
 import neo4j_test_util
 from rz_config import RZ_Config
 from rz_kernel import RZ_Kernel
@@ -17,8 +19,17 @@ class TestRZDoc(unittest.TestCase):
         self.db_ctl = db_controller.DB_Controller(cfg.db_base_url)
         self.log = logging.getLogger('rhizi')
         self.log.addHandler(logging.StreamHandler())
-        self.kernel = RZ_Kernel()
-        self.kernel.db_ctl = self.db_ctl
+
+        # bootstrap kernel
+        kernel = RZ_Kernel()
+        kernel.db_ctl = self.db_ctl
+        kernel.db_op_factory = DBO_factory__default()
+        kernel.start()
+
+        self.kernel = kernel
+
+        while not self.kernel.is_DB_status__ok():  # wait for kernel to initialize...
+            time.sleep(0.3)
 
     def setUp(self): pass
 
@@ -71,9 +82,27 @@ class TestRZDoc(unittest.TestCase):
         self.assertIsNone(lookup_ret__by_name)
 
     def test_rzdoc_search(self):
-        pass
+        rzdoc_common_name = test_util.gen_random_name()
+        rzdoc_post_a = test_util.generate_random_RZDoc(rzdoc_common_name + '_a')
+        rzdoc_post_b = test_util.generate_random_RZDoc(rzdoc_common_name + '_b')
+        rzdoc_pre_c = test_util.generate_random_RZDoc('c_' + rzdoc_common_name)
+        rzdoc_plain = test_util.generate_random_RZDoc(rzdoc_common_name)
 
-    def tearDown(self): pass
+        for rzdoc in [rzdoc_post_a, rzdoc_post_b, rzdoc_pre_c, rzdoc_plain]:
+            self.kernel.rzdoc__create(rzdoc_name=rzdoc.name)
+
+        ret = self.kernel.rzdoc__search(rzdoc_common_name)
+        self.assertEquals(4, len(ret))
+
+        ret = self.kernel.rzdoc__search(rzdoc_common_name + '_')
+        self.assertEquals(2, len(ret))
+
+        ret = self.kernel.rzdoc__search('c_' + rzdoc_common_name)
+        self.assertEquals(1, len(ret))
+
+    @classmethod
+    def tearDownClass(self):
+        self.kernel.shutdown()
 
 @debug__pydev_pd_arg
 def main():
