@@ -752,15 +752,19 @@ class DBO_rzdb__init_DB(DB_composed_op):
 
     class _init_DB_subop(DB_op):
 
-        def __init__(self):
+        def __init__(self, cfg):
             super(DBO_rzdb__init_DB. _init_DB_subop, self).__init__()
 
             # init DB metadata node
             q_arr = ['create (n:%s {db_attr})' % (neo4j_schema.META_LABEL__RZDB_META)]
-            q_params = {'db_attr': {'schema_version': neo4j_schema.NEO4J_SCHEMA_VERSION}}
+            q_params = {'db_attr': {'schema_version': neo4j_schema.NEO4J_SCHEMA_VERSION,
+                                    'rzdoc__name__max_length': cfg['rzdoc__name__max_length']
+                                   }
+                       }
             self.add_statement(q_arr, q_params)
 
-    def __init__(self, rzdoc__mainpage_name):
+    def __init__(self, rzdoc__mainpage_name,
+                       rzdoc__name__max_length=neo4j_schema.RZDOC__NAME__MAX_LENGTH):
         """
         Fetch DB metadata
         """
@@ -770,7 +774,8 @@ class DBO_rzdb__init_DB(DB_composed_op):
         self.add_sub_op(DBO_rzdb__fetch_DB_metablock())
 
         # init DB metadata node
-        self.add_sub_op(DBO_rzdb__init_DB._init_DB_subop())
+        cfg = {'rzdoc__name__max_length': rzdoc__name__max_length}
+        self.add_sub_op(DBO_rzdb__init_DB._init_DB_subop(cfg))
 
         # create mainpage
         mainpage_rzdoc = RZDoc(rzdoc__mainpage_name)
