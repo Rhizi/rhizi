@@ -77,6 +77,7 @@ function($, rz_core, file_saver) {
                 return;
             }
 
+            $('#debug-view__import__file-list').children().remove();
             $.map(import_file_set, function(file){
 
                 var e_file_path;
@@ -84,7 +85,7 @@ function($, rz_core, file_saver) {
                 e_file_path = $('<div>');
                 e_file_path.addClass('debug-view__import__input_file_name')
                 e_file_path.text('- ' + file.name);
-                $('#debug-view__import').append(e_file_path);
+                $('#debug-view__import__file-list').append(e_file_path);
             });
 
             $('#devtools__import__step__export').show(); // enable import exec button
