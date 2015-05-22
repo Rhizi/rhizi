@@ -30,7 +30,7 @@ function link_ids_from_diff(diff)
     return is_attr(diff) ? _.keys(diff['__type_link']) : _.pluck(diff.link_set_add, 'id');
 }
 
-function topo_explanation(diff)
+function diff_to_summary_str__topo(diff)
 {
     var nodes_added = _.pluck(diff.node_set_add, 'name'),
         links_added = _.pluck(diff.link_set_add, 'name');
@@ -40,7 +40,7 @@ function topo_explanation(diff)
         (links_added.length > 0 ? 'added ' + links_added.join(' ') + ' links' : '');
 }
 
-function attr_explanation(diff)
+function diff_to_summary_str__attr(diff)
 {
     //var nodes_changed = _.map(diff.__type_node0
     var nodes_changed,
@@ -71,13 +71,13 @@ function attr_explanation(diff)
     return (nodes_changed.concat(links_changed)).join(';');
 }
 
-function explanation_from_diff(diff)
+function diff_to_summary_str(diff)
 {
     if (is_topo(diff)) {
-        return topo_explanation(diff);
+        return diff_to_summary_str__topo(diff);
     }
     if (is_attr(diff)) {
-        return attr_explanation(diff);
+        return diff_to_summary_str__attr(diff);
     }
 
 }
@@ -120,7 +120,7 @@ function Activity(diff)
         affected_link_ids = link_ids_from_diff(diff),
         author = meta.author || 'Anonymous',
         sentence = meta.sentence,
-        explanation = (sentence !== undefined && sentence.length > 0) ? sentence : explanation_from_diff(diff);
+        explanation = (sentence !== undefined && sentence.length > 0) ? sentence : diff_to_summary_str(diff);
 
     this.div = new_div;
     if (is_topo(diff)) {
