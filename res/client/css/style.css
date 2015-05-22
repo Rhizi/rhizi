@@ -902,6 +902,7 @@ p {
   background-color: #E0E0E0;
   border-bottom: 2px solid white;
   line-height: 20px;
+  overflow: auto;
   padding: 0px 5px; }
   .activity__entry:hover {
     background-color: #b9b9b9; }
