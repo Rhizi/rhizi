@@ -162,6 +162,7 @@ RZI_NEO4J_INIT_SCRIPT_PATH=/etc/init.d/${RZI_NEO4J_SVC_NAME}
 RZI_NEO4J_PID_FILE=/var/lib/neo4j/mux-root.d/${RZI_NAME}/data/neo4j-service.pid
 RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 RZI_RZ_INIT_SCRIPT_PATH=/etc/init.d/rhizi__${RZI_NAME}
+RZI_RZ_CRON_SCRIPT_PATH=/etc/cron.daily/rhizi__${RZI_NAME}
 
 #
 # sanity checks
@@ -192,6 +193,7 @@ case $1 in
         # set modes, ownership
         chmod +x ${RZI_NEO4J_INIT_SCRIPT_PATH}
         chmod +x ${RZI_RZ_INIT_SCRIPT_PATH}
+        chmod +x ${RZI_RZ_CRON_SCRIPT_PATH}
         chgrp ${APACHE_USER} /etc/rhizi/mux-conf.d/${RZI_NAME}/*
         chmod o-r /etc/rhizi/mux-conf.d/${RZI_NAME}/*
 
