@@ -46,9 +46,11 @@ function diff_to_summary_str__attr(diff)
     var nodes_changed,
         links_changed;
 
-    function collect(root, find) {
+    function collect(root, graph_elem_find_func) {
         return _.map(_.keys(root), function (id) {
-                var writes = root[id].__attr_write,
+                var e_name_or_id,
+                    cur_graph_elem,
+                    writes = root[id].__attr_write,
                     ret = [];
 
                 _.each(_.keys(writes), function (key) {
@@ -63,7 +65,11 @@ function diff_to_summary_str__attr(diff)
                 _.map(root[id].__attr_remove, function (id) {
                     ret.push(id + ' removed');
                 });
-                return find(id).name + ': ' + ret.join(', '); /* TODO: use the previous name of the node, not the new name */
+
+                // attempt name resolution
+                cur_graph_elem = graph_elem_find_func(id);
+                e_name_or_id = (cur_graph_elem && cur_graph_elem.name) || id; // use id as fallback, eg. when element not present in current graph
+                return e_name_or_id + ': ' + ret.join(', '); /* TODO: use the previous name of the node, not the new name */
             });
     }
     nodes_changed = collect(diff.__type_node, graph.find_node__by_id);
