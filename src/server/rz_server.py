@@ -201,10 +201,6 @@ def init_rest_interface(cfg, flask_webapp):
     rest_entry_set = [
                       # REST endpoints
                       rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
-                      rest_entry('/graph/diff-commit-set', rz_api_rest.diff_commit__set),
-                      rest_entry('/graph/diff-commit-topo', rz_api_rest.diff_commit__topo),
-                      rest_entry('/graph/diff-commit-attr', rz_api_rest.diff_commit__attr),
-                      rest_entry('/graph/diff-commit-vis', rz_api_rest.diff_commit__vis),
                       rest_entry('/index', rz_api.index, {'methods': ['GET']}),
                       rest_entry('/load/node-set-by-id', rz_api_rest.load_node_set_by_id_attr),
                       rest_entry('/load/link-set/by_link_ptr_set', rz_api_rest.load_link_set_by_link_ptr_set),
@@ -219,6 +215,11 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/api/rzdoc/search', rz_api_rest.rzdoc__search),
                       rest_entry('/api/rzdoc/<path:rzdoc_name>/create', rz_api_rest.rzdoc__create),
                       rest_entry('/api/rzdoc/<path:rzdoc_name>/delete', rz_api_rest.rzdoc__delete, {'methods': ['GET', 'DELETE']}),  # TODO: rm 'GET' once we have UI deletion support - see #436
+
+                      rest_entry('/api/rzdoc/diff-commit__set', rz_api_rest.diff_commit__set),
+                      rest_entry('/api/rzdoc/diff-commit__topo', rz_api_rest.diff_commit__topo),
+                      rest_entry('/api/rzdoc/diff-commit__attr', rz_api_rest.diff_commit__attr),
+                      rest_entry('/api/rzdoc/diff-commit__vis', rz_api_rest.diff_commit__vis),
 
                       # upload endpoints - this might change to external later, keep minimal and separate
                       rest_entry('/blob/upload', rz_blob.upload, {'methods': ['POST']}),

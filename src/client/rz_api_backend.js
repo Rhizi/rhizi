@@ -85,7 +85,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data),
             };
 
-            return ajax_rs('/graph/diff-commit-attr', req_opts, on_success,
+            return ajax_rs('/api/rzdoc/diff-commit__attr', req_opts, on_success,
                     on_error);
         }
 
@@ -102,7 +102,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data),
             };
 
-            return ajax_rs('/graph/diff-commit-topo', req_opts, on_success,
+            return ajax_rs('/api/rzdoc/diff-commit__topo', req_opts, on_success,
                     on_error);
         }
 
@@ -119,7 +119,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data),
             };
 
-            return ajax_rs('/graph/diff-commit-vis', req_opts, on_success,
+            return ajax_rs('/api/rzdoc/diff-commit__vis', req_opts, on_success,
                     on_error);
         }
 
@@ -136,7 +136,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data),
             };
 
-            return ajax_rs('/graph/diff-commit-set', req_opts, on_success,
+            return ajax_rs('/api/rzdoc/diff-commit__set', req_opts, on_success,
                     on_error);
         }
 
