@@ -202,8 +202,6 @@ def init_rest_interface(cfg, flask_webapp):
                       # REST endpoints
                       rest_entry('/feedback', rz_feedback.rest__send_user_feedback__email),
                       rest_entry('/index', rz_api.index, {'methods': ['GET']}),
-                      rest_entry('/load/node-set-by-id', rz_api_rest.load_node_set_by_id_attr),
-                      rest_entry('/load/link-set/by_link_ptr_set', rz_api_rest.load_link_set_by_link_ptr_set),
                       rest_entry('/login', rz_user.rest__login, {'methods': ['GET', 'POST']}),
                       rest_entry('/logout', rz_user.rest__logout, {'methods': ['GET', 'POST']}),
                       rest_entry('/match/node-set', rz_api_rest.match_node_set_by_attr_filter_map),
@@ -220,6 +218,10 @@ def init_rest_interface(cfg, flask_webapp):
                       rest_entry('/api/rzdoc/diff-commit__topo', rz_api_rest.diff_commit__topo),
                       rest_entry('/api/rzdoc/diff-commit__attr', rz_api_rest.diff_commit__attr),
                       rest_entry('/api/rzdoc/diff-commit__vis', rz_api_rest.diff_commit__vis),
+
+
+                      rest_entry('/api/rzdoc/fetch/node-set-by-id', rz_api_rest.load_node_set_by_id_attr),
+                      rest_entry('/api/rzdoc/fetch/link-set/by_link_ptr_set', rz_api_rest.load_link_set_by_link_ptr_set),
 
                       # upload endpoints - this might change to external later, keep minimal and separate
                       rest_entry('/blob/upload', rz_blob.upload, {'methods': ['POST']}),

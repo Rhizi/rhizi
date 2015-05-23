@@ -160,7 +160,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data),
             };
 
-            return ajax_rs('/load/node-set-by-id', req_opts, on_success,
+            return ajax_rs('/api/rzdoc/fetch/node-set-by-id', req_opts, on_success,
                     on_error);
         }
 
@@ -178,7 +178,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 data : JSON.stringify(req_data),
             };
 
-            return ajax_rs('/load/link-set/by_link_ptr_set', req_opts,
+            return ajax_rs('/api/rzdoc/fetch/link-set/by_link_ptr_set', req_opts,
                     on_success, on_error);
         }
 
