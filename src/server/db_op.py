@@ -3,6 +3,8 @@ import hashlib
 import logging
 import re
 
+from flask import current_app # for user_db
+
 from model.graph import Attr_Diff
 from model.graph import Topo_Diff
 from model.model import Link, RZDoc, RZCommit
@@ -827,20 +829,30 @@ class DBO_rzdoc__commit_log(DB_op):
         db_q = DB_Query(q_arr)
         self.add_db_query(db_q)
 
+    def _lookup_user_name(self, email):
+        ret = 'Anonymous'
+        if email is not None:
+            try:
+                user = current_app.user_db.lookup_user__by_email_address(email)
+                ret = user[1].rz_username
+            except:
+                pass
+        return ret
+
     def process_result_set(self):
         ret = []
         # break out the blobs, return them - binary all the way home
         for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 pairs = row.items()[0]  # see query return statement
-                for commit, operation, user in pairs:
+                for commit, operation, user_node_attrs in pairs:
                     if commit['blob'] == '':
                         # root commit, done
                         break
-                    # TODO: get author
                     diff = RZCommit.diff_obj_from_blob(commit['blob'])
+                    user_name = self._lookup_user_name(user_node_attrs['user_name'] if user_node_attrs else None)
                     diff['meta'] = dict(ts_created=commit['ts_created'],
-                                        author='Anonymous' if user is None else user['user_name'],
+                                        author=user_name,
                                         commit=commit['hash'],
                                         )
                     if None is not operation and 'sentence' in operation:
