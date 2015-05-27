@@ -71,12 +71,7 @@
              description="controls the source of domain fragments" />
    <property name="doClientOptimize" value="false" />
    <property name="localServerUseSymlink" value="true" />
-   <property name="fragmentd_root_path" value="res/domain-fragment.d" />
-   <property name="default_fragmentd_src_path"
-             value="${fragmentd_root_path}/default"
-             description="source path for default fragments" />
-   <property name="domain_fragmentd_src_path"
-             value="${fragmentd_root_path}/${targetDomain}" />
+   <property name="fragmentd_root_path" value="res/local" />
 
    <tstamp>
       <format property="versionQualifier" pattern="yyyyMMddHHmm" />
@@ -146,7 +141,7 @@
                failonerror="false" />
 
          <!-- default fragments: templates -->
-         <rsync src="${default_fragmentd_src_path}/" dst="${fragment_d_path}" />
+         <rsync src="${fragmentd_root_path}/" dst="${fragment_d_path}" />
 
       </parallel>
 
@@ -158,13 +153,6 @@
 
          <!-- requires default fragment rsync to have finished -->
          <generate_version_tag outputdir="${fragment_d_path}/template.d" />
-
-         <!-- domain-specific fragments -->
-         <copy todir="${fragment_d_path}" overwrite="true" failonerror="false">
-            <fileset dir="${domain_fragmentd_src_path}"
-                     includes="**/*"
-                     excludes="template.d/" />
-         </copy>
 
          <replaceregexp file="${deploy_target_dir}/static/js/app.js">
             <regexp pattern="\$\{fragment_d_path\}" />
@@ -257,7 +245,7 @@
       </replaceregexp>
 
       <!-- generate version fragment -->
-      <generate_version_tag outputdir="${build_dir__deb_pkg}/${default_fragmentd_src_path}/template.d" />
+      <generate_version_tag outputdir="${build_dir__deb_pkg}/${fragmentd_root_path}/template.d" />
 
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${build_dir__deb_pkg}" includes="Makefile" />
