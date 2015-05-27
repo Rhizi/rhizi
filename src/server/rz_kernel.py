@@ -406,7 +406,7 @@ class RZ_Kernel(object):
                 rm_target = r_assoc
 
         if None == rm_target:  # target possibly removed after becoming stale
-            log.debug("rz_kernel: rzdoc__reader_unsubscribe: assoc not found: remote-address: %s" % (remote_socket_addr))
+            log.debug("rz_kernel: rzdoc__reader_unsubscribe: assoc not found: remote-address: %s" % (remote_socket_addr,))
             return
 
         r_assoc_set.remove(rm_target)  # FIXME: make thread safe
