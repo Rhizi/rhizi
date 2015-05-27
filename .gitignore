@@ -11,6 +11,6 @@ rhizi-server.log
 res/etc/rhizi-server.conf
 src/client/main-built.js
 src/client/main-built.js.map
-res/templates/fragment/version.txt
+res/template.d/version.txt
 src/server/tools
-res/docker/fedora/neo4j-community-2.2.1-unix.tar.gz
+res/docker/fedora/neo4j-*.tar.gz
