@@ -1,3 +1,20 @@
+#    This file is part of rhizi, a collaborative knowledge graph editor.
+#    Copyright (C) 2014-2015  Rhizi
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published
+#    by the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 from neo4j_cypher import Query_Struct_Type, DB_Query
 from neo4j_util import rzdoc__ns_label, rzdoc__meta_ns_label
 from neo4j_cypher_parser import p_path, p_node

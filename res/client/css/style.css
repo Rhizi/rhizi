@@ -1,3 +1,88 @@
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 @import url(vendor/ui.css);
 @font-face {
   font-family: 'Source_Regular';
@@ -17,6 +102,23 @@
   /* IE9 Compat Modes */
   src: url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.woff") format("woff"), url("../font/sourcesanspro_bold/SourceSansPro-Bold-webfont.ttf") format("truetype");
   /* Safari, Android, iOS */ }
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /* Vertical spacing */
 /* Horizontal spacing */
 html, body {
@@ -88,6 +190,23 @@ input, .input {
 #content {
   height: 100%; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
@@ -136,6 +255,23 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .btn-regular {
   cursor: pointer;
   background-color: white;
@@ -163,6 +299,23 @@ table {
   background-position: center;
   background-color: lightgreen; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .cmn-form {
   width: 420px;
   background-color: white;
@@ -232,6 +385,23 @@ table {
   padding: 12px;
   text-align: center; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #devtools {
   position: absolute;
   bottom: 0;
@@ -257,6 +427,23 @@ table {
   font-family: monospace;
   margin-left: 20px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .dropdown-menu {
   border: 1px solid #919095;
   color: #363636;
@@ -307,6 +494,57 @@ table {
   background: darkgray;
   font-weight: bold; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .input-container {
   left: 20px;
   width: 35%; }
@@ -432,6 +670,23 @@ table {
 .analyser-span-space-link-node {
   color: blue; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .type_selection {
   color: #363636;
   font-size: 18px;
@@ -451,6 +706,40 @@ table {
 #keys {
   opacity: 0.5; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .info-container {
   margin-top: 85px;
   margin-bottom: 20px;
@@ -544,6 +833,23 @@ table {
 .info-container.type-project {
   border-top-color: #40C200; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .kbd-button {
   background-color: #f7f7f7;
   box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
@@ -558,6 +864,40 @@ table {
   vertical-align: middle;
   white-space: nowrap; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #search {
   font-family: "Source_Regular", sans-serif;
   font-size: 18px; }
@@ -574,6 +914,23 @@ table {
 #search-suggestion .suggestion-item.selected, #search-suggestion .suggestion-item:hover {
   padding: 12px 0px 12px 22px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .task-alert {
   position: relative;
   width: 100%;
@@ -607,6 +964,23 @@ table {
   background-position: center;
   background-repeat: no-repeat; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .username {
   display: inline-block;
   text-align: right; }
@@ -658,6 +1032,23 @@ table {
   padding: 2px;
   vertical-align: middle; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /* Headings */
 h1 {
   font-size: 30px; }
@@ -681,6 +1072,23 @@ p {
   color: #363636;
   line-height: 1.4; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .tool_bar_btn {
   border: 1px solid #919095;
   cursor: pointer;
@@ -746,6 +1154,23 @@ p {
   width: 65px;
   right: 1px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #zoom-bar {
   position: absolute;
   bottom: 70px;
@@ -779,6 +1204,23 @@ p {
   width: 16px;
   height: 25px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .cmd-bar {
   background-color: lightgray; }
 
@@ -837,6 +1279,23 @@ p {
     background-color: gold;
     cursor: pointer; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #status-bar {
   background-color: #A3C9EA; }
 
@@ -852,6 +1311,23 @@ p {
   margin-left: 10px;
   padding: 2px 8px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .menu-bar__item {
   float: left;
   font-size: 14px; }
@@ -898,6 +1374,23 @@ p {
   font-size: 14px;
   padding: 2px 8px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .activity__entry {
   background-color: #E0E0E0;
   border-bottom: 2px solid white;
@@ -942,6 +1435,23 @@ p {
   font-size: 14px;
   padding: 5px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .graph-view {
   background-color: #f5f5fa;
   height: 100%; }
@@ -1482,6 +1992,40 @@ p {
 .activity-div:focus {
   outline: none; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .welcome-box {
   margin-left: auto;
   margin-right: auto;
@@ -1633,9 +2177,43 @@ p {
   #login-page_create-account-button:hover {
     background-color: #363636; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #cmn-form-row--instruction-line {
   margin-bottom: 12px; }
 
+/*
+    This file is part of rhizi, a collaborative knowledge graph editor.
+    Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 .signup_form__row {
   width: 100%; }
 
