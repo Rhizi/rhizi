@@ -1,7 +1,7 @@
 """
  Multiplexed-Rhizi instance configuration generator:
     - generate Apache instance configuration files
-    - generate Neo4J instance,  instance configuration files
+    - generate Neo4j instance,  instance configuration files
     - generate Rhizi instance configuration files
 
  This tool currently does not handle module confdir/rootdir creation, file mode/ownership creation,
