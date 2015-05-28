@@ -1,8 +1,16 @@
 # Rhizi
 A collaborative editor for organizing, communicating, and analyzing data in graph form.
 
+It is licensed under the GNU AGPL v3, see LICENSE for more details.
+
+Patches or pull requests are welcome but we require a contributor license agreement, see TBU
+
 # Dependencies
+
+Database:
 - Neo4J DB server >= 2.1.5 - http://neo4j.com/download/
+
+Server:
 - Flask - http://flask.pocoo.org/
 - Apache Ant >= 1.9.0
 - Python 2.7
@@ -13,15 +21,24 @@ A collaborative editor for organizing, communicating, and analyzing data in grap
 - python-socketio
 - python-futures >= 2.2.0
 
-For rz-backup:
-- python-click >= 3.3 (not tested with anything prior)
-
-## Client
+Client
 All of the following are already bundled but noted here for reference:
-- feedback - https://github.com/ivoviz/feedback (it also bundles html2canvas)
 - jquery
 - d3
+- Bacon.js
+- underscore
+- feedback - https://github.com/ivoviz/feedback (it also bundles html2canvas)
 - FileSaver
+
+For rebuilding client css from scss saource files you will need:
+- sass (scss tool)
+
+Build dependencies:
+- ant
+- make
+
+For rz-backup:
+- python-click >= 3.3 (not tested with anything prior)
 
 # Installation
 ## Apt based systems: Debian / Ubuntu
@@ -41,11 +58,11 @@ use pip to install all requirements
  $ pip install flask
  $ pip install gevent-socketio
 
-# Use
+# Running instructions
 ## Running Rhizi Locally
 To run Rhizi locally:
 - Run neo4j locally on the default 7474 port
-- Add <code>127.0.0.1 rhizi.local</code> to your hosts file
+<code>neo4j console</code> or <code>neo4j server</code> after intalling neo4j: we use 2.2.1 from http://neo4j.com
 - Launch run-local.sh:<br>
 <code>$ ./run-local.sh</code>
 
@@ -56,7 +73,7 @@ Or perform the following by hand:
 - Run rhizi-server.py:<br>
 <code>$ cd deploy-local && python bin/rz_server.py --config-dir=etc</code>
 
-Command line use documentation can be view with:
+Command line use documentation can be viewed with:
 :$ python rz_server.py -h
 
 ## Configuration
@@ -132,7 +149,7 @@ mingw doesn't have python support, so using mingw (I want a unix native python)
     - didn't complete.
 
 # Deployment
-Deployment takes two forms currently: 
+Deployment, that is installation on a different server that has none of the development prerequisites installed, takes two forms currently:
 - development mode, in which flask handles all resource serving, including client/server code, resources & fragments
 - reverse proxy mode, in which a reverse proxy, eg. Apache is used to serve all static content
 
@@ -169,8 +186,8 @@ It is installed by default to /srv/www/<domain>/tools/rz-doc, lets call that rz-
 rz-doc --list-names
  - will show all available documents. uses default config in /etc/rhizi/rhizi-server.conf, can be overridden with --config-dir
 
-1. rz-doc --list-names > merge.file
-2. rz-doc --merge-file merge.file --merge-target "All Documents"
+1. <code>rz-doc --list-names > merge.file</code>
+2. <code>rz-doc --merge-file merge.file --merge-target "All Documents"</code>
 
 creates a new doc called "All Documents" with the contents of all rzdocs in merge.file.
 
