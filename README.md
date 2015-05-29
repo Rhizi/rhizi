@@ -62,7 +62,7 @@ use pip to install all requirements
 ## Running Rhizi Locally
 To run Rhizi locally:
 - Run neo4j locally on the default 7474 port
-<code>neo4j console</code> or <code>neo4j server</code> after intalling neo4j: we use 2.2.1 from http://neo4j.com
+<code>neo4j console</code> or <code>neo4j server</code> after installing neo4j: we use 2.2.1 from http://neo4j.com
 - Launch run-local.sh:<br>
 <code>$ ./run-local.sh</code>
 
