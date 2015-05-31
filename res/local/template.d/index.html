@@ -80,7 +80,11 @@ var RZ_VERSION = '{% include "version.txt" %}';
       <div id="btn_zoom_in" title="Zoom in"></div>
       <div id="btn_zoom_out"title="Zoom out"></div>
     </div>
-    <div id="input-box-set-container">
+    <div id="left-column-container">
+      <div id="activity_view" style="display:none">
+        <div id="activity_view__header">Activity</div>
+        <div id="activity_view__body"></div>
+      </div>
       <div class="input-container" id="input-container__search">
         <input class="input-bar" tabindex="1" id="search" placeholder="Select elements"/>
         <button tabindex="-1" id="btn_search"></button>
@@ -118,10 +122,6 @@ var RZ_VERSION = '{% include "version.txt" %}';
       <div class="type_selection__row" id="type_selection__chosen_type_label">Chosen Type: <span id="type_selection__chosen_type_name"/></div>
       <div class="type_selection__row" id="type_selection__chosen_type_desc"></div>
     </div>
-  </div>
-  <div id="activity_view" style="display:none">
-    <div id="activity_view__header">Activity</div>
-    <div id="activity_view__body"></div>
   </div>
   <div class="rhizi-logo"><a tabindex="-1" href="http://www.rhizi.org">
     <img src="/static/img/rhizi-logo.png"/></a>
