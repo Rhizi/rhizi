@@ -1,5 +1,5 @@
 # Rhizi
-A collaborative editor for organizing, communicating, and analyzing data in graph form.
+A collaborative graph editor for organizing, communicating, and analyzing data in graph form.
 
 It is licensed under the GNU AGPL v3, see LICENSE for more details.
 
