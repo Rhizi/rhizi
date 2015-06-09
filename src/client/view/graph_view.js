@@ -93,7 +93,7 @@ function init_checkboxes(graph, update_view) {
 
             input.attr("name", type);
             div.append(input);
-            div.append(util.capitalize(type));
+            div.append(util.capitalize(model_types.node_titles[type]));
             root.append(div);
         });
     }
