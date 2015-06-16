@@ -670,6 +670,9 @@ table {
 .analyser-span-space-link-node {
   color: blue; }
 
+.input-help-text {
+  color: #919095; }
+
 /*
     This file is part of rhizi, a collaborative knowledge graph editor.
     Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
