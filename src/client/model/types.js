@@ -39,7 +39,8 @@ _.pluck(_.values(type_attributes), 'attributes').map(function (attributes) {
 
 all_attributes = _.union(_.flatten(_.pluck(_.values(type_attributes), 'attributes'))).sort();
 
-util.assert(_.isEqual(all_attributes, _.keys(attribute_titles).sort()));
+util.assert(_.filter(all_attributes,
+    function (attr) { return attribute_titles[attr] === undefined; }).length == 0);
 
 return (
     {
