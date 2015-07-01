@@ -488,7 +488,7 @@ table {
   position: absolute;
   right: 155px;
   top: 0;
-  width: 150px; }
+  white-space: nowrap; }
 
 #menu__type-filter_header {
   background: darkgray;
