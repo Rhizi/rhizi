@@ -474,6 +474,7 @@ table {
 
 .menu__type-filter_item {
   padding-left: 10px;
+  padding-right: 10px;
   text-align: left; }
   .menu__type-filter_item:hover {
     background-color: lightgray; }
@@ -488,7 +489,7 @@ table {
   position: absolute;
   right: 155px;
   top: 0;
-  width: 150px; }
+  white-space: nowrap; }
 
 #menu__type-filter_header {
   background: darkgray;
