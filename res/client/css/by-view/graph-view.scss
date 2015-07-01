@@ -188,18 +188,6 @@
   @include node-fill-color($yellow);
 }
 
-.node.category {
-  @include node-fill-color($yellow);
-}
-
-.node.objective {
-  @include node-fill-color($cyan);
-}
-
-.node.setting {
-  @include node-fill-color($orange);
-}
-
 .node.interest {
   @include node-fill-color($purple);
 }
@@ -227,7 +215,7 @@
 }
 
 .node.keyword {
-  @include node-fill-color(adjust-hue($purple, 50));
+  @include node-fill-color($purple);
 }
 
 .node.idea {

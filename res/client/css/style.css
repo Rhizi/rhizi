@@ -1751,63 +1751,6 @@ p {
     stroke-opacity: 0.5;
     stroke-width: 5px; }
 
-.node.category {
-  fill: #fad900;
-  stroke: #fad900;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.category.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.category.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.category:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.objective {
-  fill: #33c2e0;
-  stroke: #33c2e0;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.objective.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.objective.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.objective:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.setting {
-  fill: #ff8b11;
-  stroke: #ff8b11;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.setting.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.setting.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.setting:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
 .node.interest {
   fill: #8b3ab0;
   stroke: #8b3ab0;
@@ -1923,8 +1866,8 @@ p {
     stroke-width: 5px; }
 
 .node.keyword {
-  fill: #b03a73;
-  stroke: #b03a73;
+  fill: #8b3ab0;
+  stroke: #8b3ab0;
   stroke-width: 4px;
   stroke-opacity: 0.4; }
   .node.keyword.related {
