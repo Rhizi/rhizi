@@ -712,52 +712,6 @@ function GraphView(spec) {
                 d.height = 900;
             });
 
-        // reorder nodes so selected are last, and so rendered last, and so on top.
-        // FIXME: with b-ubble removed this is probably broken. actually also before. links are not correctly ordered.
-        (function () {
-            var ontop = [];
-
-            node.each(function (d) {
-                    this.node = d;
-                    if (selection.node_selected(d)) {
-                        ontop.push(this);
-                    }
-                });
-            function reparent(new_parent, element) {
-                if (element.parentNode == new_parent) {
-                    return;
-                }
-                new_parent.appendChild(element);
-            }
-            // move link to correct group
-            // O(|links|*|ontop|)
-            link.each(function (d) {
-                if (ontop.some(function (node) {
-                        var d_node = node.node;
-                        return d.__src == d_node || d.__dst == d_node;
-                    }))
-                {
-                    reparent(selected_link_group, this);
-                } else {
-                    reparent(unselected_link_group, this);
-                }
-            });
-            link_text.each(function (d) {
-                if (selection.link_related(d)) {
-                    ontop.push(this);
-                }
-            });
-            function moveToEnd(e) {
-                e.parentNode.appendChild(e);
-            }
-            ontop.reverse().forEach(function (e) {
-                moveToEnd(e);
-            });
-            var count_links = function() {
-                return selected_link_group.childElementCount + unselected_link_group.childElementCount;
-            };
-        }); //();
-
         function load_image(element, image_url, set_href) {
             var image = new Image();
 
