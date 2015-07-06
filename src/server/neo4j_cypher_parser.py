@@ -204,7 +204,7 @@ class pt_abs_composite_node(pt_abs_node):
         Spawn child node:
            - set child's parent ref. to this object
            - add child node as sub exp.
-           
+
         This method should be overridden by subclasses
         """
         self.assert_child_spawn_type(n_type)
@@ -218,7 +218,7 @@ class pt_abs_composite_node(pt_abs_node):
         """
         @param exp_type_or_set: type or set of types to check against using isinstance()
         @param recurse: whether to recursively search within sub expressions
-        
+
         @return: set of matched sub expressions who match the given type set, possibly empty
         """
 
@@ -549,9 +549,9 @@ class Cypher_Parser(object):
     Neo4J Cypher language parser - conventions:
        - read_xxx functions: should adjust argument node without modifying parse tree
        - parse_xxx functions:
-          - caller should spawn correct current node 
+          - caller should spawn correct current node
           - should handle current node closing
-          - default parse case should recurse up via parent node 
+          - default parse case should recurse up via parent node
     """
 
     def __init__(self):
