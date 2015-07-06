@@ -35,6 +35,7 @@ define([
         'view/filter_menu',
         'view/search',
         'view/selection',
+        'view/filter',
         ],
 
 /**
@@ -55,7 +56,8 @@ function(
          util,
          filter_menu,
          search,
-         selection
+         selection,
+         view_filter
          ) {
 
     function fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit() {
@@ -96,6 +98,7 @@ function(
         });
 
         // TODO: interaction between the hack above and this
+        view_filter.init();
         model_core.init(rz_config);
         rz_core.init();
         textanalysis.init(rz_core.main_graph);
