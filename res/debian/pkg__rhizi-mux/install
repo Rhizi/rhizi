@@ -1,6 +1,5 @@
 res/client/*                          usr/share/rhizi/webapp/static/
 res/neo4j/reset-db__clean.cypher      usr/lib/rhizi/tools/neo4j
-res/domain-fragment.d/default         usr/share/rhizi/webapp/domain-fragment.d/
 res/rz-mux/*                          usr/share/rhizi/rz-mux/
 
 src/client/*                          usr/lib/rhizi/webapp/static/js
