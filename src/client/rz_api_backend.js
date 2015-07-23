@@ -44,7 +44,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 if (on_error && typeof (on_error) === "function") {
                     on_error(xhr, text_status, err_thrown);
                 }
-            }
+            };
 
             function on_success_wrapper(xhr, text) {
                 // log wrap callback
@@ -70,7 +70,7 @@ define(['util', 'model/core'], function(util, model_core) {
             req_opts.crossDomain = true;
 
             $.ajax(rz_server_url + path, req_opts);
-        }
+        };
 
         /**
          * common attr_diff
@@ -87,7 +87,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             return ajax_rs('/api/rzdoc/diff-commit__attr', req_opts, on_success,
                     on_error);
-        }
+        };
 
         /**
          * commit topo_diff
@@ -104,7 +104,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             return ajax_rs('/api/rzdoc/diff-commit__topo', req_opts, on_success,
                     on_error);
-        }
+        };
 
         /**
          * commit vis_diff
@@ -121,7 +121,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             return ajax_rs('/api/rzdoc/diff-commit__vis', req_opts, on_success,
                     on_error);
-        }
+        };
 
         /**
          * commit a diff_set
@@ -138,7 +138,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             return ajax_rs('/api/rzdoc/diff-commit__set', req_opts, on_success,
                     on_error);
-        }
+        };
 
         /**
          * load node-set by id attribute
@@ -162,7 +162,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             return ajax_rs('/api/rzdoc/fetch/node-set-by-id', req_opts, on_success,
                     on_error);
-        }
+        };
 
         /**
          * load link set by src / dst id
@@ -180,7 +180,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             return ajax_rs('/api/rzdoc/fetch/link-set/by_link_ptr_set', req_opts,
                     on_success, on_error);
-        }
+        };
 
         /**
          * add a node set
@@ -190,7 +190,7 @@ define(['util', 'model/core'], function(util, model_core) {
             topo_diff.node_set_add = n_set;
 
             return this.topo_diff_commit(topo_diff, on_success, on_error);
-        }
+        };
 
         /**
          * add a link set
@@ -200,7 +200,7 @@ define(['util', 'model/core'], function(util, model_core) {
             topo_diff.link_set_add = l_set;
 
             return this.topo_diff_commit(topo_diff);
-        }
+        };
 
         /**
          * remove node set
@@ -208,7 +208,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.remove_node_set = function() {
             var topo_diff = null;
             return this.topo_diff_commit(topo_diff);
-        }
+        };
 
         /**
          * remove link set
@@ -216,14 +216,14 @@ define(['util', 'model/core'], function(util, model_core) {
         this.remove_link_set = function() {
             var topo_diff = null;
             return this.topo_diff_commit(topo_diff);
-        }
+        };
 
         /**
          * update node set
          */
         this.update_node_set = function(attr_diff, on_success, on_error) {
             return this.attr_diff_commit(attr_diff, on_success, on_error);
-        }
+        };
 
         /**
          * update link set
@@ -231,7 +231,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.update_link_set = function() {
             var attr_diff = null;
             return this.attr_diff_commit(null);
-        }
+        };
 
         /**
          * clone rhizi repo
@@ -247,7 +247,7 @@ define(['util', 'model/core'], function(util, model_core) {
             };
 
             ajax_rs('/api/rzdoc/clone', req_opts, on_success, on_error);
-        }
+        };
 
         /**
          * create rzdoc
@@ -256,7 +256,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             var req_opts = { type : 'POST' };
             return ajax_rs('/api/rzdoc/' + rzdoc_name + '/create', req_opts, on_success, on_error);
-        }
+        };
 
         /**
          * list available rzdocs
@@ -267,7 +267,7 @@ define(['util', 'model/core'], function(util, model_core) {
             var req_opts = { type : 'POST', data : JSON.stringify(req_data)};
 
             return ajax_rs('/api/rzdoc/search', req_opts, on_success, on_error);
-        }
+        };
     }
 
     return new RZ_API_Backend();
