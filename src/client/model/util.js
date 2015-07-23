@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+"use strict";
 
 /**
  * model utility functions: - convert from/to client/backend data
@@ -63,10 +63,10 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         ret['__label_set'] = [__sanitize_label__write(n_raw.type)];
 
         delete ret.state;
-        delete ret.status
+        delete ret.status;
         delete ret.type;
 
-        return ret
+        return ret;
     }
 
     /**
@@ -118,11 +118,11 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
 
         new_n_set = $.map(new_n_set, function(n, _) {
             return adapt_format_write_node(n);
-        })
+        });
 
         new_l_set = $.map(new_l_set, function(l, _) {
             return adapt_format_write_link(l);
-        })
+        });
 
         var topo_diff = new model_diff.new_topo_diff({
             node_set_add : new_n_set,
@@ -149,5 +149,5 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
 
         adapt_format_write_diff__topo : adapt_format_write_diff__topo,
         adapt_format_read_diff__attr : adapt_format_read_diff__attr,
-    }
+    };
 });
