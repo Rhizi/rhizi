@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+"use strict";
 
 define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu', 'view/activity', 'rz_api_backend', 'view/toolbar__status'],
 function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,        activity, rz_api_backend, toolbar__status) {
@@ -201,7 +201,7 @@ var init_graph_views = function () {
     published_var_dict.main_graph_view = main_graph_view;
     published_var_dict.edit_graph = edit_graph;
     published_var_dict.edit_graph_view = edit_graph_view;
-}
+};
 
 /**
  * Initialize backend websocket connection - this will have no effect if
@@ -242,7 +242,7 @@ function init() {
 function locate_visual_element(model_obj){
     var id_sel = $('#' + model_obj.id);
     if (0 === id_sel.length) {
-        console.warn('unable to find visual element for model object: object id: ' + model_obj.id.toString())
+        console.warn('unable to find visual element for model object: object id: ' + model_obj.id.toString());
         return null;
     }
     return id_sel[0];
@@ -264,7 +264,7 @@ function canvas_handler_dblclick(){
     var on_slowdown_cb =  function(){
         svgInput.enable($(n_ve).find('.nodetext'), n);
         observer.disconnect();
-    }
+    };
     var mutation_handler = rz_observer.new_Mutation_Handler__on_dxy_slowdown(on_slowdown_cb);
     var observer = rz_observer.new_MutationObserver(mutation_handler);
     mutation_handler.on_slowdown_threshold_reached;
@@ -422,7 +422,7 @@ function rzdoc__search(search_query) {
             query_echo = '<span id=\"cmd-bar__rzdoc-search__query-echo\">\'' + search_query + '\'</span>';
             msg = $('<span>No document titled ' + query_echo + ' was found.</span>');
 
-            block_div_wrapper = $('<div id="cmd-bar__rzdoc-search__no-results">')
+            block_div_wrapper = $('<div id="cmd-bar__rzdoc-search__no-results">');
             block_div_wrapper.append(msg);
             block_div_wrapper.append(create_btn);
 
@@ -484,7 +484,7 @@ var published_var_dict = {
     edit_graph: undefined,
     edit_graph_view: undefined,
     root_element_id_to_graph_view: undefined,
-}
+};
 
 return published_var_dict;
 }); /* close define call */
