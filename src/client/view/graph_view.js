@@ -46,7 +46,7 @@
 define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts', 'view/filter'],
 function(d3 ,   Bacon,   consts,   util ,  selection      ,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts,  view_filter) {
 
-"use strict"
+"use strict";
 
 // aliases
 var obj_take = util.obj_take;
@@ -67,7 +67,7 @@ function enableDebugViewOfDiffs(graph)
     debugView.innerHTML = '<div>debug view</div>';
     debugView.append = function (diff) {
         debugView.innerHTML = debugView.innerHTML + '<div>' + diff + '</div>';
-    }
+    };
     graph.diffBus.onValue(function (diff) {
         debugView.append(diff);
     });
@@ -256,7 +256,7 @@ function GraphView(spec) {
                 function (n) { return n.x * n.x + n.y * n.y; }))) / s;
 
         function screen_to_graph(xy) {
-            return [zcx + xy[0], zcy + xy[1]]
+            return [zcx + xy[0], zcy + xy[1]];
         }
         // order by angle
         var nodes = _.pluck(selection.root_nodes.map(function (n) { return [Math.atan2(n.y, n.x), n]; }).sort(), 1);
@@ -293,7 +293,7 @@ function GraphView(spec) {
 
     function showNodeInfo(node) {
         util.assert(!temporary, "cannot showNodeInfo on a temporary graph");
-        item_info.show(graph, node)
+        item_info.show(graph, node);
     }
 
     function dragstarted(d) {
@@ -409,7 +409,7 @@ function GraphView(spec) {
 
         var node__text_x = function(d) {
             return node_text_dx + node__radius(d) + (urlValid(d.url) ? node_url_dx : 0);
-        }
+        };
 
         function model_id_from_dom_id(dom_id) {
             return dom_id.split('__')[0];
@@ -471,7 +471,7 @@ function GraphView(spec) {
             if (!selection.link_related(d)) {
                 set_link_label_text(d.id, link_text__short(d));
             }
-        }
+        };
         gv.link__hover__start = link__hover__start;
 
         var link__hover__end = function (d) {
@@ -482,7 +482,7 @@ function GraphView(spec) {
             if (!selection.link_related(d)) {
                 set_link_label_text(d.id, "");
             }
-        }
+        };
         gv.link__hover__end = link__hover__end;
 
         var link_on_hover = function (d) {
@@ -491,19 +491,19 @@ function GraphView(spec) {
             }, function (e) {
                 link__hover__end(d);
             });
-        }
+        };
 
         gv.node__hover__start = function (d) {
             var e = document.getElementById(d.id);
 
             add_class(e, 'hovering');
-        }
+        };
 
         gv.node__hover__end = function (d) {
             var e = document.getElementById(d.id);
 
             remove_class(e, 'hovering');
-        }
+        };
 
         relayout = (relayout === undefined && true) || relayout;
 
@@ -654,7 +654,7 @@ function GraphView(spec) {
                 element.setAttribute("width", width);
                 element.setAttribute("height", Math.min(width * aspect, this.height));
                 element.setAttributeNS("http://www.w3.org/1999/xlink", "href", this.src);
-            }
+            };
             image.src = image_url;
         }
 
@@ -881,7 +881,7 @@ function GraphView(spec) {
         zoom_obj.translate([translate[0], translate[1]]);
         zoom_obj.scale(scale);
         zoom_obj.event(zoom_obj_element.transition().duration(duration));
-    }
+    };
     gv.__set_scale_translate = set_scale_translate;
 
     var scale__absolute = function (new_scale) {
@@ -892,7 +892,7 @@ function GraphView(spec) {
             h = window.innerHeight;
 
         set_scale_translate(new_scale, [t[0] - ds * w / 2, t[1] - ds * h / 2], 200);
-    }
+    };
 
     gv.scale__absolute = scale__absolute;
 
@@ -1167,7 +1167,7 @@ function GraphView(spec) {
         spec.parent_graph_zoom_obj.on('zoom', function () {
             existing_zoom_cb.apply(null, arguments);
             pushRedraw(null);
-        })
+        });
     }
 
     var local_storage_key__positions = "positions";
@@ -1280,7 +1280,7 @@ function GraphView(spec) {
         set_layout_toolbar(layout_menu);
         gv.hide_layout_menu = function () {
             layout_menu.find('.btn_layout').remove();
-        }
+        };
     }
 
     gv.dev_set_layout = function (layout_func) {
@@ -1318,10 +1318,10 @@ function GraphView(spec) {
     gv.zen_mode__set = zen_mode__set;
     gv.zen_mode__toggle = function () {
         zen_mode__set(!zen_mode);
-    }
+    };
     gv.zen_mode__cancel = function () {
         zen_mode__set(false);
-    }
+    };
     return gv;
 }
 
