@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+"use strict";
 
 /**
  * core model module - currently unused
@@ -30,7 +30,7 @@ define(['util'], function(util) {
 
     var random_id__hash = function() {
         return Math.random().toString(36).substring(2, 10);
-    }
+    };
 
     var random_id__seq = function () {
         var id = 0;
@@ -40,7 +40,7 @@ define(['util'], function(util) {
             return next;
         }
         return get_next;
-    }
+    };
 
     function random_node_name() {
         return random_id__hash();
@@ -59,7 +59,7 @@ define(['util'], function(util) {
     }
     Node.prototype.equals = function(other_node){
         return this.id == other_node.id;
-    }
+    };
 
     function Link() {
     }
@@ -148,7 +148,7 @@ define(['util'], function(util) {
             console.debug(this.id + ' != ' + other.id);
         }
         return ret;
-    }
+    };
 
     function create_link_from_spec(src, dst, link_spec) {
         var ret = new Link();
@@ -186,7 +186,7 @@ define(['util'], function(util) {
      */
     Link.prototype.equal_by_id = function(other) {
         return this.id.toLowerCase() == other.id.toLowerCase();
-    }
+    };
 
     return {
         init : init,
