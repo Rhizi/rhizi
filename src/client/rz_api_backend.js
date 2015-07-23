@@ -23,12 +23,21 @@
  */
 define(['util', 'model/core'], function(util, model_core) {
 
+	var rz_core;
+
+	function get_rz_core() {
+		if (rz_core === undefined) {
+			rz_core =require('rz_core');
+		}
+		return rz_core;
+	}
+
     function RZ_API_Backend() {
 
         var rz_server_url = document.location.origin;
 
         var common_req_ctx = function() {
-            var common_ctx = { rzdoc_name: rz_config.rzdoc_cur__name }; // FIXME: call rz_core.rzdoc_get_current + avoid requirejs circular dep
+            var common_ctx = { rzdoc_name: get_rz_core().rzdoc__current__get_name() };
             return common_ctx;
         };
 
