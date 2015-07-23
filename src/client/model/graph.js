@@ -83,12 +83,11 @@ function Graph(spec) {
      *
      * @return node if node was actually added
      */
-    // FIXME: is this a good idea? i.e. changing API based on constructor? just in dynamic city
-    if (temporary) {
-        this.addTempNode = function(spec) {
+    this.addTempNode = function(spec) {
+	    if (temporary) {
             return this.__addNode(spec);
-        };
-    }
+        }
+    };
 
     var nodes_to_touched_links = function (node_id_set) {
         var touched_links = [];
