@@ -215,15 +215,27 @@ function GraphView(spec) {
     }
 
     var selection_outer_radius = 0; //200;
-    // HACK to load positions stored locally: on the first diff, which is the result of the
-    // initial clone, load positions from stored last settled position (see record_position_to_local_storage
-    // and restore_position_from_local_storage)
-    // this is before we have proper layout recording in the database, loaded together with the nodes
-    // and links.
-    graph.diffBus.take(1).onValue(restore_position_from_local_storage);
 
     graph.diffBus.onValue(function (diff) {
-        var relayout = !temporary && (false == model_diff.is_attr_diff(diff));
+        var relayout = !temporary && (false === model_diff.is_attr_diff(diff)),
+            have_position = 0,
+            layout_x_key = 'layouts.' + layout.name + '.x',
+            layout_y_key = 'layouts.' + layout.name + '.y';
+
+        // copy position from diff based on current layout
+        if (layout.name && diff.node_set_add) {
+            diff.node_set_add.forEach(function (node) {
+                if (node[layout_x_key] && node[layout_y_key]) {
+                    node.x = node[layout_x_key];
+                    node.y = node[layout_y_key];
+                    have_position += 1;
+                }
+            });
+            if (have_position > 0) {
+                console.log('loading layout last position from database for layout ' + layout.name);
+                layout__load_graph();
+            }
+        }
         update_view(relayout);
     });
 
@@ -1170,45 +1182,8 @@ function GraphView(spec) {
         });
     }
 
-    var local_storage_key__positions = "positions";
-
-    function record_position_to_local_storage() {
-        localStorage.setItem(local_storage_key__positions,
-            JSON.stringify(_.object(graph.nodes().map(
-                function (n) {
-                    return [n.id, {x: n.x, y: n.y}];
-                }))));
-    }
-
-    function restore_position_from_local_storage() {
-        var positions,
-            nodes,
-            success = 0;
-        try {
-            positions = JSON.parse(localStorage.getItem(local_storage_key__positions));
-        } catch (e) {
-            localStorage.removeItem(local_storage_key__positions);
-            return;
-        }
-
-        if (null === positions) {
-            return;
-        }
-        nodes = graph.nodes();
-        nodes.forEach(function (n) {
-            var n_pos = positions[n.id];
-
-            if (n_pos !== undefined) {
-                n.x = n_pos.x;
-                n.y = n_pos.y;
-                success += 1;
-            }
-        });
-        if (success > 0) {
-            layout__load_graph();
-        }
-        console.log('restored ' + success + ' / ' + _.keys(positions).length + ' positions to ' +
-                    nodes.length + ' nodes');
+    function record_position_to_database() {
+        graph.nodes__update_positions(layout.name);
     }
 
     var layouts = view_layouts.layouts.map(function (layout_data) {
@@ -1267,7 +1242,7 @@ function GraphView(spec) {
         layout = new_layout
             .size([w, h])
             .on("tick", layout__tick__callback)
-            .on("end", record_position_to_local_storage)
+            .on("end", record_position_to_database)
             .nodes_links(nodes__visible(), links__visible())
             .restore()
             .zen_mode(zen_mode)

@@ -631,6 +631,47 @@ function Graph(spec) {
         rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     };
 
+    /**
+     * Do an attribute commit with x, y for the current layout
+     */
+    this.nodes__update_positions = function(layout_name) {
+        // TODO: fix when attribute diff supports nested keys to use:
+        // layout.<layout_name>.{x,y}
+        var x_key = 'layouts.' + layout_name + '.x',
+            y_key = 'layouts.' + layout_name + '.y';
+
+        // commit x, y to layout
+        _.values(id_to_node_map).forEach(function (node) {
+            node[x_key] = node.x;
+            node[y_key] = node.y;
+        });
+        // commit all current nodes
+        nodes__commit_attributes(function (node) {
+            var d = {};
+
+            d[x_key] = node.x;
+            d[y_key] = node.y;
+            return d;
+        });
+    };
+
+    function nodes__commit_attributes(getter) {
+        var attr_diff = model_diff.new_attr_diff();
+        _.values(id_to_node_map).forEach(function (node) {
+            var d = getter(node);
+            _.keys(d).forEach(function (k) {
+                attr_diff.add_node_attr_write(node.id, k, d[k]);
+            });
+        });
+        var on_ajax_success = function() {
+            console.log('successfully committed x, y for current layout');
+        };
+        var on_ajax_error = function(){
+            console.log('error with commit nodes properties to server');
+        };
+        rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
+    }
+
     this.update_node = function(node, new_node_spec) {
         util.assert(node instanceof model_core.Node);
 
