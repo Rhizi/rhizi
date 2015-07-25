@@ -635,9 +635,9 @@ function Graph(spec) {
         util.assert(node instanceof model_core.Node);
 
         // TODO - fake api for client only (debug, demo, ui work)
-        if (!rz_config.backend_enabled) return;
+        if (!rz_config.backend_enabled) { return; }
 
-        if (new_node_spec.name !== undefined && node.name != new_node_spec.name){
+        if (new_node_spec.name !== undefined && node.name !== new_node_spec.name){
             /*
              * handle name update collision: suggest removal first
              */
@@ -648,7 +648,7 @@ function Graph(spec) {
                 }
             }
 
-            node['name'] = new_node_spec['name']; // [!] may still fail due to server NAK
+            node.name = new_node_spec.name; // [!] may still fail due to server NAK
         }
 
         var attr_diff = model_diff.new_attr_diff();
@@ -658,17 +658,17 @@ function Graph(spec) {
 
         var on_ajax_success = function(attr_diff_spec){
             var attr_diff = model_util.adapt_format_read_diff__attr(attr_diff_spec),
-		id_to_node_map = attr_diff.id_to_node_map,
-		key,
-		n_id = node.id; // original node id
+                    id_to_node_map = attr_diff.id_to_node_map,
+                    key,
+                    n_id = node.id; // original node id
 
             util.assert(id_to_node_map && id_to_node_map[n_id], "bad return value from ajax");
 
             var ret_node = id_to_node_map[n_id];
-            for (key in ret_node['__attr_write']){
-                node[key] = ret_node['__attr_write'][key];
+            for (key in ret_node.__attr_write){
+                node[key] = ret_node.__attr_write[key];
             }
-            for (key in ret_node['__attr_remove']){
+            for (key in ret_node.__attr_remove){
                 delete node[key];
             }
 
@@ -1118,25 +1118,25 @@ function Graph(spec) {
 
         // process nodes
         attr_diff.for_each_node(function(n_id, n_attr_diff) {
-	    var attr_key,
-		node = id_to_node_map[n_id];
+            var attr_key,
+                node = id_to_node_map[n_id];
 
-            if (undefined == node) {
+            if (undefined === node) {
                 console.warn('commit_diff__attr: incoming attr diff for non-existing node, discarding');
                 return;
             }
 
             // apply attr writes: node
             var count_w = 0;
-            for (attr_key in n_attr_diff['__attr_write']) {
-                var attr_value = n_attr_diff['__attr_write'][attr_key];
+            for (attr_key in n_attr_diff.__attr_write) {
+                var attr_value = n_attr_diff.__attr_write[attr_key];
                 node[attr_key] = attr_value; // write each new attr update
                 count_w = count_w + 1;
-            };
+            }
 
             // apply attr removals: node
             var count_d = 0;
-            for (attr_key in n_attr_diff['__attr_remove']) {
+            for (attr_key in n_attr_diff.__attr_remove) {
                 delete node[attr_key];  // apply each attr removal
                 count_d = count_d + 1;
             };
@@ -1146,28 +1146,28 @@ function Graph(spec) {
 
         // process links
         attr_diff.for_each_link(function(l_id, n_attr_diff) {
-	    var attr_key,
-		link = id_to_link_map[l_id];
+            var attr_key,
+                link = id_to_link_map[l_id];
 
-            if (undefined == link) {
+            if (undefined === link) {
                 console.warn('commit_diff__attr: incoming attr diff for non-existing link, discarding');
                 return;
             }
 
             // apply attr writes: link
             var count_w = 0;
-            for (attr_key in n_attr_diff['__attr_write']) {
-                var attr_value = n_attr_diff['__attr_write'][attr_key];
+            for (attr_key in n_attr_diff.__attr_write) {
+                var attr_value = n_attr_diff.__attr_write[attr_key];
                 link[attr_key] = attr_value; // write each new attr update
                 count_w = count_w + 1;
-            };
+            }
 
             // apply attr removals: link
             var count_d = 0;
-            for (attr_key in n_attr_diff['__attr_remove']) {
+            for (attr_key in n_attr_diff.__attr_remove) {
                 delete link[attr_key];  // apply each attr removal
                 count_d = count_d + 1;
-            };
+            }
 
             console.log('commit_diff__attr: l_id: \'' + l_id + '\', write-count: ' + count_w + ', rm-count: ' + count_d);
         });

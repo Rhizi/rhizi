@@ -48,7 +48,7 @@ function(consts,   $,        d3,   _) {
             node_by_id = _.object(_.map(nodes, "id"), nodes),
             node_links = calc_node_links(nodes, links);
 
-        if (nodes.length == 0) {
+        if (nodes.length === 0) {
             return [];
         }
 
@@ -125,7 +125,7 @@ function(consts,   $,        d3,   _) {
         var ret = layout__d3_force(graph);
         ret.zen_mode_inner = function (zen_mode) {
             if (zen_mode) {
-                ret.distance(240)
+                ret.distance(240);
             } else {
                 ret.linkDistance(function (link) {
                     var d_src = graph.degree(link.__src),
@@ -135,7 +135,7 @@ function(consts,   $,        d3,   _) {
                   });
             }
             return ret;
-        }
+        };
         return ret;
     }
 
@@ -230,8 +230,10 @@ function(consts,   $,        d3,   _) {
                 _zen_mode__fixed: {},
                 _zen_mode_inner: donothing,
                 zen_mode: function (zen_mode) {
+                    var nodes, d;
+
                     if (zen_mode) {
-                        var nodes = layout.nodes();
+                        nodes = layout.nodes();
 
                         // store fixed position
                         console.log('zen on:  storing fixed for ' + _.size(layout.nodes()));
@@ -240,8 +242,8 @@ function(consts,   $,        d3,   _) {
                         _.each(nodes, function(node) { node.fixed = false; });
                     } else {
                         // restore fixed
-                        var nodes = layout.nodes(),
-                            d = _.object(_.pluck(nodes, "id"), nodes);
+                        nodes = layout.nodes();
+                        d = _.object(_.pluck(nodes, "id"), nodes);
                         console.log('zen off: restoring fixed for ' + _.size(nodes));
                         _.each(_.keys(layout._zen_mode__fixed), function (node_id) {
                             if (d[node_id] !== undefined && layout._zen_mode__fixed[node_id]) {
