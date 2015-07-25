@@ -1114,6 +1114,10 @@ function Graph(spec) {
      * This function should not trigger remote transmission of diff object
      */
     function commit_diff__attr(attr_diff) {
+        var total_count_d = 0,
+            total_count_w = 0,
+            count_n = 0;
+
         util.assert(model_diff.is_attr_diff(attr_diff), 'commit_diff__attr: argument type != Attr_Diff');
 
         // process nodes
@@ -1139,10 +1143,14 @@ function Graph(spec) {
             for (attr_key in n_attr_diff.__attr_remove) {
                 delete node[attr_key];  // apply each attr removal
                 count_d = count_d + 1;
-            };
-
-            console.log('commit_diff__attr: n_id: \'' + n_id + '\', write-count: ' + count_w + ', rm-count: ' + count_d);
+            }
+            if (count_w > 0 || count_d > 0) {
+                count_n += 1;
+            }
+            total_count_w += count_w;
+            total_count_d += count_d;
         });
+        console.log('commit_diff__attr: nodes: ' + count_n + ', writes: ' + total_count_w + ', removals: ' + total_count_d);
 
         // process links
         attr_diff.for_each_link(function(l_id, n_attr_diff) {
