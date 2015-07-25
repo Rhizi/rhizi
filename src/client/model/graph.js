@@ -225,6 +225,7 @@ function Graph(spec) {
     var _link_add_helper = function (link) {
         var src_id = link.__src.id,
             dst_id = link.__dst.id;
+
         util.assert(link.id, "missing link id");
         id_to_link_map[link.id] = link;
         // link's nodes may not belong to this graph, check first - we add them if required to the id_to_link_id_set only
@@ -237,6 +238,7 @@ function Graph(spec) {
         id_to_link_id_set[src_id][dst_id] = 1;
         id_to_link_id_set[dst_id][src_id] = 1;
         invalidate_links = true;
+        return link;
     };
 
     var _remove_node_set = function(node_id_set) {
@@ -574,11 +576,12 @@ function Graph(spec) {
         var existing_link = findLink(link.__src.id, link.__dst.id, link.name);
 
         if (undefined == existing_link) {
-            _link_add_helper(link);
+            existing_link = _link_add_helper(link);
         } else {
             existing_link.name = link.name;
             existing_link.state = link.state;
         }
+        return existing_link;
     }
     // FIXME: good idea to add API based on constructor parameter?
     if (temporary) {
@@ -1069,7 +1072,7 @@ function Graph(spec) {
 
     function _add_node_set(node_specs) {
         return node_specs.map(function (node_spec) {
-            __addNode(node_spec);
+            return __addNode(node_spec);
         });
     }
 
@@ -1084,7 +1087,7 @@ function Graph(spec) {
                         find_node__by_id(link_spec.__dst_id),
                 link = model_core.create_link_from_spec(src, dst, link_spec);
 
-            __addLink(link);
+            return __addLink(link);
         });
     }
 
