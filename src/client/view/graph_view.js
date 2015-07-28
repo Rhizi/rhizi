@@ -173,18 +173,6 @@ function GraphView(spec) {
         return node__pass_filter(d.__src) && node__pass_filter(d.__dst);
     }
 
-    function range(start, end, number) {
-        var ret = [],
-            i,
-            divisor = number <= 1 ? 1 : number - 1,
-            difference = end - start;
-
-        for (i = 0; i < number; ++i) {
-            ret.push(difference * i / divisor + start);
-        }
-        return ret;
-    }
-
     // TODO: nice animation FRP using Bacon combine/flatMap.
     // 0
     // 180   10
