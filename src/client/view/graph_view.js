@@ -781,10 +781,6 @@ function GraphView(spec) {
         }
     }
 
-    function layout__load_graph() {
-        layout.nodes_links(nodes__visible(), links__visible());
-    }
-
     function segment_in_segment(inner_low, inner_high, outer_low, outer_high)
     {
         return (inner_low  >= outer_low && inner_low  < outer_high &&
@@ -1208,6 +1204,10 @@ function GraphView(spec) {
         layout.nodes_links(nodes__visible(), links__visible())
               .alpha(alpha)
               .start();
+    }
+
+    function layout__load_graph() {
+        layout.nodes_links(nodes__visible(), links__visible());
     }
 
     function set_layout(new_layout) {
