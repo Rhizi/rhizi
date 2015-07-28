@@ -125,7 +125,6 @@ function GraphView(spec) {
         layout,
         drag,
         vis,
-        deliverables,
         filter_states,
 
         zen_mode = false,
@@ -312,10 +311,8 @@ function GraphView(spec) {
 
     function setupInitialPositions()
     {
-        var nodes = graph.nodes(),
-            links = graph.links(),
+        var links = graph.links(),
             i = 0,
-            node,
             link;
 
         // right thing: place node opposite center of mass of existing links
@@ -345,8 +342,8 @@ function GraphView(spec) {
     function dragended(d) {
         d3.select(this).classed("dragging", false);
         d3.select(this).classed("fixed", true); // TODO: this is broken since we override all the classes. Need to switch to class addition/removal (i.e. use classed for everything) or set class in one location (so here just set a value on the node, not the element)
-        if (d.dragstart.clientX - d3.event.sourceEvent.clientX != 0 ||
-            d.dragstart.clientY - d3.event.sourceEvent.clientY != 0) {
+        if (d.dragstart.clientX - d3.event.sourceEvent.clientX !== 0 ||
+            d.dragstart.clientY - d3.event.sourceEvent.clientY !== 0) {
             d.fixed = true;
             d.px = d.x;
             d.py = d.y;
@@ -358,8 +355,6 @@ function GraphView(spec) {
     var urlValid = function(url) {
         return url !== undefined && url !== null && url.length > 0 && url.slice(0, 4) === 'http';
     };
-
-    var image_endings = {'jpg':1, 'gif':1, 'png':1, 'bmp':1, 'svg':1};
 
     var urlImage = function(url) {
         return urlValid(url);
@@ -760,13 +755,10 @@ function GraphView(spec) {
                 switch (d.status) {
                     case "done":
                         return "static/img/check.png";
-                        break;
                     case "current":
                         return "static/img/wait.png";
-                        break;
                     case "waiting":
                         return "static/img/cross.png";
-                        break;
                 }
             });
 
@@ -1017,7 +1009,7 @@ function GraphView(spec) {
      * [bubble_radius * 2, inf] => identify
      */
     function bubble_transform(d, bubble_radius) {
-        if (bubble_radius == 0) {
+        if (bubble_radius === 0) {
             return d;
         }
         var zoom_center_point = graph_to_screen(cx, cy, zoom_obj),
@@ -1139,7 +1131,7 @@ function GraphView(spec) {
         // tabindex affects focus change on tab key.
         // Sort top to bottom left to right
         node.sort(function (a, b) {
-                return b.py == a.py ? (b.px == a.px ? 0 : (b.px > a.px ? -1 : 1)) : (b.py > a.py ? -1 : 1);
+                return b.py === a.py ? (b.px === a.px ? 0 : (b.px > a.px ? -1 : 1)) : (b.py > a.py ? -1 : 1);
             })
             .attr('tabindex', function(d, i) { return i + 100; });
     }
@@ -1212,7 +1204,7 @@ function GraphView(spec) {
     }
 
     function layout__reset(alpha) {
-        alpha = alpha | 0.1;
+        alpha = alpha || 0.1;
         layout.nodes_links(nodes__visible(), links__visible())
               .alpha(alpha)
               .start();
