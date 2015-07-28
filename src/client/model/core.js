@@ -47,18 +47,27 @@ define(['util'], function(util) {
     }
 
     function init(config){
-        if (config['rand_id_generator'] == 'hash') {
+        if (config.rand_id_generator === 'hash') {
             random_id = random_id__hash;
         }
-        if (config['rand_id_generator'] == 'seq') {
+        if (config.rand_id_generator === 'seq') {
             random_id = random_id__seq();
         }
     }
 
     function Node() {
+        Object.defineProperty(this, "x", {
+            set: function (new_x) {
+                console.log('Node ' + this.id + '.x = ' + new_x);
+                this._x = new_x;
+            },
+            get: function () {
+                return this._x;
+            }
+        });
     }
     Node.prototype.equals = function(other_node){
-        return this.id == other_node.id;
+        return this.id === other_node.id;
     };
 
     function Link() {
@@ -77,17 +86,17 @@ define(['util'], function(util) {
      */
     function create_node_from_spec(node_spec) {
 
-        util.assert(undefined != node_spec.name, 'create_node_from_spec: name missing');
+        util.assert(undefined !== node_spec.name, 'create_node_from_spec: name missing');
 
         var ret = new Node();
 
-        if (undefined != node_spec.id) {
+        if (undefined !== node_spec.id) {
             // reuse id if present
             __set_obj_id(ret, node_spec.id);
         }
 
         // type
-        if (undefined == node_spec.type) {
+        if (undefined === node_spec.type) {
             console.debug('create_node_from_spec: undefined type, falling back to \'perm\'');
             node_spec.type = 'perm';
         }
@@ -134,7 +143,7 @@ define(['util'], function(util) {
         var ret = create_link_from_spec(src, dst, link_spec);
         __set_obj_id(ret, random_id());
         return ret;
-    }
+   }
 
     /**
      * determine if nodes are equal by name

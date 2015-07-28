@@ -213,15 +213,18 @@ function GraphView(spec) {
         if (layout.name && diff.node_set_add) {
             diff.node_set_add.forEach(function (node) {
                 if (node[layout_x_key] && node[layout_y_key]) {
-                    node.x = node[layout_x_key];
-                    node.y = node[layout_y_key];
+                    node.px = node.x = node[layout_x_key];
+                    node.py = node.y = node[layout_y_key];
                     have_position += 1;
                 }
             });
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
                 layout__load_graph();
-                relayout = false;
+                if (have_position == graph.nodes().length) {
+                    console.log('no relayout because diff contains all graph nodes');
+                    relayout = false;
+                }
             }
         }
         update_view(relayout);
