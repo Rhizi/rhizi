@@ -221,6 +221,7 @@ function GraphView(spec) {
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
                 layout__load_graph();
+                relayout = false;
             }
         }
         update_view(relayout);
