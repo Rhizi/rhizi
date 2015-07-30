@@ -177,6 +177,12 @@ function(consts,   $,        d3,   _) {
             return layout;
         }
 
+        function save_from_arr_id_x_y(data) {
+            layout.saved_nodes_position = _.object(data.map(function (d) {
+                return [d.id, {x: d.x, y: d.y, px: d.x, py: d.y, fixed: true}];
+            }));
+        }
+
         function restore() {
             if (layout.saved_nodes_position === undefined) {
                 return layout;
@@ -219,6 +225,7 @@ function(consts,   $,        d3,   _) {
                 links: links,
                 save: save,
                 restore: restore,
+                save_from_arr_id_x_y: save_from_arr_id_x_y,
                 stop: save,
                 start: restore,
                 nodes_links: function (nodes, links) {
