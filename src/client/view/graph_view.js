@@ -530,7 +530,7 @@ function GraphView(spec) {
             .attr('id', function(d){ return text_link_id(d.id); }) // append link id to enable data->visual mapping
             .attr("text-anchor", "middle")
             .attr("class", "linklabel graph")
-            .on("click", function(d, i) {
+            .on("click", function(d) {
                 if (!temporary) { // FIXME: if temporary don't even put a click handler
                     svgInput.enable(this, d);
                 }
@@ -561,7 +561,7 @@ function GraphView(spec) {
         link_g.each(function (d) {
                 link_on_hover(d);
             });
-        link_g.on("click", function(d, i) {
+        link_g.on("click", function(d) {
                 if (zoomInProgress) {
                     // don't disable zoomInProgress, it will be disabled by the svg_click_handler
                     // after this events bubbles to the svg element
@@ -573,8 +573,8 @@ function GraphView(spec) {
 
         //var selected_N = selection:
 
-        link.attr("class", function(d, i){
-                var temp_and = (d.name && d.name.replace(/ /g,"")=="and" && temporary) ? "temp_and" : "";
+        link.attr("class", function(d){
+                var temp_and = (d.name && d.name.replace(/ /g,"") === "and" && temporary) ? "temp_and" : "";
 
                 return ["graph link", temp_and, selection.class__link(d, temporary)].join(' ');
             });
@@ -640,7 +640,7 @@ function GraphView(spec) {
                 d.height = 900;
             });
 
-        function load_image(element, image_url, set_href) {
+        function load_image(element, image_url) {
             var image = new Image();
 
             image.onload = function () {
@@ -673,7 +673,7 @@ function GraphView(spec) {
                 load_image(this, "/static/img/url-icon.png");
             });
 
-        function node__click_handler(d, i) {
+        function node__click_handler(d, _i) {
             if (d3.event.defaultPrevented) {
                 // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
                 return;
