@@ -641,6 +641,11 @@ function Graph(spec) {
     }
     this.layout_y_key = layout_y_key;
 
+    function layout_fixed_key(layout_name) {
+        return 'layouts_' + layout_name + '_fixed';
+    }
+    this.layout_fixed_key = layout_fixed_key;
+
     function close_to(a, b, eps) {
         return Math.abs(a - b) < eps;
     }
@@ -650,16 +655,28 @@ function Graph(spec) {
     /**
      * Do an attribute commit with x, y for the current layout
      */
-    this.nodes__update_positions = function(layout_name) {
+    this.nodes__store_layout_positions = function(layout_name, node_ids) {
         // TODO: fix when attribute diff supports nested keys to use:
         // layout.<layout_name>.{x,y}
         var x_key = layout_x_key(layout_name),
             y_key = layout_y_key(layout_name),
-            changes = 0;
+            fixed_key = layout_fixed_key(layout_name),
+            changes = 0,
+            fixed = false;
+
+        if (node_ids && node_ids.forEach) {
+            node_ids = node_ids.filter(function (node_id) {
+                return id_to_node_map[node_id] !== undefined;
+            });
+            fixed = true;
+        } else {
+            node_ids = _.keys(id_to_node_map);
+        }
 
         // commit x, y to layout
-        _.values(id_to_node_map).forEach(function (node) {
-            var db_x = node[x_key],
+        node_ids.forEach(function (node_id) {
+            var node = id_to_node_map[node_id],
+                db_x = node[x_key],
                 db_y = node[y_key],
                 x = node.x,
                 y = node.y;
@@ -676,19 +693,21 @@ function Graph(spec) {
         }
         console.log('sending ' + changes + ' nodes position for layout ' + layout_name);
         // commit all current nodes
-        nodes__commit_attributes(function (node) {
+        nodes__commit_attributes(node_ids, function (node) {
             var d = {};
 
             d[x_key] = node.x;
             d[y_key] = node.y;
+            d[fixed_key] = fixed;
             return d;
         });
     };
 
-    function nodes__commit_attributes(getter) {
+    function nodes__commit_attributes(node_ids, getter) {
         var attr_diff = model_diff.new_attr_diff();
-        _.values(id_to_node_map).forEach(function (node) {
-            var d = getter(node);
+        node_ids.forEach(function (node_id) {
+            var node = id_to_node_map[node_id],
+                d = getter(node);
             _.keys(d).forEach(function (k) {
                 attr_diff.add_node_attr_write(node.id, k, d[k]);
             });

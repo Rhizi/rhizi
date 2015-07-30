@@ -207,28 +207,50 @@ function GraphView(spec) {
         var relayout = !temporary && (false === model_diff.is_attr_diff(diff)),
             have_position = 0,
             layout_x_key = graph.layout_x_key(layout.name),
-            layout_y_key = graph.layout_y_key(layout.name);
+            layout_y_key = graph.layout_y_key(layout.name),
+            node_set_add = diff.node_set_add || [],
+            is_full_graph_update = false;
 
         // copy position from diff based on current layout
-        if (layout.name && diff.node_set_add) {
-            diff.node_set_add.forEach(function (node) {
+        if (layout.name) {
+            node_set_add.forEach(function (node) {
                 if (node[layout_x_key] && node[layout_y_key]) {
                     node.x = node[layout_x_key];
                     node.y = node[layout_y_key];
                     have_position += 1;
                 }
             });
+            is_full_graph_update = (have_position === graph.nodes().length);
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
                 layout__load_graph();
-                if (have_position === graph.nodes().length) {
+                if (is_full_graph_update) {
                     console.log('no relayout because diff contains all graph nodes');
                     relayout = false;
                 }
             }
         }
+        if (is_full_graph_update) {
+            layouts__set_from_nodes(node_set_add);
+        }
         update_view(relayout);
     });
+
+    function layouts__set_from_nodes(nodes) {
+        layouts.forEach(function (layout_) {
+            var layout_x_key = graph.layout_x_key(layout_.name),
+                layout_y_key = graph.layout_y_key(layout_.name);
+            layout_.save_from_arr_id_x_y(nodes.map(function (node) {
+                var x = node[layout_x_key],
+                    y = node[layout_y_key];
+
+                if (!x || !y) {
+                    return undefined;
+                }
+                return {id: node.id, x: x, y: y};
+            }).filter(function (datum) { return datum !== undefined; }));
+        });
+    }
 
     function transformOnSelection(data) {
         var selection = data[0],
@@ -352,6 +374,9 @@ function GraphView(spec) {
             d.px = d.x;
             d.py = d.y;
             tick();
+            if (layout.name === 'custom') {
+                graph.nodes__store_layout_positions(layout.name, [d.id]);
+            }
         }
     }
 
@@ -1161,7 +1186,7 @@ function GraphView(spec) {
     }
 
     function record_position_to_database() {
-        graph.nodes__update_positions(layout.name);
+        graph.nodes__store_layout_positions(layout.name);
     }
 
     var layouts = view_layouts.layouts.map(function (layout_data) {
