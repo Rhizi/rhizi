@@ -18,6 +18,8 @@
 
 "use strict";
 
+var DEBUG_NODE_POSITION = false;
+
 /**
  * core model module - currently unused
  */
@@ -55,7 +57,25 @@ define(['util'], function(util) {
         }
     }
 
-    function Node() {
+    function NodePlain() {
+    }
+    function NodeWithNaNXTest() {
+        Object.defineProperty(this, "x", {
+            set: function (new_x) {
+                if (isNaN(new_x) && !isNaN(this._x)) {
+                    console.log('Node ' + this.id + '.x changed to Nan from ' + this._x);
+                }
+                this._x = new_x;
+            },
+            get: function () {
+                return this._x;
+            }
+        });
+    }
+    if (DEBUG_NODE_POSITION) {
+        Node = NodeWithNaNXTest;
+    } else {
+        Node = NodePlain;
     }
     Node.prototype.equals = function(other_node){
         return this.id === other_node.id;
