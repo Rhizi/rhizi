@@ -1302,6 +1302,7 @@ function GraphView(spec) {
     gv.zen_mode__cancel = function () {
         zen_mode__set(false);
     };
+    gv.layouts = layouts;
     return gv;
 }
 
