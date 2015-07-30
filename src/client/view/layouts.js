@@ -429,8 +429,8 @@ function(consts,   $,        d3,   _) {
             clazz: 'btn_layout_d3_force'
         },
         {
-            name: 'User',
-            create: named('user', layout__d3_force__link_distance),
+            name: 'Custom',
+            create: named('custom', layout__d3_force__link_distance),
             clazz: 'btn_layout_d3_force'
         },
          {
