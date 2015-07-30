@@ -795,7 +795,7 @@ function GraphView(spec) {
             }
 
             if (relayout) {
-                layout__reset(0.1);
+                layout__reset(0.01);
             } else {
                 layout.start().alpha(0.0001);
                 tick(); // this will be called before the end event is triggered by layout completing.
@@ -1224,7 +1224,7 @@ function GraphView(spec) {
     }
 
     function layout__reset(alpha) {
-        alpha = alpha || 0.1;
+        alpha = alpha || 0.01;
         layout.nodes_links(nodes__visible(), links__visible())
               .alpha(alpha)
               .start();
@@ -1250,7 +1250,8 @@ function GraphView(spec) {
             .nodes_links(nodes__visible(), links__visible())
             .restore()
             .zen_mode(zen_mode)
-            .start();
+            .start()
+            .alpha(0.01);
         gv.layout = layout;
     }
 
