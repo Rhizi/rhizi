@@ -221,7 +221,10 @@ function GraphView(spec) {
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
                 layout__load_graph();
-                relayout = false;
+                if (have_position === graph.nodes().length) {
+                    console.log('no relayout because diff contains all graph nodes');
+                    relayout = false;
+                }
             }
         }
         update_view(relayout);
