@@ -776,9 +776,8 @@ function GraphView(spec) {
             if (relayout) {
                 layout__reset(0.1);
             } else {
-                // XXX If we are stopped we need to update the text of the links at least,
-                // and this is the simplest way
-                tick();
+                layout.start().alpha(0.0001);
+                tick(); // this will be called before the end event is triggered by layout completing.
             }
         } else {
             start_layout_animation();
