@@ -631,14 +631,24 @@ function Graph(spec) {
         rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     };
 
+    function layout_x_key(layout_name) {
+        return 'layouts_' + layout_name + '_x';
+    }
+    this.layout_x_key = layout_x_key;
+
+    function layout_y_key(layout_name) {
+        return 'layouts_' + layout_name + '_y';
+    }
+    this.layout_y_key = layout_y_key;
+
     /**
      * Do an attribute commit with x, y for the current layout
      */
     this.nodes__update_positions = function(layout_name) {
         // TODO: fix when attribute diff supports nested keys to use:
         // layout.<layout_name>.{x,y}
-        var x_key = 'layouts.' + layout_name + '.x',
-            y_key = 'layouts.' + layout_name + '.y';
+        var x_key = layout_x_key(layout_name),
+            y_key = layout_y_key(layout_name);
 
         // commit x, y to layout
         _.values(id_to_node_map).forEach(function (node) {

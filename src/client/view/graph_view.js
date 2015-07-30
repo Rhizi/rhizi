@@ -206,8 +206,8 @@ function GraphView(spec) {
     graph.diffBus.onValue(function (diff) {
         var relayout = !temporary && (false === model_diff.is_attr_diff(diff)),
             have_position = 0,
-            layout_x_key = 'layouts.' + layout.name + '.x',
-            layout_y_key = 'layouts.' + layout.name + '.y';
+            layout_x_key = graph.layout_x_key(layout.name),
+            layout_y_key = graph.layout_y_key(layout.name);
 
         // copy position from diff based on current layout
         if (layout.name && diff.node_set_add) {
