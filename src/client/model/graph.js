@@ -674,6 +674,7 @@ function Graph(spec) {
         if (changes === 0) {
             return;
         }
+        console.log('sending ' + changes + ' nodes position for layout ' + layout_name);
         // commit all current nodes
         nodes__commit_attributes(function (node) {
             var d = {};
@@ -693,7 +694,6 @@ function Graph(spec) {
             });
         });
         var on_ajax_success = function() {
-            console.log('successfully committed x, y for current layout');
         };
         var on_ajax_error = function(){
             console.log('error with commit nodes properties to server');
