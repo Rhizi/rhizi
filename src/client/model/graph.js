@@ -641,6 +641,10 @@ function Graph(spec) {
     }
     this.layout_y_key = layout_y_key;
 
+    function close_to(a, b, eps) {
+        return Math.abs(a - b) < eps;
+    }
+
     /**
      * Do an attribute commit with x, y for the current layout
      */
@@ -648,13 +652,26 @@ function Graph(spec) {
         // TODO: fix when attribute diff supports nested keys to use:
         // layout.<layout_name>.{x,y}
         var x_key = layout_x_key(layout_name),
-            y_key = layout_y_key(layout_name);
+            y_key = layout_y_key(layout_name),
+            changes = 0;
 
         // commit x, y to layout
         _.values(id_to_node_map).forEach(function (node) {
+            var db_x = node[x_key],
+                db_y = node[y_key],
+                x = node.x,
+                y = node.y;
+
+            if (close_to(db_x, x, 0.0001) && close_to(db_y, y, 0.0001)) {
+                return;
+            }
             node[x_key] = node.x;
             node[y_key] = node.y;
+            changes += 1;
         });
+        if (changes === 0) {
+            return;
+        }
         // commit all current nodes
         nodes__commit_attributes(function (node) {
             var d = {};
