@@ -645,6 +645,8 @@ function Graph(spec) {
         return Math.abs(a - b) < eps;
     }
 
+    var eps = 0.001;
+
     /**
      * Do an attribute commit with x, y for the current layout
      */
@@ -662,7 +664,7 @@ function Graph(spec) {
                 x = node.x,
                 y = node.y;
 
-            if (close_to(db_x, x, 0.0001) && close_to(db_y, y, 0.0001)) {
+            if (close_to(db_x, x, eps) && close_to(db_y, y, eps)) {
                 return;
             }
             node[x_key] = node.x;
