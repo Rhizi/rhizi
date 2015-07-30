@@ -405,9 +405,6 @@ function GraphView(spec) {
     }
 
     function node__transform(d) {
-        var bx = d.bx || 0,
-            by = d.by || 0;
-
         return translate(d.bx, d.by);
     }
 
