@@ -352,7 +352,6 @@ function GraphView(spec) {
             d.px = d.x;
             d.py = d.y;
             tick();
-            layout.resume();
         }
     }
 
