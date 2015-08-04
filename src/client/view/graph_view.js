@@ -208,19 +208,23 @@ function GraphView(spec) {
             have_position = 0,
             layout_x_key = graph.layout_x_key(layout.name),
             layout_y_key = graph.layout_y_key(layout.name),
-            node_set_add = diff.node_set_add || [],
-            is_full_graph_update = false;
+            layout_fixed_key = graph.layout_fixed_key(layout.name),
+            nodes_from_attr_diff = function() { var ret = []; diff.for_each_node(function (nid) { ret.push(graph.find_node__by_id(nid)); }); return ret; },
+            changed_nodes = diff.node_set_add || (diff.for_each_node && nodes_from_attr_diff()) || [],
+            is_full_graph_update = false,
+            nodes = graph.nodes();
 
         // copy position from diff based on current layout
         if (layout.name) {
-            node_set_add.forEach(function (node) {
+            changed_nodes.forEach(function (node) {
                 if (node[layout_x_key] && node[layout_y_key]) {
                     node.x = node[layout_x_key];
                     node.y = node[layout_y_key];
+                    node.fixed = node[layout_fixed_key];
                     have_position += 1;
                 }
             });
-            is_full_graph_update = (have_position === graph.nodes().length);
+            is_full_graph_update = (have_position === nodes.length);
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
                 layout__load_graph();
@@ -230,8 +234,12 @@ function GraphView(spec) {
                 }
             }
         }
+        if (have_position === 0) {
+            // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
+            return;
+        }
         if (is_full_graph_update) {
-            layouts__set_from_nodes(node_set_add);
+            layouts__set_from_nodes(changed_nodes);
         }
         update_view(relayout);
     });
