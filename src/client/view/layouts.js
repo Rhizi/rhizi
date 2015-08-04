@@ -424,16 +424,16 @@ function(consts,   $,        d3,   _) {
 
     var layouts = [
         {
+            name: 'Custom',
+            create: named('custom', layout__d3_force__link_distance),
+            clazz: 'btn_layout_d3_force'
+        },
+        {
             name: 'Force',
             create: named('force', layout__d3_force__link_distance),
             clazz: 'btn_layout_d3_force'
         },
         {
-            name: 'Custom',
-            create: named('custom', layout__d3_force__link_distance),
-            clazz: 'btn_layout_d3_force'
-        },
-         {
             name: 'Ring',
             create: named('ring', layout__concentric),
             clazz: 'btn_layout_concentric'
