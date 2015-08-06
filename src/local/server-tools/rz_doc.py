@@ -1,3 +1,5 @@
+#!/usr/bin/python2.7
+
 #    This file is part of rhizi, a collaborative knowledge graph editor.
 #    Copyright (C) 2014-2015  Rhizi
 #
@@ -14,22 +16,23 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#!/usr/bin/python2.7
-
 import argparse  # TODO - use the newer / shorter argument parser. y?
 from collections import namedtuple
 import json
 import os
-import sys
 import uuid
+import time
 
 import db_controller as dbc
 from model.graph import Topo_Diff
 from neo4j_util import generate_random_id__uuid
-import rz
+try:
+    import rz
+except:
+    pass
 from rz_kernel import RZ_Kernel
-from rz_server import init_config
+from rz_server import init_config, init_webapp
+from rz_user_db import Fake_User_DB
 
 
 # must be before any rhizi import
@@ -150,14 +153,20 @@ if __name__ == '__main__':
                 break
     cfg = init_config(args.config_dir)
     kernel = RZ_Kernel()
-    db_ctl = dbc.DB_Controller(cfg)
+    db_ctl = dbc.DB_Controller(cfg.db_base_url)
     kernel.db_ctl = db_ctl
+    user_db = Fake_User_DB()
+    webapp = init_webapp(cfg, kernel)
+    webapp.user_db = user_db
+    kernel.db_op_factory = webapp  # assist kernel with DB initialization
+    kernel.start()
+    time.sleep(0.1)
     if args.list_table:
         print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30),
-                                       d['id'].encode('utf-8').ljust(30)) for d in kernel.rzdoc__list()))
+                                       d['id'].encode('utf-8').ljust(30)) for d in kernel.rzdoc__search('')))
         raise SystemExit
     if args.list_names:
-        print('\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__list()))
+        print('\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__search('')))
         raise SystemExit
     if args.delete:
         remove(args.delete)
