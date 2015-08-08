@@ -80,6 +80,7 @@ function init() {
         } else {
             selection.clear();
         }
+        rz_core.main_graph_view.zen_mode__set(true);
         rz_core.update_view__graph(false);
     };
 
