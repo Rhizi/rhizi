@@ -417,6 +417,33 @@ function GraphView(spec) {
         return translate(d.bx, d.by);
     }
 
+    function model_id_from_dom_id(dom_id) {
+        return dom_id.split('__')[0];
+    }
+
+    function node__radius (d) {
+        return urlValid(d['image-url']) ? 20 : 10;
+    }
+    function filter_id(id) {
+        return id + '__node_filter';
+    }
+    function feimage_id(id) {
+        return id + '__node_filter_feimage';
+    }
+    function clip_path_id(id) {
+        return id + '__node_clip_path';
+    }
+    function svg_url(id) {
+        return 'url(#' + id + ')';
+    }
+
+    var node__text_x = function(d) {
+        return node_text_dx + node__radius(d) + (urlValid(d.url) ? node_url_dx : 0);
+    };
+
+    function graphics__node_text(node) {
+    }
+
     function update_view(relayout) {
         var node,
             link,
@@ -434,14 +461,6 @@ function GraphView(spec) {
             return d3e.data(data, function (d) {
                 return d.id;
             });
-        }
-
-        var node__text_x = function(d) {
-            return node_text_dx + node__radius(d) + (urlValid(d.url) ? node_url_dx : 0);
-        };
-
-        function model_id_from_dom_id(dom_id) {
-            return dom_id.split('__')[0];
         }
 
         function node_text_setup() {
@@ -718,21 +737,6 @@ function GraphView(spec) {
             }
         }
 
-        function node__radius (d) {
-            return urlValid(d['image-url']) ? 20 : 10;
-        }
-        function filter_id(id) {
-            return id + '__node_filter';
-        }
-        function feimage_id(id) {
-            return id + '__node_filter_feimage';
-        }
-        function clip_path_id(id) {
-            return id + '__node_clip_path';
-        }
-        function svg_url(id) {
-            return 'url(#' + id + ')';
-        }
         var filter_group = d3.select('.nodefilter-group').selectAll(".nodefilter")
             .data(visible_nodes, function (d) { return d.id; });
         var filter = filter_group.enter()
