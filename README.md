@@ -60,6 +60,10 @@ use pip to install all requirements
  $ pip install flask
  $ pip install gevent-socketio
 
+Use npm for javascript (client) requirements, currently for development (testing) only, all other external dependencies are part of the repository:
+
+ $ npm install
+
 # Running instructions
 ## Running Rhizi Locally
 To run Rhizi locally:
@@ -96,6 +100,11 @@ To update the css files you need [sass](http://sass-lang.com/). To rebuild the c
  $ make
 
  For dev mode(debbuging, manual file load) use `?debug=1` at end of URL: e.g. `file://rhizifolder/html.index?debug=1`
+
+Client testing:
+
+ $ npm install
+ $ karma start
 
 ## Coding Conventions - Ant Scripts
 - use underscore as delimiter in var name, eg: <code>pkg_foo_bar</code>
