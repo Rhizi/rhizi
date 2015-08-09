@@ -100,7 +100,6 @@ function Graph(spec) {
                 }
             });
         });
-        console.dir(touched_links);
 
         return touched_links.map(function(l){ return l.id; });
     };
