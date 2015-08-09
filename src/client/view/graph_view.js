@@ -1252,7 +1252,8 @@ function GraphView(spec) {
         graph.nodes().forEach(function (node) {
             node.fixed = undefined;
         });
-        layout = new_layout
+        layout = new_layout;
+        layout
             .size([w, h])
             .on("tick", layout__tick__callback)
             .on("end", record_position_to_database)
