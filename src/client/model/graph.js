@@ -660,14 +660,12 @@ function Graph(spec) {
         var x_key = layout_x_key(layout_name),
             y_key = layout_y_key(layout_name),
             fixed_key = layout_fixed_key(layout_name),
-            changes = 0,
-            fixed = false;
+            changes = 0;
 
         if (node_ids && node_ids.forEach) {
             node_ids = node_ids.filter(function (node_id) {
                 return id_to_node_map[node_id] !== undefined;
             });
-            fixed = true;
         } else {
             node_ids = _.keys(id_to_node_map);
         }
@@ -697,7 +695,7 @@ function Graph(spec) {
 
             d[x_key] = node.x;
             d[y_key] = node.y;
-            d[fixed_key] = fixed;
+            d[fixed_key] = node.fixed;
             return d;
         });
     };
