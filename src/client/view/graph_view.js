@@ -234,7 +234,7 @@ function GraphView(spec) {
                 }
             }
         }
-        if (!temporary && have_position === 0) {
+        if (!temporary && !relayout && have_position === 0) {
             // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
             return;
         }
