@@ -234,21 +234,21 @@ function GraphView(spec) {
                 }
             }
         }
-        if (!temporary && !relayout && have_position === 0) {
+        if (nodes.length == 0 || (!temporary && !relayout && have_position === 0)) {
             // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
             return;
         }
         if (is_full_graph_update) {
-            layouts__set_from_nodes(changed_nodes);
+            layout__set_from_nodes(layout.name, changed_nodes);
         }
         update_view(relayout);
     });
 
-    function layouts__set_from_nodes(nodes) {
-        layouts.forEach(function (layout_) {
-            var layout_x_key = graph.layout_x_key(layout_.name),
-                layout_y_key = graph.layout_y_key(layout_.name);
-            layout_.save_from_arr_id_x_y(nodes.map(function (node) {
+    function layout__set_from_nodes(name, nodes) {
+        var layout_ = layouts.filter(function (layout_) { return layout_.name === name; })[0],
+            layout_x_key = graph.layout_x_key(layout_.name),
+            layout_y_key = graph.layout_y_key(layout_.name),
+            nodes_with_x_y = nodes.map(function (node) {
                 var x = node[layout_x_key],
                     y = node[layout_y_key];
 
@@ -256,8 +256,9 @@ function GraphView(spec) {
                     return undefined;
                 }
                 return {id: node.id, x: x, y: y};
-            }).filter(function (datum) { return datum !== undefined; }));
-        });
+            }).filter(function (datum) { return datum !== undefined; });
+
+        layout_.save_from_arr_id_x_y(nodes_with_x_y);
     }
 
     function transformOnSelection(data) {
