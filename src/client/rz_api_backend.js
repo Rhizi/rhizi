@@ -60,8 +60,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 var ret_data = xhr.data;
                 util.assert(undefined == xhr.error); // assert we no longer return errors along with HTTP 200 status codes
 
-                console.log('ajax success: return value:');
-                console.dir(ret_data);
+                console.log('ajax success: return value: ' + ret_data);
                 if (on_success) {
                     on_success(ret_data);
                 };
