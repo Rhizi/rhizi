@@ -1,5 +1,6 @@
 # Rhizi
 A collaborative graph editor for organizing, communicating, and analyzing data in graph form.
+
 [Screencast tutorial](https://www.youtube.com/watch?v=yRQtUPCzd3A)  
   
 [Live demo](http://demo.rhizi.net/index)
