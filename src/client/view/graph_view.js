@@ -234,7 +234,7 @@ function GraphView(spec) {
                 }
             }
         }
-        if (nodes.length == 0 || (!temporary && !relayout && have_position === 0)) {
+        if (!temporary && (nodes.length == 0 || (!relayout && have_position === 0))) {
             // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
             return;
         }
