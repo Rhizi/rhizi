@@ -23,6 +23,12 @@ import pwd
 import re
 import sys
 
+server_path = os.path.realpath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), '..', '..', 'server'))
+if not os.path.exists(server_path):
+    print("error: path not setup correctly")
+    raise SystemExit
+sys.path.append(server_path)
+
 from crypt_util import hash_pw
 from rz_server import init_config
 from rz_user import User_Account
@@ -99,29 +105,51 @@ def role_rm(user_db_path, user_email, role):
     uid, u = user_db.lookup_user__by_email_address(user_email)
     user_db.user_rm_role(uid, role)
 
+def list_users(user_db_path):
+    user_db = open_existing_user_db(user_db_path)
+    for user in user_db:
+        print('{}'.format(user))
+
 def main():
-    p = argparse.ArgumentParser(description='rz-cli tool')
+    commands = ['role-add', 'role-rm', 'list']
+    p = argparse.ArgumentParser(description='rz-cli tool. You must provide a command, one of:\n{}'.format(commands))
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     p.add_argument('--user-db-path', help='path to user_db (ignore config)')
     p.add_argument('--init-user-db', help='init user db', action='store_const', const=True)
     p.add_argument('--user-db-init-file', help='user_db db initialization file in \'user,pw\' format')
     p.add_argument('--email', help='email of user to operate on')
-    p.add_argument('--role-add', help='role to add to user, i.e. admin or user')
-    p.add_argument('--role-rm', help='role to remove from user')
+    p.add_argument('--role', help='role to add or remove to/from user, i.e. admin or user')
 
-    args = p.parse_args()
+    args, rest = p.parse_known_args()
+    illegal = False
+    if len(rest) != 1:
+        print("only one non argument parameter expected")
+        illegal = True
+    elif rest[0] not in commands:
+        print("command not in {}".format(commands))
+        illegal = True
+    elif rest[0] in ['role-add', 'role-rm'] and not args.email:
+        print("command {} requires an email argument".format(command))
+        illegal = True
+    if illegal:
+        p.print_help()
+        raise SystemExit
+
+    command = rest[0]
     cfg = init_config(args.config_dir)
-    user_db_path = cfg.user_db_path
+    user_db_path = args.user_db_path if args.user_db_path is not None else cfg.user_db_path
 
     if args.init_user_db:
         init_pw_db(cfg, args.user_db_init_file, user_db_path)
         exit(0)
 
-    if args.email:
-        if args.role_add:
-            role_add(user_db_path, args.email, args.role_add)
-        if args.role_rm:
-            role_rm(user_db_path, args.email, args.role_rm)
+    if command == 'role-add':
+        role_add(user_db_path, args.email, args.role)
+    if command == 'role-rm':
+        role_rm(user_db_path, args.email, args.role)
+
+    if command == 'list':
+        list_users(user_db_path)
 
 if __name__ == '__main__':
     main()
