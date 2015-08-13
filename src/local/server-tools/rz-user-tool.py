@@ -22,6 +22,7 @@ import pickle
 import pwd
 import re
 import sys
+from getpass import getpass
 
 server_path = os.path.realpath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), '..', '..', 'server'))
 if not os.path.exists(server_path):
@@ -34,23 +35,23 @@ from rz_server import init_config
 from rz_user import User_Account
 from rz_user_db import User_DB
 
+def add_user_login(user_db, salt, first_name, last_name,
+                   rz_username, email_address, pw_plaintext):
+
+    pw_hash = hash_pw(str(pw_plaintext), salt)
+    u_account = User_Account(first_name=first_name,
+                             last_name=last_name,
+                             rz_username=rz_username,
+                             email_address=email_address,
+                             pw_hash=pw_hash,
+                             role_set=['user'])
+    user_db.user_add(u_account)
+
 
 def init_pw_db(cfg, user_pw_list_file, user_db_path, ugid_str='www-data'):
     """
     @param ugid_str: shared uid, gid set on generated file
     """
-
-    def add_user_login(first_name, last_name,
-                       rz_username, email_address, pw_plaintext):
-
-        pw_hash = hash_pw(str(pw_plaintext), salt)
-        u_account = User_Account(first_name=first_name,
-                                 last_name=last_name,
-                                 rz_username=rz_username,
-                                 email_address=email_address,
-                                 pw_hash=pw_hash,
-                                 role_set=['user'])
-        user_db.user_add(u_account)
 
     if os.path.exists(user_db_path):
         print('user_db_path already exists, aborting: ' + user_db_path)
@@ -59,7 +60,6 @@ def init_pw_db(cfg, user_pw_list_file, user_db_path, ugid_str='www-data'):
     user_db = User_DB(db_path=user_db_path)
     user_db.init(mode='n')  # always create a new, empty database, open for reading and writing
 
-    salt = cfg.secret_key
     assert len(salt) > 8, 'server-key not found or too short'
     print('using config secret_key for salt generation: ' + salt[:3] + '...')
 
@@ -74,7 +74,9 @@ def init_pw_db(cfg, user_pw_list_file, user_db_path, ugid_str='www-data'):
                 raise Exception('failed to parse first-name,last-name,email,user,pw line: ' + line)
 
             first_name, last_name, rz_username, email_address, pw_plaintext = map(str.strip, kv_arr)
-            add_user_login(first_name=first_name,
+            add_user_login(user_db=user_db,
+                           self=cfg.secret_key,
+                           first_name=first_name,
                            last_name=last_name,
                            rz_username=rz_username,
                            email_address=email_address,
@@ -110,8 +112,18 @@ def list_users(user_db_path):
     for user in user_db:
         print('{}'.format(user))
 
+def add_user(user_db_path, cfg, email, password, first, last, username):
+    user_db = open_existing_user_db(user_db_path)
+    add_user_login(user_db=user_db,
+                   salt=cfg.secret_key,
+                   first_name=first,
+                   last_name=last,
+                   rz_username=username,
+                   email_address=email,
+                   pw_plaintext=password)
+
 def main():
-    commands = ['role-add', 'role-rm', 'list']
+    commands = ['role-add', 'role-rm', 'list', 'add']
     p = argparse.ArgumentParser(description='rz-cli tool. You must provide a command, one of:\n{}'.format(commands))
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     p.add_argument('--user-db-path', help='path to user_db (ignore config)')
@@ -119,6 +131,9 @@ def main():
     p.add_argument('--user-db-init-file', help='user_db db initialization file in \'user,pw\' format')
     p.add_argument('--email', help='email of user to operate on')
     p.add_argument('--role', help='role to add or remove to/from user, i.e. admin or user')
+    p.add_argument('--first-name', help="first name for added user")
+    p.add_argument('--last-name', help='last name for added user')
+    p.add_argument('--username', help='username for added user')
 
     args, rest = p.parse_known_args()
     illegal = False
@@ -130,6 +145,9 @@ def main():
         illegal = True
     elif rest[0] in ['role-add', 'role-rm'] and not args.email:
         print("command {} requires an email argument".format(command))
+        illegal = True
+    elif rest[0] == 'add' and None in set([args.first_name, args.last_name, args.username]):
+        print("missing one of first-name, last-name or username for user addition")
         illegal = True
     if illegal:
         p.print_help()
@@ -145,11 +163,18 @@ def main():
 
     if command == 'role-add':
         role_add(user_db_path, args.email, args.role)
-    if command == 'role-rm':
+
+    elif command == 'role-rm':
         role_rm(user_db_path, args.email, args.role)
 
-    if command == 'list':
+    elif command == 'list':
         list_users(user_db_path)
+
+    elif command == 'add':
+        print("please enter password:")
+        password = getpass()
+        add_user(user_db_path=user_db_path, cfg=cfg, email=args.email, password=password,
+                 first=args.first_name, last=args.last_name, username=args.username)
 
 if __name__ == '__main__':
     main()
