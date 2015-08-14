@@ -108,13 +108,22 @@ install_instance__apache() {
 
     ln -vfs -T /etc/rhizi/mux-conf.d/${RZI_NAME}     ${apache_module__rootdir}/webapp/etc
     ln -vfs -T /usr/lib/rhizi/webapp/static/js       ${apache_module__rootdir}/webapp/static/js
-    ln -vfs -T /usr/share/rhizi/webapp/static/css    ${apache_module__rootdir}/webapp/static/css
+
+    ln -vfs -T ${rhizi_custom__instance}/js/domain_types.js ${apache_module__rootdir}/webapp/fragment.d/js/domain_types.js
+    ln -vfs -T ${rhizi_custom__instance}/css    ${apache_module__rootdir}/webapp/static/css
+
     ln -vfs -T /usr/share/rhizi/webapp/static/font   ${apache_module__rootdir}/webapp/static/font
     ln -vfs -T /usr/share/rhizi/webapp/static/img    ${apache_module__rootdir}/webapp/static/img
     ln -vfs -T /usr/share/rhizi/webapp/static/lib    ${apache_module__rootdir}/webapp/static/lib
 
     # enable site
     ln -vfs -T /etc/apache2/sites-available/${apache_module__siteconf_filename} /etc/apache2/sites-enabled/${apache_module__siteconf_filename}
+}
+
+install_instance__apache__custom() {
+    if [ -e ${rhizi_custom__fragment} ]; then
+        cp -vr ${rhizi_custom__fragment}/* ${apache_module__rootdir}/webapp/fragment.d/template.d/
+    fi
 }
 
 install_instance__rhizi() { # depends on install_instance__apache()
@@ -125,7 +134,7 @@ install_instance__rhizi() { # depends on install_instance__apache()
                --directory ${rz_module__bkp}
 
     # install default fragments - JS
-    cp -vr /usr/share/rhizi/webapp/domain-fragment.d/default/* ${apache_module__rootdir}/webapp/fragment.d/
+    cp -vr /usr/share/rhizi/webapp/domain-fragment.d/default/* ${apache_module__rootdir}/webapp/fragment.d/template.d/
 
 }
 
@@ -164,6 +173,10 @@ RZI_RZ_PID_FILE=/var/run/rhizi/${RZI_NAME}.pid
 RZI_RZ_INIT_SCRIPT_PATH=/etc/init.d/rhizi__${RZI_NAME}
 RZI_RZ_CRON_SCRIPT_PATH=/etc/cron.daily/rhizi__${RZI_NAME}
 
+rhizi_custom__rootdir=$3
+rhizi_custom__instance=${rhizi_custom__rootdir}/domain-fragment.d/${RZI_NAME}
+rhizi_custom__fragment=${rhizi_custom__rootdir}/fragment/by-domain/${RZI_NAME}
+
 #
 # sanity checks
 #
@@ -171,6 +184,9 @@ RZI_RZ_CRON_SCRIPT_PATH=/etc/cron.daily/rhizi__${RZI_NAME}
 [ -z ${RZI_NAME} ] && die 'error: RZI_NAME arg missing, aborting'
 [ -e ${RZI_NEO4J_PID_FILE} ] && die "error: ${RZI_NEO4J_SVC_NAME} server seems to be running, please stop it before continuing"
 [ -e ${RZI_RZ_PID_FILE} ] && die "error: ${RZI_RZ_PID_FILE} server seems to be running, please stop it before continuing"
+[ ! -e ${rhizi_custom__rootdir}/domain-fragment.d ] && die 'error: 3rd argument must point to rhizi-custom git checkout'
+[ ! -e ${rhizi_custom__instance} ] && die 'error: no such instance in rhizi-custom (${RZI_NAME} in ${rhizi_custom__rootdir}}'
+[ -e /usr/lib/rhizi/webapp/static/js/domain_types.js ] && die 'unexpected domain_types.js in rhizi install'
 
 set_path_vars
 
@@ -182,10 +198,11 @@ case $1 in
         install_instance__apache
         install_instance__neo4j
         install_instance__rhizi
+        install_instance__apache__custom
 
         # pass-on extra argument to python: install dom-x ...:
         #    - opt: --rz_config__disable_access_control
-        if [ $# -ge 3 ] ; then shift 2; py_extra_args=$@ ; fi
+        if [ $# -ge 4 ] ; then shift 3; py_extra_args=$@ ; fi
         python /usr/lib/rhizi/tools/rz-mux/rz-mux-tool.py \
                --template-dir /usr/share/rhizi/rz-mux/ \
                --domain ${RZI_NAME} ${py_extra_args}
