@@ -24,8 +24,13 @@ import re
 import sys
 from getpass import getpass
 
-server_path = os.path.realpath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), '..', '..', 'server'))
-if not os.path.exists(server_path):
+server_path = None
+for parts in [('..', '..', 'server'), ('..', '..', 'rhizi-server')]:
+    candidate = os.path.realpath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), *parts))
+    if os.path.exists(candidate):
+        server_path = candidate
+        break
+if server_path is None:
     print("error: path not setup correctly")
     raise SystemExit
 sys.path.append(server_path)
