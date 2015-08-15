@@ -122,7 +122,7 @@ install_instance__apache() {
 
 install_instance__apache__custom() {
     if [ -e ${rhizi_custom__fragment} ]; then
-        cp -vr ${rhizi_custom__fragment}/* ${apache_module__rootdir}/webapp/fragment.d/template.d/
+        cp -vr ${rhizi_custom__fragment}/* ${apache_module__rootdir}/webapp/fragment.d/
     fi
 }
 
