@@ -23,13 +23,13 @@ import os
 import uuid
 import time
 
-import db_controller as dbc
-from model.graph import Topo_Diff
-from neo4j_util import generate_random_id__uuid
 try:
     import rz
 except:
     pass
+import db_controller as dbc
+from model.graph import Topo_Diff
+from neo4j_util import generate_random_id__uuid
 from rz_kernel import RZ_Kernel
 from rz_server import init_config, init_webapp
 from rz_user_db import Fake_User_DB
