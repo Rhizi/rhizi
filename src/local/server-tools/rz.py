@@ -15,11 +15,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# hack to setup rhizi path - needs a proper install
 import sys
 import os
+import time
 
-# to work both from source dir and from deployment dir
+# Hack to setup rhizi path - needs a proper install.
 path = None
 for postfix in [['..', 'bin'], ['..', '..', 'server'], ['..', '..', 'rhizi-server']]:
     candidate = os.path.join(*([os.path.dirname(__file__)] + postfix))
@@ -30,3 +30,23 @@ if None is path:
     print("must be run from one or two directories above server")
     raise SystemExit
 sys.path.append(path)
+
+
+from rz_server import init_config, init_webapp
+from rz_user_db import Fake_User_DB
+from rz_kernel import RZ_Kernel
+import db_controller as dbc
+
+class RZ(object):
+    def __init__(self, config_dir):
+        cfg = init_config(config_dir)
+        kernel = RZ_Kernel()
+        db_ctl = dbc.DB_Controller(cfg.db_base_url)
+        kernel.db_ctl = db_ctl
+        user_db = Fake_User_DB()
+        webapp = init_webapp(cfg, kernel)
+        webapp.user_db = user_db
+        kernel.db_op_factory = webapp  # assist kernel with DB initialization
+        kernel.start()
+        time.sleep(0.1)
+        self.kernel = kernel

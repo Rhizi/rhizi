@@ -23,21 +23,30 @@ import os
 import uuid
 import time
 
+#### must be before any rhizi import ####
 try:
     import rz
 except:
     pass
-import db_controller as dbc
+#########################################
+
 from model.graph import Topo_Diff
-from neo4j_util import generate_random_id__uuid
-from rz_kernel import RZ_Kernel
-from rz_server import init_config, init_webapp
-from rz_user_db import Fake_User_DB
 
 
-# must be before any rhizi import
 def clone(rzdoc_name):
     return kernel.rzdoc__clone(kernel.rzdoc__lookup_by_name(rzdoc_name))
+
+def create(rzdoc_name, clone):
+    """
+    create a new document with @rzdoc_name with a single commit clone.
+
+    Missing:
+        this loses all the history.
+        no user recorded for newly created doc
+    """
+    destination = kernel.rzdoc__create(rzdoc_name)
+    ctx = namedtuple('Context', ['user_name', 'rzdoc'])(None, destination)
+    kernel.diff_commit__topo(clone, ctx)
 
 def names():
     return [v['name'] for v in kernel.rzdoc__list()]
@@ -116,10 +125,7 @@ def merge(destination_name, sources=None):
         sources = names()
     docs = [kernel.rzdoc__lookup_by_name(name) for name in sources]
     topos = [kernel.rzdoc__clone(doc) for doc in docs]
-    destination = kernel.rzdoc__create(destination_name)
-
-    ctx = namedtuple('Context', ['user_name', 'rzdoc'])(None, destination)
-    kernel.diff_commit__topo(merge_topos(topos, sources), ctx)
+    create(destination_name, merge_topos(topos, sources))
 
 def remove(rzdoc_name):
     kernel.rzdoc__delete(kernel.rzdoc__lookup_by_name(rzdoc_name))
@@ -141,9 +147,13 @@ if __name__ == '__main__':
     p.add_argument('--merge-target', help='name of resulting rzdoc')
     p.add_argument('--merge', help='comma separated names of docs to merge')
     p.add_argument('--merge-file', help='filename with line per doc name')
-    p.add_argument('--clone', help='show contents of doc')
+    p.add_argument('--clone', help='dump contents of doc as clone json')
+    p.add_argument('--create', help='create a single doc from a dumped clone json')
+    p.add_argument('--create-name', help='name of document to create')
     p.add_argument('--rename-from', help='rename current name')
     p.add_argument('--rename-to', help='rename new name')
+    p.add_argument('--dump-all', help='dump all documents')
+    p.add_argument('--load-all', help='load all arguments from previous dump')
     args = p.parse_args()
 
     if args.config_dir is None:
@@ -151,16 +161,8 @@ if __name__ == '__main__':
             if os.path.exists(d):
                 args.config_dir = d
                 break
-    cfg = init_config(args.config_dir)
-    kernel = RZ_Kernel()
-    db_ctl = dbc.DB_Controller(cfg.db_base_url)
-    kernel.db_ctl = db_ctl
-    user_db = Fake_User_DB()
-    webapp = init_webapp(cfg, kernel)
-    webapp.user_db = user_db
-    kernel.db_op_factory = webapp  # assist kernel with DB initialization
-    kernel.start()
-    time.sleep(0.1)
+    RZ = rz.RZ(args.config_dir)
+    kernel = RZ.kernel
     if args.list_table:
         print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30),
                                        d['id'].encode('utf-8').ljust(30)) for d in kernel.rzdoc__search('')))
@@ -174,6 +176,9 @@ if __name__ == '__main__':
         rename(args.rename_from, args.rename_to)
     if args.clone:
         print(json.dumps(clone(args.clone).to_json_dict()))
+    if args.create and args.create_name:
+        with open(args.create) as fd:
+            create(args.create_name, Topo_Diff.from_json_dict(json.load(fd)))
     if args.merge_target:
         merge_sources = None
         if args.merge:
