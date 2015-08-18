@@ -964,11 +964,11 @@ function GraphView(spec) {
     }
 
     function check_for_nan(x) {
-        if (Number.isNaN(x)) {
+        if (isNaN(x)) {
             console.log('nan problem');
             layout.stop();
         }
-        return Number.isNaN(x);
+        return isNaN(x);
     }
 
     var newnodes=1;
