@@ -18,17 +18,18 @@
 """
 Various test utilities
 """
-import json
 import string
+import random
 
-import db_controller as dbc
-from model.graph import Topo_Diff
-from model.model import Link, RZDoc
+import server.db_controller as dbc
+from server.model.graph import Topo_Diff
+from server.model.model import Link, RZDoc
 from neo4j_test_util import rand_label
-from neo4j_util import generate_random_id__uuid, generate_random_rzdoc_id
-from rz_kernel import RZ_Kernel
-from rz_mesh import init_ws_interface
-from rz_server import init_webapp
+from server.neo4j_util import generate_random_id__uuid, generate_random_rzdoc_id
+from server.rz_kernel import RZ_Kernel
+from server.rz_mesh import init_ws_interface
+from server.rz_server import init_webapp
+from server.rz_user import User_Signup_Request
 import test_rz_mesh
 
 
@@ -102,7 +103,7 @@ def generate_random_RZDoc(rzdoc_name=None):
         rzdoc_name = gen_random_name()
 
     rzdoc = RZDoc(rzdoc_name)
-    rzdoc.id = neo4j_util.generate_random_rzdoc_id()
+    rzdoc.id = generate_random_rzdoc_id()
     return rzdoc
 
 def gen_random_user_signup(self):

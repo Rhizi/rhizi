@@ -19,6 +19,9 @@ from random import choice
 import string
 import uuid
 
+import sys
+import inspect
+sys.path.append('src/server')
 from db_op import DB_op, DBO_raw_query_set
 import neo4j_cypher
 import neo4j_schema

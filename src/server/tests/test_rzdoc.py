@@ -19,11 +19,12 @@ import logging
 import time
 import unittest
 
-import db_controller
-from db_op import DBO_factory__default
+import server.db_controller as db_controller
+from server.db_op import DBO_factory__default
 import neo4j_test_util
-from rz_config import RZ_Config
-from rz_kernel import RZ_Kernel
+from server.rz_config import RZ_Config
+from server.rz_kernel import RZ_Kernel
+from server.model.graph import Topo_Diff
 import test_util
 from test_util__pydev import debug__pydev_pd_arg
 
