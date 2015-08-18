@@ -15,15 +15,9 @@ Database:
 - Neo4J DB server >= 2.1.5 - http://neo4j.com/download/
 
 Server:
-- Flask - http://flask.pocoo.org/
-- Apache Ant >= 1.9.0
 - Python 2.7
-- python-enum
-- python-gevent
-- python-gevent-websocket
-- python-six
-- python-socketio
-- python-futures >= 2.2.0
+- Apache Ant >= 1.9.0
+- Python dependencies as described in `requirements.txt`
 
 Client
 All of the following are already bundled but noted here for reference:
@@ -41,17 +35,10 @@ Build dependencies:
 - ant
 - make
 
-For rz-backup:
-- python-click >= 3.3 (not tested with anything prior)
-
 # Installation
 ## Apt based systems: Debian / Ubuntu
 <code># apt-get install \
 ant \
-python-flask \
-python-socketio \
-python-gevent \
-python-six \
 python-pip \
 ruby-sass
 </code>
@@ -59,8 +46,7 @@ ruby-sass
 ## Generic
 use pip to install all requirements
 
- $ pip install flask
- $ pip install gevent-socketio
+ $ pip install -r requirements.txt
 
 Use npm for javascript (client) requirements, currently for development (testing) only, all other external dependencies are part of the repository:
 
