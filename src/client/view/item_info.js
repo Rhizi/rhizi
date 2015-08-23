@@ -256,7 +256,7 @@ function show(_graph, new_item, new_visible_attributes)
         switch (attr) {
         case 'enddate':
         case 'startdate':
-            element.datepicker({
+            (element.datepicker !== undefined) && element.datepicker({
               inline: true,
               showOtherMonths: true,
               dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
