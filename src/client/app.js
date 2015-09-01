@@ -48,7 +48,7 @@
     if (rz_config.optimized_main) {
         config.paths.main = 'main-built';
     }
-    config.urlArgs = (typeof local_config != 'undefined') && local_config.urlArgs;
+    config.urlArgs = typeof local_config != 'undefined' ? local_config.urlArgs : RZ_VERSION;
 
 if (window.is_node) {
     // Testing path only
