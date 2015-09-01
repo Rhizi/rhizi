@@ -169,8 +169,8 @@ function(consts,   $,        d3,   _) {
                 return [node.id, {
                     x: node.x,
                     y: node.y,
-                    px: node.px,
-                    py: node.py,
+                    px: node.x,
+                    py: node.y,
                     fixed: node.fixed
                 }];
             }));
