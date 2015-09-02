@@ -19,17 +19,17 @@
 
 import unittest
 
-from db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
+from ..db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
     DBO_block_chain__commit, DBO_diff_commit__attr, DBO_diff_commit__topo, \
     DBO_rm_node_set, DB_composed_op, DBO_block_chain__init, DBO_rzdoc__create, \
-    DBO_rzdoc__delete, DBO_rzdoc__list, DBO_rzdoc__lookup_by_name
-from model.graph import Attr_Diff, Topo_Diff
-from neo4j_cypher import Cypher_Parser, DB_Query
-from neo4j_qt import QT_RZDOC_NS_Filter
+    DBO_rzdoc__delete, DBO_rzdoc__search, DBO_rzdoc__lookup_by_name
+from ..model.graph import Attr_Diff, Topo_Diff
+from ..neo4j_cypher import Cypher_Parser, DB_Query
+from ..neo4j_qt import QT_RZDOC_NS_Filter
 import neo4j_test_util
-from neo4j_util import meta_attr_list_to_meta_attr_map
-from rz_config import RZ_Config
-from rz_server import init_log
+from ..neo4j_util import meta_attr_list_to_meta_attr_map
+from ..rz_config import RZ_Config
+from ..rz_server import init_log
 from test_util import generate_random_node_dict, generate_random_link_dict, \
     generate_random_RZDoc
 from test_util__pydev import debug__pydev_pd_arg
@@ -74,7 +74,7 @@ class Test_DB_Op(unittest.TestCase):
                   # rzdoc
                   DBO_rzdoc__create(test_rzdoc),
                   DBO_rzdoc__delete(test_rzdoc),
-                  DBO_rzdoc__list(),
+                  DBO_rzdoc__search(''),
                   DBO_rzdoc__lookup_by_name(test_rzdoc.name),
                   ]
         return op_set
@@ -153,7 +153,7 @@ class Test_DB_Op(unittest.TestCase):
         op_set = self.gen_full_db_op_set(test_label)
         for op in op_set:
             if isinstance(op, DB_composed_op): continue  # sub-queries tested instead
-            for _idx, db_q, _db_q_result in op:
+            for _idx, db_q, _db_q_result in op.iter__r_set():
                 dbq_set.append(db_q)
 
         self.test_T__common(dbq_set, DB_Query.t__add_node_filter__meta_label)

@@ -21,10 +21,10 @@ import uuid
 
 import sys
 import inspect
-sys.path.append('src/server')
-from db_op import DB_op, DBO_raw_query_set
-import neo4j_cypher
-import neo4j_schema
+
+from ..db_op import DB_op, DBO_raw_query_set
+from .. import neo4j_cypher
+from .. import neo4j_schema
 
 class DBO_flush_db(DBO_raw_query_set):
     """
