@@ -31,7 +31,7 @@ except:
 #########################################
 
 from model.graph import Topo_Diff
-
+from rz_file import RZFile
 
 def clone(rzdoc_name):
     return kernel.rzdoc__clone(kernel.rzdoc__lookup_by_name(rzdoc_name))
@@ -138,6 +138,9 @@ def noeol(line):
         return line
     return line[:-1] if line[-1] == '\n' else line
 
+def dump(document_names):
+    print(RZFile(kernel).dump(document_names))
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description="rhizi command line interface")
     p.add_argument('--config-dir', help='path to Rhizi config dir', default=None)
@@ -148,12 +151,13 @@ if __name__ == '__main__':
     p.add_argument('--merge', help='comma separated names of docs to merge')
     p.add_argument('--merge-file', help='filename with line per doc name')
     p.add_argument('--clone', help='dump contents of doc as clone json')
+    p.add_argument('--dump-single', help='dump a single document as json with all the associated data, including commit history')
     p.add_argument('--create', help='create a single doc from a dumped clone json')
     p.add_argument('--create-name', help='name of document to create')
     p.add_argument('--rename-from', help='rename current name')
     p.add_argument('--rename-to', help='rename new name')
     p.add_argument('--dump-all', help='dump all documents')
-    p.add_argument('--load-all', help='load all arguments from previous dump')
+    p.add_argument('--load', help='load a previous dump (both single and all produce the same format)')
     args = p.parse_args()
 
     if args.config_dir is None:
@@ -178,6 +182,7 @@ if __name__ == '__main__':
         print(json.dumps(clone(args.clone).to_json_dict()))
     if args.create and args.create_name:
         with open(args.create) as fd:
+            data = json.load(fd)
             create(args.create_name, Topo_Diff.from_json_dict(json.load(fd)))
     if args.merge_target:
         merge_sources = None
@@ -188,3 +193,9 @@ if __name__ == '__main__':
                 merge_sources = [noeol(line) for line in fd.readlines()]
         if merge_sources:
             merge(args.merge_target, merge_sources)
+    if args.dump_single:
+        dump([args.dump_single])
+    if args.dump_all:
+        dump(None)
+    if args.load:
+        load(args.load)
