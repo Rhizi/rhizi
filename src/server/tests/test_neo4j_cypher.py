@@ -90,8 +90,7 @@ class Test_DB_Op(unittest.TestCase):
                                       'struct: \n%s' % (pt.str__struct_tree()),
                                       ]))
 
-            if pt.str__cypher_query() != q_str:  # test for precise query string match
-                self.fail()
+            self.assertEquals(pt.str__cypher_query(), q_str)  # test for precise query string match
 
         valid_exp_set = []
         #
