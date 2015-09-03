@@ -69,7 +69,7 @@ class DB_Query(object):
 
     def __init__(self, q_arr, param_set={}):
         """
-        @param q_str_or_array: cypher query to add - if passed as an array ' '.join(q_str_or_array)
+        @param q_arr: cypher query as an array, the string is ' '.join(q_str_or_array)
         is used to convert it to string type
         """
         assert type(q_arr) is list
