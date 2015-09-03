@@ -184,16 +184,10 @@ class Test_DB_Op(unittest.TestCase):
         for db_q in dbq_set:
             q_str__pre = db_q.q_str
 
-            try:
-                t = T(*args)  # instantiate transformation
-                t(db_q)
-                q_str__post = db_q.pt_root.str__cypher_query()
-                self.log.debug('test case:\n\t q: %s\n\tq\': %s\n' % (q_str__pre,
-                                                                      q_str__post))
-            except Exception as e:
-                self.log.debug('transformation failed:\n\tq: %s\n%r' % (q_str__pre,
-                                                                        db_q.pt_root))
-                self.log.exception(e)
+            t = T(*args)  # instantiate transformation
+            t(db_q)
+            q_str__post = db_q.pt_root.str__cypher_query()
+            #self.log.debug('test case:\n\t q: %s\n\tq\': %s\n' % (q_str__pre, q_str__post))
 
 @debug__pydev_pd_arg
 def main():
