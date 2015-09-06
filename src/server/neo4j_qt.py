@@ -31,13 +31,12 @@ class Query_Transformation(object):
         """
         Apply transformation to either a DB_op or a DB_Query
         """
-        if isinstance(value, DB_Query):
-            return self.apply_to_db_op(value)
-        if isinstance(value, DB_op):
-            return self.apply_to_db_op(value)
+        assert(isinstance(value, DB_op))
+        return self.apply_to_db_op(value)
 
     def apply_to_db_op(self, op):
         for dbq in op: # apply to sub queries
+            assert(isinstance(op, DB_op))
             self.apply_to_single_query(dbq)
         return op
 
