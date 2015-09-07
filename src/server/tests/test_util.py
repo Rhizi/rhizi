@@ -21,15 +21,15 @@ Various test utilities
 import string
 import random
 
-import server.db_controller as dbc
-from server.model.graph import Topo_Diff
-from server.model.model import Link, RZDoc
+from .. import db_controller as dbc
+from ..model.graph import Topo_Diff
+from ..model.model import Link, RZDoc
 from neo4j_test_util import rand_label
-from server.neo4j_util import generate_random_id__uuid, generate_random_rzdoc_id
-from server.rz_kernel import RZ_Kernel
-from server.rz_mesh import init_ws_interface
-from server.rz_server import init_webapp
-from server.rz_user import User_Signup_Request
+from ..neo4j_util import generate_random_id__uuid, generate_random_rzdoc_id
+from ..rz_kernel import RZ_Kernel
+from ..rz_mesh import init_ws_interface
+from ..rz_server import init_webapp
+from ..rz_user import User_Signup_Request
 import test_rz_mesh
 
 
@@ -57,7 +57,7 @@ def gen_random_name(size=8, char_set=string.ascii_uppercase + string.digits):
 def generate_random_node_dict(n_type, nid=None):
     """
     @param n_type: is converted to a label set
-    
+
     @return: a dict based node object representation and the generated node id
     """
     if None == nid:
@@ -70,7 +70,7 @@ def generate_random_node_dict(n_type, nid=None):
 def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     """
     @param l_type: is converted to a single item type array
-    
+
     @return: a dict based node object representation and the generated node id
     """
     if None == lid:
