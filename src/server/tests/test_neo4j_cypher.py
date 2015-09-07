@@ -22,7 +22,7 @@ import unittest
 from ..db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
     DBO_block_chain__commit, DBO_diff_commit__attr, DBO_diff_commit__topo, \
     DBO_rm_node_set, DB_composed_op, DBO_block_chain__init, DBO_rzdoc__create, \
-    DBO_rzdoc__delete, DBO_rzdoc__search, DBO_rzdoc__lookup_by_name
+    DBO_rzdoc__delete, DBO_rzdoc__search, DBO_rzdoc__lookup_by_name, DB_op
 from ..model.graph import Attr_Diff, Topo_Diff
 from ..neo4j_cypher import Cypher_Parser, DB_Query
 from ..neo4j_qt import QT_RZDOC_NS_Filter
@@ -85,12 +85,9 @@ class Test_DB_Op(unittest.TestCase):
     def test_cypher_exp_parsing(self):
 
         def validate_parse_tree(pt, q_str):
-            self.log.debug('\n'.join([' q: %s' % (q_str),
-                                      'q\': %s' % (pt.str__cypher_query()),
-                                      'struct: \n%s' % (pt.str__struct_tree()),
-                                      ]))
-
-            self.assertEquals(pt.str__cypher_query(), q_str)  # test for precise query string match
+            self.assertEquals(pt.str__cypher_query(), q_str,
+                              u"""{} != {}
+{}""".format(pt.str__cypher_query(), q_str, pt.str__struct_tree()))  # test for precise query string match
 
         valid_exp_set = []
         #
@@ -155,7 +152,7 @@ class Test_DB_Op(unittest.TestCase):
             for _idx, db_q, _db_q_result in op.iter__r_set():
                 dbq_set.append(db_q)
 
-        self.test_T__common(dbq_set, DB_Query.t__add_node_filter__meta_label)
+        self.helper_T__common(dbq_set, lambda *args: lambda db_q: db_q.t__add_node_filter__meta_label())
 
     def test_T__add_node_filter__rzdoc_id_label(self):
         test_label = neo4j_test_util.rand_label()
@@ -176,16 +173,14 @@ class Test_DB_Op(unittest.TestCase):
         dbq_set = [dbq]
 
         # dbq_set = dbq_set[:1]
-        self.test_T__common(dbq_set, QT_RZDOC_NS_Filter, test_rzdoc)
+        self.helper_T__common(dbq_set, QT_RZDOC_NS_Filter(test_rzdoc))
 
-    def test_T__common(self, dbq_set, T, *args):
-        self.log.debug('\n')
-
+    def helper_T__common(self, dbq_set, T, *args):
+        db_op = DB_op()
         for db_q in dbq_set:
-            q_str__pre = db_q.q_str
-
-            t = T(*args)  # instantiate transformation
-            t(db_q)
+            db_op.add_db_query(db_q)
+        T(db_op)
+        for db_q in dbq_set:
             q_str__post = db_q.pt_root.str__cypher_query()
             #self.log.debug('test case:\n\t q: %s\n\tq\': %s\n' % (q_str__pre, q_str__post))
 
