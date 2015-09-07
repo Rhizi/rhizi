@@ -24,7 +24,7 @@ import neo4j_schema
 
 class Query_Transformation(object):
     """
-    DB_op / DB_Query transformation
+    DB_op transformation
     """
 
     def __call__(self, value):
