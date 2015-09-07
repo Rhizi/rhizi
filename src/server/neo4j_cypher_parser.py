@@ -636,7 +636,7 @@ class Cypher_Parser(object):
     def parse__e_clause_create_or_match(self, input, n_cur):
         if ' ' == input[0]: return self.parse__e_clause_create_or_match(input[1:], n_cur)  # consume
 
-        if '(' == input[0]: return self.parse__node_or_rel(input, n_cur)  # open node or path
+        if '(' == input[0]: return self.parse__node(input, n_cur)  # open node or path
 
         if ',' == input[0]:  # open sibling
             assert len(n_cur.sub_exp_set) >= 2 and e_keyword == n_cur.sub_exp_set[0].__class__
@@ -726,8 +726,8 @@ class Cypher_Parser(object):
     def parse__e_set(self, input, n_cur):
         if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
 
-        if '(' == input[0]:  # open node or path
-            return self.parse__node_or_rel(input, n_cur)
+        if '(' == input[0]:  # open node
+            return self.parse__node(input, n_cur)
 
         n_cur = n_cur.parent
         return self.__parse(input, n_cur)
@@ -739,7 +739,41 @@ class Cypher_Parser(object):
         n_cur = n_cur.parent
         return self.__parse(suffix, n_cur)
 
-    def parse__node_or_rel(self, input, n_cur):
+    def parse__rel(self, input, n_cur):
+        if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
+
+        if input.startswith('-['):  # open rel
+            n_cur = n_cur.spawn_child(p_rel)
+            return self.parse__rel(input[2:], n_cur)
+
+        if ':' == input[0]:  # open label set
+            n_cur = n_cur.spawn_child(e_label_set)
+            n_cur = n_cur.spawn_child(e_value)
+            return self.__parse(input[1:], n_cur)
+
+        if input.startswith(']-'):  # close directional-rel
+            if input.startswith(']->'):  # close directional-rel
+                n_cur.is_directional = True
+                n_cur = n_cur.parent
+                return self.parse__node(input[3:], n_cur)
+
+            n_cur = n_cur.parent
+            return self.parse__node(input[2:], n_cur)
+
+        if '{' == input[0]:  # open attr-set
+            n_cur = n_cur.spawn_child(e_attr_set)
+            return self.__parse(input[1:], n_cur)
+
+        rgx_opt_id = r'^%s' % (e_ident.rgx('ident'))
+        m = re.match(rgx_opt_id, input)
+        if m:
+            n_cur = n_cur.spawn_child(e_ident)
+            return self.__parse(input, n_cur)
+
+        assert False
+
+
+    def parse__node(self, input, n_cur):
         if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
 
         if ':' == input[0]:  # open label set
@@ -749,30 +783,17 @@ class Cypher_Parser(object):
 
         if '(' == input[0]:  # open node
             n_cur = n_cur.spawn_child(p_node)
-            return self.parse__node_or_rel(input[1:], n_cur)
+            return self.parse__node(input[1:], n_cur)
 
-        if ')' == input[0]:  # close node/path
-            if input.startswith(')-'):  # open path
+        if ')' == input[0]:  # close node
+            if input.startswith(')-'):  # open rel
                 n_cur = n_cur.rotate__pin_under_new_parent(p_path)
-                return self.parse__node_or_rel(input[1:], n_cur)
+                return self.parse__rel(input[1:], n_cur)
 
             n_cur = n_cur.parent
             if n_cur.__class__ == p_path:
                 n_cur = n_cur.parent
             return self.__parse(input[1:], n_cur)
-
-        if input.startswith('-['):  # open rel
-            n_cur = n_cur.spawn_child(p_rel)
-            return self.parse__node_or_rel(input[2:], n_cur)
-
-        if input.startswith(']-'):  # close directional-rel
-            if input.startswith(']->'):  # close directional-rel
-                n_cur.is_directional = True
-                n_cur = n_cur.parent
-                return self.parse__node_or_rel(input[3:], n_cur)
-
-            n_cur = n_cur.parent
-            return self.parse__node_or_rel(input[2:], n_cur)
 
         if '{' == input[0]:  # open attr-set
             n_cur = n_cur.spawn_child(e_attr_set)
@@ -832,8 +853,8 @@ class Cypher_Parser(object):
         if isinstance(n_cur, e_clause__where): return self.parse__e_clause__common(input, n_cur)
         if isinstance(n_cur, e_clause): return self.parse__e_clause__common(input, n_cur)
 
-        if isinstance(n_cur, p_rel): return self.parse__node_or_rel(input, n_cur)
-        if isinstance(n_cur, p_node): return self.parse__node_or_rel(input, n_cur)
+        if isinstance(n_cur, p_rel): return self.parse__rel(input, n_cur)
+        if isinstance(n_cur, p_node): return self.parse__node(input, n_cur)
 
         if isinstance(n_cur, e_label_set): return self.parse__e_label_set(input, n_cur)
         if isinstance(n_cur, e_attr_set): return self.parse__e_attr_set(input, n_cur)
