@@ -167,11 +167,11 @@ class DBO_add_link_set(DB_op):
 
 class DB_composed_op(DB_op):
     """
-    A DB_op composed of sup-operations with the intention of being able to 
-    partially succeed in sub-op execution. This op class will reject addition 
+    A DB_op composed of sup-operations with the intention of being able to
+    partially succeed in sub-op execution. This op class will reject addition
     of direct query statements.
-    
-    Note: this class may be removed in future releases. 
+
+    Note: this class may be removed in future releases.
     """
     def __init__(self):
         super(DB_composed_op, self).__init__()
@@ -356,7 +356,7 @@ class DBO_block_chain__init(DB_op):
 class DBO_block_chain__list(DB_op):
     """
     Return block chain hash list
-    
+
     @return: hash list where last list item corresponds to earliest commit
     """
 
@@ -738,7 +738,7 @@ class DBO_rm_link_set(DB_op):
         """
         remove link set
 
-        [!] when removing as a result of node removal, use DBO_rm_node_set 
+        [!] when removing as a result of node removal, use DBO_rm_node_set
         along with rm_links=True
         """
         assert len(id_set) > 0, __name__ + ': empty id set'
