@@ -105,9 +105,11 @@ class Test_DB_Op(unittest.TestCase):
                    'match ()-[:A]->()',
                    'match (n:`T_nMu7ktxW` {node_attr})',
                    'match (n:A:B)-[r_b:Knows {a: \'0\'}]-(m:Skill), (n)-[]-(m)',
+                   'match ()-[]-()',
 
                    # path quantifier
                    'match (n:A)-[r:B*0..4]-(m)',
+                   'match ()-[*]-()',
                    'match (m)-[*0..2]-(m)',
                    'match ()-[r*0..6]-()',
 
