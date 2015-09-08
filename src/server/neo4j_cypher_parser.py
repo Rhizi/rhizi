@@ -282,11 +282,11 @@ class e_value(pt_abs_node):
 
     @classmethod
     def rgx__unquoted(self, g_name='value'):
-        return '(?P<%s>[\w\d/|,_]+(\*\d*\.\.\d*)?)' % (g_name)
+        return '(?P<%s>[\w\d/|,_]+)' % (g_name)
 
     @classmethod
     def rgx__quoted(self, g_name='value', quote_tok='\''):
-        return '%s(?P<%s>[\w\d_/,|\-\s]+(\*\d*\.\.\d*)?)%s' % (quote_tok, g_name, quote_tok)
+        return '%s(?P<%s>[\w\d_/,|\-\s]+)%s' % (quote_tok, g_name, quote_tok)
 
     def str__tok_open(self):
         if self.quoted: return self.quote_tok
@@ -303,6 +303,19 @@ class e_ident(pt_abs_node):  # identifier
     @classmethod
     def rgx(self, g_name='ident'):
         return '(?P<%s>[\w_]+)' % (g_name)
+
+
+class e_multiplicity(pt_abs_node):  # multiplicity for relations
+
+    def __init__(self): super(e_multiplicity, self).__init__()
+
+    @classmethod
+    def rgx(self):
+        return '(?P<value>(\*)?(\d+)?(\.\.)?(\d+)?)'
+
+    def str__tok_close(self):
+        return ''
+
 
 class e_param(e_ident):
     """
@@ -510,7 +523,8 @@ class p_rel(pt_abs_composite_node):  # rel pattern: '[...]'
         self.is_directional = False
 
     def str__tok_sibling_delim(self, sib_a=None, sib_b=None):
-        if isinstance(sib_a, e_ident) and isinstance(sib_b, e_label_set):
+        if ((isinstance(sib_a, e_ident) and isinstance(sib_b, e_label_set))
+            or isinstance(sib_b, e_multiplicity)):
             return ''  # handled by label_set
         return ' '
 
@@ -609,6 +623,12 @@ class Cypher_Parser(object):
         n_value.value = m.group('value')
         return m.group('suffix')
 
+    def read__e_multiplicity(self, input, n_multiplicity):
+        rgx = r'^%s%s' % (e_multiplicity.rgx(), self.rgx__suffix)
+        m = self.__match(rgx, input, re.UNICODE)
+        n_multiplicity.value = m.group('value')
+        return m.group('suffix')
+
     def parse__e_attr_set(self, input, n_cur):
         if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
 
@@ -671,6 +691,11 @@ class Cypher_Parser(object):
         n_cur = n_cur.parent
         return self.__parse(suffix, n_cur)
 
+    def parse__e_multiplicity(self, input, n_cur):
+        suffix = self.read__e_multiplicity(input, n_cur)
+        n_cur = n_cur.parent
+        return self.__parse(suffix, n_cur)
+
     def parse__e_kv_pair(self, input, n_cur):
         if ' ' == input[0]: return self.__parse(input[1:], n_cur)  # consume
 
@@ -707,6 +732,9 @@ class Cypher_Parser(object):
             n_cur = n_cur.spawn_child(e_value)
             return self.__parse(input[1:], n_cur)
         if input[0] in [')', ']']:
+            n_cur = n_cur.parent
+            return self.__parse(input, n_cur)
+        if '*' == input[0]: # multiplicity, let parent parse
             n_cur = n_cur.parent
             return self.__parse(input, n_cur)
         assert False
@@ -768,6 +796,11 @@ class Cypher_Parser(object):
         m = re.match(rgx_opt_id, input)
         if m:
             n_cur = n_cur.spawn_child(e_ident)
+            return self.__parse(input, n_cur)
+
+        m = re.match(e_multiplicity.rgx(), input)
+        if m:
+            n_cur = n_cur.spawn_child(e_multiplicity)
             return self.__parse(input, n_cur)
 
         assert False
