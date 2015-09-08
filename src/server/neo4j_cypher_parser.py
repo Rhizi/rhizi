@@ -286,7 +286,7 @@ class e_value(pt_abs_node):
 
     @classmethod
     def rgx__quoted(self, g_name='value', quote_tok='\''):
-        return '%s(?P<%s>[\w\d_/,|\-\s]+)%s' % (quote_tok, g_name, quote_tok)
+        return '%s(?P<%s>[\w\d\.,_/|:?"\'\-\s]+)%s' % (quote_tok, g_name, quote_tok)
 
     def str__tok_open(self):
         if self.quoted: return self.quote_tok

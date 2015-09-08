@@ -119,6 +119,19 @@ class Test_DB_Op(unittest.TestCase):
                    u'create (n:א)-[r:ב]->(m:ג:ד)',
                    u'create ({א: 0})',
                    u'create ({א: 0, נ: \'ערך ב\'})',
+
+                   #
+                   # Punctuation tests
+                   #
+                   "create (n:Test {name: 'test,'})",
+                   "create (n:Test {name: 'test:'})",
+                   "create (n:Test {name: 'test.'})",
+                   "create (n:Test {name: 'test?'})",
+                   "create (n:'Test:')",
+                   "create (n:'Test:')",
+                   "create (n:'Test|')",
+                   "create (n:'Test\"')",
+                   "create (n:'Test?')",
                    ]
         # exp_set = []
         for clause in exp_set:
