@@ -336,9 +336,9 @@ function rzdoc__open(rzdoc_name) {
         window.history.replaceState(null, page_title(rzdoc_name), url_for_doc(rzdoc_name) + location.search);
 
         var rzdoc_bar = $('#rzdoc-bar_doc-label');
-        var rzdoc_bar__doc_lable = $('#rzdoc-bar_doc-label');
+        var rzdoc_bar__doc_label = $('#rzdoc-bar_doc-label');
         rzdoc_bar.fadeToggle(500, 'swing', function() {
-            rzdoc_bar__doc_lable.text(rzdoc_name);
+            rzdoc_bar__doc_label.text(rzdoc_name);
             rzdoc_bar.fadeToggle(500);
         });
 
