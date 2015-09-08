@@ -282,7 +282,7 @@ class e_value(pt_abs_node):
 
     @classmethod
     def rgx__unquoted(self, g_name='value'):
-        return '(?P<%s>[\w\d/|,_]+)' % (g_name)
+        return '(?P<%s>[\w\d/|_?]+)' % (g_name)
 
     @classmethod
     def rgx__quoted(self, g_name='value', quote_tok='\''):
