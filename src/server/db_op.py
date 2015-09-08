@@ -274,7 +274,9 @@ class DBO_block_chain__commit(DB_op):
             self.add_statement(self._add_statement__authored_by(ctx.user_name))
 
         if None != meta and 'sentence' in meta and meta['sentence'] != '':
-            self.add_statement(self._add_statement__result_of_sentence(ctx.user_name, meta['sentence']))
+            result_of_param_set = {'result_of_attr': {'sentence': meta['sentence']}}
+            self.add_statement(self._add_statement__result_of_sentence(ctx.user_name),
+                               result_of_param_set)
 
     def _add_statement__authored_by(self, user_name):
         return ['merge (n:%s {user_name: \'%s\'})' % (neo4j_schema.META_LABEL__USER, user_name),
@@ -283,13 +285,12 @@ class DBO_block_chain__commit(DB_op):
                 'create (m)-[r:`%s`]->(n)' % (neo4j_schema.META_LABEL__VC_COMMIT_AUTHOR),
                 ]
 
-    def _add_statement__result_of_sentence(self, user_name, sentence):
+    def _add_statement__result_of_sentence(self, user_name):
         return ['match (head:%s:%s)' % (neo4j_schema.META_LABEL__VC_HEAD,
                                         neo4j_schema.META_LABEL__VC_COMMIT),
-                'create (head)-[r:%s]->(result_of:%s {sentence: \'%s\'} )' % (
+                'create (head)-[r:%s]->(result_of:%s {result_of_attr} )' % (
                 neo4j_schema.META_LABEL__VC_COMMIT_RESULT_OF,
                 neo4j_schema.META_LABEL__VC_OPERATION,
-                sentence,
                 )]
 
     def process_result_set(self):
