@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Change admin to taste, add cronjob. Monitoring at 1 AM.
+
+admin=example@example.com
+cookies=/tmp/rhizi-monitoring-cookies-jar.curl
+mail_log=/var/log/rhizi-monitor-mails.log
+
+function mail_admin()
+{
+        server=$1
+        msg=$2
+        subject="down rhizi server $server ($msg)"
+        echo $msg | mail -s "$subject" $admin
+        (date; echo mailed subject:$subject to $admin) >> $mail_log
+        return 1
+}
+
+function login()
+{
+        _server=$1
+        _email=$2
+        _password=$3
+        (curl -s -i -c $cookies -H "Content-Type: application/json" \
+                -X POST \
+                -d "{\"email_address\": \"$_email\" , \"password\": \"$_password\"}"    \
+                http://$_server/login 2> /dev/null | grep -q 'HTTP.*401') && return 1
+        return 0
+}
+
+function index()
+{
+        server=$1
+        (curl -s -i -b $cookies http://$server/index 2> /dev/null | grep -q 'HTTP.*200') && return 0
+        return 1
+}
+
+touch $mail_log
+rm -f $cookies
+cat /etc/rhizi-monitoring/data | grep -v '^#' | (while read server email password; do
+           (login $server $email $password || mail_admin $server 'login failed') \
+        && (index $server || mail_admin $server "index failed")
+done)
