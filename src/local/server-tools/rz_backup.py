@@ -1,3 +1,5 @@
+#!/usr/bin/python2.7
+
 #    This file is part of rhizi, a collaborative knowledge graph editor.
 #    Copyright (C) 2014-2015  Rhizi
 #
@@ -14,8 +16,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#!/usr/bin/python2.7
 
 import click
 
