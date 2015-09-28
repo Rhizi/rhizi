@@ -5,6 +5,7 @@ We intend to have a format to export to be used for migration to a newer/older r
 but since this tool is currently written and useful it is being put, intended as temporary, to the db.
 """
 
+import sys
 import base64
 import gzip
 
@@ -47,9 +48,16 @@ def rhizi_db_version():
 def main():
     global graph_db
     watch("httpstream")
-    graph_db = Graph('http://localhost:7474/db/data')
+    port = 7474 if len(sys.argv) == 1 else int(sys.argv[1])
+    graph_db = Graph('http://localhost:{}/db/data'.format(port))
 
-    rhizi_major, rhizi_minor, rhizi_micro = rhizi_db_version()
+    version = rhizi_db_version()
+    print("version: {}".format(version))
+    if len(version) == 2:
+        rhizi_major, rhizi_minor, rhizi_micro = version[0], version[1], 0
+    else:
+        assert(len(version) == 3)
+        rhizi_major, rhizi_minor, rhizi_micro = version
     print("rhizi db schema version: %r.%r.%r" % (rhizi_major, rhizi_minor, rhizi_micro))
 
     if rhizi_major <= 0 and rhizi_minor <= 2:
