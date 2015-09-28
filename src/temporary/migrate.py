@@ -52,7 +52,6 @@ def main():
     graph_db = Graph('http://localhost:{}/db/data'.format(port))
 
     version = rhizi_db_version()
-    print("version: {}".format(version))
     if len(version) == 2:
         rhizi_major, rhizi_minor, rhizi_micro = version[0], version[1], 0
     else:
