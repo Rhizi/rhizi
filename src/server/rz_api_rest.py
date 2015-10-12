@@ -46,7 +46,8 @@ from rz_req_handling import common_resp_handle__success, make_response__json, \
 
 log = logging.getLogger('rhizi')
 
-class Req_Context():
+
+class Req_Context(object):
     """
     Request context:
        - user_name
