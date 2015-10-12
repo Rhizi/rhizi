@@ -58,6 +58,7 @@ class Req_Context(object):
         self.user_name = user_name
         self.rzdoc = rzdoc
 
+
 def __context__common(rzdoc_name=None):
     """
     Common request context builder passed along with kernel calls:
@@ -76,6 +77,7 @@ def __context__common(rzdoc_name=None):
         ret.rzdoc = current_app.kernel.cache_lookup__rzdoc(s_rzdoc_name)
     return ret
 
+
 def __load_node_set_by_id_attr_common(rzdoc_name, id_set):
     """
     @param f_k: optional attribute filter key
@@ -85,6 +87,7 @@ def __load_node_set_by_id_attr_common(rzdoc_name, id_set):
     kernel = flask.current_app.kernel
     _, commit_ret = kernel.load_node_set_by_id_attr(id_set, ctx)
     return common_resp_handle__success(data=commit_ret)
+
 
 def diff_commit__set():
     """
@@ -103,6 +106,7 @@ def diff_commit__set():
     op = DBO_diff_commit__topo(topo_diff)
 
     assert False
+
 
 @common_rest_req_exception_handler
 def diff_commit__topo():
@@ -128,6 +132,7 @@ def diff_commit__topo():
     _, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
     return common_resp_handle__success(data=commit_ret)
 
+
 @common_rest_req_exception_handler
 def diff_commit__attr():
     """
@@ -149,8 +154,10 @@ def diff_commit__attr():
     _, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
     return common_resp_handle__success(data=commit_ret)
 
+
 def diff_commit__vis():
     pass
+
 
 def load_link_set_by_link_ptr_set():
 
@@ -173,6 +180,7 @@ def load_link_set_by_link_ptr_set():
 
     assert False
 
+
 @common_rest_req_exception_handler
 def load_node_set_by_id_attr():
     """
@@ -194,6 +202,7 @@ def load_node_set_by_id_attr():
 
     return __load_node_set_by_id_attr_common(rzdoc_name, id_set)
 
+
 def match_node_set_by_attr_filter_map(attr_filter_map):
     """
     @param attr_filter_map
@@ -204,8 +213,10 @@ def match_node_set_by_attr_filter_map(attr_filter_map):
 
     assert False
 
+
 def rzdoc__via_rz_url(rzdoc_name=None):
     return rz_mainpage(rzdoc_name)
+
 
 @common_rest_req_exception_handler
 def rzdoc_clone():
@@ -225,6 +236,7 @@ def rzdoc_clone():
     commit_log = kernel.rzdoc__commit_log(ctx.rzdoc, limit=10)
     return common_resp_handle__success(data=[topo_diff_json, commit_log])
 
+
 @common_rest_req_exception_handler
 def rzdoc__create(rzdoc_name):
     """
@@ -239,12 +251,14 @@ def rzdoc__create(rzdoc_name):
         return common_resp_handle__server_error(error='rzdoc already exists')
     return make_response__json(status=HTTP_STATUS__201_CREATED)
 
+
 @common_rest_req_exception_handler
 def rzdoc__delete(rzdoc_name):
     kernel = flask.current_app.kernel
     ctx = __context__common(rzdoc_name)
     kernel.rzdoc__delete(ctx.rzdoc, ctx)
     return make_response__json(status=HTTP_STATUS__204_NO_CONTENT)
+
 
 @common_rest_req_exception_handler
 def rzdoc__search():
