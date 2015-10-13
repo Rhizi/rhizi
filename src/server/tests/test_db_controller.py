@@ -18,27 +18,28 @@
 import logging
 import unittest
 
-import db_controller as dbc
-from db_op import DBO_add_link_set, DBO_block_chain__commit, DBO_rzdoc__clone, \
+from ...server import db_controller as dbc
+from ...server.db_op import DBO_add_link_set, DBO_block_chain__commit, DBO_rzdoc__clone, \
     DBO_rzdb__init_DB, DBO_rzdb__fetch_DB_metablock
-from db_op import DBO_add_node_set
-from db_op import DBO_block_chain__list
-from db_op import DBO_diff_commit__attr
-from db_op import DBO_diff_commit__topo
-from db_op import DBO_load_link_set
-from db_op import DBO_load_node_set_by_DB_id
-from db_op import DBO_match_link_id_set
-from db_op import DBO_match_node_id_set
-from db_op import DBO_match_node_set_by_id_attribute
-from model.graph import Attr_Diff
-from model.graph import Topo_Diff
-from model.model import Link
-from neo4j_cypher import DB_Query
+from ...server.db_op import DBO_add_node_set
+from ...server.db_op import DBO_block_chain__list
+from ...server.db_op import DBO_diff_commit__attr
+from ...server.db_op import DBO_diff_commit__topo
+from ...server.db_op import DBO_load_link_set
+from ...server.db_op import DBO_load_node_set_by_DB_id
+from ...server.db_op import DBO_match_link_id_set
+from ...server.db_op import DBO_match_node_id_set
+from ...server.db_op import DBO_match_node_set_by_id_attribute
+from ...server.model.graph import Attr_Diff
+from ...server.model.graph import Topo_Diff
+from ...server.model.model import Link
+from ...server.neo4j_cypher import DB_Query
 from neo4j_test_util import DBO_random_data_generation
 import neo4j_test_util
-from neo4j_util import Neo4JException
-from neo4j_util import meta_attr_list_to_meta_attr_map
-from rz_config import RZ_Config
+from ...server.neo4j_util import Neo4JException
+from ...server.neo4j_util import meta_attr_list_to_meta_attr_map
+from ...server.rz_api_rest import Req_Context
+from ...server.rz_config import RZ_Config
 from test_util import generate_random_link_dict
 from test_util import generate_random_node_dict
 from test_util__pydev import debug__pydev_pd_arg
@@ -63,7 +64,7 @@ class TestDBController(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        cfg = Config.init_from_file('res/etc/rhizi-server.conf')
+        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
         self.db_ctl = dbc.DB_Controller(cfg.db_base_url)
         self.log = logging.getLogger('rhizi')
         self.log.addHandler(logging.StreamHandler())
@@ -84,7 +85,7 @@ class TestDBController(unittest.TestCase):
         n_map = meta_attr_list_to_meta_attr_map([n_0, n_1])
         op = DBO_add_node_set(n_map)
 
-        self.assertEqual(len(op.statement_set), 1)  # assert a single statement is issued
+        self.assertEqual(len(op.query_set), 1)  # assert a single statement is issued
 
         ret_id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(ret_id_set), 2)
@@ -106,7 +107,7 @@ class TestDBController(unittest.TestCase):
 
         l_map = { test_label : [l_0, l_1]}
         op = DBO_add_link_set(l_map)
-        self.assertEqual(len(op.statement_set), 2)  # no support yet for parameterized statements for link creation
+        self.assertEqual(len(op.query_set), 2)  # no support yet for parameterized statements for link creation
 
         ret_id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(ret_id_set), 2)
