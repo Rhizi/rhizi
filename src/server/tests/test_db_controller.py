@@ -45,7 +45,8 @@ from .test_util import (generate_random_link_dict, generate_random_node_dict,
                        RhiziTestBase)
 from .test_util__pydev import debug__pydev_pd_arg
 
-class TestDBController(unittest.TestCase):
+
+class TestDBController(RhiziTestBase):
 
     db_ctl = None
     log = None
@@ -61,13 +62,6 @@ class TestDBController(unittest.TestCase):
 
     l_map = { 'Knows' : [Link.link_ptr('person_00', 'skill_00'),
                          Link.link_ptr('person_00', 'skill_01')] }
-
-    @classmethod
-    def setUpClass(self):
-        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
-        self.db_ctl = dbc.DB_Controller(cfg.db_base_url)
-        self.log = logging.getLogger('rhizi')
-        self.log.addHandler(logging.StreamHandler())
 
     def setUp(self):
         # flush_DB

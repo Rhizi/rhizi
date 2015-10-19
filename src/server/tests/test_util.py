@@ -125,3 +125,18 @@ def gen_random_user_signup(self):
                                  last_name='lastname%s' % (seed),
                                  pw_plaintxt='aaaa12345')
     return us_req
+
+
+class RhiziTestBase(TestCase):
+
+    @classmethod
+    def setUpClass(clz):
+
+        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
+        clz.db_ctl = dbc.DB_Controller(cfg.db_base_url)
+        rz_api.db_ctl = clz.db_ctl
+
+        log = logging.getLogger('rhizi')
+        log.setLevel(logging.DEBUG)
+        log_handler_c = logging.FileHandler('rhizi-tests.log')
+        log.addHandler(log_handler_c)
