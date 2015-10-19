@@ -20,8 +20,11 @@ Various test utilities
 """
 import string
 import random
-from unittest import TestCase
 import logging
+from time \
+    import sleep
+import sys
+from unittest import TestCase
 
 from .. import db_controller as dbc
 from ..model.graph import Topo_Diff
@@ -33,6 +36,7 @@ from ..rz_server import init_webapp
 from ..rz_user import User_Signup_Request
 from ..rz_config import RZ_Config
 from .. import rz_api
+from ..db_op import DBO_factory__default
 
 from .neo4j_test_util import rand_label
 
@@ -127,16 +131,48 @@ def gen_random_user_signup(self):
     return us_req
 
 
+db_ctl = None
+kernel = None
+cfg = None
+
+
+def get_connection():
+    if cfg is None:
+        initialize_test_kernel()
+    return db_ctl, kernel
+
+
+def initialize_test_kernel():
+    global db_ctl
+    global kernel
+    global cfg
+    sys.stderr.write("initializing db\n")
+    cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
+    db_ctl = dbc.DB_Controller(cfg.db_base_url)
+    rz_api.db_ctl = db_ctl
+
+    log = logging.getLogger('rhizi')
+    log.setLevel(logging.DEBUG)
+    log_handler_c = logging.FileHandler('rhizi-tests.log')
+    log.addHandler(log_handler_c)
+
+    # bootstrap kernel
+    kernel = RZ_Kernel()
+    kernel.db_ctl = db_ctl
+    kernel.db_op_factory = DBO_factory__default()
+    kernel.start()
+
+    while not kernel.is_DB_status__ok():  # wait for kernel to initialize...
+        sleep(0.3)
+        sys.stderr.write(".\n")
+
+
 class RhiziTestBase(TestCase):
 
     @classmethod
     def setUpClass(clz):
 
-        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
-        clz.db_ctl = dbc.DB_Controller(cfg.db_base_url)
+        db_ctl, kernel = get_connection()
+        clz.db_ctl = db_ctl
         rz_api.db_ctl = clz.db_ctl
-
-        log = logging.getLogger('rhizi')
-        log.setLevel(logging.DEBUG)
-        log_handler_c = logging.FileHandler('rhizi-tests.log')
-        log.addHandler(log_handler_c)
+        clz.kernel = kernel

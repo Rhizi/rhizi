@@ -19,35 +19,18 @@ import logging
 import time
 import unittest
 
-import server.db_controller as db_controller
-from server.db_op import DBO_factory__default
 import neo4j_test_util
 from server.rz_config import RZ_Config
 from server.rz_kernel import RZ_Kernel
 from server.model.graph import Topo_Diff
 import test_util
 from test_util__pydev import debug__pydev_pd_arg
+from test_util import RhiziTestBase
 
-
-class TestRZDoc(unittest.TestCase):
+class TestRZDoc(RhiziTestBase):
 
     @classmethod
     def setUpClass(self):
-        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
-        self.db_ctl = db_controller.DB_Controller(cfg.db_base_url)
-        self.log = logging.getLogger('rhizi')
-        self.log.addHandler(logging.StreamHandler())
-
-        # bootstrap kernel
-        kernel = RZ_Kernel()
-        kernel.db_ctl = self.db_ctl
-        kernel.db_op_factory = DBO_factory__default()
-        kernel.start()
-
-        self.kernel = kernel
-
-        while not self.kernel.is_DB_status__ok():  # wait for kernel to initialize...
-            time.sleep(0.3)
 
     def setUp(self): pass
 
