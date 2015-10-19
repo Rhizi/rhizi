@@ -35,13 +35,16 @@ class Query_Transformation(object):
         assert(isinstance(value, DB_op))
         return self.apply_to_db_op(value)
 
+
     def apply_to_db_op(self, op):
         for dbq in op: # apply to sub queries
             assert(isinstance(op, DB_op))
             self.apply_to_single_query(dbq)
         return op
 
+
     def apply_to_single_query(self, dbq): pass # subclass hook
+
 
 class QT_RZDOC_NS_Filter__common(Query_Transformation):
     """
@@ -53,9 +56,11 @@ class QT_RZDOC_NS_Filter__common(Query_Transformation):
     def __init__(self, ns_label):
         self.ns_label = ns_label
 
+
     def deco__process_q_ret__n_label_set(self, label_set):
         ret = [lbl for lbl in label_set if lbl != self.ns_label]
         return ret
+
 
     def apply_to_db_op(self, op):
         ret = Query_Transformation.apply_to_db_op(self, op)
@@ -65,6 +70,7 @@ class QT_RZDOC_NS_Filter__common(Query_Transformation):
             op.process_q_ret__n_label_set = self.deco__process_q_ret__n_label_set
 
         return ret
+
 
     def apply_to_single_query(self, dbq):
         q_type = dbq.query_struct_type
@@ -92,17 +98,20 @@ class QT_RZDOC_NS_Filter__common(Query_Transformation):
 
             # log.debug('db_q trans: in clause: %s, out clause: %s' % (cur_clause, new_clause))
 
+
 class QT_RZDOC_NS_Filter(QT_RZDOC_NS_Filter__common):
 
     def __init__(self, rzdoc):
         ns_label = rzdoc__ns_label(rzdoc)
         super(QT_RZDOC_NS_Filter, self).__init__(ns_label)
 
+
 class QT_RZDOC_Meta_NS_Filter(QT_RZDOC_NS_Filter__common):
 
     def __init__(self, rzdoc):
         ns_label = rzdoc__meta_ns_label(rzdoc)
         super(QT_RZDOC_Meta_NS_Filter, self).__init__(ns_label)
+
 
 class QT_Node_Filter__meta_label_set(Query_Transformation):
     # TODO: impl

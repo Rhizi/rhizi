@@ -185,7 +185,7 @@ def load_link_set_by_link_ptr_set():
 def load_node_set_by_id_attr():
     """
     load node-set by ID attribute
-    
+
     @param id_set: list of node ids to match id attribute against
     @return: a list of nodes whose id attribute matches 'id' or
             an empty list if the requested node is not found
@@ -206,7 +206,7 @@ def load_node_set_by_id_attr():
 def match_node_set_by_attr_filter_map(attr_filter_map):
     """
     @param attr_filter_map
-    
+
     @return: a set of node DB id's
     """
     op = DBO_match_node_id_set(attr_filter_map)

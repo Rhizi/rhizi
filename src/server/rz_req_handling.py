@@ -48,7 +48,7 @@ def __common_resp_handle(data, error, status):
     def __response_wrap(data=None, error=None):
         """
         wrap response data/errors as dict - this should always be used when returning
-        data to allow easy return of list objects, assist in error case distinction, etc. 
+        data to allow easy return of list objects, assist in error case distinction, etc.
         """
         return dict(data=data, error=error)
 

@@ -130,6 +130,7 @@ class TestDBController(unittest.TestCase):
         self.assertEqual(hash_list.pop(), hash_ret1)
         self.assertEqual(hash_list.pop(), hash_ret2)
 
+
     def test_db_op_statement_iteration(self):
         s_arr = ['create (b:Book {title: \'foo\'}) return b',
                  'match (n) return n', ]
@@ -218,6 +219,7 @@ class TestDBController(unittest.TestCase):
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
+
     def test_diff_commit__attr(self):
         # create test node
         test_label = neo4j_test_util.rand_label()
@@ -255,6 +257,7 @@ class TestDBController(unittest.TestCase):
         ret_diff = self.db_ctl.exec_op(op)
         self.assertTrue('attr_2' in ret_diff.type__node[n_0_id]['__attr_remove'])
 
+
     def test_load_link_set(self):
 
         # load by l_ptr
@@ -286,6 +289,7 @@ class TestDBController(unittest.TestCase):
         l_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(l_set), 3)
 
+
     def test_load_node_set_by_DB_id(self):
         """
         test node DB id life cycle
@@ -301,6 +305,7 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(n_set), len(id_set), 'incorrect result size')
 
+
     def test_match_node_set_by_type(self):
         op = DBO_match_node_id_set(filter_label='Person')
         id_set = self.db_ctl.exec_op(op)
@@ -309,6 +314,7 @@ class TestDBController(unittest.TestCase):
         op = DBO_match_node_id_set(filter_label='Nan_Type')
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
+
 
     def test_match_node_set_by_attribute(self):
         fam = { 'name': ['Bob', u'Judo'], 'age': [128] }
@@ -319,12 +325,15 @@ class TestDBController(unittest.TestCase):
         n_set = self.db_ctl.exec_op(DBO_match_node_id_set(filter_attr_map=fam))
         self.assertEqual(len(n_set), 2)
 
+
     def test_match_node_set_by_DB_id(self):
         pass  # TODO
+
 
     def test_match_node_set_by_id_attribute(self):
         n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute(['skill_00', 'person_01']))
         self.assertEqual(len(n_set), 2)
+
 
     def test_match_link_set_by_type(self):
         op = DBO_match_link_id_set(filter_label='Knows')
@@ -335,12 +344,13 @@ class TestDBController(unittest.TestCase):
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
+
     def test_partial_query_set_execution_success(self):
         """
         test:
             - statement execution stops at first invalid statement
-            - assert create statement with result data does not actually persist in DB 
-            
+            - assert create statement with result data does not actually persist in DB
+
         From the REST API doc: 'If any errors occur while executing statements,
         the server will roll back the transaction.'
         """
@@ -360,6 +370,7 @@ class TestDBController(unittest.TestCase):
         # assert node creation did not persist
         n_set = self.db_ctl.exec_op(DBO_match_node_set_by_id_attribute([n_id]))
         self.assertEqual(len(n_set), 0)
+
 
     def test_rz_clone(self):
         op = DBO_random_data_generation(lim_n=8, lim_r=16, prob_link_create=0.7)

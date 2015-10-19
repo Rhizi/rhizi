@@ -91,7 +91,7 @@ def rzdoc__meta_ns_label(rzdoc):
 def db_query_set_to_REST_form(db_query_set):
     """
     Transform DB_Query set to Neo4J's REST API request format
-    
+
     ref: http://neo4j.com/docs/stable/rest-api.html
     """
 
@@ -165,7 +165,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     generate a set of node create queries
 
     @param node_map: is a node-type to node map
-    @input_to_DB_property_map: optional function which takes a map of input 
+    @input_to_DB_property_map: optional function which takes a map of input
     properties and returns a map of DB properties - use to map input schemas to DB schemas
 
     @return: a (query, query_parameteres) set of create queries
@@ -263,7 +263,7 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
         links:
         in: [{'id':0, '__type': ['T']}, {'id':1, '__type': ['T']}]
         out: { 'T': [{'id':0}, {'id':1}] }
-        
+
     [!] as of 2015-01 multiple labels for relations are not supported,
         which is why meta_attr='__type' should be used when calling this
         function to map links

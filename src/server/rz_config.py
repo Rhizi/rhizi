@@ -32,7 +32,7 @@ class RZ_Config(object):
     rhizi-server configuration
 
     TODO: config option documentation
-    
+
         listen_address
         listen_port
         log_level: upper/lower case log level as specified by the logging module

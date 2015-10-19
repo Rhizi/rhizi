@@ -20,22 +20,27 @@ Various test utilities
 """
 import string
 import random
+from unittest import TestCase
+import logging
 
 from .. import db_controller as dbc
 from ..model.graph import Topo_Diff
 from ..model.model import Link, RZDoc
-from neo4j_test_util import rand_label
 from ..neo4j_util import generate_random_id__uuid, generate_random_rzdoc_id
 from ..rz_kernel import RZ_Kernel
 from ..rz_mesh import init_ws_interface
 from ..rz_server import init_webapp
 from ..rz_user import User_Signup_Request
-import test_rz_mesh
+from ..rz_config import RZ_Config
+from .. import rz_api
+
+from .neo4j_test_util import rand_label
 
 
 def init_test_db_controller(cfg):
     ret = dbc.DB_Controller(cfg.db_base_url)
     return ret
+
 
 def init_test_ws_server(cfg, db_ctl):
     """
@@ -48,11 +53,13 @@ def init_test_ws_server(cfg, db_ctl):
     ws_srv = init_ws_interface(cfg, webapp)
     return ws_srv
 
+
 def gen_random_name(size=8, char_set=string.ascii_uppercase + string.digits):
     """
     used for random node generation
     """
     return ''.join(random.choice(char_set) for _ in range(size))
+
 
 def generate_random_node_dict(n_type, nid=None):
     """
@@ -67,6 +74,7 @@ def generate_random_node_dict(n_type, nid=None):
             'id': nid,
             'name': gen_random_name() }, nid
 
+
 def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     """
     @param l_type: is converted to a single item type array
@@ -80,6 +88,7 @@ def generate_random_link_dict(l_type, src_id, dst_id, lid=None):
     ret_dict['__type'] = [l_type]
     ret_dict['id'] = lid
     return ret_dict, lid
+
 
 def generate_random_diff__topo__minimal(test_label):
     """
@@ -98,6 +107,7 @@ def generate_random_diff__topo__minimal(test_label):
                           link_set_add=l_set)
     return topo_diff
 
+
 def generate_random_RZDoc(rzdoc_name=None):
     if rzdoc_name is None:
         rzdoc_name = gen_random_name()
@@ -105,6 +115,7 @@ def generate_random_RZDoc(rzdoc_name=None):
     rzdoc = RZDoc(rzdoc_name)
     rzdoc.id = generate_random_rzdoc_id()
     return rzdoc
+
 
 def gen_random_user_signup(self):
     seed = gen_random_name()
