@@ -140,15 +140,13 @@ def init_log(cfg):
     assert None != log_level, 'failed to determine log level'
 
     log.setLevel(log_level)
-    log_handler_c = logging.StreamHandler()
-    log_handler_f = logging.FileHandler(cfg.log_path)
+    handlers = [logging.FileHandler(cfg.log_path),
+                logging.StreamHandler()]
 
     formatter = logging.Formatter(u'%(asctime)s [%(levelname)s] %(name)s %(message)s')
-    log_handler_c.setFormatter(formatter)
-    log_handler_f.setFormatter(formatter)
-
-    log.addHandler(log_handler_c)
-    log.addHandler(log_handler_f)
+    for handler in handlers:
+        handler.setFormatter(formatter)
+        log.addHandler(handler)
     return log
 
 def init_rest_interface(cfg, flask_webapp):
