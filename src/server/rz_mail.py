@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from email import Encoders
+from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -47,7 +47,7 @@ def send_email(mta_host, mta_port, send_from, recipients, subject, attachments, 
         maintype, subtype = mimetype.split('/')
         part = MIMEBase(maintype, subtype)
         part.set_payload(data)
-        Encoders.encode_base64(part)
+        encoders.encode_base64(part)
         part.add_header('Content-Disposition', 'attachment', filename=filename)
         # Content_Disposition: attachment; filename="feedback_page.html"
         msg.attach(part)

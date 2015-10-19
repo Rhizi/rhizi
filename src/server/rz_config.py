@@ -160,10 +160,11 @@ class RZ_Config(object):
 
                 if v is None: continue
 
-                type_f = type(getattr(cfg, k))
+                f = getattr(cfg, k)
+                type_f = type(f)
                 if bool == type_f:
                     v = v in ("True", "true")  # workaround bool('false') = True
-                elif types.NoneType != type_f:
+                elif f is not None:
                     v = type_f(v)
 
                 # FIXME: handle type cast for keys which default to None (always str)
