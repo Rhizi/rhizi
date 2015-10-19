@@ -27,21 +27,30 @@ import os
 import signal
 import traceback
 
+# Allow running this file despite it being inside the package
+if __package__ is None:
+    print("deprecated way of running, use run_server.py instead")
+    import sys
+    sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
+    import server.rz_server as rz_server
+    rz_server.main()
+    raise SystemExit
 
-from db_controller import DB_Controller
-from db_op import DBO_rzdb__init_DB
-import rz_api
-import rz_api_rest
-import rz_blob
-from rz_config import RZ_Config
-import rz_feedback
-from rz_kernel import RZ_Kernel
-from rz_mesh import init_ws_interface
-from rz_req_handling import make_response__http__empty, \
+
+from .db_controller import DB_Controller
+from .db_op import DBO_rzdb__init_DB
+from . import rz_api
+from . import rz_api_rest
+from . import rz_blob
+from .rz_config import RZ_Config
+from . import rz_feedback
+from .rz_kernel import RZ_Kernel
+from .rz_mesh import init_ws_interface
+from .rz_req_handling import make_response__http__empty, \
     sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys
-import rz_server_ctrl
-import rz_user
-from rz_user_db import User_DB, Fake_User_DB
+from . import rz_server_ctrl
+from . import rz_user
+from .rz_user_db import User_DB, Fake_User_DB
 
 
 class FlaskExt(Flask):
@@ -338,7 +347,8 @@ def shutdown():
     user_db.shutdown()
     webapp.kernel.shutdown()
 
-if __name__ == "__main__":
+
+def main():
 
     global log
 
@@ -396,3 +406,7 @@ if __name__ == "__main__":
         log.exception(e)
 
     shutdown()
+
+
+if __name__ == "__main__":
+    main()
