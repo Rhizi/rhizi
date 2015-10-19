@@ -33,17 +33,10 @@ from ..rz_server import init_log
 from test_util import generate_random_node_dict, generate_random_link_dict, \
     generate_random_RZDoc
 from test_util__pydev import debug__pydev_pd_arg
+from test_util import RhiziTestBase
 
 
-class Test_DB_Op(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(self):
-        cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
-        self.log = init_log(cfg)
-
-    def setUp(self):
-        pass
+class Test_DB_Op(RhiziTestBase):
 
     def gen_full_db_op_set(self, test_label):
         n_0, n_0_id = generate_random_node_dict(test_label)
@@ -78,9 +71,6 @@ class Test_DB_Op(unittest.TestCase):
                   DBO_rzdoc__lookup_by_name(test_rzdoc.name),
                   ]
         return op_set
-
-    def tearDown(self):
-        pass
 
     def test_cypher_exp_parsing(self):
 
@@ -146,15 +136,15 @@ class Test_DB_Op(unittest.TestCase):
         op_set = self.gen_full_db_op_set(test_label)
         # op_set = []
 
+        num = 0
         for op in op_set:
             if isinstance(op, DB_composed_op): continue  # validated through sub-ops
             for _idx, db_q, _db_q_result in op.iter__r_set():
-                q_str = db_q.q_str
-                validate_parse_tree(db_q.pt_root, q_str)
-                valid_exp_set += [q_str]
-
-        self.log.debug('-' * 80 + '\npassed expression count: %d:\n\n%s' % (len(valid_exp_set),
-                                                                          '\n'.join(valid_exp_set)))
+                num += 1
+                with self.subTest(i=num):
+                    q_str = db_q.q_str
+                    validate_parse_tree(db_q.pt_root, q_str)
+                    valid_exp_set += [q_str]
 
 
     def test_T__add_node_filter__meta_label(self):
