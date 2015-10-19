@@ -35,16 +35,15 @@ from ...server.model.graph import Attr_Diff
 from ...server.model.graph import Topo_Diff
 from ...server.model.model import Link
 from ...server.neo4j_cypher import DB_Query
-from neo4j_test_util import DBO_random_data_generation
-import neo4j_test_util
 from ...server.neo4j_util import Neo4JException
 from ...server.neo4j_util import meta_attr_list_to_meta_attr_map
 from ...server.rz_api_rest import Req_Context
 from ...server.rz_config import RZ_Config
-from test_util import generate_random_link_dict
-from test_util import generate_random_node_dict
-from test_util__pydev import debug__pydev_pd_arg
 
+from .neo4j_test_util import DBO_random_data_generation, rand_label
+from .test_util import (generate_random_link_dict, generate_random_node_dict,
+                       RhiziTestBase)
+from .test_util__pydev import debug__pydev_pd_arg
 
 class TestDBController(unittest.TestCase):
 
@@ -79,8 +78,9 @@ class TestDBController(unittest.TestCase):
         # self.db_ctl.exec_op(DBO_add_link_set(self.l_map))
         pass
 
+
     def test_add_node_set(self):
-        test_label = neo4j_test_util.rand_label()
+        test_label = rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
         n_1, n_1_id = generate_random_node_dict(test_label)
         n_map = meta_attr_list_to_meta_attr_map([n_0, n_1])
@@ -93,8 +93,9 @@ class TestDBController(unittest.TestCase):
         self.assertTrue(n_0_id in ret_id_set)
         self.assertTrue(n_1_id in ret_id_set)
 
+
     def test_add_link_set(self):
-        test_label = neo4j_test_util.rand_label()
+        test_label = rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
         n_1, n_1_id = generate_random_node_dict(test_label)
         n_2, n_2_id = generate_random_node_dict(test_label)
@@ -157,7 +158,7 @@ class TestDBController(unittest.TestCase):
             i = i + 1
 
     def test_diff_commit__topo(self):
-        test_label = neo4j_test_util.rand_label()
+        test_label = rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
         n_1, n_1_id = generate_random_node_dict(test_label)
         n_2, n_2_id = generate_random_node_dict(test_label)
@@ -222,7 +223,7 @@ class TestDBController(unittest.TestCase):
 
     def test_diff_commit__attr(self):
         # create test node
-        test_label = neo4j_test_util.rand_label()
+        test_label = rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
         n_0['attr_0'] = 0
         topo_diff = Topo_Diff(node_set_add=[n_0])
