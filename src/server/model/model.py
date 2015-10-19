@@ -65,8 +65,7 @@ class Link():
         link['__dst_id'] - meta attribute for link destination id
         """
         def __init__(self, src_id=None, dst_id=None):
-            assert None != src_id or None != dst_id
-
+            assert None is not src_id and None is not dst_id
             self['__src_id'] = src_id
             self['__dst_id'] = dst_id
 
