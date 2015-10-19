@@ -100,7 +100,11 @@ class DB_op(object):
 
         @return: statement index (zero based)
         """
-        db_q = DB_Query(q_str_or_array, query_params)
+        if type(q_str_or_array) is str:
+            q_arr = [q_str_or_array]
+        else:
+            q_arr = q_str_or_array
+        db_q = DB_Query(q_arr, query_params)
         return self.add_db_query(db_q)
 
     @property
