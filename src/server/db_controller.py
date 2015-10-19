@@ -19,10 +19,10 @@
 
 import logging
 
-from db_driver import DB_Driver_REST, DB_Driver_Base
-from db_op import DB_composed_op
-from db_op import DB_op
-from neo4j_util import Neo4JException
+from .db_driver import DB_Driver_REST, DB_Driver_Base
+from .db_op import DB_composed_op
+from .db_op import DB_op
+from .neo4j_util import Neo4JException
 
 
 log = logging.getLogger('rhizi')

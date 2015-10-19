@@ -21,7 +21,8 @@ import logging
 import os
 import re
 import types
-import neo4j_schema
+
+from . import neo4j_schema
 
 
 log = logging.getLogger('rhizi')

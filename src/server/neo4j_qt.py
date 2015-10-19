@@ -15,12 +15,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from neo4j_cypher import Query_Struct_Type, DB_Query
-from neo4j_util import rzdoc__ns_label, rzdoc__meta_ns_label
-from neo4j_cypher_parser import p_path, p_node
-from db_op import DBO_rzdoc__clone, DB_op
 import re
-import neo4j_schema
+
+from .neo4j_cypher import Query_Struct_Type, DB_Query
+from .neo4j_util import rzdoc__ns_label, rzdoc__meta_ns_label
+from .neo4j_cypher_parser import p_path, p_node
+from .db_op import DBO_rzdoc__clone, DB_op
+
 
 class Query_Transformation(object):
     """

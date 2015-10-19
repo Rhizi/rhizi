@@ -19,8 +19,9 @@ import logging
 import unittest
 
 from ...server import db_controller as dbc
-from ...server.db_op import DBO_add_link_set, DBO_block_chain__commit, DBO_rzdoc__clone, \
-    DBO_rzdb__init_DB, DBO_rzdb__fetch_DB_metablock
+from ...server.db_op import (DBO_add_link_set, DBO_block_chain__commit,
+                             DBO_rzdoc__clone, DBO_rzdb__init_DB,
+                             DBO_rzdb__fetch_DB_metablock)
 from ...server.db_op import DBO_add_node_set
 from ...server.db_op import DBO_block_chain__list
 from ...server.db_op import DBO_diff_commit__attr

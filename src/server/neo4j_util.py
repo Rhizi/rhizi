@@ -24,12 +24,12 @@ import six
 import string
 import uuid
 
-import model
-from neo4j_cypher_parser import tok__quote__backquote, tok__quote__singlequote
-import neo4j_schema
 from six.moves.urllib import request
 import six.moves.urllib_error as urllib_error
-from util import debug_log_duration
+
+from .neo4j_cypher_parser import tok__quote__backquote, tok__quote__singlequote
+from . import neo4j_schema
+from .util import debug_log_duration
 
 
 class Neo4JException(Exception):

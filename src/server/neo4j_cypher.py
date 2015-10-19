@@ -22,10 +22,10 @@ Neo4j DB object
 from enum import Enum
 import logging
 
-from neo4j_cypher_parser import Cypher_Parser, e_clause__where, e_keyword, \
-    e_value
-import neo4j_cypher_parser
-import neo4j_schema
+from .neo4j_cypher_parser import (Cypher_Parser, e_clause__where, e_keyword,
+    e_value)
+from . import neo4j_cypher_parser
+from . import neo4j_schema
 
 
 log = logging.getLogger('rhizi')

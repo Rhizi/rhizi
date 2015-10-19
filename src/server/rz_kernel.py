@@ -25,16 +25,16 @@ import logging
 import time
 import traceback
 
-from db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
+from .db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
     DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__search,
     DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop,
     DBO_match_node_set_by_id_attribute, DBO_rzdb__fetch_DB_metablock,
     DBO_rzdoc__commit_log, DBO_factory__default)
-from db_op import DBO_diff_commit__topo
-from model.graph import Topo_Diff
-from model.model import RZDoc
-from neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
-import neo4j_util
+from .db_op import DBO_diff_commit__topo
+from .model.graph import Topo_Diff
+from .model.model import RZDoc
+from .neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
+from .neo4j_util import generate_random_rzdoc_id
 
 
 log = logging.getLogger('rhizi')
@@ -349,7 +349,7 @@ class RZ_Kernel(object):
         except RZDoc_Exception__not_found: pass
 
         rzdoc = RZDoc(rzdoc_name)
-        rzdoc.id = neo4j_util.generate_random_rzdoc_id()
+        rzdoc.id = generate_random_rzdoc_id()
 
         op__rzdoc__create = DBO_rzdoc__create(rzdoc)
         op__block_chain__init = DBO_block_chain__init(rzdoc)

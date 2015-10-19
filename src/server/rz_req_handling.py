@@ -21,8 +21,8 @@ import json
 import logging
 from werkzeug.wrappers import BaseResponse as Response
 
-from rz_api_common import API_Exception__bad_request
-from rz_kernel import RZDoc_Exception__not_found
+from .rz_api_common import API_Exception__bad_request
+from .rz_kernel import RZDoc_Exception__not_found
 
 
 HTTP_STATUS__101_SWITCHING_PROTOCOLS = 101

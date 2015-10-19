@@ -22,16 +22,16 @@ import re
 
 from flask import current_app # for user_db
 
-from model.graph import Attr_Diff
-from model.graph import Topo_Diff
-from model.model import Link, RZDoc, RZCommit
-from neo4j_cypher import DB_Query, DB_result_set, DB_Raw_Query
-import neo4j_schema
-from neo4j_util import cfmt
-from neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
+from .model.graph import Attr_Diff
+from .model.graph import Topo_Diff
+from .model.model import Link, RZDoc, RZCommit
+from .neo4j_cypher import DB_Query, DB_result_set, DB_Raw_Query
+from .neo4j_util import cfmt
+from .neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
     quote__singlequote, rzdoc__meta_ns_label, quote__backtick
-import neo4j_util as db_util
-
+from . import neo4j_util
+from . import neo4j_schema
+from . import neo4j_util as db_util
 
 log = logging.getLogger('rhizi')
 

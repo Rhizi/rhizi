@@ -17,8 +17,9 @@
 
 import logging
 
-from neo4j_util import Neo4JException
-import neo4j_util as db_util
+from .neo4j_util import Neo4JException
+from . import neo4j_util as db_util
+
 
 log = logging.getLogger('rhizi')
 
