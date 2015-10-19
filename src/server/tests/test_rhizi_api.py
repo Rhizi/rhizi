@@ -21,12 +21,12 @@ import unittest
 from werkzeug.test import Client
 from werkzeug.test import EnvironBuilder
 
-import db_controller as dbc
-from db_op import DBO_raw_query_set
-import rz_api
-from rz_config import RZ_Config
+from .. import db_controller as dbc
+from ..db_op import DBO_raw_query_set
+from .. import rz_api
+from ..rz_config import RZ_Config
 from test_util__pydev import debug__pydev_pd_arg
-from test_base import RhiziTestBase
+from test_util import RhiziTestBase
 
 
 class TestRhiziAPI(RhiziTestBase):

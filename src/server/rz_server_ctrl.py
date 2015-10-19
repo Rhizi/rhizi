@@ -21,7 +21,8 @@ Server control/monitoring logic
 
 from datetime import datetime
 from flask import current_app
-from rz_req_handling import make_response__http__pre_tag_wrapped
+
+from .rz_req_handling import make_response__http__pre_tag_wrapped
 
 def monitor__server_info():
     """

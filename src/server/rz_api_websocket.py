@@ -24,8 +24,9 @@ import logging
 from socketio.mixins import BroadcastMixin
 from socketio.namespace import BaseNamespace
 import traceback
-from model.graph import Attr_Diff, Topo_Diff
-from rz_kernel import RZDoc_Exception__not_found
+
+from .model.graph import Attr_Diff, Topo_Diff
+from .rz_kernel import RZDoc_Exception__not_found
 
 
 log = logging.getLogger('rhizi')

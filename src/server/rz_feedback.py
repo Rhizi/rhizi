@@ -22,8 +22,8 @@ from flask import request
 from flask import session
 import logging
 
-from rz_mail import send_email__flask_ctx
-from rz_req_handling import make_response__json
+from .rz_mail import send_email__flask_ctx
+from .rz_req_handling import make_response__json
 
 
 log = logging.getLogger('rhizi')

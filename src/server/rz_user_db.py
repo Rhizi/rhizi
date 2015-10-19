@@ -21,7 +21,9 @@ import shelve
 import sys
 from functools import wraps
 
-import rz_user
+
+from . import rz_user
+
 
 class Fake_User_DB(object):
     def shutdown(self):

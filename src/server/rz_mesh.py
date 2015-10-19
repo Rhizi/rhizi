@@ -25,12 +25,12 @@ from socketio import socketio_manage
 from socketio.server import SocketIOHandler
 from socketio.server import SocketIOServer
 
-from model.graph import Topo_Diff
-from rz_api_rest import Req_Context
-from rz_api_websocket import WebSocket_Graph_NS
-from rz_req_handling import make_response__http__empty, \
-    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, make_response__json, \
-    sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys
+from .model.graph import Topo_Diff
+from .rz_api_rest import Req_Context
+from .rz_api_websocket import WebSocket_Graph_NS
+from .rz_req_handling import (make_response__http__empty,
+    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, make_response__json,
+    sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys)
 
 
 log = logging.getLogger('rhizi')
