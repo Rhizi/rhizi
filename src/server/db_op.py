@@ -369,13 +369,13 @@ class DBO_block_chain__list(DB_op):
 
         # FIXME: use cleaner query:
         # match p=(n:HEAD)-[r:Parent*]->(m) return extract(n in nodes(p) | n.hash);
-        q_arr = ['match (n:HEAD)-[r:Parent*]->(m)',
+        q_arr = ['match (n:__HEAD)-[r:__PARENT*]->(m)',
                  'return [n.hash] + collect(m.hash)'
                  ]
 
         if None != length_lim:
             # inject maxHops limit if available
-            q_arr[0] = "match (n:HEAD)-[r:Parent*..%d]->m" % (length_lim),
+            q_arr[0] = "match (n:__HEAD)-[r:__PARENT*..%d]->m" % (length_lim),
 
         self.add_statement(q_arr)
 
