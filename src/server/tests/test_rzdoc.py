@@ -19,13 +19,14 @@ import logging
 import time
 import unittest
 
-import neo4j_test_util
-from server.rz_config import RZ_Config
-from server.rz_kernel import RZ_Kernel
-from server.model.graph import Topo_Diff
-import test_util
-from test_util__pydev import debug__pydev_pd_arg
-from test_util import RhiziTestBase
+from ..rz_config import RZ_Config
+from ..rz_kernel import RZ_Kernel
+from ..model.graph import Topo_Diff
+from . import neo4j_test_util
+from . import test_util
+from .test_util__pydev import debug__pydev_pd_arg
+from .test_util import RhiziTestBase
+
 
 class TestRZDoc(RhiziTestBase):
 

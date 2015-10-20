@@ -19,11 +19,11 @@ import json
 import logging
 import unittest
 
-from rz_config import RZ_Config
-from rz_server import FlaskExt, init_webapp
-from rz_user import rest__user_signup, User_Signup_Request
-from test_util import gen_random_name
-from test_util__pydev import debug__pydev_pd_arg
+from ..rz_config import RZ_Config
+from ..rz_server import FlaskExt, init_webapp
+from ..rz_user import rest__user_signup, User_Signup_Request
+from .test_util import gen_random_name
+from .test_util__pydev import debug__pydev_pd_arg
 
 
 log = logging.getLogger('rhizi')

@@ -26,14 +26,14 @@ from ..db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
 from ..model.graph import Attr_Diff, Topo_Diff
 from ..neo4j_cypher import Cypher_Parser, DB_Query
 from ..neo4j_qt import QT_RZDOC_NS_Filter
-import neo4j_test_util
+from . import neo4j_test_util
 from ..neo4j_util import meta_attr_list_to_meta_attr_map
 from ..rz_config import RZ_Config
 from ..rz_server import init_log
-from test_util import generate_random_node_dict, generate_random_link_dict, \
+from .test_util import generate_random_node_dict, generate_random_link_dict, \
     generate_random_RZDoc
-from test_util__pydev import debug__pydev_pd_arg
-from test_util import RhiziTestBase
+from .test_util__pydev import debug__pydev_pd_arg
+from .test_util import RhiziTestBase
 
 
 class Test_DB_Op(RhiziTestBase):

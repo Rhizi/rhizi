@@ -25,8 +25,8 @@ from .. import db_controller as dbc
 from ..db_op import DBO_raw_query_set
 from .. import rz_api
 from ..rz_config import RZ_Config
-from test_util__pydev import debug__pydev_pd_arg
-from test_util import RhiziTestBase
+from .test_util__pydev import debug__pydev_pd_arg
+from .test_util import RhiziTestBase
 
 
 class TestRhiziAPI(RhiziTestBase):

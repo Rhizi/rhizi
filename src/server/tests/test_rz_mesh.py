@@ -20,16 +20,16 @@ import json
 import logging
 from socketIO_client import SocketIO, BaseNamespace
 import unittest
-import urllib2
+from six.moves.urllib.request import Request, urlopen
 
 from ..model.graph import Attr_Diff
 from ..model.graph import Topo_Diff
-import neo4j_test_util
+from . import neo4j_test_util
 from ..neo4j_util import generate_random_id__uuid
 from ..rz_api_websocket import WebSocket_Graph_NS
 
-import test_util
-from test_util__pydev import debug__pydev_pd_arg
+from . import test_util
+from .test_util__pydev import debug__pydev_pd_arg
 
 class RZ_websocket(object):
 
@@ -80,11 +80,11 @@ class TestMeshAPI(unittest.TestCase):
 
         def c_1():
             data = json.dumps({'topo_diff': topo_diff.to_json_dict()})
-            req = urllib2.Request(url='http://rhizi.local:8080/graph/diff-commit-topo',
+            req = Request(url='http://rhizi.local:8080/graph/diff-commit-topo',
                                   data=data,
                                   headers={'Content-Type': 'application/json'})
 
-            f = urllib2.urlopen(req)
+            f = urlopen(req)
             f.close()
             c0_t.switch()
 

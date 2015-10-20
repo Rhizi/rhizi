@@ -18,9 +18,10 @@
 import tempfile
 import unittest
 
-from rz_user import User_Account
-from rz_user_db import User_DB
-from test_util__pydev import debug__pydev_pd_arg
+from ..rz_user import User_Account
+from ..rz_user_db import User_DB
+from .test_util__pydev import debug__pydev_pd_arg
+
 
 class TestUser_DB(unittest.TestCase):
 
