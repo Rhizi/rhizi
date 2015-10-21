@@ -1,2 +1,3 @@
+-r requirements.txt
 enum==0.4.4
 wsgiref==0.1.2
