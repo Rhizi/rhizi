@@ -136,15 +136,13 @@ class Test_DB_Op(RhiziTestBase):
         op_set = self.gen_full_db_op_set(test_label)
         # op_set = []
 
-        num = 0
         for op in op_set:
             if isinstance(op, DB_composed_op): continue  # validated through sub-ops
             for _idx, db_q, _db_q_result in op.iter__r_set():
-                num += 1
-                with self.subTest(i=num):
-                    q_str = db_q.q_str
-                    validate_parse_tree(db_q.pt_root, q_str)
-                    valid_exp_set += [q_str]
+                # TODO: need python3 for this: with self.subTest(i=num):
+                q_str = db_q.q_str
+                validate_parse_tree(db_q.pt_root, q_str)
+                valid_exp_set += [q_str]
 
 
     def test_T__add_node_filter__meta_label(self):

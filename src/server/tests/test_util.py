@@ -154,6 +154,7 @@ def initialize_test_kernel():
     log = logging.getLogger('rhizi')
     log.setLevel(logging.DEBUG)
     log_handler_c = logging.FileHandler('rhizi-tests.log')
+    log_handler_c.setFormatter(logging.Formatter(u'%(asctime)s [%(levelname)s] %(name)s %(message)s'))
     log.addHandler(log_handler_c)
 
     # bootstrap kernel
