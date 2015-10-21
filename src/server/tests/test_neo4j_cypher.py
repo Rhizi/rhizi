@@ -109,6 +109,7 @@ class Test_DB_Op(RhiziTestBase):
                    u'create (n:א)-[r:ב]->(m:ג:ד)',
                    u'create ({א: 0})',
                    u'create ({א: 0, נ: \'ערך ב\'})',
+                   u'create ({name: \'pressazewx;,cnxcvlkjvcbuoiyzermmùq$\'})',
 
                    #
                    # Punctuation tests
