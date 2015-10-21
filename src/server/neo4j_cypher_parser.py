@@ -586,9 +586,10 @@ class Cypher_Parser(object):
         return root_node
 
     def __match(self, rgx, input_str, flags=0):  # error handling match
+        flags |= re.UNICODE
         ret = re.match(rgx, input_str, flags)
         if not ret:
-            raise Exception('cypher parse error: rgx match failure: rgx: %s, input: "%s"' % (rgx, input_str))
+            raise Exception(u'cypher parse error: rgx match failure: rgx: %s, input: "%s"' % (rgx, input_str))
         return ret
 
     def first_sibling_root(self, n):
@@ -604,28 +605,28 @@ class Cypher_Parser(object):
             pass
 
     def read__e_ident(self, input, n_ident):
-        rgx_ident = r'^%s%s' % (e_ident.rgx(), self.rgx__suffix)
-        m = self.__match(rgx_ident, input, re.UNICODE)
+        rgx_ident = ur'^%s%s' % (e_ident.rgx(), self.rgx__suffix)
+        m = self.__match(rgx_ident, input)
         n_ident.value = m.group('ident')
         return m.group('suffix')
 
     def read__e_value(self, input, n_value):
         if input[0] in tok_set__quote:  # quoted value
             quote_tok = input[0]
-            rgx_value = r'^%s%s' % (e_value.rgx__quoted(quote_tok=quote_tok),
+            rgx_value = ur'^%s%s' % (e_value.rgx__quoted(quote_tok=quote_tok),
                                     self.rgx__suffix)
             n_value.quoted = True
             n_value.quote_tok = quote_tok
         else:  # non quoted value
-            rgx_value = r'^%s%s' % (e_value.rgx__unquoted(), self.rgx__suffix)
+            rgx_value = ur'^%s%s' % (e_value.rgx__unquoted(), self.rgx__suffix)
 
-        m = self.__match(rgx_value, input, re.UNICODE)
+        m = self.__match(rgx_value, input)
         n_value.value = m.group('value')
         return m.group('suffix')
 
     def read__e_multiplicity(self, input, n_multiplicity):
-        rgx = r'^%s%s' % (e_multiplicity.rgx(), self.rgx__suffix)
-        m = self.__match(rgx, input, re.UNICODE)
+        rgx = ur'^%s%s' % (e_multiplicity.rgx(), self.rgx__suffix)
+        m = self.__match(rgx, input)
         n_multiplicity.value = m.group('value')
         return m.group('suffix')
 
@@ -640,9 +641,9 @@ class Cypher_Parser(object):
             n_cur = n_cur.collapse(e_attr_set).parent
             return self.__parse(input[1:], n_cur)
 
-        rgx_attr_set_or_param = r'^((%s:)|(%s))' % (e_ident.rgx('kv_pair__key'),
+        rgx_attr_set_or_param = ur'^((%s:)|(%s))' % (e_ident.rgx('kv_pair__key'),
                                                     e_ident.rgx('ident'))
-        m = self.__match(rgx_attr_set_or_param, input, re.UNICODE)
+        m = self.__match(rgx_attr_set_or_param, input)
         if m.group('ident'):
             n_cur = n_cur.spawn_child(e_ident)
             return self.__parse(input, n_cur)
@@ -792,7 +793,7 @@ class Cypher_Parser(object):
             n_cur = n_cur.spawn_child(e_attr_set)
             return self.__parse(input[1:], n_cur)
 
-        rgx_opt_id = r'^%s' % (e_ident.rgx('ident'))
+        rgx_opt_id = ur'^%s' % (e_ident.rgx('ident'))
         m = re.match(rgx_opt_id, input)
         if m:
             n_cur = n_cur.spawn_child(e_ident)
@@ -832,7 +833,7 @@ class Cypher_Parser(object):
             n_cur = n_cur.spawn_child(e_attr_set)
             return self.__parse(input[1:], n_cur)
 
-        rgx_opt_id = r'^%s' % (e_ident.rgx('ident'))
+        rgx_opt_id = ur'^%s' % (e_ident.rgx('ident'))
         m = re.match(rgx_opt_id, input)
         if m:
             n_cur = n_cur.spawn_child(e_ident)
