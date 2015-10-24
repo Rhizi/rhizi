@@ -828,6 +828,8 @@ class DBO_rzdoc__commit_log(DB_op):
     def __init__(self, limit):
         """
         return last @limit commits including the operations that caused them
+
+        :param limit: maximum number of results, or all if limit=0.
         """
         super(DBO_rzdoc__commit_log, self).__init__()
         self.limit = limit
@@ -837,7 +839,7 @@ class DBO_rzdoc__commit_log(DB_op):
                  ),
                  'match (n)-[:%s*0..%s]->(c)' % (
                     neo4j_schema.META_LABEL__VC_PARENT,
-                    limit - 1,
+                    limit - 1 if limit > 0 else '',
                  ),
                  'optional match (c)-[:%s]->(o:%s)' % (
                     neo4j_schema.META_LABEL__VC_COMMIT_RESULT_OF,
