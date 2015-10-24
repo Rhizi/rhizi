@@ -18,27 +18,27 @@
 import logging
 import unittest
 
-from ...server import db_controller as dbc
-from ...server.db_op import (DBO_add_link_set, DBO_block_chain__commit,
+from .. import db_controller as dbc
+from ..db_op import (DBO_add_link_set, DBO_block_chain__commit,
                              DBO_rzdoc__clone, DBO_rzdb__init_DB,
                              DBO_rzdb__fetch_DB_metablock)
-from ...server.db_op import DBO_add_node_set
-from ...server.db_op import DBO_block_chain__list
-from ...server.db_op import DBO_diff_commit__attr
-from ...server.db_op import DBO_diff_commit__topo
-from ...server.db_op import DBO_load_link_set
-from ...server.db_op import DBO_load_node_set_by_DB_id
-from ...server.db_op import DBO_match_link_id_set
-from ...server.db_op import DBO_match_node_id_set
-from ...server.db_op import DBO_match_node_set_by_id_attribute
-from ...server.model.graph import Attr_Diff
-from ...server.model.graph import Topo_Diff
-from ...server.model.model import Link
-from ...server.neo4j_cypher import DB_Query
-from ...server.neo4j_util import Neo4JException
-from ...server.neo4j_util import meta_attr_list_to_meta_attr_map
-from ...server.rz_api_rest import Req_Context
-from ...server.rz_config import RZ_Config
+from ..db_op import DBO_add_node_set
+from ..db_op import DBO_block_chain__list
+from ..db_op import DBO_diff_commit__attr
+from ..db_op import DBO_diff_commit__topo
+from ..db_op import DBO_load_link_set
+from ..db_op import DBO_load_node_set_by_DB_id
+from ..db_op import DBO_match_link_id_set
+from ..db_op import DBO_match_node_id_set
+from ..db_op import DBO_match_node_set_by_id_attribute
+from ..model.graph import Attr_Diff
+from ..model.graph import Topo_Diff
+from ..model.model import Link
+from ..neo4j_cypher import DB_Query
+from ..neo4j_util import Neo4JException
+from ..neo4j_util import meta_attr_list_to_meta_attr_map
+from ..rz_api_rest import Req_Context
+from ..rz_config import RZ_Config
 
 from .neo4j_test_util import DBO_random_data_generation, rand_label
 from .test_util import (generate_random_link_dict, generate_random_node_dict,

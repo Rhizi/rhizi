@@ -19,23 +19,11 @@ import sys
 import os
 import time
 
-# Hack to setup rhizi path - needs a proper install.
-path = None
-for postfix in [['..', 'bin'], ['..', '..', 'server'], ['..', '..', 'rhizi-server']]:
-    candidate = os.path.join(*([os.path.dirname(__file__)] + postfix))
-    if os.path.exists(candidate):
-        path = candidate
-        break
-if None is path:
-    print("must be run from one or two directories above server")
-    raise SystemExit
-sys.path.append(path)
+from .rz_server import init_config, init_webapp
+from .rz_user_db import Fake_User_DB
+from .rz_kernel import RZ_Kernel
+from . import db_controller as dbc
 
-
-from rz_server import init_config, init_webapp
-from rz_user_db import Fake_User_DB
-from rz_kernel import RZ_Kernel
-import db_controller as dbc
 
 class RZ(object):
     def __init__(self, config_dir):

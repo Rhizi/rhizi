@@ -20,5 +20,5 @@ fi
 make # building css relies on Makefile
 ant -f build.ant deploy-local -DdefaultDomain=$DOMAIN -DtargetDomain=$DOMAIN && (
     cd deploy-local
-    python2.7 bin/rz_server.py --config-dir etc
+    PYTHONPATH=. ./bin/rz-server --config-dir etc
 )

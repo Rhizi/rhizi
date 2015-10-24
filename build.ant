@@ -86,6 +86,7 @@
 
       <symlink action="delete" link="${deploy_target_dir}/static/fragment.d" />
       <symlink action="delete" link="${deploy_target_dir}/bin" />
+      <symlink action="delete" link="${deploy_target_dir}/rhizi" />
 
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${deploy_target_dir}"
@@ -119,13 +120,17 @@
          <symlink if:true="${localServerUseSymlink}"
                   action="single"
                   link="${deploy_target_dir}/bin"
-                  resource="${basedir}/src/server" />
+                  resource="${basedir}/bin" />
+         <symlink if:true="${localServerUseSymlink}"
+                  action="single"
+                  link="${deploy_target_dir}/rhizi"
+                  resource="${basedir}/rhizi" />
          <symlink if:true="${localServerUseSymlink}"
                   action="single"
                   link="${deploy_target_dir}/static/fragment.d"
                   resource="${basedir}/${fragment_d_path}" />
          <rsync unless:true="${localServerUseSymlink}"
-                src="src/server/"
+                src="rhizi/"
                 dst="${deploy_target_dir}/bin" />
 
          <!-- conf -->
@@ -186,7 +191,7 @@
                 src="res/production-patch-set/${targetDomain}/rhizi-server.production.conf"
                 dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/etc/rhizi-server.conf" />
 
-         <rsync src="src/local/server-tools"
+         <rsync src="bin"
                 dst="rsync://${remoteDeployServer}/${rsync_module}/" />
 
       </parallel>
