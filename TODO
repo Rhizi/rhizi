@@ -1,6 +1,0 @@
-This is generic, not yet divided into a bunch of actionable items:
-
-break down rz_core.js
-reduce amount of globals to 1.
-make it testable without a browser, not using some headless automation - node stuff.
-
