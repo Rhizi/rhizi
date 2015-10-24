@@ -27,9 +27,11 @@ from .. import rz
 
 kernel = None
 
+
 def clone(rzdoc_name):
     global kernel
     return kernel.rzdoc__clone(kernel.rzdoc__lookup_by_name(rzdoc_name))
+
 
 def create(rzdoc_name, clone):
     """
@@ -44,12 +46,15 @@ def create(rzdoc_name, clone):
     ctx = namedtuple('Context', ['user_name', 'rzdoc'])(None, destination)
     kernel.diff_commit__topo(clone, ctx)
 
+
 def names():
     global kernel
     return [v['name'] for v in kernel.rzdoc__list()]
 
+
 def create_id():
     return uuid.uuid4().get_hex()[:8]
+
 
 def merge_topos(topos, names):
     """
@@ -117,6 +122,7 @@ def merge_topos(topos, names):
         node['id'] = new_id
     return result
 
+
 def merge(destination_name, sources=None):
     global kernel
     if sources == None:
@@ -125,18 +131,22 @@ def merge(destination_name, sources=None):
     topos = [kernel.rzdoc__clone(doc) for doc in docs]
     create(destination_name, merge_topos(topos, sources))
 
+
 def remove(rzdoc_name):
     global kernel
     kernel.rzdoc__delete(kernel.rzdoc__lookup_by_name(rzdoc_name))
+
 
 def rename(cur_name, new_name):
     global kernel
     kernel.rzdoc__rename(cur_name, new_name)
 
+
 def noeol(line):
     if len(line) == 0:
         return line
     return line[:-1] if line[-1] == '\n' else line
+
 
 def dump(document_names):
     global kernel
@@ -145,6 +155,7 @@ def dump(document_names):
         document_names = [d['name'].encode('utf-8') for d in kernel.rzdoc__search('')]
         print("dumping {}".format(document_names))
     print(RZFile(kernel).dump(document_names))
+
 
 def main():
     global kernel
