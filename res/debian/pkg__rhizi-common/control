@@ -1,7 +1,7 @@
 Source: rhizi
 Section: web
 Priority: optional
-Maintainer: Amir Sagie <sagie@rhizi.org>
+Maintainer: Alon Levy <rhizi@pobox.com>
 Build-Depends: debhelper (>= 9),
                dh-python
 Standards-Version: 3.9.5
