@@ -4,6 +4,7 @@ res/rz-mux/*                          usr/share/rhizi/rz-mux/
 
 src/client/*                          usr/lib/rhizi/webapp/static/js
 res/local/*                           usr/share/rhizi/webapp/domain-fragment.d/default
-src/server/*                          usr/lib/rhizi/rhizi-server/
-src/local/server-tools/*              usr/lib/rhizi/tools/server-tools
+# TODO: use setup.py (distutils)
+rhizi/*                               usr/lib/python2.7/dist-packages/rhizi
+bin/*                                 usr/bin
 src/local/rz-mux/*                    usr/lib/rhizi/tools/rz-mux
