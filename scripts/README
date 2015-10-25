@@ -1,0 +1,7 @@
+scripts directory README
+========================
+
+This directory contains development utilities.
+
+dump-all     - shortcut for running bin/rz-doc --dump-all
+time-compare - shows a table of a given dump's timestamps and commit types.

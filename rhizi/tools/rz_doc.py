@@ -18,6 +18,7 @@ import argparse  # TODO - use the newer / shorter argument parser. y?
 from collections import namedtuple
 import json
 import os
+import sys
 import uuid
 
 from ..model.graph import Topo_Diff
@@ -153,8 +154,18 @@ def dump(document_names):
     if document_names is None:
         # dump everything
         document_names = [d['name'].encode('utf-8') for d in kernel.rzdoc__search('')]
-        print("dumping {}".format(document_names))
     print(RZFile(kernel).dump(document_names))
+
+
+def load(filename):
+    global kernel
+    if filename == '-':
+        data = json.load(sys.stdin)
+    else:
+        with open(filename) as fd:
+            data = json.load(fd)
+    print("NOTE: please ignore any RZDoc_Exception__not_found exceptions, they are harmless")
+    print('loaded {} docs'.format(len(RZFile(kernel).load(data))))
 
 
 def main():

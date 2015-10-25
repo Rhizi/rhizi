@@ -63,6 +63,8 @@ class Attr_Diff(dict):
                     if None != ad.get('__attr_remove'):
                         for k in ad['__attr_remove']:
                             remover(o_id, k)
+        if 'meta' in json_dict:
+            ret['meta'] = json_dict['meta']
         return ret
 
     @property

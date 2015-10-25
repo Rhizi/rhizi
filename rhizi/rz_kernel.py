@@ -265,6 +265,24 @@ class RZ_Kernel(object):
     def is_DB_status__ok(self):
         return self.db_conn_avail and self.db_metablock is not None
 
+
+    def _commit__topo__helper(self, topo_diff, rzdoc):
+        """
+        helper that does not produce a commit. used by two paths:
+         - the regular topo diff
+         - restoring from backup, where we create a new document and produce the commit
+           history from the backup as well.
+
+        :param topo_diff:
+        :param ctx:
+        :return: return of the DBO_diff_commit__topo operation
+        """
+        op = DBO_diff_commit__topo(topo_diff)
+        op = QT_RZDOC_NS_Filter(rzdoc)(op)
+
+        return self.db_ctl.exec_op(op)
+
+
     @deco__DB_status_check
     def diff_commit__topo(self, topo_diff, ctx):
         """
@@ -273,13 +291,10 @@ class RZ_Kernel(object):
            - socket.io calls
            - future interfaces
 
-        @return: a tuple containing the input diff and the result of it's commit
+        :return: a tuple containing the input diff and the result of it's commit
         """
         rzdoc = ctx.rzdoc
-        op = DBO_diff_commit__topo(topo_diff)
-        op = QT_RZDOC_NS_Filter(rzdoc)(op)
-
-        op_ret = self.db_ctl.exec_op(op)
+        op_ret = self._commit__topo__helper(topo_diff, rzdoc)
         ts_created = self._exec_chain_commit_op(topo_diff, ctx, topo_diff.meta)
         topo_diff.meta['author'] = ctx.user_name
         topo_diff.meta['ts_created'] = ts_created
@@ -294,14 +309,14 @@ class RZ_Kernel(object):
            - socket.io calls
            - future interfaces
 
-        @return: a tuple containing the input diff and the result of it's commit
+        :return: a tuple containing the input diff and the result of it's commit
         """
         rzdoc = ctx.rzdoc
         op = DBO_diff_commit__attr(attr_diff)
         op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         op_ret = self.db_ctl.exec_op(op)
-        ts_created = self._exec_chain_commit_op(attr_diff, ctx)
+        ts_created = self._exec_chain_commit_op(attr_diff, ctx, attr_diff.meta)
         attr_diff.meta['author'] = ctx.user_name
         attr_diff.meta['ts_created'] = ts_created
         return attr_diff, op_ret
@@ -323,6 +338,24 @@ class RZ_Kernel(object):
 
         topo_diff = self.db_ctl.exec_op(op)
         return topo_diff
+
+
+    @deco__DB_status_check
+    def rzdoc__from_clone_and_commits(self, rzdoc_name, ctx=None):
+        """
+        Create a new document with given name and graph from clone, plus populate the history.
+
+        Note: History may be partial; i.e. it may be inconsistent.
+
+        :param rzdoc_name:
+        :param ctx:
+        :return: None
+        """
+        raise NotImplementedError("not yet implemented, requires efficient commits production, plus blob fix")
+        # TODO: atomically
+        rzdoc = self.rzdoc__create(rzdoc_name=rzdoc_name, ctx=ctx)
+        # TODO: check rzdoc creation error
+
 
     @deco__DB_status_check
     def rzdoc__commit_log(self, rzdoc, limit):
@@ -346,7 +379,8 @@ class RZ_Kernel(object):
         try:
             self.cache_lookup__rzdoc(rzdoc_name)
             raise RZDoc_Exception__already_exists(rzdoc_name)
-        except RZDoc_Exception__not_found: pass
+        except RZDoc_Exception__not_found:
+            pass
 
         rzdoc = RZDoc(rzdoc_name)
         rzdoc.id = generate_random_rzdoc_id()

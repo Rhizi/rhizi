@@ -1,0 +1,7 @@
+#!/bin/python
+
+import json,sys
+
+t=list(sorted([(int(x["meta"]["ts_created"]), x["meta"]["type"]) for x in json.load(sys.stdin)["documents"][0][1]["commits"]]))
+t0 = t[0][0]
+print("\n".join('{:>15} {:>15}{:>10}'.format((x-t0)/1000.0, x, ty) for x,ty in sorted(t)))

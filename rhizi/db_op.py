@@ -19,6 +19,7 @@ from copy import deepcopy
 import hashlib
 import logging
 import re
+from time import time
 
 from flask import current_app # for user_db
 
@@ -257,14 +258,16 @@ class DBO_block_chain__commit(DB_op):
                                                             neo4j_schema.META_LABEL__VC_COMMIT),
                  'create (new_head)-[r:%s {link_attr}]->(old_head)' % (neo4j_schema.META_LABEL__VC_PARENT),
                  'remove old_head:%s' % (neo4j_schema.META_LABEL__VC_HEAD),
-                 'set new_head.ts_created=timestamp()',
+                 'set new_head.ts_created={ts_created}',
                  'return {head_parent_commit: old_head, head_commit: new_head, ts_created: new_head.ts_created}'
                  ]
 
+        ts_created = meta['ts_created'] if meta is not None and 'ts_created' in meta else int(time() * 1000)
         q_param_set = {'commit_attr': {'blob': blob,
                                        'hash': hash_value,
                                        'id': hash_value},
                        'link_attr': {'id': l_id},
+                       'ts_created': ts_created
                        }
 
         self.add_statement(q_arr, q_param_set)
