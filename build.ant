@@ -217,7 +217,7 @@
       <fail unless="pkg_variant" />
       <fail unless="package_name" />
 
-      <property name="pkg_version" value="0.2.0" />
+      <property name="pkg_version" value="0.3.0" />
       <property name="pkg_debname" value="${package_name}_${pkg_version}" />
       <property name="pkg_fullname" value="${package_name}-${pkg_version}" />
       <property name="build_dir__deb_pkg"
