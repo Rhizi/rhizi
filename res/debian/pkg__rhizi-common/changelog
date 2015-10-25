@@ -1,3 +1,11 @@
+rhizi (0.3.0) unstable; urgency=low
+
+  * rz-doc dump and load tool
+  * server closer to being a proper python package
+  * multiple improvements
+
+ -- Alon Levy <alon@pobox.com>  Mon, 26 Oct 2015 01:10:00 +0200
+
 rhizi (0.2.0) unstable; urgency=low
 
   * Update.
