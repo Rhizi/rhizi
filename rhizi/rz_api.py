@@ -71,7 +71,7 @@ def rz_mainpage(rzdoc_name=None):
 
     # establish rz_config template values
     host_addr, host_port = request.host_sock_addr[0], request.host_sock_addr[1]
-    rz_config = {'rz_config__rzdoc_cur__name': s_rzdoc_name,
+    rz_config = {'rz_config__rzdoc_cur__name': s_rzdoc_name.replace('"', r'\"'),
                  'rz_config__rzdoc__mainpage_name': rz_config.rzdoc__mainpage_name,
                  'rz_config__hostname': host_addr,
                  'rz_config__port': host_port,
