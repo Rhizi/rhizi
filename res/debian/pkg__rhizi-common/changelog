@@ -1,3 +1,9 @@
+rhizi (0.3.2) unstable; urgency=low
+
+  * fix init script location
+
+ -- Alon Levy <alon@pobox.com>  Mon, 26 Oct 2015 01:37:00 +0200
+
 rhizi (0.3.1) unstable; urgency=low
 
   * fix minor bug
