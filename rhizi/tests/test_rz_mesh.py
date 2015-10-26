@@ -40,6 +40,7 @@ class RZ_websocket(object):
         sock = SocketIO('rhizi.local', 8080)
         ns_sock = sock.define(self.namespace, '/graph')
         self.sock = sock
+        print sock
         return sock, ns_sock
 
     def __exit__(self, e_type, e_value, e_traceback):

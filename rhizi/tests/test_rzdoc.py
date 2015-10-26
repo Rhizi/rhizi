@@ -32,8 +32,10 @@ class TestRZDoc(RhiziTestBase):
 
     @classmethod
     def setUpClass(self):
+        pass
 
-    def setUp(self): pass
+    def setUp(self): 
+        pass
 
     def test_rzdoc_commit_log(self):
         rzdoc_a = 'test_commit_log_doc_a'
