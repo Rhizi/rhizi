@@ -839,7 +839,7 @@ function GraphView(spec) {
     function scale_and_move(screen_low, screen_high, rect_low, rect_high, percent,
                             current_scale, current_translate)
     {
-        function forward(x) { return x * current_scale + current_translate; };
+        function forward(x) { return x * current_scale + current_translate; }
         var scaled_low = forward(rect_low),
             scaled_high = forward(rect_high),
             in_view = segment_in_segment(scaled_low, scaled_high, screen_low, screen_high),
@@ -848,18 +848,16 @@ function GraphView(spec) {
         new_scale = (screen_high - screen_low) / (rect_high - rect_low) * percent;
         new_scale = Math.min(3, Math.max(0.1, new_scale));
         return [
-            in_view
-            ,
+            in_view,
             // scale to percent of screen
-            new_scale
-            ,
+            new_scale,
             // translate middle to middle - function because scale not determined yet
             function (scale) { return ((screen_low + screen_high) / 2 - (rect_high + rect_low) / 2 * scale); }
             ];
     }
 
     function nodes__user_visible(nodes, zoom_if_visible, duration) {
-        if (nodes.length == 0) {
+        if (nodes.length === 0) {
             return;
         }
         var ratio_used = 0.8,
@@ -890,7 +888,7 @@ function GraphView(spec) {
         if (zoom_if_visible || (!x_in_view || !y_in_view)) {
             set_scale_translate(min_scale, [x_translate, y_translate], duration);
         }
-    };
+    }
     gv.nodes__user_visible = nodes__user_visible;
 
     var set_scale_translate = function(scale, translate, duration) {
@@ -935,14 +933,14 @@ function GraphView(spec) {
 
             util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
             // we loop some just to settle the temporary graph animation
-            if (d_current == 0 && d_bubble_radius == 0) {
+            if (d_current === 0 && d_bubble_radius === 0) {
                 clearInterval(gv.layout_animation.interval);
                 gv.layout_animation.interval = null;
             } else {
                 if (d_current > 0) {
                     gv.layout_animation.current += 1;
                 }
-                if (d_bubble_radius != 0) {
+                if (d_bubble_radius !== 0) {
                     if (end_now <= 0) {
                         gv.bubble_radius = b_dict.target;
                     } else {
@@ -954,7 +952,7 @@ function GraphView(spec) {
             util.assert(gv.bubble_radius !== undefined, "bug");
             tick();
         };
-        if (gv.layout_animation.interval == null) {
+        if (gv.layout_animation.interval === null) {
             gv.layout_animation.interval = setInterval(on_interval, gv.layout_animation.step_msec);
         }
         if (temporary) {
