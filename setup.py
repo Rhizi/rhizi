@@ -13,15 +13,16 @@ version = "0.0.1" # [major].[minor].[release]
 with open('README.md') as readme_file:
     long_description = readme_file.read()
 
-# parse
+# parse requirements
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
-# support python 2
+# parse requirements for python 2
 if sys.version_info[0] == 2:
     with open('requirements-python2.txt') as f:
         required += [dep for dep in f.read().splitlines() if dep != "-r requirements.txt"]
 
+# run setup
 setup(
     name='Rhizi',
     version=version,
