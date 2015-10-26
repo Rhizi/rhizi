@@ -1,3 +1,9 @@
+rhizi (0.3.5) unstable; urgency=low
+
+  * support user_db.db from older (pre rz_user/rz_user_db change)
+
+ -- Alon Levy <alon@pobox.com>  Mon, 26 Oct 2015 22:25:00 +0200
+
 rhizi (0.3.4) unstable; urgency=low
 
   * fix zen-mode bug #622
