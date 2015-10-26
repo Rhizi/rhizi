@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+import sys
 
 try:
     from setuptools import setup,find_packages
@@ -17,6 +17,10 @@ with open('README.md') as readme_file:
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
+# support python 2
+if sys.version_info[0] == 2:
+    with open('requirements-python2.txt') as f:
+        required += [dep for dep in f.read().splitlines() if dep != "-r requirements.txt"]
 
 setup(
     name='Rhizi',
@@ -31,7 +35,7 @@ setup(
     packages = find_packages(),
     install_requires=required,
     entry_points = {
-                'console_scripts': [ 'rhizi-server=manage.__main__:main' ]
+                'console_scripts': [ 'rhizi-server=rhizi.rz_server:main' ]
                 },
     license='BSD',
     zip_safe=False,
