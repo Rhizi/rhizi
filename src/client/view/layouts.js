@@ -234,8 +234,8 @@ function(consts,   $,        d3,   _) {
                     return layout.links(links);
                 },
                 // zen_mode callback - to change layout based on it. reimplement inner only
-                _zen_mode__fixed: {},
                 _zen_mode_inner: donothing,
+                _zen_mode__pre_state: {},
                 zen_mode: function (zen_mode) {
                     var nodes, d;
 
@@ -244,17 +244,24 @@ function(consts,   $,        d3,   _) {
 
                         // store fixed position
                         console.log('zen on:  storing fixed for ' + _.size(layout.nodes()));
-                        layout._zen_mode__fixed = _.object(_.pluck(nodes, "id"),
-                                                           _.pluck(nodes, "fixed"));
+                        layout._zen_mode__pre_state = _.object(_.pluck(nodes, "id"),
+                                                               _.map(nodes, function (n) {
+                                                                   return {fixed: n.fixed, x: n.x, y: n.y};
+                                                               }));
                         _.each(nodes, function(node) { node.fixed = false; });
                     } else {
                         // restore fixed
                         nodes = layout.nodes();
                         d = _.object(_.pluck(nodes, "id"), nodes);
                         console.log('zen off: restoring fixed for ' + _.size(nodes));
-                        _.each(_.keys(layout._zen_mode__fixed), function (node_id) {
-                            if (d[node_id] !== undefined && layout._zen_mode__fixed[node_id]) {
-                                d[node_id].fixed = layout._zen_mode__fixed[node_id];
+                        _.each(_.keys(layout._zen_mode__pre_state), function (node_id) {
+                            if (d[node_id] !== undefined && layout._zen_mode__pre_state[node_id]) {
+                                var saved = layout._zen_mode__pre_state[node_id];
+                                d[node_id].fixed = saved.fixed;
+                                d[node_id].x = saved.x;
+                                d[node_id].y = saved.y;
+                                d[node_id].px = saved.x;
+                                d[node_id].py = saved.y;
                             } else {
                                 console.log('missing ' + node_id);
                             }

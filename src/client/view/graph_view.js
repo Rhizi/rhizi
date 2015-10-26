@@ -1193,8 +1193,10 @@ function GraphView(spec) {
         });
     }
 
-    function record_position_to_database() {
-        graph.nodes__store_layout_positions(layout.name);
+    function layout__end__callback() {
+        if (!zen_mode) {
+            graph.nodes__store_layout_positions(layout.name);
+        }
     }
 
     var layouts = view_layouts.layouts.map(function (layout_data) {
@@ -1258,7 +1260,7 @@ function GraphView(spec) {
         layout
             .size([w, h])
             .on("tick", layout__tick__callback)
-            .on("end", record_position_to_database)
+            .on("end", layout__end__callback)
             .nodes_links(nodes__visible(), links__visible())
             .restore()
             .zen_mode(zen_mode)
