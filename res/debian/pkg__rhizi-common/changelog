@@ -1,3 +1,9 @@
+rhizi (0.3.4) unstable; urgency=low
+
+  * fix zen-mode bug #622
+
+ -- Alon Levy <alon@pobox.com>  Mon, 26 Oct 2015 21:35:00 +0200
+
 rhizi (0.3.3) unstable; urgency=low
 
   * fix user accounts breakage
