@@ -43,8 +43,8 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3',  'Bacon', 'consts', 'util', 'view/selection', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts', 'view/filter'],
-function(d3 ,   Bacon,   consts,   util ,  selection      ,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts,  view_filter) {
+define(['d3',  'jquery', 'underscore', 'Bacon', 'consts', 'util', 'view/selection', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts', 'view/filter'],
+function(d3 ,  $       , _           ,  Bacon ,  consts,   util ,  selection      ,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts,  view_filter) {
 
 "use strict";
 
