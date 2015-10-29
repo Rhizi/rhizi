@@ -21,28 +21,34 @@ import unittest
 from werkzeug.test import Client
 from werkzeug.test import EnvironBuilder
 
-from .. import db_controller as dbc
-from ..db_op import DBO_raw_query_set
-from .. import rz_api
-from ..rz_config import RZ_Config
-from .test_util__pydev import debug__pydev_pd_arg
-from .test_util import RhiziTestBase
+from rhizi.db_op import DBO_raw_query_set
+from rhizi.rz_server import init_webapp
+from rhizi.tests.test_util__pydev import debug__pydev_pd_arg
+from rhizi.tests.test_util import RhiziTestBase
 
 
 class TestRhiziAPI(RhiziTestBase):
 
-    def setUp(self):
-        pass
+    @classmethod
+    def setUpClass(clz):
+        super(TestRhiziAPI, clz).setUpClass()
+        clz.webapp = webapp = init_webapp(clz.cfg, clz.kernel)
+        webapp.user_db = clz.user_db
+        clz.kernel.db_op_factory = webapp  # assist kernel with DB initialization
+        # TODO: use a document that we create (Welcome Rhizi is the default init db right now,
+        # can use that but need to have an assert on that earlier)
+        clz.rzdoc_name = 'Welcome Rhizi'
+
 
     def test_load_node_non_existing(self):
         """
         loading a non existing node test
         """
         id_set = ['non_existing_id']
-        with rz_api.webapp.test_client() as c:
-            req = c.post('/load/node-set-by-id',
+        with self.webapp.test_client() as c:
+            req = c.post('/api/rzdoc/fetch/node-set-by-id',
                          content_type='application/json',
-                         data=json.dumps({ 'id_set': id_set}))
+                         data=json.dumps({ 'id_set': id_set, 'rzdoc_name': self.rzdoc_name}))
             req_data = json.loads(req.data)
             rz_data = req_data['data']
             rz_err = req_data['error']
@@ -58,10 +64,10 @@ class TestRhiziAPI(RhiziTestBase):
         op = DBO_raw_query_set(q)
         self.db_ctl.exec_op(op)
 
-        with rz_api.webapp.test_client() as c:
-            req = c.post('/load/node-set-by-id',
+        with self.webapp.test_client() as c:
+            req = c.post('/api/rzdoc/fetch/node-set-by-id',
                          content_type='application/json',
-                         data=json.dumps({ 'id_set': id_set}))
+                         data=json.dumps({ 'id_set': id_set, 'rzdoc_name': self.rzdoc_name}))
             n_set = json.loads(req.data)['data']
 
             self.assertEqual(1, len(n_set))

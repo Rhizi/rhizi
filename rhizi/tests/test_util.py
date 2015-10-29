@@ -21,9 +21,9 @@ Various test utilities
 import string
 import random
 import logging
-from time \
-    import sleep
+from time import sleep
 import sys
+import os
 from unittest import TestCase
 
 from .. import db_controller as dbc
@@ -36,7 +36,8 @@ from ..rz_server import init_webapp
 from ..rz_user import User_Signup_Request
 from ..rz_config import RZ_Config
 from .. import rz_api
-from ..db_op import DBO_factory__default
+from ..db_op import DBO_factory__default, DBO_raw_query_set
+from ..rz_user_db import Fake_User_DB
 
 from .neo4j_test_util import rand_label
 
@@ -134,7 +135,7 @@ def gen_random_user_signup(self):
 db_ctl = None
 kernel = None
 cfg = None
-
+user_db = None
 
 def get_connection():
     if cfg is None:
@@ -146,8 +147,9 @@ def initialize_test_kernel():
     global db_ctl
     global kernel
     global cfg
+    global user_db
     sys.stderr.write("initializing db\n")
-    cfg = RZ_Config.init_from_file('res/etc/rhizi-server.conf')
+    cfg = RZ_Config.init_from_file('{}/../../res/etc/rhizi-server.conf'.format(os.path.dirname(__file__)))
     db_ctl = dbc.DB_Controller(cfg.db_base_url)
     rz_api.db_ctl = db_ctl
 
@@ -156,6 +158,9 @@ def initialize_test_kernel():
     log_handler_c = logging.FileHandler('rhizi-tests.log')
     log_handler_c.setFormatter(logging.Formatter(u'%(asctime)s [%(levelname)s] %(name)s %(message)s'))
     log.addHandler(log_handler_c)
+
+    # clear db !!!
+    db_ctl.exec_op(DBO_raw_query_set(['match n optional match (n)-[l]-(m) delete n,l return count(n),count(l)']))
 
     # bootstrap kernel
     kernel = RZ_Kernel()
@@ -167,6 +172,7 @@ def initialize_test_kernel():
         sleep(0.3)
         sys.stderr.write(".\n")
 
+    user_db = Fake_User_DB()
 
 class RhiziTestBase(TestCase):
 
@@ -174,6 +180,8 @@ class RhiziTestBase(TestCase):
     def setUpClass(clz):
 
         db_ctl, kernel = get_connection()
+        clz.cfg = cfg
         clz.db_ctl = db_ctl
+        clz.user_db = user_db
         rz_api.db_ctl = clz.db_ctl
         clz.kernel = kernel
