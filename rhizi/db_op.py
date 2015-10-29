@@ -621,7 +621,7 @@ class DBO_match_node_id_set(DB_op):
         """
         super(DBO_match_node_id_set, self).__init__()
 
-        q = "match (n{filter_label}) {where_clause} return id(n)"
+        q = "match (n{filter_label}) {where_clause} return n"
         q = cfmt(q, filter_label="" if not filter_label else ":" + filter_label)
         q = cfmt(q, where_clause=db_util.gen_clause_where_from_filter_attr_map(filter_attr_map))
 
