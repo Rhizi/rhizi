@@ -172,6 +172,6 @@ def sock_addr_from_env_HTTP_headers(req_env, key_name__addr):
     return rmt_addr, rmt_port
 
 def sock_addr_from_REMOTE_X_keys(req_env):
-    rmt_addr = req_env['REMOTE_ADDR']
-    rmt_port = req_env['REMOTE_PORT']
+    rmt_addr = req_env.get('REMOTE_ADDR', '127.0.0.1')
+    rmt_port = req_env.get('REMOTE_PORT', 12345)
     return rmt_addr, rmt_port
