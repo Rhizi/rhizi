@@ -14,3 +14,4 @@ src/client/main-built.js.map
 res/template.d/version.txt
 src/server/tools
 res/docker/fedora/neo4j-*.tar.gz
+node_modules/
