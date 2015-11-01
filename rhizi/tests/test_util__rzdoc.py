@@ -15,8 +15,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from db_op import DBO_raw_query_set
-import neo4j_util
+from ..db_op import DBO_raw_query_set
+from .. import neo4j_util
 
 
 class DBO_RDG__skill_graph(DBO_raw_query_set):
