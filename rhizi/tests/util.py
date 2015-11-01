@@ -122,7 +122,7 @@ def generate_random_RZDoc(rzdoc_name=None):
     return rzdoc
 
 
-def gen_random_user_signup(self):
+def gen_random_user_signup():
     seed = gen_random_name()
     us_req = User_Signup_Request(rz_username='rz_username_%s' % (seed),
                                  email_address='%s@localhost' % (seed),

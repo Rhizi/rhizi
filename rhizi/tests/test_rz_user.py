@@ -22,7 +22,7 @@ import unittest
 from ..rz_config import RZ_Config
 from ..rz_server import FlaskExt, init_webapp
 from ..rz_user import rest__user_signup, User_Signup_Request
-from .test_util import gen_random_name
+from .util import gen_random_name, gen_random_user_signup
 from .test_util__pydev import debug__pydev_pd_arg
 
 
@@ -47,11 +47,11 @@ class Test_RZ_User(unittest.TestCase):
         self.webapp.rz_config.acl_wl__email_domain_set = 'a.org, b.org'
         self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@foo.bar', 'alice@zoo.bar']  # hack: acl_wl__email_address_set_cached attribute access
 
-        us_req = self.gen_random_user_signup()
+        us_req = gen_random_user_signup()
         with self.webapp.test_client() as test_client:
             for email_address, expected_status_code in [('bob@a.org', 500),  # FIXME: use 200, 500 caused by mta_port hack
                                                         ('bob@b.org', 500),  # FIXME: use 200, 500 caused by mta_port hack
-                                                        ('alice@foo.bar', 500),
+                                                        ('alice@foo.bar', 400),
                                                         ('bob@c.org', 400)]:
 
                 us_req['email_address'] = email_address

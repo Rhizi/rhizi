@@ -24,7 +24,7 @@ from werkzeug.test import EnvironBuilder
 from rhizi.db_op import DBO_raw_query_set
 from rhizi.rz_server import init_webapp
 from rhizi.tests.test_util__pydev import debug__pydev_pd_arg
-from rhizi.tests.test_util import RhiziTestBase
+from rhizi.tests.util import RhiziTestBase
 
 
 class TestRhiziAPI(RhiziTestBase):

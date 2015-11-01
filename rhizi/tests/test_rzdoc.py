@@ -23,43 +23,42 @@ from ..rz_config import RZ_Config
 from ..rz_kernel import RZ_Kernel
 from ..model.graph import Topo_Diff
 from . import neo4j_test_util
-from . import test_util
+from . import util
 from .test_util__pydev import debug__pydev_pd_arg
-from .test_util import RhiziTestBase
+from .util import RhiziTestBase
 
 
 class TestRZDoc(RhiziTestBase):
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(clz):
+        super(TestRZDoc, clz).setUpClass()
 
-    def setUp(self): pass
+    def setUp(self):
+        pass
 
     def test_rzdoc_commit_log(self):
-        rzdoc_a = 'test_commit_log_doc_a'
-        rzdoc_b = 'test_commit_log_doc_b'
-        for rzdoc_name in [rzdoc_a, rzdoc_b]:
+        rzdoc_a_name = 'test_commit_log_doc_a'
+        rzdoc_b_name = 'test_commit_log_doc_b'
+        for rzdoc_name in [rzdoc_a_name, rzdoc_b_name]:
             lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
             if lookup_ret != None:
                 self.kernel.rzdoc__delete(lookup_ret)
-        ret_create = self.kernel.rzdoc__create(rzdoc_a)
-        ret_create = self.kernel.rzdoc__create(rzdoc_b)
-        node_a, _ = test_util.generate_random_node_dict('type_a')
-        node_b, _ = test_util.generate_random_node_dict('type_b')
+        rzdoc_a = self.kernel.rzdoc__create(rzdoc_a_name)
+        rzdoc_b = self.kernel.rzdoc__create(rzdoc_b_name)
+        node_a, _ = util.generate_random_node_dict('type_a')
+        node_b, _ = util.generate_random_node_dict('type_b')
         topo_diff_a = Topo_Diff(node_set_add=[node_a], meta={'sentence': 'a'})
         topo_diff_b = Topo_Diff(node_set_add=[node_b], meta={'sentence': 'b'})
-        class FakeRZDoc(object):
-            def __init__(self, id):
-                self.id = id
         class FakeContext(object):
-            def __init__(self, id):
-                self.rzdoc = FakeRZDoc(id)
+            def __init__(self, rzdoc):
+                self.rzdoc = rzdoc
                 self.user_name = None
         ctx_a = FakeContext(rzdoc_a)
         ctx_b = FakeContext(rzdoc_b)
         self.kernel.diff_commit__topo(topo_diff=topo_diff_a, ctx=ctx_a)
         self.kernel.diff_commit__topo(topo_diff=topo_diff_b, ctx=ctx_b)
-        commit_log = self.kernel.rzdoc__commit_log(rzdoc=ctx_a, limit=10)
+        commit_log = self.kernel.rzdoc__commit_log(rzdoc=rzdoc_a, limit=10)
 
     def test_rzdoc_lifecycle(self):
         test_label = neo4j_test_util.rand_label()
@@ -69,13 +68,11 @@ class TestRZDoc(RhiziTestBase):
         self.assertIsNone(lookup_ret__by_name)
 
         # create
-        rzdoc, m_rzdoc = self.kernel.rzdoc__create(rzdoc_name)
+        rzdoc = self.kernel.rzdoc__create(rzdoc_name)
 
         # lookup
-        for rzd in [rzdoc, m_rzdoc]:
-            lookup_ret__by_id = self.kernel.rzdoc__lookup_by_id(rzd.id)
+        for rzd in [rzdoc]:
             lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzd.name)
-            self.assertTrue(None != lookup_ret__by_id)
             self.assertTrue(None != lookup_ret__by_name)
 
         # delete
@@ -84,11 +81,11 @@ class TestRZDoc(RhiziTestBase):
         self.assertIsNone(lookup_ret__by_name)
 
     def test_rzdoc_search(self):
-        rzdoc_common_name = test_util.gen_random_name()
-        rzdoc_post_a = test_util.generate_random_RZDoc(rzdoc_common_name + '_a')
-        rzdoc_post_b = test_util.generate_random_RZDoc(rzdoc_common_name + '_b')
-        rzdoc_pre_c = test_util.generate_random_RZDoc('c_' + rzdoc_common_name)
-        rzdoc_plain = test_util.generate_random_RZDoc(rzdoc_common_name)
+        rzdoc_common_name = util.gen_random_name()
+        rzdoc_post_a = util.generate_random_RZDoc(rzdoc_common_name + '_a')
+        rzdoc_post_b = util.generate_random_RZDoc(rzdoc_common_name + '_b')
+        rzdoc_pre_c = util.generate_random_RZDoc('c_' + rzdoc_common_name)
+        rzdoc_plain = util.generate_random_RZDoc(rzdoc_common_name)
 
         for rzdoc in [rzdoc_post_a, rzdoc_post_b, rzdoc_pre_c, rzdoc_plain]:
             self.kernel.rzdoc__create(rzdoc_name=rzdoc.name)

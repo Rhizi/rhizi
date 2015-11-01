@@ -41,7 +41,7 @@ from ..rz_api_rest import Req_Context
 from ..rz_config import RZ_Config
 
 from .neo4j_test_util import DBO_random_data_generation, rand_label
-from .test_util import (generate_random_link_dict, generate_random_node_dict,
+from .util import (generate_random_link_dict, generate_random_node_dict,
                        RhiziTestBase)
 from .test_util__pydev import debug__pydev_pd_arg
 
