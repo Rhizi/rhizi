@@ -1,0 +1,23 @@
+machine:
+        python:
+                version: 2.7.10
+dependencies:
+        cache_directories:
+                - neo4j-community-2.3.0
+        pre:
+                - if [[ ! -d neo4j-community-2.3.0 ]]; then wget http://neo4j.com/artifact.php?name=neo4j-community-2.3.0-unix.tar.gz -O neo4j-community-2.3.0-unix.tar.gz && tar xvzf neo4j-community-2.3.0-unix.tar.gz; fi
+                - sed -i -e 's/dbms.security.auth_enabled=.*/dbms.security.auth_enabled=false/' neo4j-community-2.3.0/conf/neo4j-server.properties
+                - tmux new-session -d -s services
+                - tmux new-window -t services -n neo4j "./neo4j-community-2.3.0/bin/neo4j console | tee $PWD/neo4j.out"
+                - tmux new-window -t services -n smtpd "sudo python -m smtpd -n -c DebuggingServer localhost:25"
+                - while ! cat neo4j.out | grep "Remote interface ready and available at http://localhost:7474/"; do sleep 1; done
+                - pip install -r requirements-python2.txt
+                - cp res/etc/rhizi-server.conf.example res/etc/rhizi-server.conf
+                - sed -i -e 's/access_control.*/access_control = False/g' res/etc/rhizi-server.conf
+                - neo4j-shell -c "match (n) return count(n);"
+test:
+        override:
+                - nosetests -v:
+                        parallel: false
+                        files:
+                                - "rhizi/tests/**/test_*.py"
