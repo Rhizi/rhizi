@@ -17,7 +17,7 @@ dependencies:
                 - neo4j-shell -c "match (n) return count(n);"
 test:
         override:
-                - nosetests -v:
+                - nosetests -v --with-xunit --xunit-file=$CIRCLE_TEST_REPORTS/nosetests.xml:
                         parallel: false
                         files:
                                 - "rhizi/tests/**/test_*.py"
