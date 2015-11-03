@@ -1,22 +1,18 @@
-var allTestFiles = [];
-var TEST_REGEXP = /(spec|test)\.js$/i;
+var tests = [];
+var TEST_REGEXP = /\/(spec|test)_.*\.js$/i;
 
 // Get a list of all the test files to include
 Object.keys(window.__karma__.files).forEach(function(file) {
+  "use strict";
   if (TEST_REGEXP.test(file)) {
-    // Normalize paths to RequireJS module names.
-    // If you require sub-dependencies of test files to be loaded as-is (requiring file extension)
-    // then do not normalize the paths
-    var normalizedTestModule = file.replace(/^\/base\/|\.js$/g, '');
-    allTestFiles.push(normalizedTestModule);
+    tests.push(file);
   }
 });
-
 var lib_path = '/base/res/client/lib/';
 
 require.config({
   // Karma serves files under /base, which is the basePath from your config file
-  baseUrl: '/base',
+  baseUrl: '/base/client',
 
     shim: {
         'socketio': { exports: 'io' },
@@ -27,8 +23,8 @@ require.config({
     },
 
     paths: {
-        util: '/base/src/client/util',
-        stam: '/base/src/client/stam',
+        util: '/base/client/util',
+        stam: '/base/client/stam',
 
         // libraries paths
         autocomplete: lib_path + 'autocomplete',
@@ -43,10 +39,13 @@ require.config({
         jquery: lib_path + 'jquery',
         socketio: lib_path + 'socket.io/socket.io.min_0.9.10',
         underscore: lib_path + 'underscore',
+
+        // figure out how to make this dynamic for testing later
+        domain_types: '/base/client/tests/domain_types'
     },
 
   // dynamically load all test files
-  deps: allTestFiles,
+  deps: tests,
 
   // we have to kickoff jasmine, as it is asynchronous
   callback: window.__karma__.start
