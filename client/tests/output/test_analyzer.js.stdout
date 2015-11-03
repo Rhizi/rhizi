@@ -1,0 +1,82 @@
+addScript: loaded ../src/external/require.js
+app: running under node
+addScript: loaded ../src/app.js
+test harness: starting script loading with requirejs
+test harness: main loaded
+Rhizi main started
+rhizi: init drag-n-drop
+analyzing #a hello there #b
+not same size: new/old 2 / 0; 1 / 0
+bug: temp node creation on finalize
+expected: a,b
+got:      a|b
+expected: a,b,hello there
+got:      a,b,hello there
+digraph {
+ a;
+ b;
+ a -> b [label=hello there];
+}
+analyzing #c and #d like #e
+not same size: new/old 3 / 0; 3 / 0
+bug: temp node creation on finalize
+expected: c,d,e
+got:      c|d|e
+expected: c,e,like,d,e,like
+got:      c,d,and,d,e,like,c,e,like
+digraph {
+ c;
+ d;
+ e;
+ c -> d [label=and];
+ d -> e [label=like];
+ c -> e [label=like];
+}
+analyzing #f and #g and #h are cool
+not same size: new/old 5 / 0; 3 / 0
+bug: temp node creation on finalize
+bug: temp node creation on finalize
+expected: f,g,h,f and g and h are cool
+got:      f|g|h|f and g and h are cool
+expected: f,f and g and h are cool,,g,f and g and h are cool,,h,f and g and h are cool,
+got:      f,f and g and h are cool,,g,f and g and h are cool,,h,f and g and h are cool,
+digraph {
+ f;
+ g;
+ h;
+ "f and g and h are cool";
+ f -> "f and g and h are cool" [label=];
+ g -> "f and g and h are cool" [label=];
+ h -> "f and g and h are cool" [label=];
+}
+analyzing #i likes #j and #k
+not same size: new/old 3 / 0; 3 / 0
+bug: temp node creation on finalize
+expected: i,j,k
+got:      i|j|k
+expected: i,j,likes
+got:      i,j,likes,j,k,and,i,k,likes
+digraph {
+ i;
+ j;
+ k;
+ i -> j [label=likes];
+ j -> k [label=and];
+ i -> k [label=likes];
+}
+analyzing #q likes #r but doesn't like #l
+not same size: new/old 4 / 0; 3 / 0
+bug: temp node creation on finalize
+expected: q,r,l
+got:      q|r|l|q likes r but doesn't like l
+expected: 
+got:      q,q likes r but doesn't like l,,r,q likes r but doesn't like l,,l,q likes r but doesn't like l,
+digraph {
+ q;
+ r;
+ l;
+ "q likes r but doesn't like l";
+ q -> "q likes r but doesn't like l" [label=];
+ r -> "q likes r but doesn't like l" [label=];
+ l -> "q likes r but doesn't like l" [label=];
+}
