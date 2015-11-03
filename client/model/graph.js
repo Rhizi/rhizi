@@ -45,7 +45,8 @@ function Graph(spec) {
     this.temporary = temporary;
     this.base = base;
 
-    util.assert(temporary !== undefined && base !== undefined, "missing inputs");
+    util.assert(temporary !== undefined, "specs.temporary is undefined");
+    util.assert(base !== undefined, "specs.base is undefined");
 
     clear();
 
