@@ -114,7 +114,7 @@
       <parallel>
 
          <!-- client code -->
-         <rsync src="src/client/" dst="${deploy_target_dir}/static/js" />
+         <rsync src="client/" dst="${deploy_target_dir}/static/js" />
 
          <!-- [!] use absolute paths on all symlink targets -->
          <symlink if:true="${localServerUseSymlink}"
@@ -151,7 +151,7 @@
       </parallel>
 
       <client-optimize if:true="${doClientOptimize}"
-                       root="src/client/"
+                       root="client/"
                        build="build.js" />
 
       <parallel>
@@ -177,7 +177,7 @@
                 value="-f '- __pycache__/' -f '- *.pyc'" />
 
       <client-optimize if:true="${doClientOptimize}"
-                       root="src/client/"
+                       root="client/"
                        build="build.js" />
 
       <!-- -l: traverse bin/ -> ../src-py link -->
@@ -244,7 +244,7 @@
          <substitution expression="${package_name}" />
       </replaceregexp>
 
-      <replaceregexp file="${build_dir__deb_pkg}/src/client/app.js">
+      <replaceregexp file="${build_dir__deb_pkg}/client/app.js">
          <regexp pattern="\$\{fragment_d_path\}" />
          <substitution expression="/fragment.d" />
       </replaceregexp>
