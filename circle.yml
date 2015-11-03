@@ -21,3 +21,5 @@ test:
                         parallel: false
                         files:
                                 - "rhizi/tests/**/test_*.py"
+
+                - karma start --singleRun
