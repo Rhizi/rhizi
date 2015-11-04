@@ -90,7 +90,8 @@ var node_text_dx = 5,
  *
  */
 function GraphView(spec) {
-    var gv = {
+    var parent_element = spec.parent_element,
+        gv = {
             bubble_radius: 0,
             layout_animation: {
                 interval: null,
@@ -110,7 +111,6 @@ function GraphView(spec) {
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
-        parent_element = spec.parent_element,
         graph_name = spec.graph_name,
         graph = spec.graph,
         zoom_property = spec.zoom_property,
