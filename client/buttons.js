@@ -18,8 +18,8 @@
 
 "use strict"
 
-define(['jquery', 'rz_core', 'rz_api_backend', 'view/selection', 'view/cmd_bar'],
-function ($,       rz_core,   rz_api_backend,   selection, view__cmd_bar) {
+define(['jquery', 'rz_core', 'view/selection', 'view/cmd_bar'],
+function ($,       rz_core,        selection,   view__cmd_bar) {
 $('.tutorial').click(function(){});
 
 var key="#47989379";
