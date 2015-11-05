@@ -15,3 +15,6 @@ res/template.d/version.txt
 src/server/tools
 res/docker/fedora/neo4j-*.tar.gz
 node_modules/rhizi-tests.log
+node_modules/
+
+
