@@ -91,6 +91,14 @@ define(['util'], function(util) {
         return this.__dst;
     });
 
+    function __set_obj_id(obj, id) {
+        Object.defineProperty(obj, "id", {
+            value: id,
+            enumerable: true,
+            writable: false
+        });
+    }
+
     /**
      * the most flexible way to create a node: - perform spec field validation -
      * fill-in missing spec fields
@@ -124,14 +132,6 @@ define(['util'], function(util) {
         ret.status = ret.status || 'unknown';
 
         return ret;
-    }
-
-    function __set_obj_id(obj, id) {
-        Object.defineProperty(obj, "id", {
-            value: id,
-            enumerable: true,
-            writable: false
-        });
     }
 
     /**
