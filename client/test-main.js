@@ -1,4 +1,4 @@
-var tests = [];
+var tests = ['/base/client/tests/rz_config.js'];
 var TEST_REGEXP = /\/(spec|test)_.*\.js$/i;
 
 // Get a list of all the test files to include
@@ -24,7 +24,6 @@ require.config({
 
     paths: {
         util: '/base/client/util',
-        stam: '/base/client/stam',
 
         // libraries paths
         autocomplete: lib_path + 'autocomplete',

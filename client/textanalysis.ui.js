@@ -111,7 +111,6 @@ function analyzeSentence(spec)
     ret.applyToGraph({
         main_graph: rz_core.main_graph,
         edit_graph: rz_core.edit_graph,
-        backend_commit: rz_config.backend_enabled,
     });
 
     switch (ret.state) {

@@ -27,7 +27,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
 	function get_rz_core() {
 		if (rz_core === undefined) {
-			rz_core =require('rz_core');
+			rz_core = require('rz_core');
 		}
 		return rz_core;
 	}

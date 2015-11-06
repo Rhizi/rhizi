@@ -24,7 +24,7 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [
       'client/main.js',
-      'client/app.js'
+      'client/app.js',
     ],
 
 
@@ -59,6 +59,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    // Chrome
     browsers: ['Chrome'],
 
 

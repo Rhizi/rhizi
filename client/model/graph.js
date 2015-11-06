@@ -18,8 +18,10 @@
 
 "use strict";
 
-define(['underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend', 'rz_api_mesh', 'history', 'model/types'],
-function (_,           Bacon,           consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,   rz_api_mesh,   history,   model_types) {
+define(['underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend',
+        'local_backend', 'rz_api_mesh', 'history', 'model/types'],
+function (_,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,
+         local_backend,   rz_api_mesh,   history,   model_types) {
 
 // aliases
 var all_attributes = model_types.all_attributes;
@@ -40,10 +42,15 @@ function Graph(spec) {
         temporary = spec.temporary,
         base = spec.base,
         server_pending_objects = [],
-        filtered_types = {}; // set of node types not to show
+        filtered_types = {}, // set of node types not to show
+        backend;
 
+    util.assert(spec.temporary || (spec.backend === 'rhizi' || spec.backend === 'local' || spec.backend === 'none'),
+        'missing or wrong backend attribute on non temporary spec');
     this.temporary = temporary;
     this.base = base;
+    this.backend = backend = (temporary || spec.backend === 'none') ? null :
+        (spec.backend === 'local' ? local_backend : rz_api_backend);
 
     util.assert(temporary !== undefined, "specs.temporary is undefined");
     util.assert(base !== undefined, "specs.base is undefined");
@@ -151,7 +158,7 @@ function Graph(spec) {
             return !hasNodeByName(n.name);
         });
 
-        rz_api_backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo);
+        backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo);
     };
     this.commit_and_tx_diff__topo = commit_and_tx_diff__topo;
 
@@ -628,7 +635,7 @@ function Graph(spec) {
             console.log('error with commit to server: danger robinson!');
         };
 
-        rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
+        backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     };
 
     function layout_x_key(layout_name) {
@@ -715,7 +722,7 @@ function Graph(spec) {
         var on_ajax_error = function(){
             console.log('error with commit nodes properties to server');
         };
-        rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
+        backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     }
 
     this.update_node = function(node, new_node_spec) {
@@ -765,7 +772,7 @@ function Graph(spec) {
         var on_ajax_error = function(){
             console.log('error with commit to server: danger robinson!');
         };
-        rz_api_backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
+        backend.commit_diff__attr(attr_diff, on_ajax_success, on_ajax_error);
     };
     var update_node = this.update_node;
 
@@ -1141,8 +1148,12 @@ function Graph(spec) {
     }
 
     function __commit_diff_ajax__topo(diff) {
-        diff.node_set_add = diff.node_id_set_add.map(_get_server_pending);
-        diff.link_set_add = diff.link_id_set_add.map(_get_server_pending);
+        if (diff.node_set_add === undefined) {
+            diff.node_set_add = diff.node_id_set_add.map(_get_server_pending);
+        }
+        if (diff.link_set_add === undefined) {
+            diff.link_set_add = diff.link_id_set_add.map(_get_server_pending);
+        }
         commit_diff__topo(diff);
     }
 
@@ -1284,7 +1295,7 @@ function Graph(spec) {
             undefined != on_success && on_success();
         }
 
-        rz_api_backend.rzdoc_clone(on_success_wrapper, on_error);
+        backend.rzdoc_clone(on_success_wrapper, on_error);
     }
     this.load_from_backend = load_from_backend;
 
@@ -1332,6 +1343,11 @@ function Graph(spec) {
     };
     this.new_topo_diff__from_nodes_links = new_topo_diff__from_nodes_links;
 
+    this.load_from_nodes_links = function(nodes, links) {
+        // FIXME: prompt for replace/merge; now defaulting to merge
+        commit_and_tx_diff__topo(new_topo_diff__from_nodes_links(nodes, links));
+    }
+
     this.load_from_json = function(json) {
         var data = JSON.parse(json);
 
@@ -1339,8 +1355,7 @@ function Graph(spec) {
             console.log('load callback: no data to load');
             return;
         }
-        // FIXME: prompt for replace/merge; now defaulting to merge
-        commit_and_tx_diff__topo(new_topo_diff__from_nodes_links(data.nodes, data.links));
+        this.load_from_nodes_links(data.nodes, data.links);
     };
 
     this.save_to_json = function() {

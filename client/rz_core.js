@@ -18,8 +18,12 @@
 
 "use strict";
 
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer', 'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu', 'view/activity', 'rz_api_backend', 'view/toolbar__status'],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,   selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,        activity, rz_api_backend, toolbar__status) {
+define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer',
+        'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu',
+        'view/activity', 'rz_api_backend', 'local_backend', 'view/toolbar__status'],
+function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,
+         selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,
+         activity,        rz_api_backend,   local_backend,        toolbar__status) {
 
 // fix circular module dependency
 var search;
@@ -42,7 +46,8 @@ var addednodes = [],
     main_graph,
     main_graph_view,
     edit_graph_view,
-    root_element_id_to_graph_view;
+    root_element_id_to_graph_view,
+    backend = rz_config.backend_enabled ? rz_api_backend : local_backend;
 
 
 var zoomProgress = false,
@@ -81,7 +86,7 @@ function init_graphs() {
     var user_id = $('#user_id'),
         user = user_id.text();
 
-    main_graph = new model_graph.Graph({temporary: false, base: null});
+    main_graph = new model_graph.Graph({temporary: false, base: null, backend: 'rhizi'});
     edit_graph = new model_graph.Graph({temporary: true, base: main_graph});
 
     if (user_id.length > 0) {
@@ -226,11 +231,8 @@ function init() {
     init_graph_views();
     init_ws_connection();
     activity.init(main_graph, main_graph_view, $('.graph-view'));
-
-    if (rz_config.backend_enabled) {
-        var cur_rzdoc_name = rzdoc__current__get_name();
-        rzdoc__open(cur_rzdoc_name);
-    }
+    var cur_rzdoc_name = rzdoc__current__get_name();
+    rzdoc__open(cur_rzdoc_name);
 }
 
 /**
@@ -315,7 +317,7 @@ function rzdoc__create_and_open(rzdoc_name) {
     };
 
     // TODO: validate rzdoc name
-    rz_api_backend.rzdoc_create(rzdoc_name, on_success, on_error);
+    backend.rzdoc_create(rzdoc_name, on_success, on_error);
 }
 
 function rzdoc__current__get_name() {
@@ -461,7 +463,7 @@ function rzdoc__search(search_query) {
         cmd_bar.remove();
     });
 
-    rz_api_backend.rzdoc_search(search_query, on_success, on_error); // TODO: handle doc list timeout
+    backend.rzdoc_search(search_query, on_success, on_error); // TODO: handle doc list timeout
 
     cmd_bar.insertAfter('#top-bar');
     cmd_bar.fadeToggle(400);

@@ -525,13 +525,12 @@ var textAnalyser = function (spec) {
 
     ret.applyToGraph = function(spec) {
         var edit_graph = spec.edit_graph,
-            backend_commit = spec.backend_commit,
             main_graph = edit_graph.base,
             existing_nodes = [];
 
         util.assert(edit_graph !== undefined &&
-                    main_graph !== undefined &&
-                    backend_commit !== undefined, "missing inputs");
+                    main_graph !== undefined,
+                    "missing inputs");
         window.ret = ret;
 
         ret.node_set_add = nodes
@@ -581,7 +580,7 @@ var textAnalyser = function (spec) {
             main_graph.removeRelated();
         }
 
-        if (finalize && backend_commit) {
+        if (finalize) {
             main_graph.commit_and_tx_diff__topo(ret);
         } else {
             edit_graph.commit_diff__topo(ret);
