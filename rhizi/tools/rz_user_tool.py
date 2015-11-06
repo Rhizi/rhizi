@@ -101,7 +101,7 @@ def role_rm(user_db_path, user_email, role):
 
 def list_users(user_db_path):
     user_db = open_existing_user_db(user_db_path)
-    for user in user_db:
+    for i, user in user_db:
         print('{}'.format(user))
 
 def add_user(user_db_path, cfg, email, password, first, last, username):
