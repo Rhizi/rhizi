@@ -77,16 +77,16 @@ def env(name, default):
 
 REPO_ROOT = parentdir(find_dir_up_or_abort('.git'))
 
-MTA_PORT = 10025
+MTA_PORT = int(env('RHIZI_TESTS__MTA_PORT', 10025))
 
 NEO4J_VERSION = '2.3.0'
 NEO4J_URL = "http://neo4j.com/artifact.php?name=neo4j-community-{}-unix.tar.gz".format(NEO4J_VERSION)
-ASSET_DIRECTORY = env('RHIZI_ASSET_DIRECTORY', os.path.join(REPO_ROOT, 'assets'))
+ASSET_DIRECTORY = env('RHIZI_TESTS__ASSET_DIRECTORY', os.path.join(REPO_ROOT, 'assets'))
 NEO4J_ARCHIVE = os.path.join(ASSET_DIRECTORY, 'neo4j-community-{}-unix.tar.gz'.format(NEO4J_VERSION))
 NEO4J_SUBDIR = 'neo4j-community-{}'.format(NEO4J_VERSION)
 NEO4J_DEST = os.path.join(ASSET_DIRECTORY, NEO4J_SUBDIR)
 NEO4J_BIN = os.path.join(NEO4J_DEST, "bin", "neo4j")
-NEO4J_PORT = 28800
+NEO4J_PORT = int(env('RHIZI_TESTS__NEO4J_PORT', 28800))
 
 NEO4J_STDOUT = os.path.join(NEO4J_DEST, "stdout.log")
 MTA_STDOUT = os.path.join(ASSET_DIRECTORY, "mta.log")
@@ -192,6 +192,8 @@ def once(f):
 
 @once
 def launch_neo4j():
+    if env('RHIZI_TESTS__EXTERNAL_NEO4J_PROCESS', False):
+        return
     install_neo4j()
     abort_if_port_open(NEO4J_PORT)
     neo4j_write_server_conf()
@@ -202,6 +204,8 @@ def launch_neo4j():
 
 @once
 def launch_mta():
+    if env('RHIZI_TESTS__EXTERNAL_MTA_PROCESS', False):
+        return
     launch('python -m smtpd -n -c DebuggingServer localhost:{port}'.format(port=MTA_PORT).split(),
            stdout_filename=MTA_STDOUT)
 

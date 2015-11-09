@@ -1,6 +1,12 @@
 machine:
         python:
                 version: 2.7.10
+        environment:
+                RHIZI_TESTS__EXTERNAL_NEO4J_PROCESS: true
+                RHIZI_TESTS__EXTERNAL_MTA_PROCESS: true
+                RHIZI_TESTS__NEO4J_PORT: 7474
+                RHIZI_TESTS__MTA_PORT: 25
+                RHIZI_TESTS__ASSET_DIRECTORY: .
 dependencies:
         cache_directories:
                 - neo4j-community-2.3.0
