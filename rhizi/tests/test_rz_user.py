@@ -22,35 +22,23 @@ import unittest
 from ..rz_config import RZ_Config
 from ..rz_server import FlaskExt, init_webapp
 from ..rz_user import rest__user_signup, User_Signup_Request
-from .util import gen_random_name, gen_random_user_signup
+from .util import gen_random_name, gen_random_user_signup, RhiziTestBase
 from .test_util__pydev import debug__pydev_pd_arg
 
 
-log = logging.getLogger('rhizi')
-
-class Test_RZ_User(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(self):
-        cfg = RZ_Config.generate_default()
-        webapp = init_webapp(cfg, None)
-        webapp.testing = True
-        self.webapp = webapp
-
-    def setUp(self):
-        pass
+class Test_RZ_User(RhiziTestBase):
 
     def test_user_signup__acl_domain(self):
 
+        self.webapp.testing = True
         self.webapp.rz_config.access_control = True
-        self.webapp.rz_config.mta_port = 50000  # prevent accidental email sending
         self.webapp.rz_config.acl_wl__email_domain_set = 'a.org, b.org'
         self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@foo.bar', 'alice@zoo.bar']  # hack: acl_wl__email_address_set_cached attribute access
 
         us_req = gen_random_user_signup()
         with self.webapp.test_client() as test_client:
-            for email_address, expected_status_code in [('bob@a.org', 500),  # FIXME: use 200, 500 caused by mta_port hack
-                                                        ('bob@b.org', 500),  # FIXME: use 200, 500 caused by mta_port hack
+            for email_address, expected_status_code in [('bob@a.org', 200),
+                                                        ('bob@b.org', 200),
                                                         ('alice@foo.bar', 400),
                                                         ('bob@c.org', 400)]:
 
@@ -62,8 +50,6 @@ class Test_RZ_User(unittest.TestCase):
                 req_data = json.loads(req.data)
                 self.assertEqual(expected_status_code, req.status_code, req_data)
 
-    def tearDown(self):
-        pass
 
 @debug__pydev_pd_arg
 def main():

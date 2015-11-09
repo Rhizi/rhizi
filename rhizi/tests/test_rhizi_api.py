@@ -32,12 +32,12 @@ class TestRhiziAPI(RhiziTestBase):
     @classmethod
     def setUpClass(clz):
         super(TestRhiziAPI, clz).setUpClass()
-        clz.webapp = webapp = init_webapp(clz.cfg, clz.kernel)
-        webapp.user_db = clz.user_db
-        clz.kernel.db_op_factory = webapp  # assist kernel with DB initialization
         # TODO: use a document that we create (Welcome Rhizi is the default init db right now,
         # can use that but need to have an assert on that earlier)
         clz.rzdoc_name = 'Welcome Rhizi'
+        # HACK: we use the same rhizi server for all tests, so set access
+        # control here since we override it in other tests
+        clz.cfg.access_control = False
 
 
     def test_load_node_non_existing(self):

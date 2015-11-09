@@ -461,7 +461,10 @@ def rest__user_signup():
             add_user_signup_req(us_req_map, us_req)
             return make_response__json__html(html_str=html_ok__submitted)
         except Exception as e:
-            log.exception('user sign-up: failed to send validation email')  # exception derived from stack
+            log.exception('user sign-up: failed to send validation email through {}:{}'.format(
+                current_app.rz_config.mta_host,
+                current_app.rz_config.mta_port
+                ))  # exception derived from stack
             return make_response__json__html(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR, html_str=html_err__tech_difficulty)
 
     if request.method == 'GET':
@@ -498,7 +501,7 @@ def rest__user_signup():
 def send_user_activation_link__email(req__url_root, us_req):
     """
     Send user feedback by email along with screen capture attachments
-    
+
     @return: activation_link
     @raise exception: on send error
     """
@@ -527,7 +530,7 @@ def send_user_activation_link__email(req__url_root, us_req):
 def send_user_pw_reset__email(req__url_root, u_account, pw_reset_token):
     """
     Send user pw reset email
-    
+
     @return: pw reset link
     @raise exception: on send error
     """
