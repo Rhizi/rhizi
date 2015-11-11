@@ -280,6 +280,10 @@
 
 .insideforeign {
     display: inline;
+    border: 1px solid;
+    border-color: $mid-grey;
+    background: white;
+    padding: 6px 8px 5px 8px;
     &:focus {
       outline: none;
     }

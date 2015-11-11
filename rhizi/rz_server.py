@@ -24,17 +24,21 @@ from flask import session
 from functools import wraps
 import logging
 import os
+import sys
 import signal
 import traceback
 
-# Allow running this file despite it being inside the package
-if __package__ is None:
-    print("deprecated way of running, use run_server.py instead")
-    import sys
-    sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
-    import server.rz_server as rz_server
-    rz_server.main()
-    raise SystemExit
+
+# Hack to create modules for usage by old user_db shelve
+from .rz_user import User_Account
+from . import rz_user_db
+from . import rz_user
+
+# Support for old (<0.3.0 debian package) shelve files
+sys.modules['rz_user_db'] = rz_user_db
+sys.modules['rz_user'] = rz_user
+rz_user_db.User_Account = User_Account
+
 
 
 from .db_controller import DB_Controller

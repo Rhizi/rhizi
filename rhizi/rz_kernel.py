@@ -324,7 +324,8 @@ class RZ_Kernel(object):
     @deco__DB_status_check
     def load_node_set_by_id_attr(self, id_set, ctx=None):
         op = DBO_match_node_set_by_id_attribute(id_set=id_set)
-        self.db_ctl.exec_op(op)
+        op_ret = self.db_ctl.exec_op(op)
+        return op_ret
 
     @deco__DB_status_check
     def rzdoc__clone(self, rzdoc, ctx=None):

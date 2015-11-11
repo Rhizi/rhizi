@@ -26,14 +26,6 @@ from .. crypt_util import hash_pw
 from .. rz_server import init_config
 from .. rz_user import User_Account
 from .. rz_user_db import User_DB
-from .. import rz_user_db
-from .. import rz_user
-
-# Support for old (<0.3.0 debian package) shelve files
-sys.modules['rz_user_db'] = rz_user_db
-sys.modules['rz_user'] = rz_user
-rz_user_db.User_Account = User_Account
-
 
 def add_user_login(user_db, salt, first_name, last_name,
                    rz_username, email_address, pw_plaintext):
@@ -109,7 +101,7 @@ def role_rm(user_db_path, user_email, role):
 
 def list_users(user_db_path):
     user_db = open_existing_user_db(user_db_path)
-    for user in user_db:
+    for i, user in user_db:
         print('{}'.format(user))
 
 def add_user(user_db_path, cfg, email, password, first, last, username):

@@ -76,6 +76,8 @@ class RZ_WebSocket_Server(SocketIOServer):
             SocketIOHandler.__init__(self, config, *args, **kwargs)
 
         def start_response(self, status, headers, exc_info=None):
+            # workaround for some headers not being unicode:
+            headers = [(k, str(v)) for k, v in headers]
             # headers['Access-Control-Allow-Origin'] = '*'
             return SocketIOHandler.start_response(self, status, headers, exc_info)
 

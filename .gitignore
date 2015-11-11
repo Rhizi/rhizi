@@ -80,4 +80,7 @@ docs/_build/
 target/
 
 node_modules
+node_modules/rhizi-tests.log
+node_modules/
+
 

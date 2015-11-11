@@ -15,16 +15,16 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/client/test-main.js',
+      'client/test-main.js',
       {pattern: 'res/client/**/*.js', included: false},
-      {pattern: 'src/client/**/*.js', included: false},
+      {pattern: 'client/**/*.js', included: false},
     ],
 
 
     // list of files to exclude
     exclude: [
-      'src/client/main.js',
-      'src/client/app.js'
+      'client/main.js',
+      'client/app.js',
     ],
 
 
@@ -59,11 +59,12 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    // Chrome
     browsers: ['Chrome'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
-  })
-}
+  });
+};

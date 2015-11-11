@@ -85,8 +85,8 @@ def __load_node_set_by_id_attr_common(rzdoc_name, id_set):
     """
     ctx = __context__common(rzdoc_name)
     kernel = flask.current_app.kernel
-    _, commit_ret = kernel.load_node_set_by_id_attr(id_set, ctx)
-    return common_resp_handle__success(data=commit_ret)
+    ret = kernel.load_node_set_by_id_attr(id_set, ctx)
+    return common_resp_handle__success(data=ret)
 
 
 def diff_commit__set():

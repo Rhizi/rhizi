@@ -1,3 +1,0 @@
-#!/bin/bash
-git add output
-git commit -m "update run_tests.js output"

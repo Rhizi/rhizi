@@ -1,0 +1,4 @@
+Directory empty in repository on purpose.
+
+It will contain testing related assets, mainly the neo4j installation for test
+running, plus log files from running tests.
