@@ -17,7 +17,7 @@ res/docker/fedora/neo4j-*.tar.gz
 
 .env
 venv
-
+assets/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

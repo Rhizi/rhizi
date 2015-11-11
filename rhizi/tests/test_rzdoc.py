@@ -30,13 +30,12 @@ from .util import RhiziTestBase
 
 class TestRZDoc(RhiziTestBase):
 
+
     @classmethod
-
-    def setUp(self): 
-        pass
-
     def setUpClass(clz):
         super(TestRZDoc, clz).setUpClass()
+
+    def setUp(self):
         pass
 
     def test_rzdoc_commit_log(self):
