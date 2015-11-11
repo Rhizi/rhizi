@@ -83,3 +83,5 @@ docs/_build/
 target/
 
 node_modules
+
+nosetests.xml
