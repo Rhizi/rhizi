@@ -123,19 +123,18 @@ function(consts,   $,        d3,   _) {
 
     function layout__d3_force__link_distance(graph) {
         var ret = layout__d3_force(graph);
-        ret.zen_mode_inner = function (zen_mode) {
-            if (zen_mode) {
-                ret.distance(240);
-            } else {
-                ret.linkDistance(function (link) {
-                    var d_src = graph.degree(link.__src),
-                        d_dst = graph.degree(link.__dst),
-                        ret = (d_src + d_dst) * 10 + 10;
-                    return ret;
-                  });
-            }
+
+        ret.linkDistance(function (link) {
+            var d_src = graph.degree(link.__src),
+                d_dst = graph.degree(link.__dst),
+                ret = (d_src + d_dst) * 10 + 10;
             return ret;
-        };
+        });
+        return ret;
+    }
+
+    function layout__zen(graph) {
+        var ret = layout__d3_force(graph);
         return ret;
     }
 
@@ -233,42 +232,6 @@ function(consts,   $,        d3,   _) {
                     layout.nodes(nodes);
                     return layout.links(links);
                 },
-                // zen_mode callback - to change layout based on it. reimplement inner only
-                _zen_mode_inner: donothing,
-                _zen_mode__pre_state: {},
-                zen_mode: function (zen_mode) {
-                    var nodes, d;
-
-                    if (zen_mode) {
-                        nodes = layout.nodes();
-
-                        // store fixed position
-                        console.log('zen on:  storing fixed for ' + _.size(layout.nodes()));
-                        layout._zen_mode__pre_state = _.object(_.pluck(nodes, "id"),
-                                                               _.map(nodes, function (n) {
-                                                                   return {fixed: n.fixed, x: n.x, y: n.y};
-                                                               }));
-                        _.each(nodes, function(node) { node.fixed = false; });
-                    } else {
-                        // restore fixed
-                        nodes = layout.nodes();
-                        d = _.object(_.pluck(nodes, "id"), nodes);
-                        console.log('zen off: restoring fixed for ' + _.size(nodes));
-                        _.each(_.keys(layout._zen_mode__pre_state), function (node_id) {
-                            if (d[node_id] !== undefined && layout._zen_mode__pre_state[node_id]) {
-                                var saved = layout._zen_mode__pre_state[node_id];
-                                d[node_id].fixed = saved.fixed;
-                                d[node_id].x = saved.x;
-                                d[node_id].y = saved.y;
-                                d[node_id].px = saved.x;
-                                d[node_id].py = saved.y;
-                            } else {
-                                console.log('missing ' + node_id);
-                            }
-                        });
-                    }
-                    return layout._zen_mode_inner(zen_mode);
-                },
                 // data
                 graph: graph,
                 _nodes: [],
@@ -296,7 +259,7 @@ function(consts,   $,        d3,   _) {
                 wh: [1, 1] // width + height
             }),
             bound_layer = layer.bind(layout);
-        
+
         layout.resume = function () {
             layout.start();
             return layout;
@@ -467,8 +430,14 @@ function(consts,   $,        d3,   _) {
         },
         */
         ];
+    var zen_layout = {
+        name: 'Zen',
+        create: named('zen', layout__zen),
+        clazz: 'btn_layout_d3_force'
+    };
     return {
         layouts: layouts,
+        zen_layout: zen_layout,
         empty: layout__empty,
         layout__sync: layout__sync,
     };

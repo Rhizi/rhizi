@@ -128,7 +128,9 @@ function GraphView(spec) {
         filter_states,
 
         zen_mode = false,
+        zen_mode__layout = view_layouts.zen_layout.create(graph),
         zen_mode__auto_center = false,
+        zen_mode__prev_layout = null,
 
         // FIXME - want to use parent_element
         w,
@@ -1220,9 +1222,7 @@ function GraphView(spec) {
                 button.addClass(layout_data.clazz);
                 button.addClass('btn_layout');
                 button.on('click', function () {
-                    if (zen_mode) {
-                        return;
-                    }
+                    zen_mode__set(false);
                     set_layout(button_layout);
                     layout_btns.remove();
                 });
@@ -1251,14 +1251,28 @@ function GraphView(spec) {
     }
 
     function set_layout(new_layout) {
+        $('#layout_name').html(new_layout.name);
         if (layout !== undefined) {
             layout.save();
             layout.stop();
         }
+        var new_layout_is_zen = new_layout && new_layout.name === 'zen',
+            old_layout_is_zen = layout && layout.name === 'zen',
+            change_zen_mode = new_layout_is_zen ^ old_layout_is_zen;
+
         // remove fixed status, the fixed status is restored from the layout
         graph.nodes().forEach(function (node) {
             node.fixed = undefined;
         });
+        if (new_layout.name == 'zen') {
+            zen_mode__prev_layout = layout;
+            zen_mode = true;
+            zen_mode__auto_center = true;
+        } else {
+            zen_mode__prev_layout = null;
+            zen_mode = false;
+            zen_mode__auto_center = false;
+        }
         layout = new_layout;
         layout
             .size([w, h])
@@ -1266,10 +1280,12 @@ function GraphView(spec) {
             .on("end", layout__end__callback)
             .nodes_links(nodes__visible(), links__visible())
             .restore()
-            .zen_mode(zen_mode)
             .start()
             .alpha(0.01);
         gv.layout = layout;
+        if (change_zen_mode) {
+            update_view(true);
+        }
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
@@ -1306,11 +1322,11 @@ function GraphView(spec) {
         if (zen_mode === value) {
             return;
         }
-        zen_mode = value;
-        layout.nodes_links(nodes__visible(), links__visible());
-        layout.zen_mode(value);
-        update_view(true);
-        zen_mode__auto_center = zen_mode;
+        if (value) {
+            set_layout(zen_mode__layout);
+        } else {
+            set_layout(zen_mode__prev_layout);
+        }
     }
     gv.zen_mode__set = zen_mode__set;
     gv.zen_mode__toggle = function () {
