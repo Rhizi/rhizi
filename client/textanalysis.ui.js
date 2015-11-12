@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+"use strict";
 
 define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input', 'model/types'],
 function($,        Bacon ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,        textanalyser_input,   model_types) {
@@ -24,7 +24,7 @@ function($,        Bacon ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,
 var element_name = '#textanalyser',
     input = textanalyser_input({
         'element_name': element_name,
-        'completer_name': '#input-suggestion',
+        'completer_name': '#input-suggestion'
         }),
     plus_button = $('#btn_add'),
     description = consts.description,
@@ -53,7 +53,7 @@ var typeselection = function TypeSelectionDialog() {
     fo.appendChild(e[0]);
     typeselection.analysisNodeStart = function(node_id) {
         typeselection.show(node_id);
-    }
+    };
     function attach_to(node_id) {
         var node = document.getElementById(node_id);
 
@@ -73,10 +73,10 @@ var typeselection = function TypeSelectionDialog() {
         e_desc.show();
         e_name.html(model_types.node_titles[textanalysis.selected_type()]);
         e.show();
-    }
+    };
     typeselection.hide = function() {
         e.hide();
-    }
+    };
     typeselection.showChosenType = function(node_id, nodetype) {
         var desc = description[nodetype];
 
@@ -93,7 +93,7 @@ var typeselection = function TypeSelectionDialog() {
         } else {
             e_desc.hide();
         }
-    }
+    };
     return typeselection;
 }();
 
@@ -180,10 +180,11 @@ var main = function ()
         });
 
     function submitNewSentence(text) {
+        console.log('submitting: ' + text);
         analyzeSentence(
             {
                 sentence: text,
-                finalize: true,
+                finalize: true
             });
     }
 
@@ -192,8 +193,10 @@ var main = function ()
     // The mousedown is required because CSS3 transitions eat some events sometimes. This is
     // the closest I've come to an explanation:
     //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
-    plus_button.bind("click mousedown", function(e) {
-        console.dir(e);
+    plus_button.bind('click', function (e) {
+        e.preventDefault();
+    });
+    plus_button.bind("mousedown", function(e) {
         submitNewSentence(input.value());
         e.preventDefault();
     });
