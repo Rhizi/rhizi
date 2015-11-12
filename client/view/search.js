@@ -20,7 +20,6 @@ define(['consts', 'view/completer', 'textanalysis', 'rz_core', 'view/selection']
 function(consts,        completer,   textanalysis,   rz_core,        selection)
 {
 var search = $('#search'),
-    search_btn = $('#btn_search'),
     search_completer_element = $('#search-suggestion'),
     search_completer;
 
@@ -45,7 +44,6 @@ function init() {
             }
             return (e.which === consts.VK_ENTER);
         })
-        .merge($('#btn_search').asEventStream('click'))
         .merge(search_completer.completionsBus)
         .map(function () { return search[0].value.trim(); })
         .skipDuplicates()

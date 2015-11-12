@@ -84,18 +84,12 @@
   border: 0;
 }
 
-#btn_search {
-  float: right;
+.btn_search {
   background: url(../img/search-icon.png);
-  background-position: center;
   background-repeat: no-repeat;
-  background-color: lightgreen;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  height: 36px;
-  width: 36px;
-  border: 0;
+  background-position-x: 98%;
+  background-position-y: 50%;
+  background-color: white;
 }
 
 .add-button:hover {
