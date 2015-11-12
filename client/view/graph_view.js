@@ -1223,6 +1223,7 @@ function GraphView(spec) {
                 button.html(layout_data.name);
                 button.addClass(layout_data.clazz);
                 button.addClass('btn_layout');
+                button.addClass("noselect");
                 button[0].style.borderStyle = layout.name === button_layout.name ? 'dashed' : 'solid';
                 button.on('click', function () {
                     set_layout(button_layout);
