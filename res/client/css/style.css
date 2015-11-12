@@ -190,6 +190,14 @@ input, .input {
 #content {
   height: 100%; }
 
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+
 /*
     This file is part of rhizi, a collaborative knowledge graph editor.
     Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
@@ -1407,7 +1415,7 @@ p {
   overflow: auto;
   padding: 0px 5px; }
   .activity__entry:hover {
-    background-color: #bababa; }
+    background-color: #b9b9b9; }
   .activity__entry:focus {
     outline: none; }
 

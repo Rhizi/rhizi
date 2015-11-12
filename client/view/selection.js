@@ -401,6 +401,11 @@ var setup_toolbar = function(main_graph, main_graph_view)
         .onValue(function (visible) {
             show(zen_mode_btn, visible);
         });
+
+    main_graph_view.zen_mode_bus
+        .onValue(function (zenmode) {
+            zen_mode_btn[0].style.borderStyle = zenmode ? 'dashed' : 'solid';
+        });
 }
 
 var is_empty = function() {

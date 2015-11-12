@@ -108,6 +108,8 @@ function GraphView(spec) {
             zoom_obj: spec.zoom_obj,
             parent_graph_zoom_obj: spec.parent_graph_zoom_obj,
             parent_element: parent_element,
+            zen_mode_bus: new Bacon.Bus(),
+            layout_name_bus: new Bacon.Bus(),
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
@@ -128,7 +130,9 @@ function GraphView(spec) {
         filter_states,
 
         zen_mode = false,
+        zen_mode__layout = view_layouts.zen_layout.create(graph),
         zen_mode__auto_center = false,
+        zen_mode__prev_layout = null,
 
         // FIXME - want to use parent_element
         w,
@@ -1219,14 +1223,16 @@ function GraphView(spec) {
                 button.html(layout_data.name);
                 button.addClass(layout_data.clazz);
                 button.addClass('btn_layout');
+                button.addClass("noselect");
+                button[0].style.borderStyle = layout.name === button_layout.name ? 'dashed' : 'solid';
                 button.on('click', function () {
-                    if (zen_mode) {
-                        return;
-                    }
                     set_layout(button_layout);
                     layout_btns.remove();
                 });
                 layout_menu.append(button);
+                gv.layout_name_bus.onValue(function (name) {
+                    button[0].style.borderStyle = name === button_layout.name ? 'dashed' : 'solid';
+                })
             });
         });
     }
@@ -1255,10 +1261,23 @@ function GraphView(spec) {
             layout.save();
             layout.stop();
         }
+        var new_layout_is_zen = new_layout && new_layout.name === 'zen',
+            old_layout_is_zen = layout && layout.name === 'zen',
+            change_zen_mode = new_layout_is_zen ^ old_layout_is_zen;
+
         // remove fixed status, the fixed status is restored from the layout
         graph.nodes().forEach(function (node) {
             node.fixed = undefined;
         });
+        if (new_layout.name == 'zen') {
+            zen_mode__prev_layout = layout;
+            zen_mode__auto_center = true;
+            zen_mode__inner_set(true);
+        } else {
+            zen_mode__prev_layout = null;
+            zen_mode__auto_center = false;
+            zen_mode__inner_set(false);
+        }
         layout = new_layout;
         layout
             .size([w, h])
@@ -1266,10 +1285,13 @@ function GraphView(spec) {
             .on("end", layout__end__callback)
             .nodes_links(nodes__visible(), links__visible())
             .restore()
-            .zen_mode(zen_mode)
             .start()
             .alpha(0.01);
         gv.layout = layout;
+        if (change_zen_mode) {
+            update_view(true);
+        }
+        gv.layout_name_bus.push(new_layout.name);
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
@@ -1306,11 +1328,18 @@ function GraphView(spec) {
         if (zen_mode === value) {
             return;
         }
+        if (value) {
+            set_layout(zen_mode__layout);
+        } else {
+            set_layout(zen_mode__prev_layout);
+        }
+    }
+    function zen_mode__inner_set(value) {
+        if (zen_mode === value) {
+            return;
+        }
         zen_mode = value;
-        layout.nodes_links(nodes__visible(), links__visible());
-        layout.zen_mode(value);
-        update_view(true);
-        zen_mode__auto_center = zen_mode;
+        gv.zen_mode_bus.push(value);
     }
     gv.zen_mode__set = zen_mode__set;
     gv.zen_mode__toggle = function () {
