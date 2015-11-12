@@ -108,6 +108,7 @@ function GraphView(spec) {
             zoom_obj: spec.zoom_obj,
             parent_graph_zoom_obj: spec.parent_graph_zoom_obj,
             parent_element: parent_element,
+            zen_mode_bus: new Bacon.Bus()
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
@@ -1265,12 +1266,12 @@ function GraphView(spec) {
         });
         if (new_layout.name == 'zen') {
             zen_mode__prev_layout = layout;
-            zen_mode = true;
             zen_mode__auto_center = true;
+            zen_mode__inner_set(true);
         } else {
             zen_mode__prev_layout = null;
-            zen_mode = false;
             zen_mode__auto_center = false;
+            zen_mode__inner_set(false);
         }
         layout = new_layout;
         layout
@@ -1326,6 +1327,13 @@ function GraphView(spec) {
         } else {
             set_layout(zen_mode__prev_layout);
         }
+    }
+    function zen_mode__inner_set(value) {
+        if (zen_mode === value) {
+            return;
+        }
+        zen_mode = value;
+        gv.zen_mode_bus.push(value);
     }
     gv.zen_mode__set = zen_mode__set;
     gv.zen_mode__toggle = function () {
