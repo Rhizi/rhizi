@@ -60,13 +60,6 @@ var RZ_VERSION = '{% include "version.txt" %}';
     <div id="tool-bar">
       <div id="tool-bar-top-bar">
         <div class="tool_bar_btn" id="btn_layout" title="Layout">Layout</div>
-        <div class="tool_bar_btn" id="btn_filter" title="Filter">Filter
-          <div>
-            <div id="menu__type-filter" style="display:none">
-              <div id="menu__type-filter_header">Filter by type</div>
-            </div>
-          </div>
-        </div>
         <div class="tool_bar_btn" id="btn_zen_mode" style="display: none" title="Zen mode">Zen mode</div>
         <div class="tool_bar_btn" id="btn_delete" style="display: none" title="Delete nods">Delete</div>
         <div id="tool-bar-multiple-node-operations" style="display: none">
@@ -85,8 +78,14 @@ var RZ_VERSION = '{% include "version.txt" %}';
         <div id="activity_view__header">Activity</div>
         <div id="activity_view__body"></div>
       </div>
-      <div class="input-container" id="input-container__search">
-        <input class="input-bar search_icon" tabindex="1" id="search" placeholder="Select elements"/>
+      <div class="filter-container" id="input-container__search">
+        <input class="search-bar search_icon" tabindex="1" id="search" placeholder="Select elements"/>
+        <div class="filter-dropdown" id="btn_filter" title="Filter">Filter
+          <div>
+            <div id="menu__type-filter" class="filter-dropdown-menu" style="display:none">
+            </div>
+          </div>
+        </div>
         <div id="selection-count"></div>
         <div id="search-suggestion" class="suggestion" style="display: none"></div>
       </div>

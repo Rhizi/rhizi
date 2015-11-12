@@ -16,13 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.dropdown-menu {
-    border: 1px solid $mid-grey;
-    color: $dark-grey;
-    font-size: $h3-size;
-    list-style-type: none;
-    z-index: 100;
-     @include rz-box-shadow(0px, 3px, 6px, 0px, rgba(0,0,0,0.3) );
+.filter-dropdown-menu {
+    z-index: 1;
+    @include rz-box-shadow(0px, 3px, 6px, 0px, rgba(0,0,0,0.3) );
+    position: relative;
  }
 
 .dropdown-item {
@@ -38,22 +35,12 @@
     @include rz-box-sizing-border;
 }
 
-.dropdown-menu-heading {
-    background-color: lightgrey;
-    border-bottom: 1px solid $mid-light-grey;
-    font-family: $bold-font-family;
-    padding: 6px 0px 6px 18px;
-}
-
-.dropdown-menu-heading:hover {
-    cursor: default;
-}
-
 .menu__type-filter_item {
     padding-left: 10px;
     padding-right: 10px;
     text-align: left;
-
+    z-index: 100;
+    background: white;
     &:hover {
         background-color: lightgray;
     }
@@ -63,18 +50,4 @@
            left: -3px;
            top: 3px;
     }
-}
-
-#menu__type-filter {
-    background-color: $white;
-    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
-    position: absolute;
-    right: 155px;
-    top: 0;
-    white-space: nowrap;
-}
-
-#menu__type-filter_header {
-    background: darkgray;
-    font-weight: bold;
 }

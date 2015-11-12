@@ -444,13 +444,10 @@ table {
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-.dropdown-menu {
-  border: 1px solid #919095;
-  color: #363636;
-  font-size: 18px;
-  list-style-type: none;
-  z-index: 100;
-  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3); }
+.filter-dropdown-menu {
+  z-index: 1;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
+  position: relative; }
 
 .dropdown-item {
   padding: 6px 0px 6px 18px;
@@ -463,19 +460,12 @@ table {
   border-left: 2px solid #33c2e0;
   box-sizing: border-box; }
 
-.dropdown-menu-heading {
-  background-color: lightgrey;
-  border-bottom: 1px solid #d4d4d9;
-  font-family: "Source_Bold", sans-serif;
-  padding: 6px 0px 6px 18px; }
-
-.dropdown-menu-heading:hover {
-  cursor: default; }
-
 .menu__type-filter_item {
   padding-left: 10px;
   padding-right: 10px;
-  text-align: left; }
+  text-align: left;
+  z-index: 100;
+  background: white; }
   .menu__type-filter_item:hover {
     background-color: lightgray; }
   .menu__type-filter_item input {
@@ -483,18 +473,6 @@ table {
     left: -3px;
     top: 3px; }
 
-#menu__type-filter {
-  background-color: white;
-  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3);
-  position: absolute;
-  right: 155px;
-  top: 0;
-  white-space: nowrap; }
-
-#menu__type-filter_header {
-  background: darkgray;
-  font-weight: bold; }
-
 /*
     This file is part of rhizi, a collaborative knowledge graph editor.
     Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy
@@ -546,9 +524,13 @@ table {
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+.filter-container {
+  left: 20px; }
+  .filter-container form {
+    display: inline; }
+
 .input-container {
-  left: 20px;
-  width: 35%; }
+  left: 20px; }
   .input-container form {
     display: inline; }
 
@@ -564,6 +546,34 @@ table {
   .input-bar:focus {
     border: 1px solid #919095;
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3); }
+
+.search-bar {
+  float: left;
+  font-family: "Source_Regular", sans-serif;
+  color: #919095;
+  max-height: 36px;
+  padding: 6px 8px 5px 8px;
+  border: solid #919095;
+  border-width: 1px 1px 1px 1px;
+  box-sizing: border-box;
+  background: white; }
+  .search-bar:focus {
+    border: solid #919095;
+    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.3); }
+
+.filter-dropdown {
+  border: solid #919095;
+  border-width: 1px 1px 1px 1px;
+  cursor: pointer;
+  float: left;
+  left: 20px;
+  font-size: 12px;
+  /* height: 36px; */
+  line-height: 34px;
+  margin-left: -1px;
+  text-align: center;
+  background: white;
+  min-width: 70px; }
 
 #input-container__search {
   margin-top: 24px;

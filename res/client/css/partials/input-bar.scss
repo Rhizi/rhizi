@@ -18,15 +18,19 @@
 
 @import '../modules/mixins'; // For box-shadow
 
-.input-container {
+.filter-container {
   left: $graph-margin-left;
-  width: 35%;
-
   form {
     display: inline;
   }
 }
 
+.input-container {
+  left: $graph-margin-left;
+  form {
+    display: inline;
+  }
+}
 
 .input-bar {
   font-family: $base-font-family;
@@ -41,6 +45,37 @@
     border: 1px solid $mid-grey;
     @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
   }  
+}
+
+.search-bar {
+  float: left;
+  font-family: $base-font-family;
+  color: $mid-grey;
+  max-height: $three-baselines;
+  padding: 6px 8px 5px 8px;
+  border: solid $mid-grey;
+  border-width: 1px 1px 1px 1px; 
+  @include rz-box-sizing-border;
+  background: white;
+  &:focus {
+    border: solid $mid-grey;
+    @include rz-box-shadow(0px, 1px, 6px, 0px, rgba(0,0,0,0.3) );
+  }  
+}
+
+.filter-dropdown {
+    border: solid #919095;
+    border-width: 1px 1px 1px 1px;
+    cursor: pointer;
+    float: left;
+    left: $graph-margin-left;
+    font-size: 12px;
+    /* height: 36px; */
+    line-height: 34px;
+    margin-left: -1px;
+    text-align: center;
+    background: white;
+    min-width: 70px;
 }
 
 #input-container__search {
