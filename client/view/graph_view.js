@@ -108,7 +108,8 @@ function GraphView(spec) {
             zoom_obj: spec.zoom_obj,
             parent_graph_zoom_obj: spec.parent_graph_zoom_obj,
             parent_element: parent_element,
-            zen_mode_bus: new Bacon.Bus()
+            zen_mode_bus: new Bacon.Bus(),
+            layout_name_bus: new Bacon.Bus(),
         },
         temporary = spec.temporary,
         force_enabled = !spec.temporary,
@@ -1222,11 +1223,15 @@ function GraphView(spec) {
                 button.html(layout_data.name);
                 button.addClass(layout_data.clazz);
                 button.addClass('btn_layout');
+                button[0].style.borderStyle = layout.name === button_layout.name ? 'dashed' : 'solid';
                 button.on('click', function () {
                     set_layout(button_layout);
                     layout_btns.remove();
                 });
                 layout_menu.append(button);
+                gv.layout_name_bus.onValue(function (name) {
+                    button[0].style.borderStyle = name === button_layout.name ? 'dashed' : 'solid';
+                })
             });
         });
     }
@@ -1251,7 +1256,6 @@ function GraphView(spec) {
     }
 
     function set_layout(new_layout) {
-        $('#layout_name').html(new_layout.name);
         if (layout !== undefined) {
             layout.save();
             layout.stop();
@@ -1286,6 +1290,7 @@ function GraphView(spec) {
         if (change_zen_mode) {
             update_view(true);
         }
+        gv.layout_name_bus.push(new_layout.name);
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
