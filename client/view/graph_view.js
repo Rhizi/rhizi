@@ -1222,7 +1222,6 @@ function GraphView(spec) {
                 button.addClass(layout_data.clazz);
                 button.addClass('btn_layout');
                 button.on('click', function () {
-                    zen_mode__set(false);
                     set_layout(button_layout);
                     layout_btns.remove();
                 });
