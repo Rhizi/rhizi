@@ -193,10 +193,7 @@ var main = function ()
     // The mousedown is required because CSS3 transitions eat some events sometimes. This is
     // the closest I've come to an explanation:
     //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
-    plus_button.bind('click', function (e) {
-        e.preventDefault();
-    });
-    plus_button.bind("mousedown", function(e) {
+    plus_button.asEventStream('click mousedown').debounce(300).onValue(function (e) {
         submitNewSentence(input.value());
         e.preventDefault();
     });
