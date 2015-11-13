@@ -150,6 +150,7 @@ class TestRhiziAPI(RhiziTestBase):
     def test_commit_topo_add_links(self):
 
         with self.webapp.test_client() as c:
+            
             # add nodes
             nodeA = self.get_random_node()
             nodeB = self.get_random_node()
@@ -158,23 +159,56 @@ class TestRhiziAPI(RhiziTestBase):
             req = c.post('/api/rzdoc/diff-commit__topo',
                          content_type='application/json',
                          data=json.dumps(payload))
-            
+
+            # get nodes ids
             resp = json.loads(req.data)
             node_ids = resp["data"]["node_id_set_add"]
+            print node_ids
 
-            linkA = self.get_link(node_ids**)
-            linkB = self.get_link(node_ids**)
+            # create links
+            linkA = self.get_link(node_ids[0],node_ids[1])
+            linkB = self.get_link(node_ids[0],node_ids[1])
 
             topo_diff = { "link_set_add" : [ linkA, linkB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
-
             req = c.post('/api/rzdoc/diff-commit__topo',
                          content_type='application/json',
                          data=json.dumps(payload) )
+
+            resp = json.loads(req.data)
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
 
+    def test_commit_topo_delete_nodes(self):
 
+        with self.webapp.test_client() as c:
+            
+            # add nodes
+            nodeA = self.get_random_node()
+            nodeB = self.get_random_node()
+            topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
+            req = c.post('/api/rzdoc/diff-commit__topo',
+                         content_type='application/json',
+                         data=json.dumps(payload))
+
+            # get nodes ids
+            resp = json.loads(req.data)
+            node_ids = resp["data"]["node_id_set_add"]
+            print node_ids
+
+            # delete nodes
+            topo_diff = { "node_id_set_rm" : node_ids }
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
+            req = c.post('/api/rzdoc/diff-commit__topo',
+                 content_type='application/json',
+                 data=json.dumps(payload))
+
+            resp = json.loads(req.data)
+            print resp
+            self.assertEqual(req.status_code, 200)
+            self.assertEqual(len(resp["data"]["node_id_set_rm"]), 2)
+            self.assertEqual(resp["data"]["node_id_set_rm"], node_ids)
 
 @debug__pydev_pd_arg
 def main():
