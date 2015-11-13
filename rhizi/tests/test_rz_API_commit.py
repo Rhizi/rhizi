@@ -55,14 +55,14 @@ class TestRhiziAPI(RhiziTestBase):
         node["__label_set"] = [random.choice(groups)]
         return node
 
-    def get_random_link(self):
-        names =  ['Tom', 'Snappy', 'Kitty', 'Jessie', 'Chester']
-        groups =  ["friend", "foe", "neutral", "others"]
-        edge =  {}
-        edge["name"] = random.choice(names)
-        edge["id"] = str(random.getrandbits(32))
-        edge["__type"] = [random.choice(groups)]
-        return edge
+    def get_link(self, nodeA, nodeB):
+        relationships = ["loves", "hates", "despises", "admires", "ignores"]
+        link = {}
+        link["id"] = str(random.getrandbits(32))
+        link["__dst_id"] = nodeA["id"]
+        link["__src_id"] = nodeB["id"]
+        link["__type"] = [random.choice(relationships)]
+        return link
 
     def test_commit_topo_should_have_meta_attributes(self):
         """ API commit_topo should throw error with bad-formatted JSON""" 
@@ -86,6 +86,17 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertEqual(req.status_code, 500) # TODO : should throw 400
             self.assertIn("only single-label mapping currently supported for nodes", req.data)
 
+            node = self.get_random_node()
+            node["__label_set"] =  "hahah" # use string instead of list
+
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : {"node_set_add" :[ node ] }}
+            req = c.post('/api/rzdoc/diff-commit__topo',
+                             content_type='application/json',
+                             data=json.dumps(payload))
+            self.assertEqual(req.status_code, 500) # TODO : should throw 400
+            self.assertIn("with non-list type", req.data)
+
+
     def test_commit_topo_add_node(self):
         """ API should allow creation of new node"""
 
@@ -95,7 +106,7 @@ class TestRhiziAPI(RhiziTestBase):
             nodeB = self.get_random_node()
             print nodeA, nodeB
 
-            # attributes = 
+            # attributes
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
 
@@ -108,17 +119,21 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
 
-    def test_commit_topo_add_links(self):
+    def test_commit_topo_add_nodes_with_links(self):
         """ API should allow creation of new node"""
 
         with self.webapp.test_client() as c:
 
-            edgeA = self.get_random_link()
-            edgeB = self.get_random_link()
-            print edgeA, edgeB
+            nodeA = self.get_random_node()
+            nodeB = self.get_random_node()
+            print nodeA, nodeB
 
-            # attributes = 
-            topo_diff = { "link_set_add" : [ edgeA, edgeB ]  }
+            linkA = self.get_link(nodeA, nodeB)
+            linkB = self.get_link(nodeA, nodeB)
+            print linkA, linkB
+
+            # attributes
+            topo_diff = {  "node_set_add" : [ nodeA, nodeB ], "link_set_add" : [ linkA, linkB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
 
             req = c.post('/api/rzdoc/diff-commit__topo',
@@ -127,8 +142,10 @@ class TestRhiziAPI(RhiziTestBase):
 
             resp = json.loads(req.data)
             print resp
+
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
+            self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
 
 
 @debug__pydev_pd_arg
