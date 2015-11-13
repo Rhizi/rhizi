@@ -55,12 +55,12 @@ class TestRhiziAPI(RhiziTestBase):
         node["__label_set"] = [random.choice(groups)]
         return node
 
-    def get_link(self, nodeA, nodeB):
+    def get_link(self, nodeA_id, nodeB_id):
         relationships = ["loves", "hates", "despises", "admires", "ignores"]
         link = {}
         link["id"] = str(random.getrandbits(32))
-        link["__dst_id"] = nodeA["id"]
-        link["__src_id"] = nodeB["id"]
+        link["__dst_id"] = nodeA_id
+        link["__src_id"] = nodeB_id
         link["__type"] = [random.choice(relationships)]
         return link
 
@@ -128,8 +128,8 @@ class TestRhiziAPI(RhiziTestBase):
             nodeB = self.get_random_node()
             print nodeA, nodeB
 
-            linkA = self.get_link(nodeA, nodeB)
-            linkB = self.get_link(nodeA, nodeB)
+            linkA = self.get_link(nodeA["id"], nodeB["id"])
+            linkB = self.get_link(nodeA["id"], nodeB["id"])
             print linkA, linkB
 
             # attributes
@@ -146,6 +146,34 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
             self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
+
+    def test_commit_topo_add_links(self):
+
+        with self.webapp.test_client() as c:
+            # add nodes
+            nodeA = self.get_random_node()
+            nodeB = self.get_random_node()
+            topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
+            req = c.post('/api/rzdoc/diff-commit__topo',
+                         content_type='application/json',
+                         data=json.dumps(payload))
+            
+            resp = json.loads(req.data)
+            node_ids = resp["data"]["node_id_set_add"]
+
+            linkA = self.get_link(node_ids**)
+            linkB = self.get_link(node_ids**)
+
+            topo_diff = { "link_set_add" : [ linkA, linkB ]  }
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
+
+            req = c.post('/api/rzdoc/diff-commit__topo',
+                         content_type='application/json',
+                         data=json.dumps(payload) )
+            self.assertEqual(req.status_code, 200)
+            self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
+
 
 
 @debug__pydev_pd_arg
