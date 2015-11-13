@@ -53,7 +53,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 if (on_error && typeof (on_error) === "function") {
                     on_error(xhr, text_status, err_thrown);
                 }
-            };
+            }
 
             function on_success_wrapper(xhr, text) {
                 // log wrap callback
@@ -63,7 +63,7 @@ define(['util', 'model/core'], function(util, model_core) {
                 console.log('ajax success: return value: ' + ret_data);
                 if (on_success) {
                     on_success(ret_data);
-                };
+                }
             }
 
             /*
@@ -90,7 +90,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(req_data),
+                data : JSON.stringify(req_data)
             };
 
             return ajax_rs('/api/rzdoc/diff-commit__attr', req_opts, on_success,
@@ -107,7 +107,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(req_data),
+                data : JSON.stringify(req_data)
             };
 
             return ajax_rs('/api/rzdoc/diff-commit__topo', req_opts, on_success,
@@ -124,7 +124,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(req_data),
+                data : JSON.stringify(req_data)
             };
 
             return ajax_rs('/api/rzdoc/diff-commit__vis', req_opts, on_success,
@@ -141,7 +141,7 @@ define(['util', 'model/core'], function(util, model_core) {
 
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(req_data),
+                data : JSON.stringify(req_data)
             };
 
             return ajax_rs('/api/rzdoc/diff-commit__set', req_opts, on_success,
@@ -183,7 +183,7 @@ define(['util', 'model/core'], function(util, model_core) {
             // prep request
             var req_opts = {
                 type : 'POST',
-                data : JSON.stringify(req_data),
+                data : JSON.stringify(req_data)
             };
 
             return ajax_rs('/api/rzdoc/fetch/link-set/by_link_ptr_set', req_opts,
