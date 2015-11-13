@@ -143,25 +143,6 @@ class FlaskExt(Flask):
         # ret.headers['Access-Control-Allow-Methods'] = ', '.join(m_list)
         return ret
 
-def init_log(cfg):
-    """
-    init log file, location derived from configuration
-    """
-    log = logging.getLogger('rhizi')
-
-    log_level = logging._levelNames.get(cfg.log_level.upper())
-    assert None != log_level, 'failed to determine log level'
-
-    log.setLevel(log_level)
-    handlers = [logging.FileHandler(cfg.log_path),
-                logging.StreamHandler()]
-
-    formatter = logging.Formatter(u'%(asctime)s [%(levelname)s] %(name)s %(message)s')
-    for handler in handlers:
-        handler.setFormatter(formatter)
-        log.addHandler(handler)
-    return log
-
 def init_rest_interface(cfg, flask_webapp):
     """
     Initialize REST interface
@@ -304,113 +285,15 @@ def init_webapp(cfg, kernel):
     else:
         webapp.req_probe__sock_addr = FlaskExt.Req_Probe__sock_addr__direct(cfg.listen_port)
 
+    # HTML ERRORS HANDLING
+    @webapp.errorhandler(404)
+    def page_not_found(e):
+        return "Page not found, sorry"
+
+    # REST API endpoints
+    @webapp.route("/api/")
+    def flask_route_test():
+        return "Welcome to Rhizi API !"
+
     init_rest_interface(cfg, webapp)
     return webapp
-
-def init_config(cfg_dir):
-    cfg_path = os.path.join(cfg_dir, 'rhizi-server.conf')
-    cfg = RZ_Config.init_from_file(cfg_path)
-    return cfg
-
-def init_user_db(cfg):
-    global user_db
-
-    if not cfg.access_control:
-        user_db = Fake_User_DB()
-        return user_db
-
-    try:
-        if os.path.exists(cfg.user_db_path):
-            mode = 'w'  # anydbm doc: open existing database for reading and writing
-            log.info('user DB located, path: %s' % (cfg.user_db_path))
-        else:
-            mode = 'n'  # anydbm doc: create a new, empty database, open for reading and writing
-            log.info('user DB missing, generating one: path: %s' % (cfg.user_db_path))
-
-        user_db = User_DB(db_path=cfg.user_db_path)
-        user_db.init(mode=mode)
-    except Exception as e:
-        log.exception('failed to init user_db, configured user_db path: %s' % (cfg.user_db_path))
-        raise e
-
-    log.info('user DB initialized: path: %s, user-count: %s' % (cfg.user_db_path, user_db.user_count()))
-    return user_db
-
-def init_signal_handlers():
-
-    def signal_handler__exit(signum, frame):
-        log.info('received exit signal: SIGINT/SIGTERM')
-        shutdown()
-        exit(0)
-
-    signal.signal(signal.SIGINT, signal_handler__exit)
-    signal.signal(signal.SIGTERM, signal_handler__exit)
-
-def shutdown():
-    log.info('rz_server: shutting down')
-    user_db.shutdown()
-    webapp.kernel.shutdown()
-
-
-def main():
-
-    global log
-
-    try:  # enable pydev remote debugging
-        import pydevd
-        pydevd.settrace()
-    except ImportError:
-        pass
-
-    p = argparse.ArgumentParser(description='rhizi-server')
-    p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
-    args = p.parse_args()
-
-    log = logging.getLogger('rhizi')  # init config-unaware log, used until we call init_log
-
-    try:
-        cfg = init_config(args.config_dir)
-        log = init_log(cfg)
-    except Exception as e:
-        log.error('failed to initialize server: ' + e.message)
-        traceback.print_exc()
-        exit(-1)
-
-    try:
-        cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
-        log.info('loaded configuration:\n%s' % cfg_indent_str)  # print indented
-        if False == cfg.access_control:
-            log.warn('[!] access control disabled, all-granted access set on all URLs')
-
-        init_signal_handlers()
-        init_user_db(cfg)
-    except Exception as e:
-        log.exception('failed to initialize server')
-        traceback.print_exc()
-        exit(-1)
-
-    #
-    # init kernel
-    #
-    kernel = RZ_Kernel()
-    kernel.db_ctl = DB_Controller(cfg.db_base_url)
-
-    #
-    # init webapp
-    #
-    webapp = init_webapp(cfg, kernel)
-    webapp.user_db = user_db
-    kernel.db_op_factory = webapp  # assist kernel with DB initialization
-    ws_srv = init_ws_interface(cfg, kernel, webapp)
-
-    try:
-        kernel.start()
-        ws_srv.serve_forever()
-    except Exception as e:
-        log.exception(e)
-
-    shutdown()
-
-
-if __name__ == "__main__":
-    main()
