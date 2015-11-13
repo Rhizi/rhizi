@@ -55,6 +55,15 @@ class TestRhiziAPI(RhiziTestBase):
         node["__label_set"] = [random.choice(groups)]
         return node
 
+    def get_random_link(self):
+        names =  ['Tom', 'Snappy', 'Kitty', 'Jessie', 'Chester']
+        groups =  ["friend", "foe", "neutral", "others"]
+        edge =  {}
+        edge["name"] = random.choice(names)
+        edge["id"] = str(random.getrandbits(32))
+        edge["__type"] = [random.choice(groups)]
+        return edge
+
     def test_commit_topo_should_have_meta_attributes(self):
         """ API commit_topo should throw error with bad-formatted JSON""" 
         with self.webapp.test_client() as c:
@@ -68,7 +77,7 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertIn("missing type meta-attribute", req.data)
 
             node = self.get_random_node()
-            node["__label_set"].append("ha")
+            node["__label_set"].append("ha") # add a 2nd label
 
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : {"node_set_add" :[ node ] }}
             req = c.post('/api/rzdoc/diff-commit__topo',
@@ -98,6 +107,28 @@ class TestRhiziAPI(RhiziTestBase):
             print resp
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
+
+    def test_commit_topo_add_links(self):
+        """ API should allow creation of new node"""
+
+        with self.webapp.test_client() as c:
+
+            edgeA = self.get_random_link()
+            edgeB = self.get_random_link()
+            print edgeA, edgeB
+
+            # attributes = 
+            topo_diff = { "link_set_add" : [ edgeA, edgeB ]  }
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
+
+            req = c.post('/api/rzdoc/diff-commit__topo',
+                         content_type='application/json',
+                         data=json.dumps(payload))
+
+            resp = json.loads(req.data)
+            print resp
+            self.assertEqual(req.status_code, 200)
+            self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
 
 
 @debug__pydev_pd_arg
