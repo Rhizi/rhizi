@@ -23,11 +23,9 @@ from werkzeug.test import Client
 from werkzeug.test import EnvironBuilder
 
 from rhizi.db_op import DBO_raw_query_set
-from rhizi.rz_server import init_webapp
 from rhizi.tests.test_util__pydev import debug__pydev_pd_arg
 from rhizi.tests.util import RhiziTestBase
 
-from rhizi.rz_api_common import sanitize_input__rzdoc_name
 
 rzdoc_name = 'Test Document for Rhizi API'
 
