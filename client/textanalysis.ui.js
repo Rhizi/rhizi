@@ -125,7 +125,7 @@ function analyzeSentence(spec)
         break;
     }
 
-    if (finalize || sentence.length == 0) {
+    if (finalize || sentence.length === 0) {
         typeselection.hide();
     } else {
         rz_core.main_graph_view.nodes__user_visible(ret.existing_nodes(rz_core.main_graph));
@@ -175,7 +175,6 @@ var main = function ()
     input.on_type.onValue(function (up) {
             if (textanalysis.lastnode(rz_core.edit_graph, input.selectionStart())) {
                 changeType(up);
-                ret = false;
             }
         });
 

@@ -19,6 +19,8 @@
 define(['jquery', 'Bacon', 'underscore', 'util', 'view/completer', 'rz_bus', 'textanalysis', 'consts'],
 function($,        Bacon,           _,            util,        completer,   rz_bus,   textanalysis,   consts)
 {
+"use strict";
+
 // Aliases
 var value = util.value;
 
@@ -28,21 +30,22 @@ var nbsp = String.fromCharCode(160),
     VK_DOWN = consts.VK_DOWN,
     VK_ENTER = consts.VK_ENTER;
 
+
 function textanalyser_input(spec) {
     var selectionStart = function () {
         return util.selectionStart(element_raw);
-    }
+    };
 
     function key(val) {
         return function (e) {
             return e.keyCode === val;
         };
-    };
+    }
 
     function shift_key(val) {
         return function(e) {
             return e.keyCode === val && e.shiftKey;
-        }
+        };
     }
 
     function current_value() {
@@ -69,14 +72,14 @@ function textanalyser_input(spec) {
                        'analyser-span-link', 'analyser-span-space-link-node'],
             cursor_location = (undefined === input_cursor_location ? selectionStart() : input_cursor_location);
 
-        base_parts = current_text.split(/   */)
+        base_parts = current_text.split(/   */);
         parts = _.flatten(base_parts.slice(0, base_parts.length - 1).map(function (l) { return [l, '  ']; }));
-        if (base_parts[base_parts.length - 1].length != 0) {
+        if (base_parts[base_parts.length - 1].length !== 0) {
             parts.push(base_parts[base_parts.length - 1]);
         }
         function span(text, clazz) {
             return $('<span class="' + clazz + '">' + text.replace(/ /g, nbsp) + '</span>')[0];
-        };
+        }
 
         element.text('');
         parts.map(function (part, index) {
@@ -113,7 +116,7 @@ function textanalyser_input(spec) {
         input_bus = new Bacon.Bus(),
         selectionBus = element.asEventStream('selectstart input keyup').map(selectionStart).skipDuplicates();
 
-    function first_argument(one, two) { return one; };
+    function first_argument(one) { return one; }
 
     analysisCompleter.options.plug(
         textanalysis.suggestions_options
@@ -176,7 +179,7 @@ function textanalyser_input(spec) {
     }));
 
     return ta;
-};
+}
 
 return textanalyser_input;
 }
