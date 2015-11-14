@@ -113,8 +113,8 @@ function textanalyser_input(spec) {
         },
         analysisCompleter = completer(element, $(spec.completer_name), completer_spec),
         document_keydown = new Bacon.Bus(),
-        input_bus = new Bacon.Bus(),
-        selectionBus = element.asEventStream('selectstart input keyup').map(selectionStart).skipDuplicates();
+        selectionBus = element.asEventStream('selectstart input keyup').map(selectionStart).skipDuplicates(),
+        plus_button = $('#btn_add');
 
     function first_argument(one) { return one; }
 
@@ -139,7 +139,6 @@ function textanalyser_input(spec) {
 
             if (!analysisCompleter.handleEnter()) {
                 text = current_value();
-                value(element_raw, "");
                 return text;
             } else {
                 return false;
@@ -154,10 +153,36 @@ function textanalyser_input(spec) {
         return e;
     }
     function stream_shift_key(key) {
-        return element.asEventStream('keydown').filter(shift_key(key)).map(prevent_default_and_stop_propagation)
+        return element.asEventStream('keydown')
+            .filter(shift_key(key))
+            .map(prevent_default_and_stop_propagation);
     }
 
-    ta.on_sentence = enters.filter(function (v) { return v !== false; });
+    // Click is required to prevent the default action - this is a form so that's a post,
+    // and away we go.
+    // The mousedown is required because CSS3 transitions eat some events sometimes. This is
+    // the closest I've come to an explanation:
+    //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
+    var plus_clicks = plus_button.asEventStream('click mousedown')
+        .map(function (e) {
+            e.preventDefault();
+        })
+        .throttle(100);
+
+    ta.on_resize.onValue(function () {
+        plus_button.offset({'left': element.offset().left + element.width() - 18});
+    });
+
+    function clear_and_return() {
+        var v = current_value();
+        value(element_raw, "");
+        return v;
+    }
+
+    ta.on_sentence = enters
+        .filter(function (v) { return v !== false; })
+        .merge(plus_clicks)
+        .map(clear_and_return);
     ta.on_analysis__input.plug(enters.filter(function (v) { return v === false; }).map(current_value));
     ta.on_type = stream_shift_key(VK_UP).map(true).merge(stream_shift_key(VK_DOWN).map(false));
 
@@ -177,6 +202,10 @@ function textanalyser_input(spec) {
     ta.on_analysis__input.plug(element.asEventStream('input').map(current_value).map(function (val) {
         return update_element(val);
     }));
+
+    ta.clear = function () {
+        value(element_raw, "");
+    };
 
     return ta;
 }

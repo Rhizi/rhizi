@@ -26,10 +26,8 @@ var element_name = '#textanalyser',
         'element_name': element_name,
         'completer_name': '#input-suggestion'
         }),
-    plus_button = $('#btn_add'),
     description = consts.description,
-    input_bus = new Bacon.Bus(),
-    plus_button_initial_offset = plus_button.offset();
+    input_bus = new Bacon.Bus();
 
 function get_svg__body_position(node_id)
 {
@@ -186,20 +184,6 @@ var main = function ()
                 finalize: true
             });
     }
-
-    // Click is required to prevent the default action - this is a form so that's a post,
-    // and away we go.
-    // The mousedown is required because CSS3 transitions eat some events sometimes. This is
-    // the closest I've come to an explanation:
-    //   http://stackoverflow.com/questions/15786891/browser-sometimes-ignores-a-jquery-click-event-during-a-css3-transform
-    plus_button.asEventStream('click mousedown').debounce(300).onValue(function (e) {
-        submitNewSentence(input.value());
-        e.preventDefault();
-    });
-
-    input.on_resize.onValue(function () {
-        plus_button.offset({'left': input.element.offset().left + input.element.width() - 18});
-    });
 
     rz_bus.ui_input.plug(input_bus);
 };
