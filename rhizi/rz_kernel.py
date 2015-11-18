@@ -241,12 +241,12 @@ class RZ_Kernel(object):
         self.executor.shutdown()
         log.info('rz_kernel: shutting down')
 
-    def cache_lookup__rzdoc(self, rzdoc_name):
+    def cache_lookup__rzdoc(self, rzdoc_name, raise_if_missing=True):
         """
         lookup RZDoc by rzdoc_name, possibly triggering a DB query
 
-        @return: RZDoc
-        @raise RZDoc_Exception__not_found
+        @raise RZDoc_Exception__not_found if raise_if_missing
+        @return: RZDoc or None
         """
         # FIXME: impl cache cleansing logic
 
@@ -257,7 +257,9 @@ class RZ_Kernel(object):
         rz_doc = self.rzdoc__lookup_by_name(rzdoc_name)
 
         if None == rz_doc:
-            raise RZDoc_Exception__not_found(rzdoc_name)
+            if raise_if_missing:
+                raise RZDoc_Exception__not_found(rzdoc_name)
+            return None
 
         self.cache__rzdoc_name_to_rzdoc[rzdoc_name] = rz_doc
         return rz_doc
@@ -377,11 +379,9 @@ class RZ_Kernel(object):
         @return: RZDoc object
         @raise RZDoc_Exception__already_exists
         """
-        try:
-            self.cache_lookup__rzdoc(rzdoc_name)
+        existing_doc = self.cache_lookup__rzdoc(rzdoc_name, raise_if_missing=False)
+        if existing_doc is not None:
             raise RZDoc_Exception__already_exists(rzdoc_name)
-        except RZDoc_Exception__not_found:
-            pass
 
         rzdoc = RZDoc(rzdoc_name)
         rzdoc.id = generate_random_rzdoc_id()
