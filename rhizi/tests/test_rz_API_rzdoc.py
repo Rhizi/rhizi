@@ -58,17 +58,17 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertIn("sorry", req.data) # say sorry on 404
 
     def test_index_redirect(self):
-        """" Index '/' should redirect to '/index' """
+        """ Index '/' should redirect to '/index' """
         with self.webapp.test_client() as c:
-            resp = c.get('/') 
+            resp = c.get('/')
             self.assertIn("/index", resp.location)
-            self.assertEqual(resp.status_code, 302) # 
+            self.assertEqual(resp.status_code, 302) #
 
     # def test_index_html(self):
     #     """" '/index' should serve a static page with the right context"""
     #     with self.webapp.test_client() as c:
     #         resp = c.get('/index')
-    #         self.assertEqual(resp.status_code, 201) 
+    #         self.assertEqual(resp.status_code, 201)
     #         self.assertIn("rhizi", resp.data) # company name should be in the homepage
 
     def test_create_new_doc(self):
@@ -95,9 +95,9 @@ class TestRhiziAPI(RhiziTestBase):
                          content_type='application/json',
                          data=json.dumps({}))
             req_data = json.loads(req.data)
-            self.assertEqual(req.status_code, 500) # raise error 
+            self.assertEqual(req.status_code, 500) # raise error
             self.assertIn("already exists", req.data) # return error message
-            
+
             # delete doc
             self.kernel.rzdoc__delete(lookup_duplicate_doc)
 
@@ -109,7 +109,7 @@ class TestRhiziAPI(RhiziTestBase):
             req = c.delete('/api/rzdoc/test_delete_doc/delete',
                          content_type='application/json',
                          data=json.dumps({}))
-            self.assertEqual(req.status_code, 204) # deletion ok 
+            self.assertEqual(req.status_code, 204) # deletion ok
 
             lookup_duplicate_doc = self.kernel.rzdoc__lookup_by_name("test_duplicate_doc")
             self.assertEqual(lookup_duplicate_doc, None)
