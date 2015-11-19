@@ -1,7 +1,7 @@
 console.log("loading *TEST* domain types");
 
 define({
-    type_attributes: [
+    types: [
         ['collaborator', {
             'title': 'Collaborator',
             'attributes': ['affiliation',

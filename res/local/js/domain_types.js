@@ -1,5 +1,5 @@
 define({
-    type_attributes: [
+    types: [
         ['collaborator', {
             'title': 'Collaborator',
             'attributes': ['affiliation',
