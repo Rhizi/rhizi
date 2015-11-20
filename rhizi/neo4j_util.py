@@ -298,7 +298,7 @@ def post_neo4j(url, data):
     @return dict object from the neo4j json POST response
     """
     ret = post(url, data)
-    ret_data = json.load(ret)
+    ret_data = json.loads(ret.read().decode('utf-8'))
 
     # [!] do not raise exception if ret_data['errors'] is not empty -
     # this allows query-sets to partially succeed
@@ -308,7 +308,7 @@ def post_neo4j(url, data):
 def post(url, data):
     assert(isinstance(data, dict))  # make sure we're not handed json strings
 
-    post_data_json = json.dumps(data)
+    post_data_json = json.dumps(data).encode('utf-8')
 
     req = request.Request(url)
     req.add_header('User-Agent', 'rhizi-server/0.1')

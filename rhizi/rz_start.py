@@ -66,7 +66,7 @@ def init_log(cfg):
     """
     log = logging.getLogger('rhizi')
 
-    log_level = logging._levelNames.get(cfg.log_level.upper())
+    log_level = logging.getLevelName(cfg.log_level.upper())
     assert None != log_level, 'failed to determine log level'
 
     log.setLevel(log_level)

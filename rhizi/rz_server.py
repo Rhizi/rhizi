@@ -155,6 +155,8 @@ def init_rest_interface(cfg, flask_webapp):
         def redirector():
             return redirect(path_to, code=302)
         redirector.func_name = 'redirector_%s' % path.replace('/', '_')
+        assert 'endpoint' not in flask_args
+        flask_args['endpoint'] = redirector.func_name
         return (path, redirector, flask_args)
 
     def login_decorator(f):
