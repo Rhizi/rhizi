@@ -248,4 +248,4 @@ def init_ws_interface(cfg, kernel, flask_webapp):
                                                        kernel.diff_commit__attr,
                                                        f_multicast=WebSocket_Graph_NS.on_diff_commit__attr)
 
-    return ws_srv;
+    return ws_srv
