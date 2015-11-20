@@ -425,7 +425,8 @@ class TestDBController(RhiziTestBase):
         print('%s' % (dbmb))
 
 
-    def tearDown(self): pass
+    def tearDown(self):
+        pass
 
 @debug__pydev_pd_arg
 def main():
