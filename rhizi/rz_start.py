@@ -56,6 +56,10 @@ from . import rz_server_ctrl
 from . import rz_user
 from .rz_user_db import User_DB, Fake_User_DB
 
+
+webapp = None
+
+
 def init_log(cfg):
     """
     init log file, location derived from configuration
@@ -75,10 +79,12 @@ def init_log(cfg):
         log.addHandler(handler)
     return log
 
+
 def init_config(cfg_dir):
     cfg_path = os.path.join(cfg_dir, 'rhizi-server.conf')
     cfg = RZ_Config.init_from_file(cfg_path)
     return cfg
+
 
 def init_user_db(cfg):
     global user_db
@@ -104,6 +110,7 @@ def init_user_db(cfg):
     log.info('user DB initialized: path: %s, user-count: %s' % (cfg.user_db_path, user_db.user_count()))
     return user_db
 
+
 def init_signal_handlers():
 
     def signal_handler__exit(signum, frame):
@@ -114,14 +121,18 @@ def init_signal_handlers():
     signal.signal(signal.SIGINT, signal_handler__exit)
     signal.signal(signal.SIGTERM, signal_handler__exit)
 
+
 def shutdown():
     log.info('rz_server: shutting down')
     user_db.shutdown()
-    webapp.kernel.shutdown()
+    if webapp is not None:
+        webapp.kernel.shutdown()
+
 
 def main():
 
     global log
+    global webapp
 
     try:  # enable pydev remote debugging
         import pydevd
@@ -177,6 +188,7 @@ def main():
         log.exception(e)
 
     shutdown()
+
 
 if __name__ == "__main__":
     main()
