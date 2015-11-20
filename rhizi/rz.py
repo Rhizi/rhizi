@@ -19,7 +19,7 @@ import sys
 import os
 import time
 
-from .rz_server import init_config, init_webapp
+from .rz_start import init_config, init_webapp
 from .rz_user_db import Fake_User_DB
 from .rz_kernel import RZ_Kernel
 from . import db_controller as dbc

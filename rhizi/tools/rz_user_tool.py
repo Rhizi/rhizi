@@ -23,7 +23,7 @@ import sys
 from getpass import getpass
 
 from .. crypt_util import hash_pw
-from .. rz_server import init_config
+from .. rz_start import init_config
 from .. rz_user import User_Account
 from .. rz_user_db import User_DB
 
