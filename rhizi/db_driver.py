@@ -72,7 +72,7 @@ class DB_Driver_REST(DB_Driver_Base):
 
             log.debug('tx-open: id: {0}, commit-url: {1}'.format(op.tx_id, tx_commit_url))
         except Exception as e:
-            raise Exception('failed to open transaction: ' + e.message)
+            raise Exception('failed to open transaction: {}'.format(e.args))
 
     def exec_query_set(self, op):
 

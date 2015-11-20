@@ -150,7 +150,7 @@ def main():
         cfg = init_config(args.config_dir)
         log = init_log(cfg)
     except Exception as e:
-        log.error('failed to initialize server: ' + e.message)
+        log.error('failed to initialize server: {}'.format(e.args))
         traceback.print_exc()
         exit(-1)
 

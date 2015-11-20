@@ -19,6 +19,8 @@
 
 import logging
 
+import six
+
 from .db_driver import DB_Driver_REST, DB_Driver_Base
 from .db_op import DB_composed_op
 from .db_op import DB_op
@@ -58,7 +60,8 @@ class DB_Controller(object):
             self.db_driver.commit_tx(op)
 
             op_ret = op.process_result_set()
-            log.debug('exec_op: ' + op.name + ': return value: ' + unicode(op_ret)[:256])  # trim verbose return values
+            log.debug('exec_op: {}: return value: {}'.format(op.name,
+                      six.u(str(op_ret))[:256]))  # trim verbose return values
             return op_ret
 
         except Neo4JException as e:

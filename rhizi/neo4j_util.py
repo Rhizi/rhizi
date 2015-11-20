@@ -186,8 +186,8 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
         q_params_set = []
         for n_prop_set in n_set:
 
-            assert n_prop_set.has_key('id'), 'node create query: node id attribute not set'
-            assert not n_prop_set.has_key('__label_set'), 'node create query: out-of-place \'__label_set\' attribute in attribute set'
+            assert 'id' in n_prop_set, 'node create query: node id attribute not set'
+            assert '__label_set' not in n_prop_set, 'node create query: out-of-place \'__label_set\' attribute in attribute set'
 
             q_params = input_to_DB_property_map(n_prop_set)
             q_params_set.append(q_params)
@@ -218,9 +218,9 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
                  ]
 
         for link in l_set:
-            assert link.has_key('__src_id')
-            assert link.has_key('__dst_id')
-            assert link.has_key('id'), 'link create query: link id attribute not set'
+            assert '__src_id' in link
+            assert '__dst_id' in link
+            assert 'id' in link, 'link create query: link id attribute not set'
 
             # TODO: use object based link representation
             l_prop_set = link.copy()

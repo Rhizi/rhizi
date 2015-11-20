@@ -69,7 +69,7 @@ def __context__common(rzdoc_name=None):
     """
 
     ret = Req_Context()
-    if session.has_key('username'):
+    if 'username' in session:
         ret.user_name = session['username']
 
     if None != rzdoc_name:
