@@ -1,4 +1,4 @@
-FROM fedora:21
+FROM fedora:22
 MAINTAINER Alon Levy <alon@pobox.com>
 RUN yum install -y dnf
 # development requirements

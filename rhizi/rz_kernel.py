@@ -93,7 +93,7 @@ def deco__exception_log(kernel_f):
             ret = kernel_f(self, *args, **kwargs)
             return ret
         except Exception as e:
-            log.error(e.message)
+            log.error(e.args)
             log.error(traceback.print_exc())
             raise e
 
