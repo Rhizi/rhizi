@@ -21,6 +21,7 @@ from flask import Flask
 from flask import redirect
 from flask import request
 from flask import session
+from flask import jsonify
 from functools import wraps
 import logging
 import os
@@ -163,8 +164,18 @@ def init_rest_interface(cfg, flask_webapp):
         """
         @wraps(f)
         def wrapped_function(*args, **kw):
+
             if None == session.get('username'):
-                return redirect('/login')
+                if request.path[0:4] == "/api":
+                    message = {
+                            'status': 403,
+                            'message': 'Operation not authorized : ' + request.url,
+                    }
+                    resp = jsonify(message)
+                    resp.status_code = 403
+                    return resp
+                else :
+                    return redirect('/login')
             return f(*args, **kw)
 
         return wrapped_function
