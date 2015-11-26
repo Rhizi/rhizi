@@ -35,7 +35,7 @@ with open('README.md') as readme_file:
 
 # parse requirements
 with open('requirements.txt') as f:
-    required = f.read().splitlines()
+    required = [x for x in f.read().splitlines() if 'git+https' not in x] # TODO - how to fix this?
 
 # parse requirements for python 2
 if sys.version_info[0] == 2:
