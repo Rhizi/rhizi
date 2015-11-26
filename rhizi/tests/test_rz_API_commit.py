@@ -105,6 +105,12 @@ class TestRhiziAPI(RhiziTestBase):
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 200)
+            # read it back, make sure it appears as an empty label
+            link_id = resp['data']['link_id_set_add'][0]
+            req, resp = self._json_post(c, '/api/rzdoc/clone', { 'rzdoc_name' : self.rzdoc_name })
+            new_link_label = [l['__type'] for l in resp['data'][0]['link_set_add'] if l['id'] == link_id][0][0]
+            self.assertEqual(req.status_code, 200)
+            self.assertEqual(new_link_label, '')
 
     def test_commit_topo_add_node(self):
         """ API should allow creation of new node"""

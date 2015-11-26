@@ -31,6 +31,7 @@ from .neo4j_util import cfmt
 from .neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
     quote__singlequote, rzdoc__meta_ns_label, quote__backtick
 from . import neo4j_util
+from .neo4j_util import RESERVED_LABEL__EMPTY_STRING
 from . import neo4j_schema
 from . import neo4j_util as db_util
 
@@ -954,6 +955,8 @@ class DBO_rzdoc__clone(DB_op):
         return label_set
 
     def process_q_ret__l_type(self, l_type):
+        if l_type == RESERVED_LABEL__EMPTY_STRING:
+            l_type = ''
         return [l_type]  # return as list
 
 class DBO_rzdoc__create(DB_op):
