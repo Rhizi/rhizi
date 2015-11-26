@@ -32,8 +32,8 @@ class RZCommit():
         """
         @return json.loads(gzip_decompress(base64_decode(blob)))
         """
-        blob_gzip = base64.decodestring(blob)
-        blob = gzip.zlib.decompress(blob_gzip)
+        blob_gzip = base64.decodestring(blob.encode('utf-8'))
+        blob = gzip.zlib.decompress(blob_gzip).decode()
         return json.loads(blob)
 
     @staticmethod
