@@ -64,6 +64,11 @@ class TestRhiziAPI(RhiziTestBase):
         link["__type"] = [random.choice(relationships)]
         return link
 
+    def get_link_empty_type(self, nodeA_id, nodeB_id):
+        link = self.get_link(nodeA_id, nodeB_id)
+        link['__type'] = ['']
+        return link
+
     def test_commit_topo_should_have_meta_attributes(self):
         """ API commit_topo should throw error with bad-formatted JSON"""
         with self.webapp.test_client() as c:
@@ -89,6 +94,17 @@ class TestRhiziAPI(RhiziTestBase):
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 500) # TODO : should throw 400
             self.assertIn("with non-list type", req.data.decode('utf-8'))
+
+    def test_commit_topo_add_link_empty_name(self):
+        """ API must allow empty names on links """
+        with self.webapp.test_client() as c:
+            nodeA = self.get_random_node()
+            nodeB = self.get_random_node()
+            linkA = self.get_link_empty_type(nodeA["id"], nodeB["id"])
+            topo_diff = { "node_set_add" : [ nodeA, nodeB ], 'link_set_add': [ linkA ] }
+            payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
+            self.assertEqual(req.status_code, 200)
 
     def test_commit_topo_add_node(self):
         """ API should allow creation of new node"""

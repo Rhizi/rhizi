@@ -33,6 +33,8 @@ from . import neo4j_schema
 from .util import debug_log_duration
 
 
+RESERVED_LABEL__EMPTY_STRING = '__EMPTY_STRING__'
+
 class Neo4JException(Exception):
     def __init__(self, error_set):
         self.error_set = error_set
@@ -209,6 +211,8 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     ret = []
     for l_type, l_set in link_map.items():
 
+        if l_type == '':
+            l_type = RESERVED_LABEL__EMPTY_STRING
         validate_label(l_type);
 
         q_arr = ['match (src {id: {src}.id}), (dst {id: {dst}.id})',
