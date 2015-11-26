@@ -15,9 +15,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
 import base64
 import gzip
 import json
+
+
+python2 = sys.version_info[0] == 2
+
 
 class RZCommit():
     """
@@ -41,9 +46,11 @@ class RZCommit():
         """
         @return: blob = base64(gzip(json.dumps(obj)))
         """
-        obj_str = json.dumps(obj)
-        blob_gzip = gzip.zlib.compress(obj_str)
+        obj_bytes = json.dumps(obj).encode('utf-8')
+        blob_gzip = gzip.zlib.compress(obj_bytes)
         blob_base64 = base64.encodestring(blob_gzip)
+        if not python2:
+            blob_base64 = blob_base64.decode('utf-8')
 
         return blob_base64
 
