@@ -1,6 +1,6 @@
 machine:
         python:
-                version: 2.7.10
+                version: 2.7.10 3.5
         environment:
                 RHIZI_TESTS__EXTERNAL_NEO4J_PROCESS: true
                 RHIZI_TESTS__EXTERNAL_MTA_PROCESS: true
