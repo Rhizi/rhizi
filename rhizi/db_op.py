@@ -466,26 +466,26 @@ class DBO_diff_commit__topo(DB_composed_op):
         it = self.iter__sub_op()
 
         if self.n_add_map:
-            for _, _, r_set in it.next().iter__r_set():  # iterate over result sets
+            for _, _, r_set in next(it).iter__r_set():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
                         n_id = ret_dict['id']  # see query return statement
                         ret_nid_set_add.append(n_id)
 
         if self.l_add_map:
-            for _, _, r_set in it.next().iter__r_set():  # iterate over result sets
+            for _, _, r_set in next(it).iter__r_set():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
                         l_id = ret_dict['id']  # see query return statement
                         ret_lid_set_add.append(l_id)
 
         if self.l_rm_set:
-            for _, _, row_set in it.next().iter__r_set():
+            for _, _, row_set in next(it).iter__r_set():
                 for l_id in row_set:
                     ret_lid_set_rm.extend(l_id)
 
         if self.n_rm_set:
-            for _, _, row_set in it.next().iter__r_set():
+            for _, _, row_set in next(it).iter__r_set():
                 for n_id in row_set:
                     ret_nid_set_rm.extend(n_id)
 
