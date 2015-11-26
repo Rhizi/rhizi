@@ -34,6 +34,7 @@ from . import neo4j_util
 from . import neo4j_schema
 from . import neo4j_util as db_util
 
+
 log = logging.getLogger('rhizi')
 
 
@@ -1071,5 +1072,3 @@ class DBO_rzdoc__rename(DB_op):
         rzdoc = RZDoc(rzdoc_name=rzdoc_dict['name'])
         rzdoc.id = rzdoc_dict['id']
         return rzdoc
-
-

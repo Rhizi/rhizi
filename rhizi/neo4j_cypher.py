@@ -61,7 +61,6 @@ class Query_Struct_Type(Enum):
         return super(Query_Struct_Type, self).__eq__(other)
 
 
-
 class DB_Query(object):
     """
     DB query object
