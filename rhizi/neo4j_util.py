@@ -26,6 +26,7 @@ import uuid
 
 from six.moves.urllib import request
 import six.moves.urllib_error as urllib_error
+from six import iteritems
 
 from .neo4j_cypher_parser import tok__quote__backquote, tok__quote__singlequote
 from . import neo4j_schema
@@ -57,7 +58,7 @@ class Cypher_String_Formatter(string.Formatter):
         return val
 
 def __type_check_link_or_node_map(x_map):
-    for k, v in x_map.iteritems():  # do some type sanity checking
+    for k, v in iteritems(x_map):  # do some type sanity checking
         assert isinstance(k, six.string_types)
         assert isinstance(v, list)
 
