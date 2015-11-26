@@ -231,7 +231,7 @@ class DBO_block_chain__commit(DB_op):
     """
 
     @staticmethod
-    def calc_blob_hash(blob=''):
+    def calc_blob_hash(blob=b''):
         """
         Calculate blog hash value
         """
@@ -249,7 +249,7 @@ class DBO_block_chain__commit(DB_op):
         super(DBO_block_chain__commit, self).__init__()
 
         blob = RZCommit.blob_from_diff_obj(commit_obj)
-        hash_value = self.calc_blob_hash(blob)
+        hash_value = self.calc_blob_hash(blob.encode('utf-8'))
 
         l_id = generate_random_id__uuid()
 
