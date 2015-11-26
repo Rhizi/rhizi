@@ -24,6 +24,7 @@ from functools import wraps
 import logging
 import time
 import traceback
+import sys
 
 from .db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__create,
     DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__search,
@@ -36,6 +37,8 @@ from .model.model import RZDoc
 from .neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
 from .neo4j_util import generate_random_rzdoc_id
 
+
+python2 = sys.version_info[0] == 2
 
 log = logging.getLogger('rhizi')
 
@@ -93,8 +96,9 @@ def deco__exception_log(kernel_f):
             ret = kernel_f(self, *args, **kwargs)
             return ret
         except Exception as e:
-            log.error(e.args)
-            log.error(traceback.print_exc())
+            if python2:
+                log.error(e.args)
+                log.error(traceback.print_exc())
             raise e
 
     return f_decorated

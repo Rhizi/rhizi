@@ -18,6 +18,7 @@
 #!/usr/bin/python
 
 import logging
+import sys
 
 import six
 
@@ -26,6 +27,8 @@ from .db_op import DB_composed_op
 from .db_op import DB_op
 from .neo4j_util import Neo4JException
 
+
+python2 = sys.version_info[0] == 2
 
 log = logging.getLogger('rhizi')
 
@@ -65,7 +68,8 @@ class DB_Controller(object):
             return op_ret
 
         except Neo4JException as e:
-            log.exception(e)  # Neo4JException may be composed of several sub errors, defer to class __str__
+            if python2:
+                log.exception(e)  # Neo4JException may be composed of several sub errors, defer to class __str__
             raise e
         except Exception as e:
             # here we watch for IOExecptions, etc - not db errors
