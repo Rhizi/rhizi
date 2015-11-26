@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
 import logging
 
 from .neo4j_util import Neo4JException
@@ -22,6 +23,10 @@ from . import neo4j_util as db_util
 
 
 log = logging.getLogger('rhizi')
+
+
+python2 = sys.version_info[0] == 2
+
 
 class DB_Driver_Base():
 
@@ -95,8 +100,9 @@ class DB_Driver_REST(DB_Driver_Base):
             raise e
         except Exception as e:
             log.error('REST statement: %r' % statement_param_pair_set)
-            log.exception(e)
-            raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.message, tx_url))
+            if python2:
+                log.exception(e)
+            raise Exception('failed exec op statements: err: {0}, url: {1}'.format(e.args, tx_url))
 
     def commit_tx(self, op):
         tx_commit_url = "{0}/{1}/commit".format(self.tx_base_url, op.tx_id)
