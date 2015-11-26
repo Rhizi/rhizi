@@ -1,7 +1,8 @@
 click==5.1
 futures==3.0.3
 gevent==1.1rc1
-gevent-socketio==0.3.6
+# missing python 3 fixes in our fork gevent-socketio==0.3.6
+git+https://github.com/Rhizi/gevent-socketio.git@f0271d86b18ff092143de92f1cd8e61e923788f9#egg=gevent-socketio
 gevent-websocket==0.9.5
 greenlet==0.4.9
 flask==0.10.1
