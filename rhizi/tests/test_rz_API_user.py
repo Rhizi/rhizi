@@ -43,11 +43,8 @@ class Test_RZ_User(RhiziTestBase):
                                                         ('bob@c.org', 400)]:
 
                 us_req['email_address'] = email_address
-                req = test_client.post('/signup',
-                                       content_type='application/json',
-                                       data=json.dumps(us_req))
+                req, req_data = self._json_post(test_client, '/signup', us_req)
 
-                req_data = json.loads(req.data)
                 self.assertEqual(expected_status_code, req.status_code, req_data)
 
 

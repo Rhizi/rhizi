@@ -25,13 +25,14 @@ from time import sleep
 import socket
 import sys
 import os
-import urllib2
+from six.moves.urllib.request import urlopen
 import subprocess
 import atexit
 from glob import glob
 import tarfile
 import functools
 from unittest import TestCase
+import json
 
 from .. import db_controller as dbc
 from ..model.graph import Topo_Diff
@@ -105,7 +106,7 @@ org.neo4j.server.webadmin.rrdb.location=data/rrd
 
 
 def httpget(src, dst):
-    src_sock = urllib2.urlopen(src)
+    src_sock = urlopen(src)
     total_length = int(src_sock.headers.get('content-length', 0))
     read_length = 0
     with open(dst, 'w+') as fd:
@@ -216,7 +217,7 @@ def kill_subprocesses():
             f()
         except OSError:
             pass
-    do = lambda f: map(f, subprocesses)
+    do = lambda f: list(map(f, subprocesses))
     ignore_os_error(lambda: do(lambda p: p.kill()))
     sleep(0.01)
     awake = [p for p in subprocesses if p.poll() is None]
@@ -337,7 +338,7 @@ def initialize_test_kernel():
     log = logging.getLogger('rhizi')
     log.setLevel(logging.DEBUG)
     log_handler_c = logging.FileHandler('rhizi-tests.log')
-    log_handler_c.setFormatter(logging.Formatter(u'%(asctime)s [%(levelname)s] %(name)s %(message)s'))
+    log_handler_c.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(name)s %(message)s'))
     log.addHandler(log_handler_c)
 
     # clear db !!!
@@ -373,6 +374,11 @@ class RhiziTestBase(TestCase):
         rz_api.db_ctl = clz.db_ctl
         clz.kernel = kernel
         clz.webapp = webapp
+
+    def _json_post(self, c, path, payload):
+        req = c.post(path, content_type='application/json', data=json.dumps(payload))
+        resp = json.loads(req.data.decode('utf-8'))
+        return req, resp
 
 
 def test_main():

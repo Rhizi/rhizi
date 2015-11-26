@@ -17,8 +17,8 @@ def run_python_script(s, args):
         old_argv = sys.argv
         sys.argv = [s] + args
         try:
-            exec fd
-        except Exception, e:
+            exec(fd.read())
+        except Exception as e:
             ret = -1, str(e)
         else:
             ret = 0, None

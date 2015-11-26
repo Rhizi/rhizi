@@ -65,37 +65,30 @@ class TestRhiziAPI(RhiziTestBase):
         return link
 
     def test_commit_topo_should_have_meta_attributes(self):
-        """ API commit_topo should throw error with bad-formatted JSON""" 
+        """ API commit_topo should throw error with bad-formatted JSON"""
         with self.webapp.test_client() as c:
             node = { "id" : str(random.getrandbits(32))} #node without __label_set value
 
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : {"node_set_add" :[ node ] }}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                             content_type='application/json',
-                             data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 500) # TODO : should throw 400
-            self.assertIn("missing type meta-attribute", req.data)
+            self.assertIn("missing type meta-attribute", req.data.decode('utf-8'))
 
             node = self.get_random_node()
             node["__label_set"].append("ha") # add a 2nd label
 
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : {"node_set_add" :[ node ] }}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                             content_type='application/json',
-                             data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 500) # TODO : should throw 400
-            self.assertIn("only single-label mapping currently supported for nodes", req.data)
+            self.assertIn("only single-label mapping currently supported for nodes", req.data.decode('utf-8'))
 
             node = self.get_random_node()
             node["__label_set"] =  "hahah" # use string instead of list
 
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : {"node_set_add" :[ node ] }}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                             content_type='application/json',
-                             data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 500) # TODO : should throw 400
-            self.assertIn("with non-list type", req.data)
-
+            self.assertIn("with non-list type", req.data.decode('utf-8'))
 
     def test_commit_topo_add_node(self):
         """ API should allow creation of new node"""
@@ -104,18 +97,12 @@ class TestRhiziAPI(RhiziTestBase):
 
             nodeA = self.get_random_node()
             nodeB = self.get_random_node()
-            print nodeA, nodeB
 
             # attributes
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
 
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                         content_type='application/json',
-                         data=json.dumps(payload))
-
-            resp = json.loads(req.data)
-            print resp
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
 
@@ -126,22 +113,15 @@ class TestRhiziAPI(RhiziTestBase):
 
             nodeA = self.get_random_node()
             nodeB = self.get_random_node()
-            print nodeA, nodeB
 
             linkA = self.get_link(nodeA["id"], nodeB["id"])
             linkB = self.get_link(nodeA["id"], nodeB["id"])
-            print linkA, linkB
 
             # attributes
             topo_diff = {  "node_set_add" : [ nodeA, nodeB ], "link_set_add" : [ linkA, linkB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
 
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                         content_type='application/json',
-                         data=json.dumps(payload))
-
-            resp = json.loads(req.data)
-            print resp
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
 
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
@@ -150,20 +130,16 @@ class TestRhiziAPI(RhiziTestBase):
     def test_commit_topo_add_links(self):
 
         with self.webapp.test_client() as c:
-            
+
             # add nodes
             nodeA = self.get_random_node()
             nodeB = self.get_random_node()
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                         content_type='application/json',
-                         data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
 
             # get nodes ids
-            resp = json.loads(req.data)
             node_ids = resp["data"]["node_id_set_add"]
-            print node_ids
 
             # create links
             linkA = self.get_link(node_ids[0],node_ids[1])
@@ -171,41 +147,30 @@ class TestRhiziAPI(RhiziTestBase):
 
             topo_diff = { "link_set_add" : [ linkA, linkB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                         content_type='application/json',
-                         data=json.dumps(payload) )
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
 
-            resp = json.loads(req.data)
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["link_id_set_add"]), 2)
 
     def test_commit_topo_delete_nodes(self):
 
         with self.webapp.test_client() as c:
-            
+
             # add nodes
             nodeA = self.get_random_node()
             nodeB = self.get_random_node()
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                         content_type='application/json',
-                         data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
 
             # get nodes ids
-            resp = json.loads(req.data)
             node_ids = resp["data"]["node_id_set_add"]
-            print node_ids
 
             # delete nodes
             topo_diff = { "node_id_set_rm" : node_ids }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                 content_type='application/json',
-                 data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
 
-            resp = json.loads(req.data)
-            print resp
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["node_id_set_rm"]), 2)
             self.assertEqual(set(resp["data"]["node_id_set_rm"]), set(node_ids))
@@ -219,50 +184,41 @@ class TestRhiziAPI(RhiziTestBase):
             nodeB = self.get_random_node()
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
-            req = c.post('/api/rzdoc/diff-commit__topo',
-                         content_type='application/json',
-                         data=json.dumps(payload))
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
 
             # get nodes ids
-            resp = json.loads(req.data)
             node_ids = resp["data"]["node_id_set_add"]
 
             # modify id should raise error
             attr_diff = {}
-            attr_diff["__type_node"] = { 
+            attr_diff["__type_node"] = {
                 node_ids[0] : {
                     "__attr_write"  : { "id" : "1234234" }
-                }, 
+                },
                 node_ids[1] : {
                     "__attr_write"  : { "id" : "1234234" }
                 }
             }
             payload = { "rzdoc_name" : self.rzdoc_name, "attr_diff" : attr_diff}
 
-            req = c.post('/api/rzdoc/diff-commit__attr',
-                         content_type='application/json',
-                         data=json.dumps(payload))
-            resp = json.loads(req.data)
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__attr', payload)
 
             self.assertEqual(req.status_code, 500)
             self.assertIn("write to 'id'", resp["error"])
 
             # modify name
             attr_diff = {}
-            attr_diff["__type_node"] = { 
+            attr_diff["__type_node"] = {
                 node_ids[0] : {
-                    "__attr_write"  : {"name" : "some new name", "type" : "Collaborator"}, 
-                }, 
+                    "__attr_write"  : {"name" : "some new name", "type" : "Collaborator"},
+                },
                 node_ids[1] : {
-                    "__attr_write"  : {"name" : "blabla", "type" : "Project"}, 
+                    "__attr_write"  : {"name" : "blabla", "type" : "Project"},
                 }
             }
             payload = { "rzdoc_name" : self.rzdoc_name, "attr_diff" : attr_diff}
 
-            req = c.post('/api/rzdoc/diff-commit__attr',
-                         content_type='application/json',
-                         data=json.dumps(payload))
-            resp = json.loads(req.data)
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__attr', payload)
 
             self.assertEqual(req.status_code, 200)
             self.assertEqual(resp["error"], None)
@@ -274,27 +230,24 @@ class TestRhiziAPI(RhiziTestBase):
 
             # delete attr
             attr_diff = {}
-            attr_diff["__type_node"] = { 
+            attr_diff["__type_node"] = {
                 node_ids[0] : {
-                    "__attr_remove"  : {"type" : ""}, 
-                }, 
+                    "__attr_remove"  : {"type" : ""},
+                },
                 node_ids[1] : {
-                    "__attr_remove"  : {"type" : "", "name" :""}, 
+                    "__attr_remove"  : {"type" : "", "name" :""},
                 }
             }
             payload = { "rzdoc_name" : self.rzdoc_name, "attr_diff" : attr_diff}
 
-            req = c.post('/api/rzdoc/diff-commit__attr',
-                         content_type='application/json',
-                         data=json.dumps(payload))
-            resp = json.loads(req.data)
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__attr', payload)
 
             self.assertEqual(req.status_code, 200)
             self.assertEqual(resp["error"], None)
             resp_data = resp["data"]["__type_node"]
 
-            self.assertEqual(resp_data[node_ids[0]]["__attr_remove"],["type"])
-            self.assertEqual(resp_data[node_ids[1]]["__attr_remove"],["type", "name"])
+            self.assertEqual(resp_data[node_ids[0]]["__attr_remove"], ["type"])
+            self.assertEqual(set(resp_data[node_ids[1]]["__attr_remove"]), {"type", "name"})
 
 
 

@@ -16,11 +16,7 @@
 
 
 import json
-import logging
 import unittest
-import urlparse
-from werkzeug.test import Client
-from werkzeug.test import EnvironBuilder
 
 from rhizi.db_op import DBO_raw_query_set
 from rhizi.tests.test_util__pydev import debug__pydev_pd_arg
@@ -55,7 +51,7 @@ class TestRhiziAPI(RhiziTestBase):
         """ App should be polite, so errors can be forgiven :) """
         with self.webapp.test_client() as c:
             req = c.get('/some-random-page-that-does-not-exist')
-            self.assertIn("sorry", req.data) # say sorry on 404
+            self.assertIn("sorry", req.data.decode('utf-8')) # say sorry on 404
 
     def test_index_redirect(self):
         """ Index '/' should redirect to '/index' """
@@ -74,10 +70,7 @@ class TestRhiziAPI(RhiziTestBase):
     def test_create_new_doc(self):
         """API should allow creation of new documents"""
         with self.webapp.test_client() as c:
-            req = c.post('/api/rzdoc/test_doc/create',
-                         content_type='application/json',
-                         data=json.dumps({}))
-            req_data = json.loads(req.data)
+            req, req_data = self._json_post(c, '/api/rzdoc/test_doc/create', {})
             self.assertEqual(req.status_code, 201) # creation ok
             lookup_test_doc = self.kernel.rzdoc__lookup_by_name("test_doc")
             self.assertNotEqual(lookup_test_doc, None) # exists in db
@@ -91,12 +84,9 @@ class TestRhiziAPI(RhiziTestBase):
             lookup_duplicate_doc = self.kernel.rzdoc__lookup_by_name("test_duplicate_doc")
 
             # check API
-            req = c.post('/api/rzdoc/test_duplicate_doc/create',
-                         content_type='application/json',
-                         data=json.dumps({}))
-            req_data = json.loads(req.data)
+            req, _ = self._json_post(c, '/api/rzdoc/test_duplicate_doc/create', {})
             self.assertEqual(req.status_code, 500) # raise error
-            self.assertIn("already exists", req.data) # return error message
+            self.assertIn("already exists", req.data.decode('utf-8')) # return error message
 
             # delete doc
             self.kernel.rzdoc__delete(lookup_duplicate_doc)
@@ -118,23 +108,17 @@ class TestRhiziAPI(RhiziTestBase):
         """API should allow to find documents by name"""
         with self.webapp.test_client() as c:
 
-            req = c.post('/api/rzdoc/search',
-                         content_type='application/json',
-                         data=json.dumps({'search_query': self.rzdoc_name}))
+            req, req_data = self._json_post(c, '/api/rzdoc/search', {'search_query': self.rzdoc_name})
             self.assertEqual(req.status_code, 200)
-            req_data = json.loads(req.data)
-            self.assertIn(self.rzdoc_name, str(req_data["data"]))
+            self.assertIn(self.rzdoc_name, req_data["data"])
             self.assertEqual(req_data["error"], None)
 
     def test_search_error(self):
         """Wrong query in API search should raise error"""
         with self.webapp.test_client() as c:
-            req = c.post('/api/rzdoc/search',
-                 content_type='application/json',
-                 data=json.dumps({'search_query': "random non-existing stuff"}))
+            req, req_data = self._json_post(c, '/api/rzdoc/search', {'search_query': "random non-existing stuff"})
 
             self.assertEqual(req.status_code, 200)
-            req_data = json.loads(req.data)
             self.assertEqual(req_data["data"], [])
             self.assertEqual(req_data["error"], None )
 
@@ -143,10 +127,7 @@ class TestRhiziAPI(RhiziTestBase):
         """ Loading a non existing node test """
         id_set = ['non_existing_id']
         with self.webapp.test_client() as c:
-            req = c.post('/api/rzdoc/fetch/node-set-by-id',
-                         content_type='application/json',
-                         data=json.dumps({ 'id_set': id_set, 'rzdoc_name': self.rzdoc_name}))
-            req_data = json.loads(req.data)
+            req, req_data = self._json_post(c, '/api/rzdoc/fetch/node-set-by-id', { 'id_set': id_set, 'rzdoc_name': self.rzdoc_name})
             rz_data = req_data['data']
             rz_err = req_data['error']
             self.assertEqual(None, rz_err)
@@ -160,10 +141,8 @@ class TestRhiziAPI(RhiziTestBase):
         self.db_ctl.exec_op(op)
 
         with self.webapp.test_client() as c:
-            req = c.post('/api/rzdoc/fetch/node-set-by-id',
-                         content_type='application/json',
-                         data=json.dumps({ 'id_set': id_set, 'rzdoc_name': self.rzdoc_name}))
-            n_set = json.loads(req.data)['data']
+            req, req_data = self._json_post(c, '/api/rzdoc/fetch/node-set-by-id', { 'id_set': id_set, 'rzdoc_name': self.rzdoc_name})
+            n_set = req_data['data']
 
             self.assertEqual(1, len(n_set))
             self.assertEqual(n_set[0]['id'], id_set[0])
