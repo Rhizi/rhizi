@@ -17,7 +17,7 @@ dependencies:
                 - tmux new-window -t services -n neo4j "./neo4j-community-2.3.0/bin/neo4j console | tee $PWD/neo4j.out"
                 - tmux new-window -t services -n smtpd "sudo python -m smtpd -n -c DebuggingServer localhost:25"
                 - while ! cat neo4j.out | grep "Remote interface ready and available at http://localhost:7474/"; do sleep 1; done
-                - pip install -r requirements.txt
+                - pip install -r requirements.txt --upgrade
                 - cp res/etc/rhizi-server.conf.example res/etc/rhizi-server.conf
                 - sed -i -e 's/access_control.*/access_control = False/g' res/etc/rhizi-server.conf
                 - neo4j-shell -c "match (n) return count(n);"
