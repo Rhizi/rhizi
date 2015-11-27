@@ -23,11 +23,11 @@ import os
 import sys
 
 try:
-    from setuptools import setup,find_packages
+    from setuptools import setup, find_packages
 except ImportError:
-    from distutils.core import setup,find_packages
+    from distutils.core import setup, find_packages
 
-version = "0.0.1" # [major].[minor].[release]
+version = "0.3.5" # [major].[minor].[release]
 
 # parse README
 with open('README.md') as readme_file:
