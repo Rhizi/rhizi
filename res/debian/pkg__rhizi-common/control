@@ -22,7 +22,8 @@ Depends: ${python:Depends},
          python-gevent-websocket,
          python-jinja2,
          python-six,
-         python-socketio
+         python-socketio,
+         python-setuptools
 Description: Rhizi document server
  Rhizi collaborative web editor
  .
