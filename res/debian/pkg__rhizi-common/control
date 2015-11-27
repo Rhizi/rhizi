@@ -3,7 +3,8 @@ Section: web
 Priority: optional
 Maintainer: Alon Levy <rhizi@pobox.com>
 Build-Depends: debhelper (>= 9),
-               dh-python
+               dh-python,
+               python-setuptools
 Standards-Version: 3.9.5
 Homepage: http://rhizi.net
 
@@ -22,9 +23,8 @@ Depends: ${python:Depends},
          python-gevent-websocket,
          python-jinja2,
          python-six,
-         python-socketio,
-         python-setuptools
+         python-socketio
 Description: Rhizi document server
  Rhizi collaborative web editor
  .
- This package includes the Rhizi server
+ This package includes both the Rhizi server and client.
