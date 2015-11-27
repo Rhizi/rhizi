@@ -1,0 +1,138 @@
+#!/usr/bin/python
+
+# upgrade debian package, run from a Fedora machine with working systemd-nspawn with a machine called rzdeb
+
+import argparse
+import os
+import subprocess
+import re
+import json
+import sys
+
+
+NSPAWN_MACHINE = 'rzdeb'
+CHROOT = '{}/rhizi/rhizi-machines/debian7-chroot/'.format(os.environ['HOME'])
+REMOTE_USER = 'root'
+REMOTE_HOST = 'ovh-0'
+RHIZI_SOURCE_REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+SSH_KEY_DIR = os.path.realpath(os.path.join(RHIZI_SOURCE_REPO, '..', 'ssh-keys'))
+# Assume identity of user running this script and in nspawn user
+USER = os.getuid()
+
+
+dryrun = False
+dryrun_install = True
+
+class Versions(object):
+    def __init__(self):
+        self.reload()
+
+    def reload(self):
+        changelog = open(os.path.join(RHIZI_SOURCE_REPO, 'res/debian/pkg__rhizi-common/changelog')).read()
+
+        self.debian = next(re.finditer('[0-9]*\.[0-9]*\.[0-9]*', changelog)).group()
+
+        setup_py = open(os.path.join(RHIZI_SOURCE_REPO, 'setup.py')).read()
+        self.setup_py = re.findall(r'version\s*=\s*["\']([0-9]*\.[0-9]*\.[0-9]*)', setup_py)[0]
+
+        self.package_json = json.load(open(os.path.join(RHIZI_SOURCE_REPO, 'package.json')))['version']
+
+    def ensure_synced(self):
+        """
+        setup.py
+        debian - res/debian/pkg__rhizi-common/changelog
+        package.json
+        """
+        if self.setup_py != self.debian:
+            print("setup_py_version {} != self.debian {}".format(self.setup_py, self.debian))
+            raise SystemExit
+        if self.package_json != self.debian:
+            print("self.package_json {} != self.debian {}".format(self.package_json, self.debian))
+            raise SystemExit
+
+
+versions = Versions()
+
+
+def check_call(oneliner):
+    if not isinstance(oneliner, list):
+        args = oneliner.split()
+    else:
+        args = oneliner
+    print('calling {}'.format(repr(args)))
+    print('oneliner {}'.format(' '.join(args)))
+    if not dryrun:
+        subprocess.check_call(args)
+
+
+def clone(source_repo, target_path):
+    check_call('git clone {} {}'.format(source_repo, target_path))
+
+
+def chroot(path, oneliner, user=USER):
+    check_call(['sudo', 'systemd-nspawn', '-u', str(user),
+                '-M', NSPAWN_MACHINE, '-D', CHROOT, "bash", "-c",
+                'cd {}; {}'.format(path, oneliner)])
+
+
+def rmdir(path):
+    check_call(['rm', '-Rf', path])
+
+
+def keyfile(host=REMOTE_HOST):
+    return os.path.join(SSH_KEY_DIR, '{}.rsa'.format(REMOTE_HOST))
+
+
+def scp(source, target):
+    check_call(['scp', '-i', keyfile(), source, '{}@{}:{}'.format(REMOTE_USER, REMOTE_HOST, target)])
+
+
+def ssh(*args):
+    check_call(['ssh', '-i', keyfile(), '{}@{}'.format(REMOTE_USER, REMOTE_HOST)] + list(args))
+
+
+def install_deb(filename):
+    if dryrun_install:
+        ssh('ls', '-l', filename)
+        ssh('dpkg', '-l', '|', 'grep', 'mux')
+    else:
+        ssh('dpkg','-i', filename)
+
+
+def build_deb():
+    chroot('/home/rhizi', 'ant -f build.ant pkg-deb__mux')
+
+
+def install_locally(filename):
+    chroot('/home/rhizi', 'dpkg -i {}'.format(filename), user='root')
+
+
+def main():
+    versions.ensure_synced()
+
+    chroot_rhizi = os.path.join(CHROOT, 'home', 'rhizi')
+    deb_filename = 'rhizi-mux_{}_amd64.deb'.format(versions.debian)
+    deb_relative_path = os.path.join('home', 'rhizi', 'build',
+                                     'deb-pkg__rhizi-mux', deb_filename)
+    deb_chroot_fullpath = '/' + deb_relative_path
+    deb_local_fullpath = os.path.join(CHROOT, deb_relative_path)
+
+    rmdir(chroot_rhizi)
+    assert not os.path.exists(deb_local_fullpath)
+    clone(RHIZI_SOURCE_REPO, chroot_rhizi)
+    build_deb()
+    assert os.path.exists(deb_local_fullpath), "missing {}".format(deb_local_fullpath)
+    install_locally(deb_chroot_fullpath)
+    scp(source=deb_local_fullpath, target=deb_filename)
+    install_deb(deb_filename)
+
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--real', action='store_true', default=False)
+    parser.add_argument('--dryrun', action='store_true', default=False)
+    args = parser.parse_args(sys.argv[1:])
+    dryrun = args.dryrun
+    dryrun_intsall = sys.real
+    main()
