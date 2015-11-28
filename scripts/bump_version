@@ -1,0 +1,4 @@
+#!/usr/bin/python
+
+from util import versions
+versions.bump_version()

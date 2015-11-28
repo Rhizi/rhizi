@@ -9,6 +9,7 @@ import re
 import json
 import sys
 
+from .util import versions
 
 NSPAWN_MACHINE = 'rzdeb'
 CHROOT = '{}/rhizi/rhizi-machines/debian7-chroot/'.format(os.environ['HOME'])
@@ -23,36 +24,6 @@ USER = os.getuid()
 remote_host = None
 dryrun = False
 dryrun_install = True
-
-class Versions(object):
-    def __init__(self):
-        self.reload()
-
-    def reload(self):
-        changelog = open(os.path.join(RHIZI_SOURCE_REPO, 'res/debian/pkg__rhizi-common/changelog')).read()
-
-        self.debian = next(re.finditer('[0-9]*\.[0-9]*\.[0-9]*', changelog)).group()
-
-        setup_py = open(os.path.join(RHIZI_SOURCE_REPO, 'setup.py')).read()
-        self.setup_py = re.findall(r'version\s*=\s*["\']([0-9]*\.[0-9]*\.[0-9]*)', setup_py)[0]
-
-        self.package_json = json.load(open(os.path.join(RHIZI_SOURCE_REPO, 'package.json')))['version']
-
-    def ensure_synced(self):
-        """
-        setup.py
-        debian - res/debian/pkg__rhizi-common/changelog
-        package.json
-        """
-        if self.setup_py != self.debian:
-            print("setup_py_version {} != self.debian {}".format(self.setup_py, self.debian))
-            raise SystemExit
-        if self.package_json != self.debian:
-            print("self.package_json {} != self.debian {}".format(self.package_json, self.debian))
-            raise SystemExit
-
-
-versions = Versions()
 
 
 def check_call(oneliner):
@@ -80,19 +51,16 @@ def rmdir(path):
     check_call(['rm', '-Rf', path])
 
 
-def keyfile(host=None):
-    if host is None:
-        host = remote_host
-    assert host is not None
+def keyfile(host):
     return os.path.join(SSH_KEY_DIR, '{}.rsa'.format(host))
 
 
 def scp(source, target):
-    check_call(['scp', '-i', keyfile(), source, '{}@{}:{}'.format(REMOTE_USER, remote_host, target)])
+    check_call(['scp', '-i', keyfile(remote_host), source, '{}@{}:{}'.format(REMOTE_USER, remote_host, target)])
 
 
 def ssh(*args):
-    check_call(['ssh', '-i', keyfile(), '{}@{}'.format(REMOTE_USER, remote_host)] + list(args))
+    check_call(['ssh', '-i', keyfile(remote_host), '{}@{}'.format(REMOTE_USER, remote_host)] + list(args))
 
 
 def install_deb(filename):
@@ -140,4 +108,5 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
     dryrun = args.dryrun
     dryrun_intsall = args.real
+    remote_host = args.host
     main()
