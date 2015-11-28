@@ -111,6 +111,6 @@ class Versions(object):
 
     def by_tag(self):
         all = [x.strip() for x in check_output('git tag'.split()).split()]
-        return sorted([x for x in all if x.startswith('v-')])[0][2:]
+        return sorted([x for x in all if x.startswith('v-')])[-1][2:]
 
 versions = Versions()

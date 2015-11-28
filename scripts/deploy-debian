@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-# upgrade debian package, run from a Fedora machine with working systemd-nspawn with a machine called rzdeb
+"""
+upgrade debian package, run from a Fedora machine with working systemd-nspawn
+with a machine called rzdeb.
+"""
 
 import argparse
 import os
@@ -9,7 +12,8 @@ import re
 import json
 import sys
 
-from .util import versions
+from util import versions
+
 
 NSPAWN_MACHINE = 'rzdeb'
 CHROOT = '{}/rhizi/rhizi-machines/debian7-chroot/'.format(os.environ['HOME'])
@@ -97,7 +101,6 @@ def main():
     install_locally(deb_chroot_fullpath)
     scp(source=deb_local_fullpath, target=deb_filename)
     install_deb(deb_filename)
-
 
 
 if __name__ == '__main__':
