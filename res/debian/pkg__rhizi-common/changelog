@@ -1,3 +1,7 @@
+rhizi (0.3.7) unstable; urgency=low
+  * client: fix radius calculation when db contains a type not in domain_types
+ -- Alon Levy <alon@pobox.com>  Sat, 28 Nov 2015 22:09:36 +0200
+
 rhizi (0.3.6) unstable; urgency=low
   * client: different sized nodes per node type
   * client: commented out activity stream until fix

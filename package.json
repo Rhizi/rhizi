@@ -3,7 +3,7 @@
   "description": "Collaborative graph editor",
   "license": "AGPL version 3.0",
   "repository": "https://github.com/Rhizi/rhizi.git",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "dependencies": {},
   "devDependencies": {
     "karma": "~0.13",
