@@ -10,6 +10,7 @@ if __name__ == '__main__':
     full_commits = check_output('git log --oneline v-{}..'.format(versions.version).split()).split('\n')
     commits = [x.split(' ', 1)[1] for x in full_commits if x.strip() != '']
     versions.bump_version(debian_changelog=commits)
+    check_output('vim {}'.format(versions.debian_changelog_path))
     check_output('git add {}'.format(' '.join(versions.filenames)).split())
     check_output(['git', 'commit', '-m', 'version {}'.format(versions.version)])
     check_output(['git', 'tag', '-a', 'v-{}'.format(versions.version),
