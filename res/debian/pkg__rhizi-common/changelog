@@ -1,3 +1,121 @@
+rhizi (0.3.6) unstable; urgency=low
+  * domain_types for testing: add an example radius usage
+  * client: different sized nodes per node type
+  * requirements: move development requirements to dev_requirements.txt
+  * scripts/bump_version: use git commit and tag
+  * add scripts/bump_version, split scripts/util
+  * setup.py: add a lame comment to prevent future breakage
+  * build-debian: remove hard coded remote host
+  * adding scripts/build-debian
+  * update version to 0.3.5 (and minor whitespace)
+  * debian: move setuptools to build deps, update description
+  * debian: client moved to top level directory
+  * debian: add python-setuptools requirement
+  * circle.yml: force upgrade of pip packages
+  * setup.py: workaround for now for circle breaking setup which is broken anyway
+  * requirements: use our python 3 compat fork of gevent-socketio
+  * server: return empty link types correctly
+  * circle.yml: use only python 3 requirements
+  * rhizi: save an empty link type as __EMPTY_STRING__
+  * circle.yml: fix python version to supported 3.5.0
+  * circle.yml: got confused with travis; test on 3 for now
+  * circle ci: test on both python 2.7.10 and 3.5
+  * rhizi/tests: support both python 3 and python 2
+  * python3: use six.iteritems
+  * (python3) rhizi/model/model: RZCommit.blob_from_diff_obj: return str, not bytes
+  * python 3 uses next, no it/gen.next (python 2.6 supports it as well)
+  * rhizi/db_op/DBO_block_chain__commit.calc_blob_hash: use bytes (python 3 compat)
+  * fold to python 3 exception
+  * requirements.txt: update six to latest, gevent
+  * rhizi/neo4j_cypher: python 3 fix
+  * rhizi: whitespace fixes
+  * rhizi: python3: base64 & json changes
+  * rhizi: python 3 double exception handling
+  * python 3 compat: Exception.message -> Exception.args
+  * test_domain_types: add basic model/types test
+  * test_db_controller: pass on it's own line
+  * python 3 compatibility part 2
+  * python 3 compatibility part 1
+  * rz_start: fix for webapp not defined if shutdown is called after unsuccessful startup (address already used)
+  * client: add test_domain_types
+  * add test for binaries in bin
+  * rhizi/rz_mesh: remove superfluous semicolon
+  * domain_types+model/types: rename type_attributes to types, add types function to get full type definition
+  * remove cri & sage files from repository - they belong in a different repository
+  * whitespace and errant " removal
+  * rhizi/rz_kernel: remove usage of RZDoc_Exception__not_found from create_doc
+  * move rhizi-server-up-check to scripts
+  * bin/rz-start: make executable
+  * bin/rz-server: fix for rz_server/rz_main change
+  * testing commit attr_diff
+  * test commit__topo remove nodes
+  * test commit__topo links
+  * test commit__topo more links
+  * testing commit__topo
+  * testing commit__topo
+  * clean API testing
+  * separate rz-server from rz-start
+  * split rz start /rz server
+  * test config file
+  * rename properly
+  * fix test rzdocs
+  * added tests
+  * comments
+  * added command line+python27 deps
+  * start setup.py
+  * RMP-647 #resolve required text or space
+  * RMP-647 #close required text or space
+  * RMP-647 #close
+  * RMP-647 #time 1m
+  * #fix RMP-647
+  * client: textanalysis cleanup, clear input on plus button
+  * client: lint fixes
+  * client/rz_api_backend: jshint fixes
+  * Merge remote-tracking branch 'origin/master'
+  * Removed selection counter
+  * Pushed type filter next to search filter
+  * client: fix #634
+  * client/textanalysis.ui.js: linting
+  * client: disable text selection on buttons
+  * client: show selected layout via dashed/solid border
+  * client: show dashed/solid line on zen mode button to show state
+  * client/view/graph_view: remove redundant zen_mode__set call
+  * client/view/graph_view+layouts: zen mode is now a layout
+  * Refactor btn_search -> search.icon
+  * Remove search button
+  * client/view/graph_view: no layout changing in zen-mode. workaround for #642
+  * circle.yml: fix for server running it's own neo4j/smtpd
+  * server tests: start neo4j and mta
+  * client: add local_backend (for karma), add a simple graph_view test
+  * rz-user-tool: make list actually show name+email
+  * client/model/core: move __set_obj_id up
+  * client/buttons: remove unused require
+  * client/tests: test_graph_view minimal
+  * client/graph_view: gv.parent_element was init incorrectly
+  * make the edit node/edge background more prominent
+  * Add node_modules to .gitignore
+  * client: add a Graph constructor test
+  * circle: enable karma
+  * missing karma bits
+  * client tests work via karma
+  * client: remove old tests, going to use jasmine via karma
+  * gitignore: add rhizi-tests.log
+  * oops - removed client instead of renaming it
+  * server/rz_mesh: fix #637, a gevent/gevent-socketio issue
+  * directory layout: move client to toplevel, client tests under client
+  * Commented out activity stream until fix
+  * circle.yml: better reports
+  * circle-ci integration
+  * pass all server tests, skip 11
+  * tests: pass a bit more (1 error, 11 skip, 32 total)
+  * DBO_match_node_id_set: return nodes, not just their inner neo4j id
+  * server tests: pass more tests; clear db on start (this is localhost default port, so beware! todo use a separate db)
+  * rz_req_handling: provide bogus values for tests for REMOTE_{ADDR,PORT} (not sure this is a good idea)
+  * rhizi/rz_api_rest/load_noset_set_by_id_attr_common: unbreak, bur returns just node ids, not useful, but unused by client (remove?)
+  * White background to toolbar buttons
+  * ignore node_modules/
+ -- Alon Levy <alon@pobox.com>  Sat, 28 Nov 2015 21:07:45 +0200
+
 rhizi (0.3.5) unstable; urgency=low
 
   * support user_db.db from older (pre rz_user/rz_user_db change)
