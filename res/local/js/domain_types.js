@@ -16,7 +16,8 @@ define({
         }],
         ['project', {
             'title': 'Project',
-            'attributes': ['description', 'url', 'rhizi-url', 'image-url'],
+            'attributes': ['description', 'url', 'rhizi-url', 'image-url', 'hours-total'],
+            'radius': ['hours-total', 'log'],
         }],
         ['idea', {
             'title': 'Idea',
@@ -40,6 +41,7 @@ define({
         'url': 'URL',
         'image-url': 'Image URL',
         'rhizi-url': 'Rhizi URL',
+        'hours-total': 'Hours Total',
     },
     attribute_ui: {
         'affiliation': 'textarea',
