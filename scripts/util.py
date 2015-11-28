@@ -19,6 +19,8 @@ def replace(filename, oldtext, newtext):
 
 
 def check_output(args):
+    if isinstance(args, str):
+        args = args.split()
     return subprocess.check_output(args=args)
 
 
