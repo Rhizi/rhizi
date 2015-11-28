@@ -500,11 +500,11 @@ function GraphView(spec) {
         }));
         graph.nodes().forEach(function (n) {
             var d = node__radius__data[n.type],
-                cur_min = d.min,
-                cur_max = d.max,
+                cur_min = d !== undefined ? d.min : undefined,
+                cur_max = d !== undefined ? d.max : undefined,
                 size = node__radius_input(n);
 
-            if (size === undefined) {
+            if (d === undefined || size === undefined) {
                 return;
             }
             d.min = cur_min === undefined ? size : Math.min(d.min, size);
