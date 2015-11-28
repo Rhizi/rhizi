@@ -28,6 +28,8 @@ class Versions(object):
         self.debian_changelog_path = os.path.join(RHIZI_SOURCE_REPO, 'res/debian/pkg__rhizi-common/changelog')
         self.package_json_path = os.path.join(RHIZI_SOURCE_REPO, 'package.json')
         self.build_ant_path = os.path.join(RHIZI_SOURCE_REPO, 'build.ant')
+        self.filenames = [self.setup_py_path, self.debian_changelog_path,
+                          self.package_json_path, self.build_ant_path]
         self.reload()
 
     def reload(self):
@@ -53,6 +55,7 @@ class Versions(object):
                               if x.attributes['name'].value == 'pkg_version']
         assert len(build_ant_versions) == 1
         self.build_ant = build_ant_versions[0]
+        self.version = self.debian
 
     def ensure_synced(self):
         """
@@ -70,7 +73,7 @@ class Versions(object):
             print("build.ant {} != debian {}".format(self.build_ant, self.debian))
             raise SystemExit
 
-    def bump_version(self):
+    def bump_version(self, debian_changelog):
         old_ver = self.setup_py
         new_ver = self.next_micro()
         # debian changelog
@@ -82,7 +85,7 @@ class Versions(object):
             package="rhizi",
             distributions="unstable",
             urgency='low',
-            changes=['  * {}'.format(c) for c in ['change description here']],
+            changes=['  * {}'.format(c) for c in debian_changelog],
             date=now)
         with open(self.debian_changelog_path, 'w+') as fd:
             fd.write(str(self.debian_changelog))
@@ -99,9 +102,15 @@ class Versions(object):
             json.dump(self.package_json_json, fd,
                       indent=2, separators=(',', ': '))
 
+        # update internal versions
+        self.reload()
+
     def next_micro(self):
         major, minor, micro = map(int, self.setup_py.split('.'))
         return '{}.{}.{}'.format(major, minor, micro + 1)
 
+    def by_tag(self):
+        all = [x.strip() for x in check_output('git tag'.split()).split()]
+        return sorted([x for x in all if x.startswith('v-')])[0][2:]
 
 versions = Versions()
