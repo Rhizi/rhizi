@@ -110,6 +110,6 @@ if __name__ == '__main__':
     parser.add_argument('--host', required=True)
     args = parser.parse_args(sys.argv[1:])
     dryrun = args.dryrun
-    dryrun_intsall = args.real
+    dryrun_install = not args.real
     remote_host = args.host
     main()
