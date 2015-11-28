@@ -13,13 +13,14 @@ import sys
 NSPAWN_MACHINE = 'rzdeb'
 CHROOT = '{}/rhizi/rhizi-machines/debian7-chroot/'.format(os.environ['HOME'])
 REMOTE_USER = 'root'
-REMOTE_HOST = 'ovh-0'
 RHIZI_SOURCE_REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 SSH_KEY_DIR = os.path.realpath(os.path.join(RHIZI_SOURCE_REPO, '..', 'ssh-keys'))
 # Assume identity of user running this script and in nspawn user
 USER = os.getuid()
 
 
+# set via command line arguments
+remote_host = None
 dryrun = False
 dryrun_install = True
 
@@ -79,16 +80,19 @@ def rmdir(path):
     check_call(['rm', '-Rf', path])
 
 
-def keyfile(host=REMOTE_HOST):
-    return os.path.join(SSH_KEY_DIR, '{}.rsa'.format(REMOTE_HOST))
+def keyfile(host=None):
+    if host is None:
+        host = remote_host
+    assert host is not None
+    return os.path.join(SSH_KEY_DIR, '{}.rsa'.format(host))
 
 
 def scp(source, target):
-    check_call(['scp', '-i', keyfile(), source, '{}@{}:{}'.format(REMOTE_USER, REMOTE_HOST, target)])
+    check_call(['scp', '-i', keyfile(), source, '{}@{}:{}'.format(REMOTE_USER, remote_host, target)])
 
 
 def ssh(*args):
-    check_call(['ssh', '-i', keyfile(), '{}@{}'.format(REMOTE_USER, REMOTE_HOST)] + list(args))
+    check_call(['ssh', '-i', keyfile(), '{}@{}'.format(REMOTE_USER, remote_host)] + list(args))
 
 
 def install_deb(filename):
@@ -132,7 +136,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--real', action='store_true', default=False)
     parser.add_argument('--dryrun', action='store_true', default=False)
+    parser.add_argument('--host', required=True)
     args = parser.parse_args(sys.argv[1:])
     dryrun = args.dryrun
-    dryrun_intsall = sys.real
+    dryrun_intsall = args.real
     main()
