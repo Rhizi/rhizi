@@ -1,3 +1,18 @@
+rhizi (0.3.6) unstable; urgency=low
+  * client: different sized nodes per node type
+  * client: commented out activity stream until fix
+  * client: textanalysis cleanup, clear input on plus button
+  * client: fix #634 (double node creation on plus button)
+  * client: disable text selection on buttons
+  * client: show selected layout via dashed/solid border
+  * client: show dashed/solid line on zen mode button to show state
+  * client: remove search button
+  * client: white background to toolbar buttons
+  * server: support no text (empty) links
+  * server: python 3 support
+  * rz-user-tool: make list actually show name+email
+ -- Alon Levy <alon@pobox.com>  Sat, 28 Nov 2015 21:07:45 +0200
+
 rhizi (0.3.5) unstable; urgency=low
 
   * support user_db.db from older (pre rz_user/rz_user_db change)
