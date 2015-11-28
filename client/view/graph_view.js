@@ -138,7 +138,11 @@ function GraphView(spec) {
         w,
         h,
         cx,
-        cy;
+        cy,
+
+        // node size in case there is a determining attribute
+        node__radius__data = {
+        };
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
@@ -425,12 +429,35 @@ function GraphView(spec) {
         return dom_id.split('__')[0];
     }
 
-    function node__radius (d) {
-        return urlValid(d['image-url']) ? 20 : 10;
+    function node__radius_input(d) {
+        var data = model_types.types(d.type).radius,
+            size;
+
+        if (data === undefined) {
+            return undefined;
+        }
+        size = parseFloat(d[data[0]]);
+        if (_.isNaN(size)) {
+            return undefined;
+        }
+        return size;
     }
+
+    function node__radius(d) {
+        var size = node__radius_input(d),
+            maxmin = node__radius__data[d.type],
+            valid = (size !== undefined && maxmin !== undefined &&
+                maxmin.min !== undefined && maxmin.max !== undefined &&
+                maxmin.max !== maxmin.min);
+
+        return (!valid ? (d.r ? d.r : (urlValid(d['image-url']) ? 20 : 10))
+                : 10 + 20 * (size - maxmin.min) / (maxmin.max - maxmin.min));
+    }
+
     function filter_id(id) {
         return id + '__node_filter';
     }
+
     function feimage_id(id) {
         return id + '__node_filter_feimage';
     }
@@ -466,6 +493,25 @@ function GraphView(spec) {
                 return d.id;
             });
         }
+
+        // compute min/max per node type for node radii
+        node__radius__data = _.object(model_types.nodetypes, _.map(model_types.nodetypes, function () {
+            return {min: undefined, max: undefined};
+        }));
+        graph.nodes().forEach(function (n) {
+            var d = node__radius__data[n.type],
+                cur_min = d.min,
+                cur_max = d.max,
+                size = node__radius_input(n);
+
+            if (size === undefined) {
+                return;
+            }
+            d.min = cur_min === undefined ? size : Math.min(d.min, size);
+            d.max = cur_max === undefined ? size : Math.max(d.max, size);
+        });
+        gv.node__radius__data = node__radius__data; // debugging
+
 
         function node_text_setup() {
             var node_text;
