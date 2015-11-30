@@ -148,39 +148,7 @@
 .node.person {
   @include node-fill-color($blue);
 }
-
-.node.personality-trait {
-  @include node-fill-color($orange);
-}
-
-.node.accepting-changes {
-  @include node-fill-color(adjust-hue($yellow, 25));
-}
-
-.node.decision-making {
-  @include node-fill-color(adjust-hue($yellow, 50));
-}
-
-.node.beneficiary {
-  @include node-fill-color($green);
-}
-
-.node.completed-project {
-  @include node-fill-color($purple);
-}
-
-.node.ongoing-project {
-  @include node-fill-color($magenta);
-}
-
-.node.future-project {
-  @include node-fill-color($cyan);
-}
-.node.collaborator {
-  @include node-fill-color($blue);
-}
-
-.node.club {
+.node.project {
   @include node-fill-color($magenta);
 }
 
@@ -188,20 +156,16 @@
   @include node-fill-color($yellow);
 }
 
-.node.interest {
+.node.keyword {
+  @include node-fill-color($green);
+}
+
+.node.organisation {
   @include node-fill-color($purple);
 }
 
-.node.third-internship-proposal {
+.node.media {
   @include node-fill-color($cyan);
-}
-
-.node.internship {
-  @include node-fill-color($orange);
-}
-
-.node.team {
-  @include node-fill-color($orange);
 }
 
 .node.empty {
@@ -209,23 +173,6 @@
 }
 
 // TODO: how to define type colors using the scss dollar attributes? injecting css is easy, scss - not sure
-
-.node.project {
-  @include node-fill-color($magenta);
-}
-
-.node.keyword {
-  @include node-fill-color($purple);
-}
-
-.node.idea {
-  @include node-fill-color($green);
-}
-
-.node.resource {
-  @include node-fill-color($cyan);
-}
-
 
 /* Selected parts of the graph, right now by clicking, later with search. */
 

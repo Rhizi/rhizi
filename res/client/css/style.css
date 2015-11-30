@@ -1415,7 +1415,7 @@ p {
   overflow: auto;
   padding: 0px 5px; }
   .activity__entry:hover {
-    background-color: #b9b9b9; }
+    background-color: #bababa; }
   .activity__entry:focus {
     outline: none; }
 
@@ -1575,173 +1575,21 @@ p {
     stroke-opacity: 0.5;
     stroke-width: 5px; }
 
-.node.personality-trait {
-  fill: #ff8b11;
-  stroke: #ff8b11;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.personality-trait.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.personality-trait.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.personality-trait:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.accepting-changes {
-  fill: #b3fa00;
-  stroke: #b3fa00;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.accepting-changes.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.accepting-changes.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.accepting-changes:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.decision-making {
-  fill: #4bfa00;
-  stroke: #4bfa00;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.decision-making.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.decision-making.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.decision-making:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.beneficiary {
-  fill: #40C200;
-  stroke: #40C200;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.beneficiary.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.beneficiary.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.beneficiary:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.completed-project {
-  fill: #8b3ab0;
-  stroke: #8b3ab0;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.completed-project.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.completed-project.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.completed-project:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.ongoing-project {
+.node.project {
   fill: #ee3654;
   stroke: #ee3654;
   stroke-width: 4px;
   stroke-opacity: 0.4; }
-  .node.ongoing-project.related {
+  .node.project.related {
     stroke: #33c2e0;
     stroke-opacity: 0.5;
     stroke-width: 2px; }
-  .node.ongoing-project.selected {
+  .node.project.selected {
     stroke: #fad900;
     stroke-opacity: 0.5;
     stroke-width: 2px;
     z-index: 1; }
-  .node.ongoing-project:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.future-project {
-  fill: #33c2e0;
-  stroke: #33c2e0;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.future-project.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.future-project.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.future-project:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.collaborator {
-  fill: #004681;
-  stroke: #004681;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.collaborator.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.collaborator.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.collaborator:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.club {
-  fill: #ee3654;
-  stroke: #ee3654;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.club.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.club.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.club:hover {
+  .node.project:hover {
     stroke: #ff8b11;
     stroke-opacity: 0.5;
     stroke-width: 5px; }
@@ -1765,78 +1613,59 @@ p {
     stroke-opacity: 0.5;
     stroke-width: 5px; }
 
-.node.interest {
+.node.keyword {
+  fill: #40C200;
+  stroke: #40C200;
+  stroke-width: 4px;
+  stroke-opacity: 0.4; }
+  .node.keyword.related {
+    stroke: #33c2e0;
+    stroke-opacity: 0.5;
+    stroke-width: 2px; }
+  .node.keyword.selected {
+    stroke: #fad900;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+    z-index: 1; }
+  .node.keyword:hover {
+    stroke: #ff8b11;
+    stroke-opacity: 0.5;
+    stroke-width: 5px; }
+
+.node.organisation {
   fill: #8b3ab0;
   stroke: #8b3ab0;
   stroke-width: 4px;
   stroke-opacity: 0.4; }
-  .node.interest.related {
+  .node.organisation.related {
     stroke: #33c2e0;
     stroke-opacity: 0.5;
     stroke-width: 2px; }
-  .node.interest.selected {
+  .node.organisation.selected {
     stroke: #fad900;
     stroke-opacity: 0.5;
     stroke-width: 2px;
     z-index: 1; }
-  .node.interest:hover {
+  .node.organisation:hover {
     stroke: #ff8b11;
     stroke-opacity: 0.5;
     stroke-width: 5px; }
 
-.node.third-internship-proposal {
+.node.media {
   fill: #33c2e0;
   stroke: #33c2e0;
   stroke-width: 4px;
   stroke-opacity: 0.4; }
-  .node.third-internship-proposal.related {
+  .node.media.related {
     stroke: #33c2e0;
     stroke-opacity: 0.5;
     stroke-width: 2px; }
-  .node.third-internship-proposal.selected {
+  .node.media.selected {
     stroke: #fad900;
     stroke-opacity: 0.5;
     stroke-width: 2px;
     z-index: 1; }
-  .node.third-internship-proposal:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.internship {
-  fill: #ff8b11;
-  stroke: #ff8b11;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.internship.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.internship.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.internship:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.team {
-  fill: #ff8b11;
-  stroke: #ff8b11;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.team.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.team.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.team:hover {
+  .node.media:hover {
     stroke: #ff8b11;
     stroke-opacity: 0.5;
     stroke-width: 5px; }
@@ -1856,82 +1685,6 @@ p {
     stroke-width: 2px;
     z-index: 1; }
   .node.empty:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.project {
-  fill: #ee3654;
-  stroke: #ee3654;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.project.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.project.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.project:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.keyword {
-  fill: #8b3ab0;
-  stroke: #8b3ab0;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.keyword.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.keyword.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.keyword:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.idea {
-  fill: #40C200;
-  stroke: #40C200;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.idea.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.idea.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.idea:hover {
-    stroke: #ff8b11;
-    stroke-opacity: 0.5;
-    stroke-width: 5px; }
-
-.node.resource {
-  fill: #33c2e0;
-  stroke: #33c2e0;
-  stroke-width: 4px;
-  stroke-opacity: 0.4; }
-  .node.resource.related {
-    stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
-  .node.resource.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
-    z-index: 1; }
-  .node.resource:hover {
     stroke: #ff8b11;
     stroke-opacity: 0.5;
     stroke-width: 5px; }
