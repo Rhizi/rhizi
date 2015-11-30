@@ -620,8 +620,7 @@ table {
 .search_icon {
   background: url(../img/search-icon.png);
   background-repeat: no-repeat;
-  background-position-x: 98%;
-  background-position-y: 50%;
+  background-position: 98% 50%;
   background-color: white; }
 
 .add-button:hover {
@@ -1415,7 +1414,7 @@ p {
   overflow: auto;
   padding: 0px 5px; }
   .activity__entry:hover {
-    background-color: #bababa; }
+    background-color: #b9b9b9; }
   .activity__entry:focus {
     outline: none; }
 
