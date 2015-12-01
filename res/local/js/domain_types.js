@@ -10,13 +10,15 @@ define({
                 ['description',
                  'url',
                  'status',
-                 'startdate', 
+                 'startdate',
                  'enddate',
                  'country',
                  'city',
                  'street-address',
                  'cnrs-inserm-unit-code',
+                 'hours-total',
                 ],
+            'radius': ['hours-total', 'log']
         }],
         ['skill', {
             'title': 'Skill',
@@ -50,6 +52,7 @@ define({
         'street-address': 'Street address',
         'city': 'City',
         'country': 'Country',
+        'hours-total': 'Hours Total'
     },
     attribute_ui: {
         'affiliation': 'textarea',
