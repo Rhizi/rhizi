@@ -21,11 +21,12 @@
 define(function() {
 
     var description = {
-        person: 'A person in CRI - student or teacher',
-        club: 'A shared club or project within the CRI',
-        skill: 'Ability or expertise you possess',
-        interest: 'Scientific skill or domain expertise you wish you had',
-        internship: "Title of first or second internship you've done"
+        person: 'Student, teacher, supervisor and other humans',
+        project: 'Internship, phd-project, course or any other project',
+        skill: 'Ability, expertise, method or technique',
+        keyword: 'Interest, knowledge-domain or any other keyword',
+        organisation: "Lab, club, institute, team, company or any other organisation of humans",
+        media: "Data, documents, video, image, sound or any type of media"
     };
 
     // TODO: enums, sometime
