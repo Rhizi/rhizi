@@ -196,8 +196,16 @@ define(['util'], function(util) {
             link_spec.name = "";
         }
         ret.name = link_spec.name.trim();
+        delete link_spec.name;
+        delete link_spec.id;
+        delete link_spec.__src;
+        delete link_spec.__dst;
 
-        ret.state = link_spec.state;
+        for (var property in link_spec) {
+            if (typeof link_spec[property] !== 'function') {
+                ret[property] = link_spec[property];
+            }
+        }
         return ret;
     }
 

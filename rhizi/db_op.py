@@ -938,8 +938,10 @@ class DBO_rzdoc__clone(DB_op):
                         continue
 
                     ret_l, ret_l_type, ret_l_dst_id = l_tuple
+                    assert 'id' in ret_l
                     l = Link.Link_Ptr(src_id=n['id'], dst_id=ret_l_dst_id)
-                    l['id'] = ret_l['id']
+                    for k, v in ret_l.items():
+                        l[k] = v
                     l['__type'] = self.process_q_ret__l_type(ret_l_type)
 
                     ret_l_set.append(l)
