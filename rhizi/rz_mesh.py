@@ -208,7 +208,7 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         ws_req_env.peer_sock_addr = ws_srv.req_probe__sock_addr.probe_client_socket_addr__ws_conn(request.environ)
 
         try:
-            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_req_env)  # connect socketio manager
+            return socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_req_env)  # connect socketio manager
         except:
             log.exception("ws: exception while handling connection", exc_info=True)
             return make_response__json(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR)
