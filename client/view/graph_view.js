@@ -142,6 +142,9 @@ function GraphView(spec) {
 
         // statistics on node attributes for calculation of radius
         node__radius__data = {
+        },
+        // statistics on link attributes for calculation of width
+        link__width__data = {
         };
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
@@ -454,6 +457,31 @@ function GraphView(spec) {
                 : 10 + 20 * (size - maxmin.min) / (maxmin.max - maxmin.min));
     }
 
+    function link__width_input(d) {
+        var data = model_types.link_types(d.__type).width,
+            size;
+
+        if (data === undefined) {
+            return undefined;
+        }
+        size = parseFloat(d[data[0]]);
+        if (_.isNaN(size)) {
+            return undefined;
+        }
+        return size;
+    }
+
+    function link__width(d) {
+        var size = link__width_input(d),
+            maxmin = link__width__data[d.__type],
+            valid = (size !== undefined && maxmin !== undefined &&
+                maxmin.min !== undefined && maxmin.max !== undefined &&
+                maxmin.max !== maxmin.min);
+
+        return (!valid ? (d.width ? d.width : 1)
+                : 1 + 3 * (size - maxmin.min) / (maxmin.max - maxmin.min));
+    }
+
     function filter_id(id) {
         return id + '__node_filter';
     }
@@ -525,6 +553,12 @@ function GraphView(spec) {
                     get_attrib: node__radius_input,
                     keys: model_types.nodetypes,
                 }, 'type');
+        gv.link__width__data = link__width__data = calculate_minmax(
+                {
+                    collection: graph.links(),
+                    get_attrib: link__width_input,
+                    keys: model_types.link_types_names,
+                }, '__type');
 
         function node_text_setup() {
             var node_text;
@@ -697,7 +731,8 @@ function GraphView(spec) {
         link.selectAll('path.link')
             .attr('class', function(d) {
                 return [d.state || "perm", selection.class__link(d, temporary), "link graph"].join(' ');
-            });
+            })
+            .attr('stroke-width', link__width);
 
         link.exit().remove();
 
