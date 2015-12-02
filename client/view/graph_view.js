@@ -476,10 +476,15 @@ function GraphView(spec) {
             maxmin = link__width__data[d.__type],
             valid = (size !== undefined && maxmin !== undefined &&
                 maxmin.min !== undefined && maxmin.max !== undefined &&
-                maxmin.max !== maxmin.min);
+                maxmin.max !== maxmin.min),
+            selection_class_link = selection.class__link(d, temporary),
+            highlighted = d.hovering || (selection_class_link !== '' &&
+                    selection_class_link !== 'notselected');
 
         return (!valid ? (d.width ? d.width : 1)
-                : 1 + 3 * (size - maxmin.min) / (maxmin.max - maxmin.min));
+                : 1 + 3 * (size - maxmin.min) / (maxmin.max - maxmin.min)) +
+                 (highlighted ? 1 : 0)
+                ;
     }
 
     function filter_id(id) {
@@ -612,6 +617,8 @@ function GraphView(spec) {
             var e = document.getElementById(d.id);
 
             add_class(e, 'hovering');
+            d.hovering = true;
+            e.querySelector('path.link').setAttribute('stroke-width', link__width(d));
             // show text if not selected
             if (!selection.link_related(d)) {
                 set_link_label_text(d.id, link_text__short(d));
@@ -623,6 +630,8 @@ function GraphView(spec) {
             var e = document.getElementById(d.id);
 
             remove_class(e, 'hovering');
+            d.hovering = false;
+            e.querySelector('path.link').setAttribute('stroke-width', link__width(d));
             // hide text if not selected
             if (!selection.link_related(d)) {
                 set_link_label_text(d.id, "");
@@ -722,7 +731,7 @@ function GraphView(spec) {
 
         //var selected_N = selection:
 
-        link.attr("class", function(d){
+        link.attr("class", function(d) {
                 var temp_and = (d.name && d.name.replace(/ /g,"") === "and" && temporary) ? "temp_and" : "";
 
                 return ["graph link", temp_and, selection.class__link(d, temporary)].join(' ');
