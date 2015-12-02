@@ -18,7 +18,7 @@ define({
                  'cnrs-inserm-unit-code',
                  'hours-total',
                 ],
-            'radius': ['hours-total', 'log']
+            'radius': ['hours-total', 'linear']
         }],
         ['skill', {
             'title': 'Skill',
