@@ -450,7 +450,7 @@ function GraphView(spec) {
                 maxmin.min !== undefined && maxmin.max !== undefined &&
                 maxmin.max !== maxmin.min);
 
-        return (!valid ? (d.r ? d.r : (urlValid(d['image-url']) ? 20 : 10))
+        return (!valid ? (d.radius ? d.radius : (urlValid(d['image-url']) ? 20 : 10))
                 : 10 + 20 * (size - maxmin.min) / (maxmin.max - maxmin.min));
     }
 
