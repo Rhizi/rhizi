@@ -475,6 +475,29 @@ function GraphView(spec) {
     function graphics__node_text(node) {
     }
 
+    function calculate_minmax(data) {
+        var collection = data.collection,
+            get_attrib = data.get_attrib,
+            keys = data.keys,
+            ret = _.object(keys, _.map(keys, function () {
+                return {min: undefined, max: undefined};
+            }));
+
+        collection.forEach(function (n) {
+            var d = ret[n.type],
+                cur_min = d !== undefined ? d.min : undefined,
+                cur_max = d !== undefined ? d.max : undefined,
+                size = get_attrib(n);
+
+            if (d === undefined || size === undefined) {
+                return;
+            }
+            d.min = cur_min === undefined ? size : Math.min(d.min, size);
+            d.max = cur_max === undefined ? size : Math.max(d.max, size);
+        });
+        return ret;
+    }
+
     function update_view(relayout) {
         var node,
             link,
@@ -495,23 +518,7 @@ function GraphView(spec) {
         }
 
         // compute min/max per node type for node radii
-        node__radius__data = _.object(model_types.nodetypes, _.map(model_types.nodetypes, function () {
-            return {min: undefined, max: undefined};
-        }));
-        graph.nodes().forEach(function (n) {
-            var d = node__radius__data[n.type],
-                cur_min = d !== undefined ? d.min : undefined,
-                cur_max = d !== undefined ? d.max : undefined,
-                size = node__radius_input(n);
-
-            if (d === undefined || size === undefined) {
-                return;
-            }
-            d.min = cur_min === undefined ? size : Math.min(d.min, size);
-            d.max = cur_max === undefined ? size : Math.max(d.max, size);
-        });
-        gv.node__radius__data = node__radius__data; // debugging
-
+        gv.node__radius__data = node__radius__data = calculate_minmax({collection: graph.nodes(), get_attrib: node__radius_input, keys: model_types.nodetypes});
 
         function node_text_setup() {
             var node_text;
