@@ -82,7 +82,7 @@ var typeselection = function TypeSelectionDialog() {
             return;
         }
         attach_to(node_id);
-        e_intro.hide();
+        e_intro.show();
         e_label.show();
         e_name.html(model_types.node_titles[nodetype]);
         if (desc) {
