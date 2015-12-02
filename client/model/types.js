@@ -20,6 +20,8 @@ define(['underscore', 'util', 'domain_types'],
 function(_,            util,   domain_types)
 {
 
+"use strict";
+
 var all_attributes,
     types = _.object(domain_types.types),
     nodetypes = _.map(domain_types.types, 0),
@@ -40,7 +42,7 @@ _.pluck(_.values(types), 'attributes').map(function (attributes) {
 all_attributes = _.union(_.flatten(_.pluck(_.values(types), 'attributes'))).sort();
 
 util.assert(_.filter(all_attributes,
-    function (attr) { return attribute_titles[attr] === undefined; }).length == 0);
+    function (attr) { return attribute_titles[attr] === undefined; }).length === 0);
 
 return (
     {
