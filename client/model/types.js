@@ -24,14 +24,23 @@ function(_,            util,   domain_types)
 
 var all_attributes,
     types = _.object(domain_types.types),
+    link_types = _.object(domain_types.link_types),
+    link_types_names = _.map(domain_types.link_types, function (x) { return x[0]; }),
     nodetypes = _.map(domain_types.types, 0),
     attribute_titles = domain_types.attribute_titles,
     node_titles = _.object(nodetypes, _.map(domain_types.types, function(v) { return v[1].title; }));
 
-if (undefined === types['_defaults']) {
-    types['_defaults'] = {
+if (undefined === types._defaults) {
+    types._defaults = {
         'title': 'default',
         'attributes':['description', 'url']
+    };
+}
+
+if (undefined === link_types._defaults) {
+    link_types._defaults = {
+        'title': 'default',
+        'attributes':[]
     };
 }
 
@@ -47,6 +56,7 @@ util.assert(_.filter(all_attributes,
 return (
     {
         nodetypes: nodetypes,
+        link_types_names: link_types_names,
         type_attributes: function (type) {
             util.assert(!type || type[0] !== '_', 'invalid type name');
             return types[type && types.hasOwnProperty(type) ? type : '_defaults'].attributes;
@@ -55,10 +65,14 @@ return (
             util.assert(!type || type[0] !== '_', 'invalid type name');
             return types[type && types.hasOwnProperty(type) ? type : '_defaults'];
         },
+        link_types: function(type) {
+            util.assert(!type || type[0] !== '_', 'invalid type name');
+            return link_types[type && link_types.hasOwnProperty(type) ? type : '_defaults'];
+        },
         all_attributes: all_attributes,
         attribute_titles: attribute_titles,
         node_titles: node_titles,
         misc: domain_types.misc,
     });
 }
-)
+);
