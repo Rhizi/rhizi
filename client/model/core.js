@@ -16,19 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
 var DEBUG_NODE_POSITION = false;
 
 /**
  * core model module - currently unused
  */
 define(['util'], function(util) {
+    "use strict";
 
     /**
      * return a random id
      */
-    var random_id;
+    var random_id,
+        Node;
 
     var random_id__hash = function() {
         return Math.random().toString(36).substring(2, 10);
@@ -122,6 +122,9 @@ define(['util'], function(util) {
 
         // copy spec
         for (var k in node_spec) {
+            if (typeof node_spec[k] === 'function') {
+                continue;
+            }
             if (k === 'id') {
                 continue;
             }
@@ -138,13 +141,13 @@ define(['util'], function(util) {
      * @param node_spec: id must not be defined
      */
     function create_node__set_random_id(node_spec) {
-        if (undefined == node_spec) {
+        if (undefined === node_spec) {
             node_spec = {};
         }
 
         var ret = create_node_from_spec(node_spec);
 
-        util.assert(undefined == ret.id); // id must not be defined in spec
+        util.assert(undefined === ret.id); // id must not be defined in spec
         __set_obj_id(ret, random_id());
 
         return ret;
@@ -163,8 +166,8 @@ define(['util'], function(util) {
      * @returns {Boolean}
      */
     Node.prototype.equal_by_name = function(other) {
-        ret = this.name.toLowerCase() == other.name.toLowerCase();
-        if (false == ret) {
+        var ret = this.name.toLowerCase() === other.name.toLowerCase();
+        if (false === ret) {
             console.debug(this.id + ' != ' + other.id);
         }
         return ret;
@@ -178,17 +181,17 @@ define(['util'], function(util) {
             __set_obj_id(ret, link_spec.id);
         }
 
-        util.assert(undefined != src, 'create_link_from_spec: src missing');
-        util.assert(undefined != dst, 'create_link_from_spec: dst missing');
-        util.assert(undefined != src.id, 'create_link_from_spec: src missing id');
-        util.assert(undefined != dst.id, 'create_link_from_spec: dst missing id');
-        util.assert(undefined != link_spec.name, 'create_link_from_spec: name missing, unable to deduce type');
+        util.assert(undefined !== src, 'create_link_from_spec: src missing');
+        util.assert(undefined !== dst, 'create_link_from_spec: dst missing');
+        util.assert(undefined !== src.id, 'create_link_from_spec: src missing id');
+        util.assert(undefined !== dst.id, 'create_link_from_spec: dst missing id');
+        util.assert(undefined !== link_spec.name, 'create_link_from_spec: name missing, unable to deduce type');
 
         ret.__src = src;
         ret.__dst = dst;
         ret.__type = link_spec.name;
 
-        if (undefined == link_spec.name){
+        if (undefined === link_spec.name){
             console.warn('create_link_from_spec: name: ' + link_spec.name);
             link_spec.name = "";
         }
@@ -205,7 +208,7 @@ define(['util'], function(util) {
      * @returns {Boolean}
      */
     Link.prototype.equal_by_id = function(other) {
-        return this.id.toLowerCase() == other.id.toLowerCase();
+        return this.id.toLowerCase() === other.id.toLowerCase();
     };
 
     return {
