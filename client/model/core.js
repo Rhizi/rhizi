@@ -122,13 +122,9 @@ define(['util'], function(util) {
 
         // copy spec
         for (var k in node_spec) {
-            if (typeof node_spec[k] === 'function') {
-                continue;
+            if (node_spec.hasOwnProperty(k) && typeof node_spec[k] !== 'function' && k !== 'id') {
+                ret[k] = node_spec[k];
             }
-            if (k === 'id') {
-                continue;
-            }
-            ret[k] = node_spec[k];
         }
 
         // default values
@@ -201,7 +197,7 @@ define(['util'], function(util) {
         delete link_spec.__dst;
 
         for (var property in link_spec) {
-            if (typeof link_spec[property] !== 'function' && property !== 'id') {
+            if (link_spec.hasOwnProperty(property) && typeof link_spec[property] !== 'function' && property !== 'id') {
                 ret[property] = link_spec[property];
             }
         }
