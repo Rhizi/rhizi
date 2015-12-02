@@ -29,8 +29,9 @@ from .model.graph import Topo_Diff
 from .rz_api_rest import Req_Context
 from .rz_api_websocket import WebSocket_Graph_NS
 from .rz_req_handling import (make_response__http__empty,
-    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, make_response__json,
-    sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys)
+    HTTP_STATUS__500_INTERNAL_SERVER_ERROR, HTTP_STATUS__200_OK,
+    make_response__json, sock_addr_from_env_HTTP_headers,
+    sock_addr_from_REMOTE_X_keys)
 
 
 log = logging.getLogger('rhizi')
@@ -208,7 +209,8 @@ def init_ws_interface(cfg, kernel, flask_webapp):
         ws_req_env.peer_sock_addr = ws_srv.req_probe__sock_addr.probe_client_socket_addr__ws_conn(request.environ)
 
         try:
-            return socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_req_env)  # connect socketio manager
+            socketio_manage(request.environ, {'/graph': WebSocket_Graph_NS}, ws_req_env)  # connect socketio manager
+            return make_response__json(status=HTTP_STATUS__200_OK)
         except:
             log.exception("ws: exception while handling connection", exc_info=True)
             return make_response__json(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR)
