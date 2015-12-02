@@ -202,7 +202,7 @@ define(['util'], function(util) {
         delete link_spec.__dst;
 
         for (var property in link_spec) {
-            if (typeof link_spec[property] !== 'function') {
+            if (typeof link_spec[property] !== 'function' && property !== 'id') {
                 ret[property] = link_spec[property];
             }
         }
