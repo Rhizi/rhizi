@@ -197,7 +197,6 @@ define(['util'], function(util) {
         }
         ret.name = link_spec.name.trim();
         delete link_spec.name;
-        delete link_spec.id;
         delete link_spec.__src;
         delete link_spec.__dst;
 
