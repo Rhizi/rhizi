@@ -1515,22 +1515,18 @@ p {
   fill: #d10a40;
   pointer-events: all;
   stroke: #919095;
-  stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index: 1; }
   .link.selected {
     stroke: #fad900;
-    stroke-opacity: 1.0;
-    stroke-width: 2px; }
+    stroke-opacity: 1.0; }
   .link.related {
     fill: none;
     stroke: #33c2e0;
-    stroke-opacity: 0.5;
-    stroke-width: 2px; }
+    stroke-opacity: 0.5; }
   .link.hovering {
     stroke: #ff8b11;
     stroke-opacity: 0.5;
-    stroke-width: 2px;
     opacity: 1; }
 
 .linklabel {

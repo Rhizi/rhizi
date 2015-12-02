@@ -98,24 +98,20 @@
   fill: $dark-magenta;
   pointer-events: all;
   stroke: $mid-grey;
-  stroke-width: 1px;
   stroke-opacity: 0.5;
   z-index:1;
   &.selected {
     stroke: $yellow;
     stroke-opacity: 1.0;
-    stroke-width: 2px;
   }
   &.related {
     fill: none;
     stroke: $cyan;
     stroke-opacity: 0.5;
-    stroke-width: 2px;
   }
   &.hovering {
       stroke: $orange;
       stroke-opacity: 0.5;
-      stroke-width: 2px;
       opacity: 1;
   }
 }
