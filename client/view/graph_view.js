@@ -475,7 +475,7 @@ function GraphView(spec) {
     function graphics__node_text(node) {
     }
 
-    function calculate_minmax(data) {
+    function calculate_minmax(data, type_key) {
         var collection = data.collection,
             get_attrib = data.get_attrib,
             keys = data.keys,
@@ -484,7 +484,8 @@ function GraphView(spec) {
             }));
 
         collection.forEach(function (n) {
-            var d = ret[n.type],
+            var n_type = n[type_key],
+                d = ret[n_type],
                 cur_min = d !== undefined ? d.min : undefined,
                 cur_max = d !== undefined ? d.max : undefined,
                 size = get_attrib(n);
@@ -518,7 +519,12 @@ function GraphView(spec) {
         }
 
         // compute min/max per node type for node radii
-        gv.node__radius__data = node__radius__data = calculate_minmax({collection: graph.nodes(), get_attrib: node__radius_input, keys: model_types.nodetypes});
+        gv.node__radius__data = node__radius__data = calculate_minmax(
+                {
+                    collection: graph.nodes(),
+                    get_attrib: node__radius_input,
+                    keys: model_types.nodetypes,
+                }, 'type');
 
         function node_text_setup() {
             var node_text;
