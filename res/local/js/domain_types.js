@@ -36,7 +36,14 @@ define({
         ['media', {
             'title': 'Media',
             'attributes': ['description', 'url', 'image-url'],
-        }]
+        }],
+    ],
+    link_types: [
+        ['worked on', {
+            'title': 'Worked on',
+            'attributes': ['hours-total'],
+            'width': ['hours-total', 'linear'],
+        }],
     ],
     attribute_titles: {
         'name': 'Name',
