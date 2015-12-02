@@ -2,7 +2,7 @@ define({
     types: [
         ['person', {
             'title': 'Person',
-            'attributes': ['email', 'image-url', 'url'],
+            'attributes': ['email', 'work-address', 'image-url', 'url'],
         }],
         ['project', {
             'title': 'Project',
@@ -56,6 +56,7 @@ define({
         'enddate': 'End Date',
         'image-url': 'Image url',
         'cnrs-inserm-unit-code': 'CNRS / INSERM unit code',
+        'work-address': 'Work Address',
         'street-address': 'Street address',
         'city': 'City',
         'country': 'Country',
@@ -64,6 +65,7 @@ define({
     attribute_ui: {
         'affiliation': 'textarea',
         'description': 'textarea',
+        'work-address': 'textarea',
         'email': 'input',
         'name': 'input',
         'type': 'type',
