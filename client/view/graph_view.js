@@ -140,7 +140,7 @@ function GraphView(spec) {
         cx,
         cy,
 
-        // node size in case there is a determining attribute
+        // statistics on node attributes for calculation of radius
         node__radius__data = {
         };
 
@@ -520,7 +520,7 @@ function GraphView(spec) {
             node_text.enter().insert('g')
                 .attr('id', function (d) { return text_node_id(d.id); })
                 .attr("class", "nodetext graph")
-                .on("click", function(d, i) {
+                .on("click", function(d, _i) {
                     if (d3.event.defaultPrevented) {
                         // drag happened, ignore click https://github.com/mbostock/d3/wiki/Drag-Behavior#on
                         return;
@@ -1110,7 +1110,8 @@ function GraphView(spec) {
 
     function ring_transform(xy, inner_radius, outer_radius, max_radius) {
         var rtheta = xy_to_rtheta(xy),
-            r = rtheta[0], theta = rtheta[1],
+            r = rtheta[0],
+            theta = rtheta[1],
             dr = outer_radius - inner_radius,
             //rout = Math.max(inner_radius, Math.min(outer_radius, r));
             rout = dr * r / max_radius + inner_radius;
@@ -1278,7 +1279,7 @@ function GraphView(spec) {
                 layout_menu.append(button);
                 gv.layout_name_bus.onValue(function (name) {
                     button[0].style.borderStyle = name === button_layout.name ? 'dashed' : 'solid';
-                })
+                });
             });
         });
     }
@@ -1315,7 +1316,7 @@ function GraphView(spec) {
         graph.nodes().forEach(function (node) {
             node.fixed = undefined;
         });
-        if (new_layout.name == 'zen') {
+        if (new_layout.name === 'zen') {
             zen_mode__prev_layout = layout;
             zen_mode__auto_center = true;
             zen_mode__inner_set(true);
