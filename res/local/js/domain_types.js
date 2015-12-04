@@ -28,7 +28,6 @@ define({
             'title': 'Keyword',
             'attributes': ['description', 'url'],
         }],
-
         ['organisation', {
             'title': 'Organisation',
             'attributes': ['description', 'url'],
@@ -54,7 +53,7 @@ define({
         'status': 'Status',
         'startdate': 'Start Date',
         'enddate': 'End Date',
-        'image-url': 'Image url',
+        'image-url': 'Image URL',
         'cnrs-inserm-unit-code': 'CNRS / INSERM unit code',
         'work-address': 'Work Address',
         'street-address': 'Street address',
@@ -63,7 +62,6 @@ define({
         'hours-total': 'Hours Total'
     },
     attribute_ui: {
-        'affiliation': 'textarea',
         'description': 'textarea',
         'work-address': 'textarea',
         'email': 'input',
@@ -72,5 +70,6 @@ define({
         'image-url': 'image',
         'url': 'url',
         'rhizi-url': 'rhizi-url',
+        'status':'input',
     }
 });
