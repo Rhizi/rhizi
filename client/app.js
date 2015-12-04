@@ -19,7 +19,7 @@
 (function() {
 
     var lib_path = '/static/lib/';
-    var fragmentd_path = '${fragment_d_path}'; // [!] see README.md#Deployment note
+    var fragmentd_path = '/static/fragment.d'; // [!] see README.md#Deployment note
 
     var config = {
         shim: {

@@ -153,6 +153,7 @@ var init_graph_views = function () {
         .attr("markerWidth", 8)
         .attr("markerHeight", 8)
         .style("fill", "#AAA")
+        .style("opacity", ".6")
         .attr("markerUnits", "userSpaceOnUse") // default: "strokeWidth"
         .attr("orient", "auto")
         .append("svg:path")
