@@ -15,10 +15,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from flask import make_response
+import sys
 from functools import wraps
 import json
 import logging
+
+from flask import make_response
 from werkzeug.wrappers import BaseResponse as Response
 
 from .rz_api_common import API_Exception__bad_request
@@ -33,7 +35,16 @@ HTTP_STATUS__400_BAD_REQUEST = 400
 HTTP_STATUS__401_UNAUTORIZED = 401
 HTTP_STATUS__500_INTERNAL_SERVER_ERROR = 500
 
+
 log = logging.getLogger('rhizi')
+
+
+python2 = sys.version_info[0] == 2
+
+
+if not python2:
+    unicode = str
+
 
 def __common_resp_handle(data, error, status):
     """
@@ -55,7 +66,7 @@ def __common_resp_handle(data, error, status):
     if not error:
         error_str = None
     else:
-        error_str = str(error)  # convert any Exception objects to serializable form
+        error_str = unicode(error)  # convert any Exception objects to serializable form
 
     ret_data = __response_wrap(data, error_str)
     resp_payload = json.dumps(ret_data)

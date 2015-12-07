@@ -110,4 +110,4 @@ class RZDoc():
         return self.id.__hash__()
 
     def __str__(self):
-        return 'rzdoc: name: %s' % (self.name)
+        return 'rzdoc: name: %s'.decode('utf-8') % (self.name)
