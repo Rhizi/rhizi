@@ -428,9 +428,11 @@ class TestDBController(RhiziTestBase):
     def tearDown(self):
         pass
 
+
 @debug__pydev_pd_arg
 def main():
     unittest.main(defaultTest='TestDBController.test_rzdb__fetch_DB_metadata', verbosity=2)
+
 
 if __name__ == "__main__":
     main()

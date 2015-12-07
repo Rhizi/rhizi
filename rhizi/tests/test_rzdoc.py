@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #    This file is part of rhizi, a collaborative knowledge graph editor.
 #    Copyright (C) 2014-2015  Rhizi
 #
@@ -61,24 +63,23 @@ class TestRZDoc(RhiziTestBase):
         commit_log = self.kernel.rzdoc__commit_log(rzdoc=rzdoc_a, limit=10)
 
     def test_rzdoc_lifecycle(self):
-        test_label = neo4j_test_util.rand_label()
+        for test_label in ['first', u'שלןם']:
+            rzdoc_name = test_label
+            lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+            self.assertIsNone(lookup_ret__by_name)
 
-        rzdoc_name = test_label
-        lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        self.assertIsNone(lookup_ret__by_name)
+            # create
+            rzdoc = self.kernel.rzdoc__create(rzdoc_name)
 
-        # create
-        rzdoc = self.kernel.rzdoc__create(rzdoc_name)
+            # lookup
+            for rzd in [rzdoc]:
+                lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzd.name)
+                self.assertTrue(None != lookup_ret__by_name)
 
-        # lookup
-        for rzd in [rzdoc]:
-            lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzd.name)
-            self.assertTrue(None != lookup_ret__by_name)
-
-        # delete
-        self.kernel.rzdoc__delete(rzdoc)
-        lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        self.assertIsNone(lookup_ret__by_name)
+            # delete
+            self.kernel.rzdoc__delete(rzdoc)
+            lookup_ret__by_name = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+            self.assertIsNone(lookup_ret__by_name)
 
     def test_rzdoc_search(self):
         rzdoc_common_name = util.gen_random_name()

@@ -16,5 +16,9 @@ if __name__ == '__main__':
     Popen(args='{} {}'.format(os.environ.get('EDITOR', 'vim'), versions.debian_changelog_path).split()).wait()
     check_output('git add {}'.format(' '.join(versions.filenames)).split())
     check_output(['git', 'commit', '-m', 'version {}'.format(versions.version)])
-    check_output(['git', 'tag', '-a', 'v-{}'.format(versions.version),
-                  '-m', "version {}".format(versions.version)])
+    tag = 'v-{}'.format(versions.version)
+    check_output(['git', 'tag', '-a', tag, '-m', "version {}".format(versions.version)])
+    # push now - otherwise we can end up with stale tags if someone else pushed
+    # first
+    check_output(['git', 'push', 'origin', tag])
+    check_output(['git', 'push', 'origin']) # and push current branch; verify this is master?

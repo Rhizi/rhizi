@@ -1,3 +1,20 @@
+rhizi (0.3.10) unstable; urgency=low
+  * fix(refix?) unicode document names
+ -- Alon Levy <alon@pobox.com>  Mon, 07 Dec 2015 08:27:11 -0800
+
+rhizi (0.3.9) unstable; urgency=low
+  * fix edge head arrows
+  * Removed initialized field and add "status" to attribute_ui
+ -- Alon Levy <alon@pobox.com>  Sat, 05 Dec 2015 03:57:48 +0200
+
+rhizi (0.3.8) unstable; urgency=low
+  * Add "Work address" property to person node
+  * Bring back help text resolves #635
+  * Update help text for node types
+  * edge size for 'worked on' links per hours-total attribute (controllable via domain_types.js)
+  * multiple small fixes
+ -- Alon Levy <alon@pobox.com>  Thu, 03 Dec 2015 09:27:39 +0200
+
 rhizi (0.3.7) unstable; urgency=low
   * client: fix radius calculation when db contains a type not in domain_types
  -- Alon Levy <alon@pobox.com>  Sat, 28 Nov 2015 22:09:36 +0200

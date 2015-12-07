@@ -25,12 +25,19 @@ import six
 from .db_driver import DB_Driver_REST, DB_Driver_Base
 from .db_op import DB_composed_op
 from .db_op import DB_op
+from .util import str_to_unicode
 from .neo4j_util import Neo4JException
 
 
 python2 = sys.version_info[0] == 2
 
+
 log = logging.getLogger('rhizi')
+
+
+if not python2:
+    unicode = str
+
 
 class DB_Controller(object):
     """
@@ -63,8 +70,8 @@ class DB_Controller(object):
             self.db_driver.commit_tx(op)
 
             op_ret = op.process_result_set()
-            log.debug('exec_op: {}: return value: {}'.format(op.name,
-                      six.u(str(op_ret))[:256]))  # trim verbose return values
+            log.debug(str_to_unicode('exec_op: {}: return value: {}').format(op.name,
+                      unicode(op_ret)[:256]))  # trim verbose return values
             return op_ret
 
         except Neo4JException as e:
