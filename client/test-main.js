@@ -30,7 +30,6 @@ require.config({
         Bacon: lib_path + 'Bacon',
         caret: lib_path + 'caret',
         cola: lib_path + 'cola',
-        domain_types: 'res/local/js/domain_types',
         d3: lib_path + 'd3/d3',
         feedback: lib_path + 'feedback',
         FileSaver: lib_path + 'FileSaver',

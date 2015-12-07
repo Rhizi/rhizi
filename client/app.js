@@ -17,6 +17,7 @@
 */
 
 (function() {
+    "use strict";
 
     var lib_path = '/static/lib/';
     var fragmentd_path = '${fragment_d_path}'; // [!] see README.md#Deployment note
@@ -43,12 +44,12 @@
             socketio: lib_path + 'socket.io/socket.io.min_0.9.10',
             underscore: lib_path + 'underscore',
         }
-    }
+    };
 
     if (rz_config.optimized_main) {
         config.paths.main = 'main-built';
     }
-    config.urlArgs = typeof local_config != 'undefined' ? local_config.urlArgs : RZ_VERSION;
+    config.urlArgs = typeof local_config !== 'undefined' ? local_config.urlArgs : RZ_VERSION;
 
 if (window.is_node) {
     // Testing path only
