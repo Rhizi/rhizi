@@ -21,3 +21,4 @@ if __name__ == '__main__':
     # push now - otherwise we can end up with stale tags if someone else pushed
     # first
     check_output(['git', 'push', 'origin', tag])
+    check_output(['git', 'push', 'origin']) # and push current branch; verify this is master?
