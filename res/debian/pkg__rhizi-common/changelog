@@ -1,3 +1,7 @@
+rhizi (0.3.10) unstable; urgency=low
+  * fix(refix?) unicode document names
+ -- Alon Levy <alon@pobox.com>  Mon, 07 Dec 2015 08:27:11 -0800
+
 rhizi (0.3.9) unstable; urgency=low
   * fix edge head arrows
   * Removed initialized field and add "status" to attribute_ui
