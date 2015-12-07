@@ -15,13 +15,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 import base64
 import gzip
 import json
 
 
-python2 = sys.version_info[0] == 2
+from ..util import str_to_unicode, python2
 
 
 class RZCommit():
@@ -110,4 +109,5 @@ class RZDoc():
         return self.id.__hash__()
 
     def __str__(self):
-        return 'rzdoc: name: %s'.decode('utf-8') % (self.name)
+        """ actually returns unicode. """
+        return str_to_unicode('rzdoc: name: %s') % (self.name)

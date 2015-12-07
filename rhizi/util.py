@@ -18,12 +18,17 @@
 """
 code with no better place to go
 """
+import sys
 import time
+
+
+python2 = sys.version_info[0] == 2
+
 
 def debug_log_duration(method):
     """
     dubug call durations - use example:
-    
+
         neo4j_util.post = util.debug_log_duration(neo4j_util.post)
     """
 
@@ -37,3 +42,12 @@ def debug_log_duration(method):
         return result
 
     return timed
+
+# unicode utilities - required for python 2 and 3 compatibility, i.e. can
+# be removed once we move to python 3
+if python2:
+    def str_to_unicode(s):
+        return s.decode('utf-8')
+else:
+    def str_to_unicode(s):
+        return s
