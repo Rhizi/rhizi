@@ -4,7 +4,16 @@
   "license": "AGPL version 3.0",
   "repository": "https://github.com/Rhizi/rhizi.git",
   "version": "0.3.11",
-  "dependencies": {},
+  "dependencies": {
+   // TODO: move all committed packages here.
+   // d3
+   // socketio
+   // Bacon.js
+   // jquery
+   // underscore
+   // Filesaver
+   // feedback - https://github.com/ivoviz/feedback (it also bundles html2canvas)
+  },
   "devDependencies": {
     "karma": "~0.13",
     "jasmine": "~2.3.*",
