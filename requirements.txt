@@ -9,3 +9,4 @@ flask==0.10.1
 six==1.10.0
 socketIO-client==0.6.5
 python-dateutil==2.4.2
+python-debian==0.1.23
