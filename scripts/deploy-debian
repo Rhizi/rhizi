@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 """
 upgrade debian package, run from a Fedora machine with working systemd-nspawn
