@@ -2,14 +2,22 @@
 
 import os
 from subprocess import Popen
+import argparse
+import sys
 
 from util import versions, check_output
 
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--nopush', dest='push', action='store_false', default=True,
+                        help='prevent side effects for testing/debugging')
+    args = parser.parse_args(sys.argv[1:])
     if versions.by_tag() != versions.version:
         print("non matching tag and files. tag={}, files={}".format(
             versions.by_tag(), versions.version))
-        raise SystemExit
+        if args.push:
+            raise SystemExit
     full_commits = check_output('git log --oneline v-{}..'.format(versions.version).split()).split('\n')
     commits = [x.split(' ', 1)[1] for x in full_commits if x.strip() != '']
     versions.bump_version(debian_changelog=commits)
@@ -18,7 +26,9 @@ if __name__ == '__main__':
     check_output(['git', 'commit', '-m', 'version {}'.format(versions.version)])
     tag = 'v-{}'.format(versions.version)
     check_output(['git', 'tag', '-a', tag, '-m', "version {}".format(versions.version)])
-    # push now - otherwise we can end up with stale tags if someone else pushed
-    # first
-    check_output(['git', 'push', 'origin', tag])
-    check_output(['git', 'push', 'origin']) # and push current branch; verify this is master?
+    # push now - otherwise we can end up with stale tags if someone else pushed first
+    if not args.push:
+        print("dry run, notpushing")
+    else:
+        check_output(['git', 'push', 'origin', tag])
+        check_output(['git', 'push', 'origin']) # and push current branch; verify this is master?
