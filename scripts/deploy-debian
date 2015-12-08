@@ -29,6 +29,10 @@ remote_host = None
 dryrun = False
 dryrun_install = True
 
+# use systemd nspawn if not running under debian, otherwise just natively
+# build the debian package
+running_under_debian = os.path.exists('/etc/debian_version')
+
 
 def check_call(oneliner):
     if not isinstance(oneliner, list):
@@ -76,15 +80,24 @@ def install_deb(filename):
 
 
 def build_deb():
-    chroot('/home/rhizi', 'ant -f build.ant pkg-deb__mux')
+    cmd = 'ant -f build.ant pkg-deb__mux'
+    if running_under_debian:
+        check_call(cmd)
+    else:
+        chroot('/home/rhizi', cmd)
 
 
 def install_locally(filename):
-    chroot('/home/rhizi', 'dpkg -i {}'.format(filename), user='root')
+    cmd = 'dpkg -i {}'.format(filename)
+    if running_under_debian:
+        check_call('sudo {}'.format(cmd))
+    else:
+        chroot('/home/rhizi', cmd, user='root')
 
 
 def main():
     versions.ensure_synced()
+    print("running under debian" if running_under_debian else "running with nspawn")
 
     chroot_rhizi = os.path.join(CHROOT, 'home', 'rhizi')
     deb_filename = 'rhizi-mux_{}_amd64.deb'.format(versions.debian)
@@ -97,7 +110,8 @@ def main():
     assert not os.path.exists(deb_local_fullpath)
     clone(RHIZI_SOURCE_REPO, chroot_rhizi)
     build_deb()
-    assert os.path.exists(deb_local_fullpath), "missing {}".format(deb_local_fullpath)
+    if not dryrun:
+        assert os.path.exists(deb_local_fullpath), "missing {}".format(deb_local_fullpath)
     install_locally(deb_chroot_fullpath)
     scp(source=deb_local_fullpath, target=deb_filename)
     install_deb(deb_filename)
