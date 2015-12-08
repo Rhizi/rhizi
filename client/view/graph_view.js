@@ -145,7 +145,9 @@ function GraphView(spec) {
         },
         // statistics on link attributes for calculation of width
         link__width__data = {
-        };
+        },
+        minimum_link_width = 1,
+        maximum_link_width = 7;
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
@@ -482,7 +484,7 @@ function GraphView(spec) {
                     selection_class_link !== 'notselected');
 
         return (!valid ? (d.width ? d.width : 1)
-                : 1 + 3 * (size - maxmin.min) / (maxmin.max - maxmin.min)) +
+                : minimum_link_width + maximum_link_width * (size - maxmin.min) / (maxmin.max - maxmin.min)) +
                  (highlighted ? 1 : 0)
                 ;
     }
