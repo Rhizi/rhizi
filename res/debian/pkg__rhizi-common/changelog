@@ -1,3 +1,7 @@
+rhizi (0.3.12) unstable; urgency=low
+  * developer facing changes
+ -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 16:10:37 -0800
+
 rhizi (0.3.11) unstable; urgency=low
   * fix bug resulting from support for empty edges (no github issue)
   * widen variable sized edges max size
