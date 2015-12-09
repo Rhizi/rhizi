@@ -16,10 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'util', 'consts', 'model/diff', 'model/types', 'model/graph', 'messages'],
-function($, util,   consts,   model_diff,   model_types,  graph,          messages) {
+define(['jquery', 'underscore', 'util', 'consts', 'model/diff', 'model/types',
+        'model/graph', 'messages', 'domain_types'],
+function($,        _,            util,   consts,   model_diff,   model_types,
+         graph,         messages,   domain_types) {
 
-"strict"
+"use strict";
 
 // constants
 var DEBOUNCE_TIME = 500; // milliseconds
@@ -35,8 +37,8 @@ var msg_node = $('.info-card-message'),
     form = _.object(model_types.all_attributes.map(function (attr) {
             var element = edit_element_for_attribute(attr);
 
-            if (element.length == 0) {
-                element = form_add_element(attr, 'textarea');
+            if (element.length === 0) {
+                element = form_add_element(attr);
             }
             return [attr, element];
         })),
@@ -53,9 +55,11 @@ var msg_node = $('.info-card-message'),
 /**
  *  Adds the div with the label, return the edit child
  */
-function form_add_element(attr, value_element_type)
+function form_add_element(attr)
 {
-    var div = $('<div>'),
+    var dt_ui_element = domain_types.attribute_ui[attr],
+        value_element_type = dt_ui_element === undefined ? 'textarea' : dt_ui_element,
+        div = $('<div>'),
         label = $('<div>'),
         value = $('<' + value_element_type + '></' + value_element_type + '>');
 
@@ -73,10 +77,10 @@ function form_add_element(attr, value_element_type)
 
 function clean_url(candidate_url)
 {
-    if (candidate_url.length == 0) {
+    if (candidate_url.length === 0) {
         return '';
     }
-    if (candidate_url.search('://') != -1) {
+    if (candidate_url.search('://') !== -1) {
         return candidate_url;
     }
     return 'https://' + candidate_url;
@@ -185,13 +189,13 @@ function setup_click_handlers()
     diffBusUnsubscribe = graph.diffBus.onValue(function (diff) {
         var removed_set = is_node(item) ? diff.node_id_set_rm : diff.link_id_set_rm,
             changed_set = is_node(item) ? diff.id_to_node_map : diff.id_to_link_map;
-            
+
         if (model_diff.is_topo_diff(diff) && _.contains(removed_set, item.id)) {
             warning('!! item has been deleted !!');
             return;
         }
         if (model_diff.is_attr_diff(diff) && _.contains(_.keys(changed_set), item.id)) {
-            var changed = changed_set[item.id]['__attr_write'],
+            var changed = changed_set[item.id].__attr_write,
                 changed_keys = _.keys(changed),
                 form_subset = _.pick(_get_form_data(), changed_keys);
 
@@ -225,20 +229,24 @@ function update_textarea(textarea, value)
     textarea_resize(textarea[0], 25, 150);
 }
 
-function show(_graph, new_item, new_visible_attributes)
+function show(_graph, new_item, opt_attributes_data)
 {
     var hidden_attributes,
         visible_elements,
-        hidden_elements;
+        hidden_elements,
+        new_visible_attributes = opt_attributes_data === undefined ?
+            undefined : _.pluck(opt_attributes_data, 0),
+        new_editable_attributes = _.object(opt_attributes_data);
 
     visible_attributes = (new_visible_attributes || model_types.type_attributes(new_item.type)).slice(0).reverse();
-    hidden_attributes = _.difference(model_types.all_attributes, visible_attributes),
+    hidden_attributes = _.difference(model_types.all_attributes, visible_attributes);
     visible_elements = visible_attributes.map(base_element_for_attribute);
     hidden_elements = hidden_attributes.map(base_element_for_attribute);
     warning(''); // reset warning
     graph = _graph;
     item = new_item;
-    util.assert(get_item_from_graph() != null);
+
+    util.assert(get_item_from_graph() !== null);
 
     setup_click_handlers();
 
@@ -249,8 +257,11 @@ function show(_graph, new_item, new_visible_attributes)
     info_container.addClass('type-' + item.type); // add css type class
 
     _.each(visible_attributes, function (attr) {
-        var element = edit_element_for_attribute(attr);
-            value = item[attr];
+        var element = edit_element_for_attribute(attr),
+            value = item[attr],
+            editable = new_editable_attributes[attr] === undefined
+                ? true
+                : new_editable_attributes[attr];
 
         element.parent().insertAfter(msg_node);
         switch (attr) {
@@ -280,6 +291,9 @@ function show(_graph, new_item, new_visible_attributes)
         }
         if (element.val !== undefined) {
             element.val(value);
+        }
+        if (element[0].contentEditable) {
+            element[0].contentEditable = editable;
         }
     });
     info_container.show();

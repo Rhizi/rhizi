@@ -722,14 +722,18 @@ function GraphView(spec) {
                 link_on_hover(d);
             });
         link_g.on("click", function(d) {
-                if (zoomInProgress) {
-                    // don't disable zoomInProgress, it will be disabled by the svg_click_handler
-                    // after this events bubbles to the svg element
-                    return;
-                }
-                item_info.show(graph, d, ['name']);
-                (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
-            });
+            var attributes;
+
+            if (zoomInProgress) {
+                // don't disable zoomInProgress, it will be disabled by the svg_click_handler
+                // after this events bubbles to the svg element
+                return;
+            }
+            attributes = model_types.link_types(d.name).attributes;
+            item_info.show(graph, d, [['name', true]].concat(_.map(attributes,
+                            function (a) { return [a, false]; })));
+            (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
+        });
 
         //var selected_N = selection:
 
