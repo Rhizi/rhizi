@@ -1,3 +1,7 @@
+rhizi (0.3.13) unstable; urgency=low
+  * client: show link attributes in info panel for a link.
+ -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 20:16:37 -0800
+
 rhizi (0.3.12) unstable; urgency=low
   * developer facing changes
  -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 16:10:37 -0800
