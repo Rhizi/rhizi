@@ -33,7 +33,6 @@ var is_node = model_graph.is_node;
 var msg_node = $('.info-card-message'),
     setup_done = false,
     info_container = $('.info-container'),
-    form_element = $('#editbox'),
     form = _.object(model_types.all_attributes.map(function (attr) {
             var element = edit_element_for_attribute(attr);
 
@@ -152,15 +151,6 @@ function disable_change_handlers()
 {
     _.each(change_handlers, function (unsub) { unsub(); });
     change_handlers = [];
-}
-
-function delete_item()
-{
-    if (is_node(item)) {
-        graph.nodes__delete([item.id]);
-    } else {
-        graph.links__delete([item.id]);
-    }
 }
 
 /**
