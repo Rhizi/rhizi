@@ -68,8 +68,9 @@ define({
         'name': 'input',
         'type': 'type',
         'image-url': 'image',
-        'url': 'url',
-        'rhizi-url': 'rhizi-url',
-        'status':'input',
+        'url': 'input',
+        'rhizi-url': 'input',
+        'status': 'input',
+        'hours-total': 'input',
     }
 });
