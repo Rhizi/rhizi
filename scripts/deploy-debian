@@ -55,6 +55,11 @@ def chroot(path, oneliner, user=USER):
                 'cd {}; {}'.format(path, oneliner)])
 
 
+def rm(filename):
+    if os.path.exists(filename):
+        os.unlink(filename)
+
+
 def rmdir(path):
     check_call(['rm', '-Rf', path])
 
@@ -101,18 +106,37 @@ def main():
 
     chroot_rhizi = os.path.join(CHROOT, 'home', 'rhizi')
     deb_filename = 'rhizi-mux_{}_amd64.deb'.format(versions.debian)
-    deb_relative_path = os.path.join('home', 'rhizi', 'build',
-                                     'deb-pkg__rhizi-mux', deb_filename)
-    deb_chroot_fullpath = '/' + deb_relative_path
-    deb_local_fullpath = os.path.join(CHROOT, deb_relative_path)
+    deb_repo_path = os.path.join('build', 'deb-pkg__rhizi-mux', deb_filename)
+    deb_relative_path = os.path.join('home', 'rhizi', deb_repo_path)
+    if running_under_debian:
+        deb_local_fullpath = deb_chroot_fullpath = os.path.join(RHIZI_SOURCE_REPO, deb_repo_path)
+    else:
+        deb_chroot_fullpath = '/' + deb_relative_path
+        deb_local_fullpath = os.path.join(CHROOT, deb_relative_path)
 
-    rmdir(chroot_rhizi)
+    # clean chroot/old package
+    print("removing old package/chroot checkout")
+    if running_under_debian:
+        rm(deb_local_fullpath)
+    else:
+        rmdir(chroot_rhizi)
+
     assert not os.path.exists(deb_local_fullpath)
-    clone(RHIZI_SOURCE_REPO, chroot_rhizi)
+
+    # clone into chroot
+    if not running_under_debian:
+        clone(RHIZI_SOURCE_REPO, chroot_rhizi)
+
+    # create deb package
     build_deb()
     if not dryrun:
         assert os.path.exists(deb_local_fullpath), "missing {}".format(deb_local_fullpath)
-    install_locally(deb_chroot_fullpath)
+
+    # install locally
+    if not running_under_debian:
+        install_locally(deb_chroot_fullpath)
+
+    # copy to target server
     scp(source=deb_local_fullpath, target=deb_filename)
     install_deb(deb_filename)
 
