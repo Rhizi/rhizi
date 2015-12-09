@@ -32,7 +32,8 @@ class Versions(object):
         self.build_ant_path = os.path.join(RHIZI_SOURCE_REPO, 'build.ant')
         self.bower_json_path = os.path.join(RHIZI_SOURCE_REPO, 'bower.json')
         self.filenames = [self.setup_py_path, self.debian_changelog_path,
-                          self.package_json_path, self.build_ant_path]
+                          self.package_json_path, self.build_ant_path,
+                          self.bower_json_path]
         self.reload()
 
     def reload(self):
