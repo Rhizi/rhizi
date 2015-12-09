@@ -20,7 +20,7 @@ Server:
 - Python dependencies as described in `requirements.txt`
 
 Client
-- currently bundled, see package.json TODO note.
+- currently bundled, but listed in bower.json
 
 For rebuilding client css from scss saource files you will need:
 - sass (scss tool)
