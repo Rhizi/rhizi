@@ -259,19 +259,20 @@ function show(_graph, new_item, opt_attributes_data)
     _.each(visible_attributes, function (attr) {
         var element = edit_element_for_attribute(attr),
             value = item[attr],
-            editable = new_editable_attributes[attr] === undefined
-                ? true
+            editable = new_editable_attributes[attr] === undefined ? true
                 : new_editable_attributes[attr];
 
         element.parent().insertAfter(msg_node);
         switch (attr) {
         case 'enddate':
         case 'startdate':
-            (element.datepicker !== undefined) && element.datepicker({
-              inline: true,
-              showOtherMonths: true,
-              dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            });
+            if (element.datepicker !== undefined) {
+                element.datepicker({
+                  inline: true,
+                  showOtherMonths: true,
+                  dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                });
+            }
             break;
         case 'name':
         case 'description':
@@ -292,8 +293,8 @@ function show(_graph, new_item, opt_attributes_data)
         if (element.val !== undefined) {
             element.val(value);
         }
-        if (element[0].contentEditable) {
-            element[0].contentEditable = editable;
+        if (element[0].readOnly !== undefined) {
+            element[0].readOnly = !editable;
         }
     });
     info_container.show();
