@@ -19,7 +19,7 @@
 define(['jquery', 'underscore', 'util', 'consts', 'model/diff', 'model/types',
         'model/graph', 'messages', 'domain_types'],
 function($,        _,            util,   consts,   model_diff,   model_types,
-         graph,         messages,   domain_types) {
+         model_graph,   messages,   domain_types) {
 
 "use strict";
 
@@ -27,7 +27,7 @@ function($,        _,            util,   consts,   model_diff,   model_types,
 var DEBOUNCE_TIME = 500; // milliseconds
 
 // aliases
-var is_node = graph.is_node;
+var is_node = model_graph.is_node;
 
 // variables
 var msg_node = $('.info-card-message'),
