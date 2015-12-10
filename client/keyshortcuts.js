@@ -17,7 +17,10 @@
 */
 
 define(['jquery', 'rz_core', 'view/selection'],
+
 function($, rz_core, selection) {
+
+"use strict";
 
 function get_graph_view(element)
 {
@@ -31,9 +34,10 @@ function get_graph_view(element)
 
 function install() {
     document.body.onkeydown = function(e) {
-        var key = ((e.key && String(e.key))
+        var keyBase = ((e.key && String(e.key))
                    || (e.charCode && String.fromCharCode(e.charCode))
-                   || (e.which && String.fromCharCode(e.which))).toLowerCase(),
+                   || (e.which && String.fromCharCode(e.which))),
+            key = (keyBase || "").toLowerCase(),
             handled = false,
             graph_view = get_graph_view(e.target);
 
