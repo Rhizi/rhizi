@@ -1,5 +1,7 @@
-define(['jquery', 'Bacon', 'd3', 'model/core', 'model/graph', 'view/graph_view', 'rz_core'],
-function($      ,  Bacon,   d3,   core,         graph,        graph_view,         rz_core) {
+define(['jquery', 'Bacon', 'd3', 'model/core', 'model/graph', 'view/graph_view', 'rz_core', 'view/layouts'],
+function($      ,  Bacon,   d3,   core,         graph,        graph_view,         rz_core,        layouts) {
+
+    "use strict";
 
     console.log("test_graph_view");
 
@@ -35,6 +37,7 @@ function($      ,  Bacon,   d3,   core,         graph,        graph_view,       
     describe("create a graph view", function () {
         it("basic graph view creation", function() {
             var gv = create_graph_view().gv;
+            expect(gv).not.toBe(undefined);
         });
         it("loading nodes and links", function() {
             var d = create_graph_view(),
