@@ -19,7 +19,7 @@
 define(['consts', 'jquery', 'd3', 'underscore'],
 function(consts,   $,        d3,   _) {
 
-"use strict";
+    "use strict";
 
     function object__append(d, k, v) {
         if (d[k] === undefined) {
