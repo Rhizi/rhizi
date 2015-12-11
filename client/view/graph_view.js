@@ -285,7 +285,7 @@ function GraphView(spec) {
                 }
             };
 
-        if (record_on_end !== undefined && record_on_end) {
+        if (record_on_end === undefined || record_on_end) {
             layout.on("end", internal_end_callback);
         }
         layout
