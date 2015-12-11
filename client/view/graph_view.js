@@ -263,11 +263,32 @@ function GraphView(spec) {
             // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
             return;
         }
+        tick(); // updates bx, by
         if (is_full_graph_update) {
             layout__set_from_nodes(layout.name, changed_nodes);
         }
         update_view(relayout);
+        if (diff.local && !zen_mode) {
+            layout_start();
+        }
     });
+
+    function layout_start() {
+        var cur_layout = layout,
+            internal_end_callback = function () {
+                if (layout === cur_layout) {
+                    layout__end__callback();
+                } else {
+                    // end of simulation started in a different layout - ignore it.
+                    console.log('debug: simulation started in a different layout, ignoring');
+                }
+            };
+
+        layout
+            .alpha(0.01)
+            .on("end", internal_end_callback)
+            .start();
+    }
 
     function layout__set_from_nodes(name, nodes) {
         var layout_ = layouts.filter(function (layout_) { return layout_.name === name; })[0],
@@ -929,7 +950,6 @@ function GraphView(spec) {
             if (relayout) {
                 layout__reset(0.01);
             } else {
-                layout.start().alpha(0.0001);
                 tick(); // this will be called before the end event is triggered by layout completing.
             }
         } else {
@@ -1365,9 +1385,8 @@ function GraphView(spec) {
 
     function layout__reset(alpha) {
         alpha = alpha || 0.01;
-        layout.nodes_links(nodes__visible(), links__visible())
-              .alpha(alpha)
-              .start();
+        layout.nodes_links(nodes__visible(), links__visible());
+        layout.on("end", function () {});
     }
 
     function layout__load_graph() {
@@ -1381,10 +1400,12 @@ function GraphView(spec) {
         }
         var new_layout_is_zen = new_layout && new_layout.name === 'zen',
             old_layout_is_zen = layout && layout.name === 'zen',
-            change_zen_mode = new_layout_is_zen ^ old_layout_is_zen;
+            change_zen_mode = new_layout_is_zen ^ old_layout_is_zen,
+            graph_nodes = graph.nodes(),
+            restored_positions;
 
         // remove fixed status, the fixed status is restored from the layout
-        graph.nodes().forEach(function (node) {
+        graph_nodes.forEach(function (node) {
             node.fixed = undefined;
         });
         if (new_layout.name === 'zen') {
@@ -1397,19 +1418,26 @@ function GraphView(spec) {
             zen_mode__inner_set(false);
         }
         layout = new_layout;
+        // restore node positions from server
+        restored_positions = restore_position_from_layout(layout.name);
+        // then override with local changes perhaps (applicable to force
+        // layout only right now, and that might change too)
         layout
             .size([w, h])
             .on("tick", layout__tick__callback)
-            .on("end", layout__end__callback)
             .nodes_links(nodes__visible(), links__visible())
-            .restore()
-            .start()
-            .alpha(0.01);
+            .restore();
         gv.layout = layout;
         if (change_zen_mode) {
             update_view(true);
+        } else {
+            update_view(false);
         }
         gv.layout_name_bus.push(new_layout.name);
+        if (restored_positions !== graph_nodes.length) {
+            layout_start();
+            console.log('recalculating layout upon set_layout');
+        }
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
