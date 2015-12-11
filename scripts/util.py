@@ -129,7 +129,7 @@ class Versions(object):
 
     def by_tag(self):
         all = [x.strip() for x in check_output('git tag'.split()).split()]
-        return sorted([x for x in all if x.startswith('v-')],
-                      key=lambda v: map(int, v[2:].split('.')))[-1][2:]
+        return sorted([x for x in all if x.startswith(b'v-')],
+                      key=lambda v: list(map(int, v[2:].split(b'.'))))[-1][2:].decode('utf-8')
 
 versions = Versions()

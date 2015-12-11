@@ -18,8 +18,8 @@ if __name__ == '__main__':
             versions.by_tag(), versions.version))
         if args.push:
             raise SystemExit
-    full_commits = check_output('git log --oneline v-{}..'.format(versions.version).split()).split('\n')
-    commits = [x.split(' ', 1)[1] for x in full_commits if x.strip() != '']
+    full_commits = check_output('git log --oneline v-{}..'.format(versions.version).split()).split(b'\n')
+    commits = [x.split(b' ', 1)[1] for x in full_commits if x.strip() != b'']
     versions.bump_version(debian_changelog=commits)
     Popen(args='{} {}'.format(os.environ.get('EDITOR', 'vim'), versions.debian_changelog_path).split()).wait()
     check_output('git add {}'.format(' '.join(versions.filenames)).split())
