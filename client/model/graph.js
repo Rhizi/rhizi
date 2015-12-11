@@ -1337,13 +1337,17 @@ function Graph(spec) {
                 node_by_id[node.id] = node;
                 return node;
             });
+        // allow specifying links as an array of pairs of indices
         diff.link_set_add = links.map(function (link_spec) {
-                var src = node_by_id[old_id_to_new_id[link_spec.__src]],
+                var __src = link_spec.__src || nodes[link_spec[0]].id,
+                    __dst = link_spec.__dst || nodes[link_spec[1]].id,
+                    src = node_by_id[old_id_to_new_id[link_spec.__src]],
                     dst = node_by_id[old_id_to_new_id[link_spec.__dst]],
                     link = model_core.create_link__set_random_id(src, dst, {
                         name: link_spec.name,
                         state: 'perm' // FIXME: this is meaningless now with graph separation
                     });
+                util.assert(src !== undefined && dst !== undefined);
                 link.__src_id = src.id;
                 link.__dst_id = dst.id;
                 return link;
