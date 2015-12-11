@@ -511,7 +511,7 @@ def send_user_activation_link__email(req__url_root, us_req):
     msg_body = ['Hello %s %s,' % (us_req['first_name'],
                                   us_req['last_name']),
                 '',
-                'Thank you for your joining the Rhizi community!',
+                'Thank you for your joining the Rhizi community. We are working together to share skills, resources and opportunities!',
                 '',
                 'Below is a sign up confirmation link - open it in your browser to activate your account:',
                 '',
