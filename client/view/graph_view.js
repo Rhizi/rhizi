@@ -1467,6 +1467,7 @@ function GraphView(spec) {
         zen_mode__set(false);
     };
     gv.layouts = layouts;
+    gv.get_layout = function() { return layout; };
     return gv;
 }
 
