@@ -1422,6 +1422,10 @@ function Graph(spec) {
     };
     this.nodes = get_nodes;
 
+    this._all_nodes = function() {
+        return _.values(id_to_node_map);
+    };
+
     var get_node_ids = function() {
         return _.keys(id_to_node_map);
     };
