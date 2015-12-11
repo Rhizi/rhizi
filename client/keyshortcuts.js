@@ -18,7 +18,7 @@
 
 define(['jquery', 'rz_core', 'view/selection'],
 
-function($, rz_core, selection) {
+function($,        rz_core,        selection) {
 
 "use strict";
 
