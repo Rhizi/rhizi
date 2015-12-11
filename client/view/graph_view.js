@@ -173,6 +173,7 @@ function GraphView(spec) {
         filter_states = new_states;
         graph.node__set_filtered_types(filter_states);
         update_view(true);
+        layout_start(false);
     });
 
     function node__pass_filter(d) {
@@ -273,7 +274,7 @@ function GraphView(spec) {
         }
     });
 
-    function layout_start() {
+    function layout_start(record_on_end) {
         var cur_layout = layout,
             internal_end_callback = function () {
                 if (layout === cur_layout) {
@@ -284,9 +285,11 @@ function GraphView(spec) {
                 }
             };
 
+        if (record_on_end !== undefined && record_on_end) {
+            layout.on("end", internal_end_callback);
+        }
         layout
             .alpha(0.01)
-            .on("end", internal_end_callback)
             .start();
     }
 
@@ -1440,8 +1443,8 @@ function GraphView(spec) {
         }
         gv.layout_name_bus.push(new_layout.name);
         if (restored_positions !== graph_nodes.length) {
-            layout_start();
             console.log('recalculating layout upon set_layout');
+            layout_start();
         }
     }
 
