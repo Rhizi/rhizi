@@ -369,6 +369,7 @@ function GraphView(spec) {
         if (zen_mode) {
             zen_mode__auto_center = true;
             layout__reset(1.0);
+            layout_start(false);
         }
     });
 
