@@ -113,7 +113,7 @@ class TestBinaries(unittest.TestCase):
         """
         userdb_filename = mktemp()
         password_filename = temp_file('12345678')
-        myugid = subprocess.check_output('whoami').strip() # assume group = user exists
+        myugid = subprocess.check_output('whoami').strip().decode('utf-8') # assume group = user exists
         self._run_user_tool('init --user-db-path {} --user-db-ugid {}'.format(userdb_filename, myugid))
         self._run_user_tool(('add --user-db-path {} --password-file {} ' \
                              '--first-name hiro --last-name protagonist ' \
