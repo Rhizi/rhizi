@@ -1,3 +1,9 @@
+rhizi (0.3.15) unstable; urgency=low
+  * server: fix acl email wl caching
+  * client: fix breaking the zoom buttons
+  * Add help button in top bar
+ -- Alon Levy <alon@pobox.com>  Thu, 10 Dec 2015 23:11:49 -0800
+
 rhizi (0.3.14) unstable; urgency=low
   * additional shortcuts: del, escape
   * close button for info box
