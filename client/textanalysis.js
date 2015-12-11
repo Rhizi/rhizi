@@ -581,6 +581,7 @@ var textAnalyser = function (spec) {
         }
 
         if (finalize) {
+            main_graph.set_new_node_custom_positions(ret.node_set_add, ret.link_set_add);
             main_graph.commit_and_tx_diff__topo(ret);
         } else {
             edit_graph.commit_diff__topo(ret);
