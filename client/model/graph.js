@@ -424,12 +424,6 @@ function Graph(spec) {
     this.neighbourhood = function(start, d) {
         var ret = {'nodes':[], 'links':[]};
 
-        function addNode(node) {
-            if (start.filter(function (n) { return n.id == node.id; }).length == 1) {
-                return;
-            }
-            ret.nodes.push(node);
-        }
         function get_name(node) {
             // XXX: using lowercase name comparison instead of id because nodes may be stale
             return node.name.toLowerCase();
@@ -457,9 +451,7 @@ function Graph(spec) {
             return {node: node, kind: kind, links: [], depth: Infinity, sources: {}};
         }
 
-        var nodes = get_nodes(),
-            links = get_links(),
-            neighbours = calc_neighbours(),
+        var neighbours = calc_neighbours(),
             visited = _.object(_.map(start, get_name),
                                _.map(start, _.partial(make_status, kind_selected)));
 
