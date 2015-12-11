@@ -41,6 +41,9 @@ function install() {
             handled = false,
             graph_view = get_graph_view(e.target);
 
+        if (!e.altKey && !e.ctrlKey && e.keyCode === 46) { // del
+            selection.delete_selection(rz_core.main_graph);
+        }
         if (e.altKey && e.ctrlKey && 'i' === key) {
             $('#textanalyser').focus();
         }
