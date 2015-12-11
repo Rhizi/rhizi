@@ -16,10 +16,10 @@ define({
                  'city',
                  'street-address',
                  'cnrs-inserm-unit-code',
-                 'hours-total',
+                 'days-total',
                  'subtype-tags'
                 ],
-            'radius': ['hours-total', 'linear']
+            'radius': ['days-total', 'linear']
         }],
         ['skill', {
             'title': 'Skill',
@@ -41,8 +41,8 @@ define({
     link_types: [
         ['worked on', {
             'title': 'Worked on',
-            'attributes': ['hours-total'],
-            'width': ['hours-total', 'linear'],
+            'attributes': ['days-total'],
+            'width': ['days-total', 'linear'],
         }],
     ],
     attribute_titles: {
@@ -60,7 +60,7 @@ define({
         'street-address': 'Street address',
         'city': 'City',
         'country': 'Country',
-        'hours-total': 'Hours Total',
+        'days-total': 'Days Total',
         'subtype-tags': 'Subtype Tags'
     },
     attribute_ui: {
@@ -73,7 +73,7 @@ define({
         'url': 'input',
         'rhizi-url': 'input',
         'status': 'input',
-        'hours-total': 'input',
+        'days-total': 'input',
         'subtype-tags': 'input'
     }
 });
