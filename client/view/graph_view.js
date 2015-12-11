@@ -230,8 +230,8 @@ function GraphView(spec) {
         }
         nodes.forEach(function (node) {
             if (node[layout_x_key] !== undefined && node[layout_y_key] !== undefined) {
-                node.x = node[layout_x_key];
-                node.y = node[layout_y_key];
+                node.px = node.x = node[layout_x_key];
+                node.py = node.y = node[layout_y_key];
                 node.fixed = node[layout_fixed_key];
                 have_position += 1;
             }
