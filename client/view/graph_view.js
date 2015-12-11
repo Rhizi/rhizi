@@ -970,6 +970,9 @@ function GraphView(spec) {
     }
 
     function nodes__user_visible(nodes, zoom_if_visible, duration) {
+        if (nodes === undefined) {
+            nodes = graph.nodes();
+        }
         if (nodes.length === 0) {
             return;
         }
