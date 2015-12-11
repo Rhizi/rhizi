@@ -1475,6 +1475,80 @@ function Graph(spec) {
         invalidate_links = true;
         invalidate_nodes = true;
     };
+
+    // helper to find locations that are empty in the graph
+    this.set_new_node_custom_positions = function (nodes, links) {
+        // TODO: take into account links.
+        // Right now just put them in a group close to one another at an
+        // unoccupied area. right now we just find the center of mass, and
+        // place the new nodes above that in an arc.
+        var cx, cy,
+            up = 100, // constant of placement:
+            r = 50, // constant of placement
+            all_nodes = get_nodes(),
+            sum = function(l) {
+                return _.foldl(l, function (x, y) { return x + y; }, 0);
+            },
+            n = all_nodes.length,
+            x = _.pluck(all_nodes, 'x'),
+            y = _.pluck(all_nodes, 'y'),
+            new_n = nodes.length,
+            i,
+            layout_name = 'custom', // XXX should be defined as a constant somewhere
+            x_key = layout_x_key(layout_name),
+            y_key = layout_y_key(layout_name),
+            fixed_key = layout_fixed_key(layout_name);
+
+        if (new_n === 0) {
+            // nothing to do
+            return;
+        }
+
+        // make sure there are no unplaced nodes
+        if (x[0] === undefined) {
+            x[0] = 0;
+        }
+        if (y[0] === undefined) {
+            y[0] = 0;
+        }
+        for (i = 1 ; i < n ; ++i) {
+            if (x[i] === undefined) {
+                x[i] = x[i - 1];
+            }
+            if (y[i] === undefined) {
+                y[i] = y[i - 1];
+            }
+        }
+
+        // compute center of existing nodes
+        if (n === 0) {
+            cx = 0;
+            cy = -up;
+        } else {
+            cx = sum(x) / n;
+            cy = sum(y) / n;
+        }
+
+        // place new nodes
+        cy += up;
+
+        // single node: place at new center
+        if (new_n === 1) {
+            nodes[0][x_key] = cx;
+            nodes[0][y_key] = cy;
+            nodes[0][fixed_key] = false;
+            return;
+        }
+        // general case: place them in a circle around new center
+        for (i = 0 ; i < new_n ; ++i) {
+            var dx = Math.cos(2 * Math.PI * i / new_n) * r,
+                dy = Math.sin(2 * Math.PI * i / new_n) * r;
+
+            nodes[i][x_key] = cx + dx;
+            nodes[i][y_key] = cy + dy;
+            nodes[i][fixed_key] = false;
+        }
+    };
 }
 
 function is_node(item)
