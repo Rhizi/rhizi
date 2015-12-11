@@ -71,6 +71,17 @@ define(['util'], function(util) {
                 return this._x;
             }
         });
+        Object.defineProperty(this, "px", {
+            set: function (new_x) {
+                if (isNaN(new_x) && !isNaN(this._x)) {
+                    console.log('Node ' + this.id + '.x changed to Nan from ' + this._x);
+                }
+                this._px = new_x;
+            },
+            get: function () {
+                return this._px;
+            }
+        });
     }
     if (DEBUG_NODE_POSITION) {
         Node = NodeWithNaNXTest;
