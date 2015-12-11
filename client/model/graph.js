@@ -1163,6 +1163,7 @@ function Graph(spec) {
         if (diff.link_set_add === undefined) {
             diff.link_set_add = diff.link_id_set_add.map(_get_server_pending);
         }
+        diff.local = true;
         commit_diff__topo(diff);
     }
 
