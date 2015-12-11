@@ -1298,6 +1298,10 @@ function GraphView(spec) {
         link_text.attr("transform", function(d) {
             var src = same_zoom(d.__src),
                 dst = same_zoom(d.__dst);
+            util.assert(src[0] !== undefined && !_.isNaN(src[0]));
+            util.assert(src[1] !== undefined && !_.isNaN(src[1]));
+            util.assert(dst[0] !== undefined && !_.isNaN(dst[0]));
+            util.assert(dst[1] !== undefined && !_.isNaN(dst[1]));
             return "translate(" + (src[0] + dst[0]) / 2 + "," + (src[1] + dst[1]) / 2 + ")";
         });
 
