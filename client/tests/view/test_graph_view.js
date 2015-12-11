@@ -8,7 +8,7 @@ function($      ,  Bacon,   d3,   core,         graph,        graph_view,       
     // initialize the random number generator
     core.init({rand_id_generator: 'hash'});
 
-    function create_graph_view() {
+    function create_graph_view(nodes, links) {
         var parent_element = document.createElement("div"),
             g = new graph.Graph({temporary:false, base:null, backend:'local'}),
             svgInput = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
@@ -31,6 +31,9 @@ function($      ,  Bacon,   d3,   core,         graph,        graph_view,       
                 svgInput: svgInput,
             },
             gv = new graph_view.GraphView(graph_view_spec);
+        if (nodes !== undefined && links !== undefined) {
+            g.load_from_nodes_links(nodes, links);
+        }
         return {gv:gv, g:g};
     }
 
@@ -47,6 +50,56 @@ function($      ,  Bacon,   d3,   core,         graph,        graph_view,       
                 links = [];
             g.load_from_nodes_links(nodes, links);
             expect(g.nodes().length).toEqual(2);
+        });
+    });
+
+    describe("force layout works without timer", function() {
+        it("just test it", function() {
+            var l = d3.layout.force(),
+                nodes = [{x:0, y:0}],
+                while_count = 0,
+                tick_count = 0,
+                end = false;
+
+            l.on("tick", function () { tick_count += 1; });
+            l.on("end", function () { end = true; });
+            l.nodes(nodes).start();
+            while(l.tick() !== true) {
+                while_count += 1;
+            }
+            expect(while_count).not.toBe(0);
+            expect(tick_count).not.toBe(0);
+            expect(while_count).toBe(tick_count);
+            expect(end).toBe(true);
+        });
+    });
+
+    describe("layout position recording", function () {
+        it("changing force to custom does not trigger position sending", function() {
+            var d = create_graph_view([{name: "a"}, {name:"b"}], []),
+                gv = d.gv,
+                g = d.g;
+            expect(g.nodes().length).toEqual(2);
+            expect(g.nodes()[0].x).not.toBe(undefined);
+            expect(g.nodes()[0].y).not.toBe(undefined);
+            expect(g.nodes()[1].x).not.toBe(undefined);
+            expect(g.nodes()[1].y).not.toBe(undefined);
+            console.log(g.nodes()[0].x);
+            expect(gv.get_layout()).not.toBe(undefined);
+        });
+        it("can create node at specified position", function() {
+            var d = create_graph_view([{name: "a", x: 10, y: 42}], []);
+            expect(d.g.nodes()[0].x).toBe(10);
+            expect(d.g.nodes()[0].y).toBe(42);
+        });
+        it("adding a node to a graph in force layout causes it's position to be set", function() {
+            var d = create_graph_view([{name: "a", x: 10, y: 42}], []);
+            expect(d.g.nodes()[0].x).toBe(10);
+            expect(d.g.nodes()[0].y).toBe(42);
+        });
+        it("moving a node triggers a diff on that node's position", function() {
+        });
+        it("changing custom to force does not trigger position sending", function() {
         });
     });
 });
