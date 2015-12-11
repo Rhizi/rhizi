@@ -1,3 +1,10 @@
+rhizi (0.3.14) unstable; urgency=low
+  * additional shortcuts: del, escape
+  * close button for info box
+  * logic for position storage changed, rough waters ahead
+  * zoom to doc on load
+ -- Alon Levy <alon@pobox.com>  Thu, 10 Dec 2015 22:22:11 -0800
+
 rhizi (0.3.13) unstable; urgency=low
   * client: show link attributes in info panel for a link.
  -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 20:16:37 -0800
