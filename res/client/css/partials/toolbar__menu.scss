@@ -19,8 +19,15 @@
 .menu-bar__item {
     float: left;
     font-size: 14px;
+    @include btn-change-on-hover__color(red)
 }
 
+a.menu-bar__item {
+    color: black;
+    :visited {
+    color: black;
+    }
+}
 .menu-bar__delimiter {
     float: left;
     color: white;
@@ -41,7 +48,7 @@
 }
 
 #menu-bar__activity-view-toggle {
-    cursor: default;
+    cursor: default;    
 }
 
 #menu-bar__activity-view-toggle input {
@@ -50,18 +57,9 @@
     top: 3px;
 }
 
-#menu-bar__rzdoc-new {
-    @include btn-change-on-hover__color(red)
-}
-
-#menu-bar__rzdoc-open {
-    @include btn-change-on-hover__color(red)
-}
-
 #menu-bar__rzdoc-search {
     float: right;
     margin-right: 10px;
-
     @include btn-change-on-hover__color(red)
 }
 

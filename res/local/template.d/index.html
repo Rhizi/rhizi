@@ -41,6 +41,9 @@ var RZ_VERSION = '{% include "version.txt" %}';
         <div class="menu-bar__item" id="menu-bar__rzdoc-new" title="New">New</div>
         <span class="menu-bar__delimiter">・</span>
         <div class="menu-bar__item" id="menu-bar__rzdoc-open" title="Open">Open</div>
+        <span class="menu-bar__delimiter">・</span>
+        <a class="menu-bar__item" href="https://docs.google.com/document/d/1XIENiGEhW4jZodkz2uX8ohJGeVhEfN32jCtlEelvkLI/edit?usp=sharing" target="_blank" title="Help">Help</a>
+
         <!-- <span class="menu-bar__delimiter">・</span>
         <div class="menu-bar__item" id="menu-bar__activity-view-toggle" title="Enable checkbox to display activity log">
           <span>Show Activity Log</span><input id="checkbox__activity-view-toggle" type="checkbox" name="activity-view-toggle">
@@ -60,9 +63,9 @@ var RZ_VERSION = '{% include "version.txt" %}';
     <div id="tool-bar">
       <div id="tool-bar-top-bar">
         <div class="tool_bar_btn" id="btn_layout" title="Layout">Layout</div>
-        <div class="tool_bar_btn" id="btn_zen_mode" style="display: none" title="Zen mode">Zen mode</div>
-        <div class="tool_bar_btn" id="btn_delete" style="display: none" title="Delete nods">Delete</div>
-        <div id="tool-bar-multiple-node-operations" style="display: none">
+        <div class="tool_bar_btn noselect" id="btn_zen_mode" style="display: none" title="Zen mode">Zen mode</div>
+        <div class="tool_bar_btn noselect" id="btn_delete" style="display: none" title="Delete nods">Delete</div>
+        <div id="tool-bar-multiple-node-operations noselect" style="display: none">
           <div class="tool_bar_btn noselect" id="btn_link_fan" title="Link nodes in fan">Connect</div>
           <div class="tool_bar_btn noselect" id="btn_merge" title="Merge nodes">Merge</div>
         </div>
@@ -71,7 +74,7 @@ var RZ_VERSION = '{% include "version.txt" %}';
     <div id="zoom-bar">
       <div id="btn_zoom_to_selection" title="Zoom to selection"></div>
       <div id="btn_zoom_in" title="Zoom in"></div>
-      <div id="btn_zoom_out"title="Zoom out"></div>
+      <div id="btn_zoom_out" title="Zoom out"></div>
     </div>
     <div id="left-column-container">
       <div id="activity_view" style="display:none">
@@ -80,9 +83,9 @@ var RZ_VERSION = '{% include "version.txt" %}';
       </div>
       <div class="filter-container" id="input-container__search">
         <input class="search-bar search_icon" tabindex="1" id="search" placeholder="Select elements"/>
-        <div class="filter-dropdown" id="btn_filter" title="Filter">Filter
+        <div class="filter-dropdown noselect" id="btn_filter" title="Filter">Filter
           <div>
-            <div id="menu__type-filter" class="filter-dropdown-menu" style="display:none">
+            <div id="menu__type-filter" class="filter-dropdown-menu noselect" style="display:none">
             </div>
           </div>
         </div>
@@ -96,6 +99,7 @@ var RZ_VERSION = '{% include "version.txt" %}';
       </div>
     </div>
     <div class="info-container" style="display:none">
+       <div id="editbox-closebutton" class="noselect" style="float: right">X</div>
        <div id="editbox">
          <p class="info-card-message"></p>
          <div class="info-container__row" id="type">

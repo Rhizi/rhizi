@@ -145,7 +145,9 @@ function GraphView(spec) {
         },
         // statistics on link attributes for calculation of width
         link__width__data = {
-        };
+        },
+        minimum_link_width = 1,
+        maximum_link_width = 7;
 
     util.assert(parent_element !== undefined && graph_name !== undefined &&
                 graph !== undefined && zoom_property !== undefined &&
@@ -171,6 +173,7 @@ function GraphView(spec) {
         filter_states = new_states;
         graph.node__set_filtered_types(filter_states);
         update_view(true);
+        layout_start(false);
     });
 
     function node__pass_filter(d) {
@@ -214,12 +217,31 @@ function GraphView(spec) {
 
     var selection_outer_radius = 0; //200;
 
+    function restore_position_from_layout(layout_name, nodes) {
+        var have_position = 0,
+            layout_x_key = graph.layout_x_key(layout_name),
+            layout_y_key = graph.layout_y_key(layout_name),
+            layout_fixed_key = graph.layout_fixed_key(layout_name);
+
+        if (nodes === undefined) {
+            nodes = graph.nodes();
+        } else {
+            nodes = graph.find_nodes__by_id(_.pluck(nodes, "id"));
+        }
+        nodes.forEach(function (node) {
+            if (node[layout_x_key] !== undefined && node[layout_y_key] !== undefined) {
+                node.x = node[layout_x_key];
+                node.y = node[layout_y_key];
+                node.fixed = node[layout_fixed_key];
+                have_position += 1;
+            }
+        });
+        return have_position;
+    }
+
     graph.diffBus.onValue(function (diff) {
         var relayout = !temporary && (false === model_diff.is_attr_diff(diff)),
             have_position = 0,
-            layout_x_key = graph.layout_x_key(layout.name),
-            layout_y_key = graph.layout_y_key(layout.name),
-            layout_fixed_key = graph.layout_fixed_key(layout.name),
             nodes_from_attr_diff = function() { var ret = []; diff.for_each_node(function (nid) { ret.push(graph.find_node__by_id(nid)); }); return ret; },
             changed_nodes = diff.node_set_add || (diff.for_each_node && nodes_from_attr_diff()) || [],
             is_full_graph_update = false,
@@ -227,14 +249,7 @@ function GraphView(spec) {
 
         // copy position from diff based on current layout
         if (layout.name) {
-            changed_nodes.forEach(function (node) {
-                if (node[layout_x_key] && node[layout_y_key]) {
-                    node.x = node[layout_x_key];
-                    node.y = node[layout_y_key];
-                    node.fixed = node[layout_fixed_key];
-                    have_position += 1;
-                }
-            });
+            have_position = restore_position_from_layout(layout.name, changed_nodes);
             is_full_graph_update = (have_position === nodes.length);
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
@@ -249,11 +264,34 @@ function GraphView(spec) {
             // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
             return;
         }
+        tick(); // updates bx, by
         if (is_full_graph_update) {
             layout__set_from_nodes(layout.name, changed_nodes);
         }
         update_view(relayout);
+        if (diff.local && !zen_mode) {
+            layout_start();
+        }
     });
+
+    function layout_start(record_on_end) {
+        var cur_layout = layout,
+            internal_end_callback = function () {
+                if (layout === cur_layout) {
+                    layout__end__callback();
+                } else {
+                    // end of simulation started in a different layout - ignore it.
+                    console.log('debug: simulation started in a different layout, ignoring');
+                }
+            };
+
+        if (record_on_end !== undefined && record_on_end) {
+            layout.on("end", internal_end_callback);
+        }
+        layout
+            .alpha(0.01)
+            .start();
+    }
 
     function layout__set_from_nodes(name, nodes) {
         var layout_ = layouts.filter(function (layout_) { return layout_.name === name; })[0],
@@ -296,9 +334,7 @@ function GraphView(spec) {
             zcy = zoom_center_point[1],
             s = zoom_obj.scale(),
             scaled_inner_radius = selection_inner_radius / s,
-            scaled_outer_radius = selection_outer_radius / s,
-            max_radius = Math.sqrt(_.max(selection.root_nodes.map(
-                function (n) { return n.x * n.x + n.y * n.y; }))) / s;
+            scaled_outer_radius = selection_outer_radius / s;
 
         function screen_to_graph(xy) {
             return [zcx + xy[0], zcy + xy[1]];
@@ -333,6 +369,7 @@ function GraphView(spec) {
         if (zen_mode) {
             zen_mode__auto_center = true;
             layout__reset(1.0);
+            layout_start(false);
         }
     });
 
@@ -344,7 +381,7 @@ function GraphView(spec) {
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
-        d.dragstart = {clientX:d3.event.sourceEvent.clientX, clientY:d3.event.sourceEvent.clientY};
+        d.dragstart = {clientX: d3.event.sourceEvent.clientX, clientY: d3.event.sourceEvent.clientY};
         d.fixed = true;
         layout.stop();
     }
@@ -482,7 +519,7 @@ function GraphView(spec) {
                     selection_class_link !== 'notselected');
 
         return (!valid ? (d.width ? d.width : 1)
-                : 1 + 3 * (size - maxmin.min) / (maxmin.max - maxmin.min)) +
+                : minimum_link_width + maximum_link_width * (size - maxmin.min) / (maxmin.max - maxmin.min)) +
                  (highlighted ? 1 : 0)
                 ;
     }
@@ -504,9 +541,6 @@ function GraphView(spec) {
     var node__text_x = function(d) {
         return node_text_dx + node__radius(d) + (urlValid(d.url) ? node_url_dx : 0);
     };
-
-    function graphics__node_text(node) {
-    }
 
     function calculate_minmax(data, type_key) {
         var collection = data.collection,
@@ -541,7 +575,6 @@ function GraphView(spec) {
             unselected_selector = '#' + graph_name + ' #link-group',
             selected_selector = '#' + graph_name + ' #selected-link-group',
             unselected_link_group = document.querySelector(unselected_selector),
-            selected_link_group = document.querySelector(selected_selector),
             visible_nodes = nodes__visible(),
             visible_links = links__visible();
 
@@ -640,9 +673,9 @@ function GraphView(spec) {
         gv.link__hover__end = link__hover__end;
 
         var link_on_hover = function (d) {
-            $('#' + d.id).hover(function (e) {
+            $('#' + d.id).hover(function () {
                 link__hover__start(d);
-            }, function (e) {
+            }, function () {
                 link__hover__end(d);
             });
         };
@@ -720,14 +753,18 @@ function GraphView(spec) {
                 link_on_hover(d);
             });
         link_g.on("click", function(d) {
-                if (zoomInProgress) {
-                    // don't disable zoomInProgress, it will be disabled by the svg_click_handler
-                    // after this events bubbles to the svg element
-                    return;
-                }
-                item_info.show(graph, d, ['name']);
-                (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
-            });
+            var attributes;
+
+            if (zoomInProgress) {
+                // don't disable zoomInProgress, it will be disabled by the svg_click_handler
+                // after this events bubbles to the svg element
+                return;
+            }
+            attributes = model_types.link_types(d.name).attributes;
+            item_info.show(graph, d, [['name', true]].concat(_.map(attributes,
+                            function (a) { return [a, false]; })));
+            (d3.event.shiftKey? selection.invert_link : selection.select_link)(this.link);
+        });
 
         //var selected_N = selection:
 
@@ -917,7 +954,6 @@ function GraphView(spec) {
             if (relayout) {
                 layout__reset(0.01);
             } else {
-                layout.start().alpha(0.0001);
                 tick(); // this will be called before the end event is triggered by layout completing.
             }
         } else {
@@ -964,6 +1000,9 @@ function GraphView(spec) {
     }
 
     function nodes__user_visible(nodes, zoom_if_visible, duration) {
+        if (nodes === undefined) {
+            nodes = graph.nodes();
+        }
         if (nodes.length === 0) {
             return;
         }
@@ -1035,8 +1074,7 @@ function GraphView(spec) {
                 end_start = gv.layout_animation.endtime - gv.layout_animation.starttime,
                 now_start = now - gv.layout_animation.starttime,
                 d_current = gv.layout_animation.target - gv.layout_animation.current,
-                d_bubble_radius = b_dict.target - gv.bubble_radius,
-                step_msec = gv.layout_animation.step_msec;
+                d_bubble_radius = b_dict.target - gv.bubble_radius;
 
             util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
             // we loop some just to settle the temporary graph animation
@@ -1243,7 +1281,7 @@ function GraphView(spec) {
             }
         }
 
-        link.attr("d", function(d, i) {
+        link.attr("d", function(d) {
             var d_val,
                 ghost;
 
@@ -1264,6 +1302,10 @@ function GraphView(spec) {
         link_text.attr("transform", function(d) {
             var src = same_zoom(d.__src),
                 dst = same_zoom(d.__dst);
+            util.assert(src[0] !== undefined && !_.isNaN(src[0]));
+            util.assert(src[1] !== undefined && !_.isNaN(src[1]));
+            util.assert(dst[0] !== undefined && !_.isNaN(dst[0]));
+            util.assert(dst[1] !== undefined && !_.isNaN(dst[1]));
             return "translate(" + (src[0] + dst[0]) / 2 + "," + (src[1] + dst[1]) / 2 + ")";
         });
 
@@ -1351,9 +1393,9 @@ function GraphView(spec) {
 
     function layout__reset(alpha) {
         alpha = alpha || 0.01;
-        layout.nodes_links(nodes__visible(), links__visible())
-              .alpha(alpha)
-              .start();
+        layout.nodes_links(nodes__visible(), links__visible());
+        layout.on("end", function () {});
+        tick();
     }
 
     function layout__load_graph() {
@@ -1367,10 +1409,12 @@ function GraphView(spec) {
         }
         var new_layout_is_zen = new_layout && new_layout.name === 'zen',
             old_layout_is_zen = layout && layout.name === 'zen',
-            change_zen_mode = new_layout_is_zen ^ old_layout_is_zen;
+            change_zen_mode = new_layout_is_zen ^ old_layout_is_zen,
+            graph_nodes = graph.nodes(),
+            restored_positions;
 
         // remove fixed status, the fixed status is restored from the layout
-        graph.nodes().forEach(function (node) {
+        graph_nodes.forEach(function (node) {
             node.fixed = undefined;
         });
         if (new_layout.name === 'zen') {
@@ -1383,19 +1427,26 @@ function GraphView(spec) {
             zen_mode__inner_set(false);
         }
         layout = new_layout;
+        // restore node positions from server
+        restored_positions = restore_position_from_layout(layout.name);
+        // then override with local changes perhaps (applicable to force
+        // layout only right now, and that might change too)
         layout
             .size([w, h])
             .on("tick", layout__tick__callback)
-            .on("end", layout__end__callback)
             .nodes_links(nodes__visible(), links__visible())
-            .restore()
-            .start()
-            .alpha(0.01);
+            .restore();
         gv.layout = layout;
         if (change_zen_mode) {
             update_view(true);
+        } else {
+            update_view(false);
         }
         gv.layout_name_bus.push(new_layout.name);
+        if (restored_positions !== graph_nodes.length) {
+            console.log('recalculating layout upon set_layout');
+            layout_start();
+        }
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
@@ -1453,6 +1504,7 @@ function GraphView(spec) {
         zen_mode__set(false);
     };
     gv.layouts = layouts;
+    gv.get_layout = function() { return layout; };
     return gv;
 }
 

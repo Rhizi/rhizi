@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 """
 upgrade debian package, run from a Fedora machine with working systemd-nspawn
@@ -29,6 +29,10 @@ remote_host = None
 dryrun = False
 dryrun_install = True
 
+# use systemd nspawn if not running under debian, otherwise just natively
+# build the debian package
+running_under_debian = os.path.exists('/etc/debian_version')
+
 
 def check_call(oneliner):
     if not isinstance(oneliner, list):
@@ -49,6 +53,11 @@ def chroot(path, oneliner, user=USER):
     check_call(['sudo', 'systemd-nspawn', '-u', str(user),
                 '-M', NSPAWN_MACHINE, '-D', CHROOT, "bash", "-c",
                 'cd {}; {}'.format(path, oneliner)])
+
+
+def rm(filename):
+    if os.path.exists(filename):
+        os.unlink(filename)
 
 
 def rmdir(path):
@@ -76,29 +85,58 @@ def install_deb(filename):
 
 
 def build_deb():
-    chroot('/home/rhizi', 'ant -f build.ant pkg-deb__mux')
+    cmd = 'ant -f build.ant pkg-deb__mux'
+    if running_under_debian:
+        check_call(cmd)
+    else:
+        chroot('/home/rhizi', cmd)
 
 
 def install_locally(filename):
-    chroot('/home/rhizi', 'dpkg -i {}'.format(filename), user='root')
+    cmd = 'dpkg -i {}'.format(filename)
+    if running_under_debian:
+        check_call('sudo {}'.format(cmd))
+    else:
+        chroot('/home/rhizi', cmd, user='root')
 
 
 def main():
     versions.ensure_synced()
+    print("running under debian" if running_under_debian else "running with nspawn")
 
     chroot_rhizi = os.path.join(CHROOT, 'home', 'rhizi')
     deb_filename = 'rhizi-mux_{}_amd64.deb'.format(versions.debian)
-    deb_relative_path = os.path.join('home', 'rhizi', 'build',
-                                     'deb-pkg__rhizi-mux', deb_filename)
-    deb_chroot_fullpath = '/' + deb_relative_path
-    deb_local_fullpath = os.path.join(CHROOT, deb_relative_path)
+    deb_repo_path = os.path.join('build', 'deb-pkg__rhizi-mux', deb_filename)
+    deb_relative_path = os.path.join('home', 'rhizi', deb_repo_path)
+    if running_under_debian:
+        deb_local_fullpath = deb_chroot_fullpath = os.path.join(RHIZI_SOURCE_REPO, deb_repo_path)
+    else:
+        deb_chroot_fullpath = '/' + deb_relative_path
+        deb_local_fullpath = os.path.join(CHROOT, deb_relative_path)
 
-    rmdir(chroot_rhizi)
+    # clean chroot/old package
+    print("removing old package/chroot checkout")
+    if running_under_debian:
+        rm(deb_local_fullpath)
+    else:
+        rmdir(chroot_rhizi)
+
     assert not os.path.exists(deb_local_fullpath)
-    clone(RHIZI_SOURCE_REPO, chroot_rhizi)
+
+    # clone into chroot
+    if not running_under_debian:
+        clone(RHIZI_SOURCE_REPO, chroot_rhizi)
+
+    # create deb package
     build_deb()
-    assert os.path.exists(deb_local_fullpath), "missing {}".format(deb_local_fullpath)
-    install_locally(deb_chroot_fullpath)
+    if not dryrun:
+        assert os.path.exists(deb_local_fullpath), "missing {}".format(deb_local_fullpath)
+
+    # install locally
+    if not running_under_debian:
+        install_locally(deb_chroot_fullpath)
+
+    # copy to target server
     scp(source=deb_local_fullpath, target=deb_filename)
     install_deb(deb_filename)
 

@@ -2,7 +2,7 @@ define({
     types: [
         ['person', {
             'title': 'Person',
-            'attributes': ['email', 'work-address', 'image-url', 'url'],
+            'attributes': ['email', 'work-address', 'image-url', 'url', 'subtype-tags'],
         }],
         ['project', {
             'title': 'Project',
@@ -16,9 +16,10 @@ define({
                  'city',
                  'street-address',
                  'cnrs-inserm-unit-code',
-                 'hours-total',
+                 'days-total',
+                 'subtype-tags'
                 ],
-            'radius': ['hours-total', 'linear']
+            'radius': ['days-total', 'linear']
         }],
         ['skill', {
             'title': 'Skill',
@@ -26,22 +27,22 @@ define({
         }],
         ['keyword', {
             'title': 'Keyword',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'subtype-tags'],
         }],
         ['organisation', {
             'title': 'Organisation',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'subtype-tags'],
         }],
         ['media', {
             'title': 'Media',
-            'attributes': ['description', 'url', 'image-url'],
+            'attributes': ['description', 'url', 'image-url', 'subtype-tags'],
         }],
     ],
     link_types: [
         ['worked on', {
             'title': 'Worked on',
-            'attributes': ['hours-total'],
-            'width': ['hours-total', 'linear'],
+            'attributes': ['days-total'],
+            'width': ['days-total', 'linear'],
         }],
     ],
     attribute_titles: {
@@ -59,7 +60,8 @@ define({
         'street-address': 'Street address',
         'city': 'City',
         'country': 'Country',
-        'hours-total': 'Hours Total'
+        'days-total': 'Days Total',
+        'subtype-tags': 'Subtype Tags'
     },
     attribute_ui: {
         'description': 'textarea',
@@ -68,8 +70,10 @@ define({
         'name': 'input',
         'type': 'type',
         'image-url': 'image',
-        'url': 'url',
-        'rhizi-url': 'rhizi-url',
-        'status':'input',
+        'url': 'input',
+        'rhizi-url': 'input',
+        'status': 'input',
+        'days-total': 'input',
+        'subtype-tags': 'input'
     }
 });

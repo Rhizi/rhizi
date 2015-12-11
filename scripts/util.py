@@ -30,8 +30,10 @@ class Versions(object):
         self.debian_changelog_path = os.path.join(RHIZI_SOURCE_REPO, 'res/debian/pkg__rhizi-common/changelog')
         self.package_json_path = os.path.join(RHIZI_SOURCE_REPO, 'package.json')
         self.build_ant_path = os.path.join(RHIZI_SOURCE_REPO, 'build.ant')
+        self.bower_json_path = os.path.join(RHIZI_SOURCE_REPO, 'bower.json')
         self.filenames = [self.setup_py_path, self.debian_changelog_path,
-                          self.package_json_path, self.build_ant_path]
+                          self.package_json_path, self.build_ant_path,
+                          self.bower_json_path]
         self.reload()
 
     def reload(self):
@@ -57,6 +59,11 @@ class Versions(object):
                               if x.attributes['name'].value == 'pkg_version']
         assert len(build_ant_versions) == 1
         self.build_ant = build_ant_versions[0]
+
+        self.bower_json_json = json.load(open(self.bower_json_path),
+                                            object_pairs_hook=collections.OrderedDict)
+        self.bower_json = self.bower_json_json['version']
+
         self.version = self.debian
 
     def ensure_synced(self):
@@ -73,6 +80,9 @@ class Versions(object):
             raise SystemExit
         if self.build_ant != self.debian:
             print("build.ant {} != debian {}".format(self.build_ant, self.debian))
+            raise SystemExit
+        if self.bower_json != self.debian:
+            print("bower.json {} != debian {}".format(self.bower_json, self.debian))
             raise SystemExit
 
     def bump_version(self, debian_changelog):
@@ -98,10 +108,16 @@ class Versions(object):
         # setup.py
         replace(self.setup_py_path, old_ver, new_ver)
 
-        # package.json - not using json.dump because it reorders keys
+        # package.json
         self.package_json_json['version'] = new_ver
         with open(self.package_json_path, 'w+') as fd:
             json.dump(self.package_json_json, fd,
+                      indent=2, separators=(',', ': '))
+
+        # bower.json
+        self.bower_json_json['version'] = new_ver
+        with open(self.bower_json_path, 'w+') as fd:
+            json.dump(self.bower_json_json, fd,
                       indent=2, separators=(',', ': '))
 
         # update internal versions
@@ -113,6 +129,7 @@ class Versions(object):
 
     def by_tag(self):
         all = [x.strip() for x in check_output('git tag'.split()).split()]
-        return sorted([x for x in all if x.startswith('v-')])[-1][2:]
+        return sorted([x for x in all if x.startswith(b'v-')],
+                      key=lambda v: list(map(int, v[2:].split(b'.'))))[-1][2:].decode('utf-8')
 
 versions = Versions()

@@ -1,3 +1,29 @@
+rhizi (0.3.15) unstable; urgency=low
+  * server: fix acl email wl caching
+  * client: fix breaking the zoom buttons
+  * Add help button in top bar
+ -- Alon Levy <alon@pobox.com>  Thu, 10 Dec 2015 23:11:49 -0800
+
+rhizi (0.3.14) unstable; urgency=low
+  * additional shortcuts: del, escape
+  * close button for info box
+  * logic for position storage changed, rough waters ahead
+  * zoom to doc on load
+ -- Alon Levy <alon@pobox.com>  Thu, 10 Dec 2015 22:22:11 -0800
+
+rhizi (0.3.13) unstable; urgency=low
+  * client: show link attributes in info panel for a link.
+ -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 20:16:37 -0800
+
+rhizi (0.3.12) unstable; urgency=low
+  * developer facing changes
+ -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 16:10:37 -0800
+
+rhizi (0.3.11) unstable; urgency=low
+  * fix bug resulting from support for empty edges (no github issue)
+  * widen variable sized edges max size
+ -- Alon Levy <alon@pobox.com>  Tue, 08 Dec 2015 14:39:04 -0800
+
 rhizi (0.3.10) unstable; urgency=low
   * fix(refix?) unicode document names
  -- Alon Levy <alon@pobox.com>  Mon, 07 Dec 2015 08:27:11 -0800

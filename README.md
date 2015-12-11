@@ -15,18 +15,12 @@ Database:
 - Neo4J DB server >= 2.1.5 - http://neo4j.com/download/
 
 Server:
-- Python 2.7
+- Python 2.7 or 3.4
 - Apache Ant >= 1.9.0
 - Python dependencies as described in `requirements.txt`
 
 Client
-All of the following are already bundled but noted here for reference:
-- jquery
-- d3
-- Bacon.js
-- underscore
-- feedback - https://github.com/ivoviz/feedback (it also bundles html2canvas)
-- FileSaver
+- currently bundled, but listed in bower.json
 
 For rebuilding client css from scss saource files you will need:
 - sass (scss tool)

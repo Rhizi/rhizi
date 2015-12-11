@@ -1,0 +1,41 @@
+{
+  "name": "rhizi",
+  "version": "0.3.15",
+  "homepage": "http://rhizinet.strikingly.com/",
+  "authors": [
+    "Alon Levy <alon@pobox.com>",
+    "Cl\u00e9ment Renaud <clement.renaud@gmail.com>",
+    "Dor Garbash <dor.garbash@gmail.com>",
+    "LV-426 <lv-426@taproot.org.il>",
+    "Owen Cornec <owen.cornec@gmail.com>"
+  ],
+  "description": "Collaborative graph editor",
+  "main": "client/app.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "editor",
+    "collaborative",
+    "network",
+    "graph"
+  ],
+  "license": "AGPLv3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "3.4.11",
+    "bacon": "0.7.82",
+    "underscore": "1.8.3",
+    "jquery": "2.1.4",
+    "filesaver": "ec5c3cca11",
+    "socket.io": "0.9.10",
+    "feedback": "e7711f0735",
+    "requirejs-plugin-bower": "*"
+  }
+}

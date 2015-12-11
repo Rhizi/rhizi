@@ -21,6 +21,7 @@ dependencies:
                 - cp res/etc/rhizi-server.conf.example res/etc/rhizi-server.conf
                 - sed -i -e 's/access_control.*/access_control = False/g' res/etc/rhizi-server.conf
                 - neo4j-shell -c "match (n) return count(n);"
+                - npm install jasmine-as-promised --save-dev
 test:
         override:
                 - nosetests -v --with-xunit --xunit-file=$CIRCLE_TEST_REPORTS/nosetests.xml:

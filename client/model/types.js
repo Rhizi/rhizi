@@ -58,15 +58,12 @@ return (
         nodetypes: nodetypes,
         link_types_names: link_types_names,
         type_attributes: function (type) {
-            util.assert(!type || type[0] !== '_', 'invalid type name');
             return types[type && types.hasOwnProperty(type) ? type : '_defaults'].attributes;
         },
         types: function(type) {
-            util.assert(!type || type[0] !== '_', 'invalid type name');
             return types[type && types.hasOwnProperty(type) ? type : '_defaults'];
         },
         link_types: function(type) {
-            util.assert(!type || type[0] !== '_', 'invalid type name');
             return link_types[type && link_types.hasOwnProperty(type) ? type : '_defaults'];
         },
         all_attributes: all_attributes,
