@@ -1391,6 +1391,7 @@ function GraphView(spec) {
         alpha = alpha || 0.01;
         layout.nodes_links(nodes__visible(), links__visible());
         layout.on("end", function () {});
+        tick();
     }
 
     function layout__load_graph() {
