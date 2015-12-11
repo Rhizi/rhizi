@@ -180,8 +180,11 @@ def main():
 
     elif command == 'add':
         if args.password_file:
-            with open(args.password_file) as fd:
-                password = fd.read()
+            if args.password_file == '-':
+                password = sys.stdin.read().strip()
+            else:
+                with open(args.password_file) as fd:
+                    password = fd.read()
         else:
             print("please enter password:")
             password = getpass()
