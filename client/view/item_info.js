@@ -33,6 +33,7 @@ var is_node = model_graph.is_node;
 var msg_node = $('.info-card-message'),
     setup_done = false,
     info_container = $('.info-container'),
+    close_button = $('#editbox-closebutton'),
     form = _.object(model_types.all_attributes.map(function (attr) {
             var element = edit_element_for_attribute(attr);
 
@@ -323,6 +324,10 @@ function first_time_init() {
     if (model_types.misc && model_types.misc.direction) {
         info_container.css('direction', model_types.misc.direction);
     }
+
+    close_button.asEventStream('click').onValue(function () {
+        hide();
+    });
 }
 
 first_time_init();
