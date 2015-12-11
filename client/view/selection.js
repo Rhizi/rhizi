@@ -19,6 +19,8 @@
 define(['Bacon', 'jquery', 'underscore', 'messages', 'util'],
 function(Bacon,           $,        _,    messages,   util) {
 
+"use strict";
+
 var rz_core, // circular dependency, see get_rz_core
     selection_count_element = $('#selection-count');
 
@@ -76,20 +78,20 @@ var selected_nodes, // these are the nodes that are requested via update
 function listen_on_diff_bus(diffBus)
 {
     diffBus
-        .onValue(function (diff) {
+        .onValue(function () {
             // update due to potentially removed nodes first
-            new_selected_nodes = selected_nodes.filter(function (n) {
+            var new_selected_nodes = selected_nodes.filter(function (n) {
                 return get_main_graph().find_node__by_id(n.id) !== null;
-            });
-            new_selected_links = selected_links.filter(function (n) {
-                return get_main_graph().find_link__by_id(n.id) !== null;
-            });
-            new_related_nodes = related_nodes.filter(function (n) {
-                return get_main_graph().find_node__by_id(n.id) !== null;
-            });
-            new_related_links = related_links.filter(function (n) {
-                return get_main_graph().find_link__by_id(n.id) !== null;
-            });
+                }),
+                new_selected_links = selected_links.filter(function (n) {
+                    return get_main_graph().find_link__by_id(n.id) !== null;
+                }),
+                new_related_nodes = related_nodes.filter(function (n) {
+                    return get_main_graph().find_node__by_id(n.id) !== null;
+                }),
+                new_related_links = related_links.filter(function (n) {
+                    return get_main_graph().find_link__by_id(n.id) !== null;
+                });
             // reselect based on current graph
             inner_select(new_selected_nodes, new_related_nodes,
                          new_selected_links, new_related_links);
@@ -126,7 +128,7 @@ function links_to_node_id_dict(links)
 
 function updateSelectedNodesBus(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
 {
-    var selection_empty = new_selected_nodes.length + new_selected_links.length == 0;
+    var selection_empty = new_selected_nodes.length + new_selected_links.length === 0;
 
     if (_.isEqual(selected_nodes, new_selected_nodes) && _.isEqual(related_nodes, new_related_nodes) &&
         _.isEqual(selected_links, new_selected_links) && _.isEqual(related_links, new_related_links)) {
@@ -159,10 +161,8 @@ function _type_to_state(type) {
     switch (type) {
     case 'exit':
         return 'exit';
-        break;
     case 'enter':
         return 'enter';
-        break;
     }
     return '';
 }
@@ -184,7 +184,7 @@ function _select_nodes_helper(nodes, connected) {
     return {
         nodes: connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice()),
         links: connected.links.map(function (d) { return d.link; }),
-    }
+    };
 }
 
 function mutual_neighbours(nodes) {
@@ -218,7 +218,7 @@ function neighbours(nodes) {
     var connected = get_main_graph().neighbourhood(nodes, 1);
 
     return _select_nodes_helper(nodes, connected);
-};
+}
 
 var node_related = function(node) {
     return related_nodes__by_id[node.id] !== undefined ||
@@ -243,8 +243,8 @@ var link_selected = function(link) {
 };
 
 function empty_selection() {
-    return related_nodes.length == 0 && selected_nodes.length == 0 &&
-           related_links.length == 0 && selected_links.length == 0;
+    return related_nodes.length === 0 && selected_nodes.length === 0 &&
+           related_links.length === 0 && selected_links.length === 0;
 }
 
 var class__node = function(node, temporary) {
@@ -252,26 +252,26 @@ var class__node = function(node, temporary) {
         (node_first_selected(node) ? 'first-selected' :
             (node_selected(node) ? 'selected' :
                 (node_related(node) ? "related" : "notselected"))) : "";
-}
+};
 
 var class__link = function(link, temporary) {
     return !temporary && !empty_selection() ?
         (link_selected(link) ? 'selected' :
             (link_related(link) ? "related" : "notselected")) : "";
-}
+};
 
 var clear = function()
 {
     updateSelectedNodesBus([], [], [], []);
-}
+};
 
 function arr_compare(a1, a2)
 {
-    if (a1.length != a2.length) {
+    if (a1.length !== a2.length) {
         return false;
     }
     for (var i = 0 ; i < a1.length ; ++i) {
-        if (a1[i] != a2[i]) {
+        if (a1[i] !== a2[i]) {
             return false;
         }
     }
@@ -281,7 +281,7 @@ function arr_compare(a1, a2)
 var inner_select_nodes = function(nodes, keep_selected_links)
 {
     select_both(nodes, keep_selected_links ? selected_links : []);
-}
+};
 
 var select_nodes = function(nodes, keep_selected_links)
 {
@@ -291,14 +291,14 @@ var select_nodes = function(nodes, keep_selected_links)
     if (not_same) {
         inner_select_nodes(new_nodes, keep_selected_links);
     }
-}
+};
 
 var select_both = function(new_nodes, new_links)
 {
-    var related = new_nodes.length == 1 ? neighbours(new_nodes) : shortest_paths(new_nodes);
+    var related = new_nodes.length === 1 ? neighbours(new_nodes) : shortest_paths(new_nodes);
 
     inner_select(new_nodes, related.nodes, new_links, related.links);
-}
+};
 
 var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
 {
@@ -308,17 +308,17 @@ var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_
         return;
     }
     updateSelectedNodesBus(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links);
-}
+};
 
 
 var all_related_nodes = function() {
     return _.union(related_nodes, nodes_from_links(related_links));
-}
+};
 
 var select_link = function(link)
 {
     inner_select([], nodes_from_links([link]), [link], [link]);
-}
+};
 
 function invert(initial, inverted)
 {
@@ -406,15 +406,15 @@ var setup_toolbar = function(main_graph, main_graph_view)
         .onValue(function (zenmode) {
             zen_mode_btn[0].style.borderStyle = zenmode ? 'dashed' : 'solid';
         });
-}
+};
 
 var is_empty = function() {
-    return selected_nodes && selected_nodes.length == 0;
+    return selected_nodes && selected_nodes.length === 0;
 };
 
 var nodes_from_links = function(links) {
     return _.flatten(_.map(links, function (l) { return [l.__src, l.__dst]; }));
-}
+};
 
 // initialize
 clear();
