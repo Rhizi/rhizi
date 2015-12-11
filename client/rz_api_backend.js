@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
 /**
  * API calls designed to execute against a local backend service
  */
-define(['util', 'model/core'], function(util, model_core) {
+define(['jquery', 'util', 'model/core', 'model/diff'],
+function($,        util,   model_core,   model_diff) {
+
+    "use strict";
 
     var rz_core;
 
@@ -58,7 +59,7 @@ define(['util', 'model/core'], function(util, model_core) {
             function on_success_wrapper(xhr, text) {
                 // log wrap callback
                 var ret_data = xhr.data;
-                util.assert(undefined == xhr.error); // assert we no longer return errors along with HTTP 200 status codes
+                util.assert(undefined === xhr.error || null === xhr.error); // assert we no longer return errors along with HTTP 200 status codes
 
                 console.log('ajax success: return value: ' + ret_data);
                 if (on_success) {
@@ -86,7 +87,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.commit_diff__attr = function(attr_diff, on_success, on_error) {
 
             var req_data = common_req_ctx();
-            req_data['attr_diff'] = attr_diff;
+            req_data.attr_diff = attr_diff;
 
             var req_opts = {
                 type : 'POST',
@@ -103,7 +104,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.commit_diff__topo = function(topo_diff, on_success, on_error) {
 
             var req_data = common_req_ctx();
-            req_data['topo_diff'] = topo_diff;
+            req_data.topo_diff = topo_diff;
 
             var req_opts = {
                 type : 'POST',
@@ -120,7 +121,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.commit_diff__vis = function(vis_diff, on_success, on_error) {
 
             var req_data = common_req_ctx();
-            req_data['vis_diff'] = vis_diff;
+            req_data.vis_diff = vis_diff;
 
             var req_opts = {
                 type : 'POST',
@@ -137,7 +138,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.commit_diff__set = function(diff_set, on_success, on_error) {
 
             var req_data = common_req_ctx();
-            req_data['diff_set'] = diff_set;
+            req_data.diff_set = diff_set;
 
             var req_opts = {
                 type : 'POST',
@@ -160,7 +161,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.load_node_set = function(id_set, on_success, on_error) {
 
             var req_data = common_req_ctx();
-            req_data['id_set'] = id_set;
+            req_data.id_set = id_set;
 
             // prep request
             var req_opts = {
@@ -178,7 +179,7 @@ define(['util', 'model/core'], function(util, model_core) {
         this.load_link_set = function(link_ptr_set, on_success, on_error) {
 
             var req_data = common_req_ctx();
-            req_data['link_ptr_set'] = link_ptr_set;
+            req_data.link_ptr_set = link_ptr_set;
 
             // prep request
             var req_opts = {
@@ -194,7 +195,7 @@ define(['util', 'model/core'], function(util, model_core) {
          * add a node set
          */
         this.add_node_set = function(n_set, on_success, on_error) {
-            var topo_diff = new Topo_Diff();
+            var topo_diff = new model_diff.Topo_Diff();
             topo_diff.node_set_add = n_set;
 
             return this.topo_diff_commit(topo_diff, on_success, on_error);
@@ -204,7 +205,7 @@ define(['util', 'model/core'], function(util, model_core) {
          * add a link set
          */
         this.add_link_set = function(l_set, on_success, on_error) {
-            var topo_diff = new Topo_Diff();
+            var topo_diff = new model_diff.Topo_Diff();
             topo_diff.link_set_add = l_set;
 
             return this.topo_diff_commit(topo_diff);

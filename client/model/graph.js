@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
-define(['underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend',
+define(['jquery', 'underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend',
         'local_backend', 'rz_api_mesh', 'history', 'model/types'],
-function (_,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,
+function ($,       _,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,
          local_backend,   rz_api_mesh,   history,   model_types) {
+
+"use strict";
 
 // aliases
 var all_attributes = model_types.all_attributes;
@@ -67,13 +67,17 @@ function Graph(spec) {
 
     var links_forEach = function (f) {
         for (var link_key in id_to_link_map) {
-            f(id_to_link_map[link_key]);
+            if (id_to_link_map.hasOwnProperty(link_key)) {
+                f(id_to_link_map[link_key]);
+            }
         }
     };
 
     var nodes_forEach = function (f) {
         for (var node_key in id_to_node_map) {
-            f(id_to_node_map[node_key]);
+            if (id_to_node_map.hasOwnProperty(node_key)) {
+                f(id_to_node_map[node_key]);
+            }
         }
     };
 
@@ -103,7 +107,7 @@ function Graph(spec) {
         node_id_set.forEach(function (n_id) {
             var n = id_to_node_map[n_id];
             links_forEach(function (link) {
-                if ((link['__src'].equals(n)) || (link['__dst'].equals(n))) { // compare by id
+                if ((link.__src.equals(n)) || (link.__dst.equals(n))) { // compare by id
                     touched_links.push(link);
                 }
             });
@@ -142,7 +146,7 @@ function Graph(spec) {
             if (l_spec.target === undefined) {
                 l_spec.target = l_spec.__dst;
             }
-            if (l_spec.name == undefined) {
+            if (l_spec.name === undefined) {
                 // cannot have a zero length name, using name as label in neo4j
                 l_spec.name = 'is';
             }
@@ -171,7 +175,7 @@ function Graph(spec) {
         var existing_node,
             node;
 
-        if (undefined == spec.id) {
+        if (undefined === spec.id) {
             existing_node = find_node__by_name(spec.name);
             if (existing_node){
                 return existing_node;
@@ -191,7 +195,7 @@ function Graph(spec) {
             return existing_node;
         }
 
-        util.assert(undefined != node.id, '__addNode: node id missing');
+        util.assert(undefined !== node.id, '__addNode: node id missing');
         _node_add_helper(node);
         if (debug) {
             console.log('__addNode: node added: id: ' + node.id + ' state ' + node.state);
@@ -525,7 +529,7 @@ function Graph(spec) {
         });
         new_nodes.sort();
         new_links.sort();
-        if (new_nodes.length != state_nodes.length || new_links.length != state_links.length) {
+        if (new_nodes.length !== state_nodes.length || new_links.length !== state_links.length) {
             if (verbose) {
                 console.log('not same size: new/old ' + new_nodes.length + ' / ' + state_nodes.length + '; ' +
                             new_links.length + ' / ' + state_links.length);
@@ -575,14 +579,14 @@ function Graph(spec) {
 
         util.assert(link instanceof model_core.Link);
 
-        if (link.name.length != trimmed_name.length) {
+        if (link.name.length !== trimmed_name.length) {
             console.log('bug: __addLink with name containing spaces - removing before sending to server');
         }
         link.name = trimmed_name;
 
         var existing_link = findLink(link.__src.id, link.__dst.id, link.name);
 
-        if (undefined == existing_link) {
+        if (undefined === existing_link) {
             existing_link = _link_add_helper(link);
         } else {
             existing_link.name = link.name;
@@ -601,11 +605,15 @@ function Graph(spec) {
         util.assert(link instanceof model_core.Link);
 
         // TODO - fake api for client only (debug, demo, ui work)
-        if (!rz_config.backend_enabled) return;
+        if (!rz_config.backend_enabled) {
+            return;
+        }
 
         var attr_diff = model_diff.new_attr_diff();
         for (var key in new_link_spec) {
-            attr_diff.add_link_attr_write(link.id, key, new_link_spec[key]);
+            if (new_link_spec.hasOwnProperty(key)) {
+                attr_diff.add_link_attr_write(link.id, key, new_link_spec[key]);
+            }
         }
 
         var on_ajax_success = function(attr_diff_spec) {
@@ -616,12 +624,18 @@ function Graph(spec) {
 
             util.assert(id_to_link_map && id_to_link_map[l_id], "bad return value from ajax");
 
-            var ret_link = id_to_link_map[l_id];
-            for (key in ret_link['__attr_write']){
-                link[key] = ret_link['__attr_write'][key];
+            var ret_link = id_to_link_map[l_id],
+                attr_write = ret_link.__attr_write,
+                attr_remove = ret_link.__attr_remove;
+            for (key in attr_write){
+                if (attr_write.hasOwnProperty(key)) {
+                    link[key] = attr_write[key];
+                }
             }
-            for (key in ret_link['__attr_remove']){
-                delete link[key];
+            for (key in attr_remove){
+                if (attr_remove.hasOwnProperty(key)) {
+                    delete link[key];
+                }
             }
 
             // TODO: handle NAK: add problem emblem to link
@@ -729,7 +743,9 @@ function Graph(spec) {
         util.assert(node instanceof model_core.Node);
 
         // TODO - fake api for client only (debug, demo, ui work)
-        if (!rz_config.backend_enabled) { return; }
+        if (!rz_config.backend_enabled) {
+            return;
+        }
 
         if (new_node_spec.name !== undefined && node.name !== new_node_spec.name){
             /*
@@ -747,7 +763,9 @@ function Graph(spec) {
 
         var attr_diff = model_diff.new_attr_diff();
         for (var key in new_node_spec) {
-            attr_diff.add_node_attr_write(node.id, key, new_node_spec[key]);
+            if (new_node_spec.hasOwnProperty(key)) {
+                attr_diff.add_node_attr_write(node.id, key, new_node_spec[key]);
+            }
         }
 
         var on_ajax_success = function(attr_diff_spec){
@@ -758,12 +776,19 @@ function Graph(spec) {
 
             util.assert(id_to_node_map && id_to_node_map[n_id], "bad return value from ajax");
 
-            var ret_node = id_to_node_map[n_id];
-            for (key in ret_node.__attr_write){
-                node[key] = ret_node.__attr_write[key];
+            var ret_node = id_to_node_map[n_id],
+                attr_write = ret_node.__attr_write,
+                attr_remove = ret_node.__attr_remove;
+
+            for (key in attr_write){
+                if (attr_write.hasOwnProperty(key)) {
+                    node[key] = ret_node.__attr_write[key];
+                }
             }
-            for (key in ret_node.__attr_remove){
-                delete node[key];
+            for (key in attr_remove){
+                if (attr_remove.hasOwnProperty(key)) {
+                    delete node[key];
+                }
             }
 
             diffBus.push(attr_diff);
@@ -789,12 +814,11 @@ function Graph(spec) {
     this.editName = function(id, new_name) {
         var n_eq_name = find_node__by_name(new_name);
         var n_eq_id = find_node__by_id(id);
-        var acceptReplace=true;
 
         if (n_eq_id === undefined) {
             return;
         }
-        if (n_eq_id.name == new_name) {
+        if (n_eq_id.name === new_name) {
             return;
         }
         util.assert(temporary, 'editName should now only be used on temporary graphs');
@@ -877,7 +901,7 @@ function Graph(spec) {
         var merge_node_id = node_ids[0];
         var merge_node = find_node__by_id(merge_node_id);
         var topo_diff;
-        util.assert(merge_node != null);
+        util.assert(merge_node !== null);
         var added_links = _.flatten(_.map(merged, function (node_id) {
             var src_links = find_link__by_src_id(node_id)
                 .filter(function (src_link) { return src_link.__dst.id !== merge_node_id; })
@@ -916,8 +940,10 @@ function Graph(spec) {
     this._remove_link_set = _remove_link_set;
 
     this.nodes_rm = function(state) {
-        var node_ids = get_nodes().filter(function (n) { return n.state == state; })
-                                 .map(function (n) { return n.id; }),
+        var node_ids =
+                get_nodes()
+                    .filter(function (n) { return n.state === state; })
+                    .map(function (n) { return n.id; }),
             topo_diff = model_diff.new_topo_diff({
                 node_id_set_rm : node_ids
             });
@@ -929,8 +955,11 @@ function Graph(spec) {
         var link_key, link;
 
         for (link_key in id_to_link_map) {
+            if (!id_to_link_map.hasOwnProperty(link_key)) {
+                return;
+            }
             link = id_to_link_map[link_key];
-            if (link.__src.id === src_id && link.__dst.id === dst_id) {
+            if (link.__src.id === src_id && link.__dst.id === dst_id && link.name === name) {
                 return link;
             }
         }
@@ -949,7 +978,7 @@ function Graph(spec) {
     var find_links__by_state = function(state) {
         var foundLinks = [];
         links_forEach(function (link) {
-            if (link.state == state) {
+            if (link.state === state) {
                 foundLinks.push(link);
             }
         });
@@ -989,19 +1018,6 @@ function Graph(spec) {
     this.find_nodes__by_id = find_nodes__by_id;
 
     /**
-     * @param filter: must return true in order for node to be included in the returned set
-     */
-    var find_nodes__by_filter = function(filter) {
-        var ret = [];
-        _.values(id_to_node_map).map(function(n) {
-           if (true == filter(n)){
-               ret.push(n);
-           }
-        });
-        return ret;
-    };
-
-    /**
      * @param id unique id of link
      * @return Link with given id
      */
@@ -1024,7 +1040,7 @@ function Graph(spec) {
      * FIXME: none O(E) implementation (used by merge)
      */
     var find_link__by_src_id = function(src_id) {
-        return _.filter(get_links(), function (link) { return link.__src.id == src_id; });
+        return _.filter(get_links(), function (link) { return link.__src.id === src_id; });
     };
     this.find_link__by_src_id = find_link__by_src_id;
 
@@ -1034,7 +1050,7 @@ function Graph(spec) {
      * FIXME: none O(E) implementation (used by merge)
      */
     var find_link__by_dst_id = function(dst_id) {
-        return _.filter(get_links(), function (link) { return link.__dst.id == dst_id; });
+        return _.filter(get_links(), function (link) { return link.__dst.id === dst_id; });
     };
     this.find_link__by_dst_id = find_link__by_dst_id;
 
@@ -1082,7 +1098,7 @@ function Graph(spec) {
 
     function empty() {
         // FIXME: O(|nodes|+|links|)
-        return get_nodes().length == 0 && get_links().length == 0;
+        return get_nodes().length === 0 && get_links().length == 0;
     }
     this.empty = empty;
 
@@ -1099,7 +1115,7 @@ function Graph(spec) {
     function on_backend__node_add(n_spec) {
         n_spec = model_util.adapt_format_read_node(n_spec);
 
-        util.assert(undefined != n_spec.id, 'load_from_backend: n_spec missing id');
+        util.assert(undefined !== n_spec.id, 'load_from_backend: n_spec missing id');
 
         return n_spec;
     }
