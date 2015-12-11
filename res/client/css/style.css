@@ -1347,6 +1347,14 @@ p {
 .menu-bar__item {
   float: left;
   font-size: 14px; }
+  .menu-bar__item:hover {
+    color: red;
+    cursor: pointer; }
+
+a.menu-bar__item {
+  color: black; }
+  a.menu-bar__item :visited {
+    color: black; }
 
 .menu-bar__delimiter {
   float: left;
@@ -1370,14 +1378,6 @@ p {
   left: 3px;
   position: relative;
   top: 3px; }
-
-#menu-bar__rzdoc-new:hover {
-  color: red;
-  cursor: pointer; }
-
-#menu-bar__rzdoc-open:hover {
-  color: red;
-  cursor: pointer; }
 
 #menu-bar__rzdoc-search {
   float: right;
@@ -1414,7 +1414,7 @@ p {
   overflow: auto;
   padding: 0px 5px; }
   .activity__entry:hover {
-    background-color: #b9b9b9; }
+    background-color: #bababa; }
   .activity__entry:focus {
     outline: none; }
 
