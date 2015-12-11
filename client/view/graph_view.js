@@ -216,12 +216,31 @@ function GraphView(spec) {
 
     var selection_outer_radius = 0; //200;
 
+    function restore_position_from_layout(layout_name, nodes) {
+        var have_position = 0,
+            layout_x_key = graph.layout_x_key(layout_name),
+            layout_y_key = graph.layout_y_key(layout_name),
+            layout_fixed_key = graph.layout_fixed_key(layout_name);
+
+        if (nodes === undefined) {
+            nodes = graph.nodes();
+        } else {
+            nodes = graph.find_nodes__by_id(_.pluck(nodes, "id"));
+        }
+        nodes.forEach(function (node) {
+            if (node[layout_x_key] !== undefined && node[layout_y_key] !== undefined) {
+                node.x = node[layout_x_key];
+                node.y = node[layout_y_key];
+                node.fixed = node[layout_fixed_key];
+                have_position += 1;
+            }
+        });
+        return have_position;
+    }
+
     graph.diffBus.onValue(function (diff) {
         var relayout = !temporary && (false === model_diff.is_attr_diff(diff)),
             have_position = 0,
-            layout_x_key = graph.layout_x_key(layout.name),
-            layout_y_key = graph.layout_y_key(layout.name),
-            layout_fixed_key = graph.layout_fixed_key(layout.name),
             nodes_from_attr_diff = function() { var ret = []; diff.for_each_node(function (nid) { ret.push(graph.find_node__by_id(nid)); }); return ret; },
             changed_nodes = diff.node_set_add || (diff.for_each_node && nodes_from_attr_diff()) || [],
             is_full_graph_update = false,
@@ -229,14 +248,7 @@ function GraphView(spec) {
 
         // copy position from diff based on current layout
         if (layout.name) {
-            changed_nodes.forEach(function (node) {
-                if (node[layout_x_key] && node[layout_y_key]) {
-                    node.x = node[layout_x_key];
-                    node.y = node[layout_y_key];
-                    node.fixed = node[layout_fixed_key];
-                    have_position += 1;
-                }
-            });
+            have_position = restore_position_from_layout(layout.name, changed_nodes);
             is_full_graph_update = (have_position === nodes.length);
             if (have_position > 0) {
                 console.log('loading layout last position from database for layout ' + layout.name);
