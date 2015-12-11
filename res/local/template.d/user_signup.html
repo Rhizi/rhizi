@@ -21,20 +21,15 @@ body {
         <div class="login-rhizi-logo"></div>
     </div>
     <div class="login-view-section">
-        <h1 class="login-header">Create your profile</h1>
-        <p class="login-text">Sign-up to map and discover opportunities and resources.</p>
+        <h1 class="login-header">Account activation</h1>
     </div>
     {% if 'activation_success' == state %}
     <div>
-        <p>
-            Congratulations! your account has been activated.<br>Please
-            head over to the <a href="/login">login page</a> to access
-            your account.
-        </p>
+        <p class="login-text">Head over to the <a href="/login">Login page</a> to map and discover opportunities and resources.</p>
     </div>
     {% elif 'activation_failure' == state %}
     <div>
-        <p>Activation failure,<br>please try again later.</p>
+        <p>Activation failed, and something went wrong<br>please contact us on contact@rhizi.com specifying your login email address and the address you have now in your browser and we'll sort it out</p>
     </div>
     {% else %}
     <div class="login-view-section login-form">
