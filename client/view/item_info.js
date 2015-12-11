@@ -17,9 +17,9 @@
 */
 
 define(['jquery', 'underscore', 'util', 'consts', 'model/diff', 'model/types',
-        'model/graph', 'messages', 'domain_types'],
+        'model/graph', 'messages', 'domain_types', 'view/selection'],
 function($,        _,            util,   consts,   model_diff,   model_types,
-         model_graph,   messages,   domain_types) {
+         model_graph,   messages,   domain_types,        selection) {
 
 "use strict";
 
@@ -309,6 +309,7 @@ function hide(do_commit) {
     }
     init();
     info_container.hide();
+    selection.clear();
 }
 
 function first_time_init() {
