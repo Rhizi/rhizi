@@ -303,15 +303,8 @@ function Graph(spec) {
             V = _.object(node_ids, _.map(node_ids, function (id) {
                 return {node_id: id, distance: Infinity, prev: {}};
             })),
-            ret = {};
-
-        V[node_id].distance = 0;
-        while ((start_id = queue.shift()) !== undefined) {
-            var src_ids = _.pluck(_.pluck(neighbours[start_id].src, "__dst"), "id"),
-                dst_ids = _.pluck(_.pluck(neighbours[start_id].dst, "__src"), "id"),
-                n_ids = src_ids.concat(dst_ids);
-
-            _.each(n_ids, function(next_id) {
+            ret = {},
+            push_closer = function(next_id) {
                 var distance = V[start_id].distance + 1;
 
                 if (V[next_id].distance >= distance) {
@@ -319,7 +312,15 @@ function Graph(spec) {
                     V[next_id].prev[start_id] = true;
                     queue.push(next_id);
                 }
-            });
+            };
+
+        V[node_id].distance = 0;
+        while ((start_id = queue.shift()) !== undefined) {
+            var src_ids = _.pluck(_.pluck(neighbours[start_id].src, "__dst"), "id"),
+                dst_ids = _.pluck(_.pluck(neighbours[start_id].dst, "__src"), "id"),
+                n_ids = src_ids.concat(dst_ids);
+
+            _.each(n_ids, push_closer);
         }
         _.each(_.keys(V), function (k) {
             if (V[k].distance !== Infinity) {
