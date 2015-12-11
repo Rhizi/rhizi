@@ -17,6 +17,8 @@ bin_path = os.path.join(root_path, 'bin')
 # running python binaries takes a long time for some reason, so short circuit
 # by using this python interpreter
 def run_python_script(s, args):
+    # not working right now, so do run the long way
+    return run_process(s, args)
     with open(s) as fd:
         old_argv = sys.argv
         sys.argv = [s] + args
@@ -41,6 +43,7 @@ def run(f, args):
 
 def run_process(f, args):
     null = TemporaryFile()
+    print(str([f] + args))
     proc = subprocess.Popen([f] + args,
                             env=dict(PYTHONPATH=root_path), stdout=null,
                             stderr=null)
@@ -53,24 +56,36 @@ def run_process(f, args):
         t += dt
         time.sleep(dt)
     if proc.poll() is None:
-        ret = 0 # still running is fine - rz_server will run
+        ret = None # still running is fine - rz_server will run
         proc.terminate()
     else:
         ret = proc.poll()
-    if ret == 0:
+    if ret is None:
         return ret, None
     null.seek(0)
     return ret, null.read()
+
+
+def temp_file(contents):
+    filename = mktemp()
+    with open(filename, 'w+') as fd:
+        fd.write(contents)
+    return filename
+
 
 class TestBinaries(unittest.TestCase):
 
     def _helper_test_a_tool(self, bin_name, args):
         filename = os.path.join(bin_path, bin_name)
         ret, msg = run(filename, args)
-        self.assertTrue(ret == 0, msg="failed to run {}, ret = {}, msg = {}".format(bin_name, ret, msg))
+        self.assertTrue(ret == 0,
+                        msg="failed to run {} {}, ret = {}, msg:\n{}".format(
+                            bin_name, args, ret, msg))
 
-    def _run_user_tool(self, oneliner):
-        self._helper_test_a_tool('rz-user-tool', oneliner.split())
+    def _run_user_tool(self, args):
+        if not isinstance(args, list):
+            args = args.split()
+        self._helper_test_a_tool('rz-user-tool', args)
 
     def test_root_path(self):
         """
@@ -97,7 +112,15 @@ class TestBinaries(unittest.TestCase):
         list the users
         """
         userdb_filename = mktemp()
-        self._run_user_tool('list --init-user-db --user-db-path {}'.format(userdb_filename))
-        self._run_user_tool('add --first-name hiro --last-name protagonist --username hiro --email hiro@protagonist.com')
-        self._run_user_tool(u('add --verbose --first-name מורה --last-name נבוכים --username מורה --email more@nevochim.com'))
-        self._run_user_tool('list --verbose --init-user-db --user-db-path {}'.format(userdb_filename))
+        password_filename = temp_file('12345678')
+        myugid = subprocess.check_output('whoami').strip() # assume group = user exists
+        self._run_user_tool('init --user-db-path {} --user-db-ugid {}'.format(userdb_filename, myugid))
+        self._run_user_tool(('add --user-db-path {} --password-file {} ' \
+                             '--first-name hiro --last-name protagonist ' \
+                             '--username hiro --email hiro@protagonist.com').format(
+                                 userdb_filename, password_filename))
+        self._run_user_tool(['add', '--user-db-path', userdb_filename, '--verbose',
+                             '--first-name', 'מורה', '--last-name', 'נבוכים',
+                             '--username', 'מורה', '--email', 'more@nevochim.com',
+                             '--password-file', password_filename])
+        self._run_user_tool('list --user-db-path {} --verbose'.format(userdb_filename))
