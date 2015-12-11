@@ -348,6 +348,7 @@ function rzdoc__open(rzdoc_name) {
         });
 
         rz_mesh.emit__rzdoc_subscribe(rzdoc_name);
+        main_graph_view.nodes__user_visible(undefined, true);
         console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
     };
 
