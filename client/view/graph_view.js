@@ -310,9 +310,7 @@ function GraphView(spec) {
             zcy = zoom_center_point[1],
             s = zoom_obj.scale(),
             scaled_inner_radius = selection_inner_radius / s,
-            scaled_outer_radius = selection_outer_radius / s,
-            max_radius = Math.sqrt(_.max(selection.root_nodes.map(
-                function (n) { return n.x * n.x + n.y * n.y; }))) / s;
+            scaled_outer_radius = selection_outer_radius / s;
 
         function screen_to_graph(xy) {
             return [zcx + xy[0], zcy + xy[1]];
@@ -358,7 +356,7 @@ function GraphView(spec) {
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
-        d.dragstart = {clientX:d3.event.sourceEvent.clientX, clientY:d3.event.sourceEvent.clientY};
+        d.dragstart = {clientX: d3.event.sourceEvent.clientX, clientY: d3.event.sourceEvent.clientY};
         d.fixed = true;
         layout.stop();
     }
@@ -519,9 +517,6 @@ function GraphView(spec) {
         return node_text_dx + node__radius(d) + (urlValid(d.url) ? node_url_dx : 0);
     };
 
-    function graphics__node_text(node) {
-    }
-
     function calculate_minmax(data, type_key) {
         var collection = data.collection,
             get_attrib = data.get_attrib,
@@ -555,7 +550,6 @@ function GraphView(spec) {
             unselected_selector = '#' + graph_name + ' #link-group',
             selected_selector = '#' + graph_name + ' #selected-link-group',
             unselected_link_group = document.querySelector(unselected_selector),
-            selected_link_group = document.querySelector(selected_selector),
             visible_nodes = nodes__visible(),
             visible_links = links__visible();
 
@@ -654,9 +648,9 @@ function GraphView(spec) {
         gv.link__hover__end = link__hover__end;
 
         var link_on_hover = function (d) {
-            $('#' + d.id).hover(function (e) {
+            $('#' + d.id).hover(function () {
                 link__hover__start(d);
-            }, function (e) {
+            }, function () {
                 link__hover__end(d);
             });
         };
@@ -1056,8 +1050,7 @@ function GraphView(spec) {
                 end_start = gv.layout_animation.endtime - gv.layout_animation.starttime,
                 now_start = now - gv.layout_animation.starttime,
                 d_current = gv.layout_animation.target - gv.layout_animation.current,
-                d_bubble_radius = b_dict.target - gv.bubble_radius,
-                step_msec = gv.layout_animation.step_msec;
+                d_bubble_radius = b_dict.target - gv.bubble_radius;
 
             util.assert(b_dict.target !== undefined, "bubble radius target is undefined");
             // we loop some just to settle the temporary graph animation
@@ -1264,7 +1257,7 @@ function GraphView(spec) {
             }
         }
 
-        link.attr("d", function(d, i) {
+        link.attr("d", function(d) {
             var d_val,
                 ghost;
 
