@@ -58,7 +58,7 @@ function install() {
             handled = true;
         }
         if (e.altKey && e.ctrlKey && 'o' === key) {
-            search.focus();
+            $("#search").focus();
             handled = true;
         }
         if (e.ctrlKey && 'a' === key && e.target === document.body) {
