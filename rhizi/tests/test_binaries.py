@@ -1,10 +1,14 @@
+# coding: utf-8
+
 import unittest
 import os
 import sys
 import subprocess
 from glob import glob
 import time
-from tempfile import TemporaryFile
+from tempfile import TemporaryFile, mktemp
+
+from six import u
 
 
 root_path = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -65,6 +69,9 @@ class TestBinaries(unittest.TestCase):
         ret, msg = run(filename, args)
         self.assertTrue(ret == 0, msg="failed to run {}, ret = {}, msg = {}".format(bin_name, ret, msg))
 
+    def _run_user_tool(self, oneliner):
+        self._helper_test_a_tool('rz-user-tool', oneliner.split())
+
     def test_root_path(self):
         """
         helper test for test_binaries
@@ -79,3 +86,18 @@ class TestBinaries(unittest.TestCase):
         """
         for bin_name in [os.path.basename(p) for p in glob(os.path.join(bin_path, '*'))]:
             self._helper_test_a_tool(os.path.basename(bin_name), ['--help'])
+
+    def test_user_tool(self):
+        """
+        test rz-user-tool
+
+        do a whole cycle:
+        init a new file
+        add a user to it
+        list the users
+        """
+        userdb_filename = mktemp()
+        self._run_user_tool('list --init-user-db --user-db-path {}'.format(userdb_filename))
+        self._run_user_tool('add --first-name hiro --last-name protagonist --username hiro --email hiro@protagonist.com')
+        self._run_user_tool(u('add --verbose --first-name מורה --last-name נבוכים --username מורה --email more@nevochim.com'))
+        self._run_user_tool('list --verbose --init-user-db --user-db-path {}'.format(userdb_filename))
