@@ -214,7 +214,7 @@ class RZ_Config(object):
                         email = line
                         wl_email_set.append(email)
                 log.info('acl initialized: acl_wl__email_address, email-count: %d' % (len(wl_email_set)))
-                self.acl_wl__email_address_set_cached = wl_email_set
+                self.acl_wl__email_address_set_cached = [wl_email_set]
             else:
                 self.acl_wl__email_address_set_cached = [None]
 
