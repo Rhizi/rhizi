@@ -2,7 +2,7 @@ define({
     types: [
         ['person', {
             'title': 'Person',
-            'attributes': ['email', 'work-address', 'image-url', 'url'],
+            'attributes': ['email', 'work-address', 'image-url', 'url', 'subtype-tags'],
         }],
         ['project', {
             'title': 'Project',
@@ -17,6 +17,7 @@ define({
                  'street-address',
                  'cnrs-inserm-unit-code',
                  'hours-total',
+                 'subtype-tags'
                 ],
             'radius': ['hours-total', 'linear']
         }],
@@ -26,15 +27,15 @@ define({
         }],
         ['keyword', {
             'title': 'Keyword',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'subtype-tags'],
         }],
         ['organisation', {
             'title': 'Organisation',
-            'attributes': ['description', 'url'],
+            'attributes': ['description', 'url', 'subtype-tags'],
         }],
         ['media', {
             'title': 'Media',
-            'attributes': ['description', 'url', 'image-url'],
+            'attributes': ['description', 'url', 'image-url', 'subtype-tags'],
         }],
     ],
     link_types: [
@@ -59,7 +60,8 @@ define({
         'street-address': 'Street address',
         'city': 'City',
         'country': 'Country',
-        'hours-total': 'Hours Total'
+        'hours-total': 'Hours Total',
+        'subtype-tags': 'Subtype Tags'
     },
     attribute_ui: {
         'description': 'textarea',
@@ -72,5 +74,6 @@ define({
         'rhizi-url': 'input',
         'status': 'input',
         'hours-total': 'input',
+        'subtype-tags': 'input'
     }
 });
