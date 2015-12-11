@@ -331,29 +331,30 @@ var invert_link = function(link)
         new_related_links = _.union(invert(related_links, [link]), new_selected_links);
 
     inner_select(selected_nodes, all_related_nodes(), new_selected_links, new_related_links);
-}
+};
 
 var invert_nodes = function(nodes)
 {
     select_nodes(invert(selected_nodes, nodes), true);
-}
+};
 
 var invert_both = function(nodes, links)
 {
     select_both(invert(selected_nodes, nodes), invert(selected_links, links));
-}
+};
+
+var delete_selection = function(main_graph) {
+    if (confirm(messages.delete_nodes_links_message(selected_nodes, selected_links))) {
+        // FIXME: atomic undo
+        main_graph.links__delete(_.map(selected_links, 'id'));
+        main_graph.nodes__delete(_.map(selected_nodes, 'id'));
+    }
+};
 
 var setup_toolbar = function(main_graph, main_graph_view)
 {
     var merge_selection = function() {
             main_graph.nodes__merge(selected_nodes_ids());
-        },
-        delete_selection = function() {
-            if (confirm(messages.delete_nodes_links_message(selected_nodes, selected_links))) {
-                // FIXME: atomic undo
-                main_graph.links__delete(_.map(selected_links, 'id'));
-                main_graph.nodes__delete(_.map(selected_nodes, 'id'));
-            }
         },
         link_fan_selection = function() {
             main_graph.nodes__link_fan(selected_nodes_ids());
@@ -365,7 +366,7 @@ var setup_toolbar = function(main_graph, main_graph_view)
         multiple_node_operations = $('#tool-bar-multiple-node-operations');
 
     merge_btn.asEventStream('click').onValue(merge_selection);
-    delete_btn.asEventStream('click').onValue(delete_selection);
+    delete_btn.asEventStream('click').onValue(function () { delete_selection(main_graph); });
     link_fan_btn.asEventStream('click').onValue(link_fan_selection);
     zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
 
@@ -436,6 +437,8 @@ return {
     link_related: link_related,
     selectionChangedBus: selectionChangedBus,
     setup_toolbar: setup_toolbar,
+
+    delete_selection: delete_selection,
 
     selected_nodes: function() { return selected_nodes; },
     related_nodes: function() { return related_nodes; },
