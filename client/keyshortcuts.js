@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'rz_core', 'view/selection'],
+define(['jquery', 'rz_core', 'view/selection', 'view/item_info'],
 
-function($,        rz_core,        selection) {
+function($,        rz_core,        selection,        item_info) {
 
 "use strict";
 
@@ -43,6 +43,9 @@ function install() {
 
         if (!e.altKey && !e.ctrlKey && e.keyCode === 46) { // del
             selection.delete_selection(rz_core.main_graph);
+        }
+        if (!e.altKey && !e.ctrlKey && e.keyCode === 27) { // escape
+            item_info.hide();
         }
         if (e.altKey && e.ctrlKey && 'i' === key) {
             $('#textanalyser').focus();
