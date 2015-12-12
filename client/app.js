@@ -65,8 +65,10 @@ if (window.is_node) {
     require.config(config);
 
     requirejs(['main'], function(main) {
-        console.log('starting rhizi logic');
-        main.main();
+        window.onload = function () {
+            console.log('starting rhizi logic');
+            main.main();
+        };
     });
 }
 }());
