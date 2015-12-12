@@ -18,6 +18,7 @@
 import json
 import logging
 import unittest
+import os
 
 from ..rz_config import RZ_Config
 from ..rz_server import init_webapp
@@ -28,12 +29,24 @@ from .test_util__pydev import debug__pydev_pd_arg
 
 class Test_RZ_User(RhiziTestBase):
 
+    def test_user_signup__validate_emails(self):
+        """Registration should accept only valid email addresses"""
+        self.webapp.testing = True
+        self.webapp.rz_config.access_control = True
+
+        us_req = gen_random_user_signup()
+        with self.webapp.test_client() as test_client:
+            us_req['email_address'] = "foo@bar"
+            req, req_data = self._json_post(test_client, '/signup', us_req)
+            self.assertIn("Illegal", req.data)
+            self.assertIn("email address", req.data)
+            self.assertEqual(400, req.status_code, req_data)
+
     def test_user_signup__acl_domain(self):
         """Email registration should support domains whitelisting"""
         self.webapp.testing = True
         self.webapp.rz_config.access_control = True
         self.webapp.rz_config.acl_wl__email_domain_set = 'a.org, b.org'
-        self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@foo.bar', 'alice@zoo.bar']  # hack: acl_wl__email_address_set_cached attribute access
 
         us_req = gen_random_user_signup()
         with self.webapp.test_client() as test_client:
@@ -47,6 +60,44 @@ class Test_RZ_User(RhiziTestBase):
 
                 self.assertEqual(expected_status_code, req.status_code, req_data)
 
+    def test_user_signup__whitelist_emails(self):
+        """Email registration should support email whitelisting"""
+        self.webapp.testing = True
+        self.webapp.rz_config.access_control = True
+        self.webapp.rz_config.acl_wl__email_domain_set = 'a.org'
+        self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@c.org', 'haha@c.org']  # hack: acl_wl__email_address_set_cached attribute access
+
+        us_req = gen_random_user_signup()
+        with self.webapp.test_client() as test_client:
+            for email_address, expected_status_code in [('haha@c.org', 200), # whitelist specific user
+                                                        ('alice@a.org', 200), # whitelist domain
+                                                        ('roger@test.org', 400)]: # out
+
+                us_req['email_address'] = email_address
+                req, req_data = self._json_post(test_client, '/signup', us_req)
+        """Email registration should support email whitelisting using file"""
+
+    def test_user_signup__whitelist_emails_file(self):
+
+        self.webapp.testing = True
+        self.webapp.rz_config.access_control = True
+        self.webapp.rz_config.acl_wl__email_address_set_cached = [] # init clean
+        self.webapp.rz_config.acl_wl__email_address_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'emails.txt')
+        self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@c.org']
+        us_req = gen_random_user_signup()
+
+        with self.webapp.test_client() as test_client:
+            for email_address, expected_status_code in [('joe@test.org', 200), # whitelisted in file
+                                                        ('jane@test.org', 200), # whitelisted in file
+                                                        ('someone@domain.org', 200), # whitelisted in file
+                                                        ('alice@c.org', 200), # whitelisted in cache
+                                                        ('roger@foo.bar', 400)]: # not whitelisted
+
+                us_req['email_address'] = email_address
+                req, req_data = self._json_post(test_client, '/signup', us_req)
+
+                self.assertEqual(expected_status_code, req.status_code, req_data)
+                self.assertEqual(expected_status_code, req.status_code, req_data)
 
 @debug__pydev_pd_arg
 def main():

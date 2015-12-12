@@ -203,20 +203,43 @@ class RZ_Config(object):
 
         [!] may cache None value
         """
-        if self.acl_wl__email_address_set_cached is not None:
-            return self.acl_wl__email_address_set_cached[0]
-        else:  # first access, attempt to init from file
-            if self.acl_wl__email_address_file_path is not None:
-                wl_email_set = []
+
+        # regexp to validate email (from Django source)
+        email_re = re.compile(
+        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
+        r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
+
+        # emails to whitelist
+        wl_email_set = []
+
+        # attempt to init from email file
+        if self.acl_wl__email_address_file_path is not None:
+
+            # check if email file exists
+            if not os.path.exists(self.acl_wl__email_address_file_path) and not os.path.isfile(self.acl_wl__email_address_file_path):
+                print "Email whitelist file doesn't exist or is not a valid file : %s"%self.acl_wl__email_address_file_path
+            else :
                 with open(self.acl_wl__email_address_file_path) as email_address_file:
-                    for line in email_address_file.readlines():
-                        # TODO: check email format
-                        email = line
-                        wl_email_set.append(email)
-                log.info('acl initialized: acl_wl__email_address, email-count: %d' % (len(wl_email_set)))
-                self.acl_wl__email_address_set_cached = [wl_email_set]
-            else:
-                self.acl_wl__email_address_set_cached = [None]
+                    for line in email_address_file.readlines(): # one email by line
+                        email = line.strip()
+                        # check email format
+                        if email_re.search(email) is None:
+                            raise ValueError("Wrong email address : %s"%email)
+                        else :
+                            wl_email_set.append(email)
+
+        if self.acl_wl__email_address_set_cached is not None:
+            assert type(self.acl_wl__email_address_set_cached) is list
+            for email in self.acl_wl__email_address_set_cached:
+                # validate email address
+                if email_re.search(email) is None:
+                    raise ValueError("Wrong email address : %s"%email)
+                else :
+                    wl_email_set.append(email)
+
+        log.info('acl initialized: acl_wl__email_address, email-count: %d' % (len(wl_email_set)))
+        return wl_email_set
 
     @property
     def db_base_url(self):
