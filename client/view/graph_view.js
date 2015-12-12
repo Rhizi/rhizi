@@ -368,7 +368,7 @@ function GraphView(spec) {
     selection.selectionChangedBus.onValue(function () {
         if (zen_mode) {
             zen_mode__auto_center = true;
-            layout__reset(1.0);
+            layout__update_graph_and_tick();
             layout_start(false);
         }
     });
@@ -952,7 +952,7 @@ function GraphView(spec) {
             }
 
             if (relayout) {
-                layout__reset(0.01);
+                layout__update_graph_and_tick();
             } else {
                 tick(); // this will be called before the end event is triggered by layout completing.
             }
@@ -1391,10 +1391,9 @@ function GraphView(spec) {
         pushRedraw();
     }
 
-    function layout__reset(alpha) {
-        alpha = alpha || 0.01;
-        layout.nodes_links(nodes__visible(), links__visible());
-        layout.on("end", function () {});
+    function layout__update_graph_and_tick() {
+        layout.nodes_links(nodes__visible(), links__visible())
+            .start();
         tick();
     }
 
