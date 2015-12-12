@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
-define(['jquery', 'd3', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer',
+define(['jquery', 'd3', 'Bacon', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer',
         'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu',
         'view/activity', 'rz_api_backend', 'local_backend', 'view/toolbar__status'],
-function($,        d3,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,
+function($,        d3,   Bacon,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,
          selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,
          activity,        rz_api_backend,   local_backend,        toolbar__status) {
+
+"use strict";
 
 // fix circular module dependency
 var search;
@@ -35,13 +35,7 @@ function get_search()
     return search;
 }
 
-var addednodes = [],
-    vis,
-    graphinterval = 0,
-    timeline_timer = 0,
-    deliverables = [],
-    circle, // <-- should not be module globals.
-    scrollValue = 0,
+var vis,
     edit_graph,
     main_graph,
     main_graph_view,
@@ -66,7 +60,7 @@ function svg_click_handler(e) {
         updateZoomProgress(false);
         return;
     }
-    if (e.originalEvent.target.nodeName != 'svg') {
+    if (e.originalEvent.target.nodeName !== 'svg') {
         return;
     }
     svgInput.hide();
@@ -101,7 +95,7 @@ var init_graph_views = function () {
 
     function zoom() {
         zoom_g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        d3.event.sourceEvent != null && d3.event.sourceEvent.stopPropagation();
+        d3.event.sourceEvent !== null && d3.event.sourceEvent.stopPropagation();
         updateZoomProgress(true);
     }
 
@@ -169,7 +163,7 @@ var init_graph_views = function () {
     $('svg').click(svg_click_handler);
     var bubble_property =
         edit_graph.diffBus.map(function () {
-            return edit_graph.nodes().length == 0 ? 0 : 180;
+            return edit_graph.nodes().length === 0 ? 0 : 180;
         }).skipDuplicates();
 
     main_graph_view = graph_view.GraphView({
@@ -216,12 +210,12 @@ var init_graph_views = function () {
  * rz_config.backend__maintain_ws_connection is set to 'false'
  */
 function init_ws_connection(){
-    if (true == rz_config.backend__maintain_ws_connection){
+    if (true === rz_config.backend__maintain_ws_connection) {
         rz_mesh.init({graph: main_graph});
 
         // attempt to actively disconnect on tab/window close
         // ref: https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers.onbeforeunload
-        window.addEventListener("beforeunload", function(e){
+        window.addEventListener("beforeunload", function() {
             var cur_rzdoc_name = rzdoc__current__get_name();
             rz_mesh.emit__rzdoc_unsubscribe(cur_rzdoc_name);
             rz_mesh.destroy();
@@ -256,7 +250,7 @@ function locate_visual_element(model_obj){
 /**
  * add node on canvas double click
  */
-function canvas_handler_dblclick(){
+function canvas_handler_dblclick() {
     var n = model_core.create_node__set_random_id();
     n.name = ''; // will be set by user
 
@@ -350,7 +344,7 @@ function rzdoc__open(rzdoc_name) {
         rz_mesh.emit__rzdoc_subscribe(rzdoc_name);
         main_graph_view.nodes__user_visible(undefined, true);
         console.log('rzdoc: opened rzdoc : \'' + rzdoc_name + '\'');
-    };
+    }
 
     function on_error(xhr, status, err_thrown) {
         var create_btn,
@@ -452,7 +446,7 @@ function rzdoc__search(search_query) {
         $('.cmd_bar__rzdoc_open__item').click(function(click_event) { // attach common click handler
             var rzdoc_name = click_event.currentTarget.textContent;
             var rzdoc_cur_name = rzdoc__current__get_name();
-            if (rzdoc_name == rzdoc_cur_name) {
+            if (rzdoc_name === rzdoc_cur_name) {
                 console.log('rzdoc__open: ignoring request to reopen currently rzdoc: name: ' + rzdoc_cur_name);
                 $("#rzdoc-bar_doc-label").fadeOut(400).fadeIn(400); // signal user
             } else {
