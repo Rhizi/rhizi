@@ -142,8 +142,16 @@ function(consts,   $,        d3,   _) {
         return ret;
     }
 
+    function always(con) {
+        return function () {
+            return con;
+        };
+    }
+
     function layout__zen(graph) {
         var ret = layout__d3_force(graph);
+
+        ret.record_on_simulation_completion = always(false);
         return ret;
     }
 
@@ -241,6 +249,7 @@ function(consts,   $,        d3,   _) {
                     layout.nodes(nodes);
                     return layout.links(links);
                 },
+                record_on_simulation_completion: always(true),
                 // data
                 graph: graph,
                 _nodes: [],
@@ -295,6 +304,7 @@ function(consts,   $,        d3,   _) {
             layout.wh = _wh;
             return layout;
         };
+        layout.record_on_simulation_completion = always(false);
         return layout;
     }
 

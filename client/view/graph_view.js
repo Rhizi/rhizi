@@ -1347,7 +1347,15 @@ function GraphView(spec) {
     }
 
     function layout__end__callback() {
-        if (!zen_mode) {
+        var x_pos,
+            y_pos;
+
+        if (layout.record_on_simulation_completion()) {
+            console.log("recording layout " + layout.name);
+            x_pos = _.pluck(graph.nodes(), 'x');
+            y_pos = _.pluck(graph.nodes(), 'y');
+            util.assert(_.intersection(_.unique(x_pos), [undefined]).length === 0);
+            util.assert(_.intersection(_.unique(y_pos), [undefined]).length === 0);
             graph.nodes__store_layout_positions(layout.name);
         }
     }
