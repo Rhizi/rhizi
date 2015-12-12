@@ -218,7 +218,7 @@ class RZ_Config(object):
 
             # check if email file exists
             if not os.path.exists(self.acl_wl__email_address_file_path) and not os.path.isfile(self.acl_wl__email_address_file_path):
-                print "Email whitelist file doesn't exist or is not a valid file : %s"%self.acl_wl__email_address_file_path
+                print("Email whitelist file doesn't exist or is not a valid file : %s"%self.acl_wl__email_address_file_path)
             else :
                 with open(self.acl_wl__email_address_file_path) as email_address_file:
                     for line in email_address_file.readlines(): # one email by line
