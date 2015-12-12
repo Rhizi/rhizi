@@ -6210,6 +6210,7 @@
           type: "start",
           alpha: alpha = x
         });
+        if (strengths.length !== links.length) { throw new Error('undefined strengths, missing call to start'); }
         d3.timer(force.tick);
       }
       return force;
