@@ -173,7 +173,7 @@ function GraphView(spec) {
         filter_states = new_states;
         graph.node__set_filtered_types(filter_states);
         update_view(true);
-        layout_start(false);
+        layout__start(false);
     });
 
     function node__pass_filter(d) {
@@ -273,11 +273,11 @@ function GraphView(spec) {
         }
         update_view(relayout);
         if (diff.local && !zen_mode) {
-            layout_start();
+            layout__start();
         }
     });
 
-    function layout_start(record_on_end) {
+    function layout__start(record_on_end) {
         var cur_layout = layout,
             internal_end_callback = function () {
                 if (layout === cur_layout) {
@@ -370,8 +370,7 @@ function GraphView(spec) {
     selection.selectionChangedBus.onValue(function () {
         if (zen_mode) {
             zen_mode__auto_center = true;
-            layout__update_graph_and_tick();
-            layout_start(false);
+            layout__load_graph_and_tick();
         }
     });
 
@@ -954,7 +953,7 @@ function GraphView(spec) {
             }
 
             if (relayout) {
-                layout__update_graph_and_tick();
+                layout__load_graph_and_tick();
             } else {
                 tick(); // this will be called before the end event is triggered by layout completing.
             }
@@ -1393,9 +1392,8 @@ function GraphView(spec) {
         pushRedraw();
     }
 
-    function layout__update_graph_and_tick() {
-        layout.nodes_links(nodes__visible(), links__visible())
-            .start();
+    function layout__load_graph_and_tick() {
+        layout__load_graph();
         tick();
     }
 
@@ -1409,8 +1407,15 @@ function GraphView(spec) {
 
 
     function layout__load_graph() {
-        layout.nodes_links(nodes__visible(), links__visible())
-            .start();
+        var alpha = layout.alpha();
+
+        layout.nodes_links(nodes__visible(), links__visible());
+        if (alpha !== undefined && alpha !== 0) {
+            // do not start the graph, but do update the strengths, which requires
+            alpha = layout.alpha();
+            layout.start();
+            layout.alpha(alpha);
+        }
     }
 
     function set_layout(new_layout)
@@ -1455,13 +1460,12 @@ function GraphView(spec) {
             .size([w, h])
             .on("tick", layout__tick__callback)
             .nodes_links(nodes__visible(), links__visible())
-            .restore()
-            .start();
+            .restore();
         gv.layout = layout;
         if (_.intersection(_.pluck(graph.nodes(), 'x'), [undefined]).length > 0 ||
             restored_positions !== graph_nodes.length) {
             console.log('recalculating layout upon set_layout');
-            layout_start(true); // TODO: should only record if we are responsible for the nodes
+            layout__start(true); // TODO: should only record if we are responsible for the nodes
         }
         if (change_zen_mode) {
             update_view(true);
@@ -1471,7 +1475,7 @@ function GraphView(spec) {
         gv.layout_name_bus.push(new_layout.name);
     }
 
-    set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
+    layout__switch_to_new(temporary ? view_layouts.empty(graph) : layouts[0]);
     if (!temporary) {
         set_layout_toolbar(layout_menu);
         gv.hide_layout_menu = function () {

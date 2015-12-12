@@ -118,15 +118,14 @@ function(consts,   $,        d3,   _) {
         var layout = layout__empty(graph, d3.layout.force())
                   .distance(240)
                   .gravity(0.12)
-                  .charge(-1800)
-                  .linkStrength(function () { return 1; });
+                  .charge(-1800);
 
         layout.force_start = layout.start;
 
         layout.start = function (alpha) {
+            layout.force_start();
             alpha = alpha || 0.01;
             layout.alpha(alpha);
-            layout.force_start();
         };
         return layout;
     }
