@@ -240,7 +240,8 @@ function GraphView(spec) {
     }
 
     graph.diffBus.onValue(function (diff) {
-        var relayout = !temporary && (false === model_diff.is_attr_diff(diff)),
+        var is_attr_diff = model_diff.is_attr_diff(diff),
+            relayout = !temporary && !is_attr_diff,
             have_position = 0,
             nodes_from_attr_diff = function() { var ret = []; diff.for_each_node(function (nid) { ret.push(graph.find_node__by_id(nid)); }); return ret; },
             changed_nodes = diff.node_set_add || (diff.for_each_node && nodes_from_attr_diff()) || [],
