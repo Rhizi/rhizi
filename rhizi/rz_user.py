@@ -576,7 +576,6 @@ def acl_wl_match__email_address(sanitized_email_address):
     if current_app.rz_config.acl_wl__email_address_set is not None:
         email_address_set = current_app.rz_config.acl_wl__email_address_set
         email_address_set = [email_address.strip() for email_address in email_address_set]  # strip whitespace chars
-
         if '%s@%s' % (em_sender, em_domain) in email_address_set:
             return True
 
