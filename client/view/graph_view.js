@@ -242,6 +242,7 @@ function GraphView(spec) {
     graph.diffBus.onValue(function (diff) {
         var is_attr_diff = model_diff.is_attr_diff(diff),
             relayout = !temporary && !is_attr_diff,
+            load_positions = layout.name && !temporary && (!diff.local || relayout),
             have_position = 0,
             nodes_from_attr_diff = function() { var ret = []; diff.for_each_node(function (nid) { ret.push(graph.find_node__by_id(nid)); }); return ret; },
             changed_nodes = diff.node_set_add || (diff.for_each_node && nodes_from_attr_diff()) || [],
@@ -249,7 +250,7 @@ function GraphView(spec) {
             nodes = graph.nodes();
 
         // copy position from diff based on current layout
-        if (layout.name) {
+        if (load_positions) {
             have_position = restore_position_from_layout(layout.name, changed_nodes);
             is_full_graph_update = (have_position === nodes.length);
             if (have_position > 0) {
