@@ -1455,18 +1455,20 @@ function GraphView(spec) {
             .size([w, h])
             .on("tick", layout__tick__callback)
             .nodes_links(nodes__visible(), links__visible())
-            .restore();
+            .restore()
+            .start();
         gv.layout = layout;
+        if (_.intersection(_.pluck(graph.nodes(), 'x'), [undefined]).length > 0 ||
+            restored_positions !== graph_nodes.length) {
+            console.log('recalculating layout upon set_layout');
+            layout_start(true); // TODO: should only record if we are responsible for the nodes
+        }
         if (change_zen_mode) {
             update_view(true);
         } else {
             update_view(false);
         }
         gv.layout_name_bus.push(new_layout.name);
-        if (restored_positions !== graph_nodes.length) {
-            console.log('recalculating layout upon set_layout');
-            layout_start();
-        }
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
