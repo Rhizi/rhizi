@@ -1398,6 +1398,15 @@ function GraphView(spec) {
         tick();
     }
 
+    function layout__stop_and_dont_record()
+    {
+        layout.on("end", function () {
+            console.log('not recording layout ' + (layout !== undefined ? layout.name : 'undefined'));
+        });
+    }
+    gv.layout__stop_and_dont_record = layout__stop_and_dont_record;
+
+
     function layout__load_graph() {
         layout.nodes_links(nodes__visible(), links__visible());
     }
