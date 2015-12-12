@@ -268,6 +268,9 @@ function GraphView(spec) {
         if (is_full_graph_update) {
             layout__set_from_nodes(layout.name, changed_nodes);
         }
+        if (_.intersection(_.pluck(graph.nodes(), 'x'), [undefined]).length > 0) {
+            layout__switch_to_new(layout);
+        }
         update_view(relayout);
         if (diff.local && !zen_mode) {
             layout_start();
@@ -1410,11 +1413,20 @@ function GraphView(spec) {
         layout.nodes_links(nodes__visible(), links__visible());
     }
 
-    function set_layout(new_layout) {
+    function set_layout(new_layout)
+    {
+        layout__save_and_stop();
+        layout__switch_to_new(new_layout);
+    }
+
+    function layout__save_and_stop() {
         if (layout !== undefined) {
             layout.save();
             layout.stop();
         }
+    }
+
+    function layout__switch_to_new(new_layout) {
         var new_layout_is_zen = new_layout && new_layout.name === 'zen',
             old_layout_is_zen = layout && layout.name === 'zen',
             change_zen_mode = new_layout_is_zen ^ old_layout_is_zen,
