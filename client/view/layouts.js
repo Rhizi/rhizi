@@ -115,10 +115,20 @@ function(consts,   $,        d3,   _) {
     }
 
     function layout__d3_force(graph) {
-        return layout__empty(graph, d3.layout.force())
+        var layout = layout__empty(graph, d3.layout.force())
                   .distance(240)
                   .gravity(0.12)
-                  .charge(-1800);
+                  .charge(-1800)
+                  .linkStrength(function () { return 1; });
+
+        layout.force_start = layout.start;
+
+        layout.start = function (alpha) {
+            alpha = alpha || 0.01;
+            layout.alpha(alpha);
+            layout.force_start();
+        };
+        return layout;
     }
 
     function layout__d3_force__link_distance(graph) {
