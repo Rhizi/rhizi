@@ -292,7 +292,6 @@ function GraphView(spec) {
             layout.on("end", internal_end_callback);
         }
         layout
-            .alpha(0.01)
             .start();
     }
 
@@ -422,7 +421,7 @@ function GraphView(spec) {
 
     function resumeLayout() {
         setupInitialPositions();
-        layout.alpha(0.05);
+        layout.start(0.05);
     }
 
     function dragended(d) {
@@ -1410,7 +1409,8 @@ function GraphView(spec) {
 
 
     function layout__load_graph() {
-        layout.nodes_links(nodes__visible(), links__visible());
+        layout.nodes_links(nodes__visible(), links__visible())
+            .start();
     }
 
     function set_layout(new_layout)
