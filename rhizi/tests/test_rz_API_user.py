@@ -86,6 +86,7 @@ class Test_RZ_User(RhiziTestBase):
         self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@c.org']
         us_req = gen_random_user_signup()
 
+
         with self.webapp.test_client() as test_client:
             for email_address, expected_status_code in [('joe@test.org', 200), # whitelisted in file
                                                         ('jane@test.org', 200), # whitelisted in file

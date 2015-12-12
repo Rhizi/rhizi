@@ -16,5 +16,8 @@
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">{% block footer %}{% endblock %}</div>
     <div id="devtools" style="display:none;">{% block devtools %}{% endblock %}</div>
+    {% if rz_config__piwik_id %}
+      {% include "piwik.html" %}
+    {% endif %}
 </body>
 </html>

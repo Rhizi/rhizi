@@ -75,9 +75,10 @@ def rz_mainpage(rzdoc_name=None):
                  'rz_config__rzdoc__mainpage_name': rz_config.rzdoc__mainpage_name,
                  'rz_config__hostname': host_addr,
                  'rz_config__port': host_port,
+                 'rz_config__piwik_url' : rz_config.piwik_url,
+                 'rz_config__piwik_id' : rz_config.piwik_id,
                  'rz_config__optimized_main': 'true' if rz_config.optimized_main else 'false',
                  'rz_config__role_set': role_set,
                  'fragment_d_path': rz_config.fragment_d_path,
                  }
     return render_template('index.html', rz_username=rz_username, **rz_config)
-

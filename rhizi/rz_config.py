@@ -95,6 +95,10 @@ class RZ_Config(object):
         # User feedback settings
         cfg['feedback_recipient'] = 'feedback@rhizi.local'
 
+        # Piwik
+        cfg["piwik_url"] = None
+        cfg["piwik_id"] = None
+
         # Flask
         cfg['static_url_path'] = '/static'
 

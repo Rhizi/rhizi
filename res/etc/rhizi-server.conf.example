@@ -67,6 +67,12 @@ signup_enabled = True
 optimized_main = False
 
 # -----------------------------------------------------------------------------
+# Piwik settings
+#
+piwik_url =
+piwik_id =
+
+# -----------------------------------------------------------------------------
 # Rhizi
 #
 rzdoc__mainpage_name = Welcome Rhizi
