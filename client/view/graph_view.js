@@ -268,6 +268,9 @@ function GraphView(spec) {
         if (is_full_graph_update) {
             layout__set_from_nodes(layout.name, changed_nodes);
         }
+        if (_.intersection(_.pluck(graph.nodes(), 'x'), [undefined]).length > 0) {
+            layout__switch_to_new(layout);
+        }
         update_view(relayout);
         if (diff.local && !zen_mode) {
             layout_start();
@@ -289,7 +292,6 @@ function GraphView(spec) {
             layout.on("end", internal_end_callback);
         }
         layout
-            .alpha(0.01)
             .start();
     }
 
@@ -368,7 +370,7 @@ function GraphView(spec) {
     selection.selectionChangedBus.onValue(function () {
         if (zen_mode) {
             zen_mode__auto_center = true;
-            layout__reset(1.0);
+            layout__update_graph_and_tick();
             layout_start(false);
         }
     });
@@ -419,7 +421,7 @@ function GraphView(spec) {
 
     function resumeLayout() {
         setupInitialPositions();
-        layout.alpha(0.05);
+        layout.start(0.05);
     }
 
     function dragended(d) {
@@ -952,7 +954,7 @@ function GraphView(spec) {
             }
 
             if (relayout) {
-                layout__reset(0.01);
+                layout__update_graph_and_tick();
             } else {
                 tick(); // this will be called before the end event is triggered by layout completing.
             }
@@ -1391,22 +1393,40 @@ function GraphView(spec) {
         pushRedraw();
     }
 
-    function layout__reset(alpha) {
-        alpha = alpha || 0.01;
-        layout.nodes_links(nodes__visible(), links__visible());
-        layout.on("end", function () {});
+    function layout__update_graph_and_tick() {
+        layout.nodes_links(nodes__visible(), links__visible())
+            .start();
         tick();
     }
 
+    function layout__stop_and_dont_record()
+    {
+        layout.on("end", function () {
+            console.log('not recording layout ' + (layout !== undefined ? layout.name : 'undefined'));
+        });
+    }
+    gv.layout__stop_and_dont_record = layout__stop_and_dont_record;
+
+
     function layout__load_graph() {
-        layout.nodes_links(nodes__visible(), links__visible());
+        layout.nodes_links(nodes__visible(), links__visible())
+            .start();
     }
 
-    function set_layout(new_layout) {
+    function set_layout(new_layout)
+    {
+        layout__save_and_stop();
+        layout__switch_to_new(new_layout);
+    }
+
+    function layout__save_and_stop() {
         if (layout !== undefined) {
             layout.save();
             layout.stop();
         }
+    }
+
+    function layout__switch_to_new(new_layout) {
         var new_layout_is_zen = new_layout && new_layout.name === 'zen',
             old_layout_is_zen = layout && layout.name === 'zen',
             change_zen_mode = new_layout_is_zen ^ old_layout_is_zen,
@@ -1435,18 +1455,20 @@ function GraphView(spec) {
             .size([w, h])
             .on("tick", layout__tick__callback)
             .nodes_links(nodes__visible(), links__visible())
-            .restore();
+            .restore()
+            .start();
         gv.layout = layout;
+        if (_.intersection(_.pluck(graph.nodes(), 'x'), [undefined]).length > 0 ||
+            restored_positions !== graph_nodes.length) {
+            console.log('recalculating layout upon set_layout');
+            layout_start(true); // TODO: should only record if we are responsible for the nodes
+        }
         if (change_zen_mode) {
             update_view(true);
         } else {
             update_view(false);
         }
         gv.layout_name_bus.push(new_layout.name);
-        if (restored_positions !== graph_nodes.length) {
-            console.log('recalculating layout upon set_layout');
-            layout_start();
-        }
     }
 
     set_layout(temporary ? view_layouts.empty(graph) : layouts[0]);
