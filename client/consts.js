@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 define(function() {
+
+    "use strict";
 
     var description = {
         person: 'Student, teacher, supervisor and other humans',

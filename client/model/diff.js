@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 /**
  * Diff module
  */
 define(['consts'],
 function(consts) {
+
+"use strict";
 
 function Meta(obj_spec) {
     this.sentence = (obj_spec && obj_spec.sentence) || '';
@@ -54,7 +54,7 @@ Diff_Set.prototype.add_diff_obj = function(diff_obj) {
     if (diff_obj instanceof Vis_Diff) {
         this.__diff_set_vis.push(diff_obj);
     }
-}
+};
 
 /**
  * Topological diff object
@@ -83,11 +83,11 @@ Topo_Diff.prototype._link_set_add__fix_empty_links = function() {
 
 Topo_Diff.prototype.for_each_node_add = function(callback, this_arg) {
     this.node_set_add.forEach(callback, this_arg);
-}
+};
 
 Topo_Diff.prototype.for_each_node_rm = function(callback, this_arg) {
     this.node_id_set_rm.forEach(callback, this_arg);
-}
+};
 
 Topo_Diff.prototype.for_each_link_add = function(callback, this_arg) {
     this.link_set_add.forEach(callback, this_arg);
@@ -96,7 +96,7 @@ Topo_Diff.prototype.for_each_link_add = function(callback, this_arg) {
 
 Topo_Diff.prototype.for_each_link_rm = function(callback, this_arg) {
     this.link_id_set_rm.forEach(callback, this_arg);
-}
+};
 
 /**
  * Attribute diff object, organized by type, where currently
@@ -109,11 +109,11 @@ function Attr_Diff() {
 
 Attr_Diff.prototype.toString = function() {
     return 'AttrDiff<' + JSON.stringify(this) + '>';
-}
+};
 
 Attr_Diff.prototype.init_attr_diff = function(type_name, id) {
 
-    if ('node' != type_name && 'link' != type_name) {
+    if ('node' !== type_name && 'link' !== type_name) {
         console.error('attempt to init attribute diff for unsupported type: ' + type_name);
         return;
     }
@@ -128,33 +128,33 @@ Attr_Diff.prototype.init_attr_diff = function(type_name, id) {
     this.id_to_link_map = this.__type_link;
 
     return this;
-}
+};
 
 Attr_Diff.prototype.init_attr_diff_node = function(id) {
     return this.init_attr_diff('node', id);
-}
+};
 
 Attr_Diff.prototype.init_attr_diff_link = function(id) {
     return this.init_attr_diff('link', id);
-}
+};
 
 Attr_Diff.prototype.add_node_attr_write = function(n_id, attr_name,
         attr_val) {
 
-    if (undefined == this.__type_node[n_id]) {
+    if (undefined === this.__type_node[n_id]) {
         this.init_attr_diff_node(n_id);
     }
     this.__type_node[n_id].__attr_write[attr_name] = attr_val;
     return this;
-}
+};
 
 Attr_Diff.prototype.add_node_attr_remove = function(n_id, attr_name) {
-    if (undefined == this[n_id]) {
+    if (undefined === this[n_id]) {
         this.init_attr_diff(n_id);
     }
     this.__type_node[n_id].__attr_remove.push(attr_name);
     return this;
-}
+};
 
 Attr_Diff.prototype.add_link_attr_write = function(l_id, attr_name,
         attr_val) {
@@ -162,54 +162,54 @@ Attr_Diff.prototype.add_link_attr_write = function(l_id, attr_name,
     if ('name' === attr_name && String(attr_val).length === 0) {
         attr_val = consts.EMPTY_LINK_NAME;
     }
-    if (undefined == this.__type_link[l_id]) {
+    if (undefined === this.__type_link[l_id]) {
         this.init_attr_diff_link(l_id);
     }
     this.__type_link[l_id].__attr_write[attr_name] = attr_val;
     return this;
-}
+};
 
 Attr_Diff.prototype.add_link_attr_remove = function(l_id, attr_name) {
-    if (undefined == this[l_id]) {
+    if (undefined === this[l_id]) {
         this.init_attr_diff(l_id);
     }
     this.__type_link[l_id].__attr_remove.push(attr_name);
     return this;
-}
+};
 
 /**
  * @param callback signature: 'function (n_id, n_attr_diff) { ... }
  */
 Attr_Diff.prototype.for_each_node = function(callback) {
-    for (var n_id in this['__type_node']) {
-        var n_attr_diff = this['__type_node'][n_id];
+    for (var n_id in this.__type_node) {
+        var n_attr_diff = this.__type_node[n_id];
         callback(n_id, n_attr_diff);
     }
-}
+};
 
 /**
  * @param callback signature: 'function (l_id, l_attr_diff) { ... }
  */
 Attr_Diff.prototype.for_each_link = function(callback) {
-    for (var l_id in this['__type_link']) {
-        var l_attr_diff = this['__type_link'][l_id];
+    for (var l_id in this.__type_link) {
+        var l_attr_diff = this.__type_link[l_id];
         callback(l_id, l_attr_diff);
     }
-}
+};
 
 /**
  * @param id of node to check for inclusion of
  */
 Attr_Diff.prototype.has_node_id_attr_write = function(n_id, attr) {
     return this.__type_node[n_id] !== undefined && this.__type_node[n_id].__attr_write[attr];
-}
+};
 
 /**
  * @param id of link to check for inclusion of
  */
 Attr_Diff.prototype.has_link_id_attr_write = function(n_id, attr) {
     return this.__type_link[n_id] !== undefined && this.__type_link[n_id].__attr_write[attr];
-}
+};
 
 /**
  * Visual diff object expressing any visual change to the state of a
@@ -226,11 +226,11 @@ function new_topo_diff(obj_spec) {
      * validate obj_spec
      */
     var ret;
-    undefined == obj_spec && (obj_spec = {});
-    undefined == obj_spec.node_set_add && (obj_spec.node_set_add = []);
-    undefined == obj_spec.link_set_add && (obj_spec.link_set_add = []);
-    undefined == obj_spec.node_id_set_rm && (obj_spec.node_id_set_rm = []);
-    undefined == obj_spec.link_id_set_rm && (obj_spec.link_id_set_rm = []);
+    undefined === obj_spec && (obj_spec = {});
+    undefined === obj_spec.node_set_add && (obj_spec.node_set_add = []);
+    undefined === obj_spec.link_set_add && (obj_spec.link_set_add = []);
+    undefined === obj_spec.node_id_set_rm && (obj_spec.node_id_set_rm = []);
+    undefined === obj_spec.link_id_set_rm && (obj_spec.link_id_set_rm = []);
     ret = new Topo_Diff(obj_spec);
     return ret;
 }
@@ -252,39 +252,40 @@ function new_attr_diff() {
  *
  */
 function new_attr_diff_from_spec(attr_diff_spec) {
-    var ret = new_attr_diff();
+    var ret = new_attr_diff(),
+        attr_name,
+        attr_val,
+        n_attr_diff;
 
-    for (var n_id in attr_diff_spec['__type_node']) {
-
-        var n_attr_diff = attr_diff_spec['__type_node'][n_id];
+    for (var n_id in attr_diff_spec.__type_node) {
+        n_attr_diff = attr_diff_spec.__type_node[n_id];
 
         // process attr writes: node
-        for (var attr_name in n_attr_diff['__attr_write']) {
-            var attr_val = n_attr_diff['__attr_write'][attr_name];
+        for (attr_name in n_attr_diff.__attr_write) {
+            attr_val = n_attr_diff.__attr_write[attr_name];
             ret.add_node_attr_write(n_id, attr_name, attr_val);
-        };
+        }
 
         // process attr removals: node
-        for (var attr_name in n_attr_diff['__attr_remove']) {
+        for (attr_name in n_attr_diff.__attr_remove) {
             ret.add_node_attr_remove(n_id, attr_name);
-        };
-    };
+        }
+    }
 
-    for (var l_id in attr_diff_spec['__type_link']) {
-
-        var n_attr_diff = attr_diff_spec['__type_link'][l_id];
+    for (var l_id in attr_diff_spec.__type_link) {
+        n_attr_diff = attr_diff_spec.__type_link[l_id];
 
         // process attr writes: link
-        for (var attr_name in n_attr_diff['__attr_write']) {
-            var attr_val = n_attr_diff['__attr_write'][attr_name];
+        for (attr_name in n_attr_diff.__attr_write) {
+            attr_val = n_attr_diff.__attr_write[attr_name];
             ret.add_link_attr_write(l_id, attr_name, attr_val);
-        };
+        }
 
         // process attr removals: link
-        for (var attr_name in n_attr_diff['__attr_remove']) {
+        for (attr_name in n_attr_diff.__attr_remove) {
             ret.add_link_attr_remove(l_id, attr_name);
-        };
-    };
+        }
+    }
 
     ret.meta =  attr_diff_spec.meta;
 
@@ -317,6 +318,6 @@ return {
     new_diff_set : new_diff_set,
     is_attr_diff: function (obj) { return obj instanceof Attr_Diff; },
     is_topo_diff: function (obj) { return obj instanceof Topo_Diff; },
-}
+};
 
 }); // Module end
