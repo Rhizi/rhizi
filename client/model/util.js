@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
 /**
  * model utility functions: - convert from/to client/backend data
  * representations
  */
-define([ 'jquery', 'model/diff' ], function($, model_diff) {
+define([ 'jquery', 'model/diff', 'util' ],
+function( $,        model_diff,   util) {
+
+    "use strict";
 
     function __sanitize_label__write(label_str){
         var ret = label_str[0].toUpperCase() +
@@ -44,7 +45,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
             // type:
             // - discard all but first label
             // - adjust to lowercase
-            'type' : __sanitize_label__read(n_raw['__label_set'][0]),
+            'type' : __sanitize_label__read(n_raw.__label_set[0]),
             'state' : 'perm',
         }, n_raw);
 
@@ -60,7 +61,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
         var ret = $.extend({
         }, n_raw);
 
-        ret['__label_set'] = [__sanitize_label__write(n_raw.type)];
+        ret.__label_set = [__sanitize_label__write(n_raw.type)];
 
         delete ret.state;
         delete ret.status;
@@ -79,7 +80,7 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
             'state' : 'perm',
         }, l_raw);
 
-        ret['name'] = __sanitize_label__read(ret['__type'][0]);
+        ret.name = __sanitize_label__read(ret.__type[0]);
         delete ret.__type;
 
         return ret;
@@ -136,8 +137,8 @@ define([ 'jquery', 'model/diff' ], function($, model_diff) {
      */
     function adapt_format_read_diff__attr(diff_spec) {
         var attr_diff = new model_diff.new_attr_diff();
-        attr_diff.id_to_node_map = diff_spec['__type_node'];
-        attr_diff.id_to_link_map = diff_spec['__type_link'];
+        attr_diff.id_to_node_map = diff_spec.__type_node;
+        attr_diff.id_to_link_map = diff_spec.__type_link;
         return attr_diff;
     }
 
