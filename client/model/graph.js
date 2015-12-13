@@ -593,6 +593,7 @@ function Graph(spec) {
     this.update_link = function(link, new_link_spec, on_success, on_error) {
         util.assert(link instanceof model_core.Link);
 
+        new_link_spec = model_util.adapt_format_write_link_attr_update(new_link_spec);
 
         var attr_diff = model_diff.new_attr_diff();
         for (var key in new_link_spec) {
@@ -611,10 +612,17 @@ function Graph(spec) {
 
             var ret_link = id_to_link_map[l_id],
                 attr_write = ret_link.__attr_write,
-                attr_remove = ret_link.__attr_remove;
+                attr_remove = ret_link.__attr_remove,
+                value;
+
             for (key in attr_write){
                 if (attr_write.hasOwnProperty(key)) {
-                    link[key] = attr_write[key];
+                    if (key === 'name') {
+                        value = attr_write[key].toLowerCase();
+                    } else {
+                        value = attr_write[key];
+                    }
+                    link[key] = value;
                 }
             }
             for (key in attr_remove){

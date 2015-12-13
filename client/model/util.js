@@ -108,6 +108,15 @@ function( $,        model_diff,   util) {
         return ret;
     }
 
+    function adapt_format_write_link_attr_update(l_raw) {
+        var ret = $.extend({}, l_raw);
+
+        if (ret.name) {
+            ret.name = __sanitize_label__write(l_raw.name);
+        }
+        return ret;
+    }
+
     /**
      * write adapt diff from node set, link set. sets may be passed by reference
      * as they are cloned
@@ -147,6 +156,7 @@ function( $,        model_diff,   util) {
         adapt_format_read_link_ptr : adapt_format_read_link_ptr,
         adapt_format_write_node : adapt_format_write_node,
         adapt_format_write_link : adapt_format_write_link,
+        adapt_format_write_link_attr_update : adapt_format_write_link_attr_update,
 
         adapt_format_write_diff__topo : adapt_format_write_diff__topo,
         adapt_format_read_diff__attr : adapt_format_read_diff__attr,
