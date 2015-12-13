@@ -57,6 +57,8 @@ from . import rz_user
 from .rz_user_db import User_DB, Fake_User_DB
 
 
+log = logging.getLogger('rhizi')
+
 class FlaskExt(Flask):
     """
     Flask server customization
