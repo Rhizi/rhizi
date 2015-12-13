@@ -1698,7 +1698,7 @@ a.menu-bar__item {
   stroke-dasharray: 3,3; }
 
 #editbox input {
-  width: 130px; }
+  width: 100%; }
 
 .overlay {
   fill: none;
