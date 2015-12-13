@@ -272,6 +272,21 @@ function Graph(spec) {
                        ));
     }
 
+    /**
+     * return: all ids for nodes not connected to first node
+     */
+    function missing_fan_links(src_id, targets) {
+        // note about filtering: we don't have any datastructure to accelerate this,
+        // so just make sure it is O(E) by going over link list once
+        var links = get_links(),
+            existing = _.filter(links, function (l) {
+                    return l.__src.id === src_id || l.__dst.id === src_id;
+                }).map(function (l) {
+                    return l.__src.id === src_id ? l.__dst.id : l.__src.id;
+                });
+        return _.difference(targets, existing);
+    }
+
 
     /**
      * Visitation constants for neighbourhood and shortest paths computation.
@@ -877,12 +892,21 @@ function Graph(spec) {
      */
     var nodes__link_fan = function(node_ids) {
         util.assert(node_ids.length > 1); // strictly speaking we can also treat 1 as correct usage
+        // note about filtering: we don't have any datastructure to accelerate this,
+        // so just make sure it is O(E) by going over link list once
         var src_id = node_ids[0],
             src_node = find_node__by_id(src_id),
-            added_links = node_ids.slice(1).map(function (tgt_id) {
-                return model_core.create_link__set_random_id(src_node, find_node__by_id(tgt_id),
-                                                             {name: consts.EMPTY_LINK_NAME});
-            });
+            missing_target_ids = missing_fan_links(src_id, node_ids.slice(1)),
+            added_links;
+
+        if (missing_target_ids.length === 0) {
+            return;
+        }
+        added_links = missing_target_ids.map(function (tgt_id) {
+                    return model_core.create_link__set_random_id(
+                            src_node, find_node__by_id(tgt_id),
+                            {name: consts.EMPTY_LINK_NAME});
+                });
         commit_and_tx_diff__topo(model_diff.new_topo_diff({link_set_add: added_links}));
     };
     this.nodes__link_fan = nodes__link_fan;
