@@ -14,11 +14,15 @@ from six import u
 root_path = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 bin_path = os.path.join(root_path, 'bin')
 
-# running python binaries takes a long time for some reason, so short circuit
-# by using this python interpreter
+
+def which(f):
+    return [p for p in [os.path.join(x, f) for x in os.environ['PATH'].split(':')] if os.path.exists(p)][0]
+
+python_bin = which('python')
+
 def run_python_script(s, args):
     # not working right now, so do run the long way
-    return run_process(s, args)
+    return run_process(python_bin, [s] + args)
     with open(s) as fd:
         old_argv = sys.argv
         sys.argv = [s] + args
@@ -44,9 +48,10 @@ def run(f, args):
 def run_process(f, args):
     null = TemporaryFile()
     print(str([f] + args))
-    proc = subprocess.Popen([f] + args,
-                            env=dict(PYTHONPATH=root_path), stdout=null,
-                            stderr=null)
+    env = dict(PYTHONPATH=root_path,
+               LC_ALL='en_US.UTF-8',
+               LANG='en_US.UTF-8')
+    proc = subprocess.Popen([f] + args, env=env, stdout=null, stderr=null)
     max = 5
     dt = 0.1
     t = 0
@@ -63,7 +68,7 @@ def run_process(f, args):
     if ret is None:
         return ret, None
     null.seek(0)
-    return ret, null.read()
+    return ret, null.read().decode('utf-8')
 
 
 def temp_file(contents):
