@@ -1,3 +1,7 @@
+rhizi (0.3.17) unstable; urgency=low
+  * rhizi/rz_server: fix missing import for case where X-Forwarded header is missing'
+ -- b'Alon Levy' <b'alon@pobox.com'>  Sun, 13 Dec 2015 00:46:39 -0800
+
 rhizi (0.3.16) unstable; urgency=low
   * client: remove usage of 'untitled' instead of empty link names
   * client: move select shortest path to a button, default to neighbours always
