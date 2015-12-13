@@ -1,6 +1,18 @@
+rhizi (0.3.18) unstable; urgency=low
+  * login page: add rhizi logo to bottom right
+  * logo settings for login page #525
+  * add support for piwik
+  * client: recalculate style.css
+  * client/domain_types: fix image-url editability
+  * client: edit box: input width to 100%
+  * client/view/graph_view: jshint
+  * client: fix flicker on redraw, fix #669
+  * client: add image_cache, hopefully avoids reloading some images
+ -- Alon Levy <alon@pobox.com>  Sun, 13 Dec 2015 11:42:44 -0800
+
 rhizi (0.3.17) unstable; urgency=low
-  * rhizi/rz_server: fix missing import for case where X-Forwarded header is missing'
- -- b'Alon Levy' <b'alon@pobox.com'>  Sun, 13 Dec 2015 00:46:39 -0800
+  * rhizi/rz_server: fix missing import for case where X-Forwarded header is missing
+ -- Alon Levy <alon@pobox.com>  Sun, 13 Dec 2015 00:46:39 -0800
 
 rhizi (0.3.16) unstable; urgency=low
   * client: remove usage of 'untitled' instead of empty link names
