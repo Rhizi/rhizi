@@ -147,11 +147,7 @@ function Graph(spec) {
                 l_spec.target = l_spec.__dst;
             }
             if (l_spec.name === undefined) {
-                // cannot have a zero length name, using name as label in neo4j
-                l_spec.name = 'is';
-            }
-            if (l_spec.__type === undefined) {
-                l_spec.__type = l_spec.name;
+                l_spec.name = '';
             }
             server_pending_objects[l_spec.id] = l_spec;
             return model_util.adapt_format_write_link(l_spec);
