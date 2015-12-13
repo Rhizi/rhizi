@@ -92,15 +92,16 @@ class Versions(object):
         now = datetime.now(tz=tzlocal()).strftime("%a, %d %b %Y %H:%M:%S %z")
         self.debian_changelog.new_block(
             version=new_ver,
-            author='{} <{}>'.format(check_output('git config user.name'.split()).strip(),
-                                    check_output('git config user.email'.split()).strip()),
+            author='{} <{}>'.format(check_output('git config user.name'.split()).strip().decode('utf-8'),
+                                    check_output('git config user.email'.split()).strip().decode('utf-8')),
             package="rhizi",
             distributions="unstable",
             urgency='low',
-            changes=['  * {}'.format(c) for c in debian_changelog],
+            changes=['  * {}'.format(c.decode('utf-8')) for c in debian_changelog],
             date=now)
         with open(self.debian_changelog_path, 'w+') as fd:
             fd.write(str(self.debian_changelog))
+
         # build.ant - not using minidom since it doesn't keep whitespace, too
         # much churn
         replace(self.build_ant_path, old_ver, new_ver)
