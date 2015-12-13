@@ -1,3 +1,13 @@
+rhizi (0.3.16) unstable; urgency=low
+  * client: remove usage of 'untitled' instead of empty link names
+  * client: move select shortest path to a button, default to neighbours always
+  * client: fix #683: close property dialog when doc is changed
+  * fix #685: create connections between nodes without existing one
+  * client: fix no display update after name edit regression
+  * client: signup: add missing scroll bar where required
+  * client: do not save position for ring layout (concentric)
+ -- Alon Levy <alon@pobox.com>  Sat, 12 Dec 2015 23:21:22 -0800
+
 rhizi (0.3.15) unstable; urgency=low
   * server: fix acl email wl caching
   * client: fix breaking the zoom buttons
