@@ -38,8 +38,8 @@ class Test_RZ_User(RhiziTestBase):
         with self.webapp.test_client() as test_client:
             us_req['email_address'] = "foo@bar"
             req, req_data = self._json_post(test_client, '/signup', us_req)
-            self.assertIn("Illegal", req.data)
-            self.assertIn("email address", req.data)
+            self.assertIn(b"Illegal", req.data)
+            self.assertIn(b"email address", req.data)
             self.assertEqual(400, req.status_code, req_data)
 
     def test_user_signup__acl_domain(self):
