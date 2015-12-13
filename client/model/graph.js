@@ -593,10 +593,6 @@ function Graph(spec) {
     this.update_link = function(link, new_link_spec, on_success, on_error) {
         util.assert(link instanceof model_core.Link);
 
-        // TODO - fake api for client only (debug, demo, ui work)
-        if (!rz_config.backend_enabled) {
-            return;
-        }
 
         var attr_diff = model_diff.new_attr_diff();
         for (var key in new_link_spec) {
