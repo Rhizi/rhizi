@@ -295,10 +295,17 @@ var select_nodes = function(nodes, keep_selected_links)
 
 var select_both = function(new_nodes, new_links)
 {
-    var related = new_nodes.length === 1 ? neighbours(new_nodes) : shortest_paths(new_nodes);
+    var related = neighbours(new_nodes)
 
     inner_select(new_nodes, related.nodes, new_links, related.links);
 };
+
+var select_shortest_path = function(new_nodes, new_links)
+{
+    var related = shortest_paths(new_nodes);
+
+    inner_select(new_nodes, related.nodes, new_links, related.links);
+}
 
 var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
 {
@@ -363,12 +370,16 @@ var setup_toolbar = function(main_graph, main_graph_view)
         delete_btn = $('#btn_delete'),
         link_fan_btn = $('#btn_link_fan'),
         zen_mode_btn = $('#btn_zen_mode'),
+        select_shortest_path_bth = $('#btn_select_shortests_path'),
         multiple_node_operations = $('#tool-bar-multiple-node-operations');
 
     merge_btn.asEventStream('click').onValue(merge_selection);
     delete_btn.asEventStream('click').onValue(function () { delete_selection(main_graph); });
     link_fan_btn.asEventStream('click').onValue(link_fan_selection);
     zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
+    select_shortest_path_bth.asEventStream('click').onValue(function () {
+        select_shortest_path(selected_nodes, selected_links);
+    });
 
     function show(e, visible) {
         if (visible) {
