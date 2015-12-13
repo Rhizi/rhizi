@@ -876,7 +876,7 @@ function GraphView(spec) {
 
         var filter_group = d3.select('.nodefilter-group').selectAll(".nodefilter")
             .data(visible_nodes, function (d) { return d.id; });
-        var filter = filter_group.enter()
+        filter_group.enter()
             .insert('filter')
             .attr('class', 'nodefilter')
             .attr('id', function(d) {
@@ -905,7 +905,7 @@ function GraphView(spec) {
             filter_group.exit().remove();
         }
 
-        var clip_path = nodeEnter
+        nodeEnter
             .append('clipPath')
             .attr('class', 'node_clippath')
             .attr('id', function (d) { return clip_path_id(d.id); })
