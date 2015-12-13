@@ -23,7 +23,7 @@ from flask import session
 import logging
 
 from .rz_mail import send_email__flask_ctx
-from .rz_req_handling import make_response__json
+from .rz_req_handling import make_response__json, HTTP_STATUS__500_INTERNAL_SERVER_ERROR
 
 
 log = logging.getLogger('rhizi')
@@ -94,4 +94,4 @@ def rest__send_user_feedback__email():
 
     except Exception:
         log.exception('send_user_feedback__email: exception while sending email')  # exception derived from stack
-        return make_response__json(status=500)
+        return make_response__json(status=HTTP_STATUS__500_INTERNAL_SERVER_ERROR)
