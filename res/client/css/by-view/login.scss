@@ -29,7 +29,7 @@
   margin-top: $three-baselines;
   width: 420px;
   background: white;
-    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.55); 
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.55);
 }
 
 .login-view-section {
@@ -40,7 +40,6 @@
 }
 
 .login-rhizi-logo {
-    background: url('/static/img/logo-red.png');
     background-repeat: no-repeat;
     margin-left: auto;
     margin-right: auto;
@@ -162,7 +161,7 @@
     }
 
     &:focus {
-    background-color: $dark-magenta; 
+    background-color: $dark-magenta;
     }
 }
 
