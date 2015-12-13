@@ -355,9 +355,6 @@ function Graph(spec) {
      */
     function shortest_paths(sources) {
 
-        function make_status(node, distance, prev_nodes) {
-            return {node: node, distances: distance || 0, prev_nodes: prev_nodes || {}};
-        }
         var ids = _.pluck(sources, 'id'),
             bfs = _.object(ids, _.map(ids, BFS)),
             nodes = {};
@@ -367,15 +364,17 @@ function Graph(spec) {
                 next,
                 next_id;
 
+            function enqueue(p) {
+                nodes[next_id].sources[p] = true;
+                queue.push(bfs[p]);
+            }
+
             while ((next = queue.shift()) !== undefined) {
                 next_id = next.node_id;
                 if (nodes[next_id] === undefined) {
                     nodes[next_id] = {node_id: next_id, sources: {}};
                 }
-                _.each(_.keys(next.prev), function (p) {
-                    nodes[next_id].sources[p] = true;
-                    queue.push(bfs[p]);
-                });
+                _.each(_.keys(next.prev), enqueue);
             }
         }
 
@@ -543,10 +542,10 @@ function Graph(spec) {
             new_source = new_links[k][0];
             new_target = new_links[k][1];
             if ((state_source !== new_source &&
-                 !(state_source in set_old_name && new_source in set_new_name))
-                ||
+                 !(state_source in set_old_name && new_source in set_new_name)) ||
                (state_target !== new_target &&
-                 !(state_target in set_old_name && new_target in set_new_name))) {
+                 !(state_target in set_old_name && new_target in set_new_name)))
+            {
                 if (verbose) {
                     console.log('not same link: ' +
                                 state_source + '->' + state_target + ' != ' +
@@ -1091,14 +1090,14 @@ function Graph(spec) {
 
     function empty() {
         // FIXME: O(|nodes|+|links|)
-        return get_nodes().length === 0 && get_links().length == 0;
+        return get_nodes().length === 0 && get_links().length === 0;
     }
     this.empty = empty;
 
     // @ajax-trans
     this.commit_diff_set = function (diff_set) {
 
-        function on_success(data){
+        function on_success(data) {
             console.log('commit_diff_set:on_success: TODO impl');
         }
 
@@ -1302,7 +1301,7 @@ function Graph(spec) {
 
         function on_success_wrapper(clone) {
             __commit_diff_ajax__clone(clone);
-            undefined != on_success && on_success();
+            undefined !== on_success && on_success();
         }
 
         backend.rzdoc_clone(on_success_wrapper, on_error);
@@ -1334,7 +1333,7 @@ function Graph(spec) {
                     node_spec.end = new Date(ext_spec.end);
                 }
                 node = model_core.create_node__set_random_id(node_spec);
-                old_id_to_new_id[ext_spec.id] = node.id,
+                old_id_to_new_id[ext_spec.id] = node.id;
                 node_by_id[node.id] = node;
                 return node;
             });
