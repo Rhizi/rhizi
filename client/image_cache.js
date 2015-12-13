@@ -25,9 +25,8 @@ function element_set_image(e, url) {
         };
         image.src = url;
     } else {
-        image = cache[url];
+        element_set_image__after_load(e, cache[url]);
     }
-    element_set_image__after_load(e, image);
 }
 
 return {
