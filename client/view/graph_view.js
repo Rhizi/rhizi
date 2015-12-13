@@ -264,6 +264,7 @@ function GraphView(spec) {
         }
         if (!temporary && !relayout && have_position === 0) {
             // avoid recursion due to layout triggering sending of new positions to db, resulting in a new diff update
+            update_view(relayout);
             return;
         }
         tick(); // updates bx, by
