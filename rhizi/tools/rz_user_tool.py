@@ -31,6 +31,8 @@ from .. rz_user_db import User_DB
 
 verbose = False
 
+python2 = sys.version_info[0] == 2
+
 
 def add_user_login(user_db, salt, first_name, last_name,
                    rz_username, email_address, pw_plaintext):
@@ -111,10 +113,15 @@ def list_users(user_db_path):
         print("{}: {} entries".format(user_db_path, len(user_db)))
     headers = ['first_name', 'last_name', 'rz_username', 'email_address', 'role_set']
     print(", ".join(headers))
-    for i, user in user_db:
-        utf = list(getattr(user, hdr).decode('utf-8') for hdr in headers[:-1])
-        nonutf = list(getattr(user, hdr) for hdr in headers[-1:])
-        print(u'{}, {}, {}, {}, {}'.format(*(utf + nonutf)).encode('utf-8'))
+    if python2:
+        for i, user in user_db:
+            utf = list(getattr(user, hdr).decode('utf-8') for hdr in headers[:-1])
+            nonutf = list(getattr(user, hdr) for hdr in headers[-1:])
+            print(u'{}, {}, {}, {}, {}'.format(*(utf + nonutf)).encode('utf-8'))
+    else:
+        for i, user in user_db:
+            params = list(getattr(user, hdr) for hdr in headers)
+            print(u'{}, {}, {}, {}, {}'.format(*params))
 
 def add_user(user_db_path, cfg, email, password, first, last, username):
     user_db = open_existing_user_db(user_db_path)

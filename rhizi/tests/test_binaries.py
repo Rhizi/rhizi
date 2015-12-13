@@ -84,7 +84,7 @@ class TestBinaries(unittest.TestCase):
         filename = os.path.join(bin_path, bin_name)
         ret, msg = run(filename, args)
         self.assertTrue(ret == 0,
-                        msg="failed to run {} {}, ret = {}, msg:\n{}".format(
+                        msg=u("failed to run {} {}, ret = {}, msg:\n{}").format(
                             bin_name, args, ret, msg))
 
     def _run_user_tool(self, args):
