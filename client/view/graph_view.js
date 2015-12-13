@@ -48,6 +48,9 @@ function(d3 ,  $       , _           ,  Bacon ,  consts,   util ,  selection    
 
 "use strict";
 
+// constants
+var xlink_ns = 'http://www.w3.org/1999/xlink';
+
 // aliases
 var obj_take = util.obj_take;
 
@@ -889,8 +892,13 @@ function GraphView(spec) {
 
         d3.selectAll('.nodefilter_feimage')
             .data(visible_nodes, function (d) { return d.id; })
-            .attr('xlink:href', function (d) {
-                return d['image-url'];
+            .filter(function (d) { return d['image-url'] !== undefined; })
+            .each(function (d) {
+                var new_url = d['image-url'];
+                if (this.getAttributeNS(xlink_ns,'href') !== new_url) {
+                    // setting causes a reload, hence avoiding it avoids some flicker #669
+                    this.setAttributeNS(xlink_ns, 'href', new_url);
+                }
             });
         if (!temporary) {
             // FIXME: defs per graph
