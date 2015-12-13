@@ -26,8 +26,8 @@ function( $,        model_diff,   util) {
     "use strict";
 
     function __sanitize_label__write(label_str){
-        var ret = label_str[0].toUpperCase() +
-                  label_str.substring(1).toLowerCase();
+        var ret = label_str.length === 0 ? '' : (
+                label_str[0].toUpperCase() + label_str.substring(1).toLowerCase());
         return ret;
     }
 

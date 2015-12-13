@@ -65,19 +65,7 @@ function Topo_Diff(obj_spec) {
     this.node_id_set_rm = obj_spec.node_id_set_rm;
     this.node_set_add = obj_spec.node_set_add;
     this.link_set_add = obj_spec.link_set_add;
-    this._link_set_add__fix_empty_links();
     this.meta = new_meta_from_spec(obj_spec.meta);
-
-}
-
-Topo_Diff.prototype._link_set_add__fix_empty_links = function() {
-
-    function set_empty_link(link) {
-        if (link.name === '') {
-            link.name = consts.EMPTY_LINK_NAME;
-        }
-    }
-    this.link_set_add.forEach(set_empty_link);
 
 }
 
@@ -91,8 +79,7 @@ Topo_Diff.prototype.for_each_node_rm = function(callback, this_arg) {
 
 Topo_Diff.prototype.for_each_link_add = function(callback, this_arg) {
     this.link_set_add.forEach(callback, this_arg);
-    this._link_set_add__fix_empty_links();
-}
+};
 
 Topo_Diff.prototype.for_each_link_rm = function(callback, this_arg) {
     this.link_id_set_rm.forEach(callback, this_arg);
@@ -156,12 +143,7 @@ Attr_Diff.prototype.add_node_attr_remove = function(n_id, attr_name) {
     return this;
 };
 
-Attr_Diff.prototype.add_link_attr_write = function(l_id, attr_name,
-        attr_val) {
-
-    if ('name' === attr_name && String(attr_val).length === 0) {
-        attr_val = consts.EMPTY_LINK_NAME;
-    }
+Attr_Diff.prototype.add_link_attr_write = function(l_id, attr_name, attr_val) {
     if (undefined === this.__type_link[l_id]) {
         this.init_attr_diff_link(l_id);
     }

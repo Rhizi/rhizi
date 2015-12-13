@@ -38,9 +38,6 @@ define(function() {
         description: description,
         NEW_NODE_NAME: 'new node',
 
-        // Our database cannot encode zero length names, so we never (unless, bug) send those
-        EMPTY_LINK_NAME: 'untitled',
-
         // Virtual Keycodes i.e. event.keyCode / event.key
         // https://dvcs.w3.org/hg/dom3events/raw-file/tip/html/DOM3-Events.html#keys-keyvalues
         VK_UP: 38,

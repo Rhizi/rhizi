@@ -905,7 +905,7 @@ function Graph(spec) {
         added_links = missing_target_ids.map(function (tgt_id) {
                     return model_core.create_link__set_random_id(
                             src_node, find_node__by_id(tgt_id),
-                            {name: consts.EMPTY_LINK_NAME});
+                            {name: ''});
                 });
         commit_and_tx_diff__topo(model_diff.new_topo_diff({link_set_add: added_links}));
     };

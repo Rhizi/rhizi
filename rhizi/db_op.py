@@ -571,6 +571,10 @@ class DBO_diff_commit__attr(DB_op):
         # Not doing so to avoid roundtrip - the following doesn't require knowing
         # the replaced label.
 
+        # empty labels are not allowed
+        if len(new_label) == 0:
+            new_label = RESERVED_LABEL__EMPTY_STRING
+
         q_create_new = ["match (n)-[l_old {id: {id}}]->(m)",
                         "create (n)-[l_new:%s]->(m) set l_new=l_old" % db_util.quote__backtick(new_label),
                         "return l_new.id, {id: l_new.id, name: type(l_new)}",  # currently unused
