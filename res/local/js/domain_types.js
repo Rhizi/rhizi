@@ -69,7 +69,7 @@ define({
         'email': 'input',
         'name': 'input',
         'type': 'type',
-        'image-url': 'image',
+        'image-url': 'input',
         'url': 'input',
         'rhizi-url': 'input',
         'status': 'input',
