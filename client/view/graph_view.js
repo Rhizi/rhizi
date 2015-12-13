@@ -43,8 +43,8 @@
  * which resulted in overly complex (read: undefined/buggy) code.
  */
 
-define(['d3',  'jquery', 'underscore', 'Bacon', 'consts', 'util', 'view/selection', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts', 'view/filter'],
-function(d3 ,  $       , _           ,  Bacon ,  consts,   util ,  selection      ,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts,  view_filter) {
+define(['d3',  'jquery', 'underscore', 'Bacon', 'consts', 'util', 'view/selection', 'model/diff', 'view/item_info', 'view/bubble', 'model/types', 'view/layouts', 'view/filter', 'image_cache'],
+function(d3 ,  $       , _           ,  Bacon ,  consts,   util ,  selection      ,  model_diff  ,  item_info,        view_bubble,   model_types,   view_layouts,  view_filter, image_cache) {
 
 "use strict";
 
@@ -840,20 +840,6 @@ function GraphView(spec) {
                 d.height = 900;
             });
 
-        function load_image(element, image_url) {
-            var image = new Image();
-
-            image.onload = function () {
-                var aspect = this.height / this.width,
-                    width = Math.min(100, this.width);
-
-                element.setAttribute("width", width);
-                element.setAttribute("height", Math.min(width * aspect, this.height));
-                element.setAttributeNS("http://www.w3.org/1999/xlink", "href", this.src);
-            };
-            image.src = image_url;
-        }
-
         var noderef = nodeEnter.insert('a')
             .attr("class", "nodeurl graph")
             .attr("dy", node_text_dy);
@@ -870,7 +856,7 @@ function GraphView(spec) {
             });
         node.select('g.node > a > image')
             .each(function () {
-                load_image(this, "/static/img/url-icon.png");
+                image_cache.element_set_image(this, "/static/img/url-icon.png");
             });
 
         function node__click_handler(d, _i) {
