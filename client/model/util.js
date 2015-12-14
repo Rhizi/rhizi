@@ -21,8 +21,8 @@
  * representations
  */
 define('model/util',
-       [ 'jquery', 'model/diff', 'util' ],
-function( $,        model_diff,   util) {
+       [ 'jquery', 'model/diff' ],
+function( $,        model_diff) {
 
     "use strict";
 

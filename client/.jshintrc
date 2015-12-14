@@ -1,0 +1,7 @@
+{
+  "undef": true,
+  "unused": true,
+  "predef": [ "requirejs", "define", "require", "rz_config", "RZ_VERSION" ],
+  "browser": true,
+  "devel": true
+}

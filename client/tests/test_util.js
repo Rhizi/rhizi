@@ -1,4 +1,8 @@
-define(['util'], function(util) {
+/* globals describe,it,expect */
+
+define(['util'],
+function(util) {
+'use strict';
     describe("set from object", function () {
         it("set from object", function() {
             expect(util.set_from_object({1:1, 2:2})).toEqual({1:1, 2:1});
@@ -9,4 +13,4 @@ define(['util'], function(util) {
             expect(util.set_from_array([])).toEqual({});
         });
     });
-})
+});

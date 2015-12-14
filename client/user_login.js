@@ -16,9 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+/* globals $ */
 
 function submit_login_form() {
+
+    "use strict";
+
     var data = {
         email_address : $('#login_email_address').val(),
         password : $('#login_password').val()

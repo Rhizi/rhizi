@@ -19,10 +19,10 @@
 define('rz_core',
        ['jquery', 'd3', 'Bacon', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer',
         'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu',
-        'view/activity', 'rz_api_backend', 'local_backend', 'view/toolbar__status'],
+        'view/activity', 'rz_api_backend', 'local_backend', 'view/toolbar__status', 'model/util'],
 function($,        d3,   Bacon,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,
-         selection,        rz_mesh,   model_diff,   graph_view,       svg_input,              filter_menu,
-         activity,        rz_api_backend,   local_backend,        toolbar__status) {
+         selection,        rz_mesh,   model_diff,   graph_view,             svg_input,        filter_menu,
+         activity,        rz_api_backend,   local_backend,        toolbar__status,   model_util) {
 
 "use strict";
 
