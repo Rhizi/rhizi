@@ -226,6 +226,9 @@
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
 
+      <client-optimize root="client/"
+                       build="build.js" />
+
       <exec dir="${basedir}" executable="/usr/bin/git">
          <arg value="clone" />
          <arg line="--depth 1" />
