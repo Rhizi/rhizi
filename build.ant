@@ -46,8 +46,8 @@
       <attribute name="root" />
       <attribute name="build" />
       <sequential>
-         <exec dir="@{root}" executable="node-modules/.bin/r.js" failonerror="true">
-            <arg line="-o @{build}" />
+         <exec dir="@{root}" executable="/usr/bin/nodejs" failonerror="true">
+            <arg line="../node_modules/.bin/r.js -o @{build}" />
          </exec>
       </sequential>
    </macrodef>
@@ -151,8 +151,8 @@
       </parallel>
 
       <client-optimize if:true="${doClientOptimize}"
-                       root="client/"
-                       build="build.js" />
+                       root="."
+                       build="client/build.js" />
 
       <parallel>
 
@@ -235,6 +235,10 @@
          <arg value="file://${basedir}" />
          <arg value="${build_dir__deb_pkg}" />
       </exec>
+
+      <!-- add artifacts - style.css is an exception, we keep it in repository -->
+      <copy file="client/main-built.js"
+         tofile="${build_dir__deb_pkg}/client/main-built.js" />
 
       <copy todir="${build_dir__deb_pkg}/debian">
          <fileset dir="res/debian/pkg__rhizi-common" />

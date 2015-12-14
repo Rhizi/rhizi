@@ -1,6 +1,3 @@
-usr/lib/rhizi-server/rhizi_server.py   usr/bin/rhizi-server
-srv/www/rhizi/webapp/bin               usr/bin/rhizi-server
-
 #
 # JS libs - note: symlink against .min version of libs
 #
