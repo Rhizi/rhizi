@@ -2,7 +2,7 @@ define({
     types: [
         ['person', {
             'title': 'Person',
-            'attributes': ['email', 'work-address', 'image-url', 'url', 'subtype-tags'],
+            'attributes': ['email', 'description', 'work-address', 'image-url', 'url', 'subtype-tags'],
         }],
         ['project', {
             'title': 'Project',
