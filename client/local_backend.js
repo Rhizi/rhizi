@@ -19,7 +19,7 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define(
+define('local_backend',
        ['util', 'model/core'],
 function(util,   model_core) {
 

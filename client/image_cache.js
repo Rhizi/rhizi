@@ -1,4 +1,4 @@
-define(
+define('image_cache',
         [],
 function() {
 

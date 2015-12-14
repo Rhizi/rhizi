@@ -19,7 +19,7 @@
 /**
  * [!] order must match function args order
  */
-define(
+define('main',
         [
         'jquery',
         'buttons',

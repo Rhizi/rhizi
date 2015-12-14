@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('model/types',
        ['underscore', 'util', 'domain_types'],
 function(_,            util,   domain_types)
 {

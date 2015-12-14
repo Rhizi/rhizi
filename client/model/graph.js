@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('model/graph',
        ['jquery', 'underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend',
         'local_backend', 'rz_api_mesh', 'history', 'model/types'],
 function ($,       _,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,

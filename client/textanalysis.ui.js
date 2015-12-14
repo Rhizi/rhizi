@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('textanalysis.ui',
        ['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input', 'model/types'],
 function($,        Bacon ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,        textanalyser_input,   model_types) {
 

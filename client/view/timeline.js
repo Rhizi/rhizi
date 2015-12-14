@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/timeline',
         ['jquery', 'rz_core'],
 function ($,        rz_core) {
 

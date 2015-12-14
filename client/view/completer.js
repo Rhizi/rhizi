@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/completer',
 ['jquery', 'Bacon', 'util', 'consts'],
 function($, Bacon,   util,   consts) {
 

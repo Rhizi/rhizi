@@ -19,7 +19,7 @@
 /**
  * Manage backend websocket connection
  */
-define(
+define('view/toolbar__status',
         ['jquery'],
 function($) {
 

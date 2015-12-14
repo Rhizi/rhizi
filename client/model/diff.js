@@ -19,7 +19,7 @@
 /**
  * Diff module
  */
-define(
+define('model/diff',
        ['consts'],
 function(consts) {
 

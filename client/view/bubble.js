@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/bubble',
        ["jquery", "Bacon", 'd3'],
 function ($,       Bacon,   d3)
 {

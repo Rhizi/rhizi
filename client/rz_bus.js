@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('rz_bus',
        ['consts', 'Bacon'],
 function(consts,   Bacon)
 {

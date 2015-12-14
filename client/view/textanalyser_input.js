@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/textanalyser_input',
         ['jquery', 'Bacon', 'underscore', 'util', 'view/completer', 'rz_bus', 'textanalysis', 'consts'],
 function($,        Bacon,           _,            util,        completer,   rz_bus,   textanalysis,   consts)
 {

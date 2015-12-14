@@ -19,7 +19,7 @@
 /**
  * Manage backend websocket connection
  */
-define(
+define('rz_mesh',
        [ 'util', 'model/diff', 'model/util', 'socketio', 'view/activity'],
 function( util,   model_diff,   model_util,   io,              activity) {
 

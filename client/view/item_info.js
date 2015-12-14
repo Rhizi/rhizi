@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/item_info',
        ['jquery', 'underscore', 'util', 'consts', 'model/diff', 'model/types',
         'model/graph', 'messages', 'domain_types', 'view/selection'],
 function($,        _,            util,   consts,   model_diff,   model_types,

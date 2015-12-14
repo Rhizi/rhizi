@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/layouts',
        ['consts', 'jquery', 'd3', 'underscore'],
 function(consts,   $,        d3,   _) {
 

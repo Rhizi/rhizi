@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('robot',
        ['jquery', 'consts'],
 function($,        consts) {
 

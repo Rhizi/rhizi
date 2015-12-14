@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('textanalysis',
        ['underscore', 'Bacon', 'rz_core', 'model/core', 'model/util', 'model/diff', 'model/types', 'consts', 'util'],
 function(_,            Bacon,   rz_core,   model_core,   model_util,   model_diff,   model_types,   consts,   util) {
 

@@ -19,7 +19,7 @@
 /**
  * DOM object observers
  */
-define(
+define('rz_observer',
 [],
 function() {
 

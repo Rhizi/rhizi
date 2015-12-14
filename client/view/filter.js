@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/filter',
        ['Bacon', 'jquery', 'underscore', 'model/types', 'util'],
 function(Bacon,   $,        _,            model_types,   util) {
 

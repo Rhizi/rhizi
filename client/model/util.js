@@ -20,7 +20,7 @@
  * model utility functions: - convert from/to client/backend data
  * representations
  */
-define(
+define('model/util',
        [ 'jquery', 'model/diff', 'util' ],
 function( $,        model_diff,   util) {
 

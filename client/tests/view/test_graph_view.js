@@ -1,4 +1,4 @@
-define(
+define('tests/view/test_graph_view',
        ['jquery', 'Bacon', 'd3', 'model/core', 'model/graph', 'view/graph_view', 'rz_core', 'view/layouts'],
 function($      ,  Bacon,   d3,   core,         graph,        graph_view,         rz_core,        layouts) {
 

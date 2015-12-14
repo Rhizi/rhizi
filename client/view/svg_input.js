@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/svg_input',
        ['jquery', 'Bacon', 'consts', 'model/diff', 'rz_bus'],
 function($,        Bacon,   consts,   model_diff,   rz_bus)
 {

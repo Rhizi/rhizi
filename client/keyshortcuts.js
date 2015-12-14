@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('keyshortcuts',
        ['jquery', 'rz_core', 'view/selection', 'view/item_info'],
 function($,        rz_core,        selection,        item_info) {
 

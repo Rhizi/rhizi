@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(
+define('view/selection',
         ['Bacon', 'jquery', 'underscore', 'messages', 'util'],
 function(Bacon,           $,        _,    messages,   util) {
 
