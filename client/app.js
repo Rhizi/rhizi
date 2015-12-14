@@ -34,7 +34,6 @@
             autocomplete: lib_path + 'autocomplete',
             Bacon: lib_path + 'Bacon',
             caret: lib_path + 'caret',
-            cola: lib_path + 'cola',
             domain_types: fragmentd_path + '/js/domain_types',
             d3: lib_path + 'd3/d3',
             feedback: lib_path + 'feedback',
