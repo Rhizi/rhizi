@@ -11,6 +11,7 @@ import subprocess
 import re
 import json
 import sys
+from functools import wraps
 
 from util import versions
 
@@ -68,10 +69,21 @@ def keyfile(host):
     return os.path.join(SSH_KEY_DIR, '{}.rsa'.format(host))
 
 
+def require_host(f):
+    @wraps(f)
+    def inner(*args, **kw):
+        if remote_host is None:
+            return
+        return f(*args, **kw)
+    return inner
+
+
+@require_host
 def scp(source, target):
     check_call(['scp', '-i', keyfile(remote_host), source, '{}@{}:{}'.format(REMOTE_USER, remote_host, target)])
 
 
+@require_host
 def ssh(*args):
     check_call(['ssh', '-i', keyfile(remote_host), '{}@{}'.format(REMOTE_USER, remote_host)] + list(args))
 
@@ -105,6 +117,7 @@ def main():
     print("running under debian" if running_under_debian else "running with nspawn")
 
     chroot_rhizi = os.path.join(CHROOT, 'home', 'rhizi')
+    chroot_rhizi_internal = '/home/rhizi'
     deb_filename = 'rhizi-mux_{}_amd64.deb'.format(versions.debian)
     deb_repo_path = os.path.join('build', 'deb-pkg__rhizi-mux', deb_filename)
     deb_relative_path = os.path.join('home', 'rhizi', deb_repo_path)
@@ -126,6 +139,7 @@ def main():
     # clone into chroot
     if not running_under_debian:
         clone(RHIZI_SOURCE_REPO, chroot_rhizi)
+        chroot(chroot_rhizi_internal, 'npm install')
 
     # create deb package
     build_deb()
@@ -145,7 +159,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--real', action='store_true', default=False)
     parser.add_argument('--dryrun', action='store_true', default=False)
-    parser.add_argument('--host', required=True)
+    parser.add_argument('--host', default=None)
     args = parser.parse_args(sys.argv[1:])
     dryrun = args.dryrun
     dryrun_install = not args.real
