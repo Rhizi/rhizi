@@ -3,23 +3,7 @@
 {% block head %}
 {{ super() }}
 <link href="/static/css/feedback.css" rel="stylesheet" type="text/css">
-<script>
-var rz_config = { // set as a global variable
-    'backend_enabled': true,
-    'backend__maintain_ws_connection': true,
-    'role_set': {{ rz_config__role_set|safe }},
-    'feedback_url': '/feedback',
-    'node_edge_separator': true,
-    'optimized_main': {{ rz_config__optimized_main }},
-    'rand_id_generator' : 'hash',
-    'rzdoc_cur__name': "{{ rz_config__rzdoc_cur__name|safe }}",
-    'rzdoc__mainpage_name': '{{ rz_config__rzdoc__mainpage_name }}',
-    'separator_string': '  ',
-};
 
-var RZ_VERSION = '{% include "version.txt" %}';
-</script>
-<script data-main='/static/js/app.js' src="/static/lib/require.js"></script>
 {% endblock %}
 {% block content %}
   <div id="top-bar">
@@ -160,4 +144,23 @@ var RZ_VERSION = '{% include "version.txt" %}';
   <div class="debug-view__url-copy">
     <a href="#">Copy to URL</a>
   </div>
+{% endblock %}
+{% block content_scripts %}
+<script type="text/javascript">
+var rz_config = { // set as a global variable
+    'backend_enabled': true,
+    'backend__maintain_ws_connection': true,
+    'role_set': {{ rz_config__role_set|safe }},
+    'feedback_url': '/feedback',
+    'node_edge_separator': true,
+    'optimized_main': {{ rz_config__optimized_main }},
+    'rand_id_generator' : 'hash',
+    'rzdoc_cur__name': "{{ rz_config__rzdoc_cur__name|safe }}",
+    'rzdoc__mainpage_name': '{{ rz_config__rzdoc__mainpage_name }}',
+    'separator_string': '  ',
+};
+
+var RZ_VERSION = '{% include "version.txt" %}';
+</script>
+<script type="text/javascript" data-main='/static/js/app.js' src="/static/lib/require.js"></script>
 {% endblock %}

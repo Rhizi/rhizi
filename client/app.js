@@ -50,24 +50,25 @@
     }
     config.urlArgs = RZ_VERSION;
 
-if (window.is_node) {
-    // Testing path only
-    console.log('app: running under node');
-    config.baseUrl = '../src/';
-    window.rhizi_require_config = config;
-} else {
-    // [!] no need to configure baseUrl, as in
-    //     config.baseUrl = ...
-    //     generated script URLs include the basepath of app.js
+    if (window.is_node) {
+        // Testing path only
+        console.log('app: running under node');
+        config.baseUrl = '../src/';
+        window.rhizi_require_config = config;
+    } else {
+        // [!] no need to configure baseUrl, as in
+        //     config.baseUrl = ...
+        //     generated script URLs include the basepath of app.js
 
-    // Main app path
-    require.config(config);
+        // Main app path
+        require.config(config);
 
-    requirejs(['main'], function(main) {
-        window.onload = function () {
+        requirejs(['main'], function(main) {
             console.log('starting rhizi logic');
             main.main();
-        };
-    });
-}
+        }, function (e) {
+            console.log('requirejs load error');
+            console.log(e);
+        });
+    }
 }());

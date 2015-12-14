@@ -19,5 +19,6 @@
     {% if rz_config__piwik_id %}
       {% include "piwik.html" %}
     {% endif %}
+    {% block content_scripts %}{% endblock %}
 </body>
 </html>
