@@ -1,4 +1,7 @@
 # Rhizi
+
+[![Circle CI](https://circleci.com/gh/Rhizi/rhizi.svg?style=shield)](https://circleci.com/gh/Rhizi/rhizi.svg)
+
 A collaborative graph editor for organizing, communicating, and analyzing data in graph form.
 
 [Screencast tutorial](https://www.youtube.com/watch?v=yRQtUPCzd3A)  
