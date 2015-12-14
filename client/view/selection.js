@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['Bacon', 'jquery', 'underscore', 'messages', 'util'],
+define(
+        ['Bacon', 'jquery', 'underscore', 'messages', 'util'],
 function(Bacon,           $,        _,    messages,   util) {
 
 "use strict";
@@ -293,19 +294,17 @@ var select_nodes = function(nodes, keep_selected_links)
     }
 };
 
-var select_both = function(new_nodes, new_links)
-{
-    var related = neighbours(new_nodes)
+var select_both = function(new_nodes, new_links) {
+    var related = neighbours(new_nodes);
 
     inner_select(new_nodes, related.nodes, new_links, related.links);
 };
 
-var select_shortest_path = function(new_nodes, new_links)
-{
+var select_shortest_path = function(new_nodes, new_links) {
     var related = shortest_paths(new_nodes);
 
     inner_select(new_nodes, related.nodes, new_links, related.links);
-}
+};
 
 var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
 {

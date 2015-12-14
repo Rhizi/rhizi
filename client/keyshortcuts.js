@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'rz_core', 'view/selection', 'view/item_info'],
-
+define(
+       ['jquery', 'rz_core', 'view/selection', 'view/item_info'],
 function($,        rz_core,        selection,        item_info) {
 
 "use strict";
@@ -34,9 +34,9 @@ function get_graph_view(element)
 
 function install() {
     document.body.onkeydown = function(e) {
-        var keyBase = ((e.key && String(e.key))
-                   || (e.charCode && String.fromCharCode(e.charCode))
-                   || (e.which && String.fromCharCode(e.which))),
+        var keyBase = ((e.key && String(e.key))                         ||
+                      (e.charCode && String.fromCharCode(e.charCode))   ||
+                      (e.which && String.fromCharCode(e.which))),
             key = (keyBase || "").toLowerCase(),
             handled = false,
             graph_view = get_graph_view(e.target);

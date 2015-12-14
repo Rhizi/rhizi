@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'd3', 'Bacon', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer',
+define(
+       ['jquery', 'd3', 'Bacon', 'consts', 'rz_bus', 'util', 'model/graph', 'model/core', 'view/item_info', 'rz_observer',
         'view/selection', 'rz_mesh', 'model/diff', "view/graph_view", 'view/svg_input', 'view/filter_menu',
         'view/activity', 'rz_api_backend', 'local_backend', 'view/toolbar__status'],
 function($,        d3,   Bacon,   consts,   rz_bus,   util,   model_graph,   model_core,        item_info,   rz_observer,

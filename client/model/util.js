@@ -20,7 +20,8 @@
  * model utility functions: - convert from/to client/backend data
  * representations
  */
-define([ 'jquery', 'model/diff', 'util' ],
+define(
+       [ 'jquery', 'model/diff', 'util' ],
 function( $,        model_diff,   util) {
 
     "use strict";
@@ -95,7 +96,7 @@ function( $,        model_diff,   util) {
             '__dst_id' : l_raw.target.id,
         }, l_raw);
 
-        ret['__type'] = [__sanitize_label__write(l_raw.__type)];
+        ret.__type = [__sanitize_label__write(l_raw.__type)];
 
         delete ret.__dst;
         delete ret.__src;

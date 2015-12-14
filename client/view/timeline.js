@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+define(
+        ['jquery', 'rz_core'],
+function ($,        rz_core) {
 
-define(['jquery', 'rz_core'],
-function ($, rz_core) {
+"use strict";
 
 function checkSwitch(checkswitch) {
 

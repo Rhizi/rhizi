@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
-define(['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input', 'model/types'],
+define(
+       ['jquery', 'Bacon', 'consts', 'rz_bus', 'rz_core', 'textanalysis', 'util', 'view/textanalyser_input', 'model/types'],
 function($,        Bacon ,  consts ,  rz_bus ,  rz_core ,  textanalysis ,  util,        textanalyser_input,   model_types) {
+
+"use strict";
 
 var element_name = '#textanalyser',
     input = textanalyser_input({

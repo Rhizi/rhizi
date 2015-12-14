@@ -19,7 +19,8 @@
 /**
  * API calls designed to execute against a local backend service
  */
-define(['jquery', 'util', 'model/core', 'model/diff'],
+define(
+       ['jquery', 'util', 'model/core', 'model/diff'],
 function($,        util,   model_core,   model_diff) {
 
     "use strict";

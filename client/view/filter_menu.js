@@ -16,9 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery'],
+define(
+       ['jquery'],
 function($) {
-    
+
+"use strict";
+
 var open_button = $('#btn_filter'),
     menu = $('#menu__type-filter');
 

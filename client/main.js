@@ -19,7 +19,9 @@
 /**
  * [!] order must match function args order
  */
-define([
+define(
+        [
+        'jquery',
         'buttons',
         'devtools',
         'drag_n_drop',
@@ -42,6 +44,7 @@ define([
  * [!] order must match define element order
  */
 function(
+         $,
          buttons,
          devtools,
          drag_n_drop,
@@ -60,6 +63,8 @@ function(
          view_filter
          ) {
 
+    'use strict';
+
     function fix_feedback_scrolling_to_visibility_causing_topbar_to_slide_slowly_in_webkit() {
         $('.feedback-btn').attr('tabindex', -1);
     }
@@ -71,7 +76,7 @@ function(
         obj.size = Math.max(obj.savesize, obj.value.length);
     }
 
-    this.main = function() {
+    function main() {
         var json;
 
         console.log('Rhizi main started');
@@ -121,6 +126,7 @@ function(
     }
 
     return {
-        main: main };
-    }
+        main: main
+    };
+}
 );

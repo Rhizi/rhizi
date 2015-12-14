@@ -16,18 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 /**
  * Manage backend websocket connection
  */
-define(['jquery'],
+define(
+        ['jquery'],
 function($) {
+
+    "use strict";
 
     var close_btn,
         toolbar__status;
 
-    function toolbar__status() {
+    function init() {
 
         close_btn = $('<div>x</div>');
         close_btn.addClass('toolbar__close_btn');
@@ -53,7 +54,7 @@ function($) {
         toolbar__status.show();
     }
 
-    toolbar__status();
+    init();
 
     return {
         display_html_frag : display_html_frag,

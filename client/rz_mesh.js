@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 /**
  * Manage backend websocket connection
  */
-define([ 'util', 'model/diff', 'model/util', 'socketio', 'view/activity'],
+define(
+       [ 'util', 'model/diff', 'model/util', 'socketio', 'view/activity'],
 function( util,   model_diff,   model_util,   io,              activity) {
+
+    "use strict";
 
     var ws_server_url = document.location.origin + '/graph'; // socketio namespace
 
@@ -40,7 +41,7 @@ function( util,   model_diff,   model_util,   io,              activity) {
             'reconnectionDelay': 30000,
         });
 
-        util.assert(undefined != init_spec.graph, 'unable to init ws connection, graph undefined');
+        util.assert(undefined !== init_spec.graph, 'unable to init ws connection, graph undefined');
         rz_mesh_graph_ref = init_spec.graph;
 
         // wire up event handlers
@@ -76,8 +77,8 @@ function( util,   model_diff,   model_util,   io,              activity) {
     function ws_diff_merge__topo(topo_diff_spec_raw, topo_diff_cr) {
 
         // adapt from wire format, no need to do the same for id_sets
-        var node_set_add = topo_diff_spec_raw.node_set_add.map(model_util.adapt_format_read_node)
-        var link_ptr_set = topo_diff_spec_raw.link_set_add.map(model_util.adapt_format_read_link_ptr)
+        var node_set_add = topo_diff_spec_raw.node_set_add.map(model_util.adapt_format_read_node);
+        var link_ptr_set = topo_diff_spec_raw.link_set_add.map(model_util.adapt_format_read_link_ptr);
 
         var topo_diff_spec = { node_set_add: node_set_add,
                                link_set_add: link_ptr_set,

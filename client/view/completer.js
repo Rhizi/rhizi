@@ -20,8 +20,7 @@ define(
 ['jquery', 'Bacon', 'util', 'consts'],
 function($, Bacon,   util,   consts) {
 
-var value = util.value,
-    selectionStart = util.selectionStart;
+'use strict';
 
 // constants
 var VK_UP = consts.VK_UP,
@@ -38,9 +37,9 @@ function unquoted(name) {
         end = name.length;
 
     if (name.length >= 1) {
-        if (name.charAt(0) == '"') {
+        if (name.charAt(0) === '"') {
             start = 1;
-            if (name.length > 1 && name.charAt(name.length - 1) == '"') {
+            if (name.length > 1 && name.charAt(name.length - 1) === '"') {
                 end = name.length - 1;
             }
         }
@@ -69,15 +68,15 @@ var completer = (function (input_element, dropdown, base_config) {
         optional_getter = base_config.getter,
         optional_setter = base_config.setter,
         optional_selectionStart = base_config.selectionStart,
-        getter = undefined !== optional_getter ? optional_getter :
-                                function () { return util.value(input_element_raw); },
-        setter = undefined !== optional_setter ? optional_setter :
+        getter = (undefined !== optional_getter ? optional_getter :
+                                function () { return util.value(input_element_raw); }),
+        setter = (undefined !== optional_setter ? optional_setter :
                                 function (val, caret) {
                                     util.value(input_element_raw, val);
                                     setCaret(input_element_raw, val.length);
-                                },
-        selectionStart = undefined !== optional_selectionStart ? optional_selectionStart :
-                                function () { return util.selectionStart(input_element_raw); };
+                                }),
+        selectionStart = (undefined !== optional_selectionStart ? optional_selectionStart :
+                                function () { return util.selectionStart(input_element_raw); });
 
     // we need an identifier to remove callbacks without affecting other completers
     util.assert(input_element_raw.id !== '');
@@ -90,7 +89,8 @@ var completer = (function (input_element, dropdown, base_config) {
     });
 
     input_element.keyup(function(e) {
-        var ret = undefined;
+        var ret;
+
         if (e.shiftKey) {
             return ret;
         }
@@ -185,10 +185,10 @@ var completer = (function (input_element, dropdown, base_config) {
      */
     function lastRegexpIndex(s, r)
     {
-        var reversed = s.split('').reverse().join(''); // constly
+        var reversed = s.split('').reverse().join(''), // constly
             index = reversed.search(r);
 
-        if (index == -1) {
+        if (index === -1) {
             return -1;
         }
         return s.length - 1 - index;
@@ -210,11 +210,11 @@ var completer = (function (input_element, dropdown, base_config) {
         _invalidateSelection();
         hide();
         dropdown_raw.innerHTML = ""; // remove all elements
-        if (trigger_start_index == -1 && !config.matchStartOfString) {
+        if (trigger_start_index === -1 && !config.matchStartOfString) {
             return;
         }
         var space = text.slice(trigger_start_index + 1).search(config.triggerEnd);
-        space = space == -1 ? text.length : space;
+        space = space === -1 ? text.length : space;
         if (space < cursor) {
             return;
         }
@@ -244,11 +244,11 @@ var completer = (function (input_element, dropdown, base_config) {
         var next,
             n = dropdown.children().length;
 
-        if (n == 0) {
+        if (n === 0) {
             return;
         }
         show();
-        if (selected_index == -1) {
+        if (selected_index === -1) {
             next = default_value;
         } else {
             next = (selected_index + change) % n;
@@ -269,7 +269,7 @@ var completer = (function (input_element, dropdown, base_config) {
         }
         var e = dropdown.children()[index],
             s = e.innerText || e.textContent;
-        if (s.indexOf(' ') != -1 && config.quoteSpaceContaining) {
+        if (s.indexOf(' ') !== -1 && config.quoteSpaceContaining) {
             return quoted__double(s);
         }
         return s;
@@ -278,10 +278,10 @@ var completer = (function (input_element, dropdown, base_config) {
         return dropdown.children().eq(i);
     }
     function update_highlighting(new_index) {
-        if (selected_index != -1) {
+        if (selected_index !== -1) {
             _choice(selected_index).removeClass('selected');
         }
-        if (new_index != -1) {
+        if (new_index !== -1) {
             _choice(new_index).addClass('selected');
         }
         selected_index = new_index;
@@ -295,7 +295,7 @@ var completer = (function (input_element, dropdown, base_config) {
         completionsBus.push(str);
     }
     function handleEnter() {
-        if (selected_index == -1) {
+        if (selected_index === -1) {
             return false;
         }
         _applySuggestion(_get_option(selected_index));

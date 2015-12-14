@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 function signup_form__submit() {
 
+    "use strict";
+
     function validate_data(data) {
-        if (data.password_first != data.password_second) { // FIXME call util.validate...
+        if (data.password_first !== data.password_second) { // FIXME call util.validate...
             throw { message: 'Passwords do not match' };
         }
-        if (undefined == data.password_first || data.password_first.length < 8) { // FIXME call util.validate...
+        if (undefined === data.password_first || data.password_first.length < 8) { // FIXME call util.validate...
             throw { message: 'Password too short - must be at least 8 charachters long' };
         }
 

@@ -16,7 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'rz_core'], function($, rz_core) {
+define(['jquery', 'rz_core'],
+function($,        rz_core) {
+
+'use strict';
 
 function init() {
 console.log('rhizi: init drag-n-drop');
@@ -27,13 +30,13 @@ console.log('rhizi: init drag-n-drop');
         var file = files[files.length - 1];
         var fr = new FileReader();
         fr.onload = function() {
-            if (fr.readyState != 2) {
+            if (fr.readyState !== 2) {
                 console.log('drop: error: reading from file failed');
             } else {
                 console.log('loading dropped file');
                 rz_core.load_from_json(fr.result);
             }
-        }
+        };
         fr.readAsText(file);
         return false;
     });
@@ -42,7 +45,7 @@ console.log('rhizi: init drag-n-drop');
         e.preventDefault();
         return false;
     });
-};
+}
 
 function prevent_default_drop_behavior() {
     $(document).on("drop", function(e) {

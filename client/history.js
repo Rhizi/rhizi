@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
 // Once upon a time we shall have a versioned property graph from which history
 // will be one extractable aspect, much like a git for graphs. Now we just have
 // a plain list of events for a specific user.
@@ -34,8 +33,11 @@
 // ReferenceError: __commandLineAPI is not defined
 //var ActionEnum = Enum();
 
-define(['jquery', 'FileSaver', 'consts', 'rz_bus'],
-    function($, saveAs, consts, rz_bus) {
+define(
+       ['jquery', 'FileSaver', 'consts', 'rz_bus'],
+function($,        saveAs,      consts,   rz_bus) {
+
+"use strict";
 
 /* user - username (string)
  * svg - svg element for catching zoom events (jquery DOMNode wrapper)
@@ -46,7 +48,7 @@ function History(user, graph, transform_element) {
     this.user = user;
     this.transform_element = transform_element;
     graph.diffBus.onValue(function (obj) {
-        return that.record_graph_diff(obj)
+        return that.record_graph_diff(obj);
     });
     rz_bus.ui_key.onValue(that.record_keystrokes.bind(that));
     rz_bus.ui_input.onValue(that.record_input.bind(that));
@@ -71,9 +73,9 @@ History.prototype.record = function(action, d)
     if (d === undefined || action === undefined) {
         throw "Invalid arguments";
     }
-    d['action'] = action;
-    d['user'] = this.user;
-    d['timestamp'] = new Date();
+    d.action = action;
+    d.user = this.user;
+    d.timestamp = new Date();
     this.records.push(d);
     $('.history-timeline').html('<pre>' + JSON.stringify(d) + '</pre>');
 };
@@ -82,7 +84,7 @@ function svg_extract_translate_and_scale(e)
 {
     // See: http://stackoverflow.com/questions/10349811/how-to-manipulate-translate-transforms-on-a-svg-element-with-javascript-in-chrom
     // Using the regexp option right now, did only firefox testing 36
-    var transform = e.attributes['transform'];
+    var transform = e.attributes.transform;
 
     if (undefined === transform) {
         return;
@@ -114,7 +116,7 @@ History.prototype.record_zoom = function(d)
         return;
     }
     this.record(ACTION_ZOOM, {transform: transform});
-}
+};
 
 History.prototype.save_to_file = function()
 {
@@ -126,7 +128,7 @@ History.prototype.save_to_file = function()
 History.prototype.clear = function()
 {
     this.records = [];
-}
+};
 
 History.prototype.record_graph_diff = function(obj)
 {
@@ -136,7 +138,7 @@ History.prototype.record_graph_diff = function(obj)
         links: {add: obj.links && obj.links.add, remove: obj.links && obj.links.remove,
                 change: obj.links && obj.links.change},
                 });
-}
+};
 
 History.prototype.record_keystrokes = function(obj)
 {
@@ -149,14 +151,14 @@ History.prototype.record_keystrokes = function(obj)
         return;
     }
     keys = keys.filter(function(k) { return k !== undefined; });
-    if (keys.length == 0) {
+    if (keys.length === 0) {
         return;
     }
     this.record(ACTION_KEYSTROKES, {
         keys: keys,
         where: where
     });
-}
+};
 
 History.prototype.record_input = function(obj)
 {
@@ -168,7 +170,7 @@ History.prototype.record_input = function(obj)
         return;
     }
     this.record(ACTION_INPUT, {where: where, input: input});
-}
+};
 
 return {
     History:History,

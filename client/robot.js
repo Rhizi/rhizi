@@ -16,8 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'consts'],
+define(
+       ['jquery', 'consts'],
 function($,        consts) {
+
+'use strict';
 
 var sentence="";
 /*sentence+=" #Rhizibot is showing you a #tutorial|";
@@ -65,7 +68,7 @@ var robot = function (element, sentence) {
                   r.timeout_id = window.setTimeout( r.next_event, 50/r.speed+Math.round(Math.random()*100/r.speed) );
                 }
             } else {
-                var e = jQuery.Event("keypress");
+                var e = $.Event("keypress");
                 e.which = consts.VK_ENTER;
                 e.keyCode = consts.VK_ENTER;
                 $("#textanalyser").trigger(e);
@@ -74,9 +77,9 @@ var robot = function (element, sentence) {
         } else {
             window.clearInterval(r.timeout_id);
         }
-    }
+    };
     return r;
-}
+};
 
 $('.logo').click(function(){
     setTimeout( robot(undefined, sentence).next_event, 1000 );

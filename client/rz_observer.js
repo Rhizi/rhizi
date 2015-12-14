@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 /**
  * DOM object observers
  */
 define(
 [],
 function() {
+
+"use strict";
 
 var MutationObserver = window.MutationObserver;
 // more portable version: var MutationObserver =
@@ -40,7 +40,7 @@ var MutationObserver = window.MutationObserver;
 function Mutation_Handler__on_dxy_slowdown(
         on_slowdown_threshold_reached) {
 
-    var x_cur, y_cur, d, dx, dy, avg_d = 0;
+    var x_cur, y_cur, dx, dy, avg_d = 0;
 
     this.on_slowdown_threshold_reached = on_slowdown_threshold_reached;
 
@@ -48,7 +48,7 @@ function Mutation_Handler__on_dxy_slowdown(
      * handle observer mutation
      */
     this.handle_mutation = function(m) {
-        if ('transform' != m.attributeName || null == m.oldValue) {
+        if ('transform' !== m.attributeName || null === m.oldValue) {
             return;
         }
 
@@ -59,7 +59,7 @@ function Mutation_Handler__on_dxy_slowdown(
         var rgx_m = m.oldValue.match(/\((\d+.\d+),(\d+.\d+)\)/);
         x_cur = rgx_m[1];
         y_cur = rgx_m[2];
-        if (undefined == this.x_prv) {
+        if (undefined === this.x_prv) {
             this.x_prv = x_cur;
             this.y_prv = y_cur;
             return;
@@ -69,8 +69,8 @@ function Mutation_Handler__on_dxy_slowdown(
 
         var d = Math.sqrt(dx * dx + dy * dy);
         // average across last samples
-        avg_d = (1.0 - this.most_recent_sample_weight) * avg_d
-                + this.most_recent_sample_weight * d;
+        avg_d = (1.0 - this.most_recent_sample_weight) * avg_d +
+                this.most_recent_sample_weight * d;
 
         // debug
         // console.log({
@@ -89,7 +89,7 @@ function Mutation_Handler__on_dxy_slowdown(
 
         this.x_prv = x_cur;
         this.y_prv = y_cur;
-    }
+    };
 }
 
 function new_Mutation_Handler__on_dxy_slowdown(
@@ -118,7 +118,7 @@ function new_MutationObserver(handler) {
     var for_each_mutaion = function(m_set) {
         m_set.forEach(function(m) {
             handler.handle_mutation(m);
-        })
+        });
     };
 
     return new MutationObserver(for_each_mutaion);

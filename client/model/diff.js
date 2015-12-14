@@ -19,7 +19,8 @@
 /**
  * Diff module
  */
-define(['consts'],
+define(
+       ['consts'],
 function(consts) {
 
 "use strict";

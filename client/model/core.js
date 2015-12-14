@@ -21,7 +21,9 @@ var DEBUG_NODE_POSITION = false;
 /**
  * core model module - currently unused
  */
-define(['util'], function(util) {
+define(
+       ['util'],
+function(util) {
     "use strict";
 
     /**

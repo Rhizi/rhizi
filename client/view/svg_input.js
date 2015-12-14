@@ -16,9 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'Bacon', 'consts', 'model/diff', 'rz_bus', 'consts'],
-function($,        Bacon,           consts,   model_diff,   rz_bus,   consts)
+define(
+       ['jquery', 'Bacon', 'consts', 'model/diff', 'rz_bus'],
+function($,        Bacon,   consts,   model_diff,   rz_bus)
 {
+"use strict";
+
 var svg_input_fo_node_y = '-.70em',
     svg_input_fo_height = '30px';
 
@@ -31,7 +34,6 @@ var svg_input_fo_node_y = '-.70em',
 var svgInput = function(vis, graph) {
     var original_element,
         is_link,
-        graphEditBus = new Bacon.Bus(),
         currentIdBus = new Bacon.Bus(),
         current_id = currentIdBus.toProperty(null);
 
@@ -72,21 +74,21 @@ var svgInput = function(vis, graph) {
     }
 
     function onkeydown(e) {
-        var ret = undefined,
+        var ret,
             jelement = createOrGetSvgInput(),
             element = jelement[0],
             newname = jelement.text(),
             fo = createOrGetSvgInputFO(),
             d;
 
-        if (element != this) {
+        if (element !== this) {
             console.log('unexpected editname_on_keypress this should be the svg-input element');
         }
 
-        if (e.which == consts.VK_ENTER || e.which == consts.VK_ESCAPE) {
+        if (e.which === consts.VK_ENTER || e.which === consts.VK_ESCAPE) {
             ret = false;
             d = jelement.data().d;
-            if (e.which == consts.VK_ENTER && newname != d.name) {
+            if (e.which === consts.VK_ENTER && newname !== d.name) {
                 if (d.hasOwnProperty('__src')) {
                     graph.update_link(d, {name: newname});
                 } else {
@@ -99,7 +101,7 @@ var svgInput = function(vis, graph) {
         }
         rz_bus.ui_key.push({where: consts.KEYSTROKE_WHERE_EDIT_NODE, keys: [e.which]});
         return ret;
-    };
+    }
 
     // FIXME: element being deleted. Some delete is legit - removal of related element. Some isn't (a click).
     // Instead of investigating (time constraint) reparenting as sibling, and introducing
@@ -110,7 +112,7 @@ var svgInput = function(vis, graph) {
             svg_input_selector = '#' + svg_input_name,
             svg_input = $(svg_input_selector);
 
-        if (svg_input.length == 0) {
+        if (svg_input.length === 0) {
             console.log('creating new svg-input');
             svg_input = $(appendForeignElementInputWithID(vis[0][0], svg_input_name));
             svg_input.on('keydown', onkeydown);

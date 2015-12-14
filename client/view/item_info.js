@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'underscore', 'util', 'consts', 'model/diff', 'model/types',
+define(
+       ['jquery', 'underscore', 'util', 'consts', 'model/diff', 'model/types',
         'model/graph', 'messages', 'domain_types', 'view/selection'],
 function($,        _,            util,   consts,   model_diff,   model_types,
          model_graph,   messages,   domain_types,        selection) {

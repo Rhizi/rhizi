@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['jquery', 'underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend',
+define(
+       ['jquery', 'underscore', 'Bacon', 'consts', 'util', 'model/core', 'model/util', 'model/diff', 'rz_api_backend',
         'local_backend', 'rz_api_mesh', 'history', 'model/types'],
 function ($,       _,           Bacon,   consts,   util,   model_core,   model_util,   model_diff,   rz_api_backend,
          local_backend,   rz_api_mesh,   history,   model_types) {
@@ -1383,12 +1384,12 @@ function Graph(spec) {
     this.load_from_nodes_links = function(nodes, links) {
         // FIXME: prompt for replace/merge; now defaulting to merge
         commit_and_tx_diff__topo(new_topo_diff__from_nodes_links(nodes, links));
-    }
+    };
 
     this.load_from_json = function(json) {
         var data = JSON.parse(json);
 
-        if (data == null) {
+        if (data === null) {
             console.log('load callback: no data to load');
             return;
         }
@@ -1407,14 +1408,14 @@ function Graph(spec) {
             all_attributes.forEach(function (attr) {
                   node_dict[attr] = node[attr];
             });
-            d['nodes'].push(node_dict);
+            d.nodes.push(node_dict);
         }
         for (var j = 0 ; j < links.length ; j++) {
             var link = links[j];
-            d['links'].push({
-              "__src":link.__src.id,
-              "__dst":link.__dst.id,
-              "name":link.name
+            d.links.push({
+              "__src": link.__src.id,
+              "__dst": link.__dst.id,
+              "name": link.name
             });
         }
         return JSON.stringify(d);

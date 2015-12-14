@@ -16,9 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
+define(
+       ['underscore', 'jquery'],
+function(_,            $) {
 
-define(['underscore', 'jquery'], function(_, $) {
+    "use strict";
 
     function assert(condition, message) {
         if (false === condition) {
@@ -39,7 +41,8 @@ define(['underscore', 'jquery'], function(_, $) {
     }
 
     function set_from_object(o) {
-        var ret = {}
+        var ret = {};
+
         for (var k in o) {
             ret[k] = 1;
         }
@@ -77,7 +80,7 @@ define(['underscore', 'jquery'], function(_, $) {
             if (_.contains(candidates, list_item)) {
                 return list_item;
             }
-        };
+        }
         return default_result;
     }
 
@@ -103,7 +106,7 @@ define(['underscore', 'jquery'], function(_, $) {
     }
 
     function input_validation__password(password_first, password_second) {
-        if (password_first != password_second) {
+        if (password_first !== password_second) {
             throw { message: 'Passwords do not match' };
         }
         if (password_first.length < 8) {
@@ -134,7 +137,9 @@ define(['underscore', 'jquery'], function(_, $) {
 
     function textChildOffset(base, element)
     {
-        function sum(a, b) { return a + b; };
+        function sum(a, b) {
+            return a + b;
+        }
         function up_to(list, element) {
             return list.slice(0, list.indexOf(element));
         }
@@ -258,7 +263,9 @@ define(['underscore', 'jquery'], function(_, $) {
 
     // String utilities
     function capitalize(word) {
-        if (word.length == 0) return '';
+        if (word.length === 0) {
+            return '';
+        }
         return word.slice(0, 1).toUpperCase() + word.slice(1, word.length);
     }
 

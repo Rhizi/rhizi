@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 define(['jquery', 'rz_core', 'FileSaver'],
 function($, rz_core, file_saver) {
 
-    var import_file_set;
+    "use strict";
+
+    var import_file_set,
+        key = 'rhizi-save';
 
     $('debug-view__save').click(function(){
         var json = rz_core.main_graph.save_to_json();
@@ -53,7 +54,7 @@ function($, rz_core, file_saver) {
         return confirm('Current work will be merged with the new import, are you sure?');
       }
       return true;
-    }
+    };
 
     function import_file(file) {
 
@@ -68,7 +69,7 @@ function($, rz_core, file_saver) {
                     console.log('file-import: done reading \'' + theFile.name + '\', byte count: ' + result.length);
                     rz_core.load_from_json(result);
                 }
-            }
+            };
         })(file);
         file_reader.readAsText(file, "text/javascript");
     }
@@ -101,7 +102,7 @@ function($, rz_core, file_saver) {
                 var e_file_path;
 
                 e_file_path = $('<div>');
-                e_file_path.addClass('debug-view__import__input_file_name')
+                e_file_path.addClass('debug-view__import__input_file_name');
                 e_file_path.text('- ' + file.name);
                 $('#debug-view__import__file-list').append(e_file_path);
             });
@@ -119,18 +120,17 @@ function($, rz_core, file_saver) {
 
             $.map(import_file_set, import_file);
         });
-    };
+    }
     init_import_handlers();
 
     $('debug-view__local-storage-load').click(function(){
       if (!confirm_import()) {
           return;
       }
-      var json_blob = localStorage.getItem(key)
+      var json_blob = localStorage.getItem(key);
       rz_core.load_from_json(json_blob);
     });
 
     return {
-        
-    }
+    };
 });

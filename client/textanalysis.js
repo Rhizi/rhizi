@@ -16,8 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['rz_core', 'model/core', 'model/util', 'model/diff', 'model/types', 'consts', 'util'],
-function(rz_core,   model_core,   model_util,   model_diff,   model_types,   consts,   util) {
+define(
+       ['underscore', 'Bacon', 'rz_core', 'model/core', 'model/util', 'model/diff', 'model/types', 'consts', 'util'],
+function(_,            Bacon,   rz_core,   model_core,   model_util,   model_diff,   model_types,   consts,   util) {
+
 "use strict";
 
 // Aliases
@@ -152,13 +154,13 @@ var obj_take = util.obj_take;
 function list_length_larger(n) {
     return function(list) {
         return list.length > n;
-    }
+    };
 }
 
 function obj_field_not_equal(field, value) {
     return function(obj) {
-        return obj[field] != value;
-    }
+        return obj[field] !== value;
+    };
 }
 
 /**
@@ -185,7 +187,7 @@ function tokens_to_graph_elements_with_node_sign(tokens) {
     var ret = [[]]; // prefix is the first element
     for (var i = 0 ; i < tokens.length;) {
         if (tokens[i].token === separator_string) {
-            if (tokens.length == i + 1) {
+            if (tokens.length === i + 1) {
                 tokens.push({end: tokens[i].end + 1 + NEW_NODE_NAME.length,
                              token: NEW_NODE_NAME});
             }
@@ -505,7 +507,7 @@ var textAnalyser = function (spec) {
                 var and_source = data[0].filter(even_second).map(obj_take('token')),
                     and_target = data[2].filter(even_second).map(obj_take('token')),
                     verb = data[1][0].token;
-                util.assert(data[1].length == 1);
+                util.assert(data[1].length === 1);
                 list_product(and_source, and_target).forEach(function (pair) {
                     __addLink(pair[0], pair[1], verb);
                 });
@@ -519,9 +521,9 @@ var textAnalyser = function (spec) {
     ret.thirds = thirds;
 
     ret.existing_nodes = function (main_graph) {
-        function not_null(x) { return x !== null; };
+        function not_null(x) { return x !== null; }
         return nodes.map(obj_take('name')).map(main_graph.find_node__by_name).filter(not_null);
-    }
+    };
 
     ret.applyToGraph = function(spec) {
         var edit_graph = spec.edit_graph,
@@ -617,7 +619,7 @@ var textAnalyser = function (spec) {
             return cursor >= d.start && cursor < d.end;
         });
         index = undefined === index ? thirds.length - 1 : index;
-        return index % 2 == 1;
+        return index % 2 === 1;
     }
 
     // FIXME: ugh.

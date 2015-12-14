@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
-define(['consts', 'Bacon'],
+define(
+       ['consts', 'Bacon'],
 function(consts,   Bacon)
 {
+    "use strict";
+
     var ui_key_bus = new Bacon.Bus(),
         ui_input_bus = new Bacon.Bus();
 

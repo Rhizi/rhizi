@@ -1,4 +1,5 @@
-define(['jquery', 'Bacon', 'd3', 'model/core', 'model/graph', 'view/graph_view', 'rz_core', 'view/layouts'],
+define(
+       ['jquery', 'Bacon', 'd3', 'model/core', 'model/graph', 'view/graph_view', 'rz_core', 'view/layouts'],
 function($      ,  Bacon,   d3,   core,         graph,        graph_view,         rz_core,        layouts) {
 
     "use strict";

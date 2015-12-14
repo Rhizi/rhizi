@@ -16,16 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['consts', 'view/completer', 'textanalysis', 'rz_core', 'view/selection'],
-function(consts,        completer,   textanalysis,   rz_core,        selection)
+define('view/search',
+       ['jquery', 'consts', 'view/completer', 'textanalysis', 'rz_core', 'view/selection'],
+function($,        consts,        completer,   textanalysis,   rz_core,        selection)
 {
+"use strict";
+
 var search = $('#search'),
     search_completer_element = $('#search-suggestion'),
     search_completer;
 
 var focus = function() {
     search.focus();
-}
+};
 
 function init() {
     search_completer = completer(search, search_completer_element,
@@ -65,8 +68,8 @@ function init() {
 
     function search_on_submit(text) {
         var r,
-            selector = function (obj) { return attribute_match(obj, r); };
-            text_processed = text[text.length - 1] == '|' ? text.slice(0, text.length - 1) : text;
+            selector = function (obj) { return attribute_match(obj, r); },
+            text_processed = text[text.length - 1] === '|' ? text.slice(0, text.length - 1) : text;
 
         try {
             r = new RegExp(text_processed, 'i');
@@ -80,8 +83,7 @@ function init() {
         }
         rz_core.main_graph_view.zen_mode__set(true);
         rz_core.update_view__graph(false);
-    };
-
+    }
 }
 
 function clear() {

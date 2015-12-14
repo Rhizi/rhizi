@@ -16,24 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict";
-
-function obj_keys(obj)
-{
-    var ret = [],
-        k;
-
-    for (k in obj) {
-        ret.push(k);
-    }
-    return k;
-}
-
 /**
  * API calls designed to execute against a local backend service
  */
-define(['util', 'model/core'],
+define(
+       ['util', 'model/core'],
 function(util,   model_core) {
+
+    "use strict";
 
     function new_graph() {
         return new model_graph.Graph({temporary: false, base: null, backend: 'none'});
@@ -47,10 +37,9 @@ function(util,   model_core) {
         return docs[get_doc_name()];
     }
 
-	var rz_core,
-        model_graph,
+    var model_graph,
         docs = {},
-        graph = undefined;
+        graph;
 
     // TODO: use a promise - not working for some reason with karma..
     function init_graph(cb) {

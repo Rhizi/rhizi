@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['consts', 'jquery', 'd3', 'underscore'],
+define(
+       ['consts', 'jquery', 'd3', 'underscore'],
 function(consts,   $,        d3,   _) {
 
     "use strict";

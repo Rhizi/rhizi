@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define( ['underscore', 'util', 'model/graph'],
+define(
+        ['underscore', 'util', 'model/graph'],
 function (_,            util,         graph) {
 
-
+'use strict';
 
 function delete_nodes_links_message(nodes, links) {
     util.assert(nodes && links && nodes.length && links.length && nodes.length + links.length > 0);
@@ -45,15 +46,15 @@ function delete_nodes_links_message_by_name(nodes, links)
 
 function quoted(name)
 {
-    if (name.indexOf(' ') == -1) {
+    if (name.indexOf(' ') === -1) {
         return name;
     }
-    return '"' + name + '"'
+    return '"' + name + '"';
 }
 
 function english_conjunction(names)
 {
-    if (names.length == 1) {
+    if (names.length === 1) {
         return names[0];
     }
     return names.slice(0, names.length - 1).join(', ') + ' and ' + names[names.length - 1];

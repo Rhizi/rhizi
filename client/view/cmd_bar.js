@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
-define(['jquery'],
+define(
+       ['jquery'],
 function($) {
+
+    "use strict";
 
     function Cmd_bar(cmdbar_name) {
 
         var close_btn,
-            cmdbar_name,
             root_div,
             body_div,
             footer_bar;
@@ -43,7 +43,7 @@ function($) {
         root_div.addClass('cmd-bar');
         root_div.css('display', 'none');
 
-        footer_bar = $('<div>Create new Rhizi</div>')
+        footer_bar = $('<div>Create new Rhizi</div>');
         footer_bar.addClass('cmd-bar__close_bar');
 
         root_div.append(close_btn);
@@ -60,31 +60,31 @@ function($) {
 
     Cmd_bar.prototype.append_to_body = function(e) {
         this.body_div.append(e);
-    }
+    };
 
     Cmd_bar.prototype.clear = function() {
         this.body_div.children().remove();
-    }
+    };
 
     Cmd_bar.prototype.hide = function() {
         this.root_div.fadeToggle(400);
-    }
+    };
 
     Cmd_bar.prototype.id_str = function(e) {
         return 'cmd-bar__' + this.cmdbar_name;
-    }
+    };
 
     Cmd_bar.prototype.insert = function(remove_other_cmd_bars) {
         this.root_div.insertAfter('#top-bar');
-    }
+    };
 
     Cmd_bar.prototype.remove = function(remove_other_cmd_bars) {
         this.root_div.insertAfter('#top-bar');
-    }
+    };
 
     Cmd_bar.prototype.show = function() {
         this.root_div.fadeToggle(400);
-    }
+    };
 
     function new_cmdbar(cmdbar_name) {
         return new Cmd_bar(cmdbar_name);

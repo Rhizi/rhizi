@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(['underscore', 'util', 'domain_types'],
+define(
+       ['underscore', 'util', 'domain_types'],
 function(_,            util,   domain_types)
 {
 

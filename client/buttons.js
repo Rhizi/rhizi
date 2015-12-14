@@ -16,13 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-"use strict"
-
 define(['jquery', 'rz_core', 'view/selection', 'view/cmd_bar'],
 function ($,       rz_core,        selection,   view__cmd_bar) {
-$('.tutorial').click(function(){});
 
-var key="#47989379";
+"use strict";
+
+$('.tutorial').click(function(){});
 
 var logout_button = $('#top-bar__logout-btn');
 logout_button.click(function() {
@@ -74,7 +73,7 @@ $('#menu-bar__rzdoc-new').click(function() {
 
     cmd_bar = view__cmd_bar.new_cmdbar("rzdoc-new");
 
-    cmd_bar_body = $('<div>')
+    cmd_bar_body = $('<div>');
     submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
     e_input = $('<input id="cmd_bar__rzdoc_new__input">');
     e_input.attr('placeholder', 'Rhizi Title');
@@ -92,7 +91,7 @@ $('#menu-bar__rzdoc-new').click(function() {
         cmd_bar.remove();
     });
     cmd_bar_body.on('keyup', function(event) { // create on Enter key pressed
-        if(event.keyCode == 13) {
+        if(event.keyCode === 13) {
             submit_btn.click();
         }
     });
@@ -105,7 +104,7 @@ $('#menu-bar__rzdoc-search').on('keypress', function(e) {
 
     var search_query;
 
-    if (13 != e.keyCode) {
+    if (13 !== e.keyCode) {
         return true;
     }
 

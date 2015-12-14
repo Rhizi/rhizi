@@ -16,9 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["jquery", "Bacon"],
-function ($,       Bacon)
+define(
+       ["jquery", "Bacon", 'd3'],
+function ($,       Bacon,   d3)
 {
+
+'use strict';
+
 function Bubble(raw_parent, radius) {
     var xmlns = "http://www.w3.org/2000/svg";
     var g = document.createElementNS(xmlns, 'g');
@@ -31,7 +35,7 @@ function Bubble(raw_parent, radius) {
             by = height / 2;
         console.log("setting bubble at " + bx + ", " + by);
         elem.setAttribute('transform', 'translate(' + bx + ',' + by + ')');
-    }
+    };
 
     g.appendChild(circle);
     raw_parent.appendChild(g);
@@ -40,7 +44,7 @@ function Bubble(raw_parent, radius) {
     circle.id = 'bubble';
 
     d3.select('#bubble').attr('stroke-width', 10)
-                        .attr('filter', 'url(#f_blur__creation-circle)')
+                        .attr('filter', 'url(#f_blur__creation-circle)');
 
     // reset bubble on radius change and window resize
     Bacon.combineWith(function (r, _) { return r; }, radius, $(window).asEventStream('resize').toProperty(0)).onValue(
@@ -51,5 +55,5 @@ function Bubble(raw_parent, radius) {
 }
 return {
     Bubble:Bubble
-}
+};
 });
