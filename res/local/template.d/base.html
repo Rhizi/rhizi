@@ -11,14 +11,14 @@
     <link href="{{ fragment_d_path }}/css/style.css" rel="stylesheet" type="text/css">
 
     {% endblock %}
+    {% if rz_config__piwik_id %}
+      {% include "piwik.html" %}
+    {% endif %}
 </head>
 <body>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">{% block footer %}{% endblock %}</div>
     <div id="devtools" style="display:none;">{% block devtools %}{% endblock %}</div>
-    {% if rz_config__piwik_id %}
-      {% include "piwik.html" %}
-    {% endif %}
     {% block content_scripts %}{% endblock %}
 </body>
 </html>
