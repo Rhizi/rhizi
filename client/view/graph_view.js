@@ -183,7 +183,7 @@ function GraphView(spec) {
     function node__pass_filter(d) {
         var state = filter_states && filter_states[d.type];
 
-        return temporary || state === undefined || state;
+        return temporary || state === undefined || !state;
     }
 
     function link__pass_filter(d) {
@@ -453,12 +453,8 @@ function GraphView(spec) {
         return urlValid(url);
     };
 
-    function nodes__filtered() {
-        return graph.nodes().filter(node__pass_filter);
-    }
-
     function nodes__visible() {
-        return zen_mode ? selection.related_nodes() : nodes__filtered();
+        return (zen_mode ? selection.related_nodes() : graph.nodes()).filter(node__pass_filter);
     }
 
     function links__filtered() {
