@@ -46,7 +46,7 @@
       <attribute name="root" />
       <attribute name="build" />
       <sequential>
-         <exec dir="@{root}" executable="/usr/bin/r.js" failonerror="true">
+         <exec dir="@{root}" executable="node-modules/.bin/r.js" failonerror="true">
             <arg line="-o @{build}" />
          </exec>
       </sequential>
