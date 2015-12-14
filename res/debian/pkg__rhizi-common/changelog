@@ -1,3 +1,7 @@
+rhizi (0.3.21) unstable; urgency=low
+  * client/view/graph_view: inverted logic in filter in zen mode, fixes #673
+ -- Alon Levy <alon@pobox.com>  Sun, 13 Dec 2015 23:08:22 -0800
+
 rhizi (0.3.20) unstable; urgency=low
   * client/piwik: docs say place script before body
  -- Alon Levy <alon@pobox.com>  Sun, 13 Dec 2015 22:16:50 -0800
