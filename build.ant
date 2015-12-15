@@ -97,6 +97,10 @@
       <mkdir dir="${deploy_target_dir}/etc" />
       <mkdir dir="${deploy_target_dir}/static" />
 
+      <exec dir="${basedir}" executable="/usr/bin/bower" failonerror="true">
+         <arg line="install" />
+      </exec>
+
       <parallel>
 
          <!-- client code -->
