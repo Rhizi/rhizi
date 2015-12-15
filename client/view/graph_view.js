@@ -219,8 +219,6 @@ function GraphView(spec) {
         }
     }
 
-    var selection_outer_radius = 0; //200;
-
     function restore_position_from_layout(layout_name, nodes) {
         var have_position = 0,
             layout_x_key = graph.layout_x_key(layout_name),
@@ -317,61 +315,6 @@ function GraphView(spec) {
             }).filter(function (datum) { return datum !== undefined; });
 
         layout_.save_from_arr_id_x_y(nodes_with_x_y);
-    }
-
-    function transformOnSelection(data) {
-        var selection = data[0],
-            selection_inner_radius = Math.max(30, data[1]);
-
-        console.log('new selection of');
-        console.log(' ' + selection.root_nodes.length + ' root nodes');
-        console.log(' ' + selection.nodes.length + ' highlighted nodes');
-        console.log(' inner radius ' + selection_inner_radius);
-        // remove existing fixed if set by us
-        graph.nodes().forEach(function (n) {
-            if (n.__selection) {
-                n.x = n.px = n.__selection.x;
-                n.y = n.py = n.__selection.y;
-                n.fixed = n.__selection.fixed;
-                delete n.__selection;
-            }
-        });
-        // fix position of selected nodes
-        var count = selection.root_nodes.length,
-            zoom_center_point = graph_to_screen(cx, cy, zoom_obj),
-            zcx = zoom_center_point[0],
-            zcy = zoom_center_point[1],
-            s = zoom_obj.scale(),
-            scaled_inner_radius = selection_inner_radius / s,
-            scaled_outer_radius = selection_outer_radius / s;
-
-        function screen_to_graph(xy) {
-            return [zcx + xy[0], zcy + xy[1]];
-        }
-        // order by angle
-        var nodes = _.pluck(selection.root_nodes.map(function (n) { return [Math.atan2(n.y, n.x), n]; }).sort(), 1);
-        nodes.forEach(function (n, i) {
-            var newp;
-            n.__selection = {
-                fixed: n.fixed,
-                x: n.x,
-                y: n.y
-            };
-            n.fixed = true;
-            newp = screen_to_graph(
-                rtheta_to_xy([(scaled_inner_radius + scaled_outer_radius) / 2, i * Math.PI * 2 / count]));
-            n.x = n.px = newp[0];
-            n.y = n.py = newp[1];
-        });
-        resumeLayout();
-    }
-    // on every selection change that isn't null set the selected nodes to fixed
-    if (selection_outer_radius > 0 && !temporary) {
-        Bacon.update(
-            [{root_nodes: [], nodes: []}, gv.bubble_radius],
-            [selection.selection], function (data, new_selection) { return [new_selection, data[1]]; },
-            [spec.bubble_property], function (data, radius) { return [data[0], radius]; }
-        ).skip(1).onValue(transformOnSelection);
     }
 
     selection.selection.onValue(function () {
