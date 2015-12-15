@@ -1,3 +1,10 @@
+rhizi (0.3.22) unstable; urgency=low
+  * client: fix shortest paths to be invertible
+  * client: Add "description" property to node type "person"
+  * development: use bower a bit more
+  * debian: update backup script to use rz-doc as well
+ -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 12:13:40 -0800
+
 rhizi (0.3.21) unstable; urgency=low
   * client/view/graph_view: inverted logic in filter in zen mode, fixes #673
  -- Alon Levy <alon@pobox.com>  Sun, 13 Dec 2015 23:08:22 -0800
