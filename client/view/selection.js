@@ -80,7 +80,9 @@ var selected_nodes, // these are the nodes that are requested via update
     related_links__by_id,
     related_links__by_node_id,
     selectionChangedBus = new Bacon.Bus(),
-    selection = selectionChangedBus.toProperty(new_selection([], [], [], []));
+    selection = selectionChangedBus.toProperty(new_selection([], [], [], [])),
+    shortest_paths = false;
+
 
 function listen_on_diff_bus(diffBus)
 {
@@ -208,7 +210,7 @@ function mutual_neighbours(nodes) {
     return _select_nodes_helper(nodes, connected);
 }
 
-function shortest_paths(nodes) {
+function nodes__shortest_paths(nodes) {
     var ret = get_main_graph().shortest_paths(nodes);
 
     ret.nodes = get_main_graph().find_nodes__by_id(_.pluck(ret.nodes, "node_id"));
@@ -307,9 +309,13 @@ var select_both = function(new_nodes, new_links) {
 };
 
 var select_shortest_path = function(new_nodes, new_links) {
-    var related = shortest_paths(new_nodes);
+    var related = nodes__shortest_paths(new_nodes);
 
     inner_select(new_nodes, related.nodes, new_links, related.links);
+};
+
+var select_normal = function(new_nodes, new_links) {
+    select_both(new_nodes, new_links);
 };
 
 var inner_select = function(new_selected_nodes, new_related_nodes, new_selected_links, new_related_links)
@@ -383,7 +389,12 @@ var setup_toolbar = function(main_graph, main_graph_view)
     link_fan_btn.asEventStream('click').onValue(link_fan_selection);
     zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
     select_shortest_path_bth.asEventStream('click').onValue(function () {
-        select_shortest_path(selected_nodes, selected_links);
+        shortest_paths = !shortest_paths;
+        if (shortest_paths) {
+            select_shortest_path(selected_nodes, selected_links);
+        } else {
+            select_normal(selected_nodes, selected_links);
+        }
     });
 
     function show(e, visible) {
