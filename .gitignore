@@ -85,3 +85,10 @@ target/
 node_modules
 
 nosetests.xml
+
+# bower
+bower_components
+
+# optimized build by r.js
+client/main-built.js
+client/main-built.js.map

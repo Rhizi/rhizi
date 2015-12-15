@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "d3": "3.4.11",
-    "bacon": "0.7.82",
+    "bacon": "0.7.83",
     "underscore": "1.8.3",
     "jquery": "2.1.4",
     "filesaver": "ec5c3cca11",
