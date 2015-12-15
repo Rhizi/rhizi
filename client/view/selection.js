@@ -390,6 +390,7 @@ var setup_toolbar = function(main_graph, main_graph_view)
     zen_mode_btn.asEventStream('click').onValue(main_graph_view.zen_mode__toggle);
     select_shortest_path_bth.asEventStream('click').onValue(function () {
         shortest_paths = !shortest_paths;
+        select_shortest_path_bth[0].style.borderStyle = shortest_paths ? 'dashed' : 'solid';
         if (shortest_paths) {
             select_shortest_path(selected_nodes, selected_links);
         } else {
