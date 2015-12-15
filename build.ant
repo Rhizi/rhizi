@@ -88,6 +88,8 @@
       <symlink action="delete" link="${deploy_target_dir}/bin" />
       <symlink action="delete" link="${deploy_target_dir}/rhizi" />
 
+      <mkdir dir="${deploy_target_dir}" />
+
       <delete verbose="true" includeemptydirs="true">
          <fileset dir="${deploy_target_dir}"
                   includes="**/*"
@@ -166,35 +168,6 @@
 
       </parallel>
 
-   </target>
-
-   <target name="deploy-remote" depends="deploy-local">
-      <!-- [!] trailing '/' on rsync src targets critical -->
-
-      <local name="rsync_module" />
-      <property name="rsync_module" value="rhizi.net" />
-      <property name="filter_list_str"
-                value="-f '- __pycache__/' -f '- *.pyc'" />
-
-      <client-optimize if:true="${doClientOptimize}"
-                       root="client/"
-                       build="build.js" />
-
-      <!-- -l: traverse bin/ -> ../src-py link -->
-      <rsync src="${deploy_target_dir}/"
-             extraopts="--delete -lL ${filter_list_str}"
-             dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/" />
-
-      <parallel>
-         <!-- apply production patches -->
-         <rsync extraopts="--delete"
-                src="res/production-patch-set/${targetDomain}/rhizi-server.production.conf"
-                dst="rsync://${remoteDeployServer}/${rsync_module}/rhizi.net/etc/rhizi-server.conf" />
-
-         <rsync src="bin"
-                dst="rsync://${remoteDeployServer}/${rsync_module}/" />
-
-      </parallel>
    </target>
 
    <target name="pkg-deb__mux" description="package as .deb">
