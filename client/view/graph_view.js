@@ -369,12 +369,12 @@ function GraphView(spec) {
     if (selection_outer_radius > 0 && !temporary) {
         Bacon.update(
             [{root_nodes: [], nodes: []}, gv.bubble_radius],
-            [selection.selectionChangedBus], function (data, new_selection) { return [new_selection, data[1]]; },
+            [selection.selection], function (data, new_selection) { return [new_selection, data[1]]; },
             [spec.bubble_property], function (data, radius) { return [data[0], radius]; }
         ).skip(1).onValue(transformOnSelection);
     }
 
-    selection.selectionChangedBus.onValue(function () {
+    selection.selection.onValue(function () {
         if (zen_mode) {
             zen_mode__auto_center = true;
             layout__load_graph_and_tick();

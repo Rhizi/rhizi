@@ -101,20 +101,6 @@ var init_graph_views = function () {
         updateZoomProgress(true);
     }
 
-    // TODO: we are listening both on graph.diffBus and selection.selectionChangedBus,
-    //  but the relation is actually:
-    //
-    //  diffBus -> SelectedNodesBus -> us
-    //  diffBus         ->             us
-    //
-    //  we need to deduplicate this event
-    // but there is no coordination, resulting in double updates.
-    selection.selectionChangedBus.onValue(
-        function() {
-            update_view__graph(false);
-        }
-    );
-
     var el = document.body;
     vis = d3.select('#graph-view__canvas').append("svg:svg")
         .attr('id', 'canvas_d3')
@@ -206,6 +192,20 @@ var init_graph_views = function () {
     published_var_dict.main_graph_view = main_graph_view;
     published_var_dict.edit_graph = edit_graph;
     published_var_dict.edit_graph_view = edit_graph_view;
+
+    // TODO: we are listening both on graph.diffBus and selection.selection,
+    //  but the relation is actually:
+    //
+    //  diffBus -> SelectedNodesBus -> us
+    //  diffBus         ->             us
+    //
+    //  we need to deduplicate this event
+    // but there is no coordination, resulting in double updates.
+    selection.selection.onValue(
+        function() {
+            update_view__graph(false);
+        }
+    );
 };
 
 /**

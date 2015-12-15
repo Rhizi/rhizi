@@ -74,7 +74,8 @@ var selected_nodes, // these are the nodes that are requested via update
                     // are considered related if both nodes are related as well.
     related_links__by_id,
     related_links__by_node_id,
-    selectionChangedBus = new Bacon.Bus();
+    selectionChangedBus = new Bacon.Bus(),
+    selection = selectionChangedBus.toProperty(new_selection([], [], [], []));
 
 function listen_on_diff_bus(diffBus)
 {
@@ -445,15 +446,18 @@ return {
     node_selected: node_selected,
     node_related: node_related,
     link_related: link_related,
-    selectionChangedBus: selectionChangedBus,
     setup_toolbar: setup_toolbar,
 
     delete_selection: delete_selection,
 
+    // deprecated: need to be removed in favor of non explicit state, i.e. event streams / properties
     selected_nodes: function() { return selected_nodes; },
     related_nodes: function() { return related_nodes; },
     selected_links: function() { return selected_links; },
     related_links: function() { return related_links; },
+
+    // output property
+    selection: selection,
 };
 
 });
