@@ -26,6 +26,15 @@
       </sequential>
    </macrodef>
 
+   <macrodef name="bower">
+      <sequential>
+         <exec dir="${basedir}" executable="/usr/bin/env" failonerror="true">
+            <arg line="bower" />
+            <arg line="install" />
+         </exec>
+      </sequential>
+   </macrodef>
+
    <macrodef name="client-optimize">
       <attribute name="root" />
       <attribute name="build" />
@@ -97,9 +106,7 @@
       <mkdir dir="${deploy_target_dir}/etc" />
       <mkdir dir="${deploy_target_dir}/static" />
 
-      <exec dir="${basedir}" executable="/usr/bin/bower" failonerror="true">
-         <arg line="install" />
-      </exec>
+      <bower />
 
       <parallel>
 
@@ -187,9 +194,7 @@
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
 
-      <exec dir="${basedir}" executable="/usr/bin/bower" failonerror="true">
-         <arg line="install" />
-      </exec>
+      <bower />
 
       <client-optimize root="client/"
                        build="build.js" />
