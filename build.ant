@@ -187,6 +187,10 @@
       <mkdir dir="dist" />
       <mkdir dir="${build_dir__deb_pkg}" />
 
+      <exec dir="${basedir}" executable="/usr/bin/bower" failonerror="true">
+         <arg line="install" />
+      </exec>
+
       <client-optimize root="client/"
                        build="build.js" />
 
