@@ -16,7 +16,8 @@
          <exec dir="${basedir}" executable="/usr/bin/rsync" failonerror="true">
             <arg line="-avz @{extraOpts}" />
             <arg value="@{src}" />
-            <arg value="@{dst}" />
+	    <arg value="@{dst}" />
+	    <arg value="--copy-unsafe-links" />
 
             <!-- note: RSYNC_CONNECT_PROG has not effect when dst is local dir path -->
             <env key="RSYNC_CONNECT_PROG"
