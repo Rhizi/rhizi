@@ -36,6 +36,10 @@ function new_selection(selected_nodes, related_nodes, selected_links, related_li
 {
     var ret = new Selection();
 
+    ret.is_empty = function() {
+        return ret.selected_nodes && ret.selected_nodes.length === 0;
+    };
+
     ret.related_nodes = related_nodes;
     ret.selected_nodes = selected_nodes;
     ret.related_links = related_links;
@@ -62,6 +66,7 @@ function get_main_graph_view()
 {
     return get_rz_core().main_graph_view;
 }
+
 
 var selected_nodes, // these are the nodes that are requested via update
     selected_nodes__by_id,
@@ -420,10 +425,6 @@ var setup_toolbar = function(main_graph, main_graph_view)
         });
 };
 
-var is_empty = function() {
-    return selected_nodes && selected_nodes.length === 0;
-};
-
 var nodes_from_links = function(links) {
     return _.flatten(_.map(links, function (l) { return [l.__src, l.__dst]; }));
 };
@@ -432,21 +433,11 @@ var nodes_from_links = function(links) {
 clear();
 
 return {
-    byVisitors: byVisitors,
-    is_empty: is_empty,
-    clear: clear,
-    select_nodes: select_nodes,
-    invert_nodes: invert_nodes,
-    select_link: select_link,
-    invert_link: invert_link,
-    select_both: select_both,
-    invert_both: invert_both,
     class__node: class__node,
     class__link: class__link,
     node_selected: node_selected,
     node_related: node_related,
     link_related: link_related,
-    setup_toolbar: setup_toolbar,
 
     delete_selection: delete_selection,
 
@@ -455,6 +446,19 @@ return {
     related_nodes: function() { return related_nodes; },
     selected_links: function() { return selected_links; },
     related_links: function() { return related_links; },
+
+    // initialization
+    setup_toolbar: setup_toolbar,
+
+    // input actions
+    clear: clear,
+    byVisitors: byVisitors,
+    select_nodes: select_nodes,
+    invert_nodes: invert_nodes,
+    select_link: select_link,
+    invert_link: invert_link,
+    select_both: select_both,
+    invert_both: invert_both,
 
     // output property
     selection: selection,
