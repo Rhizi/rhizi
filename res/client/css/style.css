@@ -124,11 +124,10 @@
 html, body {
   height: 100%;
   font-family: "Source_Regular", sans-serif;
-  overflow: hidden;
-  /* hide horizontal & vertical scrollbars */ }
+  overflow: auto;
+  /* show, we hide only on the main app */ }
 
 body {
-  overflow-y: hidden;
   overflow-x: auto;
   margin: 0;
   padding: 0;

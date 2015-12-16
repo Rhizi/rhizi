@@ -14,11 +14,6 @@
     {% if rz_config__piwik_id %}
       {% include "piwik.html" %}
     {% endif %}
-    <style type="text/css">
-    body {
-        overflow: auto;
-    }
-    </style>
 </head>
 <body>
     <div id="content">{% block content %}{% endblock %}</div>
