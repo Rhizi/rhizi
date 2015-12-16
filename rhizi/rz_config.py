@@ -21,11 +21,41 @@ import logging
 import os
 import re
 import types
+from functools import wraps
 
 from . import neo4j_schema
 
 
 log = logging.getLogger('rhizi')
+
+
+# regexp to validate email (from Django source)
+email_re = re.compile(
+r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
+r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
+
+
+def fileage(filename):
+    return os.stat(filename).st_mtime
+
+
+def cache_file_property(filename_attr, no_file_return):
+    def wrapper(f):
+        cache = [None]
+        @wraps(f)
+        def inner(self, *args, **kw):
+            filename = getattr(self, filename_attr)
+            if filename is None or not os.path.isfile(filename):
+                return no_file_return
+            cur_age = fileage(filename)
+            if cache[0] is None or cur_age > cache[0][0]:
+                log.info("rereading {}".format(filename))
+                cache[0] = (cur_age, f(self, *args, **kw))
+            return cache[0][1]
+        return inner
+    return wrapper
+
 
 class RZ_Config(object):
     """
@@ -131,9 +161,6 @@ class RZ_Config(object):
         ret = RZ_Config()
         ret.__dict__ = cfg  # allows setting of @property attributes
 
-        # set default attribute cache values
-        ret.acl_wl__email_address_set_cached = None  # [!] may caching of None value - see property access function
-
         return ret
 
     @staticmethod
@@ -203,6 +230,7 @@ class RZ_Config(object):
         return '\n'.join(kv_item_set)
 
     @property
+    @cache_file_property('acl_wl__email_address_file_path', None)
     def acl_wl__email_address_set(self):
         """
         lazy load on first access from configured file source
@@ -210,41 +238,24 @@ class RZ_Config(object):
         [!] may cache None value
         """
 
-        # regexp to validate email (from Django source)
-        email_re = re.compile(
-        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
-        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
-        r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
-
         # emails to whitelist
         wl_email_set = []
 
         # attempt to init from email file
         if self.acl_wl__email_address_file_path is not None:
 
-            # check if email file exists
-            if not os.path.exists(self.acl_wl__email_address_file_path) and not os.path.isfile(self.acl_wl__email_address_file_path):
-                print("Email whitelist file doesn't exist or is not a valid file : %s"%self.acl_wl__email_address_file_path)
-            else :
-                with open(self.acl_wl__email_address_file_path) as email_address_file:
-                    for line in email_address_file.readlines(): # one email by line
-                        email = line.strip()
-                        # check email format
-                        if email_re.search(email) is None:
-                            raise ValueError("Badly formatted email address : {}".format(email))
-                        else :
-                            wl_email_set.append(email)
+            with open(self.acl_wl__email_address_file_path) as email_address_file:
+                for line in email_address_file.readlines(): # one email by line
+                    email = line.strip()
+                    # check email format
+                    if email_re.search(email) is None:
+                        raise ValueError("Badly formatted email address : {}".format(email))
+                    else :
+                        wl_email_set.append(email)
 
-        if self.acl_wl__email_address_set_cached is not None:
-            assert type(self.acl_wl__email_address_set_cached) is list
-            for email in self.acl_wl__email_address_set_cached:
-                # validate email address
-                if email_re.search(email) is None:
-                    raise ValueError("Wrong email address : %s"%email)
-                else :
-                    wl_email_set.append(email)
-
-        log.info('acl initialized: acl_wl__email_address, email-count: %d' % (len(wl_email_set)))
+        log.info('acl initialized: acl_wl__email_address {}, email-count: {}'.format(
+            self.acl_wl__email_address_file_path, len(wl_email_set)))
+        log.info('1000 first bytes of email list: {}'.format(repr(wl_email_set)[:1000]))
         return wl_email_set
 
     @property
