@@ -25,6 +25,7 @@ body {
     </div>
     {% if 'activation_success' == state %}
     <div>
+        <p class="login-text">Account activated successfully.</p>
         <p class="login-text">Head over to the <a href="/login">Login page</a> to map and discover opportunities and resources.</p>
     </div>
     {% elif 'activation_failure' == state %}
