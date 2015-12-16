@@ -3,7 +3,6 @@
 {% block head %}
 {{ super() }}
 <script src="/static/lib/jquery.js" type="text/javascript"></script>
-<script src="/static/js/user_login.js" type="text/javascript"></script>
 
 <style type="text/css">
 html {
@@ -29,7 +28,7 @@ html {
 	</div>
 	<div class="login-view-section login-form">
 		<div id="login-form">
-			<form name="login" action="/index" method="get" onsubmit="submit_login_form();" id="login_form">
+			<form action="/index" method="get" id="login_form">
 				<input class="login-input" type="email" id="login_email_address" placeholder="Email">
 				<input class="login-input" type="password" id="login_password" placeholder="Password">
 				<input class="login-form_button" type="submit" value="Sign in">
@@ -50,5 +49,6 @@ html {
 		<div class="section-divider magenta-divider"><span class="contact-us-icon"></span></div>
 		<p class="login-text contact-us-text">Feel free to <a class="contact-us-link" href="mailto:contact@rhizi.com">contact us</a>,<br>we would love to hear your suggestions!</p>
 	</div>
+	<script src="/static/js/user_login.js" type="text/javascript"></script>
 </div>
 {% endblock %}

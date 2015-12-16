@@ -22,14 +22,14 @@ function submit_login_form() {
 
     "use strict";
 
-    var data = {
-        email_address : $('#login_email_address').val(),
-        password : $('#login_password').val()
-    };
+    var ret,
+        data = {
+            email_address : $('#login_email_address').val(),
+            password : $('#login_password').val()
+        },
+        form = document.forms.login_form;
 
-    // TODO: validate
-
-    $.ajax({
+    ret = $.ajax({
         type : "POST",
         url: '/login',
         async : false,
@@ -38,13 +38,16 @@ function submit_login_form() {
         dataType : 'json',
         contentType : "application/json; charset=utf-8",
         success : function () {
-            // to force chrome autocomplete to remember our form
-            // contents, submit the form successfully
-            document.forms['login'].submit();
         },
         error : function (xhr, status, err_thrown) {
             $('#login-view_failed-login').show();
         }
     });
+    console.log('login returned ' + ret);
+    if (ret.status === 200) {
+        form.submit();
+    }
     return false;
 }
+
+document.forms.login_form.onsubmit = submit_login_form;
