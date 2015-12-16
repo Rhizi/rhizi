@@ -24,6 +24,8 @@ function($,        _,            util,   consts,   model_diff,   model_types,
 
 "use strict";
 
+var rz_core; // set via init
+
 // constants
 var DEBOUNCE_TIME = 500; // milliseconds
 
@@ -292,7 +294,8 @@ function show(_graph, new_item, opt_attributes_data)
     info_container.show();
 }
 
-function init() {
+function init(_rz_core) {
+    rz_core = _rz_core;
     item = null;
     outside_change = false;
     graph = undefined;
@@ -311,6 +314,7 @@ function hide(do_commit) {
     init();
     info_container.hide();
     selection.clear();
+    rz_core.main_graph_view.zen_mode__set(false);
 }
 
 function first_time_init() {
@@ -333,9 +337,9 @@ function first_time_init() {
 }
 
 first_time_init();
-init();
 
 return {
+    init: init,
     show: show,
     hide: hide,
 };

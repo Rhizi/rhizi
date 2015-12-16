@@ -232,6 +232,7 @@ function init() {
     init_ws_connection();
     activity.init(main_graph, main_graph_view, $('.graph-view'));
     var cur_rzdoc_name = rzdoc__current__get_name();
+    item_info.init(published_var_dict);
     rzdoc__open(cur_rzdoc_name);
 }
 
