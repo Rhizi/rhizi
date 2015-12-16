@@ -1,3 +1,7 @@
+rhizi (0.3.34) unstable; urgency=low
+  * client: fix login breakage
+ -- Alon Levy <alon@pobox.com>  Wed, 16 Dec 2015 11:19:39 -0800
+
 rhizi (0.3.33) unstable; urgency=low
   * client: fix the edge case (rz_core not defined when item_info.init is called) completely
  -- Alon Levy <alon@pobox.com>  Wed, 16 Dec 2015 02:53:13 -0800
