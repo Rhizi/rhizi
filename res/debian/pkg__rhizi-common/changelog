@@ -1,3 +1,8 @@
+rhizi (0.3.24) unstable; urgency=low
+  * client: fix scrolling again
+  * client/view/search: fix bug - hiding all graph on empty search
+ -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 17:14:03 -0800
+
 rhizi (0.3.23) unstable; urgency=low
   * client: rhizi logo on bottom right, with customizable link
   * client: fix scrolling on all pages
