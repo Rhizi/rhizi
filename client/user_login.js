@@ -40,7 +40,7 @@ function submit_login_form() {
         success : function () {
             // to force chrome autocomplete to remember our form
             // contents, submit the form successfully
-            document.forms['name'].submit();
+            document.forms['login'].submit();
         },
         error : function (xhr, status, err_thrown) {
             $('#login-view_failed-login').show();
