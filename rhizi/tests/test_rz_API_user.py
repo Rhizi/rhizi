@@ -81,9 +81,7 @@ class Test_RZ_User(RhiziTestBase):
 
         self.webapp.testing = True
         self.webapp.rz_config.access_control = True
-        self.webapp.rz_config.acl_wl__email_address_set_cached = [] # init clean
-        self.webapp.rz_config.acl_wl__email_address_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'emails.txt')
-        self.webapp.rz_config.acl_wl__email_address_set_cached = ['alice@c.org']
+        self.webapp.rz_config.acl_wl__email_address_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'emails.txt')
         us_req = gen_random_user_signup()
 
 
@@ -91,7 +89,6 @@ class Test_RZ_User(RhiziTestBase):
             for email_address, expected_status_code in [('joe@test.org', 200), # whitelisted in file
                                                         ('jane@test.org', 200), # whitelisted in file
                                                         ('someone@domain.org', 200), # whitelisted in file
-                                                        ('alice@c.org', 200), # whitelisted in cache
                                                         ('roger@foo.bar', 400)]: # not whitelisted
 
                 us_req['email_address'] = email_address
