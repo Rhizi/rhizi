@@ -38,10 +38,13 @@ function submit_login_form() {
         dataType : 'json',
         contentType : "application/json; charset=utf-8",
         success : function () {
-            document.location = "/index";
+            // to force chrome autocomplete to remember our form
+            // contents, submit the form successfully
+            document.forms['name'].submit();
         },
         error : function (xhr, status, err_thrown) {
             $('#login-view_failed-login').show();
         }
     });
+    return false;
 }
