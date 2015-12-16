@@ -78,10 +78,11 @@ function init() {
         }
         if (text_processed.length > 0) {
             selection.byVisitors(selector, selector);
+            rz_core.main_graph_view.zen_mode__set(true);
         } else {
             selection.clear();
+            rz_core.main_graph_view.zen_mode__set(false);
         }
-        rz_core.main_graph_view.zen_mode__set(true);
         rz_core.update_view__graph(false);
     }
 }
