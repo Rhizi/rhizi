@@ -22,6 +22,11 @@
 </head>
 <body>
     <div id="content">{% block content %}{% endblock %}</div>
+
+    <div class="rhizi-logo"><a tabindex="-1" href="http://www.rhizi.org">
+        <img src="/static/img/rhizi-logo.png"/></a>
+    </div>
+
     <div id="footer">{% block footer %}{% endblock %}</div>
     <div id="devtools" style="display:none;">{% block devtools %}{% endblock %}</div>
     {% block content_scripts %}{% endblock %}
