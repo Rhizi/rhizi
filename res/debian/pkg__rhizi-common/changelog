@@ -1,3 +1,9 @@
+rhizi (0.3.23) unstable; urgency=low
+  * client: rhizi logo on bottom right, with customizable link
+  * client: fix scrolling on all pages
+  * dev: bower fixes
+ -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 16:41:13 -0800
+
 rhizi (0.3.22) unstable; urgency=low
   * client: fix shortest paths to be invertible
   * client: Add "description" property to node type "person"
