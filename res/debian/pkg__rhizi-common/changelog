@@ -1,3 +1,8 @@
+rhizi (0.3.25) unstable; urgency=low
+  * build.ant: follow Bacon around
+  * client/view/graph_view: make links start/end before circles
+ -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 18:24:40 -0800
+
 rhizi (0.3.24) unstable; urgency=low
   * client: fix scrolling again
   * client/view/search: fix bug - hiding all graph on empty search
