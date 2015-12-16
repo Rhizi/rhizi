@@ -126,6 +126,7 @@ class RZ_Config(object):
         cfg['rzdoc__mainpage_name'] = neo4j_schema.RZDOC__DEFAULT_MAINPAGE_NAME
         cfg['rzdoc__name__max_length'] = neo4j_schema.RZDOC__NAME__MAX_LENGTH
         cfg['rzhome__logo_file'] = "logo-red.png"
+        cfg['rzhome__logo_file_link'] = "https://github.com/Rhizi/rhizi"
 
         ret = RZ_Config()
         ret.__dict__ = cfg  # allows setting of @property attributes

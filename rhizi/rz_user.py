@@ -196,7 +196,9 @@ def rest__login():
 
     if request.method == 'GET':
         return render_template('login.html', signup_enabled=current_app.rz_config.signup_enabled,
-        rzhome__logo_file=current_app.rz_config.rzhome__logo_file)
+            rzhome__logo_file=current_app.rz_config.rzhome__logo_file,
+            rzhome__logo_file_link=current_app.rz_config.rzhome__logo_file_link,
+            )
 
 def rest__logout():
     """

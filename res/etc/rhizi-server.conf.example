@@ -77,7 +77,8 @@ piwik_id =
 #
 rzdoc__mainpage_name = Welcome Rhizi
 rzdoc__name__max_length = 256
-rzhome__logo_file = 
+rzhome__logo_file =
+rzhome__logo_file_link =
 
 # -----------------------------------------------------------------------------
 # Other

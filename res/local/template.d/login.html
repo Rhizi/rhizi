@@ -27,7 +27,9 @@ body {
 {% block content %}
 <div class="welcome-box">
 	<div class="login-view-section">
-		<img class="login-logo" src="/static/img/{{ rzhome__logo_file | safe }}" />
+		<a href="{{ rzhome__logo_file_link }}">
+			<img class="login-logo" src="/static/img/{{ rzhome__logo_file | safe }}" />
+		</a>
 	</div>
 	<div class="login-view-section">
 		<h1 class="login-header">Welcome to Rhizi</h1>
