@@ -314,7 +314,9 @@ function hide(do_commit) {
     init();
     info_container.hide();
     selection.clear();
-    rz_core.main_graph_view.zen_mode__set(false);
+    if (rz_core.main_graph_view) {
+        rz_core.main_graph_view.zen_mode__set(false);
+    }
 }
 
 function first_time_init() {
