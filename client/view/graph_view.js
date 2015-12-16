@@ -320,6 +320,7 @@ function GraphView(spec) {
     selection.selection.onValue(function () {
         if (zen_mode) {
             zen_mode__auto_center = true;
+            layout__start(false);
             layout__load_graph_and_tick();
         }
     });
