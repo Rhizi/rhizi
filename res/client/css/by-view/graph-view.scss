@@ -27,9 +27,9 @@
     stroke-width: 2px;
   }
   &.selected {
-    stroke: $yellow;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: $orange;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1;
   }
   &:hover { 
@@ -101,7 +101,7 @@
   stroke-opacity: 0.5;
   z-index:1;
   &.selected {
-    stroke: $yellow;
+    stroke: $orange;
     stroke-opacity: 1.0;
   }
   &.related {

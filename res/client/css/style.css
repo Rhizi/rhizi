@@ -1413,7 +1413,7 @@ a.menu-bar__item {
   overflow: auto;
   padding: 0px 5px; }
   .activity__entry:hover {
-    background-color: #b9b9b9; }
+    background-color: #bababa; }
   .activity__entry:focus {
     outline: none; }
 
@@ -1517,7 +1517,7 @@ a.menu-bar__item {
   stroke-opacity: 0.5;
   z-index: 1; }
   .link.selected {
-    stroke: #fad900;
+    stroke: #ff8b11;
     stroke-opacity: 1.0; }
   .link.related {
     fill: none;
@@ -1560,9 +1560,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.person.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.person:hover {
     stroke: #ff8b11;
@@ -1579,9 +1579,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.project.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.project:hover {
     stroke: #ff8b11;
@@ -1598,9 +1598,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.skill.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.skill:hover {
     stroke: #ff8b11;
@@ -1617,9 +1617,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.keyword.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.keyword:hover {
     stroke: #ff8b11;
@@ -1636,9 +1636,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.organisation.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.organisation:hover {
     stroke: #ff8b11;
@@ -1655,9 +1655,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.media.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.media:hover {
     stroke: #ff8b11;
@@ -1674,9 +1674,9 @@ a.menu-bar__item {
     stroke-opacity: 0.5;
     stroke-width: 2px; }
   .node.empty.selected {
-    stroke: #fad900;
-    stroke-opacity: 0.5;
-    stroke-width: 2px;
+    stroke: #ff8b11;
+    stroke-opacity: 1;
+    stroke-width: 6px;
     z-index: 1; }
   .node.empty:hover {
     stroke: #ff8b11;
