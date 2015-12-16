@@ -1,3 +1,8 @@
+rhizi (0.3.28) unstable; urgency=low
+  * client: fix 'x' on property menu hiding graph in zen-mode
+  * Emphasize selected nodes
+ -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 21:16:47 -0800
+
 rhizi (0.3.27) unstable; urgency=low
   * client: fix zen mode not updated regression
  -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 21:02:58 -0800
