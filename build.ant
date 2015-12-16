@@ -16,8 +16,8 @@
          <exec dir="${basedir}" executable="/usr/bin/rsync" failonerror="true">
             <arg line="-avz @{extraOpts}" />
             <arg value="@{src}" />
-	    <arg value="@{dst}" />
-	    <arg value="--copy-unsafe-links" />
+            <arg value="@{dst}" />
+            <arg value="--copy-unsafe-links" />
 
             <!-- note: RSYNC_CONNECT_PROG has not effect when dst is local dir path -->
             <env key="RSYNC_CONNECT_PROG"
@@ -209,6 +209,15 @@
       <!-- add artifacts - style.css is an exception, we keep it in repository -->
       <copy file="client/main-built.js"
          tofile="${build_dir__deb_pkg}/client/main-built.js" />
+
+      <!-- hack - should either do a full sweep here or rely on deploy-local
+           rsync-follow-links or debian link following somehow? -->
+      <exec dir="${basedir}" executable="cp">
+	      <arg value="--remove-destination" />
+	      <arg value="-L" />
+	      <arg value="res/client/lib/Bacon.js" />
+	      <arg value="${build_dir__deb_pkg}/res/client/lib/Bacon.js" />
+      </exec>
 
       <copy todir="${build_dir__deb_pkg}/debian">
          <fileset dir="res/debian/pkg__rhizi-common" />
