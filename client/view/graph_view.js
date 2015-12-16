@@ -1228,9 +1228,20 @@ function GraphView(spec) {
                         d.__dst.x !== undefined && d.__dst.y !== undefined,
                         "missing src and dst points");
 
-            var src = same_zoom(d.__src),
-                dst = same_zoom(d.__dst);
-            d_val = "M" + src[0] + "," + src[1] + "L" + dst[0] + "," + dst[1];
+            var src_center = same_zoom(d.__src),
+                src_radius = node__radius(d.__src),
+                dst_center = same_zoom(d.__dst),
+                dst_radius = node__radius(d.__dst),
+                dy = dst_center[1] - src_center[1],
+                dx = dst_center[0] - src_center[0],
+                angle = Math.atan2(dy, dx),
+                cosa = Math.cos(angle),
+                sina = Math.sin(angle),
+                src_x = src_center[0] + cosa * src_radius,
+                src_y = src_center[1] + sina * src_radius,
+                dst_x = dst_center[0] - cosa * dst_radius,
+                dst_y = dst_center[1] - sina * dst_radius;
+            d_val = "M" + src_x + "," + src_y + "L" + dst_x + "," + dst_y;
             // update ghostlink position
             ghost = $(this.nextElementSibling);
             ghost.attr("d", d_val);
