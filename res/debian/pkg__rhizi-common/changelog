@@ -1,3 +1,7 @@
+rhizi (0.3.30) unstable; urgency=low
+  * client/user_login: bug fix
+ -- Alon Levy <alon@pobox.com>  Wed, 16 Dec 2015 02:30:44 -0800
+
 rhizi (0.3.29) unstable; urgency=low
   * client: fix autocomplete on chrome
  -- Alon Levy <alon@pobox.com>  Wed, 16 Dec 2015 02:22:34 -0800
