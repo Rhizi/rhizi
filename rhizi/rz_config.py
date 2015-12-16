@@ -231,7 +231,7 @@ class RZ_Config(object):
                         email = line.strip()
                         # check email format
                         if email_re.search(email) is None:
-                            raise ValueError("Wrong email address : %s"%email)
+                            raise ValueError("Badly formatted email address : {}".format(email))
                         else :
                             wl_email_set.append(email)
 
