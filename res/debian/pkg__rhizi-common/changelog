@@ -1,3 +1,7 @@
+rhizi (0.3.26) unstable; urgency=low
+  * rhizi: fix acl address file caching, reread on file change (mtime)
+ -- Alon Levy <alon@pobox.com>  Tue, 15 Dec 2015 19:05:53 -0800
+
 rhizi (0.3.25) unstable; urgency=low
   * build.ant: follow Bacon around
   * client/view/graph_view: make links start/end before circles
