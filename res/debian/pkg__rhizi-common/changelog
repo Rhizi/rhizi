@@ -1,3 +1,7 @@
+rhizi (0.3.32) unstable; urgency=low
+  * client: fix initialization edge case
+ -- Alon Levy <alon@pobox.com>  Wed, 16 Dec 2015 02:48:48 -0800
+
 rhizi (0.3.31) unstable; urgency=low
   * debian: add missing main-built.js.map
  -- Alon Levy <alon@pobox.com>  Wed, 16 Dec 2015 02:34:32 -0800
