@@ -209,6 +209,8 @@
       <!-- add artifacts - style.css is an exception, we keep it in repository -->
       <copy file="client/main-built.js"
          tofile="${build_dir__deb_pkg}/client/main-built.js" />
+      <copy file="client/main-built.js.map"
+         tofile="${build_dir__deb_pkg}/client/main-built.js.map" />
 
       <!-- hack - should either do a full sweep here or rely on deploy-local
            rsync-follow-links or debian link following somehow? -->
