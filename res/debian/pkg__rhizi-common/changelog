@@ -1,3 +1,8 @@
+rhizi (0.3.36) unstable; urgency=low
+  * Add color legend to filter dropdown
+  * Fix node blue select outline
+ -- Alon Levy <alon@pobox.com>  Thu, 17 Dec 2015 14:59:22 -0800
+
 rhizi (0.3.35) unstable; urgency=low
   * client selection: fix shift and click behavior
   * Add activation success message
