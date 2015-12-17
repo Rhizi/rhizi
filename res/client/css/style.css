@@ -1477,6 +1477,8 @@ a.menu-bar__item {
   font-size: 18px;
   z-index: 100;
   pointer-events: all; }
+  .node:focus {
+    outline: none; }
 
 .notselected, .notselected * {
   opacity: 0.5;

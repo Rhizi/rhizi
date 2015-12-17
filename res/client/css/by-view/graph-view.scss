@@ -50,6 +50,9 @@
   font-size: $h3-size;
   z-index:100;
   pointer-events:all;
+  &:focus {
+      outline: none;
+    }
 }
 
 .notselected, .notselected *{
