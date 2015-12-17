@@ -350,9 +350,13 @@ var invert_link = function(link)
     inner_select(selected_nodes, all_related_nodes(), new_selected_links, new_related_links);
 };
 
-var invert_nodes = function(nodes)
+var invert_nodes = function(nodes, keep_selected_nodes)
 {
-    select_nodes(invert(selected_nodes, nodes), true);
+    var single_node_and_same = selected_nodes.length === 1 &&
+        nodes.length === 1 && nodes[0].id === selected_nodes[0].id;
+
+    select_nodes(keep_selected_nodes ? invert(selected_nodes, nodes) :
+            (single_node_and_same ? [] : nodes), false);
 };
 
 var invert_both = function(nodes, links)

@@ -810,7 +810,7 @@ function GraphView(spec) {
                 return;
             }
             d3.event.stopPropagation();
-            (d3.event.shiftKey ? selection.invert_nodes : selection.select_nodes)([d]);
+            selection.invert_nodes([d], d3.event.shiftKey);
             if(!temporary) {
                 showNodeInfo(d);
             }
