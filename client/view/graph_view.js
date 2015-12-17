@@ -776,7 +776,8 @@ function GraphView(spec) {
             .call(drag);
 
         node.attr('class', function(d) {
-                return ['node' +" " + d.type + " " + d.state + " " + "graph", selection.class__node(d, temporary)].join(' ');
+                return ['node' +" " + d.type + " " + d.state + " " + "graph",
+                        selection.class__node(d, temporary)].join(' ');
             })
             .each(function (d) {
                 d.zoom_obj = zoom_obj; // FIXME new object NodeView pointing to Node and Zoom
