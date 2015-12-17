@@ -189,7 +189,6 @@ function _select_nodes_helper(nodes, connected) {
     }), function (data) {
         data.link.state = _type_to_state(data.type);
     });
-    nodes.forEach(function (n) { n.state = 'selected'; });
     return {
         nodes: connected.nodes.map(function (d) { return d.node; }).concat(nodes.slice()),
         links: connected.links.map(function (d) { return d.link; }),
