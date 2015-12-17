@@ -480,6 +480,30 @@ table {
     left: -3px;
     top: 3px; }
 
+.filter_item__person {
+  background-image: linear-gradient(right, #004681, #004681 10%, transparent 10%, transparent 10%);
+  background-image: -webkit-linear-gradient(right, #004681, #004681 10%, transparent 10%, transparent 10%); }
+
+.filter_item__project {
+  background-image: linear-gradient(right, #ee3654, #ee3654 10%, transparent 10%, transparent 10%);
+  background-image: -webkit-linear-gradient(right, #ee3654, #ee3654 10%, transparent 10%, transparent 10%); }
+
+.filter_item__skill {
+  background-image: linear-gradient(right, #fad900, #fad900 10%, transparent 10%, transparent 10%);
+  background-image: -webkit-linear-gradient(right, #fad900, #fad900 10%, transparent 10%, transparent 10%); }
+
+.filter_item__organisation {
+  background-image: linear-gradient(right, #8b3ab0, #8b3ab0 10%, transparent 10%, transparent 10%);
+  background-image: -webkit-linear-gradient(right, #8b3ab0, #8b3ab0 10%, transparent 10%, transparent 10%); }
+
+.filter_item__keyword {
+  background-image: linear-gradient(right, #40C200, #40C200 10%, transparent 10%, transparent 10%);
+  background-image: -webkit-linear-gradient(right, #40C200, #40C200 10%, transparent 10%, transparent 10%); }
+
+.filter_item__media {
+  background-image: linear-gradient(right, #33c2e0, #33c2e0 10%, transparent 10%, transparent 10%);
+  background-image: -webkit-linear-gradient(right, #33c2e0, #33c2e0 10%, transparent 10%, transparent 10%); }
+
 /*
     This file is part of rhizi, a collaborative knowledge graph editor.
     Copyright (C) 2014-2015  Dor Garbash, Amir Sagie and Alon Levy

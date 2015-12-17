@@ -45,3 +45,21 @@
         cursor: pointer;
     }
 }
+
+@mixin filter_menu_color($color) {
+    background-image: linear-gradient(right, $color, $color 10%, transparent 10%, transparent 10%);
+    background-image: -webkit-linear-gradient(right, $color, $color 10%, transparent 10%, transparent 10%);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

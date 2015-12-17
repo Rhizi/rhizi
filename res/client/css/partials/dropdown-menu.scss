@@ -50,4 +50,27 @@
            left: -3px;
            top: 3px;
     }
+    min-width: 100px;
+}
+
+.filter_item__person {
+    @include filter_menu_color($person);
+}
+
+.filter_item__project {
+    @include filter_menu_color($project);
+}
+
+.filter_item__skill {
+    @include filter_menu_color($skill);
+}
+.filter_item__organisation {
+    @include filter_menu_color($organisation);
+}
+.filter_item__keyword {
+    @include filter_menu_color($keyword);
+}
+
+.filter_item__media {
+    @include filter_menu_color($media);
 }

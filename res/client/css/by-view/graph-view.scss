@@ -145,30 +145,30 @@
  */
 
 .node.person {
-  @include node-fill-color($blue);
+  @include node-fill-color($person);
 }
 .node.project {
-  @include node-fill-color($magenta);
+  @include node-fill-color($project);
 }
 
 .node.skill {
-  @include node-fill-color($yellow);
+  @include node-fill-color($skill);
 }
 
 .node.keyword {
-  @include node-fill-color($green);
+  @include node-fill-color($keyword);
 }
 
 .node.organisation {
-  @include node-fill-color($purple);
+  @include node-fill-color($organisation);
 }
 
 .node.media {
-  @include node-fill-color($cyan);
+  @include node-fill-color($media);
 }
 
 .node.empty {
-  @include node-fill-color($mid-grey);
+  @include node-fill-color($empty);
 }
 
 // TODO: how to define type colors using the scss dollar attributes? injecting css is easy, scss - not sure

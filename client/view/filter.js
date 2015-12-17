@@ -30,7 +30,8 @@ function init() {
 
         _.each(model_types.nodetypes, function (type) {
             var input = $('<input type="checkbox" checked="checked">'),
-                div = $('<div class="menu__type-filter_item"></div>');
+                filter_item_class = 'filter_item__' + type,
+                div = $('<div class="menu__type-filter_item ' + filter_item_class + '"></div>');
 
             input.attr("name", type);
             div.append(input);
