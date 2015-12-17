@@ -23,6 +23,7 @@ import unittest
 
 from ..rz_config import RZ_Config
 from ..rz_kernel import RZ_Kernel
+from ..rz_api_rest import Req_Context
 from ..model.graph import Topo_Diff
 from . import neo4j_test_util
 from . import util
@@ -39,25 +40,24 @@ class TestRZDoc(RhiziTestBase):
     def setUp(self):
         pass
 
+    def _ensure_deleted(self, rzdoc_name):
+        lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+        if lookup_ret != None:
+            self.kernel.rzdoc__delete(lookup_ret)
+
     def test_rzdoc_commit_log(self):
         rzdoc_a_name = 'test_commit_log_doc_a'
         rzdoc_b_name = 'test_commit_log_doc_b'
         for rzdoc_name in [rzdoc_a_name, rzdoc_b_name]:
-            lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-            if lookup_ret != None:
-                self.kernel.rzdoc__delete(lookup_ret)
+            self._ensure_deleted(rzdoc_name)
         rzdoc_a = self.kernel.rzdoc__create(rzdoc_a_name)
         rzdoc_b = self.kernel.rzdoc__create(rzdoc_b_name)
         node_a, _ = util.generate_random_node_dict('type_a')
         node_b, _ = util.generate_random_node_dict('type_b')
         topo_diff_a = Topo_Diff(node_set_add=[node_a], meta={'sentence': 'a'})
         topo_diff_b = Topo_Diff(node_set_add=[node_b], meta={'sentence': 'b'})
-        class FakeContext(object):
-            def __init__(self, rzdoc):
-                self.rzdoc = rzdoc
-                self.user_name = None
-        ctx_a = FakeContext(rzdoc_a)
-        ctx_b = FakeContext(rzdoc_b)
+        ctx_a = Req_Context(rzdoc=rzdoc_a)
+        ctx_b = Req_Context(rzdoc=rzdoc_b)
         self.kernel.diff_commit__topo(topo_diff=topo_diff_a, ctx=ctx_a)
         self.kernel.diff_commit__topo(topo_diff=topo_diff_b, ctx=ctx_b)
         commit_log = self.kernel.rzdoc__commit_log(rzdoc=rzdoc_a, limit=10)
