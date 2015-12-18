@@ -175,12 +175,20 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     """
     __type_check_link_or_node_map(node_map)
 
+    # merge does not support maps; we need merge to avoid multiple queries,
+    # plus we have attr_diff for setting properties, so the client can do this
+    # using two queries anyway (albiet two CSN round trips, instead of two SN)
+    keys = set(sum([sum([list(x.keys()) for x in xs], []) for xs in node_map.values()], []))
+    assert {'name', 'id'} >= keys
+
     ret = []
     for n_label, n_set in node_map.items():
 
         validate_label(n_label)
 
-        q_arr = ['create (n:%s {node_attr})' % (quote__backtick(n_label)),
+        q_arr = ['unwind {node_attrs} as node_attr',
+                 'with node_attr.id as node_attr_id, node_attr.name as node_attr_name',
+                 'merge (n:%s {id: node_attr_id, name: node_attr_name})' % (quote__backtick(n_label)),
                  'with n',
                  'order by n.id',
                  'return {id: n.id, __label_set: labels(n)}'
@@ -195,7 +203,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
             q_params = input_to_DB_property_map(n_prop_set)
             q_params_set.append(q_params)
 
-        q_tuple = (q_arr, {'node_attr': q_params_set})
+        q_tuple = (q_arr, {'node_attrs': q_params_set})
         ret.append(q_tuple)
 
     return ret

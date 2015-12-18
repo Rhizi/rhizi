@@ -238,7 +238,8 @@ class TestDBController(RhiziTestBase):
         # create test node
         test_label = rand_label()
         n_0, n_0_id = generate_random_node_dict(test_label)
-        n_0['attr_0'] = 0
+        # n_0['attr_0'] = 0 # we don't support additional attributes in a
+        # Topo_Diff right now; they must go in an Attr_Diff
         topo_diff = Topo_Diff(node_set_add=[n_0])
         op = DBO_diff_commit__topo(topo_diff)
         self.db_ctl.exec_op(op)

@@ -72,7 +72,7 @@ class TestRhiziAPI(RhiziTestBase):
     def test_commit_topo_should_have_meta_attributes(self):
         """ API commit_topo should throw error with bad-formatted JSON"""
         with self.webapp.test_client() as c:
-            node = { "id" : str(random.getrandbits(32))} #node without __label_set value
+            node = { "id" : str(random.getrandbits(32)), 'name': str(random.getrandbits(32))} #node without __label_set value
 
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : {"node_set_add" :[ node ] }}
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
