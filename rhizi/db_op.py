@@ -28,8 +28,8 @@ from .model.graph import Topo_Diff
 from .model.model import Link, RZDoc, RZCommit
 from .neo4j_cypher import DB_Query, DB_result_set, DB_Raw_Query
 from .neo4j_util import cfmt
-from .neo4j_util import generate_random_id__uuid, rzdoc__ns_label, \
-    quote__singlequote, rzdoc__meta_ns_label, quote__backtick
+from .neo4j_util import (generate_random_id__uuid, rzdoc__ns_label,
+    quote__singlequote, rzdoc__meta_ns_label, quote__backtick)
 from . import neo4j_util
 from .neo4j_util import RESERVED_LABEL__EMPTY_STRING
 from . import neo4j_schema
