@@ -556,7 +556,9 @@ class p_path(pt_abs_composite_node):  # path pattern: '()-[]-()'
     """
     path pattern
     """
-    def __init__(self): super(p_path, self).__init__()
+    def __init__(self):
+        super(p_path, self).__init__()
+
 
 class Cypher_Parser(object):
     """
@@ -870,6 +872,11 @@ class Cypher_Parser(object):
                     n_value.value = ''
 
                 return self.__parse(input[len(kw):], n_cur)
+
+    def parse__p_path(self, input, n_cur):
+        # only support a path that ends a clause
+        assert isinstance(n_cur.parent, e_clause)
+        return self.__parse(input, n_cur.parent)
 
     def __parse(self, input, n_cur):
 

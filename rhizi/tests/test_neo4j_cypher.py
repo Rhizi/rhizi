@@ -124,6 +124,9 @@ class Test_DB_Op(RhiziTestBase):
                    "create (n:'Test|')",
                    "create (n:'Test\"')",
                    "create (n:'Test?')",
+
+                   # larger path tests
+                   'match ()-[:__RZ_LINK]-(r)-[:__RZ_LINK]->()',
                    ]
         # exp_set = []
         for clause in exp_set:
