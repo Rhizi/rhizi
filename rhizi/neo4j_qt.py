@@ -78,10 +78,12 @@ class QT_RZDOC_NS_Filter__common(Query_Transformation):
 
         if Query_Struct_Type.w == q_type:
             clause_set += dbq.pt_root.clause_set_by_kw('create')
+            clause_set += dbq.pt_root.clause_set_by_kw('merge')
         if Query_Struct_Type.r == q_type:
             clause_set += dbq.pt_root.clause_set_by_kw('match')
         if Query_Struct_Type.rw == q_type:
             clause_set += dbq.pt_root.clause_set_by_kw('create')
+            clause_set += dbq.pt_root.clause_set_by_kw('merge')
             clause_set += dbq.pt_root.clause_set_by_kw('match')
 
         for c in clause_set:

@@ -37,6 +37,7 @@ tok_set__paren = ['(', ')', '[', ']', '{', '}']
 
 tok_set__kw__write = [
                       'create',
+                      'merge',
                       'set',
                       'delete',
                       'remove',
@@ -45,6 +46,7 @@ tok_set__kw__write = [
 
 tok_set__kw__supported = [  # order critical
                           'create',
+                          'merge',
                           'optional match',
                           'match',
                           ]
@@ -54,7 +56,6 @@ tok_set__kw__unsupported = [  # these are treated as generic clauses, capturing 
                             'delete',
                             'foreach',
                             'limit',
-                            'merge',
                             'order by',
                             'return',
                             'remove',
@@ -399,6 +400,13 @@ class e_clause__match(e_clause):
 
     def assert_child_spawn_type(self, n_type):
         assert n_type in [e_keyword, p_node, p_path], n_type
+
+class e_clause__merge(e_clause):
+
+    def __init__(self): super(e_clause__merge, self).__init__()
+
+    def assert_child_spawn_type(self, n_type):
+        assert n_type in [e_keyword, p_node, p_path]
 
 class e_clause__create(e_clause):
 
@@ -891,6 +899,7 @@ class Cypher_Parser(object):
         #    - e_label_set, e_attr_set > e_set
         #
         if isinstance(n_cur, e_clause__create): return self.parse__e_clause_create_or_match(input, n_cur)
+        if isinstance(n_cur, e_clause__merge): return self.parse__e_clause_create_or_match(input, n_cur)
         if isinstance(n_cur, e_clause__match): return self.parse__e_clause_create_or_match(input, n_cur)
         if isinstance(n_cur, e_clause__where): return self.parse__e_clause__common(input, n_cur)
         if isinstance(n_cur, e_clause): return self.parse__e_clause__common(input, n_cur)

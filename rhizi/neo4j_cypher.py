@@ -125,7 +125,7 @@ class DB_Query(object):
         for kw, _clause_set in self.pt_root.index__kw_to_clause_set().items():
             if kw in neo4j_cypher_parser.tok_set__kw__write:
                 w = True
-            if kw == 'match':
+            if kw in ['match', 'merge']:
                 r = True
 
         if r and w: return Query_Struct_Type.rw
