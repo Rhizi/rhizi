@@ -93,10 +93,9 @@ class DB_Driver_REST(DB_Driver_Base):
 
             self.log_committed_queries(statement_param_pair_set)
         except Neo4JException as e:
-            # NOTE: python 2.7 loses the stack when reraising the exception.
-            # python 3 does the right thing, but gevent doesn't support it yet.
-            log.error('REST statement: %r' % statement_param_pair_set)
-            log.exception(e)
+            if python2:
+                log.error('REST statement: %r' % statement_param_pair_set)
+                log.exception(e)
             raise e
         except Exception as e:
             log.error('REST statement: %r' % statement_param_pair_set)
