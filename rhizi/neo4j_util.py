@@ -142,7 +142,7 @@ def gen_clause_attr_filter_from_filter_attr_map(filter_attr_map, node_label="n")
 def gen_clause_where_from_filter_attr_map(filter_attr_map, node_label="n"):
     """
     convert a filter attribute map to a parameterized Cypher where clause, eg.
-    in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1,2] }
+    in: { 'att_foo': [ 'a', 'b' ], 'att_goo': [1, 2] }
     out: {att_foo: {att_foo}, att_goo: {att_goo}, ...}
 
     this function will essentially ignore all but the first value in the value list
