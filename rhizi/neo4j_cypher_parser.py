@@ -50,6 +50,7 @@ tok_set__kw__supported = [  # order critical
                           ]
 
 tok_set__kw__unsupported = [  # these are treated as generic clauses, capturing until the next keyword
+                            'unwind',
                             'delete',
                             'foreach',
                             'limit',
