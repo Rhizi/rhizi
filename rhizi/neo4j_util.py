@@ -216,6 +216,12 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
     """
     __type_check_link_or_node_map(link_map)
 
+    # merge requirement, see longer comment above
+    keys = set(sum([sum([list(x.keys()) for x in xs], []) for xs in link_map.values()], []))
+    assert {'__src_id', '__dst_id', '__type', 'id'} >= keys
+
+    # __type is ignored in the map
+
     ret = []
     for l_type, l_set in link_map.items():
 
@@ -223,8 +229,8 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
             l_type = RESERVED_LABEL__EMPTY_STRING
         validate_label(l_type);
 
-        q_arr = ['match (src {id: {src}.id}), (dst {id: {dst}.id})',
-                 'create (src)-[r:%(__type)s {link_attr}]->(dst)' % {'__type': quote__backtick(l_type)},
+        q_arr = ['match (src {id: {src_id}}), (dst {id: {dst_id}})',
+                 'merge (src)-[r:%(__type)s {id: {link_id}}]->(dst)' % {'__type': quote__backtick(l_type)},
                  'with r, src, dst',
                  'order by r.id',
                  'return {id: r.id, __src_id: src.id, __dst_id: dst.id, __type: type(r)}',
@@ -243,9 +249,9 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
 
             src_id = link['__src_id']
             dst_id = link['__dst_id']
-            q_params = {'src': { 'id': src_id},
-                        'dst': { 'id': dst_id},
-                        'link_attr' : input_to_DB_property_map(l_prop_set)}
+            q_params = {'src_id': src_id,
+                        'dst_id': dst_id,
+                        'link_id' : input_to_DB_property_map(l_prop_set)['id']}
 
             q_tuple = (q_arr, q_params)
             ret.append(q_tuple)
