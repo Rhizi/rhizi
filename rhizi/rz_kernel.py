@@ -30,11 +30,12 @@ from .db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__c
     DBO_rzdoc__lookup_by_name, DBO_rzdoc__clone, DBO_rzdoc__delete, DBO_rzdoc__search,
     DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop,
     DBO_match_node_set_by_id_attribute, DBO_rzdb__fetch_DB_metablock,
-    DBO_rzdoc__commit_log, DBO_factory__default)
+    DBO_rzdoc__commit_log, DBO_factory__default, DBO_raw_query_set,
+    DBO_rzdoc__commit)
 from .db_op import DBO_diff_commit__topo
 from .model.graph import Topo_Diff
 from .model.model import RZDoc
-from .neo4j_qt import QT_RZDOC_NS_Filter, QT_RZDOC_Meta_NS_Filter
+from .neo4j_qt import QT_RZDOC_Meta_NS_Filter
 from .neo4j_util import generate_random_rzdoc_id
 
 
@@ -283,10 +284,19 @@ class RZ_Kernel(object):
         :param ctx:
         :return: return of the DBO_diff_commit__topo operation
         """
-        op = DBO_diff_commit__topo(topo_diff)
-        op = QT_RZDOC_NS_Filter(rzdoc)(op)
+        # find any existing nodes and links, remove them from the topo_diff, and instead
+        # just add the document label to them
+        for x in topo_diff.node_set_add:
+            assert set(x.keys()) >= {'name', 'id'}
+        graph_op = DBO_diff_commit__topo(topo_diff)
 
-        return self.db_ctl.exec_op(op)
+        # TODO: combined op that succeeds only if both ops succed
+        graph_ret = self.db_ctl.exec_op(graph_op)
+
+        meta_op = DBO_rzdoc__commit(topo_diff, rzdoc=rzdoc)
+        meta_ret = self.db_ctl.exec_op(meta_op)
+
+        return graph_ret
 
 
     @deco__DB_status_check
@@ -319,7 +329,6 @@ class RZ_Kernel(object):
         """
         rzdoc = ctx.rzdoc
         op = DBO_diff_commit__attr(attr_diff)
-        op = QT_RZDOC_NS_Filter(rzdoc)(op)
 
         op_ret = self.db_ctl.exec_op(op)
         ts_created = self._exec_chain_commit_op(attr_diff, ctx, attr_diff.meta)
@@ -340,8 +349,7 @@ class RZ_Kernel(object):
 
         @return Topo_Diff with node/link attributes
         """
-        op = DBO_rzdoc__clone()
-        op = QT_RZDOC_NS_Filter(rzdoc)(op)
+        op = DBO_rzdoc__clone(rzdoc)
 
         topo_diff = self.db_ctl.exec_op(op)
         return topo_diff

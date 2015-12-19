@@ -18,7 +18,7 @@
 #
 # meta label schema
 #
-NEO4J_SCHEMA_VERSION = '0.2.1'
+NEO4J_SCHEMA_VERSION = '0.2.2'
 
 META_LABEL__RZDB_META = '__RZDB_META'
 
@@ -35,6 +35,17 @@ META_LABEL__VC_OPERATION = '__OPERATION'
 META_LABEL__VC_EMPTY_RZDOC_HASH = 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc'  # value of: echo '' | sha1sum
 
 META_LABEL__USER = '__USER'  # user node
+
+META_LABEL__RZDOC_META_NODE = '__RZDOC_META_NODE'
+META_LABEL__RZDOC_META_LINK = '__RZDOC_META_LINK'
+META_LABEL__RZDOC_BELONGS_TO = '__RZDOC_BELONGS_TO'
+
+META_LABEL__RZDOC_NODE = '__RZDOC_NODE'
+META_LABEL__RZDOC_LINK = '__RZDOC_LINK' # not actually required - unusable on a
+                                        # relationship, but if we move to an
+                                        # edge as node representation then use
+                                        # this.
+
 
 meta_label_set = [META_LABEL__VC_HEAD,
                   META_LABEL__VC_COMMIT,

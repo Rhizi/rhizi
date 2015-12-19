@@ -510,6 +510,8 @@ class DBO_diff_commit__attr(DB_op):
 
         self.op_return_value__attr_diff = deepcopy(attr_diff)  # cache copy as return value on success
 
+        node_label = neo4j_schema.META_LABEL__RZDOC_NODE
+
         for id_attr, n_attr_diff in attr_diff.type__node.items():
             # TODO parameterize multiple attr removal
             attr_set_rm = n_attr_diff['__attr_remove']
@@ -517,7 +519,7 @@ class DBO_diff_commit__attr(DB_op):
 
             assert len(attr_set_rm) > 0 or len(attr_set_wrt) > 0
 
-            q_arr = ["match (n {id: {match_attr_set}.id})",  # [!] with match (n {match_attr_set}) neo4j returns: 'Parameter maps cannot be used in MATCH patterns (use a literal map instead'
+            q_arr = ["match (n:%s {id: {match_attr_set}.id})" % node_label,
                      "return n.id, n"]
             q_param_set = {'match_attr_set': {'id': id_attr}}
 
@@ -726,8 +728,9 @@ class DBO_rm_node_set(DB_op):
 
         super(DBO_rm_node_set, self).__init__()
 
+        node_label = neo4j_schema.META_LABEL__RZDOC_NODE
         if rm_links:
-            q_arr = ['match (n)',
+            q_arr = ['match (n:%s)' % node_label,
                      'with n, n.id as n_id',
                      'where n_id in {id_set}',
                      'optional match (n)-[r]-()',
@@ -736,7 +739,7 @@ class DBO_rm_node_set(DB_op):
                      'return n_id, collect(r_id)'
              ]
         else:
-            q_arr = ['match (n)',
+            q_arr = ['match (n:%s)' % node_label,
                      'with n, n.id as n_id',
                      'where n_id in {id_set}',
                      'delete n',
@@ -759,7 +762,9 @@ class DBO_rm_link_set(DB_op):
 
         super(DBO_rm_link_set, self).__init__()
 
-        q_arr = ['match ()-[r]->()',
+        node_label = neo4j_schema.META_LABEL__RZDOC_NODE
+
+        q_arr = ['match (:%s)-[r]->(:%s)' % (node_label, node_label),
                  'with r, r.id as r_id',
                  'where r_id in {id_set}',
                  'delete r',
@@ -894,9 +899,9 @@ class DBO_rzdoc__commit_log(DB_op):
                     ret.append(diff)
         return ret
 
-class DBO_rzdoc__clone(DB_op):
+class DBO_rzdoc__clone(DBO_raw_query_set):
 
-    def __init__(self, limit=16384):
+    def __init__(self, rzdoc, limit=16384):
         """
         clone rhizi
 
@@ -908,16 +913,26 @@ class DBO_rzdoc__clone(DB_op):
         self.limit = limit
         self.skip = 0
 
-        q_arr = ['match (n)',
-                 'with n',
-                 'order by n.id',
-                 'skip %d' % (self.skip),
-                 'limit %d' % (self.limit),
-                 'optional match (n)-[r]->(m)',
-                 'return n,labels(n),collect([r, type(r), m.id])']
+        belongs_to = neo4j_schema.META_LABEL__RZDOC_BELONGS_TO
+        meta_node = neo4j_schema.META_LABEL__RZDOC_META_NODE
+        meta_link = neo4j_schema.META_LABEL__RZDOC_META_LINK
+        node_label = neo4j_schema.META_LABEL__RZDOC_NODE
 
-        db_q = DB_Query(q_arr)
-        self.add_db_query(db_q)
+        # TODO: reintroduce skip and limit
+
+        q_arr = ['match (d:%s {id: {rzdoc_id}})' % neo4j_schema.META_LABEL__RZDOC_TYPE,
+                 'optional match (mn:%s)-[:%s]->(d)' % (meta_node, belongs_to),
+                 'optional match (ml:%s)-[:%s]->(d)' % (meta_link, belongs_to),
+                 'with collect(mn.id) as n_id_set, collect(ml.id) as l_id_set',
+                 'match (n:%s)' % node_label,
+                 'where n.id in n_id_set',
+                 'with n, n_id_set, l_id_set',
+                 'order by n.id',
+                 'optional match (n)-[r]->(m)',
+                 'where r.id in l_id_set',
+                 'return n, filter(l in labels(n) where l <> "%s"), collect([r, type(r), m.id])' % node_label]
+
+        self.add_statement(q_arr, {'rzdoc_id': rzdoc.id})
 
     def process_result_set(self):
         ret_n_set = []
@@ -1081,3 +1096,80 @@ class DBO_rzdoc__rename(DB_op):
         rzdoc = RZDoc(rzdoc_name=rzdoc_dict['name'])
         rzdoc.id = rzdoc_dict['id']
         return rzdoc
+
+
+class DBO_rzdoc__commit(DBO_raw_query_set):
+
+    def __init__(self, topo_diff, rzdoc):
+        """
+        Create any missing meta nodes and meta links and link them to the rzdoc node
+        rzdoc node must already be created
+        """
+        super(DBO_rzdoc__commit, self).__init__()
+
+        # Node and Link addition
+        def add_query(idset, element_meta):
+            q_arr = ['unwind {params} as e_id',
+                     'match (d {id: {doc_id}})',
+                     'merge (:%(meta)s {id: e_id})-[:%(link)s]->(d)' % {
+                        'meta': element_meta,
+                        'link': neo4j_schema.META_LABEL__RZDOC_BELONGS_TO,
+                    }
+                    ]
+            param_set = {'doc_id': rzdoc.id,
+                        'params': idset}
+            self.add_statement(q_arr, param_set)
+        add_query(
+            idset=[x['id'] for x in topo_diff.node_set_add],
+            element_meta=neo4j_schema.META_LABEL__RZDOC_META_NODE)
+        add_query(
+            idset=[x['id'] for x in topo_diff.link_set_add],
+            element_meta=neo4j_schema.META_LABEL__RZDOC_META_LINK)
+
+        # Link removal
+        d_link = {
+                     'meta': neo4j_schema.META_LABEL__RZDOC_META_LINK,
+                     'link': neo4j_schema.META_LABEL__RZDOC_BELONGS_TO,
+                 }
+        q_arr = ['unwind {params} as l_id',
+                 'match (d {id: {doc_id}})',
+                 'match (ml:%(meta)s {id: l_id})' % d_link,
+                 'optional match (ml)-[l:%(link)s]->(d)' % d_link,
+                 'optional match (ml)-[l_all:%(link)s]->()' % d_link,
+                 'delete l',
+                 'return l_id, count(l_all)'
+                ]
+        param_set = {'doc_id': rzdoc.id,
+                     'params': topo_diff.link_id_set_rm}
+        self.add_statement(q_arr, param_set)
+
+        # silly trick beause both statements may end up returning nothing
+        # at all, so the 1 plays the roll of a separator, see
+        # process_result_set
+        self.add_statement(['return 1'])
+
+        # Node removal
+        d_node = {
+                     'meta': neo4j_schema.META_LABEL__RZDOC_META_NODE,
+                     'link': neo4j_schema.META_LABEL__RZDOC_BELONGS_TO,
+                 }
+        q_arr = ['unwind {params} as n_id',
+                 'match (d {id: {doc_id}})',
+                 'optional match (mn:%(meta)s {id: n_id})-[l:%(link)s]->(d)' % d_node,
+                 'optional match (mn)-[l_all:%(link)s]->()' % d_node,
+                 'delete l',
+                 'return n_id, count(l_all)'
+                ]
+        param_set = {'doc_id': rzdoc.id,
+                     'params': topo_diff.node_id_set_rm}
+        self.add_statement(q_arr, param_set)
+
+    def process_result_set(self):
+        res = DB_op.process_result_set(self)
+        middle = res.index(1)
+        removed_link_ids = [] if middle == 0 else res[0]
+        removed_node_ids = [] if middle == len(res) - 1 else res[-1]
+        print('debug: removed links: {}'.format(removed_link_ids))
+        print('debug: removed nodes: {}'.format(removed_node_ids))
+        return removed_node_ids, removed_link_ids
+

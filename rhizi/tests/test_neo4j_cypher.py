@@ -22,7 +22,8 @@ import unittest
 from ..db_op import DBO_rzdoc__clone, DBO_add_node_set, DBO_add_link_set, \
     DBO_block_chain__commit, DBO_diff_commit__attr, DBO_diff_commit__topo, \
     DBO_rm_node_set, DB_composed_op, DBO_block_chain__init, DBO_rzdoc__create, \
-    DBO_rzdoc__delete, DBO_rzdoc__search, DBO_rzdoc__lookup_by_name, DB_op
+    DBO_rzdoc__delete, DBO_rzdoc__search, DBO_rzdoc__lookup_by_name, DB_op, \
+    DBO_rzdoc__commit
 from ..model.graph import Attr_Diff, Topo_Diff
 from ..neo4j_cypher import Cypher_Parser, DB_Query
 from ..neo4j_qt import QT_RZDOC_NS_Filter
@@ -53,7 +54,6 @@ class Test_DB_Op(RhiziTestBase):
         test_rzdoc = generate_random_RZDoc(test_label)
 
         op_set = [
-                  DBO_rzdoc__clone(),
                   DBO_add_node_set(meta_attr_list_to_meta_attr_map(n_set)),
                   DBO_add_link_set(meta_attr_list_to_meta_attr_map(l_set, meta_attr='__type')),
                   DBO_diff_commit__attr(attr_diff),
@@ -65,6 +65,7 @@ class Test_DB_Op(RhiziTestBase):
                   DBO_block_chain__commit(commit_obj=topo_diff.to_json_dict()),
 
                   # rzdoc
+                  DBO_rzdoc__clone(test_rzdoc),
                   DBO_rzdoc__create(test_rzdoc),
                   DBO_rzdoc__delete(test_rzdoc),
                   DBO_rzdoc__search(''),
@@ -145,6 +146,8 @@ class Test_DB_Op(RhiziTestBase):
 
         for op in op_set:
             if isinstance(op, DB_composed_op): continue  # validated through sub-ops
+            if isinstance(op, DBO_rzdoc__clone): continue # no support for 'with collect(mn.id) as n_id_set'
+            if isinstance(op, DBO_rzdoc__commit): continue # ditto
             for _idx, db_q, _db_q_result in op.iter__r_set():
                 # TODO: need python3 for this: with self.subTest(i=num):
                 q_str = db_q.q_str
@@ -188,9 +191,11 @@ class Test_DB_Op(RhiziTestBase):
     def helper_T__common(self, dbq_set, T, *args):
         db_op = DB_op()
         for db_q in dbq_set:
+            if not isinstance(db_q, DB_Query): continue
             db_op.add_db_query(db_q)
         T(db_op)
         for db_q in dbq_set:
+            if not isinstance(db_q, DB_Query): continue
             q_str__post = db_q.pt_root.str__cypher_query()
             #self.log.debug('test case:\n\t q: %s\n\tq\': %s\n' % (q_str__pre, q_str__post))
 
