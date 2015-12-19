@@ -31,6 +31,7 @@ from ..db_op import DBO_load_node_set_by_DB_id
 from ..db_op import DBO_match_link_id_set
 from ..db_op import DBO_match_node_id_set
 from ..db_op import DBO_match_node_set_by_id_attribute
+from ..db_op import DBO_raw_query_set
 from ..model.graph import Attr_Diff
 from ..model.graph import Topo_Diff
 from ..model.model import Link
@@ -178,6 +179,16 @@ class TestDBController(RhiziTestBase):
                               link_set_add=l_set)
         return topo_diff, n_set, l_set
 
+    def _assert_no_two_nodes_of_same_attr(self, attr):
+        # not working, no idea why
+        #op = DBO_raw_query_set(['match n where has(n.id) return count(n) = count(distinct(n))'])
+        op = DBO_raw_query_set(['match n where has(n.%s) return n.%s' % (attr, attr)])
+        ret = self.db_ctl.exec_op(op)
+        self.assertTrue(len(ret) == len(set(ret)))
+
+    def _assert_no_two_nodes_of_same_name_or_id(self):
+        self._assert_no_two_nodes_of_same_attr('id')
+        self._assert_no_two_nodes_of_same_attr('name')
 
     def test_diff_commit__topo(self):
 
@@ -211,7 +222,13 @@ class TestDBController(RhiziTestBase):
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 2)
 
-        # remova links
+        # repeat commit, assert no additional nodes of same id or name exist
+        self._assert_no_two_nodes_of_same_name_or_id()
+        op = DBO_diff_commit__topo(topo_diff)
+        ret_topo_diff = self.db_ctl.exec_op(op)
+        self._assert_no_two_nodes_of_same_name_or_id()
+
+        # remove links
         topo_diff = Topo_Diff(link_id_set_rm=[l_0_id, l_1_id])
         op = DBO_diff_commit__topo(topo_diff)
         ret_topo_diff = self.db_ctl.exec_op(op)
