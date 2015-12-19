@@ -129,7 +129,7 @@ class TestDBController(RhiziTestBase):
         hash_ret2 = topo_ret2.node_set_add[0]['id']
         hash_list = self.db_ctl.exec_op(op_print)
 
-        # TODO - what happened hear that this part of the test now fails?
+        # TODO - what happened here that this part of the test now fails?
         #hash_commit_0 = DBO_block_chain__commit.calc_blob_hash()  # default empty blob hash
 
         #self.assertEqual(hash_list.pop(), hash_commit_0)
