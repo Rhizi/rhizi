@@ -145,10 +145,6 @@ class DB_Raw_Query(object):
         self.q_arr = q_arr
         self.param_set = param_set
 
-    def __iter__(self):
-        for keyword, clause_set in self.pt_root.index__kw_to_clause_set().items():
-            yield keyword, clause_set
-
     def str__cypher_query(self):
         return ' '.join(self.q_arr)
 
