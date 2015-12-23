@@ -80,7 +80,7 @@ REPO_ROOT = parentdir(find_dir_up_or_abort('.git'))
 
 MTA_PORT = int(env('RHIZI_TESTS__MTA_PORT', 10025))
 
-NEO4J_VERSION = '2.3.0'
+NEO4J_VERSION = '2.3.1'
 NEO4J_URL = "http://neo4j.com/artifact.php?name=neo4j-community-{}-unix.tar.gz".format(NEO4J_VERSION)
 ASSET_DIRECTORY = env('RHIZI_TESTS__ASSET_DIRECTORY', os.path.join(REPO_ROOT, 'assets'))
 NEO4J_ARCHIVE = os.path.join(ASSET_DIRECTORY, 'neo4j-community-{}-unix.tar.gz'.format(NEO4J_VERSION))
