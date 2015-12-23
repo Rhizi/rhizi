@@ -74,6 +74,8 @@ class Test_DB_Op(RhiziTestBase):
 
     def test_cypher_exp_parsing(self):
 
+        self.maxDiff = None
+
         def validate_parse_tree(pt, q_str):
             self.assertEquals(pt.str__cypher_query(), q_str,
                               u"""{} != {}

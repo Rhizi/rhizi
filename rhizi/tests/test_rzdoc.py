@@ -35,6 +35,7 @@ class TestRZDoc(RhiziTestBase):
 
     @classmethod
     def setUpClass(clz):
+        clz.maxDiff = None
         super(TestRZDoc, clz).setUpClass()
 
     def setUp(self):

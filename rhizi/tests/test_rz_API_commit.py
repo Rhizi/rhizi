@@ -164,8 +164,8 @@ class TestRhiziAPI(RhiziTestBase):
             node_ids = resp["data"]["node_id_set_add"]
 
             # create links
-            linkA = self.get_link(node_ids[0],node_ids[1])
-            linkB = self.get_link(node_ids[0],node_ids[1])
+            linkA = self.get_link(node_ids[0], node_ids[1])
+            linkB = self.get_link(node_ids[0], node_ids[1])
 
             topo_diff = { "link_set_add" : [ linkA, linkB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
