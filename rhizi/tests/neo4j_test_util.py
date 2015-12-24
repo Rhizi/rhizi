@@ -42,7 +42,7 @@ class DBO_random_data_generation(DB_op):
     def __init__(self, lim_n=128, lim_r=256, prob_link_create=0.3):
         """
         generate random DB data
-        
+
         @return: tuple consisting of the random node,link labels generated
         """
         assert 2 <= lim_n
