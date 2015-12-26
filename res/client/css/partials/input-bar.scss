@@ -105,8 +105,9 @@
     height: 36px;
 }
 
-#btn_add {
+.btn_input_submit {
   float: right;
+  cursor: hand;
   background: url(../img/plus-button.png);
   background-position: center;
   background-repeat: no-repeat;
