@@ -631,13 +631,13 @@ table {
 
 .btn_input_submit {
   float: right;
-  background: url(../img/plus-button.png);
-  background-position: center;
-  background-repeat: no-repeat;
+  color: white;
+  font-family: "Source_Regular", sans-serif;
+  cursor: pointer;
   background-color: red;
   position: absolute;
+  width: 65px;
   height: 36px;
-  width: 36px;
   top: 0px;
   right: 0px;
   border: 0; }
