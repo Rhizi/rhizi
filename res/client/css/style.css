@@ -472,7 +472,9 @@ table {
   padding-right: 10px;
   text-align: left;
   z-index: 100;
-  background: white; }
+  background: white;
+  min-width: 100px;
+  min-width: 100px; }
   .menu__type-filter_item:hover {
     background-color: lightgray; }
   .menu__type-filter_item input {

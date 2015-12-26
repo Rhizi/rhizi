@@ -41,6 +41,7 @@
     text-align: left;
     z-index: 100;
     background: white;
+    min-width: 100px;
     &:hover {
         background-color: lightgray;
     }
