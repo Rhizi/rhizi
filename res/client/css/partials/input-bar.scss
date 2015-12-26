@@ -18,13 +18,6 @@
 
 @import '../modules/mixins'; // For box-shadow
 
-.filter-container {
-  left: $graph-margin-left;
-  form {
-    display: inline;
-  }
-}
-
 .input-container {
   left: $graph-margin-left;
   form {
@@ -63,20 +56,7 @@
   }  
 }
 
-.filter-dropdown {
-    border: solid #919095;
-    border-width: 1px 1px 1px 1px;
-    cursor: pointer;
-    float: left;
-    left: $graph-margin-left;
-    font-size: 12px;
-    height: 34px;
-    line-height: 36px;
-    margin-left: 10px;
-    text-align: center;
-    background: white;
-    min-width: 65px;
-}
+
 
 #input-container__search {
   margin-top: $two-baselines;

@@ -16,10 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+.filter-dropdown {
+    border: solid $mid-grey;
+    border-width: 1px 1px 1px 1px;
+    cursor: pointer;
+    float: left;
+    left: $graph-margin-left;
+    font-size: 12px;
+    height: 34px;
+    line-height: 36px;
+    margin-left: 10px;
+    text-align: center;
+    background: white;
+    min-width: 65px;
+}
+
+.filter-container {
+  left: $graph-margin-left;
+  form {
+    display: inline;
+  }
+}
+
 .filter-dropdown-menu {
     z-index: 1;
-    @include rz-box-shadow(0px, 3px, 6px, 0px, rgba(0,0,0,0.3) );
+    top: -2px;
+    @include rz-box-shadow(0px, 3px, 0px, 0px, rgba(0,0,0,0.3) );
     position: relative;
+    border: solid $mid-grey;
+    border-width: 0px 1px 1px 1px; 
  }
 
 .dropdown-item {
