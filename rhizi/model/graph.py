@@ -22,7 +22,7 @@ class Attr_Diff(dict):
     Represents a change to note attributes, where nodes can represent
     either logical nodes or logical links, and attributes can be added,
     changed or removed
-    
+
     Example:
             attr_diff = {'__type_node' : {n_id: {'__attr_write': {'attr_0': 0,
                                                                   'attr_1': 'a'},
@@ -177,6 +177,8 @@ class Topo_Diff(object):
 
     def __str__(self):
         return __name__ + ': ' + ', '.join('%s: %s' % (k, v) for k, v in self.__dict__.items())
+
+    __repr__ = __str__
 
     def len__n_add(self):
         return len(self.node_set_add)
