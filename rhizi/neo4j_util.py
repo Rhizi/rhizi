@@ -181,6 +181,8 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     keys = set(sum([sum([list(x.keys()) for x in xs], []) for xs in node_map.values()], []))
     assert {'name', 'id'} >= keys
 
+    node_label = neo4j_schema.META_LABEL__RZDOC_NODE
+
     ret = []
     for n_label, n_set in node_map.items():
 
@@ -188,11 +190,12 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
 
         q_arr = ['unwind {node_attrs} as node_attr',
                  'with node_attr.id as node_attr_id, node_attr.name as node_attr_name',
-                 'merge (n:%s:%s {id: node_attr_id, name: node_attr_name})' % (
-                     neo4j_schema.META_LABEL__RZDOC_NODE, quote__backtick(n_label)),
-                 'with n',
+                 'merge (n:%s {name: node_attr_name})' % node_label,
+                 'on create set n.id = node_attr_id',
+                 'on create set n:%s' % quote__backtick(n_label),
+                 'with n, node_attr_id',
                  'order by n.id',
-                 'return {id: n.id, __label_set: labels(n)}'
+                 'return {id: n.id, asked_id: node_attr_id, __label_set: labels(n)}'
                  ]
 
         q_params_set = []

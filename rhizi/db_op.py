@@ -131,7 +131,34 @@ class DB_op(object):
         id_str = m.group('id')
         self.tx_id = int(id_str)
 
-class DBO_add_node_set(DB_op):
+
+class DBO_raw_query_set(DB_op):
+    """
+    Freeform set of DB query statements
+
+    [!] use of this class is discouraged and should be done
+        only when no other DB_op is able to handle the task
+        at hand
+    """
+    def __init__(self, q_arr=None, q_params={}):
+        super(DBO_raw_query_set, self).__init__()
+
+        if q_arr is not None:
+            self.add_statement(q_arr, q_params)
+
+    def add_statement(self, q_arr, query_params={}):
+        """
+        super.add_statement() override: use raw queries
+        """
+        db_q = DB_Raw_Query(q_arr, query_params)
+        self.query_set.append(db_q)
+        return len(self.query_set)
+
+    def add_db_query(self, db_q):
+        assert False, 'DBO_raw_query_set only supports raw queries - use add_statement()'
+
+
+class DBO_add_node_set(DBO_raw_query_set):
 
     def __init__(self, node_map):
         """
@@ -149,7 +176,7 @@ class DBO_add_node_set(DB_op):
         for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
-                    n_id_set.append(ret_dict['id'])
+                    n_id_set.append((ret_dict['id'], ret_dict['asked_id']))
 
         return n_id_set
 
@@ -394,31 +421,6 @@ class DBO_block_chain__list(DB_op):
             for row in r_set:
                 for col in row:
                     return col
-
-class DBO_raw_query_set(DB_op):
-    """
-    Freeform set of DB query statements
-
-    [!] use of this class is discouraged and should be done
-        only when no other DB_op is able to handle the task
-        at hand
-    """
-    def __init__(self, q_arr=None, q_params={}):
-        super(DBO_raw_query_set, self).__init__()
-
-        if q_arr is not None:
-            self.add_statement(q_arr, q_params)
-
-    def add_statement(self, q_arr, query_params={}):
-        """
-        super.add_statement() override: use raw queries
-        """
-        db_q = DB_Raw_Query(q_arr, query_params)
-        self.query_set.append(db_q)
-        return len(self.query_set)
-
-    def add_db_query(self, db_q):
-        assert False, 'DBO_raw_query_set only supports raw queries - use add_statement()'
 
 class DBO_diff_commit__topo(DB_composed_op):
 
