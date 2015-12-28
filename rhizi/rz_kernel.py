@@ -131,7 +131,7 @@ def for_all_public_functions(decorator):
         return cls
     return cls_decorated
 
-@for_all_public_functions(deco__exception_log)
+#@for_all_public_functions(deco__exception_log)
 class RZ_Kernel(object):
     """
     RZ kernel:
@@ -288,13 +288,18 @@ class RZ_Kernel(object):
         # just add the document label to them
         for x in topo_diff.node_set_add:
             assert set(x.keys()) >= {'name', 'id'}
+
+        meta_op = DBO_rzdoc__commit(topo_diff, rzdoc=rzdoc)
+        removed_nodes, removed_links = self.db_ctl.exec_op(meta_op)
+        nodes_d = dict(removed_nodes)
+        links_d = dict(removed_links)
+        topo_diff.node_id_set_rm = [nid for nid, link_count in nodes_d.items() if link_count == 0]
+        topo_diff.link_id_set_rm = [lid for lid, link_count in links_d.items() if link_count == 0]
+
         graph_op = DBO_diff_commit__topo(topo_diff)
 
         # TODO: combined op that succeeds only if both ops succed
         graph_ret = self.db_ctl.exec_op(graph_op)
-
-        meta_op = DBO_rzdoc__commit(topo_diff, rzdoc=rzdoc)
-        meta_ret = self.db_ctl.exec_op(meta_op)
 
         return graph_ret
 

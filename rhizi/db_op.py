@@ -1109,14 +1109,14 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
         """
         super(DBO_rzdoc__commit, self).__init__()
 
+        belongs_to = neo4j_schema.META_LABEL__RZDOC_BELONGS_TO
+
         # Node and Link addition
         def add_query(idset, element_meta):
             q_arr = ['unwind {params} as e_id',
                      'match (d {id: {doc_id}})',
-                     'merge (:%(meta)s {id: e_id})-[:%(link)s]->(d)' % {
-                        'meta': element_meta,
-                        'link': neo4j_schema.META_LABEL__RZDOC_BELONGS_TO,
-                    }
+                     'merge (meta:%s {id: e_id})' % element_meta,
+                     'merge (meta)-[:%s]->(d)' % belongs_to
                     ]
             param_set = {'doc_id': rzdoc.id,
                         'params': idset}
@@ -1137,18 +1137,13 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
                  'match (d {id: {doc_id}})',
                  'match (ml:%(meta)s {id: l_id})' % d_link,
                  'optional match (ml)-[l:%(link)s]->(d)' % d_link,
-                 'optional match (ml)-[l_all:%(link)s]->()' % d_link,
+                 'optional match (ml)-[l_all:%(link)s]->(q) where q <> d' % d_link,
                  'delete l',
                  'return l_id, count(l_all)'
                 ]
         param_set = {'doc_id': rzdoc.id,
                      'params': topo_diff.link_id_set_rm}
         self.add_statement(q_arr, param_set)
-
-        # silly trick beause both statements may end up returning nothing
-        # at all, so the 1 plays the roll of a separator, see
-        # process_result_set
-        self.add_statement(['return 1'])
 
         # Node removal
         d_node = {
@@ -1158,7 +1153,7 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
         q_arr = ['unwind {params} as n_id',
                  'match (d {id: {doc_id}})',
                  'optional match (mn:%(meta)s {id: n_id})-[l:%(link)s]->(d)' % d_node,
-                 'optional match (mn)-[l_all:%(link)s]->()' % d_node,
+                 'optional match (mn)-[l_all:%(link)s]->(q) where q <> d' % d_node,
                  'delete l',
                  'return n_id, count(l_all)'
                 ]
@@ -1167,10 +1162,10 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
         self.add_statement(q_arr, param_set)
 
     def process_result_set(self):
-        res = DB_op.process_result_set(self)
-        middle = res.index(1)
-        removed_link_ids = [] if middle == 0 else res[0]
-        removed_node_ids = [] if middle == len(res) - 1 else res[-1]
+        res = list(self.iter__r_set())
+
+        removed_link_ids = list(res[2][2])
+        removed_node_ids = list(res[3][2])
         print('debug: removed links: {}'.format(removed_link_ids))
         print('debug: removed nodes: {}'.format(removed_node_ids))
         return removed_node_ids, removed_link_ids
