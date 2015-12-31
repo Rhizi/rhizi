@@ -74,9 +74,9 @@ $('#menu-bar__rzdoc-new').click(function() {
     cmd_bar = view__cmd_bar.new_cmdbar("rzdoc-new");
 
     cmd_bar_body = $('<div>');
-    submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create</span>');
+    submit_btn = $('<span class="cmd-bar_btn" id="cmd_bar__rzdoc_new__submit">Create map</span>');
     e_input = $('<input id="cmd_bar__rzdoc_new__input">');
-    e_input.attr('placeholder', 'Rhizi Title');
+    e_input.attr('placeholder', 'Map title');
     cmd_bar_body.append(e_input);
     cmd_bar_body.append(submit_btn);
 

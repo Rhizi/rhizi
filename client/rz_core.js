@@ -406,7 +406,7 @@ function rzdoc__search(search_query) {
     result_body = $('<div id="cmd-bar__rzdoc-search__result-body">');
     cmd_bar.append(result_body);
 
-    cmd_bar.append($('<div class="cmd-bar__close_bar">Search results</div>'));
+    cmd_bar.append($('<div class="cmd-bar__close_bar">Open map</div>'));
 
     function on_error(rzdoc_name_list) {
         // TODO: impl
@@ -443,7 +443,7 @@ function rzdoc__search(search_query) {
 
         rzdoc_name_list.sort();
         for (var i = 0; i < rzdoc_name_list.length; i++) {
-            var rzdoc_item = $('<div title="Open Rhizi">' + rzdoc_name_list[i] + '</div>');
+            var rzdoc_item = $('<div title="Open map">' + rzdoc_name_list[i] + '</div>');
             rzdoc_item.addClass('cmd_bar__rzdoc_open__item');
             result_body.append(rzdoc_item);
         }

@@ -43,7 +43,7 @@ function($) {
         root_div.addClass('cmd-bar');
         root_div.css('display', 'none');
 
-        footer_bar = $('<div>Create new Rhizi</div>');
+        footer_bar = $('<div>Create new map</div>');
         footer_bar.addClass('cmd-bar__close_bar');
 
         root_div.append(close_btn);

@@ -25,9 +25,9 @@ overflow-y: hidden;
     </div>
     <div id="top-bar_L2">
       <div id="menu-bar">
-        <div class="menu-bar__item" id="menu-bar__rzdoc-new" title="New">New</div>
+        <div class="menu-bar__item" id="menu-bar__rzdoc-new" title="New">New Map</div>
         <span class="menu-bar__delimiter">・</span>
-        <div class="menu-bar__item" id="menu-bar__rzdoc-open" title="Open">Open</div>
+        <div class="menu-bar__item" id="menu-bar__rzdoc-open" title="Open">Open Map</div>
         <span class="menu-bar__delimiter">・</span>
         <a class="menu-bar__item" href="https://docs.google.com/document/d/1XIENiGEhW4jZodkz2uX8ohJGeVhEfN32jCtlEelvkLI/edit?usp=sharing" target="_blank" title="Help">Help</a>
 
@@ -35,8 +35,8 @@ overflow-y: hidden;
         <div class="menu-bar__item" id="menu-bar__activity-view-toggle" title="Enable checkbox to display activity log">
           <span>Show Activity Log</span><input id="checkbox__activity-view-toggle" type="checkbox" name="activity-view-toggle">
         </div> -->
-        <div class="menu-bar__item" id="menu-bar__rzdoc-search" title="Search for Rhizi documents">
-          <input id="menu-bar__rzdoc-search__input" placeholder="Search for documents">
+        <div class="menu-bar__item" id="menu-bar__rzdoc-search" title="Search for maps">
+          <input id="menu-bar__rzdoc-search__input" placeholder="Search for maps">
         </div>
       </div>
     </div>
@@ -53,9 +53,9 @@ overflow-y: hidden;
         <div class="tool_bar_btn noselect" id="btn_zen_mode" style="display: none" title="Zen mode">Zen mode</div>
         <div class="tool_bar_btn noselect" id="btn_delete" style="display: none" title="Delete nods">Delete</div>
         <div id="tool-bar-multiple-node-operations" class="noselect" style="display: none">
-          <div class="tool_bar_btn noselect" id="btn_link_fan" title="Link nodes in fan">Connect</div>
+          <div class="tool_bar_btn noselect" id="btn_link_fan" title="Link nodes in fan">Connect nodes</div>
           <div class="tool_bar_btn noselect" id="btn_merge" title="Merge nodes">Merge</div>
-          <div class="tool_bar_btn noselect" id="btn_select_shortests_path" title="Select shortest path">S. Path</div>
+          <div class="tool_bar_btn noselect" id="btn_select_shortests_path" title="Select shortest path">Show Path</div>
         </div>
       </div>
     </div>
@@ -70,7 +70,7 @@ overflow-y: hidden;
         <div id="activity_view__body"></div>
       </div>
       <div class="filter-container" id="input-container__search">
-        <input class="search-bar search_icon" tabindex="1" id="search" placeholder="Select elements"/>
+        <input class="search-bar search_icon" tabindex="1" id="search" placeholder="Search in map"/>
         <div class="filter-dropdown noselect" id="btn_filter" title="Filter">Filter
           <div>
             <div id="menu__type-filter" class="filter-dropdown-menu noselect" style="display:none">
@@ -80,10 +80,10 @@ overflow-y: hidden;
         <div id="search-suggestion" class="suggestion" style="display: none"></div>
       </div>
       <div class="input-container" id="input-container__graph-input">
-        <div contentEditable="true" tabindex="2" class="input input-bar" id="textanalyser" placeholder="Add elements" autofocus ></div>
+        <div contentEditable="true" tabindex="2" class="input input-bar" id="textanalyser" placeholder="Add to map" autofocus ></div>
         <button tabindex="-1" id="btn_add" class="btn_input_submit">Add new</button>
         <div id="input-suggestion" class="suggestion" style="display: none"></div>
-        <p class="input-help-text"> Use double-space to form a network. Type:<i><span class="analyser-span-node"> John </span>[double-space]<span class="analyser-span-link">  knows </span>[double-space]<span class="analyser-span-node">  Karate</span></p></i>
+        <p class="input-help-text"> Use double-space to connect nodes together. Type:<i><span class="analyser-span-node"> John </span>[double-space]<span class="analyser-span-link">  knows </span>[double-space]<span class="analyser-span-node">  Karate</span></p></i>
       </div>
     </div>
     <div class="info-container" style="display:none">
@@ -109,7 +109,7 @@ overflow-y: hidden;
     <div id="graph-view__canvas"></div>
     <div class="type_selection" style="display:none; width:400px; top: 20px">
       <div class="type_selection__row" id="type_selection__intro">Change node type with <span class="kbd-button">Shift</span>+<span class="kbd-button">Up</span> and <span class="kbd-button">Shift</span>+<span class="kbd-button">Down</span></div>
-      <div class="type_selection__row" id="type_selection__chosen_type_label">Chosen Type: <span id="type_selection__chosen_type_name"/></div>
+      <div class="type_selection__row" id="type_selection__chosen_type_label">Current Type: <span id="type_selection__chosen_type_name"/></div>
       <div class="type_selection__row" id="type_selection__chosen_type_desc"></div>
     </div>
   </div>
