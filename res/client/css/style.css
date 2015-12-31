@@ -855,26 +855,23 @@ table {
 .info-container.type-person {
   border-top-color: #004681; }
 
-.info-container.type-club {
+.info-container.type-project {
   border-top-color: #ee3654; }
 
 .info-container.type-skill {
   border-top-color: #fad900; }
 
-.info-container.type-internship {
-  border-top-color: #ff8b11; }
+.info-container.type-keyword {
+  border-top-color: #40C200; }
 
-.info-container.type-interest {
+.info-container.type-organisation {
   border-top-color: #8b3ab0; }
+
+.info-container.type-media {
+  border-top-color: #33c2e0; }
 
 .info-container.type-empty {
   border-top-color: #919095; }
-
-.info-container.type-third-internship-proposal {
-  border-top-color: #33c2e0; }
-
-.info-container.type-project {
-  border-top-color: #40C200; }
 
 /*
     This file is part of rhizi, a collaborative knowledge graph editor.

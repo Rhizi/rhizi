@@ -106,11 +106,10 @@
 //
 // FIXME: refactor to domain specific file / automate
 //
-.info-container.type-person                    { border-top-color: $blue;     }
-.info-container.type-club                      { border-top-color: $magenta;  }
-.info-container.type-skill                     { border-top-color: $yellow;   }
-.info-container.type-internship                { border-top-color: $orange;   }
-.info-container.type-interest                  { border-top-color: $purple;   }
-.info-container.type-empty                     { border-top-color: $mid-grey; }
-.info-container.type-third-internship-proposal { border-top-color: $cyan;     }
-.info-container.type-project                   { border-top-color: $green;    }
+.info-container.type-person                    { border-top-color: $person;      }
+.info-container.type-project                   { border-top-color: $project;     }
+.info-container.type-skill                     { border-top-color: $skill;       }
+.info-container.type-keyword                   { border-top-color: $keyword;     }
+.info-container.type-organisation              { border-top-color: $organisation;}
+.info-container.type-media                     { border-top-color: $media;       }
+.info-container.type-empty                     { border-top-color: $empty;       }
