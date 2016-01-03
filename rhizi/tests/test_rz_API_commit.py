@@ -46,14 +46,19 @@ class TestRhiziAPI(RhiziTestBase):
         if lookup_ret != None:
             cls.kernel.rzdoc__delete(lookup_ret)
 
-    def get_random_node(self):
+    def get_random_nodes(self, count):
         names =  ['Tom', 'Snappy', 'Kitty', 'Jessie', 'Chester']
         groups =  ["friend", "foe", "neutral", "others"]
-        node =  {}
-        node["name"] = random.choice(names)
-        node["id"] = str(random.getrandbits(32))
-        node["__label_set"] = [random.choice(groups)]
-        return node
+        random.shuffle(names)
+        nodes = [{
+                    "name": names[i],
+                    "id": str(random.getrandbits(32)),
+                    "__label_set": [random.choice(groups)]
+                 } for i in range(count)]
+        return nodes
+
+    def get_random_node(self):
+        return self.get_random_nodes(1)[0]
 
     def get_link(self, nodeA_id, nodeB_id):
         relationships = ["loves", "hates", "despises", "admires", "ignores"]
