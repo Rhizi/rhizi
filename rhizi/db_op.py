@@ -150,6 +150,7 @@ class DBO_raw_query_set(DB_op):
         """
         super.add_statement() override: use raw queries
         """
+        assert isinstance(q_arr, list) or isinstance(q_arr, tuple), "are you trying to add a string?"
         db_q = DB_Raw_Query(q_arr, query_params)
         self.query_set.append(db_q)
         return len(self.query_set)
