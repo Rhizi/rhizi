@@ -18,6 +18,7 @@
 
 .type_selection {
     color: $dark-grey;
+    background-color:rgba(212,212,217,0.5);
     font-size: $h3-size;
     position: fixed; // no need for positioning, set via code
     pointer-events: none;
