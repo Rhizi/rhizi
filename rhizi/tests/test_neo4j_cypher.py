@@ -145,9 +145,16 @@ class Test_DB_Op(RhiziTestBase):
         # op_set = []
 
         for op in op_set:
-            if isinstance(op, DB_composed_op): continue  # validated through sub-ops
-            if isinstance(op, DBO_rzdoc__clone): continue # no support for 'with collect(mn.id) as n_id_set'
-            if isinstance(op, DBO_rzdoc__commit): continue # ditto
+            do_continue = False
+            for c in ( # validated through sub-ops
+                      DB_composed_op,
+                       # raw queries not supported by the parser (yet?)
+                      DBO_rzdoc__clone, DBO_rzdoc__commit, DBO_add_node_set
+                      ):
+                if isinstance(op, c):
+                    do_continue = True
+            if do_continue:
+                continue
             for _idx, db_q, _db_q_result in op.iter__r_set():
                 # TODO: need python3 for this: with self.subTest(i=num):
                 q_str = db_q.q_str

@@ -17,20 +17,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import logging
-import time
 import unittest
 
-from ..rz_config import RZ_Config
-from ..rz_kernel import RZ_Kernel
 from ..rz_api_rest import Req_Context
 from ..model.graph import Topo_Diff, Attr_Diff
-from ..model.model import Link
-from . import neo4j_test_util
 from . import util
 from .test_util__pydev import debug__pydev_pd_arg
 from .util import RhiziTestBase
-from ..db_op import DBO_raw_query_set
+from ..db_op import DBO_find_links_touching
 
 
 class TestRZDoc(RhiziTestBase):
@@ -41,12 +35,7 @@ class TestRZDoc(RhiziTestBase):
         super(TestRZDoc, clz).setUpClass()
 
     def setUp(self):
-        pass
-
-    def _ensure_deleted(self, rzdoc_name):
-        lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        if lookup_ret != None:
-            self.kernel.rzdoc__delete(lookup_ret)
+        self.kernel.reset_graph()
 
     def test_rzdoc_commit_log(self):
         rzdoc_a_name = 'test_commit_log_doc_a'
@@ -103,52 +92,6 @@ class TestRZDoc(RhiziTestBase):
         ret = self.kernel.rzdoc__search('c_' + rzdoc_common_name)
         self.assertEquals(1, len(ret))
 
-    def _assert_clone(self, rzdoc, nodes, links):
-        ret = self.kernel.rzdoc__clone(rzdoc)
-        ret_nodes = ret.node_set_add
-        ret_links = ret.link_set_add
-        self.assertDictEqual({n['id']:n for n in ret_nodes}, {n['id']:n for n in nodes})
-        self.assertDictEqual({l['id']:l for l in ret_links}, {l['id']:l for l in links})
-
-    def helper_create_doc(self, name, nodes=[], links=[], sentence=None, id_start=1):
-        if sentence is not None:
-            assert len(nodes) == 0 and len(links) == 0
-            nodes, links = self.helper_links_nodes_from_sentence(sentence, id_start=id_start)
-        self._ensure_deleted(name)
-        rzdoc = self.kernel.rzdoc__create(name)
-        # helper - set initial nodes/links on doc
-        rzdoc.nodes = nodes
-        rzdoc.links = links
-        ctx = Req_Context(rzdoc=rzdoc)
-        if len(nodes) == 0 and len(links) == 0:
-            return rzdoc, ctx
-        topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links, meta=sentence)
-        self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
-        return rzdoc, ctx
-
-    def helper_links_nodes_from_sentence(self, sentence, id_start=1):
-        path = sentence.split('  ')
-        assert(len(path) % 2 == 1)
-        n_nodes = (len(path) - 1) // 2
-        node_dicts = [path[i] for i in range(0, len(path), 2)]
-        nodes = [{'name': name, 'id': i + id_start, '__label_set': ['type_a']}
-                  for i, name in enumerate(node_dicts)]
-        link_dicts = [{'name': path[i]} for i in range(1, len(path), 2)]
-        links = []
-        for i, link_dict in enumerate(link_dicts):
-            if link_dict['name'] == '':
-                continue
-            link = Link.link_ptr(nodes[i]['id'], nodes[i + 1]['id'])
-            link['id'] = i + id_start + len(nodes)
-            link['__type'] = [link_dict['name']]
-            links.append(link)
-        return nodes, links
-
-    def helper_topo_diff(self, ctx, nodes=[], links=[], node_id_set_rm=[], link_id_set_rm=[]):
-        topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links,
-                              node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
-        self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
-
     def test_node_in_multiple_docs(self):
         # create A with a-[goes]->b
         rzdoc_a, ctx_a = self.helper_create_doc(name='A', sentence='a  goes  b')
@@ -187,15 +130,14 @@ class TestRZDoc(RhiziTestBase):
         # remove some nodes, see they are removed in just the doc in
         # question
         self.helper_topo_diff(ctx_a, node_id_set_rm=[node_a['id']])
-        # this is weird, but right now it is good enough?
-        self._assert_clone(rzdoc_a, [node_b], [result_link])
+        self._assert_clone(rzdoc_a, [node_b], [])
         self._assert_clone(rzdoc_b, [node_a, node_b], [result_link])
 
     def test_single_doc_delete_more_than_one(self):
         rzdoc, ctx = self.helper_create_doc(name='a', id_start=1000,
-            sentence='a  goes  b  goes  c  goes  d')
+                                            sentence='a  goes  b  goes  c  goes  d')
         nodes = {n['name']: n for n in rzdoc.nodes}
-        links = {(l['__src_id'], l['__dst_id']):l for l in rzdoc.links}
+        links = {(l['__src_id'], l['__dst_id']): l for l in rzdoc.links}
         a, b, c, d = nodes['a'], nodes['b'], nodes['c'], nodes['d']
         cd = links[(c['id'], d['id'])]
         self.helper_topo_diff(ctx, node_id_set_rm=[a['id'], b['id']])
@@ -203,10 +145,10 @@ class TestRZDoc(RhiziTestBase):
 
     def test_two_doc_delete_more_than_one_same_ids(self):
         rzdoc, ctx = self.helper_create_doc(name='a', id_start=1000,
-            sentence='a  goes  b  goes  c  goes  d')
+                                            sentence='a  goes  b  goes  c  goes  d')
         # will share nodes since ids are the same (and names are the same)
         rzdoc2, ctx2 = self.helper_create_doc(name='b', id_start=1000,
-            sentence='a  goes  b  goes  c  goes  d')
+                                              sentence='a  goes  b  goes  c  goes  d')
         nodes = {n['name']: n for n in rzdoc.nodes}
         links = {(l['__src_id'], l['__dst_id']):l for l in rzdoc.links}
         a, b, c, d = nodes['a'], nodes['b'], nodes['c'], nodes['d']
@@ -223,9 +165,9 @@ class TestRZDoc(RhiziTestBase):
 
     def test_two_doc_delete_more_than_one_same_names(self):
         rzdoc, ctx = self.helper_create_doc(name='a', id_start=2000,
-            sentence='a  goes  b  goes  c  goes  d')
+                                            sentence='a  goes  b  goes  c  goes  d')
         rzdoc2, ctx2 = self.helper_create_doc(name='b', id_start=1000,
-            sentence='a  goes  b  goes  c  goes  d')
+                                              sentence='a  goes  b  goes  c  goes  d')
         self._assert_clone(rzdoc, rzdoc.nodes, rzdoc.links)
         self._assert_clone(rzdoc2, rzdoc.nodes, rzdoc.links)
 
@@ -244,9 +186,22 @@ class TestRZDoc(RhiziTestBase):
         self.kernel.shutdown()
 
 
+class TestFindLinksTouching(RhiziTestBase):
+
+    def test_sanity(self):
+        rzdoc, _ = self.helper_create_doc('find-links-touching', sentence='a  bemoans  b  besots  c')
+        id_a, id_b = rzdoc.nodes[0]['id'], rzdoc.nodes[1]['id']
+        id_bemoans, id_besots = rzdoc.links[0]['id'], rzdoc.links[1]['id']
+        for inp, outp in [([id_a, id_b], [id_bemoans, id_besots]), ([id_a], [id_bemoans])]:
+            test_op = DBO_find_links_touching(inp)
+            ret = self.db_ctl.exec_op(test_op)
+            self.assertEqual(ret, outp)
+
+
 @debug__pydev_pd_arg
 def main():
     unittest.main(defaultTest='TestRZDoc.test_rzdoc_lifcycle', verbosity=2)
+
 
 if __name__ == "__main__":
     main()

@@ -21,16 +21,12 @@ from rhizi.tests.util import RhiziTestBase
 
 rzdoc_name = 'Test Document for Rhizi API'
 
+
 class TestRhiziAPI(RhiziTestBase):
 
     @classmethod
     def setUpClass(cls):
         super(TestRhiziAPI, cls).setUpClass()
-        """ Create an API test document """
-
-        cls.kernel.rzdoc__create(rzdoc_name)
-        cls.rzdoc_test = cls.kernel.rzdoc__lookup_by_name(rzdoc_name)
-
         # store rzdoc name
         cls.rzdoc_name = rzdoc_name
 
@@ -38,27 +34,44 @@ class TestRhiziAPI(RhiziTestBase):
         # control here since we override it in other tests
         cls.cfg.access_control = False
 
+        # initialize random nodes generator
+        cls._nodes_gen = cls.get_nodes_gen()
+        cls._nodes_gen.send(None)
+
+    @classmethod
+    def setUp(cls):
+        # clear all nodes & links & meta nodes
+        cls.kernel.reset_graph()
+        # create a test document
+        cls.kernel.rzdoc__create(cls.rzdoc_name)
+        cls.rzdoc_test = cls.kernel.rzdoc__lookup_by_name(cls.rzdoc_name)
+
     @classmethod
     def tearDownClass(cls):
         """ Delete test document after tests execution """
-        pass
-        lookup_ret = cls.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        if lookup_ret != None:
-            cls.kernel.rzdoc__delete(lookup_ret)
+        # clear all nodes & links & meta nodes
+        cls.kernel.reset_graph()
 
-    def get_random_nodes(self, count):
-        names =  ['Tom', 'Snappy', 'Kitty', 'Jessie', 'Chester']
-        groups =  ["friend", "foe", "neutral", "others"]
-        random.shuffle(names)
-        nodes = [{
-                    "name": names[i],
-                    "id": str(random.getrandbits(32)),
-                    "__label_set": [random.choice(groups)]
-                 } for i in range(count)]
-        return nodes
+    @classmethod
+    def get_nodes_gen(cls):
+        names = ['Tom', 'Snappy', 'Kitty', 'Jessie', 'Chester']
+        groups = ["friend", "foe", "neutral", "others"]
+        ind = 0
+        count = yield
+        while True:
+            nodes = [{
+                        "name": names[i % len(names)],
+                        "id": str(random.getrandbits(32)),
+                        "__label_set": [groups[i % len(groups)]]
+                     } for i in range(ind, ind + count)]
+            ind = (ind + count) % len(names)
+            count = yield nodes
+
+    def get_nodes(self, count):
+        return self._nodes_gen.send(count)
 
     def get_random_node(self):
-        return self.get_random_nodes(1)[0]
+        return self.get_nodes(1)[0]
 
     def get_link(self, nodeA_id, nodeB_id):
         relationships = ["loves", "hates", "despises", "admires", "ignores"]
@@ -103,8 +116,7 @@ class TestRhiziAPI(RhiziTestBase):
     def test_commit_topo_add_link_empty_name(self):
         """ API must allow empty names on links """
         with self.webapp.test_client() as c:
-            nodeA = self.get_random_node()
-            nodeB = self.get_random_node()
+            nodeA, nodeB = self.get_nodes(2)
             linkA = self.get_link_empty_type(nodeA["id"], nodeB["id"])
             topo_diff = { "node_set_add" : [ nodeA, nodeB ], 'link_set_add': [ linkA ] }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
@@ -122,8 +134,7 @@ class TestRhiziAPI(RhiziTestBase):
 
         with self.webapp.test_client() as c:
 
-            nodeA = self.get_random_node()
-            nodeB = self.get_random_node()
+            nodeA, nodeB = self.get_nodes(2)
 
             # attributes
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
@@ -134,12 +145,11 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
 
     def test_commit_topo_add_nodes_with_links(self):
-        """ API should allow creation of new node"""
+        """ API should allow creation of new node and links"""
 
         with self.webapp.test_client() as c:
 
-            nodeA = self.get_random_node()
-            nodeB = self.get_random_node()
+            nodeA, nodeB = self.get_nodes(2)
 
             linkA = self.get_link(nodeA["id"], nodeB["id"])
             linkB = self.get_link(nodeA["id"], nodeB["id"])
@@ -159,8 +169,7 @@ class TestRhiziAPI(RhiziTestBase):
         with self.webapp.test_client() as c:
 
             # add nodes
-            nodeA = self.get_random_node()
-            nodeB = self.get_random_node()
+            nodeA, nodeB = self.get_nodes(2)
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
@@ -184,8 +193,7 @@ class TestRhiziAPI(RhiziTestBase):
         with self.webapp.test_client() as c:
 
             # add nodes
-            nodeA = self.get_random_node()
-            nodeB = self.get_random_node()
+            nodeA, nodeB = self.get_nodes(2)
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
@@ -207,8 +215,7 @@ class TestRhiziAPI(RhiziTestBase):
         with self.webapp.test_client() as c:
 
             # add nodes
-            nodeA = self.get_random_node()
-            nodeB = self.get_random_node()
+            nodeA, nodeB = self.get_nodes(2)
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)

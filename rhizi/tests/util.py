@@ -46,6 +46,7 @@ from ..rz_config import RZ_Config
 from .. import rz_api
 from ..db_op import DBO_factory__default, DBO_raw_query_set
 from ..rz_user_db import Fake_User_DB
+from ..rz_api_rest import Req_Context
 
 from .neo4j_test_util import rand_label
 
@@ -379,6 +380,57 @@ class RhiziTestBase(TestCase):
         req = c.post(path, content_type='application/json', data=json.dumps(payload))
         resp = json.loads(req.data.decode('utf-8'))
         return req, resp
+
+    def _assert_clone(self, rzdoc, nodes, links):
+        ret = self.kernel.rzdoc__clone(rzdoc)
+        ret_nodes = ret.node_set_add
+        ret_links = ret.link_set_add
+        self.assertDictEqual({n['id']:n for n in ret_nodes}, {n['id']:n for n in nodes})
+        self.assertDictEqual({l['id']:l for l in ret_links}, {l['id']:l for l in links})
+
+    def _ensure_deleted(self, rzdoc_name):
+        lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
+        if lookup_ret != None:
+            self.kernel.rzdoc__delete(lookup_ret)
+
+    def helper_create_doc(self, name, nodes=[], links=[], sentence=None, id_start=1):
+        if sentence is not None:
+            assert len(nodes) == 0 and len(links) == 0
+            nodes, links = self.helper_links_nodes_from_sentence(sentence, id_start=id_start)
+        self._ensure_deleted(name)
+        rzdoc = self.kernel.rzdoc__create(name)
+        # helper - set initial nodes/links on doc
+        rzdoc.nodes = nodes
+        rzdoc.links = links
+        ctx = Req_Context(rzdoc=rzdoc)
+        if len(nodes) == 0 and len(links) == 0:
+            return rzdoc, ctx
+        topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links, meta=sentence)
+        self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
+        return rzdoc, ctx
+
+    def helper_links_nodes_from_sentence(self, sentence, id_start=1):
+        path = sentence.split('  ')
+        assert(len(path) % 2 == 1)
+        n_nodes = (len(path) - 1) // 2
+        node_dicts = [path[i] for i in range(0, len(path), 2)]
+        nodes = [{'name': name, 'id': i + id_start, '__label_set': ['type_a']}
+                  for i, name in enumerate(node_dicts)]
+        link_dicts = [{'name': path[i]} for i in range(1, len(path), 2)]
+        links = []
+        for i, link_dict in enumerate(link_dicts):
+            if link_dict['name'] == '':
+                continue
+            link = Link.link_ptr(nodes[i]['id'], nodes[i + 1]['id'])
+            link['id'] = i + id_start + len(nodes)
+            link['__type'] = [link_dict['name']]
+            links.append(link)
+        return nodes, links
+
+    def helper_topo_diff(self, ctx, nodes=[], links=[], node_id_set_rm=[], link_id_set_rm=[]):
+        topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links,
+                              node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
+        self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
 
 
 def test_main():

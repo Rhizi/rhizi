@@ -275,6 +275,7 @@ def generate_random_rzdoc_id():
     ret = generate_random_id__uuid().split('-')[-1]
     return ret
 
+
 def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
     """
     convert a list of maps each containing a meta_attr key into a
@@ -316,6 +317,7 @@ def meta_attr_list_to_meta_attr_map(e_set, meta_attr='__label_set'):
         ret[v_type].append(v_no_meta)
 
     return ret
+
 
 def post_neo4j(url, data):
     """

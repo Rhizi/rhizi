@@ -23,14 +23,12 @@ from time import time
 
 from flask import current_app # for user_db
 
-from .model.graph import Attr_Diff
 from .model.graph import Topo_Diff
 from .model.model import Link, RZDoc, RZCommit
 from .neo4j_cypher import DB_Query, DB_result_set, DB_Raw_Query
 from .neo4j_util import cfmt
 from .neo4j_util import (generate_random_id__uuid, rzdoc__ns_label,
     quote__singlequote, rzdoc__meta_ns_label, quote__backtick)
-from . import neo4j_util
 from .neo4j_util import RESERVED_LABEL__EMPTY_STRING
 from . import neo4j_schema
 from . import neo4j_util as db_util
@@ -177,7 +175,8 @@ class DBO_add_node_set(DBO_raw_query_set):
         for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
-                    n_id_set.append((ret_dict['id'], ret_dict['asked_id']))
+                    n_id_set.append(ret_dict)
+                    assert 'asked_id' in ret_dict
 
         return n_id_set
 
@@ -197,9 +196,11 @@ class DBO_add_link_set(DB_op):
         for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
+                    log.debug(str(ret_dict))
                     l_id_set.append(ret_dict['id'])
 
         return l_id_set
+
 
 class DB_composed_op(DB_op):
     """
@@ -427,6 +428,8 @@ class DBO_diff_commit__topo(DB_composed_op):
 
     """
     commit a Topo_Diff
+
+    Commits only to the main graph. No change of documents is done.
 
     @return: a Topo_Diff of the actual committed changes
     """
@@ -931,9 +934,9 @@ class DBO_rzdoc__clone(DBO_raw_query_set):
                  'where n.id in n_id_set',
                  'with n, n_id_set, l_id_set',
                  'order by n.id',
-                 'optional match (n)-[r]->(m)',
-                 'where r.id in l_id_set',
-                 'return n, filter(l in labels(n) where l <> "%s"), collect([r, type(r), m.id])' % node_label]
+                 'optional match (rin)-[r]->(rout)',
+                 'where r.id in l_id_set and (rin.id = n.id or rout.id = n.id)'
+                 'return n, filter(l in labels(n) where l <> "%s"), collect([r, type(r), rin.id, rout.id])' % node_label]
 
         self.add_statement(q_arr, {'rzdoc_id': rzdoc.id})
 
@@ -953,15 +956,15 @@ class DBO_rzdoc__clone(DBO_raw_query_set):
 
                 # reconstruct links from link tuples
                 for l_tuple in l_set:
-                    assert 3 == len(l_tuple)  # see query return statement
+                    assert 4 == len(l_tuple)  # see query return statement
 
                     if None == l_tuple[0]:  # check if link dst is None
                         # as link matching is optional, collect may yield empty sets
                         continue
 
-                    ret_l, ret_l_type, ret_l_dst_id = l_tuple
+                    ret_l, ret_l_type, ret_l_src_id, ret_l_dst_id = l_tuple
                     assert 'id' in ret_l
-                    l = Link.Link_Ptr(src_id=n['id'], dst_id=ret_l_dst_id)
+                    l = Link.Link_Ptr(src_id=ret_l_src_id, dst_id=ret_l_dst_id)
                     for k, v in ret_l.items():
                         l[k] = v
                     l['__type'] = self.process_q_ret__l_type(ret_l_type)
@@ -1105,6 +1108,9 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
 
     def __init__(self, topo_diff, rzdoc):
         """
+        Changes only the document view, by adding and removing nodes and links
+        to it.
+
         Create any missing meta nodes and meta links and link them to the rzdoc node
         rzdoc node must already be created
         """
@@ -1167,7 +1173,25 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
 
         removed_link_ids = list(res[2][2])
         removed_node_ids = list(res[3][2])
-        print('debug: removed links: {}'.format(removed_link_ids))
-        print('debug: removed nodes: {}'.format(removed_node_ids))
+        log.debug('booga: removed links: {}'.format(removed_link_ids))
+        log.debug('booga: removed nodes: {}'.format(removed_node_ids))
         return removed_node_ids, removed_link_ids
 
+
+class DBO_find_links_touching(DBO_raw_query_set):
+    """
+    Return links that touch these nodes
+    """
+
+    def __init__(self, node_ids):
+        super(DBO_find_links_touching, self).__init__()
+        q_arr = ['match (n:%s) where n.id in {ids} match (n)-[l]-() return distinct(l.id)' % neo4j_schema.META_LABEL__RZDOC_NODE]
+        param_set = {'ids': node_ids}
+        self.add_statement(q_arr, param_set)
+
+    def process_result_set(self):
+        res = list(self.iter__r_set())[0][2]
+        ret = [x['row'][0] for x in res.data['data']]
+        log.debug('returning res {}'.format(repr(res)))
+        log.debug('returning {}'.format(ret))
+        return ret

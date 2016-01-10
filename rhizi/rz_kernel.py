@@ -31,12 +31,13 @@ from .db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__c
     DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop,
     DBO_match_node_set_by_id_attribute, DBO_rzdb__fetch_DB_metablock,
     DBO_rzdoc__commit_log, DBO_factory__default, DBO_raw_query_set,
-    DBO_rzdoc__commit)
+    DBO_rzdoc__commit, DBO_find_links_touching)
 from .db_op import DBO_diff_commit__topo
 from .model.graph import Topo_Diff
 from .model.model import RZDoc
 from .neo4j_qt import QT_RZDOC_Meta_NS_Filter
 from .neo4j_util import generate_random_rzdoc_id
+from . import neo4j_schema
 
 
 python2 = sys.version_info[0] == 2
@@ -231,7 +232,7 @@ class RZ_Kernel(object):
                             r_assoc_set.remove(r_assoc)
                             log.debug('rz_kernel: evicting reader: IO error count exceeded limit: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr, rzdoc.name))
 
-                for i in xrange(self.heartbeat_period_sec * 2):
+                for i in range(self.heartbeat_period_sec * 2):
                     if False == self.should_stop:
                         return;
                     time.sleep(0.5)
@@ -272,13 +273,18 @@ class RZ_Kernel(object):
     def is_DB_status__ok(self):
         return self.db_conn_avail and self.db_metablock is not None
 
-
     def _commit__topo__helper(self, topo_diff, rzdoc):
         """
         helper that does not produce a commit. used by two paths:
          - the regular topo diff
          - restoring from backup, where we create a new document and produce the commit
            history from the backup as well.
+
+        Implementation notes:
+            1. first add new nodes and links. Result contains id map for ids of existing
+               nodes, use those for next query
+            2. update document to meta nodes links, return removed nodes and links
+            3. remove nodes and links from real graph
 
         :param topo_diff:
         :param ctx:
@@ -289,20 +295,44 @@ class RZ_Kernel(object):
         for x in topo_diff.node_set_add:
             assert set(x.keys()) >= {'name', 'id'}
 
+        # assert no overlapping in ids between removed and added parts - no
+        # reason to support that (we cannot test for removed links without a
+        # query so skip that for now, later maybe incorporate it into the
+        # query)
+        overlapped_ids = (({x['id'] for x in topo_diff.node_set_add} |
+                 {x['__src_id'] for x in topo_diff.link_set_add} |
+                 {x['__dst_id'] for x in topo_diff.link_set_add}) &
+                 set(topo_diff.node_id_set_rm))
+        assert overlapped_ids == set(), "{} != %s" % overlapped_ids
+
+        # 1. NORMALIZE. expand the given node set to include all touching links.
+        norm_op = DBO_find_links_touching(node_ids=topo_diff.node_id_set_rm)
+        norm_op_ret = self.db_ctl.exec_op(norm_op)
+        topo_diff.link_id_set_rm = list(set(topo_diff.link_id_set_rm) | set(norm_op_ret))
+
+        # 2. commit addition part of topo
+        topo_diff_add = Topo_Diff(node_set_add=topo_diff.node_set_add, link_set_add=topo_diff.link_set_add)
+        graph_op_add = DBO_diff_commit__topo(topo_diff_add)
+
+        graph_op_add_ret = self.db_ctl.exec_op(graph_op_add)
+
+        # 3. commit meta doc part in one go. returns removed links and nodes.
         meta_op = DBO_rzdoc__commit(topo_diff, rzdoc=rzdoc)
+
         removed_nodes, removed_links = self.db_ctl.exec_op(meta_op)
+
         nodes_d = dict(removed_nodes)
         links_d = dict(removed_links)
-        topo_diff.node_id_set_rm = [nid for nid, link_count in nodes_d.items() if link_count == 0]
-        topo_diff.link_id_set_rm = [lid for lid, link_count in links_d.items() if link_count == 0]
+        node_id_set_rm = [nid for nid, link_count in nodes_d.items() if link_count == 0]
+        link_id_set_rm = [lid for lid, link_count in links_d.items() if link_count == 0]
 
-        graph_op = DBO_diff_commit__topo(topo_diff)
+        # 4. commit removal part
+        topo_diff_rm = Topo_Diff(node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
+        graph_op_rm = DBO_diff_commit__topo(topo_diff_rm)
 
-        # TODO: combined op that succeeds only if both ops succed
-        graph_ret = self.db_ctl.exec_op(graph_op)
+        graph_op_rm_ret = self.db_ctl.exec_op(graph_op_rm)
 
-        return graph_ret
-
+        return graph_op_rm_ret
 
     @deco__DB_status_check
     def diff_commit__topo(self, topo_diff, ctx):
@@ -512,3 +542,10 @@ class RZ_Kernel(object):
         #    - notify all rzdoc readers
 
         return rzdoc  # may be None
+
+    def reset_graph(self):
+        for _type in [neo4j_schema.META_LABEL__RZDOC_NODE, neo4j_schema.META_LABEL__RZDOC_META_NODE,
+                      neo4j_schema.META_LABEL__RZDOC_META_LINK, neo4j_schema.META_LABEL__RZDOC_TYPE]:
+            op = DBO_raw_query_set(['match (n:%s) optional match (n)-[l]-() delete n, l' % _type])
+            self.db_ctl.exec_op(op)
+        self.cache__rzdoc_name_to_rzdoc.clear()

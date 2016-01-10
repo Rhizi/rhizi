@@ -111,3 +111,5 @@ class RZDoc():
     def __str__(self):
         """ actually returns unicode. """
         return str_to_unicode('rzdoc: name: %s') % (self.name)
+
+    __repr__ = __str__

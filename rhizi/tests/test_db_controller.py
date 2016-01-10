@@ -15,7 +15,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import logging
 import unittest
 
 from .. import db_controller as dbc
@@ -31,7 +30,7 @@ from ..db_op import DBO_load_node_set_by_DB_id
 from ..db_op import DBO_match_link_id_set
 from ..db_op import DBO_match_node_id_set
 from ..db_op import DBO_match_node_set_by_id_attribute
-from ..db_op import DBO_raw_query_set
+from ..db_op import DBO_raw_query_set, DB_composed_op
 from ..model.graph import Attr_Diff
 from ..model.graph import Topo_Diff
 from ..model.model import Link
@@ -86,11 +85,10 @@ class TestDBController(RhiziTestBase):
 
         self.assertEqual(len(op.query_set), 1)  # assert a single statement is issued
 
-        ret_id_set = self.db_ctl.exec_op(op)
+        ret_id_set = [x['id'] for x in self.db_ctl.exec_op(op)]
         self.assertEqual(len(ret_id_set), 2)
         self.assertTrue(n_0_id in ret_id_set)
         self.assertTrue(n_1_id in ret_id_set)
-
 
     def test_add_link_set(self):
         test_label = rand_label()
@@ -151,7 +149,7 @@ class TestDBController(RhiziTestBase):
             # access: second tuple item -> REST-form 'statement' key
             self.assertTrue(type(s), DB_Query)
             self.assertTrue(type(r), tuple)
-            i = i + 1
+            i += 1
 
         self.db_ctl.exec_op(op)
 
@@ -161,7 +159,7 @@ class TestDBController(RhiziTestBase):
             self.assertNotEqual(None, r_set)
             for x in r_set:
                 pass
-            i = i + 1
+            i += 1
 
 
     def _make_topo_diff(self):
@@ -250,6 +248,55 @@ class TestDBController(RhiziTestBase):
         id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(id_set), 0)
 
+    def test_diff_commit__topo__same_names_different_ids(self):
+        def i(n):
+            return 'test-id-%s' % n
+        def lid(n):
+            return 'test-linkid-%s' % n
+        def i2(n):
+            return 'test-id-%s-tag' % n
+        def lid2(n):
+            return 'test-linkid-%s-tag' % n
+        def n(n):
+            return {'name': 'test-add-item-sets-%s' % n, 'id': i(n), '__label_set': ['test-add-item']}
+        def l(s, d, n):
+            return generate_random_link_dict('test-label-%s' % n,
+                                             i(s), i(d),
+                                             lid=lid(n))[0]
+        def n2(n):
+            return {'name': 'test-add-item-sets-%s' % n, 'id': i2(n), '__label_set': ['test-add-item']}
+        def l2(s, d, n):
+            return generate_random_link_dict('test-label-%s' % n,
+                                             i2(s), i2(d),
+                                             lid=lid2(n))[0]
+        def commit(node_map, link_map):
+            topo_diff = Topo_Diff(node_set_add=node_map, link_set_add=link_map)
+            op = DBO_diff_commit__topo(topo_diff)
+            return self.db_ctl.exec_op(op)
+
+        with self.subTest("null case should not error"):
+            commit(link_map=[], node_map=[])
+            self._assert_no_two_nodes_of_same_name_or_id()
+        with self.subTest("just nodes"):
+            ret = commit(node_map=[n('a'), n('b')], link_map=[])
+            self.assertEqual(ret['node_id_set_add'], [i('a'), i('b')])
+            self._assert_no_two_nodes_of_same_name_or_id()
+        with self.subTest("just links"):
+            ret = commit(link_map=[l('a', 'b', 'ab')], node_map=[])
+            self.assertEqual(ret['link_id_set_add'], [lid('ab')])
+            self._assert_no_two_nodes_of_same_name_or_id()
+        # nodes and links without any relation to
+        with self.subTest("both, no existing names"):
+            ret = commit(node_map=[n('c'), n('d')], link_map=[l('c', 'd', 'cd')])
+            self.assertEqual(ret['node_id_set_add'], [i('c'), i('d')])
+            self.assertEqual(ret['link_id_set_add'], [lid('cd')])
+            self._assert_no_two_nodes_of_same_name_or_id()
+        with self.subTest("both, existing node name"):
+            ret = commit(node_map=[n2('c'), n2('d')], link_map=[l2('c', 'd', 'cd')])
+            # return values make no distinction between added nodes or existing nodes in return value
+            self.assertEqual(ret['node_id_set_add'], [i('c'), i('d')])
+            #self.assertEqual(ret['link_id_set_add'], [lid('cd')]) # TODO - fix this one (by using post_sub_op_exec_hook in
+            self._assert_no_two_nodes_of_same_name_or_id()
 
     def test_diff_commit__attr(self):
         # create test node
@@ -445,6 +492,38 @@ class TestDBController(RhiziTestBase):
 
     def tearDown(self):
         pass
+
+
+class TestDBComposedOp(RhiziTestBase):
+
+    def test_post_sub_op_exec_hook(self):
+        class TestOp(DB_composed_op):
+            def __init__(self, test):
+                DB_composed_op.__init__(self)
+                self.test = test
+                self.sum = []
+                self.op1 = DBO_raw_query_set(["return {a} + 1"], {'a': 1})
+                self.op1_result = {}
+                self.op2 = DBO_raw_query_set(["return {a} + 1"], self.op1_result)
+                self.add_sub_op(self.op1)
+                self.add_sub_op(self.op2)
+                self._real_post = self._gen_post()
+                self._real_post.send(None) # initialize
+
+            def _gen_post(self):
+                op1, op1_ret = yield
+                self.test.assertEqual(op1, self.op1)
+                self.test.assertEqual(op1_ret[0], 2)
+                self.op1_result['a'] = op1_ret[0]
+                op2, op2_ret = yield
+                self.test.assertEqual(op2, self.op2)
+                self.test.assertEqual(op2_ret[0], 3)
+                yield
+
+            def post_sub_op_exec_hook(self, prev_op, prev_op_ret):
+                self._real_post.send((prev_op, prev_op_ret))
+        test_op = TestOp(self)
+        self.db_ctl.exec_op(test_op)
 
 
 @debug__pydev_pd_arg
