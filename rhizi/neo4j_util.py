@@ -212,6 +212,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
 
     return ret
 
+
 def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: _):
     """
     generate a set of link create queries
@@ -234,34 +235,28 @@ def gen_query_create_from_link_map(link_map, input_to_DB_property_map=lambda _: 
         validate_label(l_type);
 
         node_label = neo4j_schema.META_LABEL__RZDOC_NODE
-        q_arr = ['match (src:%s {id: {src_id}}), (dst:%s {id: {dst_id}})' % (node_label, node_label),
-                 'merge (src)-[r:%(__type)s {id: {link_id}}]->(dst)' % {'__type': quote__backtick(l_type)},
-                 'with r, src, dst',
-                 'order by r.id',
-                 'return {id: r.id, __src_id: src.id, __dst_id: dst.id, __type: type(r)}',
+        q_arr = ['unwind {link_attrs} as link_attr',
+                 'with link_attr.src_id as src_id, link_attr.dst_id as dst_id, link_attr.id as link_id',
+                 'match (src:%s {id: src_id}), (dst:%s {id: dst_id})' % (node_label, node_label),
+                 'merge (src)-[r:%s]->(dst)' % quote__backtick(l_type),
+                 'on create set r.id = link_id',
+                 'return {asked_id: link_id, id: r.id, __src_id: src.id, __dst_id: dst.id, __type: type(r)}',
                  ]
 
+        q_params = []
         for link in l_set:
             assert '__src_id' in link
             assert '__dst_id' in link
             assert 'id' in link, 'link create query: link id attribute not set'
 
-            # TODO: use object based link representation
-            l_prop_set = link.copy()
-
-            del l_prop_set['__dst_id']
-            del l_prop_set['__src_id']
-
-            src_id = link['__src_id']
-            dst_id = link['__dst_id']
-            q_params = {'src_id': src_id,
-                        'dst_id': dst_id,
-                        'link_id' : input_to_DB_property_map(l_prop_set)['id']}
-
-            q_tuple = (q_arr, q_params)
-            ret.append(q_tuple)
+            q_params.append({
+                'src_id': link['__src_id'],
+                'dst_id': link['__dst_id'],
+                'id' : input_to_DB_property_map(link)['id']})
+        ret.append((list(q_arr), {'link_attrs': q_params}))
 
     return ret
+
 
 def generate_random_id__uuid():
     """

@@ -406,7 +406,8 @@ class RhiziTestBase(TestCase):
         if len(nodes) == 0 and len(links) == 0:
             return rzdoc, ctx
         topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links, meta=sentence)
-        self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
+        topo_diff_ret, op_ret = self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
+        self.assertTrue(len(op_ret['link_id_set_add']) == len(links))
         return rzdoc, ctx
 
     def helper_links_nodes_from_sentence(self, sentence, id_start=1):

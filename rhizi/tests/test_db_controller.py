@@ -105,7 +105,7 @@ class TestDBController(RhiziTestBase):
 
         l_map = { test_label : [l_0, l_1]}
         op = DBO_add_link_set(l_map)
-        self.assertEqual(len(op.query_set), 2)  # no support yet for parameterized statements for link creation
+        self.assertEqual(len(op.query_set), 1)
 
         ret_id_set = self.db_ctl.exec_op(op)
         self.assertEqual(len(ret_id_set), 2)
@@ -198,6 +198,8 @@ class TestDBController(RhiziTestBase):
         ret_topo_diff = self.db_ctl.exec_op(op)
 
         # test return type
+        self.assertTrue('node_asked2id_map' in ret_topo_diff)
+        self.assertTrue('link_asked2id_map' in ret_topo_diff)
         self.assertTrue('node_id_set_add' in ret_topo_diff)
         self.assertTrue('link_id_set_add' in ret_topo_diff)
         self.assertTrue('node_id_set_rm' in ret_topo_diff)
@@ -279,7 +281,7 @@ class TestDBController(RhiziTestBase):
             self._assert_no_two_nodes_of_same_name_or_id()
         with self.subTest("just nodes"):
             ret = commit(node_map=[n('a'), n('b')], link_map=[])
-            self.assertEqual(ret['node_id_set_add'], [i('a'), i('b')])
+            self.assertSetEqual(set(ret['node_id_set_add']), {i('a'), i('b')})
             self._assert_no_two_nodes_of_same_name_or_id()
         with self.subTest("just links"):
             ret = commit(link_map=[l('a', 'b', 'ab')], node_map=[])
@@ -288,13 +290,13 @@ class TestDBController(RhiziTestBase):
         # nodes and links without any relation to
         with self.subTest("both, no existing names"):
             ret = commit(node_map=[n('c'), n('d')], link_map=[l('c', 'd', 'cd')])
-            self.assertEqual(ret['node_id_set_add'], [i('c'), i('d')])
+            self.assertEqual(set(ret['node_id_set_add']), {i('c'), i('d')})
             self.assertEqual(ret['link_id_set_add'], [lid('cd')])
             self._assert_no_two_nodes_of_same_name_or_id()
         with self.subTest("both, existing node name"):
             ret = commit(node_map=[n2('c'), n2('d')], link_map=[l2('c', 'd', 'cd')])
             # return values make no distinction between added nodes or existing nodes in return value
-            self.assertEqual(ret['node_id_set_add'], [i('c'), i('d')])
+            self.assertSetEqual(set(ret['node_id_set_add']), {i('c'), i('d')})
             #self.assertEqual(ret['link_id_set_add'], [lid('cd')]) # TODO - fix this one (by using post_sub_op_exec_hook in
             self._assert_no_two_nodes_of_same_name_or_id()
 

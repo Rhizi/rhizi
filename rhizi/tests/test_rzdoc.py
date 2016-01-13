@@ -164,10 +164,8 @@ class TestRZDoc(RhiziTestBase):
         self._assert_clone(rzdoc2, [c, d], [cd])
 
     def test_two_doc_delete_more_than_one_same_names(self):
-        rzdoc, ctx = self.helper_create_doc(name='a', id_start=2000,
-                                            sentence='a  goes  b  goes  c  goes  d')
-        rzdoc2, ctx2 = self.helper_create_doc(name='b', id_start=1000,
-                                              sentence='a  goes  b  goes  c  goes  d')
+        rzdoc, ctx   = self.helper_create_doc(name='a', id_start=2000, sentence='a  goes  b  goes  c  goes  d')
+        rzdoc2, ctx2 = self.helper_create_doc(name='b', id_start=1000, sentence='a  goes  b  goes  c  goes  d')
         self._assert_clone(rzdoc, rzdoc.nodes, rzdoc.links)
         self._assert_clone(rzdoc2, rzdoc.nodes, rzdoc.links)
 

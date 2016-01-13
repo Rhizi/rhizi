@@ -310,11 +310,27 @@ class RZ_Kernel(object):
         norm_op_ret = self.db_ctl.exec_op(norm_op)
         topo_diff.link_id_set_rm = list(set(topo_diff.link_id_set_rm) | set(norm_op_ret))
 
-        # 2. commit addition part of topo
+        # 2. commit node addition, use translation to update for link addition
         topo_diff_add = Topo_Diff(node_set_add=topo_diff.node_set_add, link_set_add=topo_diff.link_set_add)
         graph_op_add = DBO_diff_commit__topo(topo_diff_add)
 
         graph_op_add_ret = self.db_ctl.exec_op(graph_op_add)
+
+        # 2.25 commit link addition
+
+        # 2.5 adjust ids for meta commit based on actual ids
+        asked_to_returned = graph_op_add_ret['node_asked2id_map']
+        asked_to_returned_link = graph_op_add_ret['link_asked2id_map']
+        topo_diff.node_set_add = [{k:(v if k != 'id' else asked_to_returned[v]) for k, v in d.items()}
+                                  for d in topo_diff.node_set_add]
+        def map_link_v(k, v):
+            if k in ['__src_id', '__dst_id']:
+                return asked_to_returned.get(v, v)
+            if k == 'id':
+                return asked_to_returned_link[v]
+            return v
+        topo_diff.link_set_add = [{k:map_link_v(k, v) for k, v in d.items()}
+                                  for d in topo_diff.link_set_add]
 
         # 3. commit meta doc part in one go. returns removed links and nodes.
         meta_op = DBO_rzdoc__commit(topo_diff, rzdoc=rzdoc)
@@ -331,7 +347,8 @@ class RZ_Kernel(object):
         graph_op_rm = DBO_diff_commit__topo(topo_diff_rm)
 
         graph_op_rm_ret = self.db_ctl.exec_op(graph_op_rm)
-
+        graph_op_rm_ret['link_id_set_add'] = graph_op_add_ret['link_id_set_add']
+        graph_op_rm_ret['node_id_set_add'] = graph_op_add_ret['node_id_set_add'] # TODO: verify the nodes are returned complete with data. (if too large we need a direct client->large fields path)
         return graph_op_rm_ret
 
     @deco__DB_status_check

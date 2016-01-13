@@ -149,7 +149,8 @@ class Test_DB_Op(RhiziTestBase):
             for c in ( # validated through sub-ops
                       DB_composed_op,
                        # raw queries not supported by the parser (yet?)
-                      DBO_rzdoc__clone, DBO_rzdoc__commit, DBO_add_node_set
+                      DBO_rzdoc__clone, DBO_rzdoc__commit,
+                      DBO_add_node_set, DBO_add_link_set,
                       ):
                 if isinstance(op, c):
                     do_continue = True

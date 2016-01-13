@@ -181,7 +181,7 @@ class DBO_add_node_set(DBO_raw_query_set):
 
         return n_id_set
 
-class DBO_add_link_set(DB_op):
+class DBO_add_link_set(DBO_raw_query_set):
 
     def __init__(self, link_map):
         """
@@ -443,7 +443,7 @@ class DBO_diff_commit__topo(DB_composed_op):
     @return: a Topo_Diff of the actual committed changes
     """
     def __init__(self, topo_diff):
-        super(DBO_diff_commit__topo, self).__init__()
+        super(DBO_diff_commit__topo, self).__init__(hook_gen=self.post_sub_op_exec_hook_gen())
 
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add, meta_attr='__type')
@@ -463,7 +463,7 @@ class DBO_diff_commit__topo(DB_composed_op):
             self.add_sub_op(op)
 
         if len(l_add_map) > 0:
-            op = DBO_add_link_set(l_add_map)
+            self.op_add_link = op = DBO_add_link_set(l_add_map)
             self.add_sub_op(op)
 
         if len(l_rm_set) > 0:
@@ -474,9 +474,16 @@ class DBO_diff_commit__topo(DB_composed_op):
             op = DBO_rm_node_set(n_rm_set)
             self.add_sub_op(op)
 
+    def post_sub_op_exec_hook_gen(self):
+        op_add_node, op_add_node_ret = yield
+        op_add_link, op_add_link_ret = yield
+        op_rm_link, op_rm_link_ret = yield
+        op_rm_node, op_rm_link_ret = yield
+        yield
+
     def process_result_set(self):
-        ret_nid_set_add = []
-        ret_lid_set_add = []
+        ret_node_asked2id_map = {}
+        ret_link_asked2id_map = {}
         ret_nid_set_rm = []
         ret_lid_set_rm = []
         it = self.iter__sub_op()
@@ -485,15 +492,13 @@ class DBO_diff_commit__topo(DB_composed_op):
             for _, _, r_set in next(it).iter__r_set():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
-                        n_id = ret_dict['id']  # see query return statement
-                        ret_nid_set_add.append(n_id)
+                        ret_node_asked2id_map[ret_dict['asked_id']] = ret_dict['id']
 
         if self.l_add_map:
             for _, _, r_set in next(it).iter__r_set():  # iterate over result sets
                 for row in r_set:
                     for ret_dict in row:
-                        l_id = ret_dict['id']  # see query return statement
-                        ret_lid_set_add.append(l_id)
+                        ret_link_asked2id_map[ret_dict['asked_id']] = ret_dict['id']
 
         if self.l_rm_set:
             for _, _, row_set in next(it).iter__r_set():
@@ -505,10 +510,11 @@ class DBO_diff_commit__topo(DB_composed_op):
                 for n_id in row_set:
                     ret_nid_set_rm.extend(n_id)
 
-        ret = Topo_Diff.Commit_Result_Type(node_id_set_add=ret_nid_set_add,
-                                           link_id_set_add=ret_lid_set_add,
+        ret = Topo_Diff.Commit_Result_Type(node_asked2id_map=ret_node_asked2id_map,
+                                           link_asked2id_map=ret_link_asked2id_map,
                                            node_id_set_rm=ret_nid_set_rm,
                                            link_id_set_rm=ret_lid_set_rm)
+        log.debug('QQQQQQQQQQQQ returning {}'.format(ret))
         return ret
 
 
@@ -615,6 +621,7 @@ class DBO_diff_commit__attr(DB_op):
         #         ret[n_id] = n
 
         return self.op_return_value__attr_diff
+
 
 class DBO_load_node_set_by_DB_id(DB_op):
     def __init__(self, id_set):
@@ -1155,7 +1162,10 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
                  'optional match (ml)-[l:%(link)s]->(d)' % d_link,
                  'optional match (ml)-[l_all:%(link)s]->(q) where q <> d' % d_link,
                  'delete l',
-                 'return l_id, count(l_all)'
+                 'with l_id as l_id, count(l_all) as count_l_all, ml as ml',
+                 'where count_l_all = 0',
+                 'delete ml',
+                 'return l_id, count_l_all'
                 ]
         param_set = {'doc_id': rzdoc.id,
                      'params': topo_diff.link_id_set_rm}
@@ -1171,7 +1181,10 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
                  'optional match (mn:%(meta)s {id: n_id})-[l:%(link)s]->(d)' % d_node,
                  'optional match (mn)-[l_all:%(link)s]->(q) where q <> d' % d_node,
                  'delete l',
-                 'return n_id, count(l_all)'
+                 'with n_id as n_id, count(l_all) as count_l_all, mn as mn',
+                 'where count_l_all = 0',
+                 'delete mn',
+                 'return n_id, count_l_all'
                 ]
         param_set = {'doc_id': rzdoc.id,
                      'params': topo_diff.node_id_set_rm}
@@ -1182,14 +1195,14 @@ class DBO_rzdoc__commit(DBO_raw_query_set):
 
         removed_link_ids = list(res[2][2])
         removed_node_ids = list(res[3][2])
-        log.debug('booga: removed links: {}'.format(removed_link_ids))
-        log.debug('booga: removed nodes: {}'.format(removed_node_ids))
+        log.debug('DBO_rzdoc__commit: removed links: {}'.format(removed_link_ids))
+        log.debug('DBO_rzdoc__commit: removed nodes: {}'.format(removed_node_ids))
         return removed_node_ids, removed_link_ids
 
 
 class DBO_find_links_touching(DBO_raw_query_set):
     """
-    Return links that touch these nodes
+    Return links that touch these nodes, i.e. any link that has a source or destination in the node
     """
 
     def __init__(self, node_ids):

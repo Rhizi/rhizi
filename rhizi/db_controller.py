@@ -25,6 +25,7 @@ import six
 from .db_driver import DB_Driver_REST, DB_Driver_Base
 from .db_op import DB_composed_op
 from .db_op import DB_op
+from .db_op import DBO_diff_commit__topo # debug
 from .util import str_to_unicode
 from .neo4j_util import Neo4JException
 
@@ -62,6 +63,8 @@ class DB_Controller(object):
                 op.post_sub_op_exec_hook(sub_op, sub_op_ret)
 
             op_ret = op.process_result_set()
+            if isinstance(op, DBO_diff_commit__topo):
+                assert op_ret is not None
             return op_ret
 
         try:  # non-composed DB op

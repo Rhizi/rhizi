@@ -125,12 +125,14 @@ class Topo_Diff(object):
         """
         Topo_Diff graph commit result type
         """
-        def __init__(self, node_id_set_add=[],
-                           link_id_set_add=[],
+        def __init__(self, node_asked2id_map={},
+                           link_asked2id_map={},
                            node_id_set_rm=[],
                            link_id_set_rm=[]):
-            self['node_id_set_add'] = node_id_set_add
-            self['link_id_set_add'] = link_id_set_add
+            self['node_asked2id_map'] = node_asked2id_map
+            self['link_asked2id_map'] = link_asked2id_map
+            self['node_id_set_add'] = list(node_asked2id_map.values())
+            self['link_id_set_add'] = list(link_asked2id_map.values())
             self['node_id_set_rm'] = node_id_set_rm
             self['link_id_set_rm'] = link_id_set_rm
             self['meta'] = {}

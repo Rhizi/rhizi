@@ -160,9 +160,10 @@ def init_ws_interface(cfg, kernel, flask_webapp):
 
                     return f_ret
 
-            except Exception as e:
+            except AssertionError as e:
                 log.exception('decorator__ws_multicast: failed to detect REST/Websocket call via stack inspection (caller_class = {})'.format(caller_class))  # exception derived from stack
-                return  # f caller unidentified, abort cast
+                log.error('returning {}'.format(repr(f_ret)))
+                return f_ret # f caller unidentified, abort cast
 
             rzdoc = rzdoc_from_f_args_extractor(args)
 
