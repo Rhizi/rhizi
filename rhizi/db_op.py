@@ -20,6 +20,7 @@ import hashlib
 import logging
 import re
 from time import time
+from types import GeneratorType
 
 from flask import current_app # for user_db
 
@@ -210,9 +211,14 @@ class DB_composed_op(DB_op):
 
     Note: this class may be removed in future releases.
     """
-    def __init__(self):
+    def __init__(self, hook_gen=None):
         super(DB_composed_op, self).__init__()
         self.sub_op_set = []
+        if hook_gen is not None:
+            assert isinstance(hook_gen, GeneratorType)
+            self._post_sub_op_exec_hook_gen = hook_gen
+            self._post_sub_op_exec_hook_gen.send(None) # arm generator
+            self.post_sub_op_exec_hook = self._post_sub_op_exec_hook_gen_wrapper
 
     def __assert_false_statement_access(self):
         assert False, "composed_op may not contain statements, only sub-ops"
@@ -247,6 +253,9 @@ class DB_composed_op(DB_op):
         will prevent the execution of the subsequent sub_op's.
         """
         pass
+
+    def _post_sub_op_exec_hook_gen_wrapper(self, prv_sub_op, prv_sub_op_ret):
+        self._post_sub_op_exec_hook_gen.send((prv_sub_op, prv_sub_op_ret))
 
     def process_result_set(self):
         ret = []

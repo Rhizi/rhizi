@@ -497,9 +497,10 @@ class TestDBController(RhiziTestBase):
 class TestDBComposedOp(RhiziTestBase):
 
     def test_post_sub_op_exec_hook(self):
+
         class TestOp(DB_composed_op):
             def __init__(self, test):
-                DB_composed_op.__init__(self)
+                DB_composed_op.__init__(self, self._gen_post())
                 self.test = test
                 self.sum = []
                 self.op1 = DBO_raw_query_set(["return {a} + 1"], {'a': 1})
@@ -507,8 +508,6 @@ class TestDBComposedOp(RhiziTestBase):
                 self.op2 = DBO_raw_query_set(["return {a} + 1"], self.op1_result)
                 self.add_sub_op(self.op1)
                 self.add_sub_op(self.op2)
-                self._real_post = self._gen_post()
-                self._real_post.send(None) # initialize
 
             def _gen_post(self):
                 op1, op1_ret = yield
@@ -522,6 +521,7 @@ class TestDBComposedOp(RhiziTestBase):
 
             def post_sub_op_exec_hook(self, prev_op, prev_op_ret):
                 self._real_post.send((prev_op, prev_op_ret))
+
         test_op = TestOp(self)
         self.db_ctl.exec_op(test_op)
 
