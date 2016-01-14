@@ -442,7 +442,7 @@ class DBO_diff_commit__topo(DB_composed_op):
     @return: a Topo_Diff of the actual committed changes
     """
     def __init__(self, topo_diff):
-        super(DBO_diff_commit__topo, self).__init__(hook_gen=self.post_sub_op_exec_hook_gen())
+        super(DBO_diff_commit__topo, self).__init__()
 
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add, meta_attr='__type')
@@ -472,13 +472,6 @@ class DBO_diff_commit__topo(DB_composed_op):
         if len(n_rm_set) > 0:
             op = DBO_rm_node_set(n_rm_set)
             self.add_sub_op(op)
-
-    def post_sub_op_exec_hook_gen(self):
-        op_add_node, op_add_node_ret = yield
-        op_add_link, op_add_link_ret = yield
-        op_rm_link, op_rm_link_ret = yield
-        op_rm_node, op_rm_link_ret = yield
-        yield
 
     def process_result_set(self):
         ret_node_asked2id_map = {}
