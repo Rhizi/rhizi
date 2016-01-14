@@ -35,7 +35,7 @@ from .db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__c
     DBO_add_node_set, DBO_add_link_set)
 from . import neo4j_util as db_util
 from .db_op import DBO_diff_commit__topo
-from .model.graph import Topo_Diff
+from .model.graph import Topo_Diff, split_off_attr_diff
 from .model.model import RZDoc
 from .neo4j_qt import QT_RZDOC_Meta_NS_Filter
 from .neo4j_util import generate_random_rzdoc_id
@@ -317,8 +317,13 @@ class RZ_Kernel(object):
 
         # 2. commit node addition
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
+        n_add_map, attr_diff = split_off_attr_diff(n_add_map)
         add_node_op = DBO_add_node_set(n_add_map)
         add_node_ret = self.db_ctl.exec_op(add_node_op)
+
+        # 2.2 commit attr write
+        op = DBO_diff_commit__attr(attr_diff)
+        self.db_ctl.exec_op(op)
 
         # 2.5 update node and link id (node for meta commit, link for both regular and meta)
         asked_to_returned = {d['asked_id']: d['id'] for d in add_node_ret}

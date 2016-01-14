@@ -217,3 +217,17 @@ class Topo_Diff(object):
          removing it's end-point - this stub should check for that
         """
         pass
+
+
+def split_off_attr_diff(n_add_map):
+    # actually changes topo_diff in place
+    attr_diff = Attr_Diff()
+    for label, d_list in n_add_map.items():
+        for d in d_list:
+            n_id = d['id']
+            for attr_name, attr_val in list(d.items()):
+                if attr_name in ['id', 'name']:
+                    continue
+                del d[attr_name]
+                attr_diff.add_node_attr_write(n_id, attr_name, attr_val)
+    return n_add_map, attr_diff

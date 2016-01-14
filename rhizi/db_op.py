@@ -24,7 +24,7 @@ from types import GeneratorType
 
 from flask import current_app # for user_db
 
-from .model.graph import Topo_Diff
+from .model.graph import Topo_Diff, Attr_Diff, split_off_attr_diff
 from .model.model import Link, RZDoc, RZCommit
 from .neo4j_cypher import DB_Query, DB_result_set, DB_Raw_Query
 from .neo4j_util import cfmt
@@ -448,6 +448,7 @@ class DBO_diff_commit__topo(DB_composed_op):
         l_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.link_set_add, meta_attr='__type')
         l_rm_set = topo_diff.link_id_set_rm
         n_rm_set = topo_diff.node_id_set_rm
+        n_add_map, attr_diff = split_off_attr_diff(n_add_map)
 
         self.n_add_map = len(n_add_map) > 0
         self.l_add_map = len(l_add_map) > 0
@@ -459,6 +460,8 @@ class DBO_diff_commit__topo(DB_composed_op):
         #
         if len(n_add_map) > 0:
             op = DBO_add_node_set(n_add_map)
+            self.add_sub_op(op)
+            op = DBO_diff_commit__attr(attr_diff)
             self.add_sub_op(op)
 
         if len(l_add_map) > 0:
@@ -485,6 +488,7 @@ class DBO_diff_commit__topo(DB_composed_op):
                 for row in r_set:
                     for ret_dict in row:
                         ret_node_asked2id_map[ret_dict['asked_id']] = ret_dict['id']
+            next(it) # [!] skip attr write, ignored for now
 
         if self.l_add_map:
             for _, _, r_set in next(it).iter__r_set():  # iterate over result sets
