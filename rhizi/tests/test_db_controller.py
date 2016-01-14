@@ -107,7 +107,8 @@ class TestDBController(RhiziTestBase):
         op = DBO_add_link_set(l_map)
         self.assertEqual(len(op.query_set), 1)
 
-        ret_id_set = self.db_ctl.exec_op(op)
+        ret = self.db_ctl.exec_op(op)
+        ret_id_set = [d['id'] for d in ret]
         self.assertEqual(len(ret_id_set), 2)
         self.assertTrue(l_0_id in ret_id_set)
         self.assertTrue(l_1_id in ret_id_set)

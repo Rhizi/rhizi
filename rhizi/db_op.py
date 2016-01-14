@@ -197,8 +197,7 @@ class DBO_add_link_set(DBO_raw_query_set):
         for _, _, r_set in self.iter__r_set():
             for row in r_set:
                 for ret_dict in row:
-                    log.debug(str(ret_dict))
-                    l_id_set.append(ret_dict['id'])
+                    l_id_set.append(ret_dict)
 
         return l_id_set
 

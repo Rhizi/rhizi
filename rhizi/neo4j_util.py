@@ -179,7 +179,7 @@ def gen_query_create_from_node_map(node_map, input_to_DB_property_map=lambda _: 
     # plus we have attr_diff for setting properties, so the client can do this
     # using two queries anyway (albiet two CSN round trips, instead of two SN)
     keys = set(sum([sum([list(x.keys()) for x in xs], []) for xs in node_map.values()], []))
-    assert {'name', 'id'} >= keys
+    assert {'name', 'id'} >= keys, 'keys {} > name, id'.format(repr(keys))
 
     node_label = neo4j_schema.META_LABEL__RZDOC_NODE
 
