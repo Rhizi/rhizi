@@ -510,7 +510,6 @@ class DBO_diff_commit__topo(DB_composed_op):
                                            link_asked2id_map=ret_link_asked2id_map,
                                            node_id_set_rm=ret_nid_set_rm,
                                            link_id_set_rm=ret_lid_set_rm)
-        log.debug('QQQQQQQQQQQQ returning {}'.format(ret))
         return ret
 
 
