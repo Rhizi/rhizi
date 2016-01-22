@@ -946,7 +946,7 @@ class DBO_rzdoc__clone(DBO_raw_query_set):
                  'with n, n_id_set, l_id_set',
                  'order by n.id',
                  'optional match (rin)-[r]->(rout)',
-                 'where r.id in l_id_set and (rin.id = n.id or rout.id = n.id)'
+                 'where (r.id in l_id_set) and (rin.id = n.id)'
                  'return n, filter(l in labels(n) where l <> "%s"), collect([r, type(r), rin.id, rout.id])' % node_label]
 
         self.add_statement(q_arr, {'rzdoc_id': rzdoc.id})

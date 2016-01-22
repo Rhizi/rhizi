@@ -34,6 +34,10 @@ class TestRZDoc(RhiziTestBase):
         clz.maxDiff = None
         super(TestRZDoc, clz).setUpClass()
 
+    @classmethod
+    def tearDownClass(self):
+        self.kernel.shutdown()
+
     def setUp(self):
         self.kernel.reset_graph()
 
@@ -179,9 +183,16 @@ class TestRZDoc(RhiziTestBase):
         self._assert_clone(rzdoc, rzdoc.nodes, rzdoc.links)
         self._assert_clone(rzdoc2, rzdoc.nodes, rzdoc.links)
 
-    @classmethod
-    def tearDownClass(self):
-        self.kernel.shutdown()
+    def test_topo_diff_returns_same_format_as_clone(self):
+        """
+        topo_diff node_set_add and link_set_add must be the same format as clone
+        """
+        rzdoc, ctx = self.helper_create_doc(name='a', id_start=3000, sentence='a  with  b')
+        node_ids = [x['id'] for x in rzdoc.nodes]
+        clone = self.kernel.rzdoc__clone(rzdoc)
+        clone_subset = self.kernel._clone_subset(node_ids)
+        self.assertCountEqual(clone.node_set_add, clone_subset['node_set_add'])
+        self.assertCountEqual(clone.link_set_add, clone_subset['link_set_add'])
 
 
 class TestFindLinksTouching(RhiziTestBase):
@@ -194,6 +205,8 @@ class TestFindLinksTouching(RhiziTestBase):
             test_op = DBO_find_links_touching(inp)
             ret = self.db_ctl.exec_op(test_op)
             self.assertEqual(ret, outp)
+
+
 
 
 @debug__pydev_pd_arg

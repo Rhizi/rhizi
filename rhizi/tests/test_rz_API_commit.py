@@ -29,6 +29,7 @@ class TestRhiziAPI(RhiziTestBase):
         super(TestRhiziAPI, cls).setUpClass()
         # store rzdoc name
         cls.rzdoc_name = rzdoc_name
+        cls.rzdoc_2_name = '{} - 2'.format(rzdoc_name)
 
         # HACK: we use the same rhizi server for all tests, so set access
         # control here since we override it in other tests
@@ -44,7 +45,9 @@ class TestRhiziAPI(RhiziTestBase):
         cls.kernel.reset_graph()
         # create a test document
         cls.kernel.rzdoc__create(cls.rzdoc_name)
+        cls.kernel.rzdoc__create(cls.rzdoc_2_name)
         cls.rzdoc_test = cls.kernel.rzdoc__lookup_by_name(cls.rzdoc_name)
+        cls.rzdoc_2_test = cls.kernel.rzdoc__lookup_by_name(cls.rzdoc_2_name)
 
     @classmethod
     def tearDownClass(cls):
@@ -136,13 +139,30 @@ class TestRhiziAPI(RhiziTestBase):
 
             nodeA, nodeB = self.get_nodes(2)
 
-            # attributes
+            # commit to doc 1
             topo_diff = { "node_set_add" : [ nodeA, nodeB ]  }
             payload = { "rzdoc_name" : self.rzdoc_name, "topo_diff" : topo_diff}
 
             req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
             self.assertEqual(req.status_code, 200)
             self.assertEqual(len(resp["data"]["node_id_set_add"]), 2)
+
+            # commit to doc 2
+            nodeAtag = dict([(k, v if k != 'id' else v + '-tag') for k, v in nodeA.items()])
+            nodeBtag = dict([(k, v if k != 'id' else v + '-tag') for k, v in nodeB.items()])
+            topo_diff = { "node_set_add" : [ nodeAtag, nodeBtag ]  }
+            payload = { "rzdoc_name" : self.rzdoc_2_name, "topo_diff" : topo_diff}
+
+            req, resp = self._json_post(c, '/api/rzdoc/diff-commit__topo', payload)
+            data = resp['data']
+            self.assertEqual(req.status_code, 200)
+            self.assertEqual(len(data["node_id_set_add"]), 2)
+            ret_node_id_set_add_id = data['node_id_set_add']
+            self.assertEqual(set(ret_node_id_set_add_id), {nodeA['id'], nodeB['id']})
+            self.assertIn('node_set_add', data)
+            self.assertEqual(len(data.get('node_set_add', [])), 2)
+            self.assertEqual([x['id'] for x in data.get('node_set_add', [])], ret_node_id_set_add_id)
+
 
     def test_commit_topo_add_nodes_with_links(self):
         """ API should allow creation of new node and links"""

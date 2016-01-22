@@ -46,6 +46,15 @@ python2 = sys.version_info[0] == 2
 
 log = logging.getLogger('rhizi')
 
+
+def dictunion(d, *ds):
+    # TODO: test me
+    ret = dict(d)
+    for d2 in ds:
+        ret.update(d2)
+    return ret
+
+
 class RZDoc_Exception__not_found(Exception):
 
     def __init__(self, rzdoc_name):
@@ -359,11 +368,43 @@ class RZ_Kernel(object):
         # 6. commit removal part
         topo_diff_rm = Topo_Diff(node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
         graph_op_rm = DBO_diff_commit__topo(topo_diff_rm)
+        ret = self.db_ctl.exec_op(graph_op_rm)
 
-        graph_op_rm_ret = self.db_ctl.exec_op(graph_op_rm)
-        graph_op_rm_ret['link_id_set_add'] = list(asked_to_returned_link.values())
-        graph_op_rm_ret['node_id_set_add'] = list(asked_to_returned.values()) # TODO: verify the nodes are returned complete with data. (if too large we need a direct client->large fields path)
-        return graph_op_rm_ret
+        # 7. retreive nodes that were not given in the request
+        ret.update(self._clone_subset(node_ids=list(asked_to_returned.values())))
+
+        # return augmented graph_op_ret with add operation
+        ret['link_id_set_add'] = list(asked_to_returned_link.values())
+        ret['node_id_set_add'] = list(asked_to_returned.values()) # TODO: verify the nodes are returned complete with data. (if too large we need a direct client->large fields path)
+
+        return ret
+
+    def _clone_subset(self, node_ids):
+        """
+        clone all nodes that match given ids, return links matching as well
+
+        :param node_ids:
+        :return: {'node_set_add': [same as TopoDiff.node_set_add], 'link_set_add':[same as TopoDiff.link_set_add]}
+         TODO: use TopoDiff?
+        """
+        # TODO: you cannot ask for a link without asking for it's source and dest nodes. do we enforce that?
+        # TODO: can merge into 1? all of this requires improvement to reduce query count? need benchmarking to figure out if this is a real problem.
+        # TODO 2: put this into db_op, test it individually (as a lower layer, below / unknowing of rz_kernel).
+        node_label = neo4j_schema.META_LABEL__RZDOC_NODE
+        q_arr = [
+            "match (n:%s) where n.id in {ids}" % node_label,
+            "optional match (n1:%s)-[l]->(n2:%s)" % (node_label, node_label),
+            "where n1.id in {ids} and n2.id in {ids}",
+            'return collect([n, filter(l in labels(n) where l <> "%s")]),' % node_label,
+            "collect(distinct([l, type(l), startNode(l).id, endNode(l).id]))"
+        ]
+        op = DBO_raw_query_set(q_arr=q_arr, q_params={'ids': node_ids})
+        op_ret = self.db_ctl.exec_op(op)
+        return {
+         'node_set_add': [dictunion(n, {'__label_set': label_set}) for n, label_set in op_ret[0]],
+         'link_set_add': [dictunion(l, {'__type': [ztype], '__src_id': src_id, '__dst_id': dst_id})
+                          for l, ztype, src_id, dst_id in op_ret[1] if l is not None],
+        }
 
     @deco__DB_status_check
     def diff_commit__topo(self, topo_diff, ctx):
