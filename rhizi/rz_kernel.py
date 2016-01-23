@@ -401,8 +401,18 @@ class RZ_Kernel(object):
         op = DBO_raw_query_set(q_arr=q_arr, q_params={'ids': node_ids})
         op_ret = self.db_ctl.exec_op(op)
         return {
-         'node_set_add': [dictunion(n, {'__label_set': label_set}) for n, label_set in op_ret[0]],
-         'link_set_add': [dictunion(l, {'__type': [ztype], '__src_id': src_id, '__dst_id': dst_id})
+         'node_set_add': [dictunion(n,
+                                    {
+                                        '__label_set': label_set,
+                                        'type': label_set[0].lower() # TODO: this should be done at the client. plus - no verification??
+                                    }) for n, label_set in op_ret[0]],
+         'link_set_add': [dictunion(l,
+                                    {
+                                        '__type': [ztype],
+                                        'name': ztype, # TODO computed from __type, do this at client
+                                        '__src_id': src_id,
+                                        '__dst_id': dst_id
+                                    })
                           for l, ztype, src_id, dst_id in op_ret[1] if l is not None],
         }
 
