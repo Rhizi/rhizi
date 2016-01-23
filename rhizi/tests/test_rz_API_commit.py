@@ -161,7 +161,7 @@ class TestRhiziAPI(RhiziTestBase):
             self.assertEqual(set(ret_node_id_set_add_id), {nodeA['id'], nodeB['id']})
             self.assertIn('node_set_add', data)
             self.assertEqual(len(data.get('node_set_add', [])), 2)
-            self.assertEqual([x['id'] for x in data.get('node_set_add', [])], ret_node_id_set_add_id)
+            self.assertEqual({x['id'] for x in data.get('node_set_add', [])}, set(ret_node_id_set_add_id))
 
 
     def test_commit_topo_add_nodes_with_links(self):
