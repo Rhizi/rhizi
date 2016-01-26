@@ -1232,9 +1232,6 @@ function Graph(spec) {
         if (diff.node_set_add === undefined) {
             diff.node_set_add = diff.node_id_set_add.map(_get_server_pending);
         } else {
-            if (this === undefined) {
-                a = 10
-            }
             if (!this.temporary) { // TODO: hack. edit graph commits don't contain a __label_set - types missing..
                 diff.node_set_add = diff.node_set_add.map(on_backend__node_add);
             }
