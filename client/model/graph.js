@@ -126,6 +126,9 @@ function Graph(spec) {
      * first commit and then transmit.
      */
     var commit_and_tx_diff__topo = function (topo_diff) {
+        var self = this;
+
+        util.assert(this !== undefined, "called with undefined this binding");
         util.assert(temporary === false, "cannot be temporary");
         $.merge(topo_diff.link_id_set_rm, nodes_to_touched_links(topo_diff.node_id_set_rm));
         topo_diff.node_set_add = topo_diff.node_set_add
@@ -159,7 +162,9 @@ function Graph(spec) {
             return !hasNodeByName(n.name);
         });
 
-        backend.commit_diff__topo(topo_diff, __commit_diff_ajax__topo);
+        backend.commit_diff__topo(topo_diff, function (diff) {
+            self.__commit_diff_ajax__topo(diff);
+        });
     };
     this.commit_and_tx_diff__topo = commit_and_tx_diff__topo;
 
@@ -1181,15 +1186,10 @@ function Graph(spec) {
     }
 
     function __commit_diff_ajax__topo(diff) {
-        if (diff.node_set_add === undefined) {
-            diff.node_set_add = diff.node_id_set_add.map(_get_server_pending);
-        }
-        if (diff.link_set_add === undefined) {
-            diff.link_set_add = diff.link_id_set_add.map(_get_server_pending);
-        }
         diff.local = true;
-        commit_diff__topo(diff);
+        this.commit_diff__topo(diff);
     }
+    this.__commit_diff_ajax__topo = __commit_diff_ajax__topo;
 
     function _get_server_pending(id) {
         // FIXME: should track cache
@@ -1229,7 +1229,22 @@ function Graph(spec) {
      * FIXME: use a different object? different properties in the same object?
      */
     function commit_diff__topo(diff) {
+        if (diff.node_set_add === undefined) {
+            diff.node_set_add = diff.node_id_set_add.map(_get_server_pending);
+        } else {
+            if (this === undefined) {
+                a = 10
+            }
+            if (!this.temporary) { // TODO: hack. edit graph commits don't contain a __label_set - types missing..
+                diff.node_set_add = diff.node_set_add.map(on_backend__node_add);
+            }
+        }
         _add_node_set(diff.node_set_add);
+        if (diff.link_set_add === undefined) {
+            diff.link_set_add = diff.link_id_set_add.map(_get_server_pending);
+        } else {
+            diff.link_set_add = diff.link_set_add.map(on_backend__link_add);
+        }
         _add_link_set(diff.link_set_add);
         // done under protest
         _remove_link_set(diff.link_id_set_rm);
