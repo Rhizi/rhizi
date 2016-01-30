@@ -108,6 +108,7 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
 
         assert Topo_Diff.Commit_Result_Type == type(commit_ret)
 
+        # TODO: broadcast only to !me && doc-touched-by-topo-diff
         return self.multicast_msg('diff_commit__topo', topo_diff_dict, commit_ret)
 
     def on_diff_commit__attr(self, json_data):
@@ -123,6 +124,7 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
 
         # [!] note: here we actually send the attr_diff twice, but in the future
         # commit_ret may not be the same
+        # TODO: broadcast only to !me && doc-touched-by-attr-diff
         return self.multicast_msg('diff_commit__attr', attr_diff, commit_ret)
 
     def on_rzdoc_subscribe(self, data_dict):
