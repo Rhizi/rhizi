@@ -884,11 +884,17 @@ function Graph(spec) {
     };
 
     this.links__delete = function(link_ids) {
+        if (undefined === link_ids || link_ids.length === 0) {
+          return;
+        }
         var topo_diff = model_diff.new_topo_diff({link_id_set_rm: link_ids});
         this.commit_and_tx_diff__topo(topo_diff);
     };
 
     this.nodes__delete = function(node_ids) {
+        if (undefined === node_ids || node_ids.length === 0) {
+          return;
+        }
         var topo_diff = model_diff.new_topo_diff({node_id_set_rm: node_ids});
         this.commit_and_tx_diff__topo(topo_diff);
     };
