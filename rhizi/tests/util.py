@@ -47,12 +47,11 @@ from .. import rz_api
 from ..db_op import DBO_factory__default, DBO_raw_query_set
 from ..rz_user_db import Fake_User_DB
 from ..rz_api_rest import Req_Context
-
-from .neo4j_test_util import rand_label
-
+from .. import rz_start
 
 def parentdir(x):
     return os.path.realpath(os.path.join(x, '..'))
+
 
 def generate_parent_paths():
     cur = cwd = os.getcwd()
@@ -140,10 +139,10 @@ def install_neo4j():
 subprocesses = []
 
 
-def launch(args, stdout_filename):
+def launch(args, stdout_filename, **kw):
     stdout = open(stdout_filename, 'a+')
     stdout.write('-------------------\n')
-    p = subprocess.Popen(args, stdout=stdout, stderr=subprocess.STDOUT)
+    p = subprocess.Popen(args, stdout=stdout, stderr=subprocess.STDOUT, **kw)
     print("[{}]: launched {}".format(p.pid, repr(args)))
     subprocesses.append(p)
     return p
@@ -309,11 +308,35 @@ kernel = None
 cfg = None
 user_db = None
 webapp = None
+ws_srv = None
 
 def get_connection():
     if cfg is None:
         initialize_test_kernel()
     return db_ctl, kernel
+
+
+def initialize_config():
+    global cfg
+    if cfg is not None:
+        return False
+
+    sys.stderr.write('initializing config\n')
+    cfg = RZ_Config.generate_default()
+    cfg.access_control = False
+    cfg.neo4j_url = 'http://localhost:{}'.format(NEO4J_PORT)
+    cfg.mta_host = 'localhost'
+    cfg.mta_port = MTA_PORT
+    return True
+
+
+def initialize_db_and_mta():
+    if not initialize_config():
+        return
+
+    sys.stderr.write("initializing neo4j\n")
+    launch_neo4j()
+    launch_mta()
 
 
 def initialize_test_kernel():
@@ -322,17 +345,11 @@ def initialize_test_kernel():
     global cfg
     global user_db
     global webapp
+    global ws_srv
 
-    sys.stderr.write("initializing neo4j\n")
-    launch_neo4j()
-    launch_mta()
+    initialize_db_and_mta()
 
     sys.stderr.write("connecting to db\n")
-    cfg = RZ_Config.generate_default()
-    cfg.access_control = False
-    cfg.neo4j_url = 'http://localhost:{}'.format(NEO4J_PORT)
-    cfg.mta_host = 'localhost'
-    cfg.mta_port = MTA_PORT
     db_ctl = dbc.DB_Controller(cfg.db_base_url)
     rz_api.db_ctl = db_ctl
 
@@ -360,7 +377,7 @@ def initialize_test_kernel():
     webapp = init_webapp(cfg, kernel)
     webapp.user_db = user_db
     kernel.db_op_factory = webapp  # assist kernel with DB initialization
-    init_ws_interface(cfg, kernel, webapp)
+    ws_srv = init_ws_interface(cfg=cfg, kernel=kernel,flask_webapp=webapp)
 
 
 class RhiziTestBase(TestCase):
@@ -375,6 +392,7 @@ class RhiziTestBase(TestCase):
         rz_api.db_ctl = clz.db_ctl
         clz.kernel = kernel
         clz.webapp = webapp
+        clz.ws_srv = ws_srv
 
     def _json_post(self, c, path, payload):
         req = c.post(path, content_type='application/json', data=json.dumps(payload))
@@ -433,6 +451,26 @@ class RhiziTestBase(TestCase):
                               node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
         self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
 
+
+class RhiziExternalBaseTest(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        global cfg
+        initialize_db_and_mta()
+        cls.cfg = cfg
+        args = rz_start.get_args(listen_address=cfg.listen_address,
+                        config_dir='etc',
+                        listen_port=cfg.listen_port,
+                        neo4j_url=cfg.neo4j_url,
+                        mta_host=cfg.mta_host,
+                        mta_port=cfg.mta_port,
+                        debug=True)
+        #bash_args = ['bash', '-c', ' '.join(args + ['&'])]
+        env = dict(os.environ)
+        env['PYTHONPATH'] = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        launch(args, stdout_filename='rhizi-test-stdout.log', env=env, cwd=os.path.join(rz_start.working_dir, 'deploy-local'))
+        wait_for_port(cfg.listen_port)
 
 def test_main():
     #initialize_test_kernel()
