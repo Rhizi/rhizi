@@ -129,7 +129,62 @@ def shutdown():
         webapp.kernel.shutdown()
 
 
-def main():
+def parse_args():
+
+    global log
+
+    p = argparse.ArgumentParser(description='rhizi-server')
+    p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
+    p.add_argument('--listen-address', help='override configuration listen address', default=None)
+    p.add_argument('--listen-port', help='override configuration listening port', type=int, default=None)
+    p.add_argument('--neo4j-url', help='override configuration neo4j url', default=None)
+    p.add_argument('--mta-host', help='override configuration mta host', default=None)
+    p.add_argument('--mta-port', help='override configuration mta port', type=int, default=None)
+    p.add_argument('--debug', help='enable debugging logs', action='store_true', default=False)
+    args = p.parse_args()
+    try:
+        cfg = init_config(args.config_dir)
+        log = init_log(cfg)
+    except Exception as e:
+        log.error('failed to initialize server: {}'.format(e.args))
+        traceback.print_exc()
+        exit(-1)
+    if args.listen_port:
+        cfg.listen_port = args.listen_port
+    if args.listen_address:
+        cfg.listen_address = args.listen_address
+    if args.neo4j_url:
+        cfg.neo4j_url = args.neo4j_url
+    if args.mta_host:
+        cfg.mta_host = args.mta_host
+    if args.mta_port:
+        cfg.mta_port = args.mta_port
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    return cfg
+
+
+working_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+bin = os.path.join(working_dir, 'bin', 'rz-start')
+
+
+def get_args(config_dir=None, listen_address=None,
+             listen_port=None, neo4j_url=None,
+             mta_host=None, mta_port=None, debug=False):
+    # TODO: is there a reversable argparser?
+    def o(name, var):
+        return ['--' + name, str(var)] if var else []
+    return ([bin] +
+            o('config-dir', config_dir) +
+            o('listen-address', listen_address) +
+            o('listen-port', listen_port) +
+            o('neo4j-url', neo4j_url) +
+            o('mta-host', mta_host) +
+            o('mta-port', mta_port) +
+            ['--debug'] if debug else [])
+
+
+def main(cfg=None):
 
     global log
     global webapp
@@ -140,19 +195,10 @@ def main():
     except ImportError:
         pass
 
-    p = argparse.ArgumentParser(description='rhizi-server')
-    p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
-    args = p.parse_args()
-
     log = logging.getLogger('rhizi')  # init config-unaware log, used until we call init_log
 
-    try:
-        cfg = init_config(args.config_dir)
-        log = init_log(cfg)
-    except Exception as e:
-        log.error('failed to initialize server: {}'.format(e.args))
-        traceback.print_exc()
-        exit(-1)
+    if cfg is None:
+        cfg = parse_args()
 
     try:
         cfg_indent_str = '   ' + str(cfg).replace('\n', '\n   ')
