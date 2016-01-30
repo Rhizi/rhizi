@@ -14,8 +14,9 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import gevent
 
-from greenlet import greenlet
+from gevent import Greenlet as greenlet
 import json
 import logging
 from socketIO_client import SocketIO, BaseNamespace
@@ -30,14 +31,18 @@ from ..rz_api_websocket import WebSocket_Graph_NS
 
 from . import util
 from .test_util__pydev import debug__pydev_pd_arg
+from rhizi.tests.util import RhiziExternalBaseTest
+
 
 class RZ_websocket(object):
 
-    def __init__(self, namespace=BaseNamespace):
+    def __init__(self, rz_config, namespace=BaseNamespace):
         self.namespace = namespace
+        self.address = rz_config.listen_address
+        self.port = rz_config.listen_port
 
     def __enter__(self):
-        sock = SocketIO('rhizi.local', 8080)
+        sock = SocketIO(self.address, self.port)
         ns_sock = sock.define(self.namespace, '/graph')
         self.sock = sock
         print(sock)
@@ -46,27 +51,30 @@ class RZ_websocket(object):
     def __exit__(self, e_type, e_value, e_traceback):
         self.sock.disconnect()
 
-class TestMeshAPI(unittest.TestCase):
+class TestMeshAPI(RhiziExternalBaseTest):
     """
     currently requires a running rhizi server instance
     """
-    def setUp(self):
-        pass
-
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         logging.basicConfig(level=logging.DEBUG)
+        RhiziExternalBaseTest.setUpClass()
+        cls.address_port = '%s:%s' % (cls.cfg.listen_address, cls.cfg.listen_port)
 
     @classmethod
     def tearDownClass(cls):
-        pass
+        RhiziExternalBaseTest.tearDownClass()
 
-    @unittest.skip("hung on socket.getaddrinfo")
+    def new_websocket(self, namespace):
+        return RZ_websocket(rz_config=self.cfg, namespace=namespace)
+
+    @unittest.skip("fails due to not waiting enough or bad websocket request")
     def test_REST_post_triggers_ws_multicast__topo_diff(self):
 
         class NS_test(BaseNamespace):
 
             def on_diff_commit__topo(self, *data):
+                logging.debug('got data {}'.format(data))
                 greenlet.getcurrent().data = data
                 raise KeyboardInterrupt()  # TODO: cleanup: properly close socket
 
@@ -74,32 +82,41 @@ class TestMeshAPI(unittest.TestCase):
         n, n_id = util.generate_random_node_dict(test_label)
         topo_diff = Topo_Diff(node_set_add=[n])
 
+        # TODO: replace with using the rhizi-API python client library
         def c_0():
+            logging.debug('c_0 started')
+            gevent.sleep(20)
+            logging.debug('c_0 after sleep')
+            with self.new_websocket(namespace=NS_test) as (sock, _):
+                logging.debug('c_0 created websocket')
+                sock.wait(8)
+            logging.debug('c_0 done')
 
-            with RZ_websocket(namespace=NS_test) as (sock, _):
-                c1_t.switch()  # allow peer to POST
-                sock.wait(8)  # allow self to receive
 
         def c_1():
+            logging.debug('c_1 started')
+            gevent.sleep(25) # wait for websocket to start - should use signaling between the events
+            logging.debug('c_1 after initial sleep')
             data = json.dumps({'topo_diff': topo_diff.to_json_dict()})
-            req = Request(url='http://rhizi.local:8080/graph/diff-commit-topo',
+            req = Request(url='http://%s/graph/diff-commit-topo' % (self.address_port),
                                   data=data,
                                   headers={'Content-Type': 'application/json'})
 
+            logging.debug('c_1 before urlopen')
             f = urlopen(req)
             f.close()
-            c0_t.switch()
+            logging.debug('c_1 done')
 
-        c0_t = greenlet(c_0)
+        c0_t = gevent.spawn(c_0)
+        c1_t = gevent.spawn(c_1)
         c0_t.data = None
-        c1_t = greenlet(c_1)
-        c0_t.switch()
+        logging.debug('before gevent.joinall')
+        gevent.joinall([c0_t, c1_t])
 
-        self.assertTrue(None != c0_t.data)
+        self.assertNotEqual(None, c0_t.data)
         self.assertEqual(2, len(c1_t.data))
 
-
-    @unittest.skip("socket.getaddrinfo hung")
+    @unittest.skip("fails due to not waiting enough or bad websocket request")
     def test_ws_event__topo_diff(self):
 
         class NS_test(BaseNamespace):
@@ -115,14 +132,14 @@ class TestMeshAPI(unittest.TestCase):
         topo_diff = Topo_Diff(node_set_add=[n_0, n_1], link_set_add=[l])
 
         def c_0():
-            with RZ_websocket(namespace=NS_test) as (_, ns_sock):
+            with self.new_websocket(namespace=NS_test) as (_, ns_sock):
                 c1_t.switch()  # allow peer to connect
                 data = json.dumps(topo_diff, cls=Topo_Diff.JSON_Encoder)
                 ns_sock.emit('diff_commit__topo', data)
                 c1_t.switch()
 
         def c_1():
-            with RZ_websocket(namespace=NS_test) as (sock, _):
+            with self.new_websocket(namespace=NS_test) as (sock, _):
                 c0_t.switch()  # allow peer to emit
                 sock.wait(8)  # allow self to receive
 
@@ -140,7 +157,7 @@ class TestMeshAPI(unittest.TestCase):
         self.assertEqual(Topo_Diff, type(diff_in))
         self.assertEqual(Topo_Diff.Commit_Result_Type, type(commit_ret))
 
-    @unittest.skip("socket.getaddrinfo hung")
+    @unittest.skip("fails due to not waiting enough or bad websocket request")
     def test_ws_event__attr_diff(self):
 
         class NS_test(BaseNamespace):
@@ -159,14 +176,14 @@ class TestMeshAPI(unittest.TestCase):
         attr_diff.add_node_attr_rm(n_id, 'attr_2')
 
         def c_0():
-            with RZ_websocket(namespace=NS_test) as (_, ns_sock):
+            with self.new_websocket(namespace=NS_test) as (_, ns_sock):
                 c1_t.switch()  # allow peer to connect
                 data = json.dumps(attr_diff)
                 ns_sock.emit('diff_commit__attr', data)
                 c1_t.switch()
 
         def c_1():
-            with RZ_websocket(namespace=NS_test) as (sock, _):
+            with self.new_websocket(namespace=NS_test) as (sock, _):
                 c0_t.switch()  # allow peer to emit
                 sock.wait(8)  # allow self to receive
 
@@ -186,7 +203,7 @@ class TestMeshAPI(unittest.TestCase):
 
 @debug__pydev_pd_arg
 def main():
-    unittest.main(defaultTest='TestMeshAPI.test_REST_post_triggers_ws_multicast__topo_diff', verbosity=2)
+    unittest.main(defaultTest='rhizi.tests.test_rz_mesh.TestMeshAPI.test_REST_post_triggers_ws_multicast__topo_diff', verbosity=2)
 
 if __name__ == "__main__":
     main()
