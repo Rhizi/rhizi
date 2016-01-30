@@ -25,8 +25,6 @@ from functools import wraps
 import logging
 import os
 import sys
-import signal
-import traceback
 
 
 # Hack to create modules for usage by old user_db shelve
@@ -34,27 +32,22 @@ from .rz_user import User_Account
 from . import rz_user_db
 from . import rz_user
 
+
 # Support for old (<0.3.0 debian package) shelve files
 sys.modules['rz_user_db'] = rz_user_db
 sys.modules['rz_user'] = rz_user
 rz_user_db.User_Account = User_Account
 
 
-
-from .db_controller import DB_Controller
 from .db_op import DBO_rzdb__init_DB
 from . import rz_api
 from . import rz_api_rest
 from . import rz_blob
-from .rz_config import RZ_Config
 from . import rz_feedback
-from .rz_kernel import RZ_Kernel
-from .rz_mesh import init_ws_interface
 from .rz_req_handling import make_response__http__empty, \
     sock_addr_from_env_HTTP_headers, sock_addr_from_REMOTE_X_keys
 from . import rz_server_ctrl
 from . import rz_user
-from .rz_user_db import User_DB, Fake_User_DB
 
 
 log = logging.getLogger('rhizi')
@@ -138,12 +131,13 @@ class FlaskExt(Flask):
     def make_default_options_response(self):
         ret = Flask.make_default_options_response(self)
 
-        ret.headers['Access-Control-Allow-Origin'] = 'http://rhizi.net'
+        ret.headers['Access-Control-Allow-Origin'] = 'http://rhizi.net' # TODO take host and schema from config
         ret.headers['Access-Control-Allow-Headers'] = "Accept, Authorization, Content-Type, Origin"
         ret.headers['Access-Control-Allow-Credentials'] = 'true'
 
         # ret.headers['Access-Control-Allow-Methods'] = ', '.join(m_list)
         return ret
+
 
 def init_rest_interface(cfg, flask_webapp):
     """
