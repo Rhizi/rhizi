@@ -43,12 +43,14 @@ function( $,        model_diff) {
         var ret;
 
         ret = $.extend({
-            // type:
-            // - discard all but first label
-            // - adjust to lowercase
-            'type' : __sanitize_label__read(n_raw.__label_set[0]),
             'state' : 'perm',
         }, n_raw);
+        if (ret.type === undefined) {
+          // type:
+          // - discard all but first label
+          // - adjust to lowercase
+          ret.type = __sanitize_label__read(n_raw.__label_set[0])
+        }
 
         delete ret.__label_set;
 
