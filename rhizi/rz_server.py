@@ -286,7 +286,7 @@ def init_webapp(cfg, kernel):
     # HTML ERRORS HANDLING
     @webapp.errorhandler(404)
     def page_not_found(e):
-        return "Page not found, sorry"
+        return "Page not found, sorry", 404
 
     # REST API endpoints
     @webapp.route("/api/")
