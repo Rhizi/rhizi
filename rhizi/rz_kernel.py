@@ -76,11 +76,10 @@ class RZKernel_Exception__DB_metablock_unavailable(Exception):
     def __init__(self):
         super(RZKernel_Exception__DB_metablock_unavailable, self).__init__('DB metablock unavailable')
 
-class RZDoc_Reader_Association:
-    """
-    RZDoc reader association used to map rzdoc's to update subscribing readers.
 
-    Note: the term reader is used to represent a party performing R/W operations
+class RZDoc_Client_Association:
+    """
+    RZDoc client association used to map rzdoc's to update subscribing clients.
     """
 
     def __init__(self):
@@ -91,9 +90,7 @@ class RZDoc_Reader_Association:
         self.mark__invalid = False  # set upon rzdoc deletion
 
     def __eq__(self, other):
-        if not isinstance(other, RZDoc_Reader_Association): return False
-
-        return  self.socket == other.socket
+        return isinstance(other, RZDoc_Client_Association) and self.sid == other.sid
 
     def __str__(self):
         return '%s: peer-addr: %s:%s' % (self.rzdoc, self.remote_socket_addr[0], self.remote_socket_addr[1])
@@ -163,7 +160,7 @@ class RZ_Kernel(object):
         self.cache__rzdoc_name_to_rzdoc = {}
         self.heartbeat_period_sec = 0.5
         self.period__db_conn_check = 60
-        self.rzdoc_reader_assoc_map = defaultdict(list)
+        self.rzdoc_client_assoc_map = defaultdict(list)
 
         self.db_ctl = None  # set by caller
         self.db_op_factory = DBO_factory__default()
@@ -232,7 +229,7 @@ class RZ_Kernel(object):
                     except Exception as e:
                         log.info('rz_kernel: failed DB metablock fetch / DB init')
 
-                for rzdoc, r_assoc_set in self.rzdoc_reader_assoc_map.items():
+                for rzdoc, r_assoc_set in self.rzdoc_client_assoc_map.items():
                     for r_assoc in r_assoc_set:
 
                         if r_assoc.mark__invalid:  # remove expired associations
@@ -535,7 +532,7 @@ class RZ_Kernel(object):
 
         self.cache__rzdoc_name_to_rzdoc.pop(rzdoc.name, None)
 
-        for r_assoc in self.rzdoc_reader_assoc_map[rzdoc]:
+        for r_assoc in self.rzdoc_client_assoc_map[rzdoc]:
             r_assoc.mark__invalid = True
 
         # FIXME:
@@ -553,27 +550,27 @@ class RZ_Kernel(object):
         rzdoc = self.db_ctl.exec_op(op)
         return rzdoc  # may be None
 
-    def rzdoc__reader_subscribe(self,
+    def rzdoc__client_subscribe(self,
                                 remote_socket_addr=None,
                                 rzdoc_name=None,
                                 socket=None):
 
         rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
 
-        r_assoc = RZDoc_Reader_Association()
+        r_assoc = RZDoc_Client_Association()
         r_assoc.remote_socket_addr = remote_socket_addr
         r_assoc.rzdoc = rzdoc
         r_assoc.socket = socket
 
-        self.rzdoc_reader_assoc_map[rzdoc].append(r_assoc)
+        self.rzdoc_client_assoc_map[rzdoc].append(r_assoc)
         log.debug("rz_kernel: reader subscribed: assoc: %s" % (r_assoc))
 
-    def rzdoc__reader_unsubscribe__r_assoc(self, r_assoc):
-        return self.rzdoc__reader_unsubscribe(r_assoc.remote_socket_addr,
+    def rzdoc__client_unsubscribe__r_assoc(self, r_assoc):
+        return self.rzdoc__client_unsubscribe(r_assoc.remote_socket_addr,
                                               r_assoc.rzdoc_name,
                                               r_assoc.socket)
 
-    def rzdoc__reader_unsubscribe(self,
+    def rzdoc__client_unsubscribe(self,
                                   remote_socket_addr=None,
                                   rzdoc_name=None,
                                   socket=None):
@@ -581,7 +578,7 @@ class RZ_Kernel(object):
         rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
 
         rm_target = None
-        r_assoc_set = self.rzdoc_reader_assoc_map[rzdoc]
+        r_assoc_set = self.rzdoc_client_assoc_map[rzdoc]
         for r_assoc in r_assoc_set:
             if r_assoc.socket == socket:
                 rm_target = r_assoc
@@ -593,8 +590,11 @@ class RZ_Kernel(object):
         r_assoc_set.remove(rm_target)  # FIXME: make thread safe
         log.debug("rz_kernel: reader unsubscribed: %s" % (rm_target))
 
-    def rzdoc__reader_set_from_rzdoc(self, rzdoc):
-        rzdoc_r_set = self.rzdoc_reader_assoc_map[rzdoc]
+    def dump_clients(self):
+        log.info(repr(self.rzdoc_client_assoc_map))
+
+    def rzdoc__client_set_from_rzdoc(self, rzdoc):
+        rzdoc_r_set = self.rzdoc_client_assoc_map[rzdoc]
         ret_list = list(rzdoc_r_set)
         return ret_list
 
