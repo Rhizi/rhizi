@@ -273,6 +273,8 @@ def init_webapp(cfg, kernel):
                       static_folder='static',
                       static_url_path=cfg.static_url_path,
                       template_folder=template_d_relpath)
+    if os.environ.get('RHIZI_DEBUG', False) == '1':
+        webapp.debug = True
 
     webapp.config.from_object(cfg)
     webapp.root_path = root_path  # for some reason calling config.from_xxx() does not have effect
