@@ -919,7 +919,7 @@ function Graph(spec) {
                             src_node, find_node__by_id(tgt_id),
                             {name: ''});
                 });
-        commit_and_tx_diff__topo(model_diff.new_topo_diff({link_set_add: added_links}));
+        this.commit_and_tx_diff__topo(model_diff.new_topo_diff({link_set_add: added_links}));
     };
     this.nodes__link_fan = nodes__link_fan;
 
