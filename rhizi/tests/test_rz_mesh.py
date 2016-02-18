@@ -14,42 +14,67 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import gipc
 import gevent
 
 from gevent import Greenlet as greenlet
 import json
 import logging
-from socketIO_client import SocketIO, BaseNamespace
 import unittest
 from six.moves.urllib.request import Request, urlopen
 
-from ..model.graph import Attr_Diff
-from ..model.graph import Topo_Diff
-from . import neo4j_test_util
-from ..neo4j_util import generate_random_id__uuid
-from ..rz_api_websocket import WebSocket_Graph_NS
+from rhizi.model.graph import Attr_Diff
+from rhizi.model.graph import Topo_Diff
+from rhizi.tests import neo4j_test_util
 
-from . import util
-from .test_util__pydev import debug__pydev_pd_arg
+from rhizi.tests import util
+from rhizi.tests.test_util__pydev import debug__pydev_pd_arg
 from rhizi.tests.util import RhiziExternalBaseTest
-
+from rhizi import socketio_client
 
 class RZ_websocket(object):
 
-    def __init__(self, rz_config, namespace=BaseNamespace):
-        self.namespace = namespace
+    def __init__(self, rz_config, handler):
+        self.handler = handler
         self.address = rz_config.listen_address
         self.port = rz_config.listen_port
+        self.socketio_namespace = '/graph' # TODO: use
+
+    def send_subscribe(self, rzdoc_name):
+        self.sock.send_event('rzdoc_subscribe', {'rzdoc_name': rzdoc_name})
+
+    def on_open(self):
+        if hasattr(self.handler, 'on_open'):
+            self.handler.on_open()
+
+    def on_close(self):
+        if hasattr(self.handler, 'on_close'):
+            self.handler.on_close()
+
+    def on_message(self, msg):
+        logging.debug('on_message: {}: {}'.format(self, msg))
+        if 'name' in msg:
+            method_name = 'on_{}'.format(msg['name'].replace(' ','_'))
+            if hasattr(self.handler, method_name):
+                getattr(self.handler, method_name)(msg['data'])
+            else:
+                logging.debug('{}: {}: unhandled'.format(self, msg['name']))
+
+    def send(self, msg):
+        self.sock.send(socketio_client.encode_for_socketio(msg))
 
     def __enter__(self):
-        sock = SocketIO(self.address, self.port)
-        ns_sock = sock.define(self.namespace, '/graph')
+        sock = socketio_client.SocketIOClient(
+                        host=self.address, port=self.port,
+                        on_open=self.on_open, on_close=self.on_close,
+                        on_message=self.on_message)
         self.sock = sock
-        print(sock)
-        return sock, ns_sock
+        logging.debug('enter: created sock {}'.format(sock))
+        return self
 
     def __exit__(self, e_type, e_value, e_traceback):
-        self.sock.disconnect()
+        pass
+
 
 class TestMeshAPI(RhiziExternalBaseTest):
     """
@@ -65,8 +90,76 @@ class TestMeshAPI(RhiziExternalBaseTest):
     def tearDownClass(cls):
         RhiziExternalBaseTest.tearDownClass()
 
-    def new_websocket(self, namespace):
-        return RZ_websocket(rz_config=self.cfg, namespace=namespace)
+    def new_websocket(self, handler):
+        return RZ_websocket(rz_config=self.cfg, handler=handler)
+
+    def test_gipc(self):
+        def main():
+            logging.error('here we are')
+            print("this should work")
+        gipc.start_process(main).join()
+        self.assertFalse(False)
+
+    def test_single_client(self):
+
+        def process_main(writeend):
+
+            class Handler(object):
+                def on_open(self):
+                    logging.debug('opened in test, registering')
+                    sock.send_subscribe(rzdoc_name=rzdoc_name)
+                    writeend.put('open')
+                    raise SystemExit
+
+            with self.new_websocket(handler=Handler()) as sock:
+                logging.debug('created websocket')
+                writeend.put('created')
+                logging.debug('entering eventloop')
+                sock.sock.wsa.run_forever()
+                logging.debug('exited eventloop')
+            logging.debug('done')
+
+        rzdoc_name = 'Welcome Rhizi'
+        self.rz_server_process.writeend.put(('create-rzdoc', rzdoc_name))
+
+        readend, writeend = gipc.pipe()
+        p = gipc.start_process(process_main, (writeend,))
+        p.join()
+        self.assertEqual(readend.get(), 'created')
+        self.assertEqual(readend.get(), 'open')
+
+    def test_two_client(self):
+
+        def process_main(writeend):
+
+            class Handler(object):
+                def on_open(self):
+                    logging.debug('opened in test, registering')
+                    sock.send_subscribe(rzdoc_name=rzdoc_name)
+
+                def on_message(self, msg):
+                    # should get this as a result of something happening to the
+                    # doc registered to
+                    writeend.put(msg)
+                    raise SystemExit
+
+            with self.new_websocket(handler=Handler()) as sock:
+                logging.debug('c_0 created websocket')
+                writeend.put('created')
+                logging.debug('entering eventloop')
+                sock.sock.wsa.run_forever()
+                logging.debug('exited eventloop')
+            logging.debug('c_0 done')
+
+        rzdoc_name = 'Welcome Rhizi'
+        self.helper_create_doc(rzdoc_name)
+
+        readend, writeend = gipc.pipe()
+        p = gipc.start_process(process_main, (writeend,))
+        p.join()
+        self.assertEqual(readend.get(), 'created')
+        data = readend.get()
+        self.assertNotEqual(data, None)
 
     @unittest.skip("fails due to not waiting enough or bad websocket request")
     def test_REST_post_triggers_ws_multicast__topo_diff(self):
@@ -75,25 +168,26 @@ class TestMeshAPI(RhiziExternalBaseTest):
 
             def on_diff_commit__topo(self, *data):
                 logging.debug('got data {}'.format(data))
-                greenlet.getcurrent().data = data
-                raise KeyboardInterrupt()  # TODO: cleanup: properly close socket
+                # writeend is injected
+                if hasattr(self, 'writeend') and self.writeend is not None:
+                    self.writeend.put(data)
+                else:
+                    logging.debug('no writeend')
 
         test_label = neo4j_test_util.rand_label()
         n, n_id = util.generate_random_node_dict(test_label)
         topo_diff = Topo_Diff(node_set_add=[n])
 
         # TODO: replace with using the rhizi-API python client library
-        def c_0():
+        def c_0(writeend):
             logging.debug('c_0 started')
-            gevent.sleep(20)
-            logging.debug('c_0 after sleep')
             with self.new_websocket(namespace=NS_test) as (sock, _):
                 logging.debug('c_0 created websocket')
                 sock.wait(8)
             logging.debug('c_0 done')
 
 
-        def c_1():
+        def c_1(writeend):
             logging.debug('c_1 started')
             gevent.sleep(25) # wait for websocket to start - should use signaling between the events
             logging.debug('c_1 after initial sleep')
@@ -107,11 +201,12 @@ class TestMeshAPI(RhiziExternalBaseTest):
             f.close()
             logging.debug('c_1 done')
 
-        c0_t = gevent.spawn(c_0)
-        c1_t = gevent.spawn(c_1)
+        c0_t = gipc.start_process(c_0)
+        c1_t = gipc.start_process(c_1)
         c0_t.data = None
-        logging.debug('before gevent.joinall')
-        gevent.joinall([c0_t, c1_t])
+        logging.debug('joining c0')
+        gipc.join(c0_t)
+        gipc.join(c1_t)
 
         self.assertNotEqual(None, c0_t.data)
         self.assertEqual(2, len(c1_t.data))

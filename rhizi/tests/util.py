@@ -34,6 +34,9 @@ import functools
 from unittest import TestCase
 import json
 
+import gevent
+import gipc
+
 from .. import db_controller as dbc
 from ..model.graph import Topo_Diff
 from ..model.model import Link, RZDoc
@@ -380,6 +383,55 @@ def initialize_test_kernel():
     ws_srv = init_ws_interface(cfg=cfg, kernel=kernel,flask_webapp=webapp)
 
 
+def helper_links_nodes_from_sentence(sentence, id_start=1):
+    path = sentence.split('  ')
+    assert(len(path) % 2 == 1)
+    n_nodes = (len(path) - 1) // 2
+    node_dicts = [path[i] for i in range(0, len(path), 2)]
+    nodes = [{'name': name, 'id': i + id_start, '__label_set': ['type_a']}
+              for i, name in enumerate(node_dicts)]
+    link_dicts = [{'name': path[i]} for i in range(1, len(path), 2)]
+    links = []
+    for i, link_dict in enumerate(link_dicts):
+        if link_dict['name'] == '':
+            continue
+        link = Link.link_ptr(nodes[i]['id'], nodes[i + 1]['id'])
+        link['id'] = i + id_start + len(nodes)
+        link['__type'] = [link_dict['name']]
+        links.append(link)
+    return nodes, links
+
+
+def helper_topo_diff(kernel, ctx, nodes=[], links=[], node_id_set_rm=[], link_id_set_rm=[]):
+    topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links,
+                          node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
+    kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
+
+
+def helper_create_doc(kernel, name, nodes=[], links=[], sentence=None, id_start=1):
+    if sentence is not None:
+        assert len(nodes) == 0 and len(links) == 0
+        nodes, links = helper_links_nodes_from_sentence(sentence, id_start=id_start)
+    ensure_deleted(kernel, name)
+    rzdoc = kernel.rzdoc__create(name)
+    # helper - set initial nodes/links on doc
+    rzdoc.nodes = nodes
+    rzdoc.links = links
+    ctx = Req_Context(rzdoc=rzdoc)
+    if len(nodes) == 0 and len(links) == 0:
+        return rzdoc, ctx
+    topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links, meta=sentence)
+    topo_diff_ret, op_ret = self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
+    self.assertTrue(len(op_ret['link_id_set_add']) == len(links))
+    return rzdoc, ctx
+
+
+def ensure_deleted(kernel, rzdoc_name):
+    lookup_ret = kernel.rzdoc__lookup_by_name(rzdoc_name)
+    if lookup_ret != None:
+        kernel.rzdoc__delete(lookup_ret)
+
+
 class RhiziTestBase(TestCase):
 
     @classmethod
@@ -407,49 +459,16 @@ class RhiziTestBase(TestCase):
         self.assertDictEqual({l['id']:l for l in ret_links}, {l['id']:l for l in links})
 
     def _ensure_deleted(self, rzdoc_name):
-        lookup_ret = self.kernel.rzdoc__lookup_by_name(rzdoc_name)
-        if lookup_ret != None:
-            self.kernel.rzdoc__delete(lookup_ret)
+        return ensure_deleted(self.kernel, rzdoc_name)
 
     def helper_create_doc(self, name, nodes=[], links=[], sentence=None, id_start=1):
-        if sentence is not None:
-            assert len(nodes) == 0 and len(links) == 0
-            nodes, links = self.helper_links_nodes_from_sentence(sentence, id_start=id_start)
-        self._ensure_deleted(name)
-        rzdoc = self.kernel.rzdoc__create(name)
-        # helper - set initial nodes/links on doc
-        rzdoc.nodes = nodes
-        rzdoc.links = links
-        ctx = Req_Context(rzdoc=rzdoc)
-        if len(nodes) == 0 and len(links) == 0:
-            return rzdoc, ctx
-        topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links, meta=sentence)
-        topo_diff_ret, op_ret = self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
-        self.assertTrue(len(op_ret['link_id_set_add']) == len(links))
-        return rzdoc, ctx
+        return helper_create_doc(self.kernel, name, nodes, links, sentence, id_start)
 
     def helper_links_nodes_from_sentence(self, sentence, id_start=1):
-        path = sentence.split('  ')
-        assert(len(path) % 2 == 1)
-        n_nodes = (len(path) - 1) // 2
-        node_dicts = [path[i] for i in range(0, len(path), 2)]
-        nodes = [{'name': name, 'id': i + id_start, '__label_set': ['type_a']}
-                  for i, name in enumerate(node_dicts)]
-        link_dicts = [{'name': path[i]} for i in range(1, len(path), 2)]
-        links = []
-        for i, link_dict in enumerate(link_dicts):
-            if link_dict['name'] == '':
-                continue
-            link = Link.link_ptr(nodes[i]['id'], nodes[i + 1]['id'])
-            link['id'] = i + id_start + len(nodes)
-            link['__type'] = [link_dict['name']]
-            links.append(link)
-        return nodes, links
+        return helper_links_nodes_from_sentence(sentence, id_start)
 
     def helper_topo_diff(self, ctx, nodes=[], links=[], node_id_set_rm=[], link_id_set_rm=[]):
-        topo_diff = Topo_Diff(node_set_add=nodes, link_set_add=links,
-                              node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
-        self.kernel.diff_commit__topo(topo_diff=topo_diff, ctx=ctx)
+        return helper_topo_diff(self.kernel, ctx, nodes, links, node_id_set_rm, link_id_set_rm)
 
 
 class RhiziExternalBaseTest(TestCase):
@@ -459,17 +478,30 @@ class RhiziExternalBaseTest(TestCase):
         global cfg
         initialize_db_and_mta()
         cls.cfg = cfg
-        args = rz_start.get_args(listen_address=cfg.listen_address,
-                        config_dir='etc',
-                        listen_port=cfg.listen_port,
-                        neo4j_url=cfg.neo4j_url,
-                        mta_host=cfg.mta_host,
-                        mta_port=cfg.mta_port,
-                        debug=True)
-        #bash_args = ['bash', '-c', ' '.join(args + ['&'])]
+
+        def rz_server_main(readend):
+
+            # [!] stdout_filename='rhizi-tests-stdout.log'
+
+            def readend_handler():
+                while True:
+                    work = readend.get()
+                    if work[0] == 'create-rzdoc':
+                        assert len(work) == 2
+                        assert isinstance(work[1], str)
+                        helper_create_doc(rz_start.webapp.kernel, name=work[1])
+
+            gevent.spawn(readend_handler)
+            os.chdir(os.path.join(rz_start.working_dir, 'deploy-local'))
+            rz_start.main(cfg)
+
         env = dict(os.environ)
         env['PYTHONPATH'] = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        launch(args, stdout_filename='rhizi-test-stdout.log', env=env, cwd=os.path.join(rz_start.working_dir, 'deploy-local'))
+        readend, writeend = gipc.pipe()
+        rz_server_process = gipc.start_process(rz_server_main, (readend,))
+        rz_server_process.writeend = writeend
+        cls.rz_server_process = rz_server_process
+        print("waiting for port {}".format(cfg.listen_port))
         wait_for_port(cfg.listen_port)
 
 def test_main():
