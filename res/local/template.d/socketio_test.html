@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<!--<script src="/socket.io/socket.io.js"></script>-->
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<!--<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>-->
+<script>
+
+var socket;
+
+document.onreadystatechange = function () {
+    if (document.readyState == "interactive") {
+        initApplication();
+    }
+};
+
+function initApplication() {
+    var namespace = '/graph';
+
+    socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+
+    socket.on('test_chat', function (msg) {
+      console.log(msg);
+      document.body.textContent = msg.timestamp;
+    });
+    socket.emit('test_chat', 'hello world' + (new Date()));
+}
+
+</script>
+</body>
+</html>

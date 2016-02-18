@@ -17,14 +17,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-from flask import Flask
-from flask import redirect
-from flask import request
-from flask import session
 from functools import wraps
 import logging
 import os
 import sys
+
+from flask import Flask
+from flask import redirect
+from flask import request
+from flask import session, render_template
 
 
 # Hack to create modules for usage by old user_db shelve
@@ -292,6 +293,12 @@ def init_webapp(cfg, kernel):
     @webapp.route("/api/")
     def flask_route_test():
         return "Welcome to Rhizi API !"
+
+    # socketio test page - should be disabled when not in debug mode
+    if webapp.debug:
+        @webapp.route('/socketio-test/')
+        def socketio_test():
+            return render_template('socketio_test.html')
 
     init_rest_interface(cfg, webapp)
     return webapp
