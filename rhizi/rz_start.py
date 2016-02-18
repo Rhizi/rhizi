@@ -17,10 +17,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-from flask import Flask
-from flask import redirect
-from flask import request
-from flask import session
 from functools import wraps
 import logging
 import os
@@ -28,6 +24,12 @@ import sys
 import signal
 import traceback
 
+from flask import Flask
+from flask import redirect
+from flask import request
+from flask import session
+from gevent import pywsgi
+from geventwebsocket.handler import WebSocketHandler
 
 # Hack to create modules for usage by old user_db shelve
 from .rz_user import User_Account
@@ -224,12 +226,14 @@ def main(cfg=None):
     #
     webapp = init_webapp(cfg, kernel)
     webapp.user_db = user_db
+    webapp.kernel = kernel # [!] circular references
     kernel.db_op_factory = webapp  # assist kernel with DB initialization
-    ws_srv = init_ws_interface(cfg, kernel, webapp)
+    webapp = init_ws_interface(cfg, kernel, webapp)
 
     try:
         kernel.start()
-        ws_srv.serve_forever()
+        pywsgi.WSGIServer((cfg.listen_address, cfg.listen_port), webapp,
+                          handler_class=WebSocketHandler).serve_forever()
     except Exception as e:
         log.exception(e)
 

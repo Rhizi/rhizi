@@ -34,7 +34,7 @@
     "underscore": "1.8.3",
     "jquery": "2.1.4",
     "filesaver": "ec5c3cca11",
-    "socket.io": "0.9.10",
+    "socket.io": "1.4.5",
     "feedback": "e7711f0735",
     "requirejs-plugin-bower": "*"
   }

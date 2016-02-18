@@ -21,9 +21,8 @@ Rhizi websocket web API
 
 import json
 import logging
-from socketio.mixins import BroadcastMixin
-from socketio.namespace import BaseNamespace
 import traceback
+from datetime import datetime
 
 from .model.graph import Attr_Diff, Topo_Diff
 from .rz_kernel import RZDoc_Exception__not_found
@@ -31,12 +30,64 @@ from .rz_kernel import RZDoc_Exception__not_found
 
 log = logging.getLogger('rhizi')
 
-class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
+
+namespace = '/graph'
+
+
+class SocketIOHandlerBase(object):
+    """
+    automagically turn any method starting with on_ on the inheriting class
+    into a socketio decorated callback.
+    """
+    def __init__(self, sio, namespace):
+        self.namespace = namespace
+        self.sio = sio
+        for f_name in dir(self):
+            if not f_name.startswith('on_'):
+                continue
+            f = getattr(self, f_name)
+            if not callable(f):
+                continue
+            event = f_name[3:]
+            print("registring {}".format(event))
+            sio.on(event=event, handler=f, namespace=self.namespace)
+
+    def broadcast_event_not_me(self, sid, event_name, *args):
+        self.sio.emit(event_name, args, skip_sid=sid, namespace=self.namespace)
+
+    def emit_many(self, event, data, sids):
+        # [?] use a room? i.e. a single sio.emit(room=the_room)
+        errors = []
+        for sid in sids:
+            err = 0
+            try:
+                self.sio.emit(event=event, data=data, room=sid, namespace=self.namespace)
+            except Exception as e:
+                err = 1
+            errors.append(err)
+        return errors
+
+
+class WebSocket_Graph_NS(SocketIOHandlerBase):
     """
     Rhizi '/graph' websocket namespace
     """
-    def __init__(self, *args, **kw):
-        super(WebSocket_Graph_NS, self).__init__(*args, **kw)
+    def __init__(self, sio, kernel):
+        super(WebSocket_Graph_NS, self).__init__(sio=sio, namespace='/graph')
+        self.kernel = kernel
+
+    def broadcast_to_rzdoc_readers(self, event, data, rzdoc):
+        """
+        Cast update messege to subscribed readers
+        """
+
+        c_assoc_set = self.kernel.rzdoc__client_set_from_rzdoc(rzdoc)
+
+        log.debug('ws: rzdoc cast: msg: \'%s\': rzdoc: %s, cast-size ~= %d' % (event,
+                                                                               rzdoc.name,
+                                                                               len(c_assoc_set)))
+        errors = self.emit_many(event=event, data=data, sids=[c.sid for c in c_assoc_set])
+
 
     def __context__common(self, json_dict):
         """
@@ -45,54 +96,34 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         rzdoc_name = json_dict['rzdoc_name']
         return {'rzdoc_name': rzdoc_name}
 
-    def _log_conn(self, prefix_msg):
-        rmt_addr, rmt_port = self.request.peer_sock_addr
+    def _log_conn(self, sid, prefix_msg):
+        log.info('ws: %s: %s' % (sid, prefix_msg))
 
-        sid = self.environ['socketio'].sessid
-        log.info('ws: %s: sid: %s, remote-socket: %s:%s' % (prefix_msg, sid, rmt_addr, rmt_port))
-
-    def _on_rzdoc_subscribe_common(self, data_dict, is_subscribe=None):
+    def _on_rzdoc_subscribe_common(self, sid, data_dict, is_subscribe=None):
         rzdoc_name_raw = data_dict['rzdoc_name']
 
         # FIXME: non-flask dep. sanitization
         # rzdoc_name = sanitize_input__rzdoc_name(rzdoc_name_raw)
         rzdoc_name = rzdoc_name_raw
 
-        rmt_addr, rmt_port = self.request.peer_sock_addr
-        remote_socket_addr = (rmt_addr, rmt_port)
-        socket = self.socket
-
-        kernel = self.request.kernel
+        kernel = self.kernel
         msg_name = 'rzdoc_subscribe' if is_subscribe else 'rzdoc_unsubscribe'
+        ret = True
         try:
             if is_subscribe:
-                kernel.rzdoc__reader_subscribe(remote_socket_addr=remote_socket_addr,
-                                               rzdoc_name=rzdoc_name,
-                                               socket=socket)
-                self.emit_ack(msg_name)
+                kernel.rzdoc__client_subscribe(sid=sid,
+                                               rzdoc_name=rzdoc_name)
             else:
-                kernel.rzdoc__reader_unsubscribe(remote_socket_addr=remote_socket_addr,
-                                                 rzdoc_name=rzdoc_name,
-                                                 socket=socket)
-                self.emit_ack(msg_name)
+                kernel.rzdoc__client_unsubscribe(sid=sid,
+                                                 rzdoc_name=rzdoc_name)
         except RZDoc_Exception__not_found:
-            self.emit_nak(msg_name)
+            ret = False
+        return ret
 
-    def emit_ack(self, acked_msg_name):
-        self.emit('emit_ack', acked_msg_name)
+    def multicast_msg(self, sid, msg_name, *args):
+        self.broadcast_event_not_me(sid, msg_name, *args)
 
-    def emit_nak(self, acked_msg_name):
-        self.emit('nak', acked_msg_name)
-
-    def multicast_msg(self, msg_name, *args):
-        self.socket.server.log_multicast(msg_name)
-        try:
-            super(WebSocket_Graph_NS, self).broadcast_event_not_me(msg_name, *args)
-        except Exception as e:
-            log.error(e.message)
-            log.error(traceback.print_exc())
-
-    def on_diff_commit__topo(self, json_data):
+    def on_diff_commit__topo(self, sid, json_data):
 
         # FIXME: sanitize input
         json_dict = json.loads(json_data)
@@ -100,8 +131,8 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         log.info('ws: rx: topo diff: ' + str(topo_diff))
 
         ctx = self.__context__common(json_dict)
-        kernel = self.request.kernel
-        topo_diff, commit_ret = kernel.diff_commit__topo(topo_diff, ctx)
+        kernel = self.kernel
+        topo_diff, commit_ret = kernel.unwrapped.diff_commit__topo(topo_diff, ctx)
 
         # handle serialization
         topo_diff_dict = topo_diff.to_json_dict()
@@ -109,9 +140,9 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         assert Topo_Diff.Commit_Result_Type == type(commit_ret)
 
         # TODO: broadcast only to !me && doc-touched-by-topo-diff
-        return self.multicast_msg('diff_commit__topo', topo_diff_dict, commit_ret)
+        return self.multicast_msg(sid, 'diff_commit__topo', topo_diff_dict, commit_ret)
 
-    def on_diff_commit__attr(self, json_data):
+    def on_diff_commit__attr(self, sid, json_data):
 
         # FIXME: sanitize input
         json_dict = json.loads(json_data)
@@ -119,25 +150,31 @@ class WebSocket_Graph_NS(BaseNamespace, BroadcastMixin):
         log.info('ws: rx: attr diff: ' + str(attr_diff))
 
         ctx = self.__context__common(json_dict)
-        kernel = self.request.kernel
-        attr_diff, commit_ret = kernel.diff_commit__attr(attr_diff, ctx)
+        kernel = self.kernel
+        attr_diff, commit_ret = kernel.unwrapped.diff_commit__attr(attr_diff, ctx)
 
         # [!] note: here we actually send the attr_diff twice, but in the future
         # commit_ret may not be the same
         # TODO: broadcast only to !me && doc-touched-by-attr-diff
-        return self.multicast_msg('diff_commit__attr', attr_diff, commit_ret)
+        return self.multicast_msg(sid, 'diff_commit__attr', attr_diff, commit_ret)
 
-    def on_rzdoc_subscribe(self, data_dict):
-        return self._on_rzdoc_subscribe_common(data_dict, is_subscribe=True)
+    def on_rzdoc_subscribe(self, sid, data_dict):
+        ret = self._on_rzdoc_subscribe_common(sid, data_dict, is_subscribe=True)
+        self.kernel.dump_clients()
+        return ret
 
-    def on_rzdoc_unsubscribe(self, data_dict):
-        return self._on_rzdoc_subscribe_common(data_dict, is_subscribe=False)
+    def on_rzdoc_unsubscribe(self, sid, data_dict):
+        ret = self._on_rzdoc_subscribe_common(sid, data_dict, is_subscribe=False)
+        self.kernel.dump_clients()
+        return ret
 
-    def recv_connect(self):
-        self._log_conn('conn open')
-        super(WebSocket_Graph_NS, self).recv_connect()  # super called despite being empty
+    def on_connect(self, sid, environ):
+        self._log_conn(sid, 'conn open')
 
-    def recv_disconnect(self):
-        self._log_conn('conn close')
-        super(WebSocket_Graph_NS, self).recv_disconnect()
+    def on_disconnect(self, sid):
+        self._log_conn(sid, 'conn closed')
 
+    def on_test_chat(self, sid, msg):
+        log.info('ws: {}: {}'.format(sid, msg))
+        self.sio.emit('test_chat', {'timestamp': str(datetime.now())},
+                      namespace=self.namespace)

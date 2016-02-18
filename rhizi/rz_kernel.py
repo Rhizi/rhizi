@@ -84,9 +84,8 @@ class RZDoc_Client_Association:
     """
 
     def __init__(self):
-        self.remote_socket_addr = None  # (addr, port)
         self.rzdoc = None
-        self.socket = None
+        self.sid = None
         self.err_count__IO = 0  # allow n IO errors before disconnecting reader
         self.mark__invalid = False  # set upon rzdoc deletion
 
@@ -94,7 +93,8 @@ class RZDoc_Client_Association:
         return isinstance(other, RZDoc_Client_Association) and self.sid == other.sid
 
     def __str__(self):
-        return '%s: peer-addr: %s:%s' % (self.rzdoc, self.remote_socket_addr[0], self.remote_socket_addr[1])
+        return '%s: sid: %s' % (self.rzdoc, self.sid)
+
 
 def deco__exception_log(kernel_f):
     """
@@ -235,11 +235,11 @@ class RZ_Kernel(object):
 
                         if r_assoc.mark__invalid:  # remove expired associations
                             r_assoc_set.remove(r_assoc)
-                            log.debug('rz_kernel: removing invalid reader association: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr, rzdoc.name))
+                            log.debug('rz_kernel: removing invalid reader association: sid: %s, rzdoc: %s' % (r_assoc.sid, rzdoc.name))
 
                         if r_assoc.err_count__IO > 3:
                             r_assoc_set.remove(r_assoc)
-                            log.debug('rz_kernel: evicting reader: IO error count exceeded limit: remote-addr: %s, rzdoc: %s' % (r_assoc.remote_socket_addr, rzdoc.name))
+                            log.debug('rz_kernel: evicting reader: IO error count exceeded limit: sid: %s, rzdoc: %s' % (r_assoc.sid, rzdoc.name))
 
                 for i in range(self.heartbeat_period_sec * 2):
                     if False == self.should_stop:
@@ -562,40 +562,36 @@ class RZ_Kernel(object):
         return rzdoc  # may be None
 
     def rzdoc__client_subscribe(self,
-                                remote_socket_addr=None,
                                 rzdoc_name=None,
-                                socket=None):
+                                sid=None):
 
         rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
 
         r_assoc = RZDoc_Client_Association()
-        r_assoc.remote_socket_addr = remote_socket_addr
         r_assoc.rzdoc = rzdoc
-        r_assoc.socket = socket
+        r_assoc.sid = sid
 
         self.rzdoc_client_assoc_map[rzdoc].append(r_assoc)
         log.debug("rz_kernel: reader subscribed: assoc: %s" % (r_assoc))
 
     def rzdoc__client_unsubscribe__r_assoc(self, r_assoc):
-        return self.rzdoc__client_unsubscribe(r_assoc.remote_socket_addr,
-                                              r_assoc.rzdoc_name,
-                                              r_assoc.socket)
+        return self.rzdoc__client_unsubscribe(r_assoc.rzdoc_name,
+                                              r_assoc.sid)
 
     def rzdoc__client_unsubscribe(self,
-                                  remote_socket_addr=None,
                                   rzdoc_name=None,
-                                  socket=None):
+                                  sid=None):
 
         rzdoc = self.cache_lookup__rzdoc(rzdoc_name)
 
         rm_target = None
         r_assoc_set = self.rzdoc_client_assoc_map[rzdoc]
         for r_assoc in r_assoc_set:
-            if r_assoc.socket == socket:
+            if r_assoc.sid == sid:
                 rm_target = r_assoc
 
         if None == rm_target:  # target possibly removed after becoming stale
-            log.debug("rz_kernel: rzdoc__reader_unsubscribe: assoc not found: remote-address: %s" % (remote_socket_addr,))
+            log.debug("rz_kernel: rzdoc__client_unsubscribe: assoc not found: sid: {}".format(sid))
             return
 
         r_assoc_set.remove(rm_target)  # FIXME: make thread safe

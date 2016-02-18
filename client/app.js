@@ -40,7 +40,7 @@
             FileSaver: lib_path + 'FileSaver',
             html2canvas: lib_path + 'html2canvas',
             jquery: lib_path + 'jquery',
-            socketio: lib_path + 'socket.io/socket.io.min_0.9.10',
+            socketio: lib_path + 'socket.io/socket.io',
             underscore: lib_path + 'underscore',
         }
     };

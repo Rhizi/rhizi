@@ -35,7 +35,7 @@
         FileSaver: '../res/client/lib/FileSaver',
         html2canvas: '../res/client/lib/html2canvas',
         jquery: '../res/client/lib/jquery',
-        socketio: '../res/client/lib/socket.io/socket.io.min_0.9.10',
+        socketio: '../res/client/lib/socket.io/socket.io',
         underscore: '../res/client/lib/underscore',
     },
     name: "main",
