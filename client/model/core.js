@@ -211,7 +211,15 @@ function(util) {
 
         for (var property in link_spec) {
             if (link_spec.hasOwnProperty(property) && typeof link_spec[property] !== 'function' && property !== 'id') {
-                ret[property] = link_spec[property];
+                try {
+                    ret[property] = link_spec[property];
+                } catch (e) {
+                    if (e instanceof TypeError) {
+                        // ignore - this is a read only property
+                    } else {
+                        throw e;
+                    }
+                }
             }
         }
         return ret;
