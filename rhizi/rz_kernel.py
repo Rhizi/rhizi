@@ -39,6 +39,7 @@ from .model.graph import Topo_Diff, split_off_attr_diff
 from .model.model import RZDoc
 from .neo4j_qt import QT_RZDOC_Meta_NS_Filter
 from .neo4j_util import generate_random_rzdoc_id
+from .neo4j_util import RESERVED_LABEL__EMPTY_STRING # TODO: move this to db_op
 from . import neo4j_schema
 
 
@@ -368,7 +369,9 @@ class RZ_Kernel(object):
         ret = self.db_ctl.exec_op(graph_op_rm)
 
         # 7. retreive nodes that were not given in the request
-        ret.update(self._clone_subset(node_ids=list(asked_to_returned.values())))
+        link_node_ids_set = {l['__dst_id'] for l in add_link_ret} | {l['__src_id'] for l in add_link_ret}
+        touched_node_ids = list(set(asked_to_returned.values()) | link_node_ids_set)
+        ret.update(self._clone_subset(node_ids=touched_node_ids))
 
         # return augmented graph_op_ret with add operation
         ret['link_id_set_add'] = list(asked_to_returned_link.values())
@@ -397,6 +400,10 @@ class RZ_Kernel(object):
         ]
         op = DBO_raw_query_set(q_arr=q_arr, q_params={'ids': node_ids})
         op_ret = self.db_ctl.exec_op(op)
+        def db_to_client__type(ztype):
+            if ztype == RESERVED_LABEL__EMPTY_STRING:
+                return ''
+            return ztype
         return {
          'node_set_add': [dictunion(n,
                                     {
@@ -405,8 +412,11 @@ class RZ_Kernel(object):
                                     }) for n, label_set in op_ret[0]],
          'link_set_add': [dictunion(l,
                                     {
-                                        '__type': [ztype],
-                                        'name': ztype, # TODO computed from __type, do this at client
+                                        '__type': [db_to_client__type(ztype)],
+
+                                        # TODO computed from __type, do this at client
+                                        'name': db_to_client__type(ztype),
+
                                         '__src_id': src_id,
                                         '__dst_id': dst_id
                                     })
@@ -448,6 +458,7 @@ class RZ_Kernel(object):
         ts_created = self._exec_chain_commit_op(attr_diff, ctx, attr_diff.meta)
         attr_diff.meta['author'] = ctx.user_name
         attr_diff.meta['ts_created'] = ts_created
+        op_ret['meta'] = attr_diff.meta
         return attr_diff, op_ret
 
     @deco__DB_status_check
