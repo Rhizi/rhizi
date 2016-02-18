@@ -83,8 +83,10 @@ function( $,        model_diff) {
             'state' : 'perm',
         }, l_raw);
 
-        ret.name = __sanitize_label__read(ret.__type[0]);
-        delete ret.__type;
+        if (ret.name === undefined) {
+            ret.name = __sanitize_label__read(ret.__type[0]);
+            delete ret.__type;
+        }
 
         return ret;
     }
