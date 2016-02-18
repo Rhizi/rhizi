@@ -76,18 +76,18 @@ class WebSocket_Graph_NS(SocketIOHandlerBase):
         super(WebSocket_Graph_NS, self).__init__(sio=sio, namespace='/graph')
         self.kernel = kernel
 
-    def broadcast_to_rzdoc_readers(self, event, data, rzdoc):
+    def broadcast_to_rzdocs_readers(self, event, data, rzdocs):
         """
         Cast update messege to subscribed readers
         """
 
-        c_assoc_set = self.kernel.rzdoc__client_set_from_rzdoc(rzdoc)
+        c_assoc_set = self.kernel.rzdoc__client_set_from_rzdocs(rzdocs)
 
-        log.debug('ws: rzdoc cast: msg: \'%s\': rzdoc: %s, cast-size ~= %d' % (event,
-                                                                               rzdoc.name,
-                                                                               len(c_assoc_set)))
+        names = (rzdocs[0].name if len(rzdocs) == 1 else
+                 '[{}]',format(', '.join(rzdoc.name for rzdoc in rzdocs)))
+        log.debug('ws: rzdoc cast: msg: \'{}\': rzdocs: {}, cast-size ~= {}'.format(
+            event, names, len(c_assoc_set)))
         errors = self.emit_many(event=event, data=data, sids=[c.sid for c in c_assoc_set])
-
 
     def __context__common(self, json_dict):
         """

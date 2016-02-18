@@ -31,7 +31,7 @@ from .db_op import (DBO_diff_commit__attr, DBO_block_chain__commit, DBO_rzdoc__c
     DBO_block_chain__init, DBO_rzdoc__rename, DBO_nop,
     DBO_match_node_set_by_id_attribute, DBO_rzdb__fetch_DB_metablock,
     DBO_rzdoc__commit_log, DBO_factory__default, DBO_raw_query_set,
-    DBO_rzdoc__commit, DBO_find_links_touching,
+    DBO_rzdoc__commit, DBO_find_links_touching, DBO_find_rzdocs_touching,
     DBO_add_node_set, DBO_add_link_set)
 from . import neo4j_util as db_util
 from .db_op import DBO_diff_commit__topo
@@ -94,6 +94,11 @@ class RZDoc_Client_Association:
 
     def __str__(self):
         return '%s: sid: %s' % (self.rzdoc, self.sid)
+
+    def __hash__(self):
+        # only valid if sid is not None
+        assert self.sid is not None
+        return hash(self.sid)
 
 
 def deco__exception_log(kernel_f):
@@ -600,10 +605,20 @@ class RZ_Kernel(object):
     def dump_clients(self):
         log.info(repr(self.rzdoc_client_assoc_map))
 
-    def rzdoc__client_set_from_rzdoc(self, rzdoc):
-        rzdoc_r_set = self.rzdoc_client_assoc_map[rzdoc]
+    def rzdoc__client_set_from_rzdocs(self, rzdocs):
+        rzdoc_r_set = set()
+        for rzdoc in rzdocs:
+            rzdoc_r_set |= set(self.rzdoc_client_assoc_map[rzdoc])
         ret_list = list(rzdoc_r_set)
         return ret_list
+
+    def rzdoc__rzdocs_from_ids(self, node_ids, link_ids):
+        """
+        return all clients touching these ids.
+        """
+        op = DBO_find_rzdocs_touching(node_ids=node_ids, link_ids=link_ids)
+        op_ret = self.db_ctl.exec_op(op)
+        return op_ret
 
     @deco__DB_status_check
     def rzdoc__search(self, search_query, ctx=None):

@@ -116,6 +116,13 @@ class Attr_Diff(dict):
             l_attr_diff = self.init_link_attr_diff(l_id)
         l_attr_diff['__attr_remove'].append(attr_name)
 
+    def node_ids(self):
+        return set(self['__type_node'].keys())
+
+    def link_ids(self):
+        return set(self['__type_link'].keys())
+
+
 class Topo_Diff(object):
     """
     Represents a change to the graph topology

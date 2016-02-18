@@ -62,12 +62,22 @@ def init_ws_interface(cfg, kernel, flask_webapp):
             f_ret = f(*args, **kw)
             assert type(f_ret) in [list, tuple]  # expect (X_Diff, X_Diff.Commit_Result_Type)
 
-            rzdoc = rzdoc_from_f_args_extractor(args)
+            diff = f_ret[1]
 
-            data = _prep_for_serialization(f_ret[1])
+            data = _prep_for_serialization(diff)
+
+            is_topo_diff = isinstance(f_ret[0], Topo_Diff)
+
+            if is_topo_diff:
+                rzdocs = [rzdoc_from_f_args_extractor(args)]
+            else:
+                node_ids = diff.node_ids()
+                link_ids = diff.link_ids()
+                rzdocs = kernel.rzdoc__rzdocs_from_ids(node_ids=node_ids, link_ids=link_ids)
 
             event = f.__name__
-            websocket_graph_ns.broadcast_to_rzdoc_readers(event=event, data=data, rzdoc=rzdoc)
+            websocket_graph_ns.broadcast_to_rzdocs_readers(event=event, data=data,
+                                                           rzdocs=rzdocs)
 
             return f_ret
 

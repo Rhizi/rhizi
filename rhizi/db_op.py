@@ -1212,3 +1212,37 @@ class DBO_find_links_touching(DBO_raw_query_set):
         log.debug('returning res {}'.format(repr(res)))
         log.debug('returning {}'.format(ret))
         return ret
+
+
+class DBO_find_rzdocs_touching(DBO_raw_query_set):
+    """
+    Return document ids for docs touching these nodes and links
+    """
+    def __init__(self, node_ids, link_ids):
+        super(DBO_find_rzdocs_touching, self).__init__()
+        # look for docs that contain those nodes
+        q_arr = ['match (n:%s)-[:%s]-(d:%s) where n.id in {node_ids} return collect([d.id, d.name])' % (
+                neo4j_schema.META_LABEL__RZDOC_META_NODE,
+                neo4j_schema.META_LABEL__RZDOC_BELONGS_TO,
+                neo4j_schema.META_LABEL__RZDOC_TYPE
+            )]
+        param_set = {'node_ids': list(node_ids)}
+        self.add_statement(q_arr, param_set)
+        # look for docs that contain those links
+        q_arr = ['match (n:%s)-[:%s]-(d:%s) where n.id in {link_ids} return collect([d.id, d.name])' % (
+                neo4j_schema.META_LABEL__RZDOC_META_LINK,
+                neo4j_schema.META_LABEL__RZDOC_BELONGS_TO,
+                neo4j_schema.META_LABEL__RZDOC_TYPE
+            )]
+        param_set = {'link_ids': list(link_ids)}
+        self.add_statement(q_arr, param_set)
+
+    def process_result_set(self):
+        row1, row2 = self.iter__r_set()
+        to_set = lambda row: set(map(tuple, list(list(row[2])[0])[0]))
+        doc_tuples = to_set(row1) | to_set(row2)
+        def to_rzdoc(id, name):
+            d = RZDoc(rzdoc_name=name)
+            d.id = id
+            return d
+        return [to_rzdoc(id=id, name=name) for id, name in doc_tuples]
