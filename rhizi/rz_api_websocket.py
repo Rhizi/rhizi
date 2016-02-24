@@ -84,7 +84,7 @@ class WebSocket_Graph_NS(SocketIOHandlerBase):
         c_assoc_set = self.kernel.rzdoc__client_set_from_rzdocs(rzdocs)
 
         names = (rzdocs[0].name if len(rzdocs) == 1 else
-                 '[{}]',format(', '.join(rzdoc.name for rzdoc in rzdocs)))
+                 '[{}]'.format(', '.join(rzdoc.name for rzdoc in rzdocs)))
         log.debug('ws: rzdoc cast: msg: \'{}\': rzdocs: {}, cast-size ~= {}'.format(
             event, names, len(c_assoc_set)))
         errors = self.emit_many(event=event, data=data, sids=[c.sid for c in c_assoc_set])
