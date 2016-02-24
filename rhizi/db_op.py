@@ -1245,4 +1245,4 @@ class DBO_find_rzdocs_touching(DBO_raw_query_set):
             d = RZDoc(rzdoc_name=name)
             d.id = id
             return d
-        return [to_rzdoc(id=id, name=name) for id, name in doc_tuples]
+        return [to_rzdoc(id=id, name=name) for id, name in set(doc_tuples)]
