@@ -287,6 +287,11 @@ class RZ_Kernel(object):
     def is_DB_status__ok(self):
         return self.db_conn_avail and self.db_metablock is not None
 
+    def _find_links_touching(self, node_id_set):
+        norm_op = DBO_find_links_touching(node_ids=node_id_set)
+        norm_op_ret = self.db_ctl.exec_op(norm_op)
+        return set(norm_op_ret)
+
     def _commit__topo__helper(self, topo_diff, rzdoc):
         """
         helper that does not produce a commit. used by two paths:
@@ -323,9 +328,8 @@ class RZ_Kernel(object):
         assert overlapped_ids == set(), "{} != %s" % overlapped_ids
 
         # 1. NORMALIZE. expand the given node set to include all touching links.
-        norm_op = DBO_find_links_touching(node_ids=topo_diff.node_id_set_rm)
-        norm_op_ret = self.db_ctl.exec_op(norm_op)
-        topo_diff.link_id_set_rm = list(set(topo_diff.link_id_set_rm) | set(norm_op_ret))
+        links_touching = self._find_links_touching(topo_diff.node_id_set_rm)
+        topo_diff.link_id_set_rm = list(set(topo_diff.link_id_set_rm) | links_touching)
 
         # 2. commit node addition
         n_add_map = db_util.meta_attr_list_to_meta_attr_map(topo_diff.node_set_add)
@@ -371,7 +375,15 @@ class RZ_Kernel(object):
         # 6. commit removal part
         topo_diff_rm = Topo_Diff(node_id_set_rm=node_id_set_rm, link_id_set_rm=link_id_set_rm)
         graph_op_rm = DBO_diff_commit__topo(topo_diff_rm)
-        ret = self.db_ctl.exec_op(graph_op_rm)
+        graph_op_rm_ret = self.db_ctl.exec_op(graph_op_rm)
+
+        # Return dictionary:
+        # removed requested (from single client standpoint, and Doc standpoint, anything requested to be removed
+        # has been removed).
+        ret = {
+            'node_id_set_rm': topo_diff.node_id_set_rm,
+            'link_id_set_rm': topo_diff.link_id_set_rm
+        }
 
         # 7. retreive nodes that were not given in the request
         link_node_ids_set = {l['__dst_id'] for l in add_link_ret} | {l['__src_id'] for l in add_link_ret}
@@ -381,6 +393,8 @@ class RZ_Kernel(object):
         # return augmented graph_op_ret with add operation
         ret['link_id_set_add'] = list(asked_to_returned_link.values())
         ret['node_id_set_add'] = list(asked_to_returned.values()) # TODO: verify the nodes are returned complete with data. (if too large we need a direct client->large fields path)
+
+        assert set(ret['node_id_set_rm']) >= set(topo_diff.node_id_set_rm)
 
         return ret
 
