@@ -246,7 +246,16 @@ function GraphView(spec) {
             relayout = !temporary && !is_attr_diff,
             load_positions = layout.name && !temporary && (!diff.local || relayout),
             have_position = 0,
-            nodes_from_attr_diff = function() { var ret = []; diff.for_each_node(function (nid) { ret.push(graph.find_node__by_id(nid)); }); return ret; },
+            nodes_from_attr_diff = function() {
+		var ret = [];
+		diff.for_each_node(function (nid) {
+		    var node = graph.find_node__by_id(nid);
+		    if (node) {
+			ret.push(node);
+		    }
+		});
+		return ret;
+	    },
             changed_nodes = diff.node_set_add || (diff.for_each_node && nodes_from_attr_diff()) || [],
             is_full_graph_update = false,
             nodes = graph.nodes();
