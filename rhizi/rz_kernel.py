@@ -327,6 +327,8 @@ class RZ_Kernel(object):
                  set(topo_diff.node_id_set_rm))
         assert overlapped_ids == set(), "{} != %s" % overlapped_ids
 
+        #import pdb; pdb.set_trace()
+
         # 1. NORMALIZE. expand the given node set to include all touching links.
         links_touching = self._find_links_touching(topo_diff.node_id_set_rm)
         topo_diff.link_id_set_rm = list(set(topo_diff.link_id_set_rm) | links_touching)

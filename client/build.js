@@ -29,7 +29,7 @@
         autocomplete: '../res/client/lib/autocomplete',
         Bacon: '../res/client/lib/Bacon',
         caret: '../res/client/lib/caret',
-        domain_types: '../res/local/js/domain_types',
+        domain_types: 'empty:',
         d3: '../res/client/lib/d3/d3',
         feedback: '../res/client/lib/feedback',
         FileSaver: '../res/client/lib/FileSaver',

@@ -39,8 +39,8 @@
       <attribute name="root" />
       <attribute name="build" />
       <sequential>
-         <exec dir="@{root}" executable="/usr/bin/nodejs" failonerror="true">
-            <arg line="../node_modules/.bin/r.js -o @{build}" />
+         <exec dir="@{root}" executable="node_modules/requirejs/bin/r.js" failonerror="true">
+            <arg line="-o @{build}" />
          </exec>
       </sequential>
    </macrodef>

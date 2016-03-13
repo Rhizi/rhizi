@@ -18,7 +18,7 @@ if [ ! -f $CONFIG ]; then
     cp $EXAMPLE $CONFIG
 fi
 make # building css relies on Makefile
-ant -f build.ant deploy-local -DdefaultDomain=$DOMAIN -DtargetDomain=$DOMAIN && (
+ant -f build.ant deploy-local -DdoClientOptimize=true -DdefaultDomain=$DOMAIN -DtargetDomain=$DOMAIN && (
     cd deploy-local
     PYTHONPATH=. ./bin/rz-user-tool init --config-dir etc --user-db-path user_db.db --user-db-ugid `whoami`
     echo test | PYTHONPATH=. ./bin/rz-user-tool add --config-dir etc --user-db-path user_db.db --first-name test --last-name test --email test@example.com --password-file - --username test
