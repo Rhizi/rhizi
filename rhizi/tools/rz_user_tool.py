@@ -115,7 +115,7 @@ def list_users(user_db_path):
     print(", ".join(headers))
     if python2:
         for i, user in user_db:
-            utf = list(getattr(user, hdr).decode('utf-8') for hdr in headers[:-1])
+            utf = list(getattr(user, hdr) for hdr in headers[:-1]) # broken on python 3
             nonutf = list(getattr(user, hdr) for hdr in headers[-1:])
             print(u'{}, {}, {}, {}, {}'.format(*(utf + nonutf)).encode('utf-8'))
     else:
