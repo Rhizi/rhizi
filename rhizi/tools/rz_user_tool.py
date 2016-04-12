@@ -107,6 +107,7 @@ def role_rm(user_db_path, user_email, role):
     uid, u = user_db.lookup_user__by_email_address(user_email)
     user_db.user_rm_role(uid, role)
 
+
 def list_users(user_db_path):
     user_db = open_existing_user_db(user_db_path)
     if verbose:
@@ -115,7 +116,7 @@ def list_users(user_db_path):
     print(", ".join(headers))
     if python2:
         for i, user in user_db:
-            utf = list(getattr(user, hdr).decode('utf-8') for hdr in headers[:-1])
+            utf = list(getattr(user, hdr) for hdr in headers[:-1]) # .decode('utf-8')
             nonutf = list(getattr(user, hdr) for hdr in headers[-1:])
             print(u'{}, {}, {}, {}, {}'.format(*(utf + nonutf)).encode('utf-8'))
     else:
