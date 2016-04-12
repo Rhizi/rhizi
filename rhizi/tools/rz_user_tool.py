@@ -142,9 +142,19 @@ def remove_user(user_db_path, cfg, email):
     user_db.user_rm(uid)
 
 
+def update_user(user_db_path, cfg, email, password, first, last, username):
+    """ note: password shouldn't be passed through arguments, should be queried from
+    stdin or read from a file
+    """
+    user_db = open_existing_user_db(user_db_path)
+    uid, u = user_db.lookup_user__by_email_address(email)
+    user_db.update(uid=uid, first_name=first, last_name=last, email_address=email,
+                   rz_username=username)
+
+
 def main():
     global verbose
-    commands = ['init', 'role-add', 'role-rm', 'list', 'add', 'remove']
+    commands = ['init', 'role-add', 'role-rm', 'list', 'add', 'remove', 'update']
     p = argparse.ArgumentParser(description='rz-cli tool. You must provide a command, one of:\n{}'.format(commands))
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     p.add_argument('--user-db-path', help='path to user_db (ignore config)')
@@ -170,11 +180,14 @@ def main():
     elif rest[0] in ['role-add', 'role-rm'] and not args.email:
         print("command {} requires an email argument".format(command))
         illegal = True
-    elif rest[0] == 'add' and None in set([args.first_name, args.last_name, args.username]):
+    elif rest[0] == 'add' and None in {args.first_name, args.last_name, args.username}:
         print("missing one of first-name, last-name or username for user addition")
         illegal = True
     elif rest[0] == 'remove' and None == args.email:
         print("missing email for user removal")
+        illegal = True
+    elif rest[0] == 'update' and (None == args.email or {None} == {args.first_name, args.last_name, args.username, args.password_file}):
+        print("missing either email or one of first/last/username for update")
         illegal = True
     if illegal:
         p.print_help()
@@ -183,6 +196,19 @@ def main():
     command = rest[0]
     cfg = init_config(args.config_dir)
     user_db_path = args.user_db_path if args.user_db_path is not None else cfg.user_db_path
+
+    if command in {'add', 'update'}:
+        if args.password_file:
+            if args.password_file == '-':
+                password = sys.stdin.read().strip()
+            else:
+                with open(args.password_file) as fd:
+                    password = fd.read()
+        elif command == 'add':
+            print("please enter password:")
+            password = getpass()
+        else:
+            password = None
 
     if command == 'init':
         init_pw_db(cfg, args.user_db_init_file, user_db_path, ugid_str=args.user_db_ugid)
@@ -198,20 +224,15 @@ def main():
         list_users(user_db_path)
 
     elif command == 'add':
-        if args.password_file:
-            if args.password_file == '-':
-                password = sys.stdin.read().strip()
-            else:
-                with open(args.password_file) as fd:
-                    password = fd.read()
-        else:
-            print("please enter password:")
-            password = getpass()
         add_user(user_db_path=user_db_path, cfg=cfg, email=args.email, password=password,
                  first=args.first_name, last=args.last_name, username=args.username)
 
     elif command == 'remove':
         remove_user(user_db_path=user_db_path, cfg=cfg, email=args.email)
+
+    elif command == 'update':
+        update_user(user_db_path=user_db_path, cfg=cfg, email=args.email, password=password,
+                 first=args.first_name, last=args.last_name, username=args.username)
 
 if __name__ == '__main__':
     main()

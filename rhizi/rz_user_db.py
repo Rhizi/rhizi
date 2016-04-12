@@ -160,6 +160,22 @@ class User_DB(object):
         self.persistent_data_store[uid] = u
 
     @__sync_db
+    def update(self, uid, first_name=None,
+               last_name=None,
+               email_address=None,
+               rz_username=None):
+        u = self.persistent_data_store[uid]
+        if first_name is not None:
+            u.first_name = first_name
+        if last_name is not None:
+            u.last_name = last_name
+        if email_address is not None:
+            u.email_address = email_address
+        if rz_username is not None:
+            u.rz_username = rz_username
+        self.persistent_data_store[uid] = u
+
+    @__sync_db
     def user_rm_role(self, uid, role):
         u = self.persistent_data_store[uid]
         i = u.role_set.index(role)
