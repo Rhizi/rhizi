@@ -124,6 +124,7 @@ def list_users(user_db_path):
             params = list(getattr(user, hdr) for hdr in headers)
             print(u'{}, {}, {}, {}, {}'.format(*params))
 
+
 def add_user(user_db_path, cfg, email, password, first, last, username):
     user_db = open_existing_user_db(user_db_path)
     add_user_login(user_db=user_db,
@@ -134,9 +135,16 @@ def add_user(user_db_path, cfg, email, password, first, last, username):
                    email_address=email,
                    pw_plaintext=password)
 
+
+def remove_user(user_db_path, cfg, email):
+    user_db = open_existing_user_db(user_db_path)
+    uid, u = user_db.lookup_user__by_email_address(email)
+    user_db.user_rm(uid)
+
+
 def main():
     global verbose
-    commands = ['init', 'role-add', 'role-rm', 'list', 'add']
+    commands = ['init', 'role-add', 'role-rm', 'list', 'add', 'remove']
     p = argparse.ArgumentParser(description='rz-cli tool. You must provide a command, one of:\n{}'.format(commands))
     p.add_argument('--config-dir', help='path to Rhizi config dir', default='res/etc')
     p.add_argument('--user-db-path', help='path to user_db (ignore config)')
@@ -164,6 +172,9 @@ def main():
         illegal = True
     elif rest[0] == 'add' and None in set([args.first_name, args.last_name, args.username]):
         print("missing one of first-name, last-name or username for user addition")
+        illegal = True
+    elif rest[0] == 'remove' and None == args.email:
+        print("missing email for user removal")
         illegal = True
     if illegal:
         p.print_help()
@@ -198,6 +209,9 @@ def main():
             password = getpass()
         add_user(user_db_path=user_db_path, cfg=cfg, email=args.email, password=password,
                  first=args.first_name, last=args.last_name, username=args.username)
+
+    elif command == 'remove':
+        remove_user(user_db_path=user_db_path, cfg=cfg, email=args.email)
 
 if __name__ == '__main__':
     main()
