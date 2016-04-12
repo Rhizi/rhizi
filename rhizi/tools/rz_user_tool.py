@@ -196,6 +196,7 @@ def main():
     command = rest[0]
     cfg = init_config(args.config_dir)
     user_db_path = args.user_db_path if args.user_db_path is not None else cfg.user_db_path
+    print("user db path: {}".format(user_db_path))
 
     if command in {'add', 'update'}:
         if args.password_file:
