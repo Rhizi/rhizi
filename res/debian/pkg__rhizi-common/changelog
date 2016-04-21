@@ -1,3 +1,10 @@
+rhizi (0.3.37) unstable; urgency=low
+  * rz-user-tool: add update and remove, some utf-8 changes for python 2
+  * various wording and style changes to client
+  * Fix markdown
+  * Fix issue #474 - Property box color doesn't match node color
+ -- Alon Levy <alon@pobox.com>  Thu, 21 Apr 2016 19:28:24 +0300
+
 rhizi (0.3.36) unstable; urgency=low
   * Add color legend to filter dropdown
   * Fix node blue select outline
