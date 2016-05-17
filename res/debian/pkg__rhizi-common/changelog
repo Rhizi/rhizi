@@ -1,3 +1,7 @@
+rhizi (0.3.38) unstable; urgency=low
+  * debian: use python-enum34, not python-enum
+ -- Alon Levy <alon@pobox.com>  Tue, 17 May 2016 08:24:41 +0300
+
 rhizi (0.3.37) unstable; urgency=low
   * rz-user-tool: add update and remove, some utf-8 changes for python 2
   * various wording and style changes to client
