@@ -57,7 +57,6 @@
 
 .notselected, .notselected *{
   opacity: 0.5;
-  -webkit-filter: blur(10px);
   &:hover {
     opacity: 1;
     stroke: $orange;

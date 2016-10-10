@@ -1509,8 +1509,7 @@ a.menu-bar__item {
     outline: none; }
 
 .notselected, .notselected * {
-  opacity: 0.5;
-  -webkit-filter: blur(10px); }
+  opacity: 0.5; }
   .notselected:hover, .notselected *:hover {
     opacity: 1;
     stroke: #ff8b11;
