@@ -168,6 +168,19 @@ def load(filename):
     print('loaded {} docs'.format(len(RZFile(kernel).load(data))))
 
 
+# --- python2 / 3 helpers
+def sob_to_str(sob):
+    """
+    str or bytes to str
+    """
+    #import pdb; pdb.set_trace()
+    if hasattr(sob, 'decode'):
+        return sob.decode('utf-8')
+    return sob
+
+# --- end helpers
+
+
 def main():
     global kernel
     p = argparse.ArgumentParser(description="rhizi command line interface")
@@ -195,12 +208,14 @@ def main():
                 break
     RZ = rz.RZ(args.config_dir)
     kernel = RZ.kernel
+    search = [dict(name=sob_to_str(d['name']), id=sob_to_str(d['id'])) for d in
+                   kernel.rzdoc__search('')]
     if args.list_table:
         print('\n'.join('%30s %30s' % (d['name'].encode('utf-8').ljust(30),
-                                       d['id'].encode('utf-8').ljust(30)) for d in kernel.rzdoc__search('')))
+                                       d['id'].encode('utf-8').ljust(30)) for d in search))
         raise SystemExit
     if args.list_names:
-        print('\n'.join(d['name'].encode('utf-8') for d in kernel.rzdoc__search('')))
+        print('\n'.join(d['name'].encode('utf-8') for d in search))
         raise SystemExit
     if args.delete:
         remove(args.delete)
