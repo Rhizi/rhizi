@@ -1,3 +1,8 @@
+rhizi (0.3.39) unstable; urgency=low
+  * client:on selection, do not hide unselected - blur effect found responsible, but no idea why
+  * rz_doc: something relating to utf-8\ascii support
+ -- Alon Levy <alon@pobox.com>  Tue, 11 Oct 2016 09:22:43 +0300
+
 rhizi (0.3.38) unstable; urgency=low
   * debian: use python-enum34, not python-enum
  -- Alon Levy <alon@pobox.com>  Tue, 17 May 2016 08:24:41 +0300
