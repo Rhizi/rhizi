@@ -28,6 +28,7 @@
     "test",
     "tests"
   ],
+  "strict-ssl": true,
   "dependencies": {
     "d3": "3.4.11",
     "bacon": "0.7.83",
