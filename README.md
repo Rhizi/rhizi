@@ -6,8 +6,6 @@ A collaborative graph editor for organizing, communicating, and analyzing data i
 
 [Screencast tutorial](https://www.youtube.com/watch?v=yRQtUPCzd3A)  
   
-[Live demo](http://demo.rhizi.net/index)
-
 It is licensed under the GNU AGPL v3, see LICENSE for more details.
 
 Patches or pull requests are welcome but we require a contributor license agreement, see TBU
